@@ -1,8 +1,202 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student Login | Funda Online Academy</title><link rel="stylesheet" href="styles.css"></head>
-<body class="auth-page"><main class="auth-shell"><a class="logo centered" href="index.html"><img src="logo.png" alt="Funda Online Academy logo"><span>Funda Online Academy Pty Ltd<small>Together, we can.</small></span></a>
-<div class="auth-card"><div class="auth-tabs"><button id="login-tab" class="active">Login</button><button id="signup-tab">Create Account</button></div>
-<div id="message" class="message hidden"></div>
-<form id="login-form"><h1>Student Login</h1><p>Log in to access your student dashboard.</p><label>Email</label><input id="login-email" type="email" required><label>Password</label><input id="login-password" type="password" required><button class="btn green full">Login</button><button type="button" id="forgot" class="text-btn">Forgot password?</button></form>
-<form id="signup-form" class="hidden"><h1>Create Student Account</h1><p>Register to manage your courses and enrolments.</p><label>Full name</label><input id="signup-name" required><label>Email</label><input id="signup-email" type="email" required><label>Password</label><input id="signup-password" type="password" minlength="6" required><button class="btn green full">Create Account</button></form>
-<a class="back" href="index.html">← Back to website</a></div></main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="auth.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funda Online Academy - Student Login</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,#071e35,#0b4773);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  color:#222;
+}
+
+.auth-container{
+  width:100%;
+  max-width:430px;
+  background:#fff;
+  border-radius:18px;
+  padding:28px 22px;
+  box-shadow:0 12px 35px rgba(0,0,0,.3);
+}
+
+.logo{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.logo h1{
+  color:#0b4773;
+  font-size:27px;
+}
+
+.logo p{
+  color:#666;
+  margin-top:5px;
+}
+
+form h2{
+  text-align:center;
+  margin-bottom:18px;
+  color:#071e35;
+}
+
+label{
+  display:block;
+  margin:12px 0 6px;
+  font-weight:bold;
+}
+
+input{
+  width:100%;
+  padding:13px;
+  border:1px solid #ccc;
+  border-radius:9px;
+  font-size:16px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  margin-top:18px;
+  border:0;
+  border-radius:9px;
+  background:#0b4773;
+  color:white;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#071e35;
+}
+
+.switch{
+  text-align:center;
+  margin-top:18px;
+}
+
+.switch a{
+  color:#0b4773;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.message{
+  padding:10px;
+  margin-bottom:15px;
+  border-radius:8px;
+  background:#f1f5f9;
+  text-align:center;
+}
+
+.hidden{
+  display:none;
+}
+
+.back{
+  display:block;
+  text-align:center;
+  margin-top:18px;
+  color:#0b4773;
+  text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="auth-container">
+
+  <div class="logo">
+    <h1>Funda Online Academy</h1>
+    <p>Student Portal</p>
+  </div>
+
+  <div id="message" class="message hidden"></div>
+
+  <form id="login-form">
+    <h2>Student Login</h2>
+
+    <label for="login-email">Email Address</label>
+    <input
+      type="email"
+      id="login-email"
+      placeholder="Enter your email"
+      required
+    >
+
+    <label for="login-password">Password</label>
+    <input
+      type="password"
+      id="login-password"
+      placeholder="Enter your password"
+      required
+    >
+
+    <button type="submit">Login</button>
+
+    <div class="switch">
+      Don't have an account?
+      <a id="show-signup">Create Account</a>
+    </div>
+  </form>
+
+  <form id="signup-form" class="hidden">
+    <h2>Create Student Account</h2>
+
+    <label for="signup-name">Full Name</label>
+    <input
+      type="text"
+      id="signup-name"
+      placeholder="Enter your full name"
+      required
+    >
+
+    <label for="signup-email">Email Address</label>
+    <input
+      type="email"
+      id="signup-email"
+      placeholder="Enter your email"
+      required
+    >
+
+    <label for="signup-password">Password</label>
+    <input
+      type="password"
+      id="signup-password"
+      placeholder="Create a password"
+      minlength="6"
+      required
+    >
+
+    <button type="submit">Create Account</button>
+
+    <div class="switch">
+      Already have an account?
+      <a id="show-login">Login</a>
+    </div>
+  </form>
+
+  <a class="back" href="index.html">← Back to Funda Online Academy</a>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
+
+</body>
+                                </html>
