@@ -20,12 +20,29 @@ loginForm.onsubmit=async e=>{e.preventDefault();showMessage("Logging in…",true
  if(error)return showMessage(error.message);
  location.href="dashboard.html";
 };
-signupForm.onsubmit=async e=>{e.preventDefault();showMessage("Creating your account…",true);
- if(window.SUPABASE_URL.includes("PASTE_")) return showMessage("Supabase is not connected yet. Follow SETUP.md first.");
- const name=document.getElementById("signup-name").value.trim(),email=document.getElementById("signup-email").value.trim(),password=document.getElementById("signup-password").value;
- const {data,error}=await db.auth.signUp({email,password,options:{data:{full_name:name}}});
- if(error)return showMessage(error.message);
- if(data.session){location.href="dashboard.html";}else showMessage("Account created. Check your email to confirm your account, then log in.",true);
+signupForm.onsubmit=async e=>{
+  e.preventDefault();
+
+  if(window.SUPABASE_URL.includes("PASTE_")) return;
+
+  const name=document.getElementById("signup-name").value.trim();
+  const email=document.getElementById("signup-email").value.trim();
+  const password=document.getElementById("signup-password").value;
+
+  const {data,error}=await db.auth.signUp({
+    email,
+    password,
+    options:{data:{full_name:name}}
+  });
+
+  if(error) return showMessage(error.message);
+
+  if(data.session){
+    location.href="dashboard.html";
+  }else{
+    showMessage("Account created successfully. Please check your email to confirm your account.",true);
+    setMode("login");
+  }
 };
 document.getElementById("forgot").onclick=async()=>{
  const email=document.getElementById("login-email").value.trim();
