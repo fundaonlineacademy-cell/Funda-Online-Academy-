@@ -14,11 +14,25 @@ async function guardExisting(){
 }
 guardExisting();
 
-loginForm.onsubmit=async e=>{e.preventDefault();showMessage("Logging in…",true);
- if(window.SUPABASE_URL.includes("PASTE_")) return showMessage("Supabase is not connected yet. Follow SETUP.md first.");
- const {data,error}=await db.auth.signInWithPassword({email:document.getElementById("login-email").value,password:document.getElementById("login-password").value});
- if(error)return showMessage(error.message);
- location.href="dashboard.html";
+loginForm.onsubmit=async e=>{
+  e.preventDefault();
+
+  const email=document.getElementById("login-email").value.trim();
+  const password=document.getElementById("login-password").value;
+
+  const {data,error}=await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  if(data.session){
+    location.href="dashboard.html";
+  }
 };
 signupForm.onsubmit=async e=>{
   e.preventDefault();
