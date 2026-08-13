@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student Login | Funda Online Academy</title><link rel="stylesheet" href="styles.css"></head>
+<body class="auth-page"><main class="auth-shell"><a class="logo centered" href="index.html"><img src="logo.png" alt="Funda Online Academy logo"><span>Funda Online Academy Pty Ltd<small>Together, we can.</small></span></a>
+<div class="auth-card"><div class="auth-tabs"><button id="login-tab" class="active">Login</button><button id="signup-tab">Create Account</button></div>
+<div id="message" class="message hidden"></div>
+<form id="login-form"><h1>Student Login</h1><p>Log in to access your student dashboard.</p><label>Email</label><input id="login-email" type="email" required><label>Password</label><input id="login-password" type="password" required><button class="btn green full">Login</button><button type="button" id="forgot" class="text-btn">Forgot password?</button></form>
+<form id="signup-form" class="hidden"><h1>Create Student Account</h1><p>Register to manage your courses and enrolments.</p><label>Full name</label><input id="signup-name" required><label>Email</label><input id="signup-email" type="email" required><label>Password</label><input id="signup-password" type="password" minlength="6" required><button class="btn green full">Create Account</button></form>
+<a class="back" href="index.html">← Back to website</a></div></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="auth.js"></script></body></html>

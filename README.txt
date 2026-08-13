@@ -1,0 +1,23 @@
+FUNDA ONLINE ACADEMY PTY LTD — UPGRADED WEBSITE
+
+This is the upgraded version of the original website.
+
+Main upgrades:
+- Real student registration/login using Supabase
+- Student dashboard
+- Admin dashboard
+- Course database
+- Add/edit/delete courses
+- Exact course prices from supplied screenshots
+- Enrolment requests
+- Admin enrolment status management
+- Duplicate course protection
+- Responsive mobile design
+
+IMPORTANT:
+The website needs a Supabase project before student login works.
+Follow SETUP.md.
+
+Initial catalogue contains 27 courses. Prices are stored as individual course prices, not a generic "starting from R440".
+
+The supplied logo is included as logo.png.
