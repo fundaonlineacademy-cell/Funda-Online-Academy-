@@ -1,37 +1,452 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Funda Online Academy Pty Ltd | Online Short Courses</title>
-<meta name="description" content="Funda Online Academy Pty Ltd - flexible online short courses. Study anytime from home.">
-<link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Funda Online Academy Pty Ltd</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#f5f7f6;
+  color:#222;
+  line-height:1.6;
+}
+
+header{
+  background:#071e35;
+  color:white;
+  padding:15px 5%;
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+
+.nav{
+  max-width:1200px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:20px;
+  font-weight:bold;
+}
+
+.logo img{
+  width:45px;
+  height:45px;
+  object-fit:contain;
+}
+
+nav a{
+  color:white;
+  text-decoration:none;
+  margin-left:15px;
+  font-weight:bold;
+}
+
+.hero{
+  background:linear-gradient(135deg,#071e35,#0b5d4f);
+  color:white;
+  padding:80px 5%;
+  text-align:center;
+}
+
+.hero h1{
+  font-size:42px;
+  margin-bottom:15px;
+}
+
+.hero p{
+  font-size:19px;
+  max-width:750px;
+  margin:0 auto 25px;
+}
+
+.btn{
+  display:inline-block;
+  padding:13px 22px;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:bold;
+  margin:5px;
+}
+
+.btn-main{
+  background:#f4c542;
+  color:#071e35;
+}
+
+.btn-light{
+  background:white;
+  color:#071e35;
+}
+
+section{
+  padding:55px 5%;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+}
+
+.section-title{
+  text-align:center;
+  margin-bottom:35px;
+}
+
+.section-title h2{
+  font-size:32px;
+  color:#071e35;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+}
+
+.card{
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.card h3{
+  color:#071e35;
+  margin-bottom:10px;
+}
+
+.price{
+  font-size:24px;
+  font-weight:bold;
+  color:#0b5d4f;
+  margin:12px 0;
+}
+
+.info{
+  background:#eaf5f1;
+}
+
+.payment{
+  border-left:5px solid #0b5d4f;
+}
+
+.assessment{
+  border-left:5px solid #f4c542;
+}
+
+.results{
+  background:#071e35;
+  color:white;
+}
+
+.results h2{
+  color:white;
+}
+
+.contact{
+  text-align:center;
+}
+
+footer{
+  background:#061525;
+  color:white;
+  text-align:center;
+  padding:25px;
+}
+
+@media(max-width:700px){
+  .nav{
+    flex-direction:column;
+  }
+
+  nav a{
+    display:inline-block;
+    margin:5px;
+  }
+
+  .hero h1{
+    font-size:32px;
+  }
+}
+</style>
 </head>
+
 <body>
-<header><div class="wrap nav">
-<a class="logo" href="index.html"><img src="logo.png" alt="Funda Online Academy logo"><span>Funda Online Academy Pty Ltd<small>Together, we can.</small></span></a>
-<nav><a href="#courses">Courses</a><a href="#about">About</a><a href="#how">How It Works</a><a href="#accreditation">Accreditation</a><a href="#contact">Contact</a></nav>
-<div class="nav-actions"><a class="btn ghost" href="auth.html">Student Login</a><a class="btn green" href="auth.html?mode=signup">Register</a></div>
-</div></header>
-<section class="hero"><div class="wrap hero-grid"><div><span class="badge">ONLINE SHORT COURSES • START ANYTIME</span><h1>Learn skills.<br><span>Build your future.</span></h1><p>Flexible online short courses designed to help learners gain practical workplace and career skills from the comfort of home.</p><div class="actions"><a class="btn green" href="#courses">View Courses</a><a class="btn blue" href="auth.html?mode=signup">Create Student Account</a></div></div><div class="hero-card"><img src="logo.png" alt="Funda Online Academy Pty Ltd"><strong>Study from home • Start anytime</strong><p>Students can create an account, enrol in courses and access their dashboard.</p></div></div></section>
 
-<section class="features"><div class="wrap"><div class="title"><h2>Why choose Funda Online Academy?</h2><p>Simple, flexible learning for people who want to improve their skills.</p></div><div class="grid3">
-<div class="card"><div class="icon">🏠</div><h3>Study From Home</h3><p>Learn using a phone, tablet or computer.</p></div>
-<div class="card"><div class="icon">⏰</div><h3>Start Anytime</h3><p>No need to wait for a new intake.</p></div>
-<div class="card"><div class="icon">💼</div><h3>Practical Skills</h3><p>Choose courses focused on useful workplace skills.</p></div>
-</div></div></section>
+<header>
+<div class="nav">
 
-<section id="courses"><div class="wrap"><div class="title"><h2>Our Online Short Courses</h2><p>Every course below has its own price. New courses can be added from the Admin Dashboard without changing the website code.</p></div><div id="course-grid" class="grid3"><p class="loading">Loading courses…</p></div></div></section>
+<div class="logo">
+<img src="logo.png" alt="Funda Online Academy Logo">
+<span>Funda Online Academy</span>
+</div>
 
-<section id="how" class="how"><div class="wrap"><div class="title"><h2>How It Works</h2><p>Getting started is simple.</p></div><div class="steps">
-<div class="step"><div class="num">1</div><h3>Create an account</h3><p>Register as a student.</p></div><div class="step"><div class="num">2</div><h3>Choose a course</h3><p>Compare the course details and price.</p></div><div class="step"><div class="num">3</div><h3>Enrol</h3><p>Request enrolment from your dashboard.</p></div><div class="step"><div class="num">4</div><h3>Study</h3><p>Access your enrolled courses.</p></div>
-</div></div></section>
+<nav>
+<a href="#courses">Courses</a>
+<a href="#payment">Payment</a>
+<a href="#assessment">Assessments</a>
+<a href="#results">Results</a>
+<a href="auth.html">Student Login</a>
+</nav>
 
-<section id="about"><div class="wrap about"><div class="about-img"><img src="logo.png" alt="Funda Online Academy logo"></div><div><h2>About Funda Online Academy Pty Ltd</h2><p>Funda Online Academy Pty Ltd is a private skills training company offering accessible online short courses for learners who want practical workplace skills.</p><p>Our focus is flexible learning: students can start anytime and study from the comfort of their home.</p><ul class="checks"><li>Affordable short courses</li><li>Flexible online learning</li><li>Start anytime</li><li>Practical workplace skills</li><li>Student accounts and dashboards</li></ul></div></div></section>
+</div>
+</header>
 
-<section class="info" id="accreditation"><div class="wrap"><div class="title"><h2>Accreditation & Certificates</h2><p>Add your official verified information here when ready.</p></div><div class="grid2"><div class="card"><h3>Accreditation Details</h3><p class="placeholder">Placeholder — replace with verified official accreditation, registration, provider or quality-assurance information.</p></div><div class="card"><h3>Course Certificates</h3><p class="placeholder">Placeholder — add verified certificate/completion information when ready.</p></div></div></div></section>
+<section class="hero">
 
-<section id="contact"><div class="wrap"><div class="title"><h2>Contact Funda Online Academy</h2><p>We are ready to help you choose your course.</p></div><div class="contact-box"><div class="contact-item">📱<strong>WhatsApp</strong><span>069 960 8590</span></div><div class="contact-item">✉️<strong>Email</strong><span>fundaonlineacademy@gmail.com</span></div></div></div></section>
-<footer><div class="wrap foot"><span>© 2026 Funda Online Academy Pty Ltd. All rights reserved.</span><span>Together, we can.</span></div></footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script><script src="site.js"></script>
-</body></html>
+<h1>Funda Online Academy Pty Ltd</h1>
+
+<p>
+Learn valuable skills online, study at your own pace and build your future
+from the comfort of your home.
+</p>
+
+<a href="#courses" class="btn btn-main">View Courses</a>
+<a href="auth.html" class="btn btn-light">Student Login</a>
+
+</section>
+
+<section>
+
+<div class="container">
+
+<div class="section-title">
+<h2>Why Choose Funda Online Academy?</h2>
+</div>
+
+<div class="cards">
+
+<div class="card">
+<h3>🎓 Online Learning</h3>
+<p>Study from anywhere and learn at your own convenience.</p>
+</div>
+
+<div class="card">
+<h3>📚 Practical Courses</h3>
+<p>Develop useful skills for employment, business and personal development.</p>
+</div>
+
+<div class="card">
+<h3>📝 Assessments</h3>
+<p>Complete assessments as part of your learning journey.</p>
+</div>
+
+<div class="card">
+<h3>📊 Student Results</h3>
+<p>Students can access their assessment results through the student area.</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<section id="courses" class="info">
+
+<div class="container">
+
+<div class="section-title">
+<h2>Our Courses</h2>
+<p>Choose a course and start learning online.</p>
+</div>
+
+<div class="cards">
+
+<div class="card">
+<h3>Skills in Childcare and Young People Development</h3>
+<p>Learn important skills for working with children and young people.</p>
+<div class="price">R900</div>
+<a href="auth.html" class="btn btn-main">Enrol Now</a>
+</div>
+
+<div class="card">
+<h3>Introduction to Fire and Safety</h3>
+<p>Learn essential fire prevention and workplace safety principles.</p>
+<div class="price">R499</div>
+<a href="auth.html" class="btn btn-main">Enrol Now</a>
+</div>
+
+<div class="card">
+<h3>Retail Short Course</h3>
+<p>Learn customer service, POS/till basics, cash handling and retail operations.</p>
+<div class="price">R450</div>
+<a href="auth.html" class="btn btn-main">Enrol Now</a>
+</div>
+
+<div class="card">
+<h3>Merchandising Short Course</h3>
+<p>Learn product presentation, displays, stock and merchandising principles.</p>
+<div class="price">R440</div>
+<a href="auth.html" class="btn btn-main">Enrol Now</a>
+</div>
+
+<div class="card">
+<h3>Hotel Receptionist Short Course</h3>
+<p>Learn front-office duties, guest service and hotel reception skills.</p>
+<div class="price">R550</div>
+<a href="auth.html" class="btn btn-main">Enrol Now</a>
+</div>
+
+<div class="card">
+<h3>Customer Service Short Course</h3>
+<p>Develop professional communication and customer service skills.</p>
+<div class="price">R550</div>
+<a href="auth.html" class="btn btn-main">Enrol Now</a>
+</div>
+
+<div class="card">
+<h3>Food and Beverage Short Course</h3>
+<p>Learn basic food service, beverage service and hospitality skills.</p>
+<div class="price">R450</div>
+<a href="auth.html" class="btn btn-main">Enrol Now</a>
+</div>
+
+</div>
+</div>
+</section>
+
+<section id="payment">
+
+<div class="container">
+
+<div class="section-title">
+<h2>Payment Methods</h2>
+<p>Choose a convenient payment option.</p>
+</div>
+
+<div class="cards">
+
+<div class="card payment">
+<h3>💳 EFT / Bank Transfer</h3>
+<p>
+Students can pay directly into the academy's bank account.
+</p>
+<p><strong>Banking details will be provided during enrolment.</strong></p>
+</div>
+
+<div class="card payment">
+<h3>📱 Mobile Payment</h3>
+<p>
+Mobile payment options can be provided to students during registration.
+</p>
+</div>
+
+<div class="card payment">
+<h3>📲 WhatsApp Enrolment</h3>
+<p>
+Contact Funda Online Academy through WhatsApp to receive payment and
+enrolment instructions.
+</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<section id="assessment" class="info">
+
+<div class="container">
+
+<div class="section-title">
+<h2>Assessments</h2>
+</div>
+
+<div class="cards">
+
+<div class="card assessment">
+<h3>📝 Online Assessments</h3>
+<p>
+Students complete assessments after studying their course material.
+</p>
+</div>
+
+<div class="card assessment">
+<h3>📚 Course Activities</h3>
+<p>
+Learning activities help students understand and apply the course content.
+</p>
+</div>
+
+<div class="card assessment">
+<h3>📊 Assessment Results</h3>
+<p>
+Results can be made available to students through their student account.
+</p>
+</div>
+
+</div>
+</div>
+</section>
+
+<section id="results" class="results">
+
+<div class="container">
+
+<div class="section-title">
+<h2>Student Results</h2>
+</div>
+
+<div class="card">
+<h3>View Your Results</h3>
+<p>
+Registered students can log in to access their assessment information
+and results.
+</p>
+
+<br>
+
+<a href="auth.html" class="btn btn-main">Student Login</a>
+</div>
+
+</div>
+</section>
+
+<section class="contact">
+
+<div class="container">
+
+<div class="section-title">
+<h2>Ready to Start Learning?</h2>
+<p>
+Register today and study from the comfort of your home.
+</p>
+</div>
+
+<a href="auth.html" class="btn btn-main">Register / Login</a>
+
+<a href="https://wa.me/" class="btn btn-light">
+WhatsApp Us
+</a>
+
+</div>
+</section>
+
+<footer>
+
+<p><strong>Funda Online Academy Pty Ltd</strong></p>
+
+<p>Online Learning • Skills Development • Student Support</p>
+
+<p>© 2026 Funda Online Academy Pty Ltd. All rights reserved.</p>
+
+</footer>
+
+</body>
+  </html>
