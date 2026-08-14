@@ -5,8 +5,8 @@ const msg = document.getElementById("message");
 let courses = [];
 let editingId = null;
 
-function show(text, ok = false) {
-  msg.textContent = text;
+function show(message, ok = false) {
+  msg.textContent = message;
   msg.className = "message " + (ok ? "success" : "error");
 }
 
@@ -39,10 +39,7 @@ function fill(course) {
   document.getElementById("course-modules").value =
     (course.modules || []).join("\n");
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 async function init() {
@@ -61,7 +58,7 @@ async function init() {
   }
 
   document.getElementById("admin-email").textContent =
-    session.user.email || "";
+    session.user.email;
 
   const { data: profile, error } = await db
     .from("profiles")
@@ -86,19 +83,12 @@ async function init() {
 
   await Promise.all([
     loadCourses(),
-    loadEnrollments()
+    loadEnrolments()
   ]);
 }
 
-/* =========================
-   COURSES
-========================= */
-
 async function loadCourses() {
-  const {
-    data,
-    error
-  } = await db
+  const { data, error } = await db
     .from("courses")
     .select("*")
     .order("name");
@@ -118,7 +108,7 @@ async function loadCourses() {
         <strong>${esc(course.name)}</strong>
         <small>
           ${esc(course.category || "")}
-          · R${Number(course.price || 0).toLocaleString("en-ZA")}
+          · R${Number(course.price).toLocaleString("en-ZA")}
           · ${esc(course.duration || "")}
         </small>
       </div>
@@ -160,9 +150,7 @@ async function deleteCourse(id) {
 
   if (!course) return;
 
-  if (!confirm(`Delete "${course.name}"?`)) {
-    return;
-  }
+  if (!confirm(`Delete "${course.name}"?`)) return;
 
   const { error } = await db
     .from("courses")
@@ -175,91 +163,84 @@ async function deleteCourse(id) {
   }
 
   show("Course deleted.", true);
-
   await loadCourses();
 }
 
-/* =========================
-   COURSE FORM
-========================= */
+document.getElementById("course-form").onsubmit =
+  async event => {
 
-document.getElementById("course-form").onsubmit = async event => {
-  event.preventDefault();
+    event.preventDefault();
 
-  const name =
-    document.getElementById("course-name").value.trim();
+    const name =
+      document.getElementById("course-name").value.trim();
 
-  const payload = {
-    name,
+    const payload = {
+      name: name,
 
-    price: Number(
-      document.getElementById("course-price").value
-    ),
+      price: Number(
+        document.getElementById("course-price").value
+      ),
 
-    category:
-      document.getElementById("course-category").value.trim(),
+      category:
+        document.getElementById("course-category").value.trim(),
 
-    duration:
-      document.getElementById("course-duration").value.trim(),
+      duration:
+        document.getElementById("course-duration").value.trim(),
 
-    image_url:
-      document.getElementById("course-image").value.trim() || null,
+      image_url:
+        document.getElementById("course-image").value.trim() || null,
 
-    description:
-      document.getElementById("course-description").value.trim(),
+      description:
+        document.getElementById("course-description").value.trim(),
 
-    modules:
-      document
-        .getElementById("course-modules")
-        .value
-        .split("\n")
-        .map(x => x.trim())
-        .filter(Boolean),
+      modules:
+        document.getElementById("course-modules")
+          .value
+          .split("\n")
+          .map(x => x.trim())
+          .filter(Boolean),
 
-    active: true,
+      active: true,
 
-    updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString()
+    };
+
+    let result;
+
+    if (editingId) {
+      result = await db
+        .from("courses")
+        .update(payload)
+        .eq("id", editingId);
+    } else {
+      result = await db
+        .from("courses")
+        .insert(payload);
+    }
+
+    if (result.error) {
+      show(result.error.message);
+      return;
+    }
+
+    show(
+      editingId
+        ? "Course updated successfully."
+        : "Course added successfully.",
+      true
+    );
+
+    resetForm();
+    await loadCourses();
   };
 
-  let result;
+document.getElementById("new-course").onclick =
+  resetForm;
 
-  if (editingId) {
-    result = await db
-      .from("courses")
-      .update(payload)
-      .eq("id", editingId);
-  } else {
-    result = await db
-      .from("courses")
-      .insert(payload);
-  }
+document.getElementById("cancel-edit").onclick =
+  resetForm;
 
-  if (result.error) {
-    show(result.error.message);
-    return;
-  }
-
-  show(
-    editingId
-      ? "Course updated successfully."
-      : "Course added successfully.",
-    true
-  );
-
-  resetForm();
-
-  await loadCourses();
-};
-
-document.getElementById("new-course").onclick = resetForm;
-
-document.getElementById("cancel-edit").onclick = resetForm;
-
-/* =========================
-   STUDENT ENROLLMENTS
-========================= */
-
-async function loadEnrollments() {
+async function loadEnrolments() {
   const box =
     document.getElementById("admin-enrolments");
 
@@ -282,15 +263,17 @@ async function loadEnrollments() {
 
   if (error) {
     box.innerHTML =
-      "<p>Could not load student enrolments.</p>";
+      "<p>Could not load enrolments: " +
+      esc(error.message) +
+      "</p>";
 
-    console.error(error);
     return;
   }
 
   if (!data || data.length === 0) {
     box.innerHTML =
       "<p>No enrolment requests yet.</p>";
+
     return;
   }
 
@@ -308,123 +291,92 @@ async function loadEnrollments() {
       </thead>
 
       <tbody>
-
-        ${data.map(enrollment => `
+        ${data.map(enrolment => `
           <tr>
-
             <td>
               ${esc(
-                enrollment.profiles?.full_name ||
-                "Student"
+                enrolment.profiles?.full_name || ""
               )}
             </td>
 
             <td>
               ${esc(
-                enrollment.courses?.name ||
-                ""
+                enrolment.courses?.name || ""
               )}
             </td>
 
             <td>
               R${Number(
-                enrollment.courses?.price || 0
+                enrolment.courses?.price || 0
               ).toLocaleString("en-ZA")}
             </td>
 
             <td>
-              ${esc(enrollment.status)}
+              ${esc(enrolment.status)}
             </td>
 
             <td>
               ${new Date(
-                enrollment.created_at
+                enrolment.created_at
               ).toLocaleDateString("en-ZA")}
             </td>
 
             <td>
-
-              <select
-                data-status="${enrollment.id}"
-              >
-
-                <option
-                  value="pending"
-                  ${enrollment.status === "pending" ? "selected" : ""}
-                >
+              <select data-status="${enrolment.id}">
+                <option value="pending"
+                  ${enrolment.status === "pending" ? "selected" : ""}>
                   Pending
                 </option>
 
-                <option
-                  value="approved"
-                  ${enrollment.status === "approved" ? "selected" : ""}
-                >
+                <option value="approved"
+                  ${enrolment.status === "approved" ? "selected" : ""}>
                   Approved
                 </option>
 
-                <option
-                  value="completed"
-                  ${enrollment.status === "completed" ? "selected" : ""}
-                >
+                <option value="completed"
+                  ${enrolment.status === "completed" ? "selected" : ""}>
                   Completed
                 </option>
 
-                <option
-                  value="cancelled"
-                  ${enrollment.status === "cancelled" ? "selected" : ""}
-                >
+                <option value="cancelled"
+                  ${enrolment.status === "cancelled" ? "selected" : ""}>
                   Cancelled
                 </option>
-
               </select>
-
             </td>
-
           </tr>
         `).join("")}
-
       </tbody>
     </table>
   `;
 
-  box.querySelectorAll("[data-status]")
-    .forEach(select => {
+  box.querySelectorAll("[data-status]").forEach(select => {
 
-      select.onchange = async () => {
+    select.onchange = async () => {
 
-        const { error } = await db
-          .from("enrollments")
-          .update({
-            status: select.value
-          })
-          .eq("id", select.dataset.status);
+      const { error } = await db
+        .from("enrollments")
+        .update({
+          status: select.value
+        })
+        .eq("id", select.dataset.status);
 
-        if (error) {
-          show(error.message);
-          return;
-        }
-
+      if (error) {
+        show(error.message);
+      } else {
         show(
           "Enrolment status updated.",
           true
         );
-      };
-
-    });
+      }
+    };
+  });
 }
-
-/* =========================
-   LOGOUT
-========================= */
 
 document.getElementById("logout").onclick =
   async () => {
-
     await db.auth.signOut();
-
     location.href = "index.html";
   };
-
-/* START */
 
 init(); 
