@@ -26,10 +26,10 @@ body{
 
 .auth-container{
   width:100%;
-  max-width:430px;
+  max-width:480px;
   background:#fff;
   border-radius:18px;
-  padding:28px 22px;
+  padding:30px 24px;
   box-shadow:0 12px 35px rgba(0,0,0,.3);
 }
 
@@ -40,7 +40,7 @@ body{
 
 .logo h1{
   color:#0b4773;
-  font-size:27px;
+  font-size:29px;
   line-height:1.2;
 }
 
@@ -59,21 +59,24 @@ form h2{
 
 label{
   display:block;
-  margin:13px 0 6px;
+  margin:14px 0 6px;
   font-weight:bold;
   font-size:16px;
 }
 
-input{
+input,
+select{
   width:100%;
   padding:14px;
   border:1px solid #ccc;
   border-radius:9px;
   font-size:16px;
   outline:none;
+  background:#fff;
 }
 
-input:focus{
+input:focus,
+select:focus{
   border-color:#0b4773;
   box-shadow:0 0 0 2px rgba(11,71,115,.1);
 }
@@ -81,7 +84,7 @@ input:focus{
 button{
   width:100%;
   padding:14px;
-  margin-top:18px;
+  margin-top:20px;
   border:0;
   border-radius:9px;
   background:#0b4773;
@@ -95,6 +98,11 @@ button:hover{
   background:#071e35;
 }
 
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
 .switch{
   text-align:center;
   margin-top:18px;
@@ -102,21 +110,11 @@ button:hover{
   line-height:1.6;
 }
 
-.switch a,
-.link-button{
+.switch a{
   color:#0b4773;
   font-weight:bold;
   cursor:pointer;
   text-decoration:none;
-}
-
-.link-button{
-  background:none;
-  border:0;
-  padding:0;
-  margin:0;
-  width:auto;
-  font-size:inherit;
 }
 
 .forgot{
@@ -130,12 +128,12 @@ button:hover{
 }
 
 .message{
-  padding:10px;
+  padding:12px;
   margin-bottom:15px;
   border-radius:8px;
-  background:#f1f5f9;
   text-align:center;
   font-size:15px;
+  line-height:1.4;
 }
 
 .hidden{
@@ -151,10 +149,36 @@ button:hover{
   font-size:16px;
 }
 
-.password-note{
+.password-note,
+.form-note{
   font-size:13px;
   color:#666;
   margin-top:5px;
+  line-height:1.4;
+}
+
+.required{
+  color:#b91c1c;
+}
+
+@media(max-width:500px){
+  body{
+    padding:12px;
+    align-items:flex-start;
+    padding-top:20px;
+  }
+
+  .auth-container{
+    padding:25px 18px;
+  }
+
+  .logo h1{
+    font-size:26px;
+  }
+
+  form h2{
+    font-size:24px;
+  }
 }
 </style>
 </head>
@@ -171,12 +195,18 @@ button:hover{
   <div id="message" class="message hidden"></div>
 
 
-  <!-- LOGIN FORM -->
+  <!-- ========================= -->
+  <!-- LOGIN -->
+  <!-- ========================= -->
+
   <form id="login-form">
 
     <h2>Student Login</h2>
 
-    <label for="login-email">Email Address</label>
+    <label for="login-email">
+      Email Address
+    </label>
+
     <input
       type="email"
       id="login-email"
@@ -185,7 +215,11 @@ button:hover{
       required
     >
 
-    <label for="login-password">Password</label>
+
+    <label for="login-password">
+      Password
+    </label>
+
     <input
       type="password"
       id="login-password"
@@ -194,9 +228,11 @@ button:hover{
       required
     >
 
-    <button type="submit">
+
+    <button type="submit" id="login-button">
       Login
     </button>
+
 
     <a
       href="#"
@@ -206,12 +242,10 @@ button:hover{
       Forgot Password?
     </a>
 
+
     <div class="switch">
       Don't have an account?
-      <a
-        href="#"
-        id="signup-tab"
-      >
+      <a href="#" id="signup-tab">
         Create Account
       </a>
     </div>
@@ -219,13 +253,23 @@ button:hover{
   </form>
 
 
-  <!-- REGISTRATION FORM -->
+  <!-- ========================= -->
+  <!-- REGISTRATION -->
+  <!-- ========================= -->
+
   <form id="signup-form" class="hidden">
 
     <h2>Create Student Account</h2>
 
+    <div class="form-note">
+      Please enter your information exactly as it appears on your
+      official documents. This information may be used for student
+      administration and certificates.
+    </div>
+
+
     <label for="signup-name">
-      Full Name
+      Full Name <span class="required">*</span>
     </label>
 
     <input
@@ -237,8 +281,71 @@ button:hover{
     >
 
 
+    <label for="signup-gender">
+      Gender <span class="required">*</span>
+    </label>
+
+    <select id="signup-gender" required>
+
+      <option value="">
+        Select gender
+      </option>
+
+      <option value="Male">
+        Male
+      </option>
+
+      <option value="Female">
+        Female
+      </option>
+
+      <option value="Other">
+        Other
+      </option>
+
+      <option value="Prefer not to say">
+        Prefer not to say
+      </option>
+
+    </select>
+
+
+    <label for="signup-id-number">
+      South African ID Number <span class="required">*</span>
+    </label>
+
+    <input
+      type="text"
+      id="signup-id-number"
+      placeholder="Enter your 13-digit ID number"
+      inputmode="numeric"
+      maxlength="13"
+      minlength="13"
+      autocomplete="off"
+      required
+    >
+
+    <div class="form-note">
+      Your ID number is confidential and should only be accessible
+      to authorised academy administrators.
+    </div>
+
+
+    <label for="signup-phone">
+      WhatsApp / Mobile Number <span class="required">*</span>
+    </label>
+
+    <input
+      type="tel"
+      id="signup-phone"
+      placeholder="e.g. 071 234 5678"
+      autocomplete="tel"
+      required
+    >
+
+
     <label for="signup-email">
-      Email Address
+      Email Address <span class="required">*</span>
     </label>
 
     <input
@@ -251,7 +358,7 @@ button:hover{
 
 
     <label for="signup-password">
-      Password
+      Password <span class="required">*</span>
     </label>
 
     <input
@@ -269,7 +376,7 @@ button:hover{
 
 
     <label for="signup-confirm-password">
-      Confirm Password
+      Confirm Password <span class="required">*</span>
     </label>
 
     <input
@@ -282,17 +389,14 @@ button:hover{
     >
 
 
-    <button type="submit">
-      Create Account
+    <button type="submit" id="signup-button">
+      Create Student Account
     </button>
 
 
     <div class="switch">
       Already have an account?
-      <a
-        href="#"
-        id="login-tab"
-      >
+      <a href="#" id="login-tab">
         Login
       </a>
     </div>
@@ -310,13 +414,10 @@ button:hover{
 </div>
 
 
-<!-- Supabase must load FIRST -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Supabase configuration -->
 <script src="supabase-config.js"></script>
 
-<!-- Authentication code -->
 <script src="auth.js"></script>
 
 </body>
