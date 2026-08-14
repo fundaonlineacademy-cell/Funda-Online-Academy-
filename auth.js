@@ -2,61 +2,7 @@
 // FUNDA ONLINE ACADEMY
 // LOGIN • REGISTRATION • PASSWORD RESET
 // ==========================================
-async function syncStudentRecord(user) {
 
-  if (!user) return false;
-
-  const metadata = user.user_metadata || {};
-
-  const fullName =
-    metadata.full_name ||
-    metadata.name ||
-    "";
-
-  const gender =
-    metadata.gender ||
-    "";
-
-  const idNumber =
-    metadata.id_number ||
-    "";
-
-  const phone =
-    metadata.phone ||
-    "";
-
-  const email =
-    user.email ||
-    "";
-
-  const { error } = await db
-    .from("students")
-    .upsert(
-      {
-        user_id: user.id,
-        full_name: fullName,
-        gender: gender,
-        south_african_id: idNumber,
-        email: email,
-        mobile_whatsapp: phone
-      },
-      {
-        onConflict: "user_id"
-      }
-    );
-
-  if (error) {
-
-    console.error(
-      "Student record error:",
-      error
-    );
-
-    return false;
-  }
-
-  return true;
-}
 const db = supabase.createClient(
   window.SUPABASE_URL,
   window.SUPABASE_ANON_KEY
@@ -196,8 +142,7 @@ async function syncStudentProfile(user) {
     "";
 
 
-  // First try to find existing profile
-
+  // Find existing profile
   const {
     data: existingProfile,
     error: findError
@@ -224,6 +169,13 @@ async function syncStudentProfile(user) {
   // ==========================================
 
   if (existingProfile) {
+
+    // Do not change an existing admin into a student
+    if (existingProfile.role === "admin") {
+
+      return true;
+    }
+
 
     const { error } = await db
       .from("profiles")
@@ -298,6 +250,178 @@ async function syncStudentProfile(user) {
 
 
 // ==========================================
+// SAVE / SYNC STUDENT RECORD
+// ==========================================
+
+async function syncStudentRecord(user) {
+
+  if (!user) return false;
+
+  const metadata = user.user_metadata || {};
+
+  const fullName =
+    metadata.full_name ||
+    metadata.name ||
+    "";
+
+  const gender =
+    metadata.gender ||
+    "";
+
+  const idNumber =
+    metadata.id_number ||
+    "";
+
+  const phone =
+    metadata.phone ||
+    "";
+
+  const email =
+    user.email ||
+    "";
+
+
+  // ==========================================
+  // CHECK WHETHER STUDENT RECORD EXISTS
+  // ==========================================
+
+  const {
+    data: existingStudent,
+    error: findError
+  } = await db
+    .from("students")
+    .select("id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+
+  if (findError) {
+
+    console.error(
+      "Student lookup error:",
+      findError
+    );
+
+    return false;
+  }
+
+
+  // ==========================================
+  // UPDATE EXISTING STUDENT
+  // ==========================================
+
+  if (existingStudent) {
+
+    const { error } = await db
+      .from("students")
+      .update({
+
+        full_name: fullName,
+
+        gender: gender,
+
+        south_african_id: idNumber,
+
+        email: email,
+
+        mobile_whatsapp: phone
+
+      })
+      .eq("id", existingStudent.id);
+
+
+    if (error) {
+
+      console.error(
+        "Student update error:",
+        error
+      );
+
+      return false;
+    }
+
+
+    return true;
+  }
+
+
+  // ==========================================
+  // CREATE NEW STUDENT
+  // ==========================================
+
+  const { error } = await db
+    .from("students")
+    .insert({
+
+      user_id: user.id,
+
+      full_name: fullName,
+
+      gender: gender,
+
+      south_african_id: idNumber,
+
+      email: email,
+
+      mobile_whatsapp: phone
+
+    });
+
+
+  if (error) {
+
+    console.error(
+      "Student creation error:",
+      error
+    );
+
+    return false;
+  }
+
+
+  return true;
+}
+
+
+// ==========================================
+// SYNC BOTH PROFILE AND STUDENT RECORD
+// ==========================================
+
+async function syncStudentAccount(user) {
+
+  if (!user) return false;
+
+  const profileSaved =
+    await syncStudentProfile(user);
+
+
+  if (!profileSaved) {
+
+    console.warn(
+      "Student profile could not be synchronized."
+    );
+
+  }
+
+
+  const studentSaved =
+    await syncStudentRecord(user);
+
+
+  if (!studentSaved) {
+
+    console.warn(
+      "Student record could not be synchronized."
+    );
+
+  }
+
+
+  return profileSaved && studentSaved;
+}
+
+
+// ==========================================
 // CHECK EXISTING SESSION
 // ==========================================
 
@@ -321,18 +445,20 @@ async function checkExistingSession() {
 
 
   if (!data.session || !data.session.user) {
+
     return;
   }
 
 
-  const user = data.session.user;
+  const user =
+    data.session.user;
 
 
-  // Keep student information synchronized
+  // Synchronize student information
+  await syncStudentAccount(user);
 
-  await syncStudentProfile(user);
 
-
+  // Get account role
   const {
     data: profile,
     error: profileError
@@ -354,13 +480,18 @@ async function checkExistingSession() {
   }
 
 
-  if (profile && profile.role === "admin") {
+  if (
+    profile &&
+    profile.role === "admin"
+  ) {
 
-    window.location.href = "admin.html";
+    window.location.href =
+      "admin.html";
 
   } else {
 
-    window.location.href = "dashboard.html";
+    window.location.href =
+      "dashboard.html";
 
   }
 }
@@ -460,14 +591,13 @@ if (loginForm) {
       }
 
 
-      // Synchronize the student's registration
-      // information into the profiles table.
-
-      await syncStudentProfile(
+      // Synchronize profile and student record
+      await syncStudentAccount(
         data.user
       );
 
 
+      // Get account role
       const {
         data: profile,
         error: profileError
@@ -539,9 +669,9 @@ if (signupForm) {
       clearMessage();
 
 
-      // --------------------------------------
+      // ======================================
       // GET REGISTRATION INFORMATION
-      // --------------------------------------
+      // ======================================
 
       const name =
         document
@@ -593,9 +723,9 @@ if (signupForm) {
           .value;
 
 
-      // --------------------------------------
+      // ======================================
       // VALIDATION
-      // --------------------------------------
+      // ======================================
 
       if (
         !name ||
@@ -649,9 +779,9 @@ if (signupForm) {
       }
 
 
-      // --------------------------------------
+      // ======================================
       // CREATE SUPABASE ACCOUNT
-      // --------------------------------------
+      // ======================================
 
       showMessage(
         "Creating your student account...",
@@ -713,24 +843,30 @@ if (signupForm) {
       }
 
 
-      // --------------------------------------
-      // IF EMAIL CONFIRMATION IS DISABLED
-      // --------------------------------------
+      // ======================================
+      // EMAIL CONFIRMATION DISABLED
+      // ======================================
 
       if (data.session) {
 
-        const profileSaved =
-          await syncStudentProfile(
+        const accountSaved =
+          await syncStudentAccount(
             data.user
           );
 
 
-        if (!profileSaved) {
+        if (!accountSaved) {
 
           console.warn(
-            "Account created, but profile information could not be saved yet."
+            "Account created, but some student information could not be saved."
           );
 
+          showMessage(
+            "Your account was created, but some student information could not be saved. Please try logging in again.",
+            false
+          );
+
+          return;
         }
 
 
@@ -752,9 +888,9 @@ if (signupForm) {
       }
 
 
-      // --------------------------------------
-      // IF EMAIL CONFIRMATION IS REQUIRED
-      // --------------------------------------
+      // ======================================
+      // EMAIL CONFIRMATION REQUIRED
+      // ======================================
 
       showMessage(
         "Your student account has been created. Please check your email to confirm your account, then log in.",
@@ -851,4 +987,4 @@ if (forgotLink) {
     }
   );
 
-      } 
+}
