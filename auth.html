@@ -26,10 +26,10 @@ body{
 
 .auth-container{
   width:100%;
-  max-width:480px;
+  max-width:460px;
   background:#fff;
   border-radius:18px;
-  padding:30px 24px;
+  padding:28px 22px;
   box-shadow:0 12px 35px rgba(0,0,0,.3);
 }
 
@@ -40,7 +40,7 @@ body{
 
 .logo h1{
   color:#0b4773;
-  font-size:29px;
+  font-size:28px;
   line-height:1.2;
 }
 
@@ -59,20 +59,19 @@ form h2{
 
 label{
   display:block;
-  margin:14px 0 6px;
+  margin:13px 0 6px;
   font-weight:bold;
   font-size:16px;
 }
 
-input,
-select{
+input,select{
   width:100%;
   padding:14px;
   border:1px solid #ccc;
   border-radius:9px;
   font-size:16px;
   outline:none;
-  background:#fff;
+  background:white;
 }
 
 input:focus,
@@ -84,7 +83,7 @@ select:focus{
 button{
   width:100%;
   padding:14px;
-  margin-top:20px;
+  margin-top:18px;
   border:0;
   border-radius:9px;
   background:#0b4773;
@@ -96,11 +95,6 @@ button{
 
 button:hover{
   background:#071e35;
-}
-
-button:disabled{
-  opacity:.6;
-  cursor:not-allowed;
 }
 
 .switch{
@@ -128,12 +122,12 @@ button:disabled{
 }
 
 .message{
-  padding:12px;
+  padding:10px;
   margin-bottom:15px;
   border-radius:8px;
+  background:#f1f5f9;
   text-align:center;
   font-size:15px;
-  line-height:1.4;
 }
 
 .hidden{
@@ -149,8 +143,7 @@ button:disabled{
   font-size:16px;
 }
 
-.password-note,
-.form-note{
+.note{
   font-size:13px;
   color:#666;
   margin-top:5px;
@@ -159,26 +152,6 @@ button:disabled{
 
 .required{
   color:#b91c1c;
-}
-
-@media(max-width:500px){
-  body{
-    padding:12px;
-    align-items:flex-start;
-    padding-top:20px;
-  }
-
-  .auth-container{
-    padding:25px 18px;
-  }
-
-  .logo h1{
-    font-size:26px;
-  }
-
-  form h2{
-    font-size:24px;
-  }
 }
 </style>
 </head>
@@ -195,9 +168,7 @@ button:disabled{
   <div id="message" class="message hidden"></div>
 
 
-  <!-- ========================= -->
-  <!-- LOGIN -->
-  <!-- ========================= -->
+  <!-- LOGIN FORM -->
 
   <form id="login-form">
 
@@ -215,7 +186,6 @@ button:disabled{
       required
     >
 
-
     <label for="login-password">
       Password
     </label>
@@ -228,11 +198,9 @@ button:disabled{
       required
     >
 
-
-    <button type="submit" id="login-button">
+    <button type="submit">
       Login
     </button>
-
 
     <a
       href="#"
@@ -241,7 +209,6 @@ button:disabled{
     >
       Forgot Password?
     </a>
-
 
     <div class="switch">
       Don't have an account?
@@ -253,20 +220,11 @@ button:disabled{
   </form>
 
 
-  <!-- ========================= -->
-  <!-- REGISTRATION -->
-  <!-- ========================= -->
+  <!-- REGISTRATION FORM -->
 
   <form id="signup-form" class="hidden">
 
     <h2>Create Student Account</h2>
-
-    <div class="form-note">
-      Please enter your information exactly as it appears on your
-      official documents. This information may be used for student
-      administration and certificates.
-    </div>
-
 
     <label for="signup-name">
       Full Name <span class="required">*</span>
@@ -285,8 +243,10 @@ button:disabled{
       Gender <span class="required">*</span>
     </label>
 
-    <select id="signup-gender" required>
-
+    <select
+      id="signup-gender"
+      required
+    >
       <option value="">
         Select gender
       </option>
@@ -306,7 +266,6 @@ button:disabled{
       <option value="Prefer not to say">
         Prefer not to say
       </option>
-
     </select>
 
 
@@ -320,14 +279,12 @@ button:disabled{
       placeholder="Enter your 13-digit ID number"
       inputmode="numeric"
       maxlength="13"
-      minlength="13"
       autocomplete="off"
       required
     >
 
-    <div class="form-note">
-      Your ID number is confidential and should only be accessible
-      to authorised academy administrators.
+    <div class="note">
+      Your ID number is private and is only accessible to authorised academy administrators.
     </div>
 
 
@@ -338,7 +295,7 @@ button:disabled{
     <input
       type="tel"
       id="signup-phone"
-      placeholder="e.g. 071 234 5678"
+      placeholder="e.g. 078 123 4567"
       autocomplete="tel"
       required
     >
@@ -370,7 +327,7 @@ button:disabled{
       required
     >
 
-    <div class="password-note">
+    <div class="note">
       Password must contain at least 6 characters.
     </div>
 
@@ -389,8 +346,8 @@ button:disabled{
     >
 
 
-    <button type="submit" id="signup-button">
-      Create Student Account
+    <button type="submit">
+      Create Account
     </button>
 
 
@@ -414,11 +371,17 @@ button:disabled{
 </div>
 
 
+<!-- Supabase must load FIRST -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<!-- Supabase configuration -->
+
 <script src="supabase-config.js"></script>
+
+<!-- Authentication code -->
 
 <script src="auth.js"></script>
 
 </body>
-</html>
+</html> 
