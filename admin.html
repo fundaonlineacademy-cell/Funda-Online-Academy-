@@ -1,273 +1,1362 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin Dashboard | Funda Online Academy</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
+// ============================================================
+// FUNDA ONLINE ACADEMY
+// ADMIN DASHBOARD
+// Students • Courses • Enrolments • Payments • Results
+// ============================================================
 
-<body>
+const { createClient } = supabase;
 
-<header>
-  <div class="wrap nav">
+const db = createClient(
+  window.SUPABASE_URL,
+  window.SUPABASE_ANON_KEY
+);
 
-    <a class="logo" href="index.html">
-      <img src="logo.png" alt="Funda Online Academy logo">
+const msg = document.getElementById("message");
 
-      <span>
-        Funda Online Academy Pty Ltd
-        <small>Admin Dashboard</small>
-      </span>
-    </a>
-
-    <div class="nav-actions">
-      <span id="admin-email" class="user-email"></span>
-      <button id="logout" class="btn ghost">Logout</button>
-    </div>
-
-  </div>
-</header>
+let courses = [];
+let editingId = null;
 
 
-<main class="dashboard">
+// ============================================================
+// HELPERS
+// ============================================================
 
-  <div class="wrap">
+function show(message, ok = false) {
+  if (!msg) return;
 
-    <div class="dash-head">
+  msg.textContent = message;
+  msg.className = "message " + (ok ? "success" : "error");
+}
 
-      <div>
-        <span class="badge">ADMIN AREA</span>
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, m => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[m]));
+}
 
-        <h1>Funda Online Academy</h1>
+function money(value) {
+  return "R" + Number(value || 0).toLocaleString("en-ZA");
+}
 
-        <p>
-          Manage students, courses, enrolments, payments,
-          assessments, results and certificates.
-        </p>
-      </div>
+function date(value) {
+  if (!value) return "";
 
-      <button id="new-course" class="btn green">
-        + Add Course
-      </button>
-
-    </div>
-
-
-    <div id="message" class="message hidden"></div>
+  return new Date(value).toLocaleDateString("en-ZA", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+}
 
 
-    <!-- STUDENTS -->
-    <section class="dashboard-section">
+// ============================================================
+// COURSE FORM
+// ============================================================
 
-      <div class="card">
+function resetForm() {
 
-        <h2>👨‍🎓 Students</h2>
+  editingId = null;
 
-        <p>
-          View registered students and their enrolment information.
-        </p>
+  const form = document.getElementById("course-form");
 
-        <div id="admin-students" class="admin-table-wrap">
-          Loading students…
+  if (form) {
+    form.reset();
+  }
+
+  const id = document.getElementById("course-id");
+
+  if (id) {
+    id.value = "";
+  }
+}
+
+
+function fill(course) {
+
+  editingId = course.id;
+
+  document.getElementById("course-id").value =
+    course.id;
+
+  document.getElementById("course-name").value =
+    course.title || "";
+
+  document.getElementById("course-price").value =
+    course.price || 0;
+
+  document.getElementById("course-category").value =
+    course.category || "";
+
+  document.getElementById("course-duration").value =
+    course.duration || "";
+
+  document.getElementById("course-image").value =
+    course.image_url || "";
+
+  document.getElementById("course-description").value =
+    course.description || "";
+
+  document.getElementById("course-modules").value =
+    Array.isArray(course.modules)
+      ? course.modules.join("\n")
+      : "";
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+}
+
+
+// ============================================================
+// INITIALISE ADMIN
+// ============================================================
+
+async function init() {
+
+  if (
+    !window.SUPABASE_URL ||
+    !window.SUPABASE_ANON_KEY ||
+    window.SUPABASE_URL.includes("PASTE_")
+  ) {
+
+    show(
+      "Supabase is not connected. Check supabase-config.js."
+    );
+
+    return;
+  }
+
+
+  const {
+    data: { session },
+    error: sessionError
+  } = await db.auth.getSession();
+
+
+  if (sessionError) {
+
+    console.error(sessionError);
+
+    show(sessionError.message);
+
+    return;
+  }
+
+
+  if (!session) {
+
+    location.href = "auth.html";
+
+    return;
+  }
+
+
+  const adminEmail =
+    document.getElementById("admin-email");
+
+  if (adminEmail) {
+    adminEmail.textContent =
+      session.user.email || "";
+  }
+
+
+  // ==========================================================
+  // CHECK ADMIN ROLE
+  // ==========================================================
+
+  const {
+    data: profile,
+    error: profileError
+  } = await db
+    .from("profiles")
+    .select("role")
+    .eq("id", session.user.id)
+    .maybeSingle();
+
+
+  if (profileError) {
+
+    console.error(profileError);
+
+    show(profileError.message);
+
+    return;
+  }
+
+
+  if (!profile || profile.role !== "admin") {
+
+    show(
+      "This account is not an administrator."
+    );
+
+    setTimeout(() => {
+
+      location.href = "dashboard.html";
+
+    }, 1800);
+
+    return;
+  }
+
+
+  // ==========================================================
+  // LOAD ADMIN INFORMATION
+  // ==========================================================
+
+  await Promise.all([
+    loadStudents(),
+    loadCourses(),
+    loadEnrolments(),
+    loadPayments(),
+    loadResults(),
+    loadCertificates()
+  ]);
+}
+
+
+// ============================================================
+// STUDENTS
+// ============================================================
+
+async function loadStudents() {
+
+  const box =
+    document.getElementById("admin-students");
+
+  if (!box) return;
+
+  box.innerHTML =
+    "Loading students…";
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("profiles")
+    .select("*")
+    .neq("role", "admin")
+    .order("full_name");
+
+
+  if (error) {
+
+    console.error("Students error:", error);
+
+    box.innerHTML =
+      "<p>Could not load students: " +
+      esc(error.message) +
+      "</p>";
+
+    return;
+  }
+
+
+  if (!data || data.length === 0) {
+
+    box.innerHTML =
+      "<p>No registered students yet.</p>";
+
+    return;
+  }
+
+
+  box.innerHTML = data.map(student => {
+
+    const gender =
+      student.gender ||
+      "Not provided";
+
+    const idNumber =
+      student.id_number ||
+      student.sa_id_number ||
+      student.south_african_id ||
+      "Not provided";
+
+    const mobile =
+      student.whatsapp ||
+      student.mobile ||
+      student.phone ||
+      student.whatsapp_mobile ||
+      "Not provided";
+
+    return `
+
+      <div class="admin-row student-card">
+
+        <div>
+
+          <strong>
+            👨‍🎓 ${esc(
+              student.full_name || "Student"
+            )}
+          </strong>
+
+          <small>
+            <b>Gender:</b>
+            ${esc(gender)}
+          </small>
+
+          <small>
+            <b>South African ID:</b>
+            ${esc(idNumber)}
+          </small>
+
+          <small>
+            <b>Email:</b>
+            ${esc(student.email || "Not provided")}
+          </small>
+
+          <small>
+            <b>WhatsApp / Mobile:</b>
+            ${esc(mobile)}
+          </small>
+
+          <small>
+            <b>Registered:</b>
+            ${date(student.created_at)}
+          </small>
+
+        </div>
+
+        <div>
+
+          <span class="badge">
+            ${esc(student.role || "student")}
+          </span>
+
         </div>
 
       </div>
 
-    </section>
+    `;
+
+  }).join("");
+}
 
 
-    <!-- COURSES -->
-    <section class="dashboard-section">
+// ============================================================
+// COURSES
+// ============================================================
 
-      <div class="admin-grid">
+async function loadCourses() {
 
-        <div class="card">
+  const {
+    data,
+    error
+  } = await db
+    .from("courses")
+    .select("*")
+    .order("title");
 
-          <h2>📚 Course Editor</h2>
 
-          <form id="course-form">
+  if (error) {
 
-            <input type="hidden" id="course-id">
+    console.error(error);
 
-            <label>Course name</label>
-            <input id="course-name" required>
+    show(error.message);
 
-            <label>Price (ZAR)</label>
-            <input
-              id="course-price"
-              type="number"
-              min="0"
-              step="1"
-              required
-            >
+    return;
+  }
 
-            <label>Category</label>
-            <input id="course-category" required>
 
-            <label>Duration</label>
-            <input
-              id="course-duration"
-              placeholder="e.g. 1–2 Weeks"
-            >
+  courses = data || [];
 
-            <label>Image URL (optional)</label>
-            <input
-              id="course-image"
-              placeholder="https://..."
-            >
 
-            <label>Short description</label>
-            <textarea id="course-description"></textarea>
+  const box =
+    document.getElementById("admin-courses");
 
-            <label>Modules (one per line)</label>
+  if (!box) return;
 
-            <textarea
-              id="course-modules"
-              placeholder="Module 1&#10;Module 2&#10;Module 3"
-            ></textarea>
 
-            <div class="actions">
+  box.innerHTML =
+    courses.map(course => `
 
-              <button class="btn green">
-                Save Course
-              </button>
+      <div class="admin-row">
 
-              <button
-                type="button"
-                id="cancel-edit"
-                class="btn ghost"
-              >
-                Cancel
-              </button>
+        <div>
 
-            </div>
+          <strong>
+            ${esc(course.title)}
+          </strong>
 
-          </form>
+          <small>
+            ${esc(course.category || "")}
+            · ${money(course.price)}
+            · ${esc(course.duration || "")}
+          </small>
 
         </div>
 
 
-        <div class="card">
+        <div class="row-actions">
 
-          <h2>📖 Courses</h2>
+          <button
+            class="btn small ghost"
+            data-edit="${course.id}">
+            Edit
+          </button>
 
-          <div
-            id="admin-courses"
-            class="admin-list"
-          >
-            Loading courses…
-          </div>
+          <button
+            class="btn small danger"
+            data-delete="${course.id}">
+            Delete
+          </button>
 
         </div>
 
       </div>
 
-    </section>
+    `).join("") ||
+    "<p>No courses.</p>";
 
 
-    <!-- ENROLMENTS -->
-    <section class="dashboard-section">
+  box.querySelectorAll("[data-edit]")
+    .forEach(button => {
 
-      <div class="card">
+      button.onclick = () => {
 
-        <h2>📝 Student Enrolments</h2>
+        const course =
+          courses.find(
+            c =>
+              String(c.id) ===
+              String(button.dataset.edit)
+          );
 
-        <p>
-          Review student requests and manage enrolment status.
-        </p>
+        if (course) {
+          fill(course);
+        }
 
-        <div
-          id="admin-enrolments"
-          class="admin-table-wrap"
-        >
-          Loading enrolments…
-        </div>
+      };
 
-      </div>
-
-    </section>
+    });
 
 
-    <!-- PAYMENTS -->
-    <section class="dashboard-section">
+  box.querySelectorAll("[data-delete]")
+    .forEach(button => {
 
-      <div class="card">
+      button.onclick = () =>
+        deleteCourse(button.dataset.delete);
 
-        <h2>💳 Payments</h2>
-
-        <p>
-          View and manage student course payments.
-        </p>
-
-        <div
-          id="admin-payments"
-          class="admin-table-wrap"
-        >
-          Payment records will appear here.
-        </div>
-
-      </div>
-
-    </section>
+    });
+}
 
 
-    <!-- ASSESSMENTS -->
-    <section class="dashboard-section">
+// ============================================================
+// DELETE COURSE
+// ============================================================
 
-      <div class="card">
+async function deleteCourse(id) {
 
-        <h2>📝 Assessments & Results</h2>
+  const course =
+    courses.find(
+      c => String(c.id) === String(id)
+    );
 
-        <p>
-          Manage assessments, marks and student results.
-        </p>
-
-        <div
-          id="admin-results"
-          class="admin-table-wrap"
-        >
-          Assessment and result records will appear here.
-        </div>
-
-      </div>
-
-    </section>
+  if (!course) return;
 
 
-    <!-- CERTIFICATES -->
-    <section class="dashboard-section">
-
-      <div class="card">
-
-        <h2>🏆 Certificates</h2>
-
-        <p>
-          Manage completed students and certificate records.
-        </p>
-
-        <div
-          id="admin-certificates"
-          class="admin-table-wrap"
-        >
-          Certificate records will appear here.
-        </div>
-
-      </div>
-
-    </section>
+  if (
+    !confirm(
+      `Delete "${course.title}"?`
+    )
+  ) {
+    return;
+  }
 
 
-  </div>
+  const { error } =
+    await db
+      .from("courses")
+      .delete()
+      .eq("id", id);
 
-</main>
+
+  if (error) {
+
+    console.error(error);
+
+    show(error.message);
+
+    return;
+  }
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  show(
+    "Course deleted successfully.",
+    true
+  );
 
-<script src="supabase-config.js"></script>
 
-<script src="admin.js"></script>
+  await loadCourses();
+}
 
-</body>
-              </html> 
+
+// ============================================================
+// SAVE COURSE
+// ============================================================
+
+const courseForm =
+  document.getElementById("course-form");
+
+
+if (courseForm) {
+
+  courseForm.onsubmit =
+    async event => {
+
+      event.preventDefault();
+
+
+      const title =
+        document
+          .getElementById("course-name")
+          .value
+          .trim();
+
+
+      if (!title) {
+
+        show(
+          "Please enter a course name."
+        );
+
+        return;
+      }
+
+
+      const payload = {
+
+        title: title,
+
+        price: Number(
+          document
+            .getElementById("course-price")
+            .value || 0
+        ),
+
+        category:
+          document
+            .getElementById("course-category")
+            .value
+            .trim(),
+
+        duration:
+          document
+            .getElementById("course-duration")
+            .value
+            .trim(),
+
+        image_url:
+          document
+            .getElementById("course-image")
+            .value
+            .trim() || null,
+
+        description:
+          document
+            .getElementById("course-description")
+            .value
+            .trim(),
+
+        modules:
+          document
+            .getElementById("course-modules")
+            .value
+            .split("\n")
+            .map(x => x.trim())
+            .filter(Boolean),
+
+        active: true,
+
+        updated_at:
+          new Date().toISOString()
+
+      };
+
+
+      let result;
+
+
+      if (editingId) {
+
+        result =
+          await db
+            .from("courses")
+            .update(payload)
+            .eq("id", editingId);
+
+      } else {
+
+        result =
+          await db
+            .from("courses")
+            .insert(payload);
+
+      }
+
+
+      if (result.error) {
+
+        console.error(result.error);
+
+        show(result.error.message);
+
+        return;
+      }
+
+
+      show(
+        editingId
+          ? "Course updated successfully."
+          : "Course added successfully.",
+        true
+      );
+
+
+      resetForm();
+
+      await loadCourses();
+
+    };
+
+}
+
+
+// ============================================================
+// COURSE BUTTONS
+// ============================================================
+
+const newCourse =
+  document.getElementById("new-course");
+
+if (newCourse) {
+  newCourse.onclick = resetForm;
+}
+
+
+const cancelEdit =
+  document.getElementById("cancel-edit");
+
+if (cancelEdit) {
+  cancelEdit.onclick = resetForm;
+}
+
+
+// ============================================================
+// ENROLMENTS
+// ============================================================
+
+async function loadEnrolments() {
+
+  const box =
+    document.getElementById("admin-enrolments");
+
+  if (!box) return;
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("enrollments")
+    .select(`
+      id,
+      status,
+      created_at,
+      student_id,
+      profiles(full_name,email),
+      courses(title,price)
+    `)
+    .order("created_at", {
+      ascending: false
+    });
+
+
+  if (error) {
+
+    console.error(error);
+
+    box.innerHTML =
+      "<p>Could not load enrolments: " +
+      esc(error.message) +
+      "</p>";
+
+    return;
+  }
+
+
+  if (!data || data.length === 0) {
+
+    box.innerHTML =
+      "<p>No enrolment requests yet.</p>";
+
+    return;
+  }
+
+
+  box.innerHTML = `
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Student</th>
+          <th>Course</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        ${data.map(enrolment => `
+
+          <tr>
+
+            <td>
+              ${esc(
+                enrolment.profiles?.full_name ||
+                "Student"
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                enrolment.courses?.title ||
+                ""
+              )}
+            </td>
+
+            <td>
+              ${money(
+                enrolment.courses?.price
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                enrolment.status ||
+                "pending"
+              )}
+            </td>
+
+            <td>
+              ${date(
+                enrolment.created_at
+              )}
+            </td>
+
+            <td>
+
+              <select
+                data-status="${enrolment.id}">
+
+                <option value="pending"
+                  ${
+                    enrolment.status === "pending"
+                      ? "selected"
+                      : ""
+                  }>
+                  Pending
+                </option>
+
+                <option value="approved"
+                  ${
+                    enrolment.status === "approved"
+                      ? "selected"
+                      : ""
+                  }>
+                  Approved
+                </option>
+
+                <option value="completed"
+                  ${
+                    enrolment.status === "completed"
+                      ? "selected"
+                      : ""
+                  }>
+                  Completed
+                </option>
+
+                <option value="cancelled"
+                  ${
+                    enrolment.status === "cancelled"
+                      ? "selected"
+                      : ""
+                  }>
+                  Cancelled
+                </option>
+
+              </select>
+
+            </td>
+
+          </tr>
+
+        `).join("")}
+
+      </tbody>
+
+    </table>
+
+  `;
+
+
+  box.querySelectorAll("[data-status]")
+    .forEach(select => {
+
+      select.onchange =
+        async () => {
+
+          const {
+            error
+          } = await db
+            .from("enrollments")
+            .update({
+              status: select.value
+            })
+            .eq(
+              "id",
+              select.dataset.status
+            );
+
+
+          if (error) {
+
+            console.error(error);
+
+            show(error.message);
+
+          } else {
+
+            show(
+              "Enrolment status updated.",
+              true
+            );
+
+          }
+
+        };
+
+    });
+}
+
+
+// ============================================================
+// PAYMENTS
+// ============================================================
+
+async function loadPayments() {
+
+  const box =
+    document.getElementById("admin-payments");
+
+  if (!box) return;
+
+
+  box.innerHTML =
+    "Loading payments…";
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("payments")
+    .select(`
+      id,
+      student_id,
+      enrolment_id,
+      amount,
+      payment_method,
+      status,
+      proof_url,
+      notes,
+      created_at
+    `)
+    .order("created_at", {
+      ascending: false
+    });
+
+
+  if (error) {
+
+    console.error("Payments error:", error);
+
+    box.innerHTML = `
+      <p>
+        Payment records could not be loaded yet.
+      </p>
+      <small>
+        ${esc(error.message)}
+      </small>
+    `;
+
+    return;
+  }
+
+
+  if (!data || data.length === 0) {
+
+    box.innerHTML =
+      "<p>No payment records yet.</p>";
+
+    return;
+  }
+
+
+  box.innerHTML = `
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Amount</th>
+          <th>Method</th>
+          <th>Status</th>
+          <th>Proof</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        ${data.map(payment => `
+
+          <tr>
+
+            <td>
+              ${money(payment.amount)}
+            </td>
+
+            <td>
+              ${esc(
+                payment.payment_method ||
+                "Not provided"
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                payment.status ||
+                "Pending"
+              )}
+            </td>
+
+            <td>
+
+              ${
+                payment.proof_url
+                  ? `
+                    <a
+                      href="${esc(payment.proof_url)}"
+                      target="_blank"
+                      rel="noopener">
+                      View Proof
+                    </a>
+                  `
+                  : "No proof"
+              }
+
+            </td>
+
+            <td>
+              ${date(payment.created_at)}
+            </td>
+
+            <td>
+
+              <select
+                data-payment-status="${payment.id}">
+
+                <option value="pending"
+                  ${
+                    payment.status === "pending"
+                      ? "selected"
+                      : ""
+                  }>
+                  Pending
+                </option>
+
+                <option value="submitted"
+                  ${
+                    payment.status === "submitted"
+                      ? "selected"
+                      : ""
+                  }>
+                  Submitted
+                </option>
+
+                <option value="verified"
+                  ${
+                    payment.status === "verified"
+                      ? "selected"
+                      : ""
+                  }>
+                  Verified
+                </option>
+
+                <option value="rejected"
+                  ${
+                    payment.status === "rejected"
+                      ? "selected"
+                      : ""
+                  }>
+                  Rejected
+                </option>
+
+              </select>
+
+            </td>
+
+          </tr>
+
+        `).join("")}
+
+      </tbody>
+
+    </table>
+
+  `;
+
+
+  box
+    .querySelectorAll(
+      "[data-payment-status]"
+    )
+    .forEach(select => {
+
+      select.onchange =
+        async () => {
+
+          const {
+            error
+          } = await db
+            .from("payments")
+            .update({
+              status: select.value
+            })
+            .eq(
+              "id",
+              select.dataset.paymentStatus
+            );
+
+
+          if (error) {
+
+            console.error(error);
+
+            show(error.message);
+
+            return;
+          }
+
+
+          show(
+            "Payment status updated.",
+            true
+          );
+
+        };
+
+    });
+}
+
+
+// ============================================================
+// ASSESSMENTS / RESULTS
+// ============================================================
+
+async function loadResults() {
+
+  const box =
+    document.getElementById("admin-results");
+
+  if (!box) return;
+
+
+  // Try results table first.
+  const {
+    data,
+    error
+  } = await db
+    .from("results")
+    .select("*")
+    .order("created_at", {
+      ascending: false
+    });
+
+
+  if (error) {
+
+    console.error(
+      "Results table:",
+      error
+    );
+
+    box.innerHTML = `
+      <p>
+        No results have been entered yet.
+      </p>
+    `;
+
+    return;
+  }
+
+
+  if (!data || data.length === 0) {
+
+    box.innerHTML =
+      "<p>No assessment results yet.</p>";
+
+    return;
+  }
+
+
+  box.innerHTML = `
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Student</th>
+          <th>Assessment</th>
+          <th>Mark</th>
+          <th>Percentage</th>
+          <th>Status</th>
+          <th>Date</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        ${data.map(result => {
+
+          const percentage =
+            result.percentage ??
+            result.mark_percentage ??
+            "";
+
+          const mark =
+            result.mark ??
+            result.score ??
+            "";
+
+          const status =
+            result.status ||
+            (
+              Number(percentage) >= 50
+                ? "Passed"
+                : "Not Passed"
+            );
+
+          return `
+
+            <tr>
+
+              <td>
+                ${esc(
+                  result.student_id ||
+                  "Student"
+                )}
+              </td>
+
+              <td>
+                ${esc(
+                  result.assessment_name ||
+                  result.assessment_id ||
+                  "Assessment"
+                )}
+              </td>
+
+              <td>
+                ${esc(mark)}
+              </td>
+
+              <td>
+                ${esc(percentage)}
+                ${
+                  percentage !== ""
+                    ? "%"
+                    : ""
+                }
+              </td>
+
+              <td>
+                ${esc(status)}
+              </td>
+
+              <td>
+                ${date(result.created_at)}
+              </td>
+
+            </tr>
+
+          `;
+
+        }).join("")}
+
+      </tbody>
+
+    </table>
+
+  `;
+}
+
+
+// ============================================================
+// CERTIFICATES
+// ============================================================
+
+async function loadCertificates() {
+
+  const box =
+    document.getElementById(
+      "admin-certificates"
+    );
+
+  if (!box) return;
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("certificates")
+    .select("*")
+    .order("created_at", {
+      ascending: false
+    });
+
+
+  if (error) {
+
+    console.error(
+      "Certificates error:",
+      error
+    );
+
+    box.innerHTML = `
+      <p>
+        No certificates have been issued yet.
+      </p>
+    `;
+
+    return;
+  }
+
+
+  if (!data || data.length === 0) {
+
+    box.innerHTML =
+      "<p>No certificates issued yet.</p>";
+
+    return;
+  }
+
+
+  box.innerHTML = `
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Student</th>
+          <th>Course</th>
+          <th>Certificate Number</th>
+          <th>Date</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        ${data.map(certificate => `
+
+          <tr>
+
+            <td>
+              ${esc(
+                certificate.student_id ||
+                "Student"
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                certificate.course_id ||
+                certificate.course_name ||
+                ""
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                certificate.certificate_number ||
+                certificate.certificate_no ||
+                ""
+              )}
+            </td>
+
+            <td>
+              ${date(
+                certificate.created_at
+              )}
+            </td>
+
+          </tr>
+
+        `).join("")}
+
+      </tbody>
+
+    </table>
+
+  `;
+}
+
+
+// ============================================================
+// LOGOUT
+// ============================================================
+
+const logout =
+  document.getElementById("logout");
+
+if (logout) {
+
+  logout.onclick =
+    async () => {
+
+      await db.auth.signOut();
+
+      location.href =
+        "index.html";
+
+    };
+
+}
+
+
+// ============================================================
+// START
+// ============================================================
+
+init();
