@@ -1,43 +1,32 @@
-// ============================================
+// ==========================================
 // FUNDA ONLINE ACADEMY
-// LOGIN, REGISTRATION & PASSWORD RESET
-// ============================================
+// LOGIN • REGISTRATION • PASSWORD RESET
+// ==========================================
 
 const db = supabase.createClient(
   window.SUPABASE_URL,
   window.SUPABASE_ANON_KEY
 );
 
+const loginForm = document.getElementById("login-form");
+const signupForm = document.getElementById("signup-form");
 
-const loginForm =
-  document.getElementById("login-form");
+const loginTab = document.getElementById("login-tab");
+const signupTab = document.getElementById("signup-tab");
+const forgotLink = document.getElementById("forgot");
 
-const signupForm =
-  document.getElementById("signup-form");
-
-const loginTab =
-  document.getElementById("login-tab");
-
-const signupTab =
-  document.getElementById("signup-tab");
-
-const forgotLink =
-  document.getElementById("forgot");
-
-const messageBox =
-  document.getElementById("message");
+const messageBox = document.getElementById("message");
 
 
-// ============================================
-// MESSAGE
-// ============================================
+// ==========================================
+// MESSAGES
+// ==========================================
 
 function showMessage(message, success = false) {
 
   if (!messageBox) return;
 
   messageBox.textContent = message;
-
   messageBox.classList.remove("hidden");
 
   if (success) {
@@ -59,14 +48,13 @@ function clearMessage() {
   if (!messageBox) return;
 
   messageBox.textContent = "";
-
   messageBox.classList.add("hidden");
 }
 
 
-// ============================================
-// FORM SWITCHING
-// ============================================
+// ==========================================
+// SWITCH LOGIN / REGISTRATION
+// ==========================================
 
 function showLogin() {
 
@@ -122,136 +110,142 @@ if (signupTab) {
 }
 
 
-// ============================================
-// SAVE / UPDATE STUDENT PROFILE
-// ============================================
+// ==========================================
+// SAVE / SYNC STUDENT PROFILE
+// ==========================================
 
-async function saveStudentProfile(user, details = {}) {
+async function syncStudentProfile(user) {
 
-  if (!user) {
-    return {
-      success: false,
-      error: "No authenticated user."
-    };
-  }
+  if (!user) return false;
 
+  const metadata = user.user_metadata || {};
 
-  const profile = {
+  const fullName =
+    metadata.full_name ||
+    metadata.name ||
+    "";
 
-    id: user.id,
+  const gender =
+    metadata.gender ||
+    "";
 
-    full_name:
-      details.full_name ||
-      user.user_metadata?.full_name ||
-      "",
+  const idNumber =
+    metadata.id_number ||
+    "";
 
-    email:
-      user.email || "",
+  const phone =
+    metadata.phone ||
+    "";
 
-    gender:
-      details.gender ||
-      user.user_metadata?.gender ||
-      null,
-
-    id_number:
-      details.id_number ||
-      user.user_metadata?.id_number ||
-      null,
-
-    phone:
-      details.phone ||
-      user.user_metadata?.phone ||
-      null,
-
-    role: "student"
-
-  };
+  const email =
+    user.email ||
+    "";
 
 
-  const { error } = await db
-    .from("profiles")
-    .upsert(
-      profile,
-      {
-        onConflict: "id"
-      }
-    );
-
-
-  if (error) {
-
-    console.error(
-      "Profile save error:",
-      error
-    );
-
-    return {
-      success: false,
-      error: error
-    };
-  }
-
-
-  return {
-    success: true
-  };
-}
-
-
-// ============================================
-// REDIRECT USER
-// ============================================
-
-async function redirectUser(user) {
-
-  if (!user) return;
-
+  // First try to find existing profile
 
   const {
-    data: profile,
-    error
+    data: existingProfile,
+    error: findError
   } = await db
     .from("profiles")
-    .select("role")
+    .select("id, role")
     .eq("id", user.id)
     .maybeSingle();
 
 
-  if (error) {
+  if (findError) {
 
     console.error(
       "Profile lookup error:",
+      findError
+    );
+
+    return false;
+  }
+
+
+  // ==========================================
+  // UPDATE EXISTING PROFILE
+  // ==========================================
+
+  if (existingProfile) {
+
+    const { error } = await db
+      .from("profiles")
+      .update({
+
+        full_name: fullName,
+
+        email: email,
+
+        gender: gender,
+
+        id_number: idNumber,
+
+        phone: phone
+
+      })
+      .eq("id", user.id);
+
+
+    if (error) {
+
+      console.error(
+        "Profile update error:",
+        error
+      );
+
+      return false;
+    }
+
+    return true;
+  }
+
+
+  // ==========================================
+  // CREATE NEW STUDENT PROFILE
+  // ==========================================
+
+  const { error } = await db
+    .from("profiles")
+    .insert({
+
+      id: user.id,
+
+      full_name: fullName,
+
+      email: email,
+
+      gender: gender,
+
+      id_number: idNumber,
+
+      phone: phone,
+
+      role: "student"
+
+    });
+
+
+  if (error) {
+
+    console.error(
+      "Profile creation error:",
       error
     );
 
-    showMessage(
-      "Login worked, but we could not load your account profile."
-    );
-
-    return;
+    return false;
   }
 
 
-  if (
-    profile &&
-    profile.role === "admin"
-  ) {
-
-    window.location.href =
-      "admin.html";
-
-    return;
-  }
-
-
-  window.location.href =
-    "dashboard.html";
+  return true;
 }
 
 
-// ============================================
+// ==========================================
 // CHECK EXISTING SESSION
-// ============================================
+// ==========================================
 
 async function checkExistingSession() {
 
@@ -272,27 +266,58 @@ async function checkExistingSession() {
   }
 
 
-  if (
-    !data.session ||
-    !data.session.user
-  ) {
+  if (!data.session || !data.session.user) {
+    return;
+  }
+
+
+  const user = data.session.user;
+
+
+  // Keep student information synchronized
+
+  await syncStudentProfile(user);
+
+
+  const {
+    data: profile,
+    error: profileError
+  } = await db
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+
+  if (profileError) {
+
+    console.error(
+      "Profile error:",
+      profileError
+    );
 
     return;
   }
 
 
-  await redirectUser(
-    data.session.user
-  );
+  if (profile && profile.role === "admin") {
+
+    window.location.href = "admin.html";
+
+  } else {
+
+    window.location.href = "dashboard.html";
+
+  }
 }
 
 
 checkExistingSession();
 
 
-// ============================================
+// ==========================================
 // LOGIN
-// ============================================
+// ==========================================
 
 if (loginForm) {
 
@@ -310,14 +335,10 @@ if (loginForm) {
           "login-email"
         );
 
+
       const passwordInput =
         document.getElementById(
           "login-password"
-        );
-
-      const loginButton =
-        document.getElementById(
-          "login-button"
         );
 
 
@@ -325,6 +346,7 @@ if (loginForm) {
         emailInput.value
           .trim()
           .toLowerCase();
+
 
       const password =
         passwordInput.value;
@@ -340,23 +362,22 @@ if (loginForm) {
       }
 
 
-      loginButton.disabled = true;
-
-      loginButton.textContent =
-        "Logging in...";
+      showMessage(
+        "Logging in...",
+        true
+      );
 
 
       const {
         data,
         error
-      } =
-        await db.auth.signInWithPassword({
+      } = await db.auth.signInWithPassword({
 
-          email: email,
+        email: email,
 
-          password: password
+        password: password
 
-        });
+      });
 
 
       if (error) {
@@ -365,11 +386,6 @@ if (loginForm) {
           "Login error:",
           error
         );
-
-        loginButton.disabled = false;
-
-        loginButton.textContent =
-          "Login";
 
         showMessage(
           error.message ||
@@ -380,15 +396,7 @@ if (loginForm) {
       }
 
 
-      if (
-        !data ||
-        !data.user
-      ) {
-
-        loginButton.disabled = false;
-
-        loginButton.textContent =
-          "Login";
+      if (!data || !data.user) {
 
         showMessage(
           "Login could not be completed. Please try again."
@@ -398,23 +406,37 @@ if (loginForm) {
       }
 
 
-      // Make sure the profile exists.
-      await saveStudentProfile(
-        data.user,
-        {
-          full_name:
-            data.user.user_metadata?.full_name,
+      // Synchronize the student's registration
+      // information into the profiles table.
 
-          gender:
-            data.user.user_metadata?.gender,
-
-          id_number:
-            data.user.user_metadata?.id_number,
-
-          phone:
-            data.user.user_metadata?.phone
-        }
+      await syncStudentProfile(
+        data.user
       );
+
+
+      const {
+        data: profile,
+        error: profileError
+      } = await db
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+
+      if (profileError) {
+
+        console.error(
+          "Profile lookup error:",
+          profileError
+        );
+
+        showMessage(
+          "Login worked, but we could not load your account profile."
+        );
+
+        return;
+      }
 
 
       showMessage(
@@ -423,16 +445,24 @@ if (loginForm) {
       );
 
 
-      setTimeout(
-        async function() {
+      setTimeout(function() {
 
-          await redirectUser(
-            data.user
-          );
+        if (
+          profile &&
+          profile.role === "admin"
+        ) {
 
-        },
-        500
-      );
+          window.location.href =
+            "admin.html";
+
+        } else {
+
+          window.location.href =
+            "dashboard.html";
+
+        }
+
+      }, 500);
 
     }
   );
@@ -440,9 +470,9 @@ if (loginForm) {
 }
 
 
-// ============================================
+// ==========================================
 // REGISTRATION
-// ============================================
+// ==========================================
 
 if (signupForm) {
 
@@ -455,47 +485,41 @@ if (signupForm) {
       clearMessage();
 
 
+      // --------------------------------------
+      // GET REGISTRATION INFORMATION
+      // --------------------------------------
+
       const name =
         document
-          .getElementById(
-            "signup-name"
-          )
+          .getElementById("signup-name")
           .value
           .trim();
 
 
       const gender =
         document
-          .getElementById(
-            "signup-gender"
-          )
+          .getElementById("signup-gender")
           .value
           .trim();
 
 
       const idNumber =
         document
-          .getElementById(
-            "signup-id-number"
-          )
+          .getElementById("signup-id-number")
           .value
           .trim();
 
 
       const phone =
         document
-          .getElementById(
-            "signup-phone"
-          )
+          .getElementById("signup-phone")
           .value
           .trim();
 
 
       const email =
         document
-          .getElementById(
-            "signup-email"
-          )
+          .getElementById("signup-email")
           .value
           .trim()
           .toLowerCase();
@@ -503,9 +527,7 @@ if (signupForm) {
 
       const password =
         document
-          .getElementById(
-            "signup-password"
-          )
+          .getElementById("signup-password")
           .value;
 
 
@@ -517,15 +539,9 @@ if (signupForm) {
           .value;
 
 
-      const signupButton =
-        document.getElementById(
-          "signup-button"
-        );
-
-
-      // ====================================
+      // --------------------------------------
       // VALIDATION
-      // ====================================
+      // --------------------------------------
 
       if (
         !name ||
@@ -546,6 +562,7 @@ if (signupForm) {
 
 
       // South African ID validation
+
       if (!/^\d{13}$/.test(idNumber)) {
 
         showMessage(
@@ -555,6 +572,8 @@ if (signupForm) {
         return;
       }
 
+
+      // Password validation
 
       if (password.length < 6) {
 
@@ -566,10 +585,7 @@ if (signupForm) {
       }
 
 
-      if (
-        password !==
-        confirmPassword
-      ) {
+      if (password !== confirmPassword) {
 
         showMessage(
           "The passwords do not match."
@@ -579,11 +595,9 @@ if (signupForm) {
       }
 
 
-      signupButton.disabled = true;
-
-      signupButton.textContent =
-        "Creating Account...";
-
+      // --------------------------------------
+      // CREATE SUPABASE ACCOUNT
+      // --------------------------------------
 
       showMessage(
         "Creating your student account...",
@@ -591,37 +605,32 @@ if (signupForm) {
       );
 
 
-      // ====================================
-      // CREATE SUPABASE AUTH ACCOUNT
-      // ====================================
-
       const {
         data,
         error
-      } =
-        await db.auth.signUp({
+      } = await db.auth.signUp({
 
-          email: email,
+        email: email,
 
-          password: password,
+        password: password,
 
-          options: {
+        options: {
 
-            data: {
+          data: {
 
-              full_name: name,
+            full_name: name,
 
-              gender: gender,
+            gender: gender,
 
-              id_number: idNumber,
+            id_number: idNumber,
 
-              phone: phone
-
-            }
+            phone: phone
 
           }
 
-        });
+        }
+
+      });
 
 
       if (error) {
@@ -631,82 +640,43 @@ if (signupForm) {
           error
         );
 
-        signupButton.disabled = false;
-
-        signupButton.textContent =
-          "Create Student Account";
-
         showMessage(
-          error.message
+          error.message ||
+          "Registration failed. Please try again."
         );
 
         return;
       }
 
 
-      if (
-        !data ||
-        !data.user
-      ) {
-
-        signupButton.disabled = false;
-
-        signupButton.textContent =
-          "Create Student Account";
+      if (!data || !data.user) {
 
         showMessage(
-          "The account could not be created. Please try again."
+          "Account could not be created. Please try again."
         );
 
         return;
       }
 
 
-      // ====================================
-      // IF SUPABASE LOGGED USER IN IMMEDIATELY
-      // SAVE PROFILE NOW
-      // ====================================
+      // --------------------------------------
+      // IF EMAIL CONFIRMATION IS DISABLED
+      // --------------------------------------
 
       if (data.session) {
 
-        const profileResult =
-          await saveStudentProfile(
-
-            data.user,
-
-            {
-
-              full_name: name,
-
-              gender: gender,
-
-              id_number: idNumber,
-
-              phone: phone
-
-            }
-
+        const profileSaved =
+          await syncStudentProfile(
+            data.user
           );
 
 
-        if (
-          !profileResult.success
-        ) {
+        if (!profileSaved) {
 
-          console.error(
-            profileResult.error
+          console.warn(
+            "Account created, but profile information could not be saved yet."
           );
 
-          showMessage(
-            "Your account was created, but your student profile could not be saved. Please contact the academy."
-          );
-
-          signupButton.disabled = false;
-
-          signupButton.textContent =
-            "Create Student Account";
-
-          return;
         }
 
 
@@ -716,24 +686,21 @@ if (signupForm) {
         );
 
 
-        setTimeout(
-          function() {
+        setTimeout(function() {
 
-            window.location.href =
-              "dashboard.html";
+          window.location.href =
+            "dashboard.html";
 
-          },
-          800
-        );
+        }, 900);
 
 
         return;
       }
 
 
-      // ====================================
-      // EMAIL CONFIRMATION REQUIRED
-      // ====================================
+      // --------------------------------------
+      // IF EMAIL CONFIRMATION IS REQUIRED
+      // --------------------------------------
 
       showMessage(
         "Your student account has been created. Please check your email to confirm your account, then log in.",
@@ -743,20 +710,12 @@ if (signupForm) {
 
       signupForm.reset();
 
-      signupButton.disabled = false;
 
-      signupButton.textContent =
-        "Create Student Account";
+      setTimeout(function() {
 
+        showLogin();
 
-      setTimeout(
-        function() {
-
-          showLogin();
-
-        },
-        3000
-      );
+      }, 3000);
 
     }
   );
@@ -764,9 +723,9 @@ if (signupForm) {
 }
 
 
-// ============================================
+// ==========================================
 // FORGOT PASSWORD
-// ============================================
+// ==========================================
 
 if (forgotLink) {
 
@@ -781,9 +740,7 @@ if (forgotLink) {
 
       const email =
         document
-          .getElementById(
-            "login-email"
-          )
+          .getElementById("login-email")
           .value
           .trim()
           .toLowerCase();
@@ -806,17 +763,15 @@ if (forgotLink) {
 
       const {
         error
-      } =
-        await db.auth
-          .resetPasswordForEmail(
+      } = await db.auth.resetPasswordForEmail(
 
-            email,
+        email,
 
-            {
-              redirectTo: resetUrl
-            }
+        {
+          redirectTo: resetUrl
+        }
 
-          );
+      );
 
 
       if (error) {
@@ -842,4 +797,4 @@ if (forgotLink) {
     }
   );
 
-}
+      } 
