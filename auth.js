@@ -292,4 +292,4 @@ forgotLink.addEventListener("click", async function (e) {
     "Password reset instructions have been sent to your email.",
     true
   );
-}); 
+});
