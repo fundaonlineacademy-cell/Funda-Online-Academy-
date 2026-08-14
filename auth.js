@@ -88,7 +88,6 @@ checkExistingSession();
 // =============================
 // STUDENT LOGIN
 // =============================
-
 loginForm.addEventListener("submit", async function (e) {
   e.preventDefault();
 
@@ -124,28 +123,37 @@ loginForm.addEventListener("submit", async function (e) {
     return;
   }
 
-  if (!data.session) {
+  if (!data.session || !data.user) {
     showMessage(
       "Login could not be completed. Please try again."
     );
     return;
   }
 
- showMessage("Login successful. Opening your portal...", true);
+  showMessage(
+    "Login successful. Opening your portal...",
+    true
+  );
 
-const { data: profile } = await db
-  .from("profiles")
-  .select("role")
-  .eq("id", data.user.id)
-  .single();
+  const { data: profile, error: profileError } = await db
+    .from("profiles")
+    .select("role")
+    .eq("id", data.user.id)
+    .single();
 
-setTimeout(function () {
-  if (profile && profile.role === "admin") {
-    window.location.href = "admin.html";
-  } else {
-    window.location.href = "dashboard.html";
+  if (profileError) {
+    console.error(profileError);
   }
-}, 500); 
+
+  setTimeout(function () {
+    if (profile && profile.role === "admin") {
+      window.location.href = "admin.html";
+    } else {
+      window.location.href = "dashboard.html";
+    }
+  }, 500);
+});
+
 
 
 // =============================
