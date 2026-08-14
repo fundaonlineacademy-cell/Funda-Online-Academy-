@@ -1,7 +1,7 @@
 // ==========================================
 // FUNDA ONLINE ACADEMY
 // STUDENT DASHBOARD
-// ENROLMENTS • COURSES • LOGOUT
+// ENROLMENTS • COURSES • MODULES • LOGOUT
 // ==========================================
 
 const { createClient } = supabase;
@@ -71,7 +71,6 @@ async function getStudent(userId) {
     .eq("user_id", userId)
     .maybeSingle();
 
-
   if (error) {
 
     console.error(
@@ -81,7 +80,6 @@ async function getStudent(userId) {
 
     return null;
   }
-
 
   return student;
 }
@@ -105,10 +103,6 @@ async function init() {
     return;
   }
 
-
-  // ----------------------------------------
-  // GET LOGIN SESSION
-  // ----------------------------------------
 
   const {
     data: { session },
@@ -147,7 +141,7 @@ async function init() {
 
 
   // ----------------------------------------
-  // GET STUDENT RECORD
+  // GET STUDENT
   // ----------------------------------------
 
   const student =
@@ -156,15 +150,8 @@ async function init() {
 
   if (!student) {
 
-    console.error(
-      "No student record found for:",
-      user.id
-    );
-
-
     const nameBox =
       document.getElementById("user-name");
-
 
     if (nameBox) {
 
@@ -173,7 +160,6 @@ async function init() {
         "Student";
 
     }
-
 
     show(
       "Your student record could not be found. Please contact Funda Online Academy."
@@ -190,7 +176,6 @@ async function init() {
   const nameBox =
     document.getElementById("user-name");
 
-
   if (nameBox) {
 
     nameBox.textContent =
@@ -202,17 +187,12 @@ async function init() {
 
 
   // ----------------------------------------
-  // LOAD DASHBOARD DATA
+  // LOAD DATA
   // ----------------------------------------
 
-  await loadEnrollments(
-    student.id
-  );
+  await loadEnrollments(student.id);
 
-
-  await loadAvailableCourses(
-    student.id
-  );
+  await loadAvailableCourses(student.id);
 }
 
 
@@ -220,15 +200,10 @@ async function init() {
 // STUDENT ENROLLMENTS
 // ==========================================
 
-async function loadEnrollments(
-  studentId
-) {
+async function loadEnrollments(studentId) {
 
   const box =
-    document.getElementById(
-      "enrolments"
-    );
-
+    document.getElementById("enrolments");
 
   if (!box) return;
 
@@ -250,16 +225,10 @@ async function loadEnrollments(
         price
       )
     `)
-    .eq(
-      "student_id",
-      studentId
-    )
-    .order(
-      "enrolled_at",
-      {
-        ascending: false
-      }
-    );
+    .eq("student_id", studentId)
+    .order("enrolled_at", {
+      ascending: false
+    });
 
 
   if (error) {
@@ -269,14 +238,11 @@ async function loadEnrollments(
       error
     );
 
-
     box.innerHTML = `
       <div class="card">
-
         <p>
           Could not load your enrolments.
         </p>
-
       </div>
     `;
 
@@ -284,21 +250,12 @@ async function loadEnrollments(
   }
 
 
-  // ----------------------------------------
-  // NO ENROLLMENTS
-  // ----------------------------------------
-
-  if (
-    !data ||
-    !data.length
-  ) {
+  if (!data || !data.length) {
 
     box.innerHTML = `
       <div class="empty card">
 
-        <h3>
-          No enrolments yet
-        </h3>
+        <h3>No enrolments yet</h3>
 
         <p>
           Choose a course below and
@@ -319,10 +276,6 @@ async function loadEnrollments(
   }
 
 
-  // ----------------------------------------
-  // DISPLAY ENROLLMENTS
-  // ----------------------------------------
-
   box.innerHTML = data.map(
     enrollment => {
 
@@ -330,25 +283,20 @@ async function loadEnrollments(
         enrollment.courses?.name ||
         "Course";
 
-
       const price =
         Number(
           enrollment.courses?.price || 0
         );
 
-
       const status =
         enrollment.enrollment_status ||
         "pending";
-
 
       const date =
         enrollment.enrolled_at
           ? new Date(
               enrollment.enrolled_at
-            ).toLocaleDateString(
-              "en-ZA"
-            )
+            ).toLocaleDateString("en-ZA")
           : "";
 
 
@@ -370,7 +318,6 @@ async function loadEnrollments(
             <span class="status">
               ${escapeHtml(status)}
             </span>
-
           </p>
 
           ${
@@ -396,22 +343,15 @@ async function loadEnrollments(
 // AVAILABLE COURSES
 // ==========================================
 
-async function loadAvailableCourses(
-  studentId
-) {
+async function loadAvailableCourses(studentId) {
 
   const box =
     document.getElementById(
       "available-courses"
     );
 
-
   if (!box) return;
 
-
-  // ----------------------------------------
-  // LOAD ACTIVE COURSES
-  // ----------------------------------------
 
   const {
     data: courses,
@@ -428,16 +368,10 @@ async function loadAvailableCourses(
       image_url,
       active
     `)
-    .eq(
-      "active",
-      true
-    )
-    .order(
-      "name",
-      {
-        ascending: true
-      }
-    );
+    .eq("active", true)
+    .order("name", {
+      ascending: true
+    });
 
 
   if (error) {
@@ -447,14 +381,11 @@ async function loadAvailableCourses(
       error
     );
 
-
     box.innerHTML = `
       <div class="card">
-
         <p>
           Could not load courses.
         </p>
-
       </div>
     `;
 
@@ -463,7 +394,7 @@ async function loadAvailableCourses(
 
 
   // ----------------------------------------
-  // GET COURSES ALREADY ENROLLED IN
+  // GET EXISTING ENROLLMENTS
   // ----------------------------------------
 
   const {
@@ -472,10 +403,7 @@ async function loadAvailableCourses(
   } = await db
     .from("enrollments")
     .select("course_id")
-    .eq(
-      "student_id",
-      studentId
-    );
+    .eq("student_id", studentId);
 
 
   if (enrollmentError) {
@@ -496,14 +424,7 @@ async function loadAvailableCourses(
     );
 
 
-  // ----------------------------------------
-  // NO COURSES
-  // ----------------------------------------
-
-  if (
-    !courses ||
-    !courses.length
-  ) {
+  if (!courses || !courses.length) {
 
     box.innerHTML = `
       <div class="card">
@@ -536,9 +457,7 @@ async function loadAvailableCourses(
 
 
       return `
-        <article
-          class="card course"
-        >
+        <article class="card course">
 
           ${
             course.image_url
@@ -572,8 +491,7 @@ async function loadAvailableCourses(
 
           <h3>
             ${escapeHtml(
-              course.name ||
-              "Course"
+              course.name || "Course"
             )}
           </h3>
 
@@ -595,24 +513,18 @@ async function loadAvailableCourses(
             class="course-modules"
             id="modules-${course.id}"
           >
-
             <p>
               Loading modules...
             </p>
-
           </div>
 
 
           <div class="course-foot">
 
             <span class="price">
-
               R${Number(
                 course.price || 0
-              ).toLocaleString(
-                "en-ZA"
-              )}
-
+              ).toLocaleString("en-ZA")}
             </span>
 
 
@@ -620,11 +532,9 @@ async function loadAvailableCourses(
               course.duration
                 ? `
                   <span class="duration">
-
                     ${escapeHtml(
                       course.duration
                     )}
-
                   </span>
                 `
                 : ""
@@ -638,6 +548,7 @@ async function loadAvailableCourses(
 
               ? `
                 <button
+                  type="button"
                   class="btn ghost full"
                   disabled
                 >
@@ -647,6 +558,7 @@ async function loadAvailableCourses(
 
               : `
                 <button
+                  type="button"
                   class="btn green full"
                   data-enrol="${course.id}"
                 >
@@ -662,12 +574,10 @@ async function loadAvailableCourses(
 
 
   // ----------------------------------------
-  // LOAD COURSE MODULES
+  // LOAD MODULES
   // ----------------------------------------
 
-  for (
-    const course of courses
-  ) {
+  for (const course of courses) {
 
     await loadCourseModules(
       course.id
@@ -681,19 +591,26 @@ async function loadAvailableCourses(
   // ----------------------------------------
 
   box
-    .querySelectorAll(
-      "[data-enrol]"
-    )
+    .querySelectorAll("[data-enrol]")
     .forEach(button => {
 
-      button.onclick = () => {
+      button.addEventListener(
+        "click",
+        async function(e) {
 
-        enrol(
-          button.dataset.enrol,
-          studentId
-        );
+          e.preventDefault();
+          e.stopPropagation();
 
-      };
+          const courseId =
+            button.dataset.enrol;
+
+          await enrol(
+            courseId,
+            studentId
+          );
+
+        }
+      );
 
     });
 }
@@ -703,15 +620,12 @@ async function loadAvailableCourses(
 // COURSE MODULES
 // ==========================================
 
-async function loadCourseModules(
-  courseId
-) {
+async function loadCourseModules(courseId) {
 
   const box =
     document.getElementById(
       `modules-${courseId}`
     );
-
 
   if (!box) return;
 
@@ -722,10 +636,7 @@ async function loadCourseModules(
   } = await db
     .from("course_modules")
     .select("*")
-    .eq(
-      "course_id",
-      courseId
-    );
+    .eq("course_id", courseId);
 
 
   if (error) {
@@ -735,17 +646,13 @@ async function loadCourseModules(
       error
     );
 
-
     box.innerHTML = "";
 
     return;
   }
 
 
-  if (
-    !modules ||
-    !modules.length
-  ) {
+  if (!modules || !modules.length) {
 
     box.innerHTML = "";
 
@@ -770,7 +677,6 @@ async function loadCourseModules(
             module.description ||
             "Module";
 
-
           return `
             <li>
               ${escapeHtml(title)}
@@ -788,22 +694,43 @@ async function loadCourseModules(
 // REQUEST ENROLMENT
 // ==========================================
 
-async function enrol(
-  courseId,
-  studentId
-) {
+async function enrol(courseId, studentId) {
 
   const confirmed =
     confirm(
       "Send an enrolment request for this course?"
     );
 
-
   if (!confirmed) return;
 
 
   // ----------------------------------------
-  // PREVENT DUPLICATES
+  // CHECK SESSION BEFORE ENROLLING
+  // ----------------------------------------
+
+  const {
+    data: { session }
+  } = await db.auth.getSession();
+
+
+  if (!session || !session.user) {
+
+    show(
+      "Your session has expired. Please log in again."
+    );
+
+    setTimeout(() => {
+
+      location.href = "auth.html";
+
+    }, 1500);
+
+    return;
+  }
+
+
+  // ----------------------------------------
+  // CHECK DUPLICATE
   // ----------------------------------------
 
   const {
@@ -812,14 +739,8 @@ async function enrol(
   } = await db
     .from("enrollments")
     .select("id")
-    .eq(
-      "student_id",
-      studentId
-    )
-    .eq(
-      "course_id",
-      courseId
-    )
+    .eq("student_id", studentId)
+    .eq("course_id", courseId)
     .maybeSingle();
 
 
@@ -853,6 +774,7 @@ async function enrol(
   // ----------------------------------------
 
   const {
+    data: newEnrollment,
     error
   } = await db
     .from("enrollments")
@@ -867,36 +789,31 @@ async function enrol(
       enrollment_status:
         "pending"
 
-    });
+    })
+    .select()
+    .single();
 
 
   if (error) {
 
     console.error(
-      "Enrolment error:",
+      "Enrollment creation error:",
       error
     );
 
-
-    if (
-      error.code === "23505"
-    ) {
-
-      show(
-        "You have already requested this course."
-      );
-
-    } else {
-
-      show(
-        "Could not send enrolment request: " +
-        error.message
-      );
-
-    }
+    show(
+      "Could not send enrolment request: " +
+      error.message
+    );
 
     return;
   }
+
+
+  console.log(
+    "Enrollment created:",
+    newEnrollment
+  );
 
 
   show(
@@ -905,12 +822,13 @@ async function enrol(
   );
 
 
-  // Refresh dashboard
+  // ----------------------------------------
+  // REFRESH
+  // ----------------------------------------
 
   await loadEnrollments(
     studentId
   );
-
 
   await loadAvailableCourses(
     studentId
@@ -923,22 +841,24 @@ async function enrol(
 // ==========================================
 
 const logoutButton =
-  document.getElementById(
-    "logout"
-  );
+  document.getElementById("logout");
 
 
 if (logoutButton) {
 
-  logoutButton.onclick =
-    async function() {
+  logoutButton.addEventListener(
+    "click",
+    async function(e) {
+
+      e.preventDefault();
 
       await db.auth.signOut();
 
       location.href =
         "index.html";
 
-    };
+    }
+  );
 
 }
 
@@ -947,4 +867,4 @@ if (logoutButton) {
 // START DASHBOARD
 // ==========================================
 
-init();
+init(); 
