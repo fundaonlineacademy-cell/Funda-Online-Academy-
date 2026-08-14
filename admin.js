@@ -11,35 +11,56 @@ let courses = [];
 let editingId = null;
 
 
-// =============================
+// =====================================================
 // MESSAGES
-// =============================
+// =====================================================
 
 function show(message, ok = false) {
+
+  if (!msg) return;
+
   msg.textContent = message;
-  msg.className = "message " + (ok ? "success" : "error");
+
+  msg.className =
+    "message " +
+    (ok ? "success" : "error");
 }
+
 
 function esc(value) {
-  return String(value ?? "").replace(/[&<>"']/g, m => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[m]));
+
+  return String(value ?? "")
+    .replace(/[&<>"']/g, m => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[m]));
 }
 
 
-// =============================
+// =====================================================
 // COURSE FORM
-// =============================
+// =====================================================
 
 function resetForm() {
+
   editingId = null;
 
-  document.getElementById("course-form").reset();
-  document.getElementById("course-id").value = "";
+  const form =
+    document.getElementById("course-form");
+
+  if (form) {
+    form.reset();
+  }
+
+  const id =
+    document.getElementById("course-id");
+
+  if (id) {
+    id.value = "";
+  }
 }
 
 
@@ -47,7 +68,8 @@ function fill(course) {
 
   editingId = course.id;
 
-  document.getElementById("course-id").value = course.id;
+  document.getElementById("course-id").value =
+    course.id;
 
   document.getElementById("course-name").value =
     course.title || "";
@@ -79,9 +101,9 @@ function fill(course) {
 }
 
 
-// =============================
+// =====================================================
 // INITIALISE ADMIN
-// =============================
+// =====================================================
 
 async function init() {
 
@@ -89,9 +111,11 @@ async function init() {
     !window.SUPABASE_URL ||
     window.SUPABASE_URL.includes("PASTE_")
   ) {
+
     show(
       "Supabase is not connected yet. Check supabase-config.js."
     );
+
     return;
   }
 
@@ -103,25 +127,36 @@ async function init() {
 
 
   if (sessionError) {
+
     console.error(sessionError);
+
     show(sessionError.message);
+
     return;
   }
 
 
   if (!session) {
+
     location.href = "auth.html";
+
     return;
   }
 
 
-  document.getElementById("admin-email").textContent =
-    session.user.email || "";
+  const adminEmail =
+    document.getElementById("admin-email");
+
+  if (adminEmail) {
+
+    adminEmail.textContent =
+      session.user.email || "";
+  }
 
 
-  // =============================
+  // ===================================================
   // CHECK ADMIN ROLE
-  // =============================
+  // ===================================================
 
   const {
     data: profile,
@@ -134,8 +169,11 @@ async function init() {
 
 
   if (profileError) {
+
     console.error(profileError);
+
     show(profileError.message);
+
     return;
   }
 
@@ -147,16 +185,18 @@ async function init() {
     );
 
     setTimeout(() => {
+
       location.href = "dashboard.html";
+
     }, 1800);
 
     return;
   }
 
 
-  // =============================
-  // LOAD ALL ADMIN INFORMATION
-  // =============================
+  // ===================================================
+  // LOAD ADMIN INFORMATION
+  // ===================================================
 
   await Promise.all([
     loadStudents(),
@@ -166,9 +206,9 @@ async function init() {
 }
 
 
-// =============================
+// =====================================================
 // LOAD STUDENTS
-// =============================
+// =====================================================
 
 async function loadStudents() {
 
@@ -179,8 +219,15 @@ async function loadStudents() {
   if (!box) return;
 
 
-  box.innerHTML = "Loading students…";
+  box.innerHTML =
+    "<p>Loading students...</p>";
 
+
+  /*
+   * We use select("*") here so the admin page does not
+   * break if you have not yet added all registration
+   * columns to the profiles table.
+   */
 
   const {
     data,
@@ -194,7 +241,10 @@ async function loadStudents() {
 
   if (error) {
 
-    console.error("Students error:", error);
+    console.error(
+      "Students error:",
+      error
+    );
 
     box.innerHTML =
       "<p>Could not load students: " +
@@ -216,63 +266,162 @@ async function loadStudents() {
 
   box.innerHTML = `
 
-    <table>
+    <div class="student-table-wrapper">
 
-      <thead>
+      <table class="student-table">
 
-        <tr>
-          <th>Student</th>
-          <th>Email</th>
-          <th>Role</th>
-          <th>Registered</th>
-        </tr>
-
-      </thead>
-
-
-      <tbody>
-
-        ${data.map(student => `
+        <thead>
 
           <tr>
 
-            <td>
-              ${esc(student.full_name || "Student")}
-            </td>
+            <th>Student</th>
 
-            <td>
-              ${esc(student.email || "")}
-            </td>
+            <th>Gender</th>
 
-            <td>
-              ${esc(student.role || "student")}
-            </td>
+            <th>ID Number</th>
 
-            <td>
-              ${
-                student.created_at
-                  ? new Date(
-                      student.created_at
-                    ).toLocaleDateString("en-ZA")
-                  : ""
-              }
-            </td>
+            <th>Email</th>
+
+            <th>WhatsApp / Mobile</th>
+
+            <th>Role</th>
+
+            <th>Registered</th>
 
           </tr>
 
-        `).join("")}
+        </thead>
 
-      </tbody>
 
-    </table>
+        <tbody>
+
+          ${data.map(student => {
+
+            /*
+             * Supports several possible column names.
+             * This makes the page more flexible while we
+             * finish the registration system.
+             */
+
+            const idNumber =
+              student.id_number ||
+              student.south_african_id ||
+              student.id_no ||
+              student.sa_id ||
+              "";
+
+            const phone =
+              student.phone ||
+              student.mobile ||
+              student.mobile_number ||
+              student.whatsapp ||
+              student.whatsapp_number ||
+              "";
+
+            const gender =
+              student.gender || "";
+
+
+            return `
+
+              <tr>
+
+                <td>
+
+                  <strong>
+                    ${esc(
+                      student.full_name ||
+                      "Student"
+                    )}
+                  </strong>
+
+                </td>
+
+
+                <td>
+                  ${esc(
+                    gender ||
+                    "Not provided"
+                  )}
+                </td>
+
+
+                <td>
+
+                  ${
+                    idNumber
+                      ? esc(idNumber)
+                      : "Not provided"
+                  }
+
+                </td>
+
+
+                <td>
+
+                  ${
+                    student.email
+                      ? esc(student.email)
+                      : "Not provided"
+                  }
+
+                </td>
+
+
+                <td>
+
+                  ${
+                    phone
+                      ? esc(phone)
+                      : "Not provided"
+                  }
+
+                </td>
+
+
+                <td>
+
+                  ${esc(
+                    student.role ||
+                    "student"
+                  )}
+
+                </td>
+
+
+                <td>
+
+                  ${
+                    student.created_at
+                      ? new Date(
+                          student.created_at
+                        ).toLocaleDateString(
+                          "en-ZA"
+                        )
+                      : ""
+                  }
+
+                </td>
+
+              </tr>
+
+            `;
+
+          }).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
 
   `;
 }
 
 
-// =============================
+// =====================================================
 // LOAD COURSES
-// =============================
+// =====================================================
 
 async function loadCourses() {
 
@@ -288,6 +437,7 @@ async function loadCourses() {
   if (error) {
 
     console.error(error);
+
     show(error.message);
 
     return;
@@ -301,60 +451,90 @@ async function loadCourses() {
     document.getElementById("admin-courses");
 
 
-  box.innerHTML = courses.map(course => `
+  if (!box) return;
 
-    <div class="admin-row">
 
-      <div>
+  box.innerHTML =
 
-        <strong>
-          ${esc(course.title)}
-        </strong>
+    courses.map(course => `
 
-        <small>
-          ${esc(course.category || "")}
-          · R${Number(
-            course.price || 0
-          ).toLocaleString("en-ZA")}
-          · ${esc(course.duration || "")}
-        </small>
+      <div class="admin-row">
+
+        <div>
+
+          <strong>
+            ${esc(course.title)}
+          </strong>
+
+          <small>
+
+            ${esc(
+              course.category || ""
+            )}
+
+            ·
+
+            R${Number(
+              course.price || 0
+            ).toLocaleString("en-ZA")}
+
+            ·
+
+            ${esc(
+              course.duration || ""
+            )}
+
+          </small>
+
+        </div>
+
+
+        <div class="row-actions">
+
+          <button
+            class="btn small ghost"
+            data-edit="${course.id}">
+            Edit
+          </button>
+
+
+          <button
+            class="btn small danger"
+            data-delete="${course.id}">
+            Delete
+          </button>
+
+        </div>
 
       </div>
 
+    `).join("")
 
-      <div class="row-actions">
-
-        <button
-          class="btn small ghost"
-          data-edit="${course.id}">
-          Edit
-        </button>
+    || "<p>No courses.</p>";
 
 
-        <button
-          class="btn small danger"
-          data-delete="${course.id}">
-          Delete
-        </button>
+  // ===================================================
+  // EDIT COURSE
+  // ===================================================
 
-      </div>
-
-    </div>
-
-  `).join("") || "<p>No courses.</p>";
-
-
-  box.querySelectorAll("[data-edit]")
+  box
+    .querySelectorAll("[data-edit]")
     .forEach(button => {
 
       button.onclick = () => {
 
-        const course = courses.find(
-          c => c.id === button.dataset.edit
-        );
+        const course =
+          courses.find(
+            c =>
+              c.id ===
+              button.dataset.edit
+          );
+
 
         if (course) {
+
           fill(course);
+
         }
 
       };
@@ -362,24 +542,37 @@ async function loadCourses() {
     });
 
 
-  box.querySelectorAll("[data-delete]")
+  // ===================================================
+  // DELETE COURSE
+  // ===================================================
+
+  box
+    .querySelectorAll("[data-delete]")
     .forEach(button => {
 
-      button.onclick = () =>
-        deleteCourse(button.dataset.delete);
+      button.onclick = () => {
+
+        deleteCourse(
+          button.dataset.delete
+        );
+
+      };
 
     });
 }
 
 
-// =============================
+// =====================================================
 // DELETE COURSE
-// =============================
+// =====================================================
 
 async function deleteCourse(id) {
 
   const course =
-    courses.find(c => c.id === id);
+    courses.find(
+      c => c.id === id
+    );
+
 
   if (!course) return;
 
@@ -389,11 +582,14 @@ async function deleteCourse(id) {
       `Delete "${course.title}"?`
     )
   ) {
+
     return;
   }
 
 
-  const { error } = await db
+  const {
+    error
+  } = await db
     .from("courses")
     .delete()
     .eq("id", id);
@@ -402,6 +598,7 @@ async function deleteCourse(id) {
   if (error) {
 
     console.error(error);
+
     show(error.message);
 
     return;
@@ -418,142 +615,224 @@ async function deleteCourse(id) {
 }
 
 
-// =============================
+// =====================================================
 // SAVE COURSE
-// =============================
+// =====================================================
 
-document.getElementById("course-form").onsubmit =
-  async event => {
-
-    event.preventDefault();
-
-
-    const title =
-      document
-        .getElementById("course-name")
-        .value
-        .trim();
+const courseForm =
+  document.getElementById(
+    "course-form"
+  );
 
 
-    if (!title) {
+if (courseForm) {
+
+  courseForm.onsubmit =
+    async event => {
+
+      event.preventDefault();
+
+
+      const title =
+        document
+          .getElementById(
+            "course-name"
+          )
+          .value
+          .trim();
+
+
+      if (!title) {
+
+        show(
+          "Please enter a course name."
+        );
+
+        return;
+      }
+
+
+      const payload = {
+
+        title: title,
+
+
+        price: Number(
+          document
+            .getElementById(
+              "course-price"
+            )
+            .value
+        ),
+
+
+        category:
+          document
+            .getElementById(
+              "course-category"
+            )
+            .value
+            .trim(),
+
+
+        duration:
+          document
+            .getElementById(
+              "course-duration"
+            )
+            .value
+            .trim(),
+
+
+        image_url:
+          document
+            .getElementById(
+              "course-image"
+            )
+            .value
+            .trim() || null,
+
+
+        description:
+          document
+            .getElementById(
+              "course-description"
+            )
+            .value
+            .trim(),
+
+
+        modules:
+          document
+            .getElementById(
+              "course-modules"
+            )
+            .value
+            .split("\n")
+            .map(
+              x => x.trim()
+            )
+            .filter(Boolean),
+
+
+        active: true,
+
+
+        updated_at:
+          new Date()
+            .toISOString()
+
+      };
+
+
+      let result;
+
+
+      if (editingId) {
+
+        result =
+          await db
+            .from("courses")
+            .update(payload)
+            .eq(
+              "id",
+              editingId
+            );
+
+      } else {
+
+        result =
+          await db
+            .from("courses")
+            .insert(payload);
+
+      }
+
+
+      if (result.error) {
+
+        console.error(
+          result.error
+        );
+
+        show(
+          result.error.message
+        );
+
+        return;
+      }
+
 
       show(
-        "Please enter a course name."
+
+        editingId
+          ? "Course updated successfully."
+          : "Course added successfully.",
+
+        true
+
       );
 
-      return;
-    }
+
+      resetForm();
 
 
-    const payload = {
+      await loadCourses();
 
-      title: title,
-
-      price: Number(
-        document.getElementById("course-price").value
-      ),
-
-      category:
-        document
-          .getElementById("course-category")
-          .value
-          .trim(),
-
-      duration:
-        document
-          .getElementById("course-duration")
-          .value
-          .trim(),
-
-      image_url:
-        document
-          .getElementById("course-image")
-          .value
-          .trim() || null,
-
-      description:
-        document
-          .getElementById("course-description")
-          .value
-          .trim(),
-
-      modules:
-        document
-          .getElementById("course-modules")
-          .value
-          .split("\n")
-          .map(x => x.trim())
-          .filter(Boolean),
-
-      active: true,
-
-      updated_at:
-        new Date().toISOString()
     };
 
-
-    let result;
-
-
-    if (editingId) {
-
-      result = await db
-        .from("courses")
-        .update(payload)
-        .eq("id", editingId);
-
-    } else {
-
-      result = await db
-        .from("courses")
-        .insert(payload);
-
-    }
+}
 
 
-    if (result.error) {
-
-      console.error(result.error);
-
-      show(result.error.message);
-
-      return;
-    }
-
-
-    show(
-      editingId
-        ? "Course updated successfully."
-        : "Course added successfully.",
-      true
-    );
-
-
-    resetForm();
-
-    await loadCourses();
-  };
-
-
-// =============================
+// =====================================================
 // COURSE BUTTONS
-// =============================
+// =====================================================
 
-document.getElementById("new-course").onclick =
-  resetForm;
+const newCourseButton =
+  document.getElementById(
+    "new-course"
+  );
 
-document.getElementById("cancel-edit").onclick =
-  resetForm;
+
+if (newCourseButton) {
+
+  newCourseButton.onclick =
+    resetForm;
+
+}
 
 
-// =============================
+const cancelEditButton =
+  document.getElementById(
+    "cancel-edit"
+  );
+
+
+if (cancelEditButton) {
+
+  cancelEditButton.onclick =
+    resetForm;
+
+}
+
+
+// =====================================================
 // LOAD ENROLMENTS
-// =============================
+// =====================================================
 
 async function loadEnrolments() {
 
   const box =
-    document.getElementById("admin-enrolments");
+    document.getElementById(
+      "admin-enrolments"
+    );
+
+
+  if (!box) return;
+
+
+  box.innerHTML =
+    "<p>Loading enrolments...</p>";
 
 
   const {
@@ -569,25 +848,33 @@ async function loadEnrolments() {
       profiles(full_name),
       courses(title,price)
     `)
-    .order("created_at", {
-      ascending: false
-    });
+    .order(
+      "created_at",
+      {
+        ascending: false
+      }
+    );
 
 
   if (error) {
 
     console.error(error);
 
+
     box.innerHTML =
       "<p>Could not load enrolments: " +
       esc(error.message) +
       "</p>";
 
+
     return;
   }
 
 
-  if (!data || data.length === 0) {
+  if (
+    !data ||
+    data.length === 0
+  ) {
 
     box.innerHTML =
       "<p>No enrolment requests yet.</p>";
@@ -598,179 +885,254 @@ async function loadEnrolments() {
 
   box.innerHTML = `
 
-    <table>
+    <div class="enrolment-table-wrapper">
 
-      <thead>
+      <table class="enrolment-table">
 
-        <tr>
-          <th>Student</th>
-          <th>Course</th>
-          <th>Price</th>
-          <th>Status</th>
-          <th>Date</th>
-          <th>Action</th>
-        </tr>
-
-      </thead>
-
-
-      <tbody>
-
-        ${data.map(enrolment => `
+        <thead>
 
           <tr>
 
-            <td>
-              ${esc(
-                enrolment.profiles?.full_name || ""
-              )}
-            </td>
+            <th>Student</th>
 
+            <th>Course</th>
 
-            <td>
-              ${esc(
-                enrolment.courses?.title || ""
-              )}
-            </td>
+            <th>Price</th>
 
+            <th>Status</th>
 
-            <td>
-              R${Number(
-                enrolment.courses?.price || 0
-              ).toLocaleString("en-ZA")}
-            </td>
+            <th>Date</th>
 
-
-            <td>
-              ${esc(
-                enrolment.status || ""
-              )}
-            </td>
-
-
-            <td>
-              ${
-                enrolment.created_at
-                  ? new Date(
-                      enrolment.created_at
-                    ).toLocaleDateString("en-ZA")
-                  : ""
-              }
-            </td>
-
-
-            <td>
-
-              <select
-                data-status="${enrolment.id}">
-
-                <option
-                  value="pending"
-                  ${
-                    enrolment.status === "pending"
-                      ? "selected"
-                      : ""
-                  }>
-                  Pending
-                </option>
-
-                <option
-                  value="approved"
-                  ${
-                    enrolment.status === "approved"
-                      ? "selected"
-                      : ""
-                  }>
-                  Approved
-                </option>
-
-                <option
-                  value="completed"
-                  ${
-                    enrolment.status === "completed"
-                      ? "selected"
-                      : ""
-                  }>
-                  Completed
-                </option>
-
-                <option
-                  value="cancelled"
-                  ${
-                    enrolment.status === "cancelled"
-                      ? "selected"
-                      : ""
-                  }>
-                  Cancelled
-                </option>
-
-              </select>
-
-            </td>
+            <th>Action</th>
 
           </tr>
 
-        `).join("")}
+        </thead>
 
-      </tbody>
 
-    </table>
+        <tbody>
+
+          ${data.map(
+            enrolment => `
+
+              <tr>
+
+                <td>
+
+                  ${esc(
+                    enrolment
+                      .profiles
+                      ?.full_name ||
+                    "Student"
+                  )}
+
+                </td>
+
+
+                <td>
+
+                  ${esc(
+                    enrolment
+                      .courses
+                      ?.title ||
+                    ""
+                  )}
+
+                </td>
+
+
+                <td>
+
+                  R${Number(
+                    enrolment
+                      .courses
+                      ?.price ||
+                    0
+                  ).toLocaleString(
+                    "en-ZA"
+                  )}
+
+                </td>
+
+
+                <td>
+
+                  ${esc(
+                    enrolment.status ||
+                    ""
+                  )}
+
+                </td>
+
+
+                <td>
+
+                  ${
+                    enrolment.created_at
+                      ? new Date(
+                          enrolment.created_at
+                        ).toLocaleDateString(
+                          "en-ZA"
+                        )
+                      : ""
+                  }
+
+                </td>
+
+
+                <td>
+
+                  <select
+                    data-status="${enrolment.id}">
+
+                    <option
+                      value="pending"
+                      ${
+                        enrolment.status ===
+                        "pending"
+                          ? "selected"
+                          : ""
+                      }>
+                      Pending
+                    </option>
+
+
+                    <option
+                      value="approved"
+                      ${
+                        enrolment.status ===
+                        "approved"
+                          ? "selected"
+                          : ""
+                      }>
+                      Approved
+                    </option>
+
+
+                    <option
+                      value="completed"
+                      ${
+                        enrolment.status ===
+                        "completed"
+                          ? "selected"
+                          : ""
+                      }>
+                      Completed
+                    </option>
+
+
+                    <option
+                      value="cancelled"
+                      ${
+                        enrolment.status ===
+                        "cancelled"
+                          ? "selected"
+                          : ""
+                      }>
+                      Cancelled
+                    </option>
+
+                  </select>
+
+                </td>
+
+              </tr>
+
+            `
+          ).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
 
   `;
 
 
-  box.querySelectorAll("[data-status]")
+  // ===================================================
+  // ENROLMENT STATUS CHANGES
+  // ===================================================
+
+  box
+    .querySelectorAll(
+      "[data-status]"
+    )
     .forEach(select => {
 
-      select.onchange = async () => {
+      select.onchange =
+        async () => {
 
-        const { error } = await db
-          .from("enrollments")
-          .update({
-            status: select.value
-          })
-          .eq(
-            "id",
-            select.dataset.status
-          );
+          const {
+            error
+          } = await db
+            .from(
+              "enrollments"
+            )
+            .update({
+
+              status:
+                select.value
+
+            })
+            .eq(
+              "id",
+              select.dataset.status
+            );
 
 
-        if (error) {
+          if (error) {
 
-          console.error(error);
+            console.error(
+              error
+            );
 
-          show(error.message);
+            show(
+              error.message
+            );
 
-        } else {
+          } else {
 
-          show(
-            "Enrolment status updated.",
-            true
-          );
+            show(
+              "Enrolment status updated.",
+              true
+            );
 
-        }
+          }
 
-      };
+        };
 
     });
 }
 
 
-// =============================
+// =====================================================
 // LOGOUT
-// =============================
+// =====================================================
 
-document.getElementById("logout").onclick =
-  async () => {
-
-    await db.auth.signOut();
-
-    location.href = "index.html";
-  };
+const logout =
+  document.getElementById(
+    "logout"
+  );
 
 
-// =============================
-// START
-// =============================
+if (logout) {
 
-init(); 
+  logout.onclick =
+    async () => {
+
+      await db.auth.signOut();
+
+      location.href =
+        "index.html";
+
+    };
+
+}
+
+
+// =====================================================
+// START ADMIN
+// =====================================================
+
+init();
