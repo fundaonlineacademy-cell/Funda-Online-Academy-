@@ -1,5 +1,5 @@
 // Funda Online Academy
-// Student Login & Registration
+// Login, Registration and Password Reset
 
 const db = supabase.createClient(
   window.SUPABASE_URL,
@@ -17,6 +17,8 @@ const messageBox = document.getElementById("message");
 
 
 function showMessage(message, success = false) {
+  if (!messageBox) return;
+
   messageBox.textContent = message;
   messageBox.classList.remove("hidden");
 
@@ -31,6 +33,8 @@ function showMessage(message, success = false) {
 
 
 function clearMessage() {
+  if (!messageBox) return;
+
   messageBox.textContent = "";
   messageBox.classList.add("hidden");
 }
@@ -38,15 +42,27 @@ function clearMessage() {
 
 function showLogin() {
   clearMessage();
-  signupForm.classList.add("hidden");
-  loginForm.classList.remove("hidden");
+
+  if (signupForm) {
+    signupForm.classList.add("hidden");
+  }
+
+  if (loginForm) {
+    loginForm.classList.remove("hidden");
+  }
 }
 
 
 function showSignup() {
   clearMessage();
-  loginForm.classList.add("hidden");
-  signupForm.classList.remove("hidden");
+
+  if (loginForm) {
+    loginForm.classList.add("hidden");
+  }
+
+  if (signupForm) {
+    signupForm.classList.remove("hidden");
+  }
 }
 
 
@@ -68,245 +84,294 @@ if (signupTab) {
 }
 
 
-// Check whether a student is already logged in
+// Check existing session
 async function checkExistingSession() {
   const { data, error } = await db.auth.getSession();
 
   if (error) {
-    console.error(error);
+    console.error("Session error:", error);
     return;
   }
 
-  if (data.session) {
-    window.location.href = "dashboard.html";
-  }
-}
-
-checkExistingSession();
-
-
-// =============================
-// STUDENT LOGIN
-// =============================
-loginForm.addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  clearMessage();
-
-  const email = document
-    .getElementById("login-email")
-    .value
-    .trim()
-    .toLowerCase();
-
-  const password = document
-    .getElementById("login-password")
-    .value;
-
-  if (!email || !password) {
-    showMessage("Please enter your email and password.");
+  if (!data.session || !data.session.user) {
     return;
   }
 
-  showMessage("Logging in...", true);
-
-  const { data, error } = await db.auth.signInWithPassword({
-    email: email,
-    password: password
-  });
-
-  if (error) {
-    showMessage(
-      "Login failed. Please check your email and password."
-    );
-    console.error(error);
-    return;
-  }
-
-  if (!data.session || !data.user) {
-    showMessage(
-      "Login could not be completed. Please try again."
-    );
-    return;
-  }
-
-  showMessage(
-    "Login successful. Opening your portal...",
-    true
-  );
+  const userId = data.session.user.id;
 
   const { data: profile, error: profileError } = await db
     .from("profiles")
     .select("role")
-    .eq("id", data.user.id)
-    .single();
+    .eq("id", userId)
+    .maybeSingle();
 
   if (profileError) {
-    console.error(profileError);
+    console.error("Profile error:", profileError);
+    return;
   }
 
-  setTimeout(function () {
-    if (profile && profile.role === "admin") {
-      window.location.href = "admin.html";
-    } else {
-      window.location.href = "dashboard.html";
-    }
-  }, 500);
-});
+  if (profile && profile.role === "admin") {
+    window.location.href = "admin.html";
+  } else {
+    window.location.href = "dashboard.html";
+  }
+}
 
+
+// Run session check
+checkExistingSession();
 
 
 // =============================
-// STUDENT REGISTRATION
+// LOGIN
 // =============================
 
-signupForm.addEventListener("submit", async function (e) {
-  e.preventDefault();
+if (loginForm) {
+  loginForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-  clearMessage();
+    clearMessage();
 
-  const name = document
-    .getElementById("signup-name")
-    .value
-    .trim();
+    const emailInput =
+      document.getElementById("login-email");
 
-  const email = document
-    .getElementById("signup-email")
-    .value
-    .trim()
-    .toLowerCase();
+    const passwordInput =
+      document.getElementById("login-password");
 
-  const password = document
-    .getElementById("signup-password")
-    .value;
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
 
-  const confirmPassword = document
-    .getElementById("signup-confirm-password")
-    .value;
-
-
-  // Check required fields
-  if (!name || !email || !password || !confirmPassword) {
-    showMessage("Please complete all registration fields.");
-    return;
-  }
-
-
-  // Check password length
-  if (password.length < 6) {
-    showMessage(
-      "Your password must contain at least 6 characters."
-    );
-    return;
-  }
-
-
-  // Check passwords match
-  if (password !== confirmPassword) {
-    showMessage(
-      "The passwords do not match. Please enter the same password twice."
-    );
-    return;
-  }
-
-
-  showMessage("Creating your student account...", true);
-
-
-  const { data, error } = await db.auth.signUp({
-    email: email,
-    password: password,
-
-    options: {
-      data: {
-        full_name: name
-      }
+    if (!email || !password) {
+      showMessage(
+        "Please enter your email and password."
+      );
+      return;
     }
-  });
 
+    showMessage("Logging in...", true);
 
-  if (error) {
-    console.error(error);
+    const { data, error } =
+      await db.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
 
-    showMessage(error.message);
-    return;
-  }
+    if (error) {
+      console.error("Login error:", error);
 
+      showMessage(
+        error.message ||
+        "Login failed. Please check your email and password."
+      );
 
-  // If Supabase immediately creates a session
-  if (data.session) {
+      return;
+    }
+
+    if (!data || !data.user) {
+      showMessage(
+        "Login could not be completed. Please try again."
+      );
+
+      return;
+    }
+
+    const { data: profile, error: profileError } =
+      await db
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+    if (profileError) {
+      console.error("Profile lookup error:", profileError);
+
+      showMessage(
+        "Login worked, but we could not load your account profile."
+      );
+
+      return;
+    }
+
     showMessage(
-      "Account created successfully. Opening your student portal...",
+      "Login successful. Opening your portal...",
       true
     );
 
     setTimeout(function () {
-      window.location.href = "dashboard.html";
-    }, 700);
 
-    return;
-  }
+      if (profile && profile.role === "admin") {
+        window.location.href = "admin.html";
+      } else {
+        window.location.href = "dashboard.html";
+      }
+
+    }, 500);
+  });
+}
 
 
-  // If email confirmation is required
-  showMessage(
-    "Your account has been created. Please check your email to confirm your account, then log in.",
-    true
-  );
+// =============================
+// REGISTRATION
+// =============================
 
-  signupForm.reset();
+if (signupForm) {
+  signupForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-  setTimeout(function () {
-    showLogin();
-  }, 2500);
-});
+    clearMessage();
+
+    const name =
+      document.getElementById("signup-name").value.trim();
+
+    const email =
+      document
+        .getElementById("signup-email")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const password =
+      document.getElementById("signup-password").value;
+
+    const confirmPassword =
+      document.getElementById(
+        "signup-confirm-password"
+      ).value;
+
+
+    if (!name || !email || !password || !confirmPassword) {
+      showMessage(
+        "Please complete all registration fields."
+      );
+      return;
+    }
+
+
+    if (password.length < 6) {
+      showMessage(
+        "Your password must contain at least 6 characters."
+      );
+      return;
+    }
+
+
+    if (password !== confirmPassword) {
+      showMessage(
+        "The passwords do not match."
+      );
+      return;
+    }
+
+
+    showMessage(
+      "Creating your student account...",
+      true
+    );
+
+
+    const { data, error } =
+      await db.auth.signUp({
+        email: email,
+        password: password,
+
+        options: {
+          data: {
+            full_name: name
+          }
+        }
+      });
+
+
+    if (error) {
+      console.error("Registration error:", error);
+
+      showMessage(error.message);
+      return;
+    }
+
+
+    if (data.session && data.user) {
+
+      showMessage(
+        "Account created successfully.",
+        true
+      );
+
+      setTimeout(function () {
+        window.location.href = "dashboard.html";
+      }, 700);
+
+      return;
+    }
+
+
+    showMessage(
+      "Your account has been created. Please check your email to confirm your account, then log in.",
+      true
+    );
+
+    signupForm.reset();
+
+    setTimeout(function () {
+      showLogin();
+    }, 2500);
+  });
+}
 
 
 // =============================
 // FORGOT PASSWORD
 // =============================
 
-forgotLink.addEventListener("click", async function (e) {
-  e.preventDefault();
+if (forgotLink) {
+  forgotLink.addEventListener("click", async function (e) {
+    e.preventDefault();
 
-  clearMessage();
+    clearMessage();
 
-  const email = document
-    .getElementById("login-email")
-    .value
-    .trim()
-    .toLowerCase();
+    const email =
+      document
+        .getElementById("login-email")
+        .value
+        .trim()
+        .toLowerCase();
 
-  if (!email) {
-    showMessage(
-      "Please enter your email address first, then tap Forgot Password."
-    );
-    return;
-  }
-
-
-  const resetUrl =
-    window.location.origin +
-    window.location.pathname;
-
-
-  const { error } = await db.auth.resetPasswordForEmail(
-    email,
-    {
-      redirectTo: resetUrl
+    if (!email) {
+      showMessage(
+        "Please enter your email address first."
+      );
+      return;
     }
-  );
 
 
-  if (error) {
-    console.error(error);
-    showMessage(error.message);
-    return;
-  }
+    const resetUrl =
+      window.location.origin +
+      window.location.pathname;
 
 
-  showMessage(
-    "Password reset instructions have been sent to your email.",
-    true
-  );
-});
+    const { error } =
+      await db.auth.resetPasswordForEmail(
+        email,
+        {
+          redirectTo: resetUrl
+        }
+      );
+
+
+    if (error) {
+      console.error(
+        "Password reset error:",
+        error
+      );
+
+      showMessage(error.message);
+      return;
+    }
+
+
+    showMessage(
+      "Password reset instructions have been sent to your email.",
+      true
+    );
+  });
+}
