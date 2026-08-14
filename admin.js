@@ -1,10 +1,12 @@
 const { createClient } = supabase;
+
 const db = createClient(
   window.SUPABASE_URL,
   window.SUPABASE_ANON_KEY
 );
 
 const msg = document.getElementById("message");
+
 let courses = [];
 let editingId = null;
 
@@ -40,12 +42,13 @@ function resetForm() {
   document.getElementById("course-id").value = "";
 }
 
+
 function fill(course) {
+
   editingId = course.id;
 
   document.getElementById("course-id").value = course.id;
 
-  // DATABASE COLUMN IS "title"
   document.getElementById("course-name").value =
     course.title || "";
 
@@ -92,10 +95,12 @@ async function init() {
     return;
   }
 
+
   const {
     data: { session },
     error: sessionError
   } = await db.auth.getSession();
+
 
   if (sessionError) {
     console.error(sessionError);
@@ -103,10 +108,12 @@ async function init() {
     return;
   }
 
+
   if (!session) {
     location.href = "auth.html";
     return;
   }
+
 
   document.getElementById("admin-email").textContent =
     session.user.email || "";
@@ -125,11 +132,13 @@ async function init() {
     .eq("id", session.user.id)
     .maybeSingle();
 
+
   if (profileError) {
     console.error(profileError);
     show(profileError.message);
     return;
   }
+
 
   if (profile?.role !== "admin") {
 
@@ -145,11 +154,119 @@ async function init() {
   }
 
 
-  // Load admin information
+  // =============================
+  // LOAD ALL ADMIN INFORMATION
+  // =============================
+
   await Promise.all([
+    loadStudents(),
     loadCourses(),
     loadEnrolments()
   ]);
+}
+
+
+// =============================
+// LOAD STUDENTS
+// =============================
+
+async function loadStudents() {
+
+  const box =
+    document.getElementById("admin-students");
+
+
+  if (!box) return;
+
+
+  box.innerHTML = "Loading students…";
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("profiles")
+    .select("*")
+    .neq("role", "admin")
+    .order("full_name");
+
+
+  if (error) {
+
+    console.error("Students error:", error);
+
+    box.innerHTML =
+      "<p>Could not load students: " +
+      esc(error.message) +
+      "</p>";
+
+    return;
+  }
+
+
+  if (!data || data.length === 0) {
+
+    box.innerHTML =
+      "<p>No registered students yet.</p>";
+
+    return;
+  }
+
+
+  box.innerHTML = `
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Student</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Registered</th>
+        </tr>
+
+      </thead>
+
+
+      <tbody>
+
+        ${data.map(student => `
+
+          <tr>
+
+            <td>
+              ${esc(student.full_name || "Student")}
+            </td>
+
+            <td>
+              ${esc(student.email || "")}
+            </td>
+
+            <td>
+              ${esc(student.role || "student")}
+            </td>
+
+            <td>
+              ${
+                student.created_at
+                  ? new Date(
+                      student.created_at
+                    ).toLocaleDateString("en-ZA")
+                  : ""
+              }
+            </td>
+
+          </tr>
+
+        `).join("")}
+
+      </tbody>
+
+    </table>
+
+  `;
 }
 
 
@@ -167,18 +284,25 @@ async function loadCourses() {
     .select("*")
     .order("title");
 
+
   if (error) {
+
     console.error(error);
     show(error.message);
+
     return;
   }
 
+
   courses = data || [];
+
 
   const box =
     document.getElementById("admin-courses");
 
+
   box.innerHTML = courses.map(course => `
+
     <div class="admin-row">
 
       <div>
@@ -189,7 +313,9 @@ async function loadCourses() {
 
         <small>
           ${esc(course.category || "")}
-          · R${Number(course.price || 0).toLocaleString("en-ZA")}
+          · R${Number(
+            course.price || 0
+          ).toLocaleString("en-ZA")}
           · ${esc(course.duration || "")}
         </small>
 
@@ -204,6 +330,7 @@ async function loadCourses() {
           Edit
         </button>
 
+
         <button
           class="btn small danger"
           data-delete="${course.id}">
@@ -213,10 +340,9 @@ async function loadCourses() {
       </div>
 
     </div>
+
   `).join("") || "<p>No courses.</p>";
 
-
-  // EDIT BUTTONS
 
   box.querySelectorAll("[data-edit]")
     .forEach(button => {
@@ -230,12 +356,11 @@ async function loadCourses() {
         if (course) {
           fill(course);
         }
+
       };
 
     });
 
-
-  // DELETE BUTTONS
 
   box.querySelectorAll("[data-delete]")
     .forEach(button => {
@@ -275,8 +400,10 @@ async function deleteCourse(id) {
 
 
   if (error) {
+
     console.error(error);
     show(error.message);
+
     return;
   }
 
@@ -285,6 +412,7 @@ async function deleteCourse(id) {
     "Course deleted successfully.",
     true
   );
+
 
   await loadCourses();
 }
@@ -308,14 +436,17 @@ document.getElementById("course-form").onsubmit =
 
 
     if (!title) {
-      show("Please enter a course name.");
+
+      show(
+        "Please enter a course name."
+      );
+
       return;
     }
 
 
     const payload = {
 
-      // DATABASE COLUMN IS "title"
       title: title,
 
       price: Number(
@@ -518,9 +649,13 @@ async function loadEnrolments() {
 
 
             <td>
-              ${new Date(
+              ${
                 enrolment.created_at
-              ).toLocaleDateString("en-ZA")}
+                  ? new Date(
+                      enrolment.created_at
+                    ).toLocaleDateString("en-ZA")
+                  : ""
+              }
             </td>
 
 
@@ -531,25 +666,41 @@ async function loadEnrolments() {
 
                 <option
                   value="pending"
-                  ${enrolment.status === "pending" ? "selected" : ""}>
+                  ${
+                    enrolment.status === "pending"
+                      ? "selected"
+                      : ""
+                  }>
                   Pending
                 </option>
 
                 <option
                   value="approved"
-                  ${enrolment.status === "approved" ? "selected" : ""}>
+                  ${
+                    enrolment.status === "approved"
+                      ? "selected"
+                      : ""
+                  }>
                   Approved
                 </option>
 
                 <option
                   value="completed"
-                  ${enrolment.status === "completed" ? "selected" : ""}>
+                  ${
+                    enrolment.status === "completed"
+                      ? "selected"
+                      : ""
+                  }>
                   Completed
                 </option>
 
                 <option
                   value="cancelled"
-                  ${enrolment.status === "cancelled" ? "selected" : ""}>
+                  ${
+                    enrolment.status === "cancelled"
+                      ? "selected"
+                      : ""
+                  }>
                   Cancelled
                 </option>
 
@@ -564,10 +715,9 @@ async function loadEnrolments() {
       </tbody>
 
     </table>
+
   `;
 
-
-  // STATUS CHANGES
 
   box.querySelectorAll("[data-status]")
     .forEach(select => {
@@ -623,4 +773,4 @@ document.getElementById("logout").onclick =
 // START
 // =============================
 
-init();
+init(); 
