@@ -7,8 +7,9 @@ const db = createClient(
 
 const msg = document.getElementById("message");
 
-function show(t, ok = false) {
-  msg.textContent = t;
+function show(text, ok = false) {
+  if (!msg) return;
+  msg.textContent = text;
   msg.className = "message " + (ok ? "success" : "error");
 }
 
@@ -18,15 +19,21 @@ async function init() {
     return;
   }
 
-  const { data: { session } } = await db.auth.getSession();
+  const {
+    data: { session }
+  } = await db.auth.getSession();
 
   if (!session) {
     location.href = "auth.html";
     return;
   }
 
-  document.getElementById("user-email").textContent =
-    session.user.email;
+  const emailBox = document.getElementById("user-email");
+  const nameBox = document.getElementById("user-name");
+
+  if (emailBox) {
+    emailBox.textContent = session.user.email || "";
+  }
 
   const { data: profile } = await db
     .from("profiles")
@@ -34,33 +41,50 @@ async function init() {
     .eq("id", session.user.id)
     .maybeSingle();
 
-  document.getElementById("user-name").textContent =
-    profile?.full_name ||
-    session.user.user_metadata?.full_name ||
-    "Student";
+  if (nameBox) {
+    nameBox.textContent =
+      profile?.full_name ||
+      session.user.user_metadata?.full_name ||
+      "Student";
+  }
 
   await loadEnrolments(session.user.id);
   await loadAvailableCourses(session.user.id);
 }
 
+
 async function loadEnrolments(uid) {
   const box = document.getElementById("enrolments");
 
-  const { data, error } = await db
+  if (!box) return;
+
+  const {
+    data,
+    error
+  } = await db
     .from("enrolments")
-    .select(
-      "id,status,created_at,courses(name,price,category,duration,description)"
-    )
+    .select(`
+      id,
+      status,
+      created_at,
+      courses (
+        name,
+        price,
+        category,
+        duration,
+        description
+      )
+    `)
     .eq("student_id", uid)
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.error(error);
+    console.error("Enrolments error:", error);
     box.innerHTML = "<p>Could not load enrolments.</p>";
     return;
   }
 
-  if (!data?.length) {
+  if (!data || !data.length) {
     box.innerHTML = `
       <div class="empty card">
         <h3>No enrolments yet</h3>
@@ -73,132 +97,155 @@ async function loadEnrolments(uid) {
     return;
   }
 
-  box.innerHTML = data
-    .map(
-      e => `
-        <article class="card">
-          <span class="tag">
-            ${escapeHtml(e.courses?.category || "Course")}
-          </span>
+  box.innerHTML = data.map(e => `
+    <article class="card">
 
-          <h3>
-            ${escapeHtml(e.courses?.name || "Course")}
-          </h3>
+      <span class="tag">
+        ${escapeHtml(e.courses?.category || "Course")}
+      </span>
 
-          <p>
-            ${escapeHtml(e.courses?.description || "")}
-          </p>
+      <h3>
+        ${escapeHtml(e.courses?.name || "Course")}
+      </h3>
 
-          <p>
-            <strong>Price:</strong>
-            R${Number(e.courses?.price || 0).toLocaleString("en-ZA")}
-          </p>
+      <p>
+        ${escapeHtml(e.courses?.description || "")}
+      </p>
 
-          <p>
-            <strong>Status:</strong>
-            <span class="status">
-              ${escapeHtml(e.status)}
-            </span>
-          </p>
+      <p>
+        <strong>Price:</strong>
+        R${Number(e.courses?.price || 0).toLocaleString("en-ZA")}
+      </p>
 
-          <small>
-            Requested
-            ${new Date(e.created_at).toLocaleDateString("en-ZA")}
-          </small>
-        </article>
-      `
-    )
-    .join("");
+      <p>
+        <strong>Status:</strong>
+        <span class="status">
+          ${escapeHtml(e.status || "pending")}
+        </span>
+      </p>
+
+      <small>
+        Requested
+        ${new Date(e.created_at).toLocaleDateString("en-ZA")}
+      </small>
+
+    </article>
+  `).join("");
 }
+
 
 async function loadAvailableCourses(uid) {
   const box = document.getElementById("available-courses");
 
-  const { data: courses, error } = await db
+  if (!box) return;
+
+  const {
+    data: courses,
+    error
+  } = await db
     .from("courses")
-    .select("id,name,price,category,duration,description")
+    .select(`
+      id,
+      name,
+      price,
+      category,
+      duration,
+      description
+    `)
     .eq("active", true)
     .order("name");
 
   if (error) {
-    console.error(error);
+    console.error("Courses error:", error);
     box.innerHTML = "<p>Could not load courses.</p>";
     return;
   }
 
-  const { data: mine } = await db
+  const {
+    data: mine,
+    error: enrolmentError
+  } = await db
     .from("enrolments")
     .select("course_id")
     .eq("student_id", uid);
+
+  if (enrolmentError) {
+    console.error("Student courses error:", enrolmentError);
+  }
 
   const enrolled = new Set(
     (mine || []).map(x => x.course_id)
   );
 
-  box.innerHTML =
-    (courses || [])
-      .map(
-        c => `
-          <article class="card">
-            <span class="tag">
-              ${escapeHtml(c.category || "Course")}
-            </span>
+  if (!courses || !courses.length) {
+    box.innerHTML = "<p>No courses available.</p>";
+    return;
+  }
 
-            <h3>
-              ${escapeHtml(c.name || "Course")}
-            </h3>
+  box.innerHTML = courses.map(c => `
 
-            <p>
-              ${escapeHtml(
-                c.description ||
-                "Flexible online short course."
-              )}
-            </p>
+    <article class="card">
 
-            <p>
-              <strong>
-                ${escapeHtml(c.duration || "")}
-              </strong>
-            </p>
+      <span class="tag">
+        ${escapeHtml(c.category || "Course")}
+      </span>
 
-            <p class="price">
-              R${Number(c.price || 0).toLocaleString("en-ZA")}
-            </p>
+      <h3>
+        ${escapeHtml(c.name || "Course")}
+      </h3>
 
-            ${
-              enrolled.has(c.id)
-                ? `
-                  <button
-                    class="btn ghost full"
-                    disabled
-                  >
-                    Already Enrolled
-                  </button>
-                `
-                : `
-                  <button
-                    class="btn green full"
-                    data-enrol="${c.id}"
-                  >
-                    Request Enrolment
-                  </button>
-                `
-            }
-          </article>
-        `
-      )
-      .join("") || "<p>No courses available.</p>";
+      <p>
+        ${escapeHtml(
+          c.description ||
+          "Flexible online short course."
+        )}
+      </p>
+
+      <p>
+        <strong>
+          ${escapeHtml(c.duration || "")}
+        </strong>
+      </p>
+
+      <p class="price">
+        R${Number(c.price || 0).toLocaleString("en-ZA")}
+      </p>
+
+      ${
+        enrolled.has(c.id)
+          ? `
+            <button
+              class="btn ghost full"
+              disabled
+            >
+              Already Enrolled
+            </button>
+          `
+          : `
+            <button
+              class="btn green full"
+              data-enrol="${c.id}"
+            >
+              Request Enrolment
+            </button>
+          `
+      }
+
+    </article>
+
+  `).join("");
 
   box
     .querySelectorAll("[data-enrol]")
-    .forEach(
-      b =>
-        (b.onclick = () =>
-          enrol(b.dataset.enrol, uid))
-    );
+    .forEach(button => {
+      button.onclick = () =>
+        enrol(button.dataset.enrol, uid);
+    });
 }
 
+
 async function enrol(courseId, uid) {
+
   if (
     !confirm(
       "Send an enrolment request for this course?"
@@ -216,13 +263,15 @@ async function enrol(courseId, uid) {
     });
 
   if (error) {
-    console.error(error);
+    console.error("Enrolment error:", error);
 
-    show(
-      error.code === "23505"
-        ? "You have already requested this course."
-        : error.message
-    );
+    if (error.code === "23505") {
+      show(
+        "You have already requested this course."
+      );
+    } else {
+      show(error.message);
+    }
 
     return;
   }
@@ -236,23 +285,30 @@ async function enrol(courseId, uid) {
   await loadAvailableCourses(uid);
 }
 
-document.getElementById("logout").onclick = async () => {
-  await db.auth.signOut();
-  location.href = "index.html";
-};
 
-function escapeHtml(s) {
-  return String(s ?? "").replace(
+const logoutButton =
+  document.getElementById("logout");
+
+if (logoutButton) {
+  logoutButton.onclick = async () => {
+    await db.auth.signOut();
+    location.href = "index.html";
+  };
+}
+
+
+function escapeHtml(value) {
+  return String(value ?? "").replace(
     /[&<>"']/g,
-    m =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#039;"
-      })[m]
+    character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[character])
   );
 }
+
 
 init();
