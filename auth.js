@@ -2,7 +2,61 @@
 // FUNDA ONLINE ACADEMY
 // LOGIN • REGISTRATION • PASSWORD RESET
 // ==========================================
+async function syncStudentRecord(user) {
 
+  if (!user) return false;
+
+  const metadata = user.user_metadata || {};
+
+  const fullName =
+    metadata.full_name ||
+    metadata.name ||
+    "";
+
+  const gender =
+    metadata.gender ||
+    "";
+
+  const idNumber =
+    metadata.id_number ||
+    "";
+
+  const phone =
+    metadata.phone ||
+    "";
+
+  const email =
+    user.email ||
+    "";
+
+  const { error } = await db
+    .from("students")
+    .upsert(
+      {
+        user_id: user.id,
+        full_name: fullName,
+        gender: gender,
+        south_african_id: idNumber,
+        email: email,
+        mobile_whatsapp: phone
+      },
+      {
+        onConflict: "user_id"
+      }
+    );
+
+  if (error) {
+
+    console.error(
+      "Student record error:",
+      error
+    );
+
+    return false;
+  }
+
+  return true;
+}
 const db = supabase.createClient(
   window.SUPABASE_URL,
   window.SUPABASE_ANON_KEY
