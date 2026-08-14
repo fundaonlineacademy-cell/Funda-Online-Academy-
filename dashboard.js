@@ -14,7 +14,6 @@ function show(text, ok = false) {
   msg.className = "message " + (ok ? "success" : "error");
 }
 
-
 async function init() {
   try {
     if (
@@ -22,18 +21,17 @@ async function init() {
       !window.SUPABASE_ANON_KEY ||
       window.SUPABASE_URL.includes("PASTE_")
     ) {
-      show("Supabase is not connected yet.");
+      show("Supabase is not connected.");
       return;
     }
 
     const {
       data: { session },
-      error: sessionError
+      error
     } = await db.auth.getSession();
 
-    if (sessionError) {
-      console.error("Session error:", sessionError);
-      show("Could not check your login session.");
+    if (error) {
+      show("Login error: " + error.message);
       return;
     }
 
@@ -49,18 +47,11 @@ async function init() {
       emailBox.textContent = session.user.email || "";
     }
 
-    const {
-      data: profile,
-      error: profileError
-    } = await db
+    const { data: profile } = await db
       .from("profiles")
       .select("full_name")
       .eq("id", session.user.id)
       .maybeSingle();
-
-    if (profileError) {
-      console.error("Profile error:", profileError);
-    }
 
     if (nameBox) {
       nameBox.textContent =
@@ -73,15 +64,15 @@ async function init() {
     await loadAvailableCourses(session.user.id);
 
   } catch (error) {
-    console.error("Dashboard error:", error);
-    show("Something went wrong loading your dashboard.");
+    console.error(error);
+    show("Dashboard error: " + error.message);
   }
 }
 
 
-/* ================================
-   LOAD STUDENT ENROLMENTS
-================================ */
+/* =========================
+   ENROLMENTS
+========================= */
 
 async function loadEnrolments(uid) {
 
@@ -89,22 +80,13 @@ async function loadEnrolments(uid) {
 
   if (!box) return;
 
-  const {
-    data,
-    error
-  } = await db
+  const { data, error } = await db
     .from("enrolments")
     .select(`
       id,
       status,
       created_at,
-      courses (
-        title,
-        price,
-        category,
-        duration,
-        description
-      )
+      course_id
     `)
     .eq("student_id", uid)
     .order("created_at", {
@@ -117,7 +99,10 @@ async function loadEnrolments(uid) {
 
     box.innerHTML = `
       <div class="card">
-        <p>Could not load enrolments.</p>
+        <p>
+          <strong>Supabase error:</strong><br>
+          ${escapeHtml(error.message)}
+        </p>
       </div>
     `;
 
@@ -147,74 +132,45 @@ async function loadEnrolments(uid) {
     return;
   }
 
-  box.innerHTML = data.map(e => {
+  box.innerHTML = data.map(e => `
+    <article class="card">
 
-    const course = e.courses;
+      <h3>Course Enrolment</h3>
 
-    return `
-      <article class="card">
+      <p>
+        <strong>Status:</strong>
+        ${escapeHtml(e.status || "pending")}
+      </p>
 
-        <span class="tag">
-          ${escapeHtml(
-            course?.category || "Course"
-          )}
-        </span>
+      <small>
+        Requested
+        ${new Date(
+          e.created_at
+        ).toLocaleDateString("en-ZA")}
+      </small>
 
-        <h3>
-          ${escapeHtml(
-            course?.title || "Course"
-          )}
-        </h3>
-
-        <p>
-          ${escapeHtml(
-            course?.description || ""
-          )}
-        </p>
-
-        <p>
-          <strong>Price:</strong>
-          R${Number(
-            course?.price || 0
-          ).toLocaleString("en-ZA")}
-        </p>
-
-        <p>
-          <strong>Status:</strong>
-
-          <span class="status">
-            ${escapeHtml(
-              e.status || "pending"
-            )}
-          </span>
-        </p>
-
-        <small>
-          Requested
-          ${new Date(
-            e.created_at
-          ).toLocaleDateString("en-ZA")}
-        </small>
-
-      </article>
-    `;
-
-  }).join("");
+    </article>
+  `).join("");
 }
 
 
-/* ================================
-   LOAD AVAILABLE COURSES
-================================ */
+/* =========================
+   AVAILABLE COURSES
+========================= */
 
 async function loadAvailableCourses(uid) {
 
   const box =
-    document.getElementById(
-      "available-courses"
-    );
+    document.getElementById("available-courses");
 
   if (!box) return;
+
+  /*
+   IMPORTANT:
+   We are ONLY asking for columns that
+   we have confirmed exist in your
+   courses table.
+  */
 
   const {
     data: courses,
@@ -225,20 +181,31 @@ async function loadAvailableCourses(uid) {
       id,
       title,
       price,
-      category,
-      duration,
-      description
+      active
     `)
     .eq("active", true)
     .order("title");
 
   if (error) {
 
-    console.error("COURSES ERROR:", error);
+    console.error(
+      "COURSES ERROR:",
+      error
+    );
 
     box.innerHTML = `
       <div class="card">
-        <p>Could not load courses.</p>
+        <p>
+          <strong>Supabase course error:</strong>
+        </p>
+
+        <p>
+          ${escapeHtml(error.message)}
+        </p>
+
+        <small>
+          Code: ${escapeHtml(error.code || "none")}
+        </small>
       </div>
     `;
 
@@ -246,7 +213,7 @@ async function loadAvailableCourses(uid) {
   }
 
 
-  /* Find courses the student already requested */
+  /* Get courses already requested */
 
   const {
     data: mine,
@@ -259,9 +226,32 @@ async function loadAvailableCourses(uid) {
   if (enrolmentError) {
 
     console.error(
-      "STUDENT ENROLMENTS ERROR:",
+      "STUDENT ENROLMENT ERROR:",
       enrolmentError
     );
+
+    box.innerHTML = `
+      <div class="card">
+        <p>
+          <strong>Enrolment permission error:</strong>
+        </p>
+
+        <p>
+          ${escapeHtml(
+            enrolmentError.message
+          )}
+        </p>
+
+        <small>
+          Code:
+          ${escapeHtml(
+            enrolmentError.code || "none"
+          )}
+        </small>
+      </div>
+    `;
+
+    return;
   }
 
 
@@ -277,7 +267,9 @@ async function loadAvailableCourses(uid) {
 
     box.innerHTML = `
       <div class="card">
-        <p>No courses are currently available.</p>
+        <p>
+          No active courses found.
+        </p>
       </div>
     `;
 
@@ -287,108 +279,68 @@ async function loadAvailableCourses(uid) {
 
   /* Display courses */
 
-  box.innerHTML = courses.map(c => {
+  box.innerHTML = courses.map(c => `
 
-    const alreadyEnrolled =
-      enrolled.has(c.id);
+    <article class="card">
 
-    return `
-      <article class="card">
+      <h3>
+        ${escapeHtml(
+          c.title || "Course"
+        )}
+      </h3>
 
-        <span class="tag">
-          ${escapeHtml(
-            c.category || "Course"
-          )}
-        </span>
+      <p class="price">
+        R${Number(
+          c.price || 0
+        ).toLocaleString("en-ZA")}
+      </p>
 
-        <h3>
-          ${escapeHtml(
-            c.title || "Course"
-          )}
-        </h3>
+      ${
+        enrolled.has(c.id)
 
-        <p>
-          ${escapeHtml(
-            c.description ||
-            "Flexible online short course."
-          )}
-        </p>
+        ? `
+          <button
+            class="btn ghost full"
+            disabled
+          >
+            Already Enrolled
+          </button>
+        `
 
-        ${
-          c.duration
-            ? `
-              <p>
-                <strong>
-                  ${escapeHtml(c.duration)}
-                </strong>
-              </p>
-            `
-            : ""
-        }
+        : `
+          <button
+            class="btn green full"
+            data-enrol="${c.id}"
+          >
+            Request Enrolment
+          </button>
+        `
+      }
 
-        <p class="price">
-          R${Number(
-            c.price || 0
-          ).toLocaleString("en-ZA")}
-        </p>
+    </article>
 
-        ${
-          alreadyEnrolled
+  `).join("");
 
-            ? `
-              <button
-                class="btn ghost full"
-                disabled
-              >
-                Already Enrolled
-              </button>
-            `
-
-            : `
-              <button
-                class="btn green full"
-                data-enrol="${c.id}"
-              >
-                Request Enrolment
-              </button>
-            `
-        }
-
-      </article>
-    `;
-
-  }).join("");
-
-
-  /* Connect buttons */
 
   box
-    .querySelectorAll(
-      "[data-enrol]"
-    )
+    .querySelectorAll("[data-enrol]")
     .forEach(button => {
 
-      button.onclick = () => {
-
+      button.onclick = () =>
         enrol(
           button.dataset.enrol,
           uid
         );
 
-      };
-
     });
 }
 
 
-/* ================================
+/* =========================
    REQUEST ENROLMENT
-================================ */
+========================= */
 
-async function enrol(
-  courseId,
-  uid
-) {
+async function enrol(courseId, uid) {
 
   if (
     !confirm(
@@ -398,17 +350,13 @@ async function enrol(
     return;
   }
 
-
-  const {
-    error
-  } = await db
+  const { error } = await db
     .from("enrolments")
     .insert({
       student_id: uid,
       course_id: courseId,
       status: "pending"
     });
-
 
   if (error) {
 
@@ -426,7 +374,7 @@ async function enrol(
     } else {
 
       show(
-        "Could not send enrolment request: " +
+        "Enrolment error: " +
         error.message
       );
 
@@ -435,43 +383,38 @@ async function enrol(
     return;
   }
 
-
   show(
     "Enrolment request sent successfully.",
     true
   );
 
-
   await loadEnrolments(uid);
-
   await loadAvailableCourses(uid);
 }
 
 
-/* ================================
+/* =========================
    LOGOUT
-================================ */
+========================= */
 
 const logoutButton =
   document.getElementById("logout");
 
 if (logoutButton) {
 
-  logoutButton.onclick =
-    async () => {
+  logoutButton.onclick = async () => {
 
-      await db.auth.signOut();
+    await db.auth.signOut();
 
-      location.href =
-        "index.html";
+    location.href = "index.html";
 
-    };
+  };
 }
 
 
-/* ================================
-   SECURITY: ESCAPE HTML
-================================ */
+/* =========================
+   SECURITY
+========================= */
 
 function escapeHtml(value) {
 
@@ -490,8 +433,8 @@ function escapeHtml(value) {
 }
 
 
-/* ================================
-   START DASHBOARD
-================================ */
+/* =========================
+   START
+========================= */
 
 init();
