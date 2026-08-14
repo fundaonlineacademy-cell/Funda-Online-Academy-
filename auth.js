@@ -131,12 +131,21 @@ loginForm.addEventListener("submit", async function (e) {
     return;
   }
 
-  showMessage("Login successful. Opening your student portal...", true);
+ showMessage("Login successful. Opening your portal...", true);
 
-  setTimeout(function () {
+const { data: profile } = await db
+  .from("profiles")
+  .select("role")
+  .eq("id", data.user.id)
+  .single();
+
+setTimeout(function () {
+  if (profile && profile.role === "admin") {
+    window.location.href = "admin.html";
+  } else {
     window.location.href = "dashboard.html";
-  }, 500);
-});
+  }
+}, 500); 
 
 
 // =============================
