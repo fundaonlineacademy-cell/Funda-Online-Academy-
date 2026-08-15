@@ -3,27 +3,26 @@
 
 <head>
 
-<meta charset="utf-8">
+  <meta charset="utf-8">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1"
->
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
 
-<title>
-  Student Dashboard | Funda Online Academy
-</title>
+  <title>
+    Student Dashboard | Funda Online Academy
+  </title>
 
-<link
-  rel="stylesheet"
-  href="styles.css"
->
+  <link
+    rel="stylesheet"
+    href="styles.css"
+  >
 
 </head>
 
 
 <body>
-
 
 <header>
 
@@ -40,7 +39,6 @@
       >
 
       <span>
-
         Funda Online Academy Pty Ltd
 
         <small>
@@ -75,15 +73,14 @@
 </header>
 
 
-
 <main class="dashboard">
 
   <div class="wrap">
 
 
-    <!-- =====================================
-         DASHBOARD HEADER
-    ====================================== -->
+    <!-- ================================= -->
+    <!-- WELCOME -->
+    <!-- ================================= -->
 
     <div class="dash-head">
 
@@ -95,18 +92,16 @@
 
 
         <h1>
-
           Welcome,
-
           <span id="user-name">
             Student
           </span>
-
         </h1>
 
 
         <p>
-          Manage your profile and course enrolments.
+          Manage your profile and
+          course enrolments.
         </p>
 
       </div>
@@ -123,9 +118,9 @@
 
 
 
-    <!-- =====================================
-         MESSAGE
-    ====================================== -->
+    <!-- ================================= -->
+    <!-- MESSAGE -->
+    <!-- ================================= -->
 
     <div
       id="message"
@@ -134,9 +129,9 @@
 
 
 
-    <!-- =====================================
-         PAYMENTS
-    ====================================== -->
+    <!-- ================================= -->
+    <!-- PAYMENTS -->
+    <!-- ================================= -->
 
     <section
       class="dashboard-section"
@@ -158,8 +153,9 @@
 
 
           <p>
-            Your payment information will appear
-            here after you enrol in a course.
+            Payment information will appear
+            here after your course enrolment
+            has been processed.
           </p>
 
         </div>
@@ -170,9 +166,9 @@
 
 
 
-    <!-- =====================================
-         MY ENROLMENTS
-    ====================================== -->
+    <!-- ================================= -->
+    <!-- MY ENROLMENTS -->
+    <!-- ================================= -->
 
     <section>
 
@@ -187,7 +183,7 @@
       >
 
         <p class="loading">
-          Loading...
+          Loading enrolments…
         </p>
 
       </div>
@@ -196,9 +192,9 @@
 
 
 
-    <!-- =====================================
-         AVAILABLE COURSES
-    ====================================== -->
+    <!-- ================================= -->
+    <!-- AVAILABLE COURSES -->
+    <!-- ================================= -->
 
     <section>
 
@@ -213,7 +209,7 @@
       >
 
         <p class="loading">
-          Loading...
+          Loading courses…
         </p>
 
       </div>
@@ -227,37 +223,43 @@
 
 
 
-<!-- =====================================
-     SUPABASE
-====================================== -->
+<!-- ===================================== -->
+<!-- SUPABASE -->
+<!-- ===================================== -->
 
 <script
   src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
 ></script>
 
 
-<!-- =====================================
-     SUPABASE CONFIG
-====================================== -->
+<!-- ===================================== -->
+<!-- SUPABASE CONFIG -->
+<!-- ===================================== -->
 
-<script
-  src="supabase-config.js"
-></script>
+<script src="supabase-config.js?v=20260815"></script>
 
 
-<!-- =====================================
-     DASHBOARD
-     
-     CACHE-BUSTER:
-     The version number forces the browser
-     to download the newest dashboard.js.
-====================================== -->
+<!-- ===================================== -->
+<!-- STUDENT DASHBOARD -->
+<!-- CACHE-BUSTED VERSION -->
+<!-- ===================================== -->
 
-<script
-  src="dashboard.js?v=20260815-3"
-></script>
+<script src="dashboard.js?v=20260815-3"></script>
+
+
+<!-- ===================================== -->
+<!-- SCRIPT TEST -->
+<!-- ===================================== -->
+
+<script>
+
+  console.log(
+    "FUNDA DASHBOARD HTML LOADED"
+  );
+
+</script>
 
 
 </body>
 
-</html> 
+      </html> 
