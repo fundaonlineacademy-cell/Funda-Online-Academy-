@@ -1,6 +1,7 @@
 // ==========================================
 // FUNDA ONLINE ACADEMY
 // LOGIN • REGISTRATION • PASSWORD RESET
+// SELECTED COURSE ENROLMENT
 // ==========================================
 
 const db = supabase.createClient(
@@ -19,6 +20,50 @@ const messageBox = document.getElementById("message");
 
 
 // ==========================================
+// REMEMBER SELECTED COURSE
+// ==========================================
+
+const authParams = new URLSearchParams(
+  window.location.search
+);
+
+const selectedCourse =
+  authParams.get("course");
+
+if (selectedCourse) {
+
+  localStorage.setItem(
+    "funda_pending_course",
+    selectedCourse
+  );
+}
+
+
+// ==========================================
+// GET AFTER-LOGIN DESTINATION
+// ==========================================
+
+function getStudentDestination() {
+
+  const course =
+    localStorage.getItem(
+      "funda_pending_course"
+    );
+
+  if (course) {
+
+    return (
+      "dashboard.html?enrol=" +
+      encodeURIComponent(course)
+    );
+
+  }
+
+  return "dashboard.html";
+}
+
+
+// ==========================================
 // MESSAGES
 // ==========================================
 
@@ -27,6 +72,7 @@ function showMessage(message, success = false) {
   if (!messageBox) return;
 
   messageBox.textContent = message;
+
   messageBox.classList.remove("hidden");
 
   if (success) {
@@ -48,6 +94,7 @@ function clearMessage() {
   if (!messageBox) return;
 
   messageBox.textContent = "";
+
   messageBox.classList.add("hidden");
 }
 
@@ -86,26 +133,32 @@ function showSignup() {
 
 if (loginTab) {
 
-  loginTab.addEventListener("click", function(e) {
+  loginTab.addEventListener(
+    "click",
+    function(e) {
 
-    e.preventDefault();
+      e.preventDefault();
 
-    showLogin();
+      showLogin();
 
-  });
+    }
+  );
 
 }
 
 
 if (signupTab) {
 
-  signupTab.addEventListener("click", function(e) {
+  signupTab.addEventListener(
+    "click",
+    function(e) {
 
-    e.preventDefault();
+      e.preventDefault();
 
-    showSignup();
+      showSignup();
 
-  });
+    }
+  );
 
 }
 
@@ -118,24 +171,30 @@ async function syncStudentProfile(user) {
 
   if (!user) return false;
 
-  const metadata = user.user_metadata || {};
+  const metadata =
+    user.user_metadata || {};
+
 
   const fullName =
     metadata.full_name ||
     metadata.name ||
     "";
 
+
   const gender =
     metadata.gender ||
     "";
+
 
   const idNumber =
     metadata.id_number ||
     "";
 
+
   const phone =
     metadata.phone ||
     "";
+
 
   const email =
     user.email ||
@@ -143,6 +202,7 @@ async function syncStudentProfile(user) {
 
 
   // Find existing profile
+
   const {
     data: existingProfile,
     error: findError
@@ -170,14 +230,19 @@ async function syncStudentProfile(user) {
 
   if (existingProfile) {
 
-    // Do not change an existing admin into a student
-    if (existingProfile.role === "admin") {
+    // Never change an admin into a student
+
+    if (
+      existingProfile.role === "admin"
+    ) {
 
       return true;
     }
 
 
-    const { error } = await db
+    const {
+      error
+    } = await db
       .from("profiles")
       .update({
 
@@ -205,6 +270,7 @@ async function syncStudentProfile(user) {
       return false;
     }
 
+
     return true;
   }
 
@@ -213,7 +279,9 @@ async function syncStudentProfile(user) {
   // CREATE NEW STUDENT PROFILE
   // ==========================================
 
-  const { error } = await db
+  const {
+    error
+  } = await db
     .from("profiles")
     .insert({
 
@@ -257,24 +325,30 @@ async function syncStudentRecord(user) {
 
   if (!user) return false;
 
-  const metadata = user.user_metadata || {};
+  const metadata =
+    user.user_metadata || {};
+
 
   const fullName =
     metadata.full_name ||
     metadata.name ||
     "";
 
+
   const gender =
     metadata.gender ||
     "";
+
 
   const idNumber =
     metadata.id_number ||
     "";
 
+
   const phone =
     metadata.phone ||
     "";
+
 
   const email =
     user.email ||
@@ -312,7 +386,9 @@ async function syncStudentRecord(user) {
 
   if (existingStudent) {
 
-    const { error } = await db
+    const {
+      error
+    } = await db
       .from("students")
       .update({
 
@@ -349,7 +425,9 @@ async function syncStudentRecord(user) {
   // CREATE NEW STUDENT
   // ==========================================
 
-  const { error } = await db
+  const {
+    error
+  } = await db
     .from("students")
     .insert({
 
@@ -391,6 +469,7 @@ async function syncStudentAccount(user) {
 
   if (!user) return false;
 
+
   const profileSaved =
     await syncStudentProfile(user);
 
@@ -417,7 +496,10 @@ async function syncStudentAccount(user) {
   }
 
 
-  return profileSaved && studentSaved;
+  return (
+    profileSaved &&
+    studentSaved
+  );
 }
 
 
@@ -444,7 +526,10 @@ async function checkExistingSession() {
   }
 
 
-  if (!data.session || !data.session.user) {
+  if (
+    !data.session ||
+    !data.session.user
+  ) {
 
     return;
   }
@@ -455,10 +540,12 @@ async function checkExistingSession() {
 
 
   // Synchronize student information
+
   await syncStudentAccount(user);
 
 
   // Get account role
+
   const {
     data: profile,
     error: profileError
@@ -480,6 +567,8 @@ async function checkExistingSession() {
   }
 
 
+  // Admin
+
   if (
     profile &&
     profile.role === "admin"
@@ -490,8 +579,10 @@ async function checkExistingSession() {
 
   } else {
 
+    // Student
+
     window.location.href =
-      "dashboard.html";
+      getStudentDestination();
 
   }
 }
@@ -537,7 +628,10 @@ if (loginForm) {
         passwordInput.value;
 
 
-      if (!email || !password) {
+      if (
+        !email ||
+        !password
+      ) {
 
         showMessage(
           "Please enter your email and password."
@@ -581,7 +675,10 @@ if (loginForm) {
       }
 
 
-      if (!data || !data.user) {
+      if (
+        !data ||
+        !data.user
+      ) {
 
         showMessage(
           "Login could not be completed. Please try again."
@@ -592,12 +689,24 @@ if (loginForm) {
 
 
       // Synchronize profile and student record
-      await syncStudentAccount(
-        data.user
-      );
+
+      const accountSaved =
+        await syncStudentAccount(
+          data.user
+        );
+
+
+      if (!accountSaved) {
+
+        console.warn(
+          "Some student information could not be synchronized."
+        );
+
+      }
 
 
       // Get account role
+
       const {
         data: profile,
         error: profileError
@@ -629,24 +738,31 @@ if (loginForm) {
       );
 
 
-      setTimeout(function() {
+      setTimeout(
+        function() {
 
-        if (
-          profile &&
-          profile.role === "admin"
-        ) {
+          // Admin
 
-          window.location.href =
-            "admin.html";
+          if (
+            profile &&
+            profile.role === "admin"
+          ) {
 
-        } else {
+            window.location.href =
+              "admin.html";
 
-          window.location.href =
-            "dashboard.html";
+          } else {
 
-        }
+            // Student
 
-      }, 500);
+            window.location.href =
+              getStudentDestination();
+
+          }
+
+        },
+        500
+      );
 
     }
   );
@@ -747,7 +863,9 @@ if (signupForm) {
 
       // South African ID validation
 
-      if (!/^\d{13}$/.test(idNumber)) {
+      if (
+        !/^\d{13}$/.test(idNumber)
+      ) {
 
         showMessage(
           "Please enter a valid 13-digit South African ID number."
@@ -759,7 +877,9 @@ if (signupForm) {
 
       // Password validation
 
-      if (password.length < 6) {
+      if (
+        password.length < 6
+      ) {
 
         showMessage(
           "Your password must contain at least 6 characters."
@@ -769,7 +889,10 @@ if (signupForm) {
       }
 
 
-      if (password !== confirmPassword) {
+      if (
+        password !==
+        confirmPassword
+      ) {
 
         showMessage(
           "The passwords do not match."
@@ -833,7 +956,10 @@ if (signupForm) {
       }
 
 
-      if (!data || !data.user) {
+      if (
+        !data ||
+        !data.user
+      ) {
 
         showMessage(
           "Account could not be created. Please try again."
@@ -862,8 +988,7 @@ if (signupForm) {
           );
 
           showMessage(
-            "Your account was created, but some student information could not be saved. Please try logging in again.",
-            false
+            "Your account was created, but some student information could not be saved. Please try logging in again."
           );
 
           return;
@@ -876,12 +1001,15 @@ if (signupForm) {
         );
 
 
-        setTimeout(function() {
+        setTimeout(
+          function() {
 
-          window.location.href =
-            "dashboard.html";
+            window.location.href =
+              getStudentDestination();
 
-        }, 900);
+          },
+          900
+        );
 
 
         return;
@@ -901,11 +1029,14 @@ if (signupForm) {
       signupForm.reset();
 
 
-      setTimeout(function() {
+      setTimeout(
+        function() {
 
-        showLogin();
+          showLogin();
 
-      }, 3000);
+        },
+        3000
+      );
 
     }
   );
@@ -953,15 +1084,17 @@ if (forgotLink) {
 
       const {
         error
-      } = await db.auth.resetPasswordForEmail(
+      } =
+        await db.auth.resetPasswordForEmail(
 
-        email,
+          email,
 
-        {
-          redirectTo: resetUrl
-        }
+          {
+            redirectTo:
+              resetUrl
+          }
 
-      );
+        );
 
 
       if (error) {
@@ -987,4 +1120,4 @@ if (forgotLink) {
     }
   );
 
-}
+        } 
