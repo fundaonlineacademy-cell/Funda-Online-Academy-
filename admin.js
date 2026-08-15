@@ -79,9 +79,7 @@ function escapeHTML(value) {
 
 function formatDate(value) {
 
-  if (!value) {
-    return "—";
-  }
+  if (!value) return "—";
 
   const date = new Date(value);
 
@@ -143,22 +141,24 @@ function getStudentName(student) {
     return student.student_name;
   }
 
-  if (
-    student.first_name ||
-    student.last_name
-  ) {
+  if (student.first_name || student.last_name) {
 
-    const name =
+    return (
       `${student.first_name || ""} ${student.last_name || ""}`
-        .trim();
+    ).trim();
 
-    if (name) {
-      return name;
-    }
   }
 
   if (student.email) {
     return student.email;
+  }
+
+  if (student.mobile) {
+    return student.mobile;
+  }
+
+  if (student.phone) {
+    return student.phone;
   }
 
   return "Unknown student";
@@ -205,7 +205,6 @@ function statusBadge(status) {
     lower === "paid" ||
     lower === "completed"
   ) {
-
     className = "approved";
   }
 
@@ -214,7 +213,6 @@ function statusBadge(status) {
     lower === "cancelled" ||
     lower === "failed"
   ) {
-
     className = "rejected";
   }
 
@@ -436,7 +434,6 @@ function addAdminStyles() {
       .funda-admin-table td > * {
         max-width: 65%;
       }
-
     }
 
   `;
@@ -457,11 +454,7 @@ async function checkAdminLogin() {
   } = await db.auth.getUser();
 
   if (error) {
-
-    console.error(
-      "Authentication error:",
-      error
-    );
+    console.error(error);
   }
 
   if (!user) {
@@ -508,9 +501,7 @@ if (logoutBtn) {
 
 async function loadStudents() {
 
-  if (!studentsBox) {
-    return;
-  }
+  if (!studentsBox) return;
 
   studentsBox.innerHTML =
     `<div class="funda-loading">
@@ -536,8 +527,7 @@ async function loadStudents() {
 
     studentsBox.innerHTML = `
       <div class="funda-empty">
-        <strong>Could not load students.</strong>
-        <br><br>
+        <strong>Could not load students.</strong><br><br>
         ${escapeHTML(error.message)}
       </div>
     `;
@@ -545,10 +535,7 @@ async function loadStudents() {
     return;
   }
 
-  if (
-    !data ||
-    data.length === 0
-  ) {
+  if (!data || data.length === 0) {
 
     studentsBox.innerHTML =
       `<div class="funda-empty">
@@ -565,7 +552,6 @@ async function loadStudents() {
       <table class="funda-admin-table">
 
         <thead>
-
           <tr>
             <th>Name</th>
             <th>Email</th>
@@ -573,7 +559,6 @@ async function loadStudents() {
             <th>Gender</th>
             <th>Registration</th>
           </tr>
-
         </thead>
 
         <tbody>
@@ -583,11 +568,9 @@ async function loadStudents() {
             <tr>
 
               <td data-label="Name">
-                <strong>
-                  ${escapeHTML(
-                    getStudentName(student)
-                  )}
-                </strong>
+                ${escapeHTML(
+                  getStudentName(student)
+                )}
               </td>
 
               <td data-label="Email">
@@ -640,9 +623,7 @@ async function loadStudents() {
 
 async function loadCourses() {
 
-  if (!coursesBox) {
-    return;
-  }
+  if (!coursesBox) return;
 
   coursesBox.innerHTML =
     `<div class="funda-loading">
@@ -668,8 +649,7 @@ async function loadCourses() {
 
     coursesBox.innerHTML = `
       <div class="funda-empty">
-        <strong>Could not load courses.</strong>
-        <br><br>
+        <strong>Could not load courses.</strong><br><br>
         ${escapeHTML(error.message)}
       </div>
     `;
@@ -677,10 +657,7 @@ async function loadCourses() {
     return;
   }
 
-  if (
-    !data ||
-    data.length === 0
-  ) {
+  if (!data || data.length === 0) {
 
     coursesBox.innerHTML =
       `<div class="funda-empty">
@@ -697,7 +674,6 @@ async function loadCourses() {
       <table class="funda-admin-table">
 
         <thead>
-
           <tr>
             <th>Course</th>
             <th>Price</th>
@@ -705,7 +681,6 @@ async function loadCourses() {
             <th>Duration</th>
             <th>Action</th>
           </tr>
-
         </thead>
 
         <tbody>
@@ -749,13 +724,13 @@ async function loadCourses() {
 
                   <button
                     class="funda-btn funda-btn-edit"
-                    onclick="editCourse('${course.id}')">
+                    onclick="editCourse('${escapeHTML(course.id)}')">
                     Edit
                   </button>
 
                   <button
                     class="funda-btn funda-btn-delete"
-                    onclick="deleteCourse('${course.id}')">
+                    onclick="deleteCourse('${escapeHTML(course.id)}')">
                     Delete
                   </button>
 
@@ -779,37 +754,29 @@ async function loadCourses() {
 // ============================================================
 // ENROLMENTS
 //
-// IMPORTANT DATABASE STRUCTURE:
+// IMPORTANT:
+// The enrollments table DOES NOT have:
+// - amount
+// - created_at
 //
-// enrollments:
-//   id
-//   student_id
-//   course_id
-//   enrollment_status
-//   enrolled_at
+// We therefore only use:
+// id
+// student_id
+// course_id
+// enrollment_status
+// enrolled_at
 //
-// We DO NOT request:
-//
-//   enrollments.amount
-//   enrollments.created_at
-//
-// The amount is obtained from courses.price.
+// The course price comes from the COURSES table.
 // ============================================================
 
 async function loadEnrolments() {
 
-  if (!enrolmentsBox) {
-    return;
-  }
+  if (!enrolmentsBox) return;
 
   enrolmentsBox.innerHTML =
     `<div class="funda-loading">
       Loading enrolments...
     </div>`;
-
-  // ----------------------------------------------------------
-  // LOAD ENROLMENTS
-  // ----------------------------------------------------------
 
   const {
     data: enrolments,
@@ -866,7 +833,7 @@ async function loadEnrolments() {
 
 
   // ----------------------------------------------------------
-  // STUDENT IDs
+  // GET STUDENTS
   // ----------------------------------------------------------
 
   const studentIds = [
@@ -877,9 +844,26 @@ async function loadEnrolments() {
     )
   ];
 
+  let students = [];
+
+  if (studentIds.length > 0) {
+
+    const result =
+      await db
+        .from("students")
+        .select("*")
+        .in("id", studentIds);
+
+    if (!result.error) {
+
+      students =
+        result.data || [];
+    }
+  }
+
 
   // ----------------------------------------------------------
-  // COURSE IDs
+  // GET COURSES
   // ----------------------------------------------------------
 
   const courseIds = [
@@ -890,43 +874,6 @@ async function loadEnrolments() {
     )
   ];
 
-
-  // ----------------------------------------------------------
-  // LOAD STUDENTS
-  // ----------------------------------------------------------
-
-  let students = [];
-
-  if (studentIds.length > 0) {
-
-    const result =
-      await db
-        .from("students")
-        .select("*")
-        .in(
-          "id",
-          studentIds
-        );
-
-    if (result.error) {
-
-      console.error(
-        "Enrolment students error:",
-        result.error
-      );
-
-    } else {
-
-      students =
-        result.data || [];
-    }
-  }
-
-
-  // ----------------------------------------------------------
-  // LOAD COURSES
-  // ----------------------------------------------------------
-
   let courses = [];
 
   if (courseIds.length > 0) {
@@ -935,19 +882,9 @@ async function loadEnrolments() {
       await db
         .from("courses")
         .select("*")
-        .in(
-          "id",
-          courseIds
-        );
+        .in("id", courseIds);
 
-    if (result.error) {
-
-      console.error(
-        "Enrolment courses error:",
-        result.error
-      );
-
-    } else {
+    if (!result.error) {
 
       courses =
         result.data || [];
@@ -956,39 +893,35 @@ async function loadEnrolments() {
 
 
   // ----------------------------------------------------------
-  // CREATE MAPS
+  // MAP STUDENTS
   // ----------------------------------------------------------
 
   const studentMap = {};
 
   students.forEach(student => {
 
-    if (student.id) {
-
-      studentMap[
-        String(student.id)
-      ] = student;
-    }
-
-  });
-
-
-  const courseMap = {};
-
-  courses.forEach(course => {
-
-    if (course.id) {
-
-      courseMap[
-        String(course.id)
-      ] = course;
-    }
+    studentMap[student.id] =
+      student;
 
   });
 
 
   // ----------------------------------------------------------
-  // RENDER ENROLMENTS
+  // MAP COURSES
+  // ----------------------------------------------------------
+
+  const courseMap = {};
+
+  courses.forEach(course => {
+
+    courseMap[course.id] =
+      course;
+
+  });
+
+
+  // ----------------------------------------------------------
+  // RENDER
   // ----------------------------------------------------------
 
   enrolmentsBox.innerHTML = `
@@ -1000,12 +933,19 @@ async function loadEnrolments() {
         <thead>
 
           <tr>
+
             <th>Student</th>
+
             <th>Course</th>
-            <th>Amount</th>
+
+            <th>Course Price</th>
+
             <th>Status</th>
+
             <th>Date</th>
+
             <th>Action</th>
+
           </tr>
 
         </thead>
@@ -1015,30 +955,10 @@ async function loadEnrolments() {
           ${enrolments.map(row => {
 
             const student =
-              studentMap[
-                String(row.student_id)
-              ];
+              studentMap[row.student_id];
 
             const course =
-              courseMap[
-                String(row.course_id)
-              ];
-
-            // Amount comes from course price.
-            const amount =
-              course
-                ? (
-                    course.price ??
-                    course.amount ??
-                    ""
-                  )
-                : "";
-
-            const currentStatus =
-              String(
-                row.enrollment_status ||
-                "Pending"
-              ).toLowerCase();
+              courseMap[row.course_id];
 
             return `
 
@@ -1054,6 +974,7 @@ async function loadEnrolments() {
 
                 </td>
 
+
                 <td data-label="Course">
 
                   ${escapeHTML(
@@ -1062,11 +983,20 @@ async function loadEnrolments() {
 
                 </td>
 
-                <td data-label="Amount">
 
-                  ${formatMoney(amount)}
+                <td data-label="Course Price">
+
+                  ${formatMoney(
+                    course
+                      ? (
+                          course.price ??
+                          course.amount
+                        )
+                      : null
+                  )}
 
                 </td>
+
 
                 <td data-label="Status">
 
@@ -1076,6 +1006,7 @@ async function loadEnrolments() {
 
                 </td>
 
+
                 <td data-label="Date">
 
                   ${formatDate(
@@ -1084,52 +1015,82 @@ async function loadEnrolments() {
 
                 </td>
 
+
                 <td data-label="Action">
 
                   <select
                     class="funda-action-select"
                     onchange="changeEnrollmentStatus(
-                      '${row.id}',
+                      '${escapeHTML(row.id)}',
                       this.value
                     )">
 
                     <option
                       value="Pending"
-                      ${currentStatus === "pending"
-                        ? "selected"
-                        : ""}>
+                      ${
+                        String(
+                          row.enrollment_status
+                        ).toLowerCase() ===
+                        "pending"
+                          ? "selected"
+                          : ""
+                      }>
                       Pending
                     </option>
 
+
                     <option
                       value="Approved"
-                      ${currentStatus === "approved"
-                        ? "selected"
-                        : ""}>
+                      ${
+                        String(
+                          row.enrollment_status
+                        ).toLowerCase() ===
+                        "approved"
+                          ? "selected"
+                          : ""
+                      }>
                       Approved
                     </option>
 
+
                     <option
                       value="Active"
-                      ${currentStatus === "active"
-                        ? "selected"
-                        : ""}>
+                      ${
+                        String(
+                          row.enrollment_status
+                        ).toLowerCase() ===
+                        "active"
+                          ? "selected"
+                          : ""
+                      }>
                       Active
                     </option>
 
+
                     <option
                       value="Completed"
-                      ${currentStatus === "completed"
-                        ? "selected"
-                        : ""}>
+                      ${
+                        String(
+                          row.enrollment_status
+                        ).toLowerCase() ===
+                        "completed"
+                          ? "selected"
+                          : ""
+                      }>
                       Completed
                     </option>
 
+
                     <option
                       value="Rejected"
-                      ${currentStatus === "rejected"
-                        ? "selected"
-                        : ""}>
+                      ${
+                        String(
+                          row.enrollment_status
+                        ).toLowerCase() ===
+                        "rejected"
+                          ? "selected"
+                          : ""
+                      }>
                       Rejected
                     </option>
 
@@ -1171,12 +1132,10 @@ async function changeEnrollmentStatus(
   } = await db
     .from("enrollments")
     .update({
-      enrollment_status: status
+      enrollment_status:
+        status
     })
-    .eq(
-      "id",
-      id
-    );
+    .eq("id", id);
 
   if (error) {
 
@@ -1210,19 +1169,12 @@ window.changeEnrollmentStatus =
 
 async function loadPayments() {
 
-  if (!paymentsBox) {
-    return;
-  }
+  if (!paymentsBox) return;
 
   paymentsBox.innerHTML =
     `<div class="funda-loading">
       Loading payments...
     </div>`;
-
-
-  // ----------------------------------------------------------
-  // LOAD PAYMENTS
-  // ----------------------------------------------------------
 
   const {
     data: payments,
@@ -1244,7 +1196,6 @@ async function loadPayments() {
     .order("created_at", {
       ascending: false
     });
-
 
   if (error) {
 
@@ -1270,7 +1221,6 @@ async function loadPayments() {
     return;
   }
 
-
   if (
     !payments ||
     payments.length === 0
@@ -1286,7 +1236,7 @@ async function loadPayments() {
 
 
   // ----------------------------------------------------------
-  // STUDENT IDs
+  // GET STUDENTS
   // ----------------------------------------------------------
 
   const studentIds = [
@@ -1297,9 +1247,26 @@ async function loadPayments() {
     )
   ];
 
+  let students = [];
+
+  if (studentIds.length > 0) {
+
+    const result =
+      await db
+        .from("students")
+        .select("*")
+        .in("id", studentIds);
+
+    if (!result.error) {
+
+      students =
+        result.data || [];
+    }
+  }
+
 
   // ----------------------------------------------------------
-  // ENROLMENT IDs
+  // GET ENROLMENTS
   // ----------------------------------------------------------
 
   const enrolmentIds = [
@@ -1309,47 +1276,6 @@ async function loadPayments() {
         .filter(Boolean)
     )
   ];
-
-
-  // ----------------------------------------------------------
-  // LOAD STUDENTS
-  // ----------------------------------------------------------
-
-  let students = [];
-
-  if (studentIds.length > 0) {
-
-    const result =
-      await db
-        .from("students")
-        .select("*")
-        .in(
-          "id",
-          studentIds
-        );
-
-    if (result.error) {
-
-      console.error(
-        "Payment students error:",
-        result.error
-      );
-
-    } else {
-
-      students =
-        result.data || [];
-    }
-  }
-
-
-  // ----------------------------------------------------------
-  // LOAD ENROLMENTS
-  //
-  // IMPORTANT:
-  // NO amount
-  // NO created_at
-  // ----------------------------------------------------------
 
   let enrolments = [];
 
@@ -1365,19 +1291,9 @@ async function loadPayments() {
           enrollment_status,
           enrolled_at
         `)
-        .in(
-          "id",
-          enrolmentIds
-        );
+        .in("id", enrolmentIds);
 
-    if (result.error) {
-
-      console.error(
-        "Payment enrolment error:",
-        result.error
-      );
-
-    } else {
+    if (!result.error) {
 
       enrolments =
         result.data || [];
@@ -1386,7 +1302,7 @@ async function loadPayments() {
 
 
   // ----------------------------------------------------------
-  // COURSE IDs
+  // GET COURSES
   // ----------------------------------------------------------
 
   const courseIds = [
@@ -1397,11 +1313,6 @@ async function loadPayments() {
     )
   ];
 
-
-  // ----------------------------------------------------------
-  // LOAD COURSES
-  // ----------------------------------------------------------
-
   let courses = [];
 
   if (courseIds.length > 0) {
@@ -1410,19 +1321,9 @@ async function loadPayments() {
       await db
         .from("courses")
         .select("*")
-        .in(
-          "id",
-          courseIds
-        );
+        .in("id", courseIds);
 
-    if (result.error) {
-
-      console.error(
-        "Payment courses error:",
-        result.error
-      );
-
-    } else {
+    if (!result.error) {
 
       courses =
         result.data || [];
@@ -1431,55 +1332,35 @@ async function loadPayments() {
 
 
   // ----------------------------------------------------------
-  // MAP STUDENTS
+  // MAPS
   // ----------------------------------------------------------
 
   const studentMap = {};
 
   students.forEach(student => {
 
-    if (student.id) {
-
-      studentMap[
-        String(student.id)
-      ] = student;
-    }
+    studentMap[student.id] =
+      student;
 
   });
 
-
-  // ----------------------------------------------------------
-  // MAP ENROLMENTS
-  // ----------------------------------------------------------
 
   const enrolmentMap = {};
 
   enrolments.forEach(enrolment => {
 
-    if (enrolment.id) {
-
-      enrolmentMap[
-        String(enrolment.id)
-      ] = enrolment;
-    }
+    enrolmentMap[enrolment.id] =
+      enrolment;
 
   });
 
-
-  // ----------------------------------------------------------
-  // MAP COURSES
-  // ----------------------------------------------------------
 
   const courseMap = {};
 
   courses.forEach(course => {
 
-    if (course.id) {
-
-      courseMap[
-        String(course.id)
-      ] = course;
-    }
+    courseMap[course.id] =
+      course;
 
   });
 
@@ -1497,14 +1378,23 @@ async function loadPayments() {
         <thead>
 
           <tr>
+
             <th>Student</th>
+
             <th>Course</th>
+
             <th>Amount</th>
+
             <th>Method</th>
+
             <th>Status</th>
+
             <th>Proof</th>
+
             <th>Date</th>
+
             <th>Action</th>
+
           </tr>
 
         </thead>
@@ -1515,28 +1405,20 @@ async function loadPayments() {
 
             const student =
               studentMap[
-                String(payment.student_id)
+                payment.student_id
               ];
 
             const enrolment =
               enrolmentMap[
-                String(payment.enrolment_id)
+                payment.enrolment_id
               ];
 
             const course =
               enrolment
                 ? courseMap[
-                    String(
-                      enrolment.course_id
-                    )
+                    enrolment.course_id
                   ]
                 : null;
-
-            const currentStatus =
-              String(
-                payment.status ||
-                "Pending"
-              ).toLowerCase();
 
             return `
 
@@ -1546,19 +1428,25 @@ async function loadPayments() {
 
                   <strong>
                     ${escapeHTML(
-                      getStudentName(student)
+                      getStudentName(
+                        student
+                      )
                     )}
                   </strong>
 
                 </td>
 
+
                 <td data-label="Course">
 
                   ${escapeHTML(
-                    getCourseName(course)
+                    getCourseName(
+                      course
+                    )
                   )}
 
                 </td>
+
 
                 <td data-label="Amount">
 
@@ -1567,6 +1455,7 @@ async function loadPayments() {
                   )}
 
                 </td>
+
 
                 <td data-label="Method">
 
@@ -1577,6 +1466,7 @@ async function loadPayments() {
 
                 </td>
 
+
                 <td data-label="Status">
 
                   ${statusBadge(
@@ -1585,11 +1475,14 @@ async function loadPayments() {
 
                 </td>
 
+
                 <td data-label="Proof">
 
                   ${
                     payment.proof_url
+
                     ? `
+
                       <a
                         class="funda-proof-link"
                         href="${escapeHTML(
@@ -1597,13 +1490,18 @@ async function loadPayments() {
                         )}"
                         target="_blank"
                         rel="noopener noreferrer">
+
                         View Proof
+
                       </a>
+
                     `
+
                     : "No proof"
                   }
 
                 </td>
+
 
                 <td data-label="Date">
 
@@ -1613,44 +1511,68 @@ async function loadPayments() {
 
                 </td>
 
+
                 <td data-label="Action">
 
                   <select
                     class="funda-action-select"
                     onchange="changePaymentStatus(
-                      '${payment.id}',
+                      '${escapeHTML(payment.id)}',
                       this.value
                     )">
 
                     <option
                       value="Pending"
-                      ${currentStatus === "pending"
-                        ? "selected"
-                        : ""}>
+                      ${
+                        String(
+                          payment.status
+                        ).toLowerCase() ===
+                        "pending"
+                          ? "selected"
+                          : ""
+                      }>
                       Pending
                     </option>
 
+
                     <option
                       value="Paid"
-                      ${currentStatus === "paid"
-                        ? "selected"
-                        : ""}>
+                      ${
+                        String(
+                          payment.status
+                        ).toLowerCase() ===
+                        "paid"
+                          ? "selected"
+                          : ""
+                      }>
                       Paid
                     </option>
 
+
                     <option
                       value="Approved"
-                      ${currentStatus === "approved"
-                        ? "selected"
-                        : ""}>
+                      ${
+                        String(
+                          payment.status
+                        ).toLowerCase() ===
+                        "approved"
+                          ? "selected"
+                          : ""
+                      }>
                       Approved
                     </option>
 
+
                     <option
                       value="Rejected"
-                      ${currentStatus === "rejected"
-                        ? "selected"
-                        : ""}>
+                      ${
+                        String(
+                          payment.status
+                        ).toLowerCase() ===
+                        "rejected"
+                          ? "selected"
+                          : ""
+                      }>
                       Rejected
                     </option>
 
@@ -1694,10 +1616,7 @@ async function changePaymentStatus(
     .update({
       status: status
     })
-    .eq(
-      "id",
-      id
-    );
+    .eq("id", id);
 
   if (error) {
 
@@ -1751,11 +1670,8 @@ if (courseForm) {
             : "",
 
         price:
-          coursePrice &&
-          coursePrice.value !== ""
-            ? Number(
-                coursePrice.value
-              )
+          coursePrice
+            ? Number(coursePrice.value)
             : 0,
 
         category:
@@ -1800,10 +1716,6 @@ if (courseForm) {
       let result;
 
 
-      // ------------------------------------------------------
-      // UPDATE
-      // ------------------------------------------------------
-
       if (
         courseId &&
         courseId.value
@@ -1818,13 +1730,7 @@ if (courseForm) {
               courseId.value
             );
 
-      }
-
-      // ------------------------------------------------------
-      // INSERT
-      // ------------------------------------------------------
-
-      else {
+      } else {
 
         result =
           await db
@@ -1832,6 +1738,7 @@ if (courseForm) {
             .insert(
               courseData
             );
+
       }
 
 
@@ -1866,6 +1773,7 @@ if (courseForm) {
 
 
       if (cancelEdit) {
+
         cancelEdit.style.display =
           "none";
       }
@@ -1890,12 +1798,8 @@ async function editCourse(id) {
   } = await db
     .from("courses")
     .select("*")
-    .eq(
-      "id",
-      id
-    )
+    .eq("id", id)
     .single();
-
 
   if (error) {
 
@@ -1912,7 +1816,6 @@ async function editCourse(id) {
 
 
   if (courseId) {
-
     courseId.value =
       data.id || "";
   }
@@ -1931,6 +1834,7 @@ async function editCourse(id) {
 
     coursePrice.value =
       data.price ??
+      data.amount ??
       "";
   }
 
@@ -1971,8 +1875,7 @@ async function editCourse(id) {
   if (courseModules) {
 
     let modules =
-      data.modules ||
-      "";
+      data.modules || "";
 
     if (Array.isArray(modules)) {
 
@@ -1998,6 +1901,7 @@ async function editCourse(id) {
       behavior: "smooth",
       block: "start"
     });
+
   }
 }
 
@@ -2017,9 +1921,7 @@ async function deleteCourse(id) {
       "Are you sure you want to delete this course?"
     );
 
-  if (!confirmed) {
-    return;
-  }
+  if (!confirmed) return;
 
 
   const {
@@ -2027,10 +1929,7 @@ async function deleteCourse(id) {
   } = await db
     .from("courses")
     .delete()
-    .eq(
-      "id",
-      id
-    );
+    .eq("id", id);
 
 
   if (error) {
@@ -2090,6 +1989,7 @@ if (newCourseBtn) {
           behavior: "smooth",
           block: "start"
         });
+
       }
 
     }
@@ -2129,20 +2029,13 @@ if (cancelEdit) {
 
 async function loadResults() {
 
-  if (!resultsBox) {
-    return;
-  }
+  if (!resultsBox) return;
 
   resultsBox.innerHTML = `
     <div class="funda-empty">
 
-      <strong>
-        Results
-      </strong>
-
-      <br><br>
-
-      Results management will be connected here.
+      Results management will appear here
+      once the results system is connected.
 
     </div>
   `;
@@ -2155,20 +2048,13 @@ async function loadResults() {
 
 async function loadCertificates() {
 
-  if (!certificatesBox) {
-    return;
-  }
+  if (!certificatesBox) return;
 
   certificatesBox.innerHTML = `
     <div class="funda-empty">
 
-      <strong>
-        Certificates
-      </strong>
-
-      <br><br>
-
-      Certificate management will be connected here.
+      Certificate management will appear here
+      once the certificate system is connected.
 
     </div>
   `;
@@ -2176,21 +2062,17 @@ async function loadCertificates() {
 
 
 // ============================================================
-// LOAD DASHBOARD
+// LOAD EVERYTHING
 // ============================================================
 
 async function loadDashboard() {
 
   addAdminStyles();
 
-
   const user =
     await checkAdminLogin();
 
-
-  if (!user) {
-    return;
-  }
+  if (!user) return;
 
 
   await Promise.all([
