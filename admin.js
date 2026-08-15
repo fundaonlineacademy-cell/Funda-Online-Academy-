@@ -31,6 +31,10 @@ function show(message, ok = false) {
 }
 
 
+// ============================================================
+// ESCAPE HTML
+// ============================================================
+
 function esc(value) {
 
   return String(value ?? "").replace(/[&<>"']/g, m => ({
@@ -44,18 +48,25 @@ function esc(value) {
 }
 
 
+// ============================================================
+// DATE
+// ============================================================
+
 function formatDate(date) {
 
-  if (!date) return "";
+  if (!date) return "—";
 
-  return new Date(date).toLocaleDateString(
-    "en-ZA",
-    {
-      year: "numeric",
-      month: "short",
-      day: "numeric"
-    }
-  );
+  const d = new Date(date);
+
+  if (Number.isNaN(d.getTime())) {
+    return "—";
+  }
+
+  return d.toLocaleDateString("en-ZA", {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
 
 }
 
@@ -93,6 +104,10 @@ function resetForm() {
 
 }
 
+
+// ============================================================
+// FILL COURSE FORM
+// ============================================================
 
 function fill(course) {
 
@@ -283,7 +298,7 @@ async function init() {
 
 
   // ==========================================================
-  // LOAD ADMIN DATA
+  // LOAD EVERYTHING
   // ==========================================================
 
   await Promise.all([
@@ -331,12 +346,9 @@ async function loadStudents() {
         created_at
       `)
       .neq("role", "admin")
-      .order(
-        "created_at",
-        {
-          ascending: false
-        }
-      );
+      .order("created_at", {
+        ascending: false
+      });
 
 
   if (error) {
@@ -351,7 +363,9 @@ async function loadStudents() {
         <strong>
           Could not load students.
         </strong>
+
         <br>
+
         ${esc(error.message)}
       </div>
     `;
@@ -364,6 +378,7 @@ async function loadStudents() {
 
     box.innerHTML = `
       <div class="empty-state">
+
         <strong>
           No registered students yet.
         </strong>
@@ -372,6 +387,7 @@ async function loadStudents() {
           Students will appear here after
           they create an account.
         </p>
+
       </div>
     `;
 
@@ -516,7 +532,7 @@ async function loadStudents() {
 
 
   // ==========================================================
-  // STUDENT MOBILE STYLING
+  // STUDENT MOBILE STYLE
   // ==========================================================
 
   if (
@@ -545,8 +561,7 @@ async function loadStudents() {
         border: 1px solid #e2e8f0;
         border-radius: 16px;
         padding: 18px;
-        box-shadow:
-          0 4px 14px rgba(0,0,0,.05);
+        box-shadow: 0 4px 14px rgba(0,0,0,.05);
       }
 
       .student-card-header {
@@ -555,8 +570,7 @@ async function loadStudents() {
         gap: 14px;
         margin-bottom: 18px;
         padding-bottom: 14px;
-        border-bottom:
-          1px solid #edf2f7;
+        border-bottom: 1px solid #edf2f7;
       }
 
       .student-avatar {
@@ -635,13 +649,13 @@ async function loadStudents() {
       @media (min-width: 700px) {
 
         .student-details {
-          grid-template-columns:
-            1fr 1fr;
+          grid-template-columns: 1fr 1fr;
         }
 
       }
 
     `;
+
 
     document.head.appendChild(style);
 
@@ -676,7 +690,8 @@ async function loadCourses() {
   }
 
 
-  courses = data || [];
+  courses =
+    data || [];
 
 
   const box =
@@ -684,10 +699,12 @@ async function loadCourses() {
       "admin-courses"
     );
 
+
   if (!box) return;
 
 
   box.innerHTML =
+
     courses.map(course => `
 
       <div class="admin-row">
@@ -699,6 +716,7 @@ async function loadCourses() {
           </strong>
 
           <small>
+
             ${esc(
               course.category || ""
             )}
@@ -710,6 +728,7 @@ async function loadCourses() {
             · ${esc(
               course.duration || ""
             )}
+
           </small>
 
         </div>
@@ -736,45 +755,46 @@ async function loadCourses() {
 
       </div>
 
-    `).join("") ||
-    "<p>No courses available.</p>";
+    `).join("")
+
+    || "<p>No courses available.</p>";
 
 
-  box.querySelectorAll(
-    "[data-edit]"
-  ).forEach(button => {
+  box
+    .querySelectorAll("[data-edit]")
+    .forEach(button => {
 
-    button.onclick = () => {
+      button.onclick = () => {
 
-      const course =
-        courses.find(
-          c =>
-            c.id ===
-            button.dataset.edit
+        const course =
+          courses.find(
+            c =>
+              c.id ===
+              button.dataset.edit
+          );
+
+        if (course) {
+          fill(course);
+        }
+
+      };
+
+    });
+
+
+  box
+    .querySelectorAll("[data-delete]")
+    .forEach(button => {
+
+      button.onclick = () => {
+
+        deleteCourse(
+          button.dataset.delete
         );
 
-      if (course) {
-        fill(course);
-      }
+      };
 
-    };
-
-  });
-
-
-  box.querySelectorAll(
-    "[data-delete]"
-  ).forEach(button => {
-
-    button.onclick = () => {
-
-      deleteCourse(
-        button.dataset.delete
-      );
-
-    };
-
-  });
+    });
 
 }
 
@@ -790,6 +810,7 @@ async function deleteCourse(id) {
       c => c.id === id
     );
 
+
   if (!course) return;
 
 
@@ -802,7 +823,9 @@ async function deleteCourse(id) {
   }
 
 
-  const { error } =
+  const {
+    error
+  } =
     await db
       .from("courses")
       .delete()
@@ -949,9 +972,7 @@ if (courseForm) {
         result =
           await db
             .from("courses")
-            .insert(
-              payload
-            );
+            .insert(payload);
 
       }
 
@@ -988,7 +1009,7 @@ if (courseForm) {
 
 
 // ============================================================
-// COURSE BUTTONS
+// NEW COURSE BUTTON
 // ============================================================
 
 const newCourse =
@@ -998,10 +1019,16 @@ const newCourse =
 
 
 if (newCourse) {
+
   newCourse.onclick =
     resetForm;
+
 }
 
+
+// ============================================================
+// CANCEL EDIT
+// ============================================================
 
 const cancelEdit =
   document.getElementById(
@@ -1010,8 +1037,10 @@ const cancelEdit =
 
 
 if (cancelEdit) {
+
   cancelEdit.onclick =
     resetForm;
+
 }
 
 
@@ -1019,8 +1048,17 @@ if (cancelEdit) {
 // ENROLMENTS
 //
 // IMPORTANT:
-// Database uses enrollment_status.
-// We do not join profiles directly.
+//
+// We use select("*") here.
+//
+// This means the code does NOT assume that your
+// enrollments table contains:
+//
+// created_at
+// status
+// or a direct profiles relationship.
+//
+// Your previous errors were caused by those assumptions.
 // ============================================================
 
 async function loadEnrolments() {
@@ -1038,26 +1076,17 @@ async function loadEnrolments() {
     "<p>Loading student enrolments...</p>";
 
 
+  // ==========================================================
+  // LOAD ENROLMENTS
+  // ==========================================================
+
   const {
     data: enrolments,
     error: enrolmentError
   } =
     await db
       .from("enrollments")
-      .select(`
-        id,
-        student_id,
-        course_id,
-        enrollment_status,
-        created_at,
-        courses(title,price)
-      `)
-      .order(
-        "created_at",
-        {
-          ascending: false
-        }
-      );
+      .select("*");
 
 
   if (enrolmentError) {
@@ -1075,7 +1104,7 @@ async function loadEnrolments() {
           Could not load enrolments.
         </strong>
 
-        <br>
+        <br><br>
 
         ${esc(
           enrolmentError.message
@@ -1093,23 +1122,91 @@ async function loadEnrolments() {
     enrolments.length === 0
   ) {
 
-    box.innerHTML =
-      "<p>No enrolment requests yet.</p>";
+    box.innerHTML = `
+      <div class="empty-state">
+
+        <strong>
+          No student enrolments yet.
+        </strong>
+
+        <p>
+          Student course requests will
+          appear here.
+        </p>
+
+      </div>
+    `;
 
     return;
   }
 
 
-  // ----------------------------------------------------------
-  // GET STUDENT IDs
-  // ----------------------------------------------------------
+  console.log(
+    "ENROLMENTS:",
+    enrolments
+  );
+
+
+  // ==========================================================
+  // COURSE IDs
+  // ==========================================================
+
+  const courseIds = [
+    ...new Set(
+      enrolments
+        .map(e => e.course_id)
+        .filter(Boolean)
+    )
+  ];
+
+
+  let courseData = [];
+
+
+  if (courseIds.length > 0) {
+
+    const {
+      data,
+      error
+    } =
+      await db
+        .from("courses")
+        .select(`
+          id,
+          title,
+          price
+        `)
+        .in(
+          "id",
+          courseIds
+        );
+
+
+    if (!error) {
+
+      courseData =
+        data || [];
+
+    } else {
+
+      console.error(
+        "Course loading error:",
+        error
+      );
+
+    }
+
+  }
+
+
+  // ==========================================================
+  // STUDENT IDs
+  // ==========================================================
 
   const studentIds = [
     ...new Set(
       enrolments
-        .map(
-          e => e.student_id
-        )
+        .map(e => e.student_id)
         .filter(Boolean)
     )
   ];
@@ -1117,6 +1214,10 @@ async function loadEnrolments() {
 
   let students = [];
 
+
+  // ==========================================================
+  // TRY STUDENTS TABLE
+  // ==========================================================
 
   if (studentIds.length > 0) {
 
@@ -1126,42 +1227,39 @@ async function loadEnrolments() {
     } =
       await db
         .from("students")
-        .select(`
-          id,
-          user_id
-        `)
+        .select("*")
         .in(
           "id",
           studentIds
         );
 
 
-    if (error) {
-
-      console.error(
-        "Student relationship error:",
-        error
-      );
-
-    } else {
+    if (!error) {
 
       students =
         data || [];
+
+    } else {
+
+      console.warn(
+        "Students table lookup failed:",
+        error.message
+      );
 
     }
 
   }
 
 
-  // ----------------------------------------------------------
-  // GET PROFILE INFORMATION
-  // ----------------------------------------------------------
+  // ==========================================================
+  // GET PROFILE IDs
+  // ==========================================================
 
   const userIds = [
     ...new Set(
       students
-        .map(
-          s => s.user_id
+        .map(student =>
+          student.user_id
         )
         .filter(Boolean)
     )
@@ -1190,26 +1288,37 @@ async function loadEnrolments() {
         );
 
 
-    if (error) {
-
-      console.error(
-        "Profile loading error:",
-        error
-      );
-
-    } else {
+    if (!error) {
 
       profiles =
         data || [];
+
+    } else {
+
+      console.error(
+        "Profile lookup error:",
+        error
+      );
 
     }
 
   }
 
 
-  // ----------------------------------------------------------
-  // CREATE LOOKUP
-  // ----------------------------------------------------------
+  // ==========================================================
+  // LOOKUPS
+  // ==========================================================
+
+  const courseLookup = {};
+
+
+  courseData.forEach(course => {
+
+    courseLookup[course.id] =
+      course;
+
+  });
+
 
   const studentLookup = {};
 
@@ -1224,17 +1333,18 @@ async function loadEnrolments() {
       );
 
 
-    studentLookup[
-      student.id
-    ] = {
+    studentLookup[student.id] = {
 
       name:
         profile?.full_name ||
         profile?.email ||
+        student.full_name ||
+        student.email ||
         "Student",
 
       email:
         profile?.email ||
+        student.email ||
         ""
 
     };
@@ -1242,26 +1352,43 @@ async function loadEnrolments() {
   });
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // DISPLAY ENROLMENTS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   box.innerHTML = `
 
-    <div class="admin-table-wrap">
+    <div class="admin-table-wrapper">
 
-      <table class="admin-data-table">
+      <table class="admin-table">
 
         <thead>
 
           <tr>
 
-            <th>Student</th>
-            <th>Course</th>
-            <th>Price</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Action</th>
+            <th>
+              Student
+            </th>
+
+            <th>
+              Course
+            </th>
+
+            <th>
+              Price
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Date
+            </th>
+
+            <th>
+              Action
+            </th>
 
           </tr>
 
@@ -1279,27 +1406,43 @@ async function loadEnrolments() {
                 ] || {};
 
 
+              const course =
+                courseLookup[
+                  enrolment.course_id
+                ] || {};
+
+
               const studentName =
                 student.name ||
                 "Student";
 
 
               const courseName =
-                enrolment
-                  .courses?.title ||
+                course.title ||
                 "Course";
 
 
               const price =
-                enrolment
-                  .courses?.price ||
+                course.price ||
+                enrolment.amount ||
                 0;
 
 
+              // Your database previously showed
+              // that enrollment_status exists.
               const status =
-                enrolment
-                  .enrollment_status ||
+                enrolment.enrollment_status ||
                 "pending";
+
+
+              // Since created_at does NOT exist,
+              // check several possible date fields.
+              const date =
+                enrolment.created_at ||
+                enrolment.enrolled_at ||
+                enrolment.enrollment_date ||
+                enrolment.date ||
+                null;
 
 
               return `
@@ -1312,11 +1455,13 @@ async function loadEnrolments() {
                     )}
                   </td>
 
+
                   <td>
                     ${esc(
                       courseName
                     )}
                   </td>
+
 
                   <td>
                     R${Number(
@@ -1326,30 +1471,36 @@ async function loadEnrolments() {
                     )}
                   </td>
 
+
                   <td>
 
                     <span
-                      class="
-                        enrolment-status
-                        ${esc(status)}
-                      "
-                    >
-                      ${esc(status)}
+                      class="enrolment-status ${esc(
+                        status
+                      )}">
+
+                      ${esc(
+                        status
+                      )}
+
                     </span>
 
                   </td>
 
+
                   <td>
                     ${formatDate(
-                      enrolment.created_at
+                      date
                     )}
                   </td>
+
 
                   <td>
 
                     <select
-                      data-status="${enrolment.id}"
-                    >
+                      data-enrolment-status="${esc(
+                        enrolment.id
+                      )}">
 
                       <option
                         value="pending"
@@ -1362,6 +1513,7 @@ async function loadEnrolments() {
                         Pending
                       </option>
 
+
                       <option
                         value="approved"
                         ${
@@ -1373,6 +1525,7 @@ async function loadEnrolments() {
                         Approved
                       </option>
 
+
                       <option
                         value="completed"
                         ${
@@ -1383,6 +1536,7 @@ async function loadEnrolments() {
                         }>
                         Completed
                       </option>
+
 
                       <option
                         value="cancelled"
@@ -1415,64 +1569,169 @@ async function loadEnrolments() {
   `;
 
 
-  // ----------------------------------------------------------
-  // STATUS UPDATES
-  // ----------------------------------------------------------
+  // ==========================================================
+  // MOBILE TABLE STYLE
+  // ==========================================================
 
-  box.querySelectorAll(
-    "[data-status]"
-  ).forEach(select => {
+  if (
+    !document.getElementById(
+      "admin-table-style"
+    )
+  ) {
 
-    select.onchange =
-      async () => {
+    const style =
+      document.createElement("style");
 
-        const newStatus =
-          select.value;
-
-        const enrolmentId =
-          select.dataset.status;
+    style.id =
+      "admin-table-style";
 
 
-        const {
-          error
-        } =
-          await db
-            .from("enrollments")
-            .update({
+    style.textContent = `
 
-              enrollment_status:
-                newStatus
+      .admin-table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
 
-            })
-            .eq(
-              "id",
-              enrolmentId
+      .admin-table {
+        width: 100%;
+        min-width: 650px;
+        border-collapse: collapse;
+      }
+
+      .admin-table th,
+      .admin-table td {
+        padding: 12px;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      .admin-table th {
+        font-weight: 700;
+        color: #0f172a;
+        background: #f8fafc;
+      }
+
+      .admin-table td {
+        color: #334155;
+      }
+
+      .admin-table select {
+        padding: 8px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: white;
+        font-size: 14px;
+      }
+
+      .enrolment-status {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: capitalize;
+        background: #f1f5f9;
+        color: #334155;
+      }
+
+      .enrolment-status.approved {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .enrolment-status.completed {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      .enrolment-status.cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .enrolment-status.pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+    `;
+
+
+    document.head.appendChild(style);
+
+  }
+
+
+  // ==========================================================
+  // UPDATE ENROLMENT STATUS
+  // ==========================================================
+
+  box
+    .querySelectorAll(
+      "[data-enrolment-status]"
+    )
+    .forEach(select => {
+
+      select.onchange =
+        async () => {
+
+          const newStatus =
+            select.value;
+
+
+          const enrolmentId =
+            select.dataset
+              .enrolmentStatus;
+
+
+          const {
+            error
+          } =
+            await db
+              .from("enrollments")
+              .update({
+
+                enrollment_status:
+                  newStatus
+
+              })
+              .eq(
+                "id",
+                enrolmentId
+              );
+
+
+          if (error) {
+
+            console.error(
+              error
             );
 
 
-        if (error) {
+            show(
+              "Could not update enrolment: " +
+              error.message
+            );
 
-          console.error(error);
 
-          show(
-            "Could not update enrolment: " +
-            error.message
-          );
+            return;
+          }
 
-        } else {
 
           show(
             "Enrolment status updated successfully.",
             true
           );
 
+
           await loadEnrolments();
 
-        }
+        };
 
-      };
-
-  });
+    });
 
 }
 
@@ -1536,7 +1795,7 @@ async function loadPayments() {
           Could not load payments.
         </strong>
 
-        <br>
+        <br><br>
 
         ${esc(
           error.message
@@ -1554,397 +1813,135 @@ async function loadPayments() {
     payments.length === 0
   ) {
 
-    box.innerHTML = `
-      <div class="empty-state">
-
-        <strong>
-          No payment records yet.
-        </strong>
-
-        <p>
-          Student payment submissions
-          will appear here.
-        </p>
-
-      </div>
-    `;
+    box.innerHTML =
+      "<p>Payment records will appear here.</p>";
 
     return;
   }
 
 
-  // ==========================================================
-  // PAYMENT CARDS
-  // ==========================================================
-
   box.innerHTML = `
 
-    <div class="payment-list">
+    <div class="admin-table-wrapper">
 
-      ${payments.map(payment => {
+      <table class="admin-table">
 
-        const amount =
-          Number(
-            payment.amount || 0
-          ).toLocaleString(
-            "en-ZA"
-          );
+        <thead>
 
+          <tr>
 
-        const method =
-          payment.payment_method ||
-          "Not provided";
+            <th>
+              Amount
+            </th>
 
+            <th>
+              Method
+            </th>
 
-        const status =
-          payment.status ||
-          "pending";
+            <th>
+              Status
+            </th>
 
+            <th>
+              Proof
+            </th>
 
-        const statusClass =
-          String(status)
-            .toLowerCase()
-            .replace(
-              /[^a-z0-9_-]/g,
-              ""
-            );
+            <th>
+              Date
+            </th>
 
+          </tr>
 
-        const proof =
-          payment.proof_url
-            ? `
-              <a
-                class="payment-proof-button"
-                href="${esc(
-                  payment.proof_url
-                )}"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                📄 View Payment Proof
-              </a>
-            `
-            : `
-              <span class="no-proof">
-                No payment proof uploaded
-              </span>
-            `;
+        </thead>
 
 
-        const notes =
-          payment.notes
-            ? `
-              <div class="payment-field">
+        <tbody>
 
-                <span>
-                  Notes
-                </span>
+          ${payments.map(
+            payment => `
 
-                <strong>
-                  ${esc(
-                    payment.notes
+              <tr>
+
+                <td>
+
+                  R${Number(
+                    payment.amount || 0
+                  ).toLocaleString(
+                    "en-ZA"
                   )}
-                </strong>
 
-              </div>
-            `
-            : "";
+                </td>
 
 
-        return `
+                <td>
 
-          <div class="payment-card">
+                  ${esc(
+                    payment.payment_method ||
+                    ""
+                  )}
 
-            <div class="payment-card-top">
-
-              <div>
-
-                <span class="payment-label">
-                  Payment Amount
-                </span>
-
-                <div class="payment-amount">
-                  R${amount}
-                </div>
-
-              </div>
+                </td>
 
 
-              <span
-                class="
-                  payment-status-badge
-                  ${statusClass}
-                "
-              >
-                ${esc(status)}
-              </span>
+                <td>
 
-            </div>
+                  <span
+                    class="payment-status">
 
+                    ${esc(
+                      payment.status ||
+                      "pending"
+                    )}
 
-            <div class="payment-fields">
+                  </span>
 
-              <div class="payment-field">
-
-                <span>
-                  Payment Method
-                </span>
-
-                <strong>
-                  ${esc(method)}
-                </strong>
-
-              </div>
+                </td>
 
 
-              <div class="payment-field">
+                <td>
 
-                <span>
-                  Payment Date
-                </span>
+                  ${
+                    payment.proof_url
+                      ? `
 
-                <strong>
+                        <a
+                          href="${esc(
+                            payment.proof_url
+                          )}"
+                          target="_blank"
+                          rel="noopener">
+
+                          View Proof
+
+                        </a>
+
+                      `
+                      : "No proof"
+                  }
+
+                </td>
+
+
+                <td>
+
                   ${formatDate(
                     payment.created_at
                   )}
-                </strong>
 
-              </div>
+                </td>
 
+              </tr>
 
-              <div class="payment-field">
+            `
+          ).join("")}
 
-                <span>
-                  Payment ID
-                </span>
+        </tbody>
 
-                <strong class="payment-id">
-                  ${esc(payment.id)}
-                </strong>
-
-              </div>
-
-
-              ${notes}
-
-            </div>
-
-
-            <div class="payment-proof">
-
-              ${proof}
-
-            </div>
-
-          </div>
-
-        `;
-
-      }).join("")}
+      </table>
 
     </div>
 
   `;
-
-
-  // ==========================================================
-  // PAYMENT MOBILE STYLING
-  // ==========================================================
-
-  if (
-    !document.getElementById(
-      "payment-mobile-style"
-    )
-  ) {
-
-    const style =
-      document.createElement(
-        "style"
-      );
-
-
-    style.id =
-      "payment-mobile-style";
-
-
-    style.textContent = `
-
-      .payment-list {
-        display: grid;
-        gap: 18px;
-        width: 100%;
-      }
-
-
-      .payment-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 18px;
-        padding: 18px;
-        box-shadow:
-          0 4px 14px rgba(0,0,0,.05);
-      }
-
-
-      .payment-card-top {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 15px;
-        padding-bottom: 16px;
-        margin-bottom: 16px;
-        border-bottom:
-          1px solid #edf2f7;
-      }
-
-
-      .payment-label {
-        display: block;
-        color: #64748b;
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 5px;
-      }
-
-
-      .payment-amount {
-        color: #0f172a;
-        font-size: 28px;
-        font-weight: 800;
-      }
-
-
-      .payment-status-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 20px;
-        padding: 7px 12px;
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: capitalize;
-        background: #fef3c7;
-        color: #92400e;
-        white-space: nowrap;
-      }
-
-
-      .payment-status-badge.pending {
-        background: #fef3c7;
-        color: #92400e;
-      }
-
-
-      .payment-status-badge.submitted {
-        background: #dbeafe;
-        color: #1e40af;
-      }
-
-
-      .payment-status-badge.verified {
-        background: #dcfce7;
-        color: #166534;
-      }
-
-
-      .payment-status-badge.rejected {
-        background: #fee2e2;
-        color: #991b1b;
-      }
-
-
-      .payment-fields {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-
-
-      .payment-field {
-        background: #f8fafc;
-        border-radius: 10px;
-        padding: 11px 12px;
-      }
-
-
-      .payment-field span {
-        display: block;
-        color: #64748b;
-        font-size: 12px;
-        font-weight: 600;
-        margin-bottom: 4px;
-      }
-
-
-      .payment-field strong {
-        display: block;
-        color: #0f172a;
-        font-size: 14px;
-        word-break: break-word;
-      }
-
-
-      .payment-id {
-        font-size: 11px !important;
-        color: #475569 !important;
-      }
-
-
-      .payment-proof {
-        margin-top: 15px;
-        padding-top: 15px;
-        border-top:
-          1px solid #edf2f7;
-      }
-
-
-      .payment-proof-button {
-        display: block;
-        width: 100%;
-        text-align: center;
-        text-decoration: none;
-        background: #2f9e20;
-        color: #ffffff;
-        padding: 12px 15px;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 14px;
-      }
-
-
-      .payment-proof-button:hover {
-        opacity: .9;
-      }
-
-
-      .no-proof {
-        display: block;
-        background: #f8fafc;
-        color: #64748b;
-        border-radius: 10px;
-        padding: 12px;
-        text-align: center;
-        font-size: 13px;
-      }
-
-
-      @media (min-width: 700px) {
-
-        .payment-fields {
-          grid-template-columns:
-            1fr 1fr;
-        }
-
-      }
-
-    `;
-
-
-    document.head.appendChild(
-      style
-    );
-
-  }
 
 }
 
@@ -1975,7 +1972,7 @@ if (logout) {
 
 
 // ============================================================
-// START
+// START ADMIN DASHBOARD
 // ============================================================
 
 init();
