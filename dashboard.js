@@ -1,7 +1,7 @@
 // ==========================================
 // FUNDA ONLINE ACADEMY
 // STUDENT DASHBOARD
-// ENROLMENTS • COURSES • MODULES • PAYMENTS • LOGOUT
+// ENROLMENTS • COURSES • MODULES • LOGOUT
 // ==========================================
 
 const { createClient } = supabase;
@@ -93,6 +93,7 @@ async function init() {
 
   if (
     !window.SUPABASE_URL ||
+    !window.SUPABASE_ANON_KEY ||
     window.SUPABASE_URL.includes("PASTE_")
   ) {
 
@@ -103,6 +104,10 @@ async function init() {
     return;
   }
 
+
+  // ----------------------------------------
+  // CHECK LOGIN SESSION
+  // ----------------------------------------
 
   const {
     data: { session },
@@ -116,13 +121,15 @@ async function init() {
     !session.user
   ) {
 
-    location.href = "auth.html";
+    window.location.href =
+      "auth.html";
 
     return;
   }
 
 
-  const user = session.user;
+  const user =
+    session.user;
 
 
   // ----------------------------------------
@@ -187,14 +194,16 @@ async function init() {
 
 
   // ----------------------------------------
-  // LOAD DATA
+  // LOAD DASHBOARD DATA
   // ----------------------------------------
 
-  await loadEnrollments(student.id);
+  await loadEnrollments(
+    student.id
+  );
 
-  await loadPayments(student.id);
-
-  await loadAvailableCourses(student.id);
+  await loadAvailableCourses(
+    student.id
+  );
 }
 
 
@@ -210,8 +219,12 @@ async function loadEnrollments(studentId) {
   if (!box) return;
 
 
+  // ----------------------------------------
+  // GET ENROLMENTS
+  // ----------------------------------------
+
   const {
-    data,
+    data: enrollments,
     error
   } = await db
     .from("enrollments")
@@ -220,13 +233,7 @@ async function loadEnrollments(studentId) {
       student_id,
       course_id,
       enrollment_status,
-      enrolled_at,
-      courses (
-        id,
-        title,
-        name,
-        price
-      )
+      enrolled_at
     `)
     .eq("student_id", studentId)
     .order("enrolled_at", {
@@ -243,9 +250,11 @@ async function loadEnrollments(studentId) {
 
     box.innerHTML = `
       <div class="card">
+
         <p>
           Could not load your enrolments.
         </p>
+
       </div>
     `;
 
@@ -253,12 +262,21 @@ async function loadEnrollments(studentId) {
   }
 
 
-  if (!data || !data.length) {
+  // ----------------------------------------
+  // NO ENROLMENTS
+  // ----------------------------------------
+
+  if (
+    !enrollments ||
+    !enrollments.length
+  ) {
 
     box.innerHTML = `
       <div class="empty card">
 
-        <h3>No enrolments yet</h3>
+        <h3>
+          No enrolments yet
+        </h3>
 
         <p>
           Choose a course below and
@@ -279,68 +297,131 @@ async function loadEnrollments(studentId) {
   }
 
 
-  box.innerHTML = data.map(
-    enrollment => {
+  // ----------------------------------------
+  // GET COURSE IDS
+  // ----------------------------------------
 
-      const course =
-        enrollment.courses || {};
-
-      const courseName =
-        course.title ||
-        course.name ||
-        "Course";
-
-      const price =
-        Number(course.price || 0);
-
-      const status =
-        enrollment.enrollment_status ||
-        "pending";
-
-      const date =
-        enrollment.enrolled_at
-          ? new Date(
-              enrollment.enrolled_at
-            ).toLocaleDateString("en-ZA")
-          : "";
+  const courseIds =
+    enrollments
+      .map(item => item.course_id)
+      .filter(Boolean);
 
 
-      return `
-        <article class="card">
+  let courses = [];
 
-          <h3>
-            ${escapeHtml(courseName)}
-          </h3>
 
-          <p>
-            <strong>Price:</strong>
-            R${price.toLocaleString("en-ZA")}
-          </p>
+  if (courseIds.length) {
 
-          <p>
-            <strong>Status:</strong>
+    const {
+      data,
+      error: courseError
+    } = await db
+      .from("courses")
+      .select(`
+        id,
+        title,
+        price
+      `)
+      .in("id", courseIds);
 
-            <span class="status">
-              ${escapeHtml(status)}
-            </span>
-          </p>
 
-          ${
-            date
-              ? `
-                <small>
-                  Enrolled:
-                  ${escapeHtml(date)}
-                </small>
-              `
-              : ""
-          }
+    if (courseError) {
 
-        </article>
-      `;
+      console.error(
+        "Enrollment course lookup error:",
+        courseError
+      );
+
+    } else {
+
+      courses =
+        data || [];
 
     }
-  ).join("");
+
+  }
+
+
+  // ----------------------------------------
+  // DISPLAY ENROLMENTS
+  // ----------------------------------------
+
+  box.innerHTML =
+    enrollments.map(
+      enrollment => {
+
+        const course =
+          courses.find(
+            item =>
+              item.id ===
+              enrollment.course_id
+          );
+
+
+        const courseTitle =
+          course?.title ||
+          "Course";
+
+
+        const price =
+          Number(
+            course?.price || 0
+          );
+
+
+        const status =
+          enrollment.enrollment_status ||
+          "pending";
+
+
+        const date =
+          enrollment.enrolled_at
+            ? new Date(
+                enrollment.enrolled_at
+              ).toLocaleDateString(
+                "en-ZA"
+              )
+            : "";
+
+
+        return `
+          <article class="card">
+
+            <h3>
+              ${escapeHtml(
+                courseTitle
+              )}
+            </h3>
+
+            <p>
+              <strong>Price:</strong>
+              R${price.toLocaleString("en-ZA")}
+            </p>
+
+            <p>
+              <strong>Status:</strong>
+
+              <span class="status">
+                ${escapeHtml(status)}
+              </span>
+            </p>
+
+            ${
+              date
+                ? `
+                  <small>
+                    Enrolled:
+                    ${escapeHtml(date)}
+                  </small>
+                `
+                : ""
+            }
+
+          </article>
+        `;
+
+      }
+    ).join("");
 }
 
 
@@ -358,6 +439,12 @@ async function loadAvailableCourses(studentId) {
   if (!box) return;
 
 
+  // ----------------------------------------
+  // GET COURSES
+  // IMPORTANT:
+  // DATABASE COLUMN IS "title", NOT "name"
+  // ----------------------------------------
+
   const {
     data: courses,
     error
@@ -366,11 +453,10 @@ async function loadAvailableCourses(studentId) {
     .select(`
       id,
       title,
-      name,
-      price,
-      category,
-      duration,
+      slug,
       description,
+      duration,
+      price,
       image_url,
       active
     `)
@@ -389,9 +475,11 @@ async function loadAvailableCourses(studentId) {
 
     box.innerHTML = `
       <div class="card">
+
         <p>
           Could not load courses.
         </p>
+
       </div>
     `;
 
@@ -400,7 +488,7 @@ async function loadAvailableCourses(studentId) {
 
 
   // ----------------------------------------
-  // GET EXISTING ENROLLMENTS
+  // GET EXISTING ENROLMENTS
   // ----------------------------------------
 
   const {
@@ -408,11 +496,7 @@ async function loadAvailableCourses(studentId) {
     error: enrollmentError
   } = await db
     .from("enrollments")
-    .select(`
-      id,
-      course_id,
-      enrollment_status
-    `)
+    .select("course_id")
     .eq("student_id", studentId);
 
 
@@ -427,17 +511,21 @@ async function loadAvailableCourses(studentId) {
 
 
   const enrolled =
-    new Map(
+    new Set(
       (mine || []).map(
-        item => [
-          item.course_id,
-          item
-        ]
+        item => item.course_id
       )
     );
 
 
-  if (!courses || !courses.length) {
+  // ----------------------------------------
+  // NO COURSES
+  // ----------------------------------------
+
+  if (
+    !courses ||
+    !courses.length
+  ) {
 
     box.innerHTML = `
       <div class="card">
@@ -468,12 +556,9 @@ async function loadAvailableCourses(studentId) {
       const alreadyEnrolled =
         enrolled.has(course.id);
 
-      const existingEnrollment =
-        enrolled.get(course.id);
 
-      const courseName =
+      const courseTitle =
         course.title ||
-        course.name ||
         "Course";
 
 
@@ -489,7 +574,7 @@ async function loadAvailableCourses(studentId) {
                     course.image_url
                   )}"
                   alt="${escapeHtml(
-                    courseName
+                    courseTitle
                   )}"
                 >
               `
@@ -497,21 +582,10 @@ async function loadAvailableCourses(studentId) {
           }
 
 
-          ${
-            course.category
-              ? `
-                <div class="tag">
-                  ${escapeHtml(
-                    course.category
-                  )}
-                </div>
-              `
-              : ""
-          }
-
-
           <h3>
-            ${escapeHtml(courseName)}
+            ${escapeHtml(
+              courseTitle
+            )}
           </h3>
 
 
@@ -573,20 +647,6 @@ async function loadAvailableCourses(studentId) {
                 >
                   Already Enrolled
                 </button>
-
-                ${
-                  existingEnrollment
-                    ? `
-                      <button
-                        type="button"
-                        class="btn green full payment-btn"
-                        data-payment-enrolment="${existingEnrollment.id}"
-                      >
-                        Make Payment Request
-                      </button>
-                    `
-                    : ""
-                }
               `
 
               : `
@@ -634,42 +694,14 @@ async function loadAvailableCourses(studentId) {
           e.preventDefault();
           e.stopPropagation();
 
+
           const courseId =
             button.dataset.enrol;
+
 
           await enrol(
             courseId,
             studentId
-          );
-
-        }
-      );
-
-    });
-
-
-  // ----------------------------------------
-  // PAYMENT BUTTONS
-  // ----------------------------------------
-
-  box
-    .querySelectorAll(
-      "[data-payment-enrolment]"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        async function(e) {
-
-          e.preventDefault();
-          e.stopPropagation();
-
-          const enrollmentId =
-            button.dataset.paymentEnrolment;
-
-          await createPaymentRequest(
-            enrollmentId
           );
 
         }
@@ -723,7 +755,10 @@ async function loadCourseModules(courseId) {
   }
 
 
-  if (!modules || !modules.length) {
+  if (
+    !modules ||
+    !modules.length
+  ) {
 
     box.innerHTML = "";
 
@@ -740,19 +775,11 @@ async function loadCourseModules(courseId) {
       ${
         modules.map(module => {
 
-          const title =
-            module.module_name ||
-            "Module";
-
-          const number =
-            module.module_number
-              ? module.module_number + ". "
-              : "";
-
           return `
             <li>
               ${escapeHtml(
-                number + title
+                module.module_name ||
+                "Module"
               )}
             </li>
           `;
@@ -768,12 +795,16 @@ async function loadCourseModules(courseId) {
 // REQUEST ENROLMENT
 // ==========================================
 
-async function enrol(courseId, studentId) {
+async function enrol(
+  courseId,
+  studentId
+) {
 
   const confirmed =
     confirm(
       "Send an enrolment request for this course?"
     );
+
 
   if (!confirmed) return;
 
@@ -787,17 +818,23 @@ async function enrol(courseId, studentId) {
   } = await db.auth.getSession();
 
 
-  if (!session || !session.user) {
+  if (
+    !session ||
+    !session.user
+  ) {
 
     show(
       "Your session has expired. Please log in again."
     );
 
+
     setTimeout(() => {
 
-      location.href = "auth.html";
+      window.location.href =
+        "auth.html";
 
     }, 1500);
+
 
     return;
   }
@@ -844,7 +881,7 @@ async function enrol(courseId, studentId) {
 
 
   // ----------------------------------------
-  // CREATE ENROLLMENT
+  // CREATE ENROLMENT
   // ----------------------------------------
 
   const {
@@ -911,268 +948,6 @@ async function enrol(courseId, studentId) {
 
 
 // ==========================================
-// CREATE PAYMENT REQUEST
-// ==========================================
-
-async function createPaymentRequest(
-  enrollmentId
-) {
-
-  const confirmed =
-    confirm(
-      "Create a payment request for this course?"
-    );
-
-  if (!confirmed) return;
-
-
-  show(
-    "Creating payment request...",
-    true
-  );
-
-
-  const {
-    data,
-    error
-  } = await db.rpc(
-    "create_payment_request",
-    {
-      p_enrollment_id:
-        enrollmentId,
-
-      p_payment_method:
-        "manual"
-    }
-  );
-
-
-  if (error) {
-
-    console.error(
-      "Payment request error:",
-      error
-    );
-
-    show(
-      "Could not create payment request: " +
-      error.message
-    );
-
-    return;
-  }
-
-
-  if (!data) {
-
-    show(
-      "Payment request could not be created."
-    );
-
-    return;
-  }
-
-
-  show(
-    "Payment request created successfully.",
-    true
-  );
-
-
-  // Refresh payment information
-
-  const {
-    data: { session }
-  } = await db.auth.getSession();
-
-
-  if (
-    session &&
-    session.user
-  ) {
-
-    const student =
-      await getStudent(
-        session.user.id
-      );
-
-    if (student) {
-
-      await loadPayments(
-        student.id
-      );
-
-    }
-
-  }
-}
-
-
-// ==========================================
-// LOAD PAYMENTS
-// ==========================================
-
-async function loadPayments(studentId) {
-
-  const box =
-    document.getElementById(
-      "payment-list"
-    );
-
-  if (!box) return;
-
-
-  const {
-    data: payments,
-    error
-  } = await db
-    .from("payments")
-    .select(`
-      id,
-      enrollment_id,
-      amount,
-      payment_method,
-      payment_status,
-      reference_number,
-      paid_at,
-      created_at,
-      enrollments (
-        id,
-        course_id,
-        courses (
-          id,
-          title,
-          name
-        )
-      )
-    `)
-    .eq("student_id", studentId)
-    .order("created_at", {
-      ascending: false
-    });
-
-
-  if (error) {
-
-    console.error(
-      "Payments error:",
-      error
-    );
-
-    box.innerHTML = `
-      <div class="card">
-        <h3>Course Payments</h3>
-        <p>
-          Could not load your payment information.
-        </p>
-      </div>
-    `;
-
-    return;
-  }
-
-
-  if (!payments || !payments.length) {
-
-    box.innerHTML = `
-      <div class="card">
-
-        <h3>
-          Course Payments
-        </h3>
-
-        <p>
-          Your payment information will appear here
-          after you enrol in a course.
-        </p>
-
-      </div>
-    `;
-
-    return;
-  }
-
-
-  box.innerHTML =
-    payments.map(payment => {
-
-      const enrollment =
-        payment.enrollments || {};
-
-      const course =
-        enrollment.courses || {};
-
-      const courseName =
-        course.title ||
-        course.name ||
-        "Course";
-
-      const amount =
-        Number(payment.amount || 0);
-
-      const status =
-        payment.payment_status ||
-        "pending";
-
-      const created =
-        payment.created_at
-          ? new Date(
-              payment.created_at
-            ).toLocaleDateString("en-ZA")
-          : "";
-
-
-      return `
-        <div class="card">
-
-          <h3>
-            ${escapeHtml(courseName)}
-          </h3>
-
-          <p>
-            <strong>Amount:</strong>
-            R${amount.toLocaleString("en-ZA")}
-          </p>
-
-          <p>
-            <strong>Payment Status:</strong>
-            <span class="status">
-              ${escapeHtml(status)}
-            </span>
-          </p>
-
-          ${
-            payment.reference_number
-              ? `
-                <p>
-                  <strong>Reference:</strong>
-                  ${escapeHtml(
-                    payment.reference_number
-                  )}
-                </p>
-              `
-              : ""
-          }
-
-          ${
-            created
-              ? `
-                <small>
-                  Request created:
-                  ${escapeHtml(created)}
-                </small>
-              `
-              : ""
-          }
-
-        </div>
-      `;
-
-    }).join("");
-}
-
-
-// ==========================================
 // LOGOUT
 // ==========================================
 
@@ -1188,9 +963,11 @@ if (logoutButton) {
 
       e.preventDefault();
 
+
       await db.auth.signOut();
 
-      location.href =
+
+      window.location.href =
         "index.html";
 
     }
@@ -1203,4 +980,4 @@ if (logoutButton) {
 // START DASHBOARD
 // ==========================================
 
-init(); 
+init();
