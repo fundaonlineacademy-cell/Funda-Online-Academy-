@@ -1,7 +1,7 @@
 // ============================================================
 // FUNDA ONLINE ACADEMY
 // ADMIN DASHBOARD
-// Students • Courses • Enrolments
+// Students • Courses • Enrolments • Payments
 // ============================================================
 
 const { createClient } = supabase;
@@ -22,120 +22,39 @@ let editingId = null;
 // ============================================================
 
 function show(message, ok = false) {
-
   if (!msg) return;
 
   msg.textContent = message;
-  msg.className =
-    "message " + (ok ? "success" : "error");
+  msg.className = "message " + (ok ? "success" : "error");
 }
 
+
+// ============================================================
+// SAFE HTML
+// ============================================================
 
 function esc(value) {
-
-  return String(value ?? "").replace(
-    /[&<>"']/g,
-    m => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    }[m])
-  );
+  return String(value ?? "").replace(/[&<>"']/g, m => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[m]));
 }
 
+
+// ============================================================
+// DATE
+// ============================================================
 
 function formatDate(date) {
-
   if (!date) return "";
 
-  return new Date(date).toLocaleDateString(
-    "en-ZA",
-    {
-      year: "numeric",
-      month: "short",
-      day: "numeric"
-    }
-  );
-}
-
-
-// ============================================================
-// COURSE FORM
-// ============================================================
-
-function resetForm() {
-
-  editingId = null;
-
-  const form =
-    document.getElementById("course-form");
-
-  if (form) {
-    form.reset();
-  }
-
-  const id =
-    document.getElementById("course-id");
-
-  if (id) {
-    id.value = "";
-  }
-
-  const button =
-    document.querySelector(
-      "#course-form button[type='submit']"
-    );
-
-  if (button) {
-    button.textContent = "Save Course";
-  }
-}
-
-
-function fill(course) {
-
-  editingId = course.id;
-
-  document.getElementById("course-id").value =
-    course.id;
-
-  document.getElementById("course-name").value =
-    course.title || "";
-
-  document.getElementById("course-price").value =
-    course.price || 0;
-
-  document.getElementById("course-category").value =
-    course.category || "";
-
-  document.getElementById("course-duration").value =
-    course.duration || "";
-
-  document.getElementById("course-image").value =
-    course.image_url || "";
-
-  document.getElementById("course-description").value =
-    course.description || "";
-
-  document.getElementById("course-modules").value =
-    Array.isArray(course.modules)
-      ? course.modules.join("\n")
-      : "";
-
-  const button =
-    document.querySelector(
-      "#course-form button[type='submit']"
-    );
-
-  if (button) {
-    button.textContent = "Update Course";
-  }
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
+  return new Date(date).toLocaleDateString("en-ZA", {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
   });
 }
 
@@ -145,6 +64,10 @@ function fill(course) {
 // ============================================================
 
 async function init() {
+
+  // ----------------------------------------------------------
+  // CHECK SUPABASE
+  // ----------------------------------------------------------
 
   if (
     !window.SUPABASE_URL ||
@@ -159,6 +82,10 @@ async function init() {
     return;
   }
 
+
+  // ----------------------------------------------------------
+  // CHECK SESSION
+  // ----------------------------------------------------------
 
   const {
     data: { session },
@@ -184,6 +111,10 @@ async function init() {
   }
 
 
+  // ----------------------------------------------------------
+  // SHOW ADMIN EMAIL
+  // ----------------------------------------------------------
+
   const adminEmail =
     document.getElementById("admin-email");
 
@@ -191,12 +122,13 @@ async function init() {
 
     adminEmail.textContent =
       session.user.email || "";
+
   }
 
 
-  // ==========================================================
+  // ----------------------------------------------------------
   // CHECK ADMIN ROLE
-  // ==========================================================
+  // ----------------------------------------------------------
 
   const {
     data: profile,
@@ -212,16 +144,16 @@ async function init() {
 
     console.error(profileError);
 
-    show(profileError.message);
+    show(
+      "Could not verify administrator account: " +
+      profileError.message
+    );
 
     return;
   }
 
 
-  if (
-    !profile ||
-    profile.role !== "admin"
-  ) {
+  if (!profile || profile.role !== "admin") {
 
     show(
       "This account is not authorised as an administrator."
@@ -238,15 +170,17 @@ async function init() {
   }
 
 
-  // ==========================================================
+  // ----------------------------------------------------------
   // LOAD ADMIN DATA
-  // ==========================================================
+  // ----------------------------------------------------------
 
   await Promise.all([
     loadStudents(),
     loadCourses(),
-    loadEnrolments()
+    loadEnrolments(),
+    loadPayments()
   ]);
+
 }
 
 
@@ -260,6 +194,7 @@ async function loadStudents() {
     document.getElementById("admin-students");
 
   if (!box) return;
+
 
   box.innerHTML =
     "<p>Loading registered students...</p>";
@@ -295,9 +230,15 @@ async function loadStudents() {
 
     box.innerHTML = `
       <div class="admin-error">
-        <strong>Could not load students.</strong>
-        <br>
+
+        <strong>
+          Could not load students.
+        </strong>
+
+        <br><br>
+
         ${esc(error.message)}
+
       </div>
     `;
 
@@ -309,11 +250,16 @@ async function loadStudents() {
 
     box.innerHTML = `
       <div class="empty-state">
-        <strong>No registered students yet.</strong>
+
+        <strong>
+          No registered students yet.
+        </strong>
+
         <p>
           Students will appear here after they create
           an account.
         </p>
+
       </div>
     `;
 
@@ -321,35 +267,11 @@ async function loadStudents() {
   }
 
 
-  // ==========================================================
-  // MOBILE-FRIENDLY STUDENT CARDS
-  // ==========================================================
-
   box.innerHTML = `
 
     <div class="student-list">
 
       ${data.map(student => {
-
-        const name =
-          student.full_name ||
-          "Student";
-
-        const gender =
-          student.gender ||
-          "Not provided";
-
-        const idNumber =
-          student.id_number ||
-          "Not provided";
-
-        const email =
-          student.email ||
-          "Not provided";
-
-        const phone =
-          student.phone ||
-          "Not provided";
 
         return `
 
@@ -364,11 +286,17 @@ async function loadStudents() {
               <div>
 
                 <h3>
-                  ${esc(name)}
+                  ${esc(
+                    student.full_name ||
+                    "Student"
+                  )}
                 </h3>
 
                 <span class="student-role">
-                  ${esc(student.role || "student")}
+                  ${esc(
+                    student.role ||
+                    "student"
+                  )}
                 </span>
 
               </div>
@@ -385,7 +313,10 @@ async function loadStudents() {
                 </span>
 
                 <strong>
-                  ${esc(gender)}
+                  ${esc(
+                    student.gender ||
+                    "Not provided"
+                  )}
                 </strong>
 
               </div>
@@ -398,7 +329,10 @@ async function loadStudents() {
                 </span>
 
                 <strong>
-                  ${esc(idNumber)}
+                  ${esc(
+                    student.id_number ||
+                    "Not provided"
+                  )}
                 </strong>
 
               </div>
@@ -411,7 +345,10 @@ async function loadStudents() {
                 </span>
 
                 <strong>
-                  ${esc(email)}
+                  ${esc(
+                    student.email ||
+                    "Not provided"
+                  )}
                 </strong>
 
               </div>
@@ -424,7 +361,10 @@ async function loadStudents() {
                 </span>
 
                 <strong>
-                  ${esc(phone)}
+                  ${esc(
+                    student.phone ||
+                    "Not provided"
+                  )}
                 </strong>
 
               </div>
@@ -437,7 +377,9 @@ async function loadStudents() {
                 </span>
 
                 <strong>
-                  ${formatDate(student.created_at)}
+                  ${formatDate(
+                    student.created_at
+                  )}
                 </strong>
 
               </div>
@@ -455,9 +397,9 @@ async function loadStudents() {
   `;
 
 
-  // ==========================================================
-  // MOBILE STUDENT STYLING
-  // ==========================================================
+  // ----------------------------------------------------------
+  // MOBILE STUDENT STYLE
+  // ----------------------------------------------------------
 
   if (
     !document.getElementById(
@@ -580,7 +522,9 @@ async function loadStudents() {
     `;
 
     document.head.appendChild(style);
+
   }
+
 }
 
 
@@ -603,7 +547,10 @@ async function loadCourses() {
 
     console.error(error);
 
-    show(error.message);
+    show(
+      "Could not load courses: " +
+      error.message
+    );
 
     return;
   }
@@ -613,7 +560,9 @@ async function loadCourses() {
 
 
   const box =
-    document.getElementById("admin-courses");
+    document.getElementById(
+      "admin-courses"
+    );
 
 
   if (!box) return;
@@ -631,11 +580,19 @@ async function loadCourses() {
           </strong>
 
           <small>
-            ${esc(course.category || "")}
+
+            ${esc(
+              course.category || ""
+            )}
+
             · R${Number(
               course.price || 0
             ).toLocaleString("en-ZA")}
-            · ${esc(course.duration || "")}
+
+            · ${esc(
+              course.duration || ""
+            )}
+
           </small>
 
         </div>
@@ -666,18 +623,25 @@ async function loadCourses() {
     "<p>No courses available.</p>";
 
 
-  box.querySelectorAll("[data-edit]")
+  // EDIT BUTTONS
+
+  box
+    .querySelectorAll("[data-edit]")
     .forEach(button => {
 
       button.onclick = () => {
 
         const course =
           courses.find(
-            c => c.id === button.dataset.edit
+            c =>
+              c.id ===
+              button.dataset.edit
           );
 
         if (course) {
+
           fill(course);
+
         }
 
       };
@@ -685,7 +649,10 @@ async function loadCourses() {
     });
 
 
-  box.querySelectorAll("[data-delete]")
+  // DELETE BUTTONS
+
+  box
+    .querySelectorAll("[data-delete]")
     .forEach(button => {
 
       button.onclick = () => {
@@ -697,6 +664,194 @@ async function loadCourses() {
       };
 
     });
+
+}
+
+
+// ============================================================
+// COURSE FORM
+// ============================================================
+
+function resetForm() {
+
+  editingId = null;
+
+  const form =
+    document.getElementById(
+      "course-form"
+    );
+
+  if (form) {
+
+    form.reset();
+
+  }
+
+
+  const id =
+    document.getElementById(
+      "course-id"
+    );
+
+  if (id) {
+
+    id.value = "";
+
+  }
+
+
+  const button =
+    document.querySelector(
+      "#course-form button[type='submit']"
+    );
+
+  if (button) {
+
+    button.textContent =
+      "Save Course";
+
+  }
+
+}
+
+
+// ============================================================
+// FILL COURSE
+// ============================================================
+
+function fill(course) {
+
+  editingId =
+    course.id;
+
+
+  const id =
+    document.getElementById(
+      "course-id"
+    );
+
+  if (id) {
+
+    id.value =
+      course.id;
+
+  }
+
+
+  const name =
+    document.getElementById(
+      "course-name"
+    );
+
+  if (name) {
+
+    name.value =
+      course.title || "";
+
+  }
+
+
+  const price =
+    document.getElementById(
+      "course-price"
+    );
+
+  if (price) {
+
+    price.value =
+      course.price || 0;
+
+  }
+
+
+  const category =
+    document.getElementById(
+      "course-category"
+    );
+
+  if (category) {
+
+    category.value =
+      course.category || "";
+
+  }
+
+
+  const duration =
+    document.getElementById(
+      "course-duration"
+    );
+
+  if (duration) {
+
+    duration.value =
+      course.duration || "";
+
+  }
+
+
+  const image =
+    document.getElementById(
+      "course-image"
+    );
+
+  if (image) {
+
+    image.value =
+      course.image_url || "";
+
+  }
+
+
+  const description =
+    document.getElementById(
+      "course-description"
+    );
+
+  if (description) {
+
+    description.value =
+      course.description || "";
+
+  }
+
+
+  const modules =
+    document.getElementById(
+      "course-modules"
+    );
+
+  if (modules) {
+
+    modules.value =
+      Array.isArray(course.modules)
+        ? course.modules.join("\n")
+        : "";
+
+  }
+
+
+  const button =
+    document.querySelector(
+      "#course-form button[type='submit']"
+    );
+
+  if (button) {
+
+    button.textContent =
+      "Update Course";
+
+  }
+
+
+  window.scrollTo({
+
+    top: 0,
+
+    behavior: "smooth"
+
+  });
+
 }
 
 
@@ -707,7 +862,10 @@ async function loadCourses() {
 async function deleteCourse(id) {
 
   const course =
-    courses.find(c => c.id === id);
+    courses.find(
+      c => c.id === id
+    );
+
 
   if (!course) return;
 
@@ -717,7 +875,9 @@ async function deleteCourse(id) {
       `Delete "${course.title}"?`
     )
   ) {
+
     return;
+
   }
 
 
@@ -732,7 +892,10 @@ async function deleteCourse(id) {
 
     console.error(error);
 
-    show(error.message);
+    show(
+      "Could not delete course: " +
+      error.message
+    );
 
     return;
   }
@@ -745,15 +908,18 @@ async function deleteCourse(id) {
 
 
   await loadCourses();
+
 }
 
 
 // ============================================================
-// SAVE COURSE
+// SAVE / UPDATE COURSE
 // ============================================================
 
 const courseForm =
-  document.getElementById("course-form");
+  document.getElementById(
+    "course-form"
+  );
 
 
 if (courseForm) {
@@ -766,7 +932,9 @@ if (courseForm) {
 
       const title =
         document
-          .getElementById("course-name")
+          .getElementById(
+            "course-name"
+          )
           .value
           .trim();
 
@@ -778,6 +946,7 @@ if (courseForm) {
         );
 
         return;
+
       }
 
 
@@ -787,37 +956,49 @@ if (courseForm) {
 
         price: Number(
           document
-            .getElementById("course-price")
+            .getElementById(
+              "course-price"
+            )
             .value
         ) || 0,
 
         category:
           document
-            .getElementById("course-category")
+            .getElementById(
+              "course-category"
+            )
             .value
             .trim(),
 
         duration:
           document
-            .getElementById("course-duration")
+            .getElementById(
+              "course-duration"
+            )
             .value
             .trim(),
 
         image_url:
           document
-            .getElementById("course-image")
+            .getElementById(
+              "course-image"
+            )
             .value
             .trim() || null,
 
         description:
           document
-            .getElementById("course-description")
+            .getElementById(
+              "course-description"
+            )
             .value
             .trim(),
 
         modules:
           document
-            .getElementById("course-modules")
+            .getElementById(
+              "course-modules"
+            )
             .value
             .split("\n")
             .map(x => x.trim())
@@ -840,7 +1021,10 @@ if (courseForm) {
           await db
             .from("courses")
             .update(payload)
-            .eq("id", editingId);
+            .eq(
+              "id",
+              editingId
+            );
 
       } else {
 
@@ -854,26 +1038,36 @@ if (courseForm) {
 
       if (result.error) {
 
-        console.error(result.error);
+        console.error(
+          result.error
+        );
 
-        show(result.error.message);
+        show(
+          result.error.message
+        );
 
         return;
+
       }
 
 
       show(
+
         editingId
           ? "Course updated successfully."
           : "Course added successfully.",
+
         true
+
       );
 
 
       resetForm();
 
       await loadCourses();
+
     };
+
 }
 
 
@@ -882,99 +1076,265 @@ if (courseForm) {
 // ============================================================
 
 const newCourse =
-  document.getElementById("new-course");
+  document.getElementById(
+    "new-course"
+  );
+
 
 if (newCourse) {
 
   newCourse.onclick =
     resetForm;
+
 }
 
 
 const cancelEdit =
-  document.getElementById("cancel-edit");
+  document.getElementById(
+    "cancel-edit"
+  );
+
 
 if (cancelEdit) {
 
   cancelEdit.onclick =
     resetForm;
+
 }
 
 
 // ============================================================
 // ENROLMENTS
-// FIXED: USE students TABLE, NOT profiles TABLE
+// IMPORTANT:
+// Your database column is enrollment_status
+// NOT status
 // ============================================================
 
 async function loadEnrolments() {
 
   const box =
-    document.getElementById("admin-enrolments");
+    document.getElementById(
+      "admin-enrolments"
+    );
 
 
   if (!box) return;
 
 
   box.innerHTML =
-    "<p>Loading enrolments...</p>";
+    "<p>Loading student enrolments...</p>";
 
+
+  // ----------------------------------------------------------
+  // LOAD ENROLMENTS WITHOUT PROFILES RELATION
+  // ----------------------------------------------------------
 
   const {
-    data,
-    error
+    data: enrolments,
+    error: enrolmentError
   } = await db
     .from("enrollments")
     .select(`
       id,
-      status,
-      created_at,
       student_id,
-      students(full_name),
-      courses(title,price)
+      course_id,
+      enrollment_status,
+      created_at
     `)
     .order("created_at", {
       ascending: false
     });
 
 
-  if (error) {
+  if (enrolmentError) {
 
     console.error(
       "Enrolment loading error:",
-      error
+      enrolmentError
     );
 
     box.innerHTML = `
+
       <div class="admin-error">
 
         <strong>
           Could not load enrolments.
         </strong>
 
-        <br>
+        <br><br>
 
-        ${esc(error.message)}
+        ${esc(
+          enrolmentError.message
+        )}
 
       </div>
+
     `;
 
     return;
   }
 
 
-  if (!data || data.length === 0) {
+  if (
+    !enrolments ||
+    enrolments.length === 0
+  ) {
 
     box.innerHTML =
       "<p>No enrolment requests yet.</p>";
 
     return;
+
   }
 
+
+  // ----------------------------------------------------------
+  // GET STUDENT IDS
+  // ----------------------------------------------------------
+
+  const studentIds = [
+    ...new Set(
+      enrolments
+        .map(e => e.student_id)
+        .filter(Boolean)
+    )
+  ];
+
+
+  // ----------------------------------------------------------
+  // GET COURSE IDS
+  // ----------------------------------------------------------
+
+  const courseIds = [
+    ...new Set(
+      enrolments
+        .map(e => e.course_id)
+        .filter(Boolean)
+    )
+  ];
+
+
+  // ----------------------------------------------------------
+  // LOAD STUDENTS
+  // ----------------------------------------------------------
+
+  let students = [];
+
+
+  if (studentIds.length > 0) {
+
+    const {
+      data,
+      error
+    } = await db
+      .from("profiles")
+      .select(`
+        id,
+        full_name,
+        email
+      `)
+      .in(
+        "id",
+        studentIds
+      );
+
+
+    if (error) {
+
+      console.error(
+        "Student lookup error:",
+        error
+      );
+
+    } else {
+
+      students =
+        data || [];
+
+    }
+
+  }
+
+
+  // ----------------------------------------------------------
+  // LOAD COURSES
+  // ----------------------------------------------------------
+
+  let courseList = [];
+
+
+  if (courseIds.length > 0) {
+
+    const {
+      data,
+      error
+    } = await db
+      .from("courses")
+      .select(`
+        id,
+        title,
+        price
+      `)
+      .in(
+        "id",
+        courseIds
+      );
+
+
+    if (error) {
+
+      console.error(
+        "Course lookup error:",
+        error
+      );
+
+    } else {
+
+      courseList =
+        data || [];
+
+    }
+
+  }
+
+
+  // ----------------------------------------------------------
+  // CREATE LOOKUPS
+  // ----------------------------------------------------------
+
+  const studentMap =
+    Object.fromEntries(
+      students.map(
+        student => [
+          student.id,
+          student
+        ]
+      )
+    );
+
+
+  const courseMap =
+    Object.fromEntries(
+      courseList.map(
+        course => [
+          course.id,
+          course
+        ]
+      )
+    );
+
+
+  // ----------------------------------------------------------
+  // DISPLAY ENROLMENTS
+  // ----------------------------------------------------------
 
   box.innerHTML = `
 
     <div
-      style="overflow-x:auto; width:100%;"
+      style="
+        overflow-x:auto;
+        width:100%;
+      "
     >
 
       <table>
@@ -985,6 +1345,10 @@ async function loadEnrolments() {
 
             <th>
               Student
+            </th>
+
+            <th>
+              Email
             </th>
 
             <th>
@@ -1014,108 +1378,157 @@ async function loadEnrolments() {
 
         <tbody>
 
-          ${data.map(enrolment => `
+          ${enrolments.map(enrolment => {
 
-            <tr>
+            const student =
+              studentMap[
+                enrolment.student_id
+              ] || {};
 
-              <td>
-                ${esc(
-                  enrolment.students?.full_name ||
-                  "Student"
-                )}
-              </td>
-
-
-              <td>
-                ${esc(
-                  enrolment.courses?.title ||
-                  "Course"
-                )}
-              </td>
+            const course =
+              courseMap[
+                enrolment.course_id
+              ] || {};
 
 
-              <td>
-                R${Number(
-                  enrolment.courses?.price || 0
-                ).toLocaleString("en-ZA")}
-              </td>
+            const currentStatus =
+              enrolment.enrollment_status ||
+              "pending";
 
 
-              <td>
-                ${esc(
-                  enrolment.status ||
-                  "pending"
-                )}
-              </td>
+            return `
+
+              <tr>
+
+                <td>
+
+                  ${esc(
+                    student.full_name ||
+                    "Student"
+                  )}
+
+                </td>
 
 
-              <td>
-                ${formatDate(
-                  enrolment.created_at
-                )}
-              </td>
+                <td>
+
+                  ${esc(
+                    student.email ||
+                    ""
+                  )}
+
+                </td>
 
 
-              <td>
+                <td>
 
-                <select
-                  data-status="${enrolment.id}"
-                >
+                  ${esc(
+                    course.title ||
+                    "Course"
+                  )}
 
-                  <option
-                    value="pending"
-                    ${
-                      enrolment.status === "pending"
-                        ? "selected"
-                        : ""
-                    }
+                </td>
+
+
+                <td>
+
+                  R${Number(
+                    course.price || 0
+                  ).toLocaleString(
+                    "en-ZA"
+                  )}
+
+                </td>
+
+
+                <td>
+
+                  <strong>
+
+                    ${esc(
+                      currentStatus
+                    )}
+
+                  </strong>
+
+                </td>
+
+
+                <td>
+
+                  ${formatDate(
+                    enrolment.created_at
+                  )}
+
+                </td>
+
+
+                <td>
+
+                  <select
+                    data-enrollment-status="${enrolment.id}"
                   >
-                    Pending
-                  </option>
+
+                    <option
+                      value="pending"
+                      ${
+                        currentStatus ===
+                        "pending"
+                          ? "selected"
+                          : ""
+                      }
+                    >
+                      Pending
+                    </option>
 
 
-                  <option
-                    value="approved"
-                    ${
-                      enrolment.status === "approved"
-                        ? "selected"
-                        : ""
-                    }
-                  >
-                    Approved
-                  </option>
+                    <option
+                      value="approved"
+                      ${
+                        currentStatus ===
+                        "approved"
+                          ? "selected"
+                          : ""
+                      }
+                    >
+                      Approved
+                    </option>
 
 
-                  <option
-                    value="completed"
-                    ${
-                      enrolment.status === "completed"
-                        ? "selected"
-                        : ""
-                    }
-                  >
-                    Completed
-                  </option>
+                    <option
+                      value="completed"
+                      ${
+                        currentStatus ===
+                        "completed"
+                          ? "selected"
+                          : ""
+                      }
+                    >
+                      Completed
+                    </option>
 
 
-                  <option
-                    value="cancelled"
-                    ${
-                      enrolment.status === "cancelled"
-                        ? "selected"
-                        : ""
-                    }
-                  >
-                    Cancelled
-                  </option>
+                    <option
+                      value="cancelled"
+                      ${
+                        currentStatus ===
+                        "cancelled"
+                          ? "selected"
+                          : ""
+                      }
+                    >
+                      Cancelled
+                    </option>
 
-                </select>
+                  </select>
 
-              </td>
+                </td>
 
-            </tr>
+              </tr>
 
-          `).join("")}
+            `;
+
+          }).join("")}
 
         </tbody>
 
@@ -1126,47 +1539,366 @@ async function loadEnrolments() {
   `;
 
 
-  // ==========================================================
-  // UPDATE ENROLMENT STATUS
-  // ==========================================================
+  // ----------------------------------------------------------
+  // STATUS UPDATE
+  // ----------------------------------------------------------
 
-  box.querySelectorAll(
-    "[data-status]"
-  ).forEach(select => {
+  box
+    .querySelectorAll(
+      "[data-enrollment-status]"
+    )
+    .forEach(select => {
 
-    select.onchange =
-      async () => {
+      select.onchange =
+        async () => {
 
-        const { error } =
-          await db
+          const enrollmentId =
+            select.dataset
+              .enrollmentStatus;
+
+
+          const newStatus =
+            select.value;
+
+
+          select.disabled =
+            true;
+
+
+          const {
+            error
+          } = await db
             .from("enrollments")
             .update({
-              status: select.value
+
+              enrollment_status:
+                newStatus
+
             })
             .eq(
               "id",
-              select.dataset.status
+              enrollmentId
             );
 
 
-        if (error) {
+          select.disabled =
+            false;
 
-          console.error(error);
 
-          show(error.message);
+          if (error) {
 
-        } else {
+            console.error(
+              "Status update error:",
+              error
+            );
+
+            show(
+              "Could not update enrolment: " +
+              error.message
+            );
+
+            return;
+
+          }
+
 
           show(
-            "Enrolment status updated.",
+            "Enrolment status updated successfully.",
             true
           );
 
-        }
+        };
 
-      };
+    });
 
-  });
+}
+
+
+// ============================================================
+// PAYMENTS
+// ============================================================
+
+async function loadPayments() {
+
+  const box =
+    document.getElementById(
+      "admin-payments"
+    );
+
+
+  if (!box) return;
+
+
+  box.innerHTML =
+    "<p>Loading payment records...</p>";
+
+
+  const {
+    data: payments,
+    error
+  } = await db
+    .from("payments")
+    .select(`
+      id,
+      student_id,
+      enrolment_id,
+      amount,
+      payment_method,
+      status,
+      proof_url,
+      notes,
+      created_at
+    `)
+    .order("created_at", {
+      ascending: false
+    });
+
+
+  if (error) {
+
+    console.error(
+      "Payment loading error:",
+      error
+    );
+
+
+    box.innerHTML = `
+
+      <div class="admin-error">
+
+        <strong>
+          Could not load payments.
+        </strong>
+
+        <br><br>
+
+        ${esc(
+          error.message
+        )}
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  if (
+    !payments ||
+    payments.length === 0
+  ) {
+
+    box.innerHTML = `
+      <p>
+        No payment records yet.
+      </p>
+    `;
+
+    return;
+
+  }
+
+
+  // ----------------------------------------------------------
+  // STUDENT IDS
+  // ----------------------------------------------------------
+
+  const studentIds = [
+    ...new Set(
+      payments
+        .map(p => p.student_id)
+        .filter(Boolean)
+    )
+  ];
+
+
+  let students = [];
+
+
+  if (studentIds.length > 0) {
+
+    const {
+      data,
+      error:
+        studentError
+    } = await db
+      .from("profiles")
+      .select(`
+        id,
+        full_name,
+        email
+      `)
+      .in(
+        "id",
+        studentIds
+      );
+
+
+    if (!studentError) {
+
+      students =
+        data || [];
+
+    }
+
+  }
+
+
+  const studentMap =
+    Object.fromEntries(
+      students.map(
+        student => [
+          student.id,
+          student
+        ]
+      )
+    );
+
+
+  // ----------------------------------------------------------
+  // DISPLAY PAYMENTS
+  // ----------------------------------------------------------
+
+  box.innerHTML = `
+
+    <div
+      style="
+        overflow-x:auto;
+        width:100%;
+      "
+    >
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Student
+            </th>
+
+            <th>
+              Email
+            </th>
+
+            <th>
+              Amount
+            </th>
+
+            <th>
+              Method
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Date
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          ${payments.map(payment => {
+
+            const student =
+              studentMap[
+                payment.student_id
+              ] || {};
+
+
+            return `
+
+              <tr>
+
+                <td>
+
+                  ${esc(
+                    student.full_name ||
+                    "Student"
+                  )}
+
+                </td>
+
+
+                <td>
+
+                  ${esc(
+                    student.email ||
+                    ""
+                  )}
+
+                </td>
+
+
+                <td>
+
+                  R${Number(
+                    payment.amount || 0
+                  ).toLocaleString(
+                    "en-ZA",
+                    {
+                      minimumFractionDigits: 2
+                    }
+                  )}
+
+                </td>
+
+
+                <td>
+
+                  ${esc(
+                    payment.payment_method ||
+                    ""
+                  )}
+
+                </td>
+
+
+                <td>
+
+                  <strong>
+
+                    ${esc(
+                      payment.status ||
+                      "pending"
+                    )}
+
+                  </strong>
+
+                </td>
+
+
+                <td>
+
+                  ${formatDate(
+                    payment.created_at
+                  )}
+
+                </td>
+
+              </tr>
+
+            `;
+
+          }).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
 }
 
 
@@ -1175,7 +1907,9 @@ async function loadEnrolments() {
 // ============================================================
 
 const logout =
-  document.getElementById("logout");
+  document.getElementById(
+    "logout"
+  );
 
 
 if (logout) {
@@ -1189,6 +1923,7 @@ if (logout) {
         "index.html";
 
     };
+
 }
 
 
@@ -1196,4 +1931,4 @@ if (logout) {
 // START
 // ============================================================
 
-init();
+init(); 
