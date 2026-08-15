@@ -75,119 +75,35 @@ function formatDate(date) {
 
 
 // ============================================================
-// GENERAL ADMIN TABLE MOBILE CSS
+// FIND ENROLMENT DATE
+// Works even if database uses a different date column.
 // ============================================================
 
-function addAdminTableStyles() {
+function getEnrolmentDate(enrolment) {
 
-  if (
-    document.getElementById(
-      "admin-table-mobile-style"
-    )
-  ) {
-    return;
-  }
+  return (
+    enrolment.enrolled_at ||
+    enrolment.created_at ||
+    enrolment.enrollment_date ||
+    enrolment.date ||
+    enrolment.submitted_at ||
+    null
+  );
 
-  const style =
-    document.createElement("style");
+}
 
-  style.id =
-    "admin-table-mobile-style";
 
-  style.textContent = `
+// ============================================================
+// FIND ENROLMENT STATUS
+// ============================================================
 
-    .admin-table-wrapper {
-      width: 100%;
-      max-width: 100%;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      border-radius: 12px;
-    }
+function getEnrolmentStatus(enrolment) {
 
-    .admin-table {
-      width: 100%;
-      min-width: 700px;
-      border-collapse: collapse;
-    }
-
-    .admin-table th,
-    .admin-table td {
-      padding: 12px 10px;
-      text-align: left;
-      vertical-align: middle;
-    }
-
-    .admin-table th {
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .admin-table td {
-      word-break: normal;
-    }
-
-    .admin-table td a {
-      color: #15803d;
-      font-weight: 700;
-      text-decoration: none;
-    }
-
-    .admin-table td a:hover {
-      text-decoration: underline;
-    }
-
-    .enrolment-status {
-      display: inline-block;
-      padding: 7px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: capitalize;
-      white-space: nowrap;
-    }
-
-    .enrolment-status.pending {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .enrolment-status.approved {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .enrolment-status.completed {
-      background: #dbeafe;
-      color: #1e40af;
-    }
-
-    .enrolment-status.cancelled {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    @media (max-width: 650px) {
-
-      .admin-table-wrapper {
-        width: 100%;
-        overflow-x: auto;
-      }
-
-      .admin-table {
-        min-width: 700px;
-      }
-
-      .admin-table th,
-      .admin-table td {
-        padding: 11px 9px;
-        font-size: 14px;
-      }
-
-    }
-
-  `;
-
-  document.head.appendChild(style);
+  return (
+    enrolment.enrollment_status ||
+    enrolment.status ||
+    "pending"
+  );
 
 }
 
@@ -330,11 +246,6 @@ function fill(course) {
 
 async function init() {
 
-  addAdminTableStyles();
-
-  addAssessmentStyles();
-
-
   if (
     !window.SUPABASE_URL ||
     !window.SUPABASE_ANON_KEY ||
@@ -360,9 +271,7 @@ async function init() {
 
     console.error(sessionError);
 
-    show(
-      sessionError.message
-    );
+    show(sessionError.message);
 
     return;
   }
@@ -412,9 +321,7 @@ async function init() {
 
     console.error(profileError);
 
-    show(
-      profileError.message
-    );
+    show(profileError.message);
 
     return;
   }
@@ -441,12 +348,17 @@ async function init() {
 
 
   // ==========================================================
-  // LOAD EVERYTHING
+  // LOAD DATA
+  //
+  // Courses are loaded first because enrolments and
+  // assessments use course information.
   // ==========================================================
 
+  await loadStudents();
+
+  await loadCourses();
+
   await Promise.all([
-    loadStudents(),
-    loadCourses(),
     loadEnrolments(),
     loadPayments(),
     loadAssessments()
@@ -510,15 +422,13 @@ async function loadStudents() {
 
     box.innerHTML = `
       <div class="admin-error">
-
         <strong>
           Could not load students.
         </strong>
 
-        <br>
+        <br><br>
 
         ${esc(error.message)}
-
       </div>
     `;
 
@@ -686,131 +596,144 @@ async function loadStudents() {
   `;
 
 
+  addStudentStyles();
+
+}
+
+
+// ============================================================
+// STUDENT CSS
+// ============================================================
+
+function addStudentStyles() {
+
   if (
-    !document.getElementById(
+    document.getElementById(
       "student-mobile-style"
     )
   ) {
-
-    const style =
-      document.createElement("style");
-
-    style.id =
-      "student-mobile-style";
+    return;
+  }
 
 
-    style.textContent = `
+  const style =
+    document.createElement("style");
 
-      .student-list {
-        display: grid;
-        gap: 18px;
-        width: 100%;
-      }
+  style.id =
+    "student-mobile-style";
 
-      .student-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 18px;
-        box-shadow: 0 4px 14px rgba(0,0,0,.05);
-      }
 
-      .student-card-header {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 18px;
-        padding-bottom: 14px;
-        border-bottom: 1px solid #edf2f7;
-      }
+  style.textContent = `
 
-      .student-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: #f0fdf4;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 25px;
-        flex-shrink: 0;
-      }
+    .student-list {
+      display: grid;
+      gap: 18px;
+      width: 100%;
+    }
 
-      .student-card h3 {
-        margin: 0 0 5px;
-        font-size: 19px;
-        color: #0f172a;
-      }
+    .student-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 4px 14px rgba(0,0,0,.05);
+    }
 
-      .student-role {
-        display: inline-block;
-        background: #e8f5e9;
-        color: #166534;
-        border-radius: 20px;
-        padding: 4px 10px;
-        font-size: 12px;
-        font-weight: bold;
-        text-transform: capitalize;
-      }
+    .student-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .student-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #f0fdf4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      flex-shrink: 0;
+    }
+
+    .student-card h3 {
+      margin: 0 0 5px;
+      font-size: 19px;
+      color: #0f172a;
+    }
+
+    .student-role {
+      display: inline-block;
+      background: #e8f5e9;
+      color: #166534;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+
+    .student-details {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .student-detail {
+      padding: 11px 12px;
+      background: #f8fafc;
+      border-radius: 9px;
+    }
+
+    .detail-label {
+      display: block;
+      color: #64748b;
+      font-size: 12px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .student-detail strong {
+      display: block;
+      color: #0f172a;
+      font-size: 14px;
+      word-break: break-word;
+    }
+
+    .student-detail.sensitive {
+      background: #fffaf0;
+    }
+
+    .empty-state {
+      padding: 25px;
+      text-align: center;
+      color: #64748b;
+    }
+
+    .admin-error {
+      padding: 18px;
+      border-radius: 10px;
+      background: #fef2f2;
+      color: #991b1b;
+      overflow-wrap: anywhere;
+    }
+
+    @media (min-width: 700px) {
 
       .student-details {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 12px;
+        grid-template-columns: 1fr 1fr;
       }
 
-      .student-detail {
-        padding: 11px 12px;
-        background: #f8fafc;
-        border-radius: 9px;
-      }
+    }
 
-      .detail-label {
-        display: block;
-        color: #64748b;
-        font-size: 12px;
-        margin-bottom: 4px;
-        font-weight: 600;
-      }
-
-      .student-detail strong {
-        display: block;
-        color: #0f172a;
-        font-size: 14px;
-        word-break: break-word;
-      }
-
-      .student-detail.sensitive {
-        background: #fffaf0;
-      }
-
-      .empty-state {
-        padding: 25px;
-        text-align: center;
-        color: #64748b;
-      }
-
-      .admin-error {
-        padding: 18px;
-        border-radius: 10px;
-        background: #fef2f2;
-        color: #991b1b;
-      }
-
-      @media (min-width: 700px) {
-
-        .student-details {
-          grid-template-columns: 1fr 1fr;
-        }
-
-      }
-
-    `;
+  `;
 
 
-    document.head.appendChild(style);
-
-  }
+  document.head.appendChild(style);
 
 }
 
@@ -828,18 +751,14 @@ async function loadCourses() {
     await db
       .from("courses")
       .select("*")
-      .order(
-        "title"
-      );
+      .order("title");
 
 
   if (error) {
 
     console.error(error);
 
-    show(
-      error.message
-    );
+    show(error.message);
 
     return;
   }
@@ -916,14 +835,11 @@ async function loadCourses() {
 
     `).join("")
 
-    ||
-    "<p>No courses available.</p>";
+    || "<p>No courses available.</p>";
 
 
   box
-    .querySelectorAll(
-      "[data-edit]"
-    )
+    .querySelectorAll("[data-edit]")
     .forEach(button => {
 
       button.onclick = () => {
@@ -945,9 +861,7 @@ async function loadCourses() {
 
 
   box
-    .querySelectorAll(
-      "[data-delete]"
-    )
+    .querySelectorAll("[data-delete]")
     .forEach(button => {
 
       button.onclick = () => {
@@ -971,8 +885,7 @@ async function deleteCourse(id) {
 
   const course =
     courses.find(
-      c =>
-        c.id === id
+      c => c.id === id
     );
 
 
@@ -1010,9 +923,7 @@ async function deleteCourse(id) {
 
     console.error(error);
 
-    show(
-      error.message
-    );
+    show(error.message);
 
     return;
   }
@@ -1047,16 +958,13 @@ if (courseForm) {
       event.preventDefault();
 
 
-      const titleElement =
-        document.getElementById(
-          "course-name"
-        );
-
-
       const title =
-        titleElement
-          ? titleElement.value.trim()
-          : "";
+        document
+          .getElementById(
+            "course-name"
+          )
+          .value
+          .trim();
 
 
       if (!title) {
@@ -1078,48 +986,53 @@ if (courseForm) {
             document
               .getElementById(
                 "course-price"
-              )?.value
+              )
+              .value
           ) || 0,
 
         category:
           document
             .getElementById(
               "course-category"
-            )?.value
-            .trim() || "",
+            )
+            .value
+            .trim(),
 
         duration:
           document
             .getElementById(
               "course-duration"
-            )?.value
-            .trim() || "",
+            )
+            .value
+            .trim(),
 
         image_url:
           document
             .getElementById(
               "course-image"
-            )?.value
+            )
+            .value
             .trim() || null,
 
         description:
           document
             .getElementById(
               "course-description"
-            )?.value
-            .trim() || "",
+            )
+            .value
+            .trim(),
 
         modules:
           document
             .getElementById(
               "course-modules"
-            )?.value
+            )
+            .value
             .split("\n")
             .map(x => x.trim())
-            .filter(Boolean) || [],
+            .filter(Boolean),
 
-        active:
-          true,
+        active: true,
 
         updated_at:
           new Date().toISOString()
@@ -1146,9 +1059,7 @@ if (courseForm) {
         result =
           await db
             .from("courses")
-            .insert(
-              payload
-            );
+            .insert(payload);
 
       }
 
@@ -1203,7 +1114,7 @@ if (newCourse) {
 
 
 // ============================================================
-// CANCEL COURSE EDIT
+// CANCEL EDIT
 // ============================================================
 
 const cancelEdit =
@@ -1223,8 +1134,8 @@ if (cancelEdit) {
 // ============================================================
 // ENROLMENTS
 // IMPORTANT:
-// We DO NOT use enrollments.created_at.
-// The existing table does not contain that column.
+// We use select("*") because the database does NOT contain
+// enrollments.created_at.
 // ============================================================
 
 async function loadEnrolments() {
@@ -1241,6 +1152,12 @@ async function loadEnrolments() {
   box.innerHTML =
     "<p>Loading student enrolments...</p>";
 
+
+  // ==========================================================
+  // DO NOT REQUEST created_at DIRECTLY.
+  // The previous error came from requesting a column that
+  // does not exist in the enrollments table.
+  // ==========================================================
 
   const {
     data: enrolments,
@@ -1303,6 +1220,10 @@ async function loadEnrolments() {
   }
 
 
+  // ==========================================================
+  // COURSE LOOKUP
+  // ==========================================================
+
   const courseIds = [
     ...new Set(
       enrolments
@@ -1315,9 +1236,7 @@ async function loadEnrolments() {
   let courseData = [];
 
 
-  if (
-    courseIds.length > 0
-  ) {
+  if (courseIds.length > 0) {
 
     const {
       data,
@@ -1341,6 +1260,13 @@ async function loadEnrolments() {
       courseData =
         data || [];
 
+    } else {
+
+      console.error(
+        "Course lookup error:",
+        error
+      );
+
     }
 
   }
@@ -1353,187 +1279,454 @@ async function loadEnrolments() {
 
     courseLookup[
       course.id
-    ] =
-      course;
+    ] = course;
 
   });
 
 
+  // ==========================================================
+  // STUDENT LOOKUP
+  // ==========================================================
+
+  const studentIds = [
+    ...new Set(
+      enrolments
+        .map(e => e.student_id)
+        .filter(Boolean)
+    )
+  ];
+
+
+  let studentData = [];
+
+
+  if (studentIds.length > 0) {
+
+    const {
+      data,
+      error
+    } =
+      await db
+        .from("profiles")
+        .select(`
+          id,
+          full_name,
+          email,
+          phone
+        `)
+        .in(
+          "id",
+          studentIds
+        );
+
+
+    if (!error) {
+
+      studentData =
+        data || [];
+
+    } else {
+
+      console.error(
+        "Student lookup error:",
+        error
+      );
+
+    }
+
+  }
+
+
+  const studentLookup = {};
+
+
+  studentData.forEach(student => {
+
+    studentLookup[
+      student.id
+    ] = student;
+
+  });
+
+
+  // ==========================================================
+  // RESPONSIVE ENROLMENT DISPLAY
+  // ==========================================================
+
   box.innerHTML = `
 
-    <div class="admin-table-wrapper">
+    <div class="enrolment-desktop">
 
-      <table class="admin-table">
+      <div class="admin-table-wrapper">
 
-        <thead>
+        <table class="admin-table enrolment-table">
 
-          <tr>
+          <thead>
 
-            <th>Student</th>
+            <tr>
 
-            <th>Course</th>
+              <th>Student</th>
+              <th>Course</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
 
-            <th>Price</th>
+            </tr>
 
-            <th>Status</th>
+          </thead>
 
-            <th>Date</th>
+          <tbody>
 
-            <th>Action</th>
+            ${enrolments.map(
+              enrolment => {
 
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          ${enrolments.map(
-            enrolment => {
-
-              const course =
-                courseLookup[
-                  enrolment.course_id
-                ] || {};
+                const course =
+                  courseLookup[
+                    enrolment.course_id
+                  ] || {};
 
 
-              const courseName =
-                course.title ||
-                course.name ||
-                "Course";
+                const student =
+                  studentLookup[
+                    enrolment.student_id
+                  ] || {};
 
 
-              const price =
-                course.price ||
-                enrolment.amount ||
-                0;
+                const studentName =
+                  student.full_name ||
+                  student.email ||
+                  "Student";
 
 
-              const status =
-                enrolment.enrollment_status ||
-                enrolment.status ||
-                "pending";
+                const courseName =
+                  course.title ||
+                  course.name ||
+                  "Course";
 
 
-              // IMPORTANT:
-              // Do not reference created_at.
-              const date =
-                enrolment.enrolled_at ||
-                enrolment.enrollment_date ||
-                null;
+                const amount =
+                  enrolment.amount ??
+                  course.price ??
+                  0;
 
 
-              return `
+                const status =
+                  getEnrolmentStatus(
+                    enrolment
+                  );
 
-                <tr>
 
-                  <td>
-                    ${esc(
-                      enrolment.student_id ||
-                      "Student"
-                    )}
-                  </td>
+                const date =
+                  getEnrolmentDate(
+                    enrolment
+                  );
 
-                  <td>
-                    ${esc(
-                      courseName
-                    )}
-                  </td>
 
-                  <td>
+                return `
+
+                  <tr>
+
+                    <td>
+                      ${esc(
+                        studentName
+                      )}
+                    </td>
+
+                    <td>
+                      ${esc(
+                        courseName
+                      )}
+                    </td>
+
+                    <td>
+                      R${Number(
+                        amount || 0
+                      ).toLocaleString(
+                        "en-ZA"
+                      )}
+                    </td>
+
+                    <td>
+
+                      <span
+                        class="enrolment-status ${esc(
+                          status
+                        )}">
+
+                        ${esc(status)}
+
+                      </span>
+
+                    </td>
+
+                    <td>
+                      ${formatDate(date)}
+                    </td>
+
+                    <td>
+
+                      <select
+                        class="status-select"
+                        data-enrolment-status="${esc(
+                          enrolment.id
+                        )}">
+
+                        <option
+                          value="pending"
+                          ${
+                            status === "pending"
+                              ? "selected"
+                              : ""
+                          }>
+                          Pending
+                        </option>
+
+                        <option
+                          value="approved"
+                          ${
+                            status === "approved"
+                              ? "selected"
+                              : ""
+                          }>
+                          Approved
+                        </option>
+
+                        <option
+                          value="completed"
+                          ${
+                            status === "completed"
+                              ? "selected"
+                              : ""
+                          }>
+                          Completed
+                        </option>
+
+                        <option
+                          value="cancelled"
+                          ${
+                            status === "cancelled"
+                              ? "selected"
+                              : ""
+                          }>
+                          Cancelled
+                        </option>
+
+                      </select>
+
+                    </td>
+
+                  </tr>
+
+                `;
+
+              }
+            ).join("")}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <div class="enrolment-mobile">
+
+      ${enrolments.map(
+        enrolment => {
+
+          const course =
+            courseLookup[
+              enrolment.course_id
+            ] || {};
+
+
+          const student =
+            studentLookup[
+              enrolment.student_id
+            ] || {};
+
+
+          const studentName =
+            student.full_name ||
+            student.email ||
+            "Student";
+
+
+          const courseName =
+            course.title ||
+            course.name ||
+            "Course";
+
+
+          const amount =
+            enrolment.amount ??
+            course.price ??
+            0;
+
+
+          const status =
+            getEnrolmentStatus(
+              enrolment
+            );
+
+
+          const date =
+            getEnrolmentDate(
+              enrolment
+            );
+
+
+          return `
+
+            <div class="enrolment-card">
+
+              <div class="enrolment-card-header">
+
+                <div>
+
+                  <span class="mobile-label">
+                    Student
+                  </span>
+
+                  <strong>
+                    ${esc(studentName)}
+                  </strong>
+
+                </div>
+
+                <span
+                  class="enrolment-status ${esc(
+                    status
+                  )}">
+
+                  ${esc(status)}
+
+                </span>
+
+              </div>
+
+
+              <div class="enrolment-card-details">
+
+                <div>
+
+                  <span class="mobile-label">
+                    Course
+                  </span>
+
+                  <strong>
+                    ${esc(courseName)}
+                  </strong>
+
+                </div>
+
+
+                <div>
+
+                  <span class="mobile-label">
+                    Amount
+                  </span>
+
+                  <strong>
                     R${Number(
-                      price
+                      amount || 0
                     ).toLocaleString(
                       "en-ZA"
                     )}
-                  </td>
+                  </strong>
 
-                  <td>
+                </div>
 
-                    <span
-                      class="enrolment-status ${esc(
-                        status
-                      )}">
 
-                      ${esc(
-                        status
-                      )}
+                <div>
 
-                    </span>
+                  <span class="mobile-label">
+                    Date
+                  </span>
 
-                  </td>
+                  <strong>
+                    ${formatDate(date)}
+                  </strong>
 
-                  <td>
-                    ${formatDate(
-                      date
-                    )}
-                  </td>
+                </div>
 
-                  <td>
+              </div>
 
-                    <select
-                      data-enrolment-status="${esc(
-                        enrolment.id
-                      )}">
 
-                      <option
-                        value="pending"
-                        ${
-                          status === "pending"
-                            ? "selected"
-                            : ""
-                        }>
-                        Pending
-                      </option>
+              <div class="enrolment-card-action">
 
-                      <option
-                        value="approved"
-                        ${
-                          status === "approved"
-                            ? "selected"
-                            : ""
-                        }>
-                        Approved
-                      </option>
+                <label>
+                  Update enrolment status
+                </label>
 
-                      <option
-                        value="completed"
-                        ${
-                          status === "completed"
-                            ? "selected"
-                            : ""
-                        }>
-                        Completed
-                      </option>
+                <select
+                  class="status-select"
+                  data-enrolment-status="${esc(
+                    enrolment.id
+                  )}">
 
-                      <option
-                        value="cancelled"
-                        ${
-                          status === "cancelled"
-                            ? "selected"
-                            : ""
-                        }>
-                        Cancelled
-                      </option>
+                  <option
+                    value="pending"
+                    ${
+                      status === "pending"
+                        ? "selected"
+                        : ""
+                    }>
+                    Pending
+                  </option>
 
-                    </select>
+                  <option
+                    value="approved"
+                    ${
+                      status === "approved"
+                        ? "selected"
+                        : ""
+                    }>
+                    Approved
+                  </option>
 
-                  </td>
+                  <option
+                    value="completed"
+                    ${
+                      status === "completed"
+                        ? "selected"
+                        : ""
+                    }>
+                    Completed
+                  </option>
 
-                </tr>
+                  <option
+                    value="cancelled"
+                    ${
+                      status === "cancelled"
+                        ? "selected"
+                        : ""
+                    }>
+                    Cancelled
+                  </option>
 
-              `;
+                </select>
 
-            }
-          ).join("")}
+              </div>
 
-        </tbody>
+            </div>
 
-      </table>
+          `;
+
+        }
+      ).join("")}
 
     </div>
 
   `;
 
+
+  // ==========================================================
+  // STATUS UPDATE
+  // ==========================================================
 
   box
     .querySelectorAll(
@@ -1544,29 +1737,58 @@ async function loadEnrolments() {
       select.onchange =
         async () => {
 
+          const enrolmentId =
+            select.dataset.enrolmentStatus;
+
+
           const {
             error
           } =
             await db
               .from("enrollments")
               .update({
+
                 enrollment_status:
+                  select.value,
+
+                status:
                   select.value
+
               })
               .eq(
                 "id",
-                select.dataset.enrolmentStatus
+                enrolmentId
               );
 
 
           if (error) {
 
-            show(
-              "Could not update enrolment: " +
-              error.message
-            );
+            // Some databases only have enrollment_status
+            // and not status. Try the correct column alone.
 
-            return;
+            const retry =
+              await db
+                .from("enrollments")
+                .update({
+                  enrollment_status:
+                    select.value
+                })
+                .eq(
+                  "id",
+                  enrolmentId
+                );
+
+
+            if (retry.error) {
+
+              show(
+                "Could not update enrolment: " +
+                retry.error.message
+              );
+
+              return;
+            }
+
           }
 
 
@@ -1581,6 +1803,199 @@ async function loadEnrolments() {
         };
 
     });
+
+
+  addEnrolmentStyles();
+
+}
+
+
+// ============================================================
+// ENROLMENT CSS
+// ============================================================
+
+function addEnrolmentStyles() {
+
+  if (
+    document.getElementById(
+      "enrolment-responsive-style"
+    )
+  ) {
+    return;
+  }
+
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "enrolment-responsive-style";
+
+
+  style.textContent = `
+
+    .enrolment-desktop {
+      width: 100%;
+    }
+
+    .enrolment-mobile {
+      display: none;
+    }
+
+    .admin-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    .admin-table th,
+    .admin-table td {
+      padding: 14px 12px;
+      text-align: left;
+      vertical-align: middle;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .admin-table th {
+      color: #0f172a;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .admin-table td {
+      color: #334155;
+    }
+
+    .status-select {
+      min-width: 130px;
+      padding: 9px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #ffffff;
+      font: inherit;
+    }
+
+    .enrolment-status {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 25px;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    .enrolment-status.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .enrolment-status.approved {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .enrolment-status.completed {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .enrolment-status.cancelled {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .enrolment-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 14px rgba(0,0,0,.05);
+    }
+
+    .enrolment-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .enrolment-card-header strong {
+      display: block;
+      font-size: 17px;
+      color: #0f172a;
+      word-break: break-word;
+    }
+
+    .mobile-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 5px;
+    }
+
+    .enrolment-card-details {
+      display: grid;
+      gap: 12px;
+    }
+
+    .enrolment-card-details > div {
+      background: #f8fafc;
+      padding: 11px 12px;
+      border-radius: 9px;
+    }
+
+    .enrolment-card-details strong {
+      color: #0f172a;
+      word-break: break-word;
+    }
+
+    .enrolment-card-action {
+      margin-top: 16px;
+      padding-top: 15px;
+      border-top: 1px solid #edf2f7;
+    }
+
+    .enrolment-card-action label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 7px;
+    }
+
+    .enrolment-card-action .status-select {
+      width: 100%;
+    }
+
+    @media (max-width: 700px) {
+
+      .enrolment-desktop {
+        display: none;
+      }
+
+      .enrolment-mobile {
+        display: block;
+        width: 100%;
+      }
+
+    }
+
+  `;
+
+
+  document.head.appendChild(style);
 
 }
 
@@ -1664,16 +2079,14 @@ async function loadPayments() {
 
     box.innerHTML = `
       <div class="empty-state">
-
         <strong>
           No payment records yet.
         </strong>
 
         <p>
-          Student payment submissions will
-          appear here.
+          Payment records will appear here
+          when students submit payments.
         </p>
-
       </div>
     `;
 
@@ -1681,127 +2094,484 @@ async function loadPayments() {
   }
 
 
+  // ==========================================================
+  // STUDENT LOOKUP
+  // ==========================================================
+
+  const studentIds = [
+    ...new Set(
+      payments
+        .map(p => p.student_id)
+        .filter(Boolean)
+    )
+  ];
+
+
+  let studentData = [];
+
+
+  if (studentIds.length > 0) {
+
+    const {
+      data,
+      error: studentError
+    } =
+      await db
+        .from("profiles")
+        .select(`
+          id,
+          full_name,
+          email
+        `)
+        .in(
+          "id",
+          studentIds
+        );
+
+
+    if (!studentError) {
+
+      studentData =
+        data || [];
+
+    }
+
+  }
+
+
+  const studentLookup = {};
+
+
+  studentData.forEach(student => {
+
+    studentLookup[
+      student.id
+    ] = student;
+
+  });
+
+
+  // ==========================================================
+  // DESKTOP PAYMENT TABLE
+  // ==========================================================
+
   box.innerHTML = `
 
-    <div class="admin-table-wrapper">
+    <div class="payment-desktop">
 
-      <table class="admin-table">
+      <div class="admin-table-wrapper">
 
-        <thead>
+        <table class="admin-table payment-table">
 
-          <tr>
+          <thead>
 
-            <th>Student</th>
+            <tr>
 
-            <th>Course</th>
+              <th>Student</th>
+              <th>Course Amount</th>
+              <th>Method</th>
+              <th>Status</th>
+              <th>Proof</th>
+              <th>Date</th>
 
-            <th>Amount</th>
+            </tr>
 
-            <th>Method</th>
+          </thead>
 
-            <th>Status</th>
+          <tbody>
 
-            <th>Proof</th>
+            ${payments.map(
+              payment => {
 
-            <th>Date</th>
+                const student =
+                  studentLookup[
+                    payment.student_id
+                  ] || {};
 
-          </tr>
 
-        </thead>
+                const studentName =
+                  student.full_name ||
+                  student.email ||
+                  "Student";
 
-        <tbody>
 
-          ${payments.map(
-            payment => {
+                const status =
+                  payment.status ||
+                  "pending";
 
-              return `
 
-                <tr>
+                return `
 
-                  <td>
-                    ${esc(
-                      payment.student_id ||
-                      "Student"
-                    )}
-                  </td>
+                  <tr>
 
-                  <td>
-                    ${esc(
-                      payment.enrolment_id ||
-                      "—"
-                    )}
-                  </td>
+                    <td>
+                      ${esc(studentName)}
+                    </td>
 
-                  <td>
+                    <td>
+                      R${Number(
+                        payment.amount || 0
+                      ).toLocaleString(
+                        "en-ZA"
+                      )}
+                    </td>
+
+                    <td>
+                      ${esc(
+                        payment.payment_method ||
+                        "Not provided"
+                      )}
+                    </td>
+
+                    <td>
+
+                      <span
+                        class="payment-status ${esc(
+                          status
+                        )}">
+
+                        ${esc(status)}
+
+                      </span>
+
+                    </td>
+
+                    <td>
+
+                      ${
+                        payment.proof_url
+                          ? `
+                            <a
+                              class="proof-link"
+                              href="${esc(
+                                payment.proof_url
+                              )}"
+                              target="_blank"
+                              rel="noopener">
+
+                              View Proof
+
+                            </a>
+                          `
+                          : "No proof"
+                      }
+
+                    </td>
+
+                    <td>
+                      ${formatDate(
+                        payment.created_at
+                      )}
+                    </td>
+
+                  </tr>
+
+                `;
+
+              }
+            ).join("")}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MOBILE PAYMENT CARDS
+         ===================================================== -->
+
+    <div class="payment-mobile">
+
+      ${payments.map(
+        payment => {
+
+          const student =
+            studentLookup[
+              payment.student_id
+            ] || {};
+
+
+          const studentName =
+            student.full_name ||
+            student.email ||
+            "Student";
+
+
+          const status =
+            payment.status ||
+            "pending";
+
+
+          return `
+
+            <div class="payment-card">
+
+              <div class="payment-card-header">
+
+                <div>
+
+                  <span class="mobile-label">
+                    Student
+                  </span>
+
+                  <strong>
+                    ${esc(studentName)}
+                  </strong>
+
+                </div>
+
+
+                <span
+                  class="payment-status ${esc(
+                    status
+                  )}">
+
+                  ${esc(status)}
+
+                </span>
+
+              </div>
+
+
+              <div class="payment-card-details">
+
+                <div>
+
+                  <span class="mobile-label">
+                    Amount
+                  </span>
+
+                  <strong>
                     R${Number(
                       payment.amount || 0
                     ).toLocaleString(
                       "en-ZA"
                     )}
-                  </td>
+                  </strong>
 
-                  <td>
+                </div>
+
+
+                <div>
+
+                  <span class="mobile-label">
+                    Method
+                  </span>
+
+                  <strong>
                     ${esc(
                       payment.payment_method ||
-                      "—"
+                      "Not provided"
                     )}
-                  </td>
+                  </strong>
 
-                  <td>
+                </div>
 
-                    <span class="enrolment-status ${esc(
-                      payment.status ||
-                      "pending"
-                    )}">
 
-                      ${esc(
-                        payment.status ||
-                        "pending"
-                      )}
+                <div>
 
-                    </span>
+                  <span class="mobile-label">
+                    Date
+                  </span>
 
-                  </td>
-
-                  <td>
-
-                    ${
-                      payment.proof_url
-                        ? `
-                          <a
-                            href="${esc(
-                              payment.proof_url
-                            )}"
-                            target="_blank"
-                            rel="noopener">
-                            View Proof
-                          </a>
-                        `
-                        : "No proof"
-                    }
-
-                  </td>
-
-                  <td>
+                  <strong>
                     ${formatDate(
                       payment.created_at
                     )}
-                  </td>
+                  </strong>
 
-                </tr>
+                </div>
 
-              `;
+              </div>
 
-            }
-          ).join("")}
 
-        </tbody>
+              <div class="payment-proof">
 
-      </table>
+                <span class="mobile-label">
+                  Payment Proof
+                </span>
+
+                ${
+                  payment.proof_url
+                    ? `
+                      <a
+                        class="proof-link"
+                        href="${esc(
+                          payment.proof_url
+                        )}"
+                        target="_blank"
+                        rel="noopener">
+
+                        View Payment Proof
+
+                      </a>
+                    `
+                    : `
+                      <span>
+                        No proof uploaded
+                      </span>
+                    `
+                }
+
+              </div>
+
+            </div>
+
+          `;
+
+        }
+      ).join("")}
 
     </div>
 
   `;
+
+
+  addPaymentStyles();
+
+}
+
+
+// ============================================================
+// PAYMENT CSS
+// ============================================================
+
+function addPaymentStyles() {
+
+  if (
+    document.getElementById(
+      "payment-responsive-style"
+    )
+  ) {
+    return;
+  }
+
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "payment-responsive-style";
+
+
+  style.textContent = `
+
+    .payment-desktop {
+      width: 100%;
+    }
+
+    .payment-mobile {
+      display: none;
+    }
+
+    .payment-status {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 25px;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: capitalize;
+      white-space: nowrap;
+    }
+
+    .payment-status.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .payment-status.approved,
+    .payment-status.paid,
+    .payment-status.completed {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .payment-status.failed,
+    .payment-status.cancelled,
+    .payment-status.rejected {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .payment-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 14px rgba(0,0,0,.05);
+    }
+
+    .payment-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .payment-card-header strong {
+      display: block;
+      color: #0f172a;
+      font-size: 17px;
+      word-break: break-word;
+    }
+
+    .payment-card-details {
+      display: grid;
+      gap: 12px;
+    }
+
+    .payment-card-details > div {
+      background: #f8fafc;
+      padding: 11px 12px;
+      border-radius: 9px;
+    }
+
+    .payment-card-details strong {
+      color: #0f172a;
+      word-break: break-word;
+    }
+
+    .payment-proof {
+      margin-top: 16px;
+      padding-top: 15px;
+      border-top: 1px solid #edf2f7;
+    }
+
+    .proof-link {
+      color: #15803d;
+      font-weight: 800;
+      text-decoration: none;
+    }
+
+    .proof-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 700px) {
+
+      .payment-desktop {
+        display: none;
+      }
+
+      .payment-mobile {
+        display: block;
+        width: 100%;
+      }
+
+    }
+
+  `;
+
+
+  document.head.appendChild(style);
 
 }
 
@@ -1872,13 +2642,21 @@ async function loadAssessments() {
   `;
 
 
-  document
-    .getElementById(
+  addAssessmentStyles();
+
+
+  const createButton =
+    document.getElementById(
       "create-assessment-btn"
-    )
-    .onclick =
-      () =>
-        showAssessmentForm();
+    );
+
+
+  if (createButton) {
+
+    createButton.onclick =
+      () => showAssessmentForm();
+
+  }
 
 
   await renderAssessmentList();
@@ -2005,9 +2783,7 @@ async function renderAssessmentList() {
                 <div>
 
                   <span class="assessment-course">
-                    ${esc(
-                      courseName
-                    )}
+                    ${esc(courseName)}
                   </span>
 
                   <h3>
@@ -2057,8 +2833,7 @@ async function renderAssessmentList() {
                   Total marks:
                   <strong>
                     ${Number(
-                      assessment.total_marks ||
-                      0
+                      assessment.total_marks || 0
                     )}
                   </strong>
                 </span>
@@ -2067,8 +2842,7 @@ async function renderAssessmentList() {
                   Pass mark:
                   <strong>
                     ${Number(
-                      assessment.pass_mark ||
-                      0
+                      assessment.pass_mark || 0
                     )}%
                   </strong>
                 </span>
@@ -2185,9 +2959,7 @@ async function renderAssessmentList() {
 // SHOW ASSESSMENT FORM
 // ============================================================
 
-function showAssessmentForm(
-  existing = null
-) {
+function showAssessmentForm(existing = null) {
 
   const area =
     document.getElementById(
@@ -2200,9 +2972,7 @@ function showAssessmentForm(
 
   const questions =
     existing &&
-    Array.isArray(
-      existing.questions
-    )
+    Array.isArray(existing.questions)
       ? existing.questions
       : [];
 
@@ -2229,9 +2999,7 @@ function showAssessmentForm(
         Course
       </label>
 
-      <select
-        id="assessment-course"
-        required>
+      <select id="assessment-course" required>
 
         <option value="">
           Select a course
@@ -2275,8 +3043,7 @@ function showAssessmentForm(
       <input
         id="assessment-title"
         value="${esc(
-          existing?.title ||
-          ""
+          existing?.title || ""
         )}"
         placeholder="e.g. Final Course Assessment"
         required
@@ -2291,8 +3058,7 @@ function showAssessmentForm(
         id="assessment-description"
         placeholder="Briefly describe this assessment..."
       >${esc(
-        existing?.description ||
-        ""
+        existing?.description || ""
       )}</textarea>
 
 
@@ -2304,8 +3070,7 @@ function showAssessmentForm(
         id="assessment-instructions"
         placeholder="Tell students how to complete the assessment..."
       >${esc(
-        existing?.instructions ||
-        ""
+        existing?.instructions || ""
       )}</textarea>
 
 
@@ -2322,8 +3087,7 @@ function showAssessmentForm(
             type="number"
             min="0"
             value="${Number(
-              existing?.total_marks ||
-              0
+              existing?.total_marks || 0
             )}"
           >
 
@@ -2342,8 +3106,7 @@ function showAssessmentForm(
             min="0"
             max="100"
             value="${Number(
-              existing?.pass_mark ||
-              50
+              existing?.pass_mark || 50
             )}"
           >
 
@@ -2372,8 +3135,7 @@ function showAssessmentForm(
         </div>
 
 
-        <div id="question-list">
-        </div>
+        <div id="question-list"></div>
 
       </div>
 
@@ -2414,20 +3176,29 @@ function showAssessmentForm(
   );
 
 
-  document
-    .getElementById(
+  const addQuestionButton =
+    document.getElementById(
       "add-question-btn"
-    )
-    .onclick =
-      () =>
-        addQuestionRow();
+    );
 
 
-  document
-    .getElementById(
+  if (addQuestionButton) {
+
+    addQuestionButton.onclick =
+      () => addQuestionRow();
+
+  }
+
+
+  const cancelButton =
+    document.getElementById(
       "cancel-assessment-btn"
-    )
-    .onclick =
+    );
+
+
+  if (cancelButton) {
+
+    cancelButton.onclick =
       () => {
 
         area.classList.add(
@@ -2438,17 +3209,24 @@ function showAssessmentForm(
 
       };
 
+  }
 
-  document
-    .getElementById(
+
+  const saveButton =
+    document.getElementById(
       "save-assessment-btn"
-    )
-    .onclick =
+    );
+
+
+  if (saveButton) {
+
+    saveButton.onclick =
       () =>
         saveAssessment(
-          existing?.id ||
-          null
+          existing?.id || null
         );
+
+  }
 
 }
 
@@ -2457,9 +3235,7 @@ function showAssessmentForm(
 // ADD QUESTION ROW
 // ============================================================
 
-function addQuestionRow(
-  question = null
-) {
+function addQuestionRow(question = null) {
 
   const list =
     document.getElementById(
@@ -2484,9 +3260,7 @@ function addQuestionRow(
     Array.isArray(
       question?.options
     )
-      ? question.options.join(
-          "\n"
-        )
+      ? question.options.join("\n")
       : "";
 
 
@@ -2517,8 +3291,7 @@ function addQuestionRow(
       class="question-text"
       placeholder="Enter the question..."
     >${esc(
-      question?.text ||
-      ""
+      question?.text || ""
     )}</textarea>
 
 
@@ -2526,14 +3299,12 @@ function addQuestionRow(
       Question type
     </label>
 
-    <select
-      class="question-type">
+    <select class="question-type">
 
       <option
         value="text"
         ${
-          question?.type ===
-          "text"
+          question?.type === "text"
             ? "selected"
             : ""
         }>
@@ -2563,8 +3334,7 @@ function addQuestionRow(
       min="1"
       class="question-marks"
       value="${Number(
-        question?.marks ||
-        1
+        question?.marks || 1
       )}"
     >
 
@@ -2581,9 +3351,7 @@ function addQuestionRow(
     <textarea
       class="question-options"
       placeholder="Option A&#10;Option B&#10;Option C&#10;Option D"
-    >${esc(
-      options
-    )}</textarea>
+    >${esc(options)}</textarea>
 
 
     <label>
@@ -2598,8 +3366,7 @@ function addQuestionRow(
     <input
       class="question-correct"
       value="${esc(
-        question?.correct_answer ||
-        ""
+        question?.correct_answer || ""
       )}"
       placeholder="Correct answer"
     >
@@ -2607,18 +3374,21 @@ function addQuestionRow(
   `;
 
 
-  row
-    .querySelector(
+  const removeButton =
+    row.querySelector(
       ".remove-question"
-    )
-    .onclick =
-      () =>
-        row.remove();
+    );
 
 
-  list.appendChild(
-    row
-  );
+  if (removeButton) {
+
+    removeButton.onclick =
+      () => row.remove();
+
+  }
+
+
+  list.appendChild(row);
 
 }
 
@@ -2627,9 +3397,7 @@ function addQuestionRow(
 // SAVE ASSESSMENT
 // ============================================================
 
-async function saveAssessment(
-  id = null
-) {
+async function saveAssessment(id = null) {
 
   const courseId =
     document.getElementById(
@@ -2699,90 +3467,83 @@ async function saveAssessment(
   }
 
 
-  const rows = [
-    ...document.querySelectorAll(
-      "#question-list .question-row"
-    )
-  ];
+  const rows =
+    [
+      ...document.querySelectorAll(
+        "#question-list .question-row"
+      )
+    ];
 
 
   const questions =
-    rows
-      .map(row => {
+    rows.map(row => {
 
-        const text =
+      const text =
+        row.querySelector(
+          ".question-text"
+        )?.value
+          .trim() || "";
+
+
+      const type =
+        row.querySelector(
+          ".question-type"
+        )?.value ||
+        "text";
+
+
+      const marks =
+        Number(
           row.querySelector(
-            ".question-text"
+            ".question-marks"
           )?.value
-            .trim() || "";
+        ) || 1;
 
 
-        const type =
-          row.querySelector(
-            ".question-type"
-          )?.value ||
-          "text";
+      const options =
+        row.querySelector(
+          ".question-options"
+        )?.value
+          .split("\n")
+          .map(x => x.trim())
+          .filter(Boolean) || [];
 
 
-        const marks =
-          Number(
-            row.querySelector(
-              ".question-marks"
-            )?.value
-          ) || 1;
+      const correctAnswer =
+        row.querySelector(
+          ".question-correct"
+        )?.value
+          .trim() || "";
 
 
-        const options =
-          row.querySelector(
-            ".question-options"
-          )?.value
-            .split("\n")
-            .map(
-              x =>
-                x.trim()
-            )
-            .filter(Boolean) || [];
+      return {
 
+        text,
 
-        const correctAnswer =
-          row.querySelector(
-            ".question-correct"
-          )?.value
-            .trim() || "";
+        type,
 
+        marks,
 
-        return {
+        options,
 
-          text,
+        correct_answer:
+          correctAnswer
 
-          type,
+      };
 
-          marks,
-
-          options,
-
-          correct_answer:
-            correctAnswer
-
-        };
-
-      })
-      .filter(
-        question =>
-          question.text
-      );
+    })
+    .filter(
+      question =>
+        question.text
+    );
 
 
   const calculatedTotal =
     questions.reduce(
-      (
-        sum,
-        question
-      ) =>
+      (sum, question) =>
         sum +
         Number(
-          question.marks ||
-          0
+          question.marks || 0
         ),
       0
     );
@@ -2819,12 +3580,10 @@ async function saveAssessment(
       title,
 
     description:
-      description ||
-      null,
+      description || null,
 
     instructions:
-      instructions ||
-      null,
+      instructions || null,
 
     questions:
       questions,
@@ -2852,9 +3611,7 @@ async function saveAssessment(
     result =
       await db
         .from("assessments")
-        .update(
-          payload
-        )
+        .update(payload)
         .eq(
           "id",
           id
@@ -2865,9 +3622,7 @@ async function saveAssessment(
     result =
       await db
         .from("assessments")
-        .insert(
-          payload
-        );
+        .insert(payload);
 
   }
 
@@ -2922,9 +3677,7 @@ async function saveAssessment(
 // DELETE ASSESSMENT
 // ============================================================
 
-async function deleteAssessment(
-  id
-) {
+async function deleteAssessment(id) {
 
   if (
     !confirm(
@@ -2999,9 +3752,7 @@ async function loadSubmissions(
     error
   } =
     await db
-      .from(
-        "assessment_submissions"
-      )
+      .from("assessment_submissions")
       .select(`
         id,
         assessment_id,
@@ -3032,9 +3783,7 @@ async function loadSubmissions(
 
     box.innerHTML = `
       <div class="admin-error">
-        ${esc(
-          error.message
-        )}
+        ${esc(error.message)}
       </div>
     `;
 
@@ -3069,10 +3818,7 @@ async function loadSubmissions(
   const studentIds = [
     ...new Set(
       submissions
-        .map(
-          s =>
-            s.student_id
-        )
+        .map(s => s.student_id)
         .filter(Boolean)
     )
   ];
@@ -3081,9 +3827,7 @@ async function loadSubmissions(
   let students = [];
 
 
-  if (
-    studentIds.length > 0
-  ) {
+  if (studentIds.length > 0) {
 
     const {
       data,
@@ -3119,8 +3863,7 @@ async function loadSubmissions(
 
     studentLookup[
       student.id
-    ] =
-      student;
+    ] = student;
 
   });
 
@@ -3153,15 +3896,12 @@ async function loadSubmissions(
                 <div>
 
                   <strong>
-                    ${esc(
-                      studentName
-                    )}
+                    ${esc(studentName)}
                   </strong>
 
                   <small>
                     ${esc(
-                      student.email ||
-                      ""
+                      student.email || ""
                     )}
                   </small>
 
@@ -3206,8 +3946,7 @@ async function loadSubmissions(
                       submission.percentage === null ||
                       submission.percentage === undefined
                         ? "Not marked"
-                        : submission.percentage +
-                          "%"
+                        : submission.percentage + "%"
                     }
                   </strong>
                 </span>
@@ -3258,8 +3997,7 @@ async function loadSubmissions(
                       min="0"
                       class="mark-score"
                       value="${
-                        submission.score ??
-                        ""
+                        submission.score ?? ""
                       }"
                     >
 
@@ -3279,8 +4017,7 @@ async function loadSubmissions(
                       step="0.01"
                       class="mark-percentage"
                       value="${
-                        submission.percentage ??
-                        ""
+                        submission.percentage ?? ""
                       }"
                     >
 
@@ -3297,8 +4034,7 @@ async function loadSubmissions(
                   class="mark-feedback"
                   placeholder="Enter feedback for the student..."
                 >${esc(
-                  submission.feedback ||
-                  ""
+                  submission.feedback || ""
                 )}</textarea>
 
 
@@ -3347,9 +4083,7 @@ async function loadSubmissions(
 // RENDER STUDENT ANSWERS
 // ============================================================
 
-function renderAnswers(
-  answers
-) {
+function renderAnswers(answers) {
 
   if (
     !answers ||
@@ -3371,10 +4105,7 @@ function renderAnswers(
     <div class="answer-list">
 
       ${answers.map(
-        (
-          answer,
-          index
-        ) => {
+        (answer, index) => {
 
           const question =
             answer.question ||
@@ -3393,15 +4124,11 @@ function renderAnswers(
             <div class="answer-item">
 
               <strong>
-                ${esc(
-                  question
-                )}
+                ${esc(question)}
               </strong>
 
               <p>
-                ${esc(
-                  value
-                )}
+                ${esc(value)}
               </p>
 
             </div>
@@ -3433,11 +4160,8 @@ async function saveStudentResult(
     );
 
 
-  if (!button) return;
-
-
   const card =
-    button.closest(
+    button?.closest(
       ".submission-card"
     );
 
@@ -3465,8 +4189,7 @@ async function saveStudentResult(
     card.querySelector(
       ".mark-feedback"
     )?.value
-      .trim() ||
-    null;
+      .trim() || null;
 
 
   if (
@@ -3482,9 +4205,7 @@ async function saveStudentResult(
 
 
   if (
-    !Number.isFinite(
-      percentage
-    ) ||
+    !Number.isFinite(percentage) ||
     percentage < 0 ||
     percentage > 100
   ) {
@@ -3502,9 +4223,7 @@ async function saveStudentResult(
     error: submissionError
   } =
     await db
-      .from(
-        "assessment_submissions"
-      )
+      .from("assessment_submissions")
       .select(`
         id,
         assessment_id
@@ -3566,8 +4285,7 @@ async function saveStudentResult(
   const status =
     percentage >=
     Number(
-      assessment?.pass_mark ||
-      50
+      assessment?.pass_mark || 50
     )
       ? "passed"
       : "failed";
@@ -3585,9 +4303,7 @@ async function saveStudentResult(
     error
   } =
     await db
-      .from(
-        "assessment_submissions"
-      )
+      .from("assessment_submissions")
       .update({
 
         score,
@@ -3602,8 +4318,7 @@ async function saveStudentResult(
           new Date().toISOString(),
 
         marked_by:
-          session?.user?.id ||
-          null,
+          session?.user?.id || null,
 
         updated_at:
           new Date().toISOString()
@@ -3731,6 +4446,7 @@ function addAssessmentStyles() {
       border-radius: 9px;
       background: #ffffff;
       font: inherit;
+      max-width: 100%;
     }
 
     .assessment-editor textarea,
@@ -3967,9 +4683,7 @@ function addAssessmentStyles() {
   `;
 
 
-  document.head.appendChild(
-    style
-  );
+  document.head.appendChild(style);
 
 }
 
