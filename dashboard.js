@@ -1,8 +1,7 @@
 // ==========================================
 // FUNDA ONLINE ACADEMY
 // STUDENT DASHBOARD
-// ENROLMENTS • COURSES • MODULES • LOGOUT
-// SELECTED COURSE ENROLMENT
+// ENROLMENTS • COURSES • AUTO ENROLMENT • LOGOUT
 // ==========================================
 
 const { createClient } = supabase;
@@ -72,7 +71,6 @@ async function getStudent(userId) {
     .eq("user_id", userId)
     .maybeSingle();
 
-
   if (error) {
 
     console.error(
@@ -83,108 +81,22 @@ async function getStudent(userId) {
     return null;
   }
 
-
   return student;
 }
 
 
 // ==========================================
-// PROCESS SELECTED COURSE
+// GET COURSE FROM URL
 // ==========================================
 
-async function processPendingEnrollment(studentId) {
+function getCourseToEnrol() {
 
   const params =
     new URLSearchParams(
       window.location.search
     );
 
-
-  const courseName =
-    params.get("enrol");
-
-
-  // No selected course
-
-  if (!courseName) {
-
-    return;
-  }
-
-
-  // Remove course from URL immediately
-  // so refreshing the page does not
-  // repeat the process.
-
-  window.history.replaceState(
-    {},
-    document.title,
-    "dashboard.html"
-  );
-
-
-  // Find selected course
-
-  const {
-    data: course,
-    error
-  } = await db
-    .from("courses")
-    .select(`
-      id,
-      name,
-      price
-    `)
-    .eq("name", courseName)
-    .maybeSingle();
-
-
-  if (error) {
-
-    console.error(
-      "Selected course lookup error:",
-      error
-    );
-
-    localStorage.removeItem(
-      "funda_pending_course"
-    );
-
-    show(
-      "We could not load the selected course."
-    );
-
-    return;
-  }
-
-
-  if (!course) {
-
-    localStorage.removeItem(
-      "funda_pending_course"
-    );
-
-    show(
-      "The selected course could not be found in the course catalogue."
-    );
-
-    return;
-  }
-
-
-  // Clear saved course
-
-  localStorage.removeItem(
-    "funda_pending_course"
-  );
-
-
-  // Start enrolment
-
-  await enrol(
-    course.id,
-    studentId
-  );
+  return params.get("enrol");
 }
 
 
@@ -196,6 +108,7 @@ async function init() {
 
   if (
     !window.SUPABASE_URL ||
+    !window.SUPABASE_ANON_KEY ||
     window.SUPABASE_URL.includes("PASTE_")
   ) {
 
@@ -206,6 +119,10 @@ async function init() {
     return;
   }
 
+
+  // ----------------------------------------
+  // CHECK LOGIN SESSION
+  // ----------------------------------------
 
   const {
     data: { session },
@@ -219,15 +136,13 @@ async function init() {
     !session.user
   ) {
 
-    location.href =
-      "auth.html";
+    location.href = "auth.html";
 
     return;
   }
 
 
-  const user =
-    session.user;
+  const user = session.user;
 
 
   // ----------------------------------------
@@ -235,10 +150,7 @@ async function init() {
   // ----------------------------------------
 
   const emailBox =
-    document.getElementById(
-      "user-email"
-    );
-
+    document.getElementById("user-email");
 
   if (emailBox) {
 
@@ -249,7 +161,7 @@ async function init() {
 
 
   // ----------------------------------------
-  // GET STUDENT
+  // GET STUDENT RECORD
   // ----------------------------------------
 
   const student =
@@ -259,10 +171,7 @@ async function init() {
   if (!student) {
 
     const nameBox =
-      document.getElementById(
-        "user-name"
-      );
-
+      document.getElementById("user-name");
 
     if (nameBox) {
 
@@ -271,7 +180,6 @@ async function init() {
         "Student";
 
     }
-
 
     show(
       "Your student record could not be found. Please contact Funda Online Academy."
@@ -286,10 +194,7 @@ async function init() {
   // ----------------------------------------
 
   const nameBox =
-    document.getElementById(
-      "user-name"
-    );
-
+    document.getElementById("user-name");
 
   if (nameBox) {
 
@@ -302,41 +207,46 @@ async function init() {
 
 
   // ----------------------------------------
-  // LOAD DATA
+  // LOAD CURRENT ENROLMENTS
   // ----------------------------------------
 
-  await loadEnrollments(
-    student.id
-  );
-
-
-  await loadAvailableCourses(
-    student.id
-  );
+  await loadEnrollments(student.id);
 
 
   // ----------------------------------------
-  // PROCESS COURSE SELECTED
-  // BEFORE LOGIN
+  // LOAD AVAILABLE COURSES
   // ----------------------------------------
 
-  await processPendingEnrollment(
-    student.id
-  );
+  await loadAvailableCourses(student.id);
+
+
+  // ----------------------------------------
+  // AUTO ENROL SELECTED COURSE
+  // ----------------------------------------
+
+  const courseId =
+    getCourseToEnrol();
+
+
+  if (courseId) {
+
+    await autoEnrol(
+      courseId,
+      student.id
+    );
+
+  }
 }
 
 
 // ==========================================
-// STUDENT ENROLLMENTS
+// LOAD STUDENT ENROLMENTS
 // ==========================================
 
 async function loadEnrollments(studentId) {
 
   const box =
-    document.getElementById(
-      "enrolments"
-    );
-
+    document.getElementById("enrolments");
 
   if (!box) return;
 
@@ -358,16 +268,10 @@ async function loadEnrollments(studentId) {
         price
       )
     `)
-    .eq(
-      "student_id",
-      studentId
-    )
-    .order(
-      "enrolled_at",
-      {
-        ascending: false
-      }
-    );
+    .eq("student_id", studentId)
+    .order("enrolled_at", {
+      ascending: false
+    });
 
 
   if (error) {
@@ -377,14 +281,11 @@ async function loadEnrollments(studentId) {
       error
     );
 
-
     box.innerHTML = `
       <div class="card">
-
         <p>
           Could not load your enrolments.
         </p>
-
       </div>
     `;
 
@@ -392,21 +293,15 @@ async function loadEnrollments(studentId) {
   }
 
 
-  if (
-    !data ||
-    !data.length
-  ) {
+  if (!data || !data.length) {
 
     box.innerHTML = `
       <div class="empty card">
 
-        <h3>
-          No enrolments yet
-        </h3>
+        <h3>No enrolments yet</h3>
 
         <p>
-          Choose a course below and
-          request enrolment to see it here.
+          Choose a course below to start your enrolment.
         </p>
 
         <a
@@ -424,101 +319,80 @@ async function loadEnrollments(studentId) {
 
 
   box.innerHTML =
-    data.map(
-      enrollment => {
+    data.map(enrollment => {
 
-        const courseName =
-          enrollment.courses?.name ||
-          "Course";
-
-
-        const price =
-          Number(
-            enrollment.courses?.price ||
-            0
-          );
+      const courseName =
+        enrollment.courses?.name ||
+        "Course";
 
 
-        const status =
-          enrollment.enrollment_status ||
-          "pending";
+      const price =
+        Number(
+          enrollment.courses?.price || 0
+        );
 
 
-        const date =
-          enrollment.enrolled_at
-            ? new Date(
-                enrollment.enrolled_at
-              ).toLocaleDateString(
-                "en-ZA"
-              )
-            : "";
+      const status =
+        enrollment.enrollment_status ||
+        "pending";
 
 
-        return `
-          <article class="card">
+      const date =
+        enrollment.enrolled_at
+          ? new Date(
+              enrollment.enrolled_at
+            ).toLocaleDateString("en-ZA")
+          : "";
 
-            <h3>
-              ${escapeHtml(
-                courseName
-              )}
-            </h3>
 
-            <p>
-              <strong>
-                Price:
-              </strong>
+      return `
+        <article class="card">
 
-              R${price.toLocaleString(
-                "en-ZA"
-              )}
-            </p>
+          <h3>
+            ${escapeHtml(courseName)}
+          </h3>
 
-            <p>
-              <strong>
-                Status:
-              </strong>
+          <p>
+            <strong>Price:</strong>
+            R${price.toLocaleString("en-ZA")}
+          </p>
 
-              <span class="status">
-                ${escapeHtml(
-                  status
-                )}
-              </span>
-            </p>
+          <p>
+            <strong>Status:</strong>
 
-            ${
-              date
-                ? `
-                  <small>
-                    Enrolled:
-                    ${escapeHtml(
-                      date
-                    )}
-                  </small>
-                `
-                : ""
-            }
+            <span class="status">
+              ${escapeHtml(status)}
+            </span>
+          </p>
 
-          </article>
-        `;
+          ${
+            date
+              ? `
+                <small>
+                  Enrolled:
+                  ${escapeHtml(date)}
+                </small>
+              `
+              : ""
+          }
 
-      }
-    ).join("");
+        </article>
+      `;
+
+    }).join("");
 }
 
 
 // ==========================================
-// AVAILABLE COURSES
+// LOAD AVAILABLE COURSES
 // ==========================================
 
-async function loadAvailableCourses(
-  studentId
-) {
+async function loadAvailableCourses(studentId) {
 
   const box =
     document.getElementById(
       "available-courses"
     );
-
 
   if (!box) return;
 
@@ -538,16 +412,10 @@ async function loadAvailableCourses(
       image_url,
       active
     `)
-    .eq(
-      "active",
-      true
-    )
-    .order(
-      "name",
-      {
-        ascending: true
-      }
-    );
+    .eq("active", true)
+    .order("name", {
+      ascending: true
+    });
 
 
   if (error) {
@@ -557,14 +425,11 @@ async function loadAvailableCourses(
       error
     );
 
-
     box.innerHTML = `
       <div class="card">
-
         <p>
           Could not load courses.
         </p>
-
       </div>
     `;
 
@@ -573,7 +438,7 @@ async function loadAvailableCourses(
 
 
   // ----------------------------------------
-  // GET EXISTING ENROLLMENTS
+  // GET EXISTING ENROLMENTS
   // ----------------------------------------
 
   const {
@@ -581,13 +446,8 @@ async function loadAvailableCourses(
     error: enrollmentError
   } = await db
     .from("enrollments")
-    .select(
-      "course_id"
-    )
-    .eq(
-      "student_id",
-      studentId
-    );
+    .select("course_id")
+    .eq("student_id", studentId);
 
 
   if (enrollmentError) {
@@ -603,16 +463,12 @@ async function loadAvailableCourses(
   const enrolled =
     new Set(
       (mine || []).map(
-        item =>
-          item.course_id
+        item => String(item.course_id)
       )
     );
 
 
-  if (
-    !courses ||
-    !courses.length
-  ) {
+  if (!courses || !courses.length) {
 
     box.innerHTML = `
       <div class="card">
@@ -622,8 +478,7 @@ async function loadAvailableCourses(
         </h3>
 
         <p>
-          Courses will appear here when
-          they are published.
+          Courses will appear here when they are published.
         </p>
 
       </div>
@@ -638,148 +493,126 @@ async function loadAvailableCourses(
   // ----------------------------------------
 
   box.innerHTML =
-    courses.map(
-      course => {
+    courses.map(course => {
 
-        const alreadyEnrolled =
-          enrolled.has(
-            course.id
-          );
+      const alreadyEnrolled =
+        enrolled.has(
+          String(course.id)
+        );
 
 
-        return `
-          <article
-            class="card course"
+      return `
+        <article class="card course">
+
+          ${
+            course.image_url
+              ? `
+                <img
+                  class="course-image"
+                  src="${escapeHtml(course.image_url)}"
+                  alt="${escapeHtml(course.name)}"
+                >
+              `
+              : ""
+          }
+
+
+          ${
+            course.category
+              ? `
+                <div class="tag">
+                  ${escapeHtml(course.category)}
+                </div>
+              `
+              : ""
+          }
+
+
+          <h3>
+            ${escapeHtml(
+              course.name || "Course"
+            )}
+          </h3>
+
+
+          ${
+            course.description
+              ? `
+                <p class="course-desc">
+                  ${escapeHtml(course.description)}
+                </p>
+              `
+              : ""
+          }
+
+
+          <div
+            class="course-modules"
+            id="modules-${course.id}"
           >
+            <p>
+              Loading modules...
+            </p>
+          </div>
+
+
+          <div class="course-foot">
+
+            <span class="price">
+              R${Number(
+                course.price || 0
+              ).toLocaleString("en-ZA")}
+            </span>
+
 
             ${
-              course.image_url
+              course.duration
                 ? `
-                  <img
-                    class="course-image"
-                    src="${escapeHtml(
-                      course.image_url
-                    )}"
-                    alt="${escapeHtml(
-                      course.name
-                    )}"
-                  >
+                  <span class="duration">
+                    ${escapeHtml(course.duration)}
+                  </span>
                 `
                 : ""
             }
 
-
-            ${
-              course.category
-                ? `
-                  <div class="tag">
-                    ${escapeHtml(
-                      course.category
-                    )}
-                  </div>
-                `
-                : ""
-            }
+          </div>
 
 
-            <h3>
-              ${escapeHtml(
-                course.name ||
-                "Course"
-              )}
-            </h3>
+          ${
+            alreadyEnrolled
 
+              ? `
+                <button
+                  type="button"
+                  class="btn ghost full"
+                  disabled
+                >
+                  Already Enrolled
+                </button>
+              `
 
-            ${
-              course.description
-                ? `
-                  <p class="course-desc">
-                    ${escapeHtml(
-                      course.description
-                    )}
-                  </p>
-                `
-                : ""
-            }
+              : `
+                <button
+                  type="button"
+                  class="btn green full"
+                  data-enrol="${escapeHtml(course.id)}"
+                >
+                  Enrol Now
+                </button>
+              `
+          }
 
+        </article>
+      `;
 
-            <div
-              class="course-modules"
-              id="modules-${course.id}"
-            >
-
-              <p>
-                Loading modules...
-              </p>
-
-            </div>
-
-
-            <div class="course-foot">
-
-              <span class="price">
-                R${Number(
-                  course.price ||
-                  0
-                ).toLocaleString(
-                  "en-ZA"
-                )}
-              </span>
-
-
-              ${
-                course.duration
-                  ? `
-                    <span class="duration">
-                      ${escapeHtml(
-                        course.duration
-                      )}
-                    </span>
-                  `
-                  : ""
-              }
-
-            </div>
-
-
-            ${
-              alreadyEnrolled
-
-                ? `
-                  <button
-                    type="button"
-                    class="btn ghost full"
-                    disabled
-                  >
-                    Already Enrolled
-                  </button>
-                `
-
-                : `
-                  <button
-                    type="button"
-                    class="btn green full"
-                    data-enrol="${course.id}"
-                  >
-                    Enrol Now
-                  </button>
-                `
-            }
-
-          </article>
-        `;
-
-      }
-    ).join("");
+    }).join("");
 
 
   // ----------------------------------------
   // LOAD MODULES
   // ----------------------------------------
 
-  for (
-    const course of courses
-  ) {
+  for (const course of courses) {
 
     await loadCourseModules(
       course.id
@@ -793,51 +626,43 @@ async function loadAvailableCourses(
   // ----------------------------------------
 
   box
-    .querySelectorAll(
-      "[data-enrol]"
-    )
-    .forEach(
-      button => {
+    .querySelectorAll("[data-enrol]")
+    .forEach(button => {
 
-        button.addEventListener(
-          "click",
-          async function(e) {
+      button.addEventListener(
+        "click",
+        async function(e) {
 
-            e.preventDefault();
-
-            e.stopPropagation();
+          e.preventDefault();
+          e.stopPropagation();
 
 
-            const courseId =
-              button.dataset.enrol;
+          const courseId =
+            button.dataset.enrol;
 
 
-            await enrol(
-              courseId,
-              studentId
-            );
+          await enrol(
+            courseId,
+            studentId
+          );
 
-          }
-        );
+        }
+      );
 
-      }
-    );
+    });
 }
 
 
 // ==========================================
-// COURSE MODULES
+// LOAD COURSE MODULES
 // ==========================================
 
-async function loadCourseModules(
-  courseId
-) {
+async function loadCourseModules(courseId) {
 
   const box =
     document.getElementById(
       `modules-${courseId}`
     );
-
 
   if (!box) return;
 
@@ -848,10 +673,10 @@ async function loadCourseModules(
   } = await db
     .from("course_modules")
     .select("*")
-    .eq(
-      "course_id",
-      courseId
-    );
+    .eq("course_id", courseId)
+    .order("id", {
+      ascending: true
+    });
 
 
   if (error) {
@@ -867,10 +692,7 @@ async function loadCourseModules(
   }
 
 
-  if (
-    !modules ||
-    !modules.length
-  ) {
+  if (!modules || !modules.length) {
 
     box.innerHTML = "";
 
@@ -885,28 +707,24 @@ async function loadCourseModules(
 
     <ul>
       ${
-        modules.map(
-          module => {
+        modules.map(module => {
 
-            const title =
-              module.module_name ||
-              module.name ||
-              module.title ||
-              module.module_title ||
-              module.description ||
-              "Module";
+          const title =
+            module.module_name ||
+            module.name ||
+            module.title ||
+            module.module_title ||
+            module.description ||
+            "Module";
 
 
-            return `
-              <li>
-                ${escapeHtml(
-                  title
-                )}
-              </li>
-            `;
+          return `
+            <li>
+              ${escapeHtml(title)}
+            </li>
+          `;
 
-          }
-        ).join("")
+        }).join("")
       }
     </ul>
   `;
@@ -914,16 +732,39 @@ async function loadCourseModules(
 
 
 // ==========================================
-// REQUEST ENROLMENT
+// AUTO ENROL SELECTED COURSE
 // ==========================================
 
-async function enrol(
+async function autoEnrol(
   courseId,
   studentId
 ) {
 
+  console.log(
+    "Automatic enrolment requested:",
+    courseId
+  );
+
+
   // ----------------------------------------
-  // GET COURSE INFORMATION
+  // CHECK SESSION
+  // ----------------------------------------
+
+  const {
+    data: { session }
+  } = await db.auth.getSession();
+
+
+  if (!session || !session.user) {
+
+    location.href = "auth.html";
+
+    return;
+  }
+
+
+  // ----------------------------------------
+  // CHECK COURSE EXISTS
   // ----------------------------------------
 
   const {
@@ -931,15 +772,8 @@ async function enrol(
     error: courseError
   } = await db
     .from("courses")
-    .select(`
-      id,
-      name,
-      price
-    `)
-    .eq(
-      "id",
-      courseId
-    )
+    .select("id, name, price")
+    .eq("id", courseId)
     .maybeSingle();
 
 
@@ -951,7 +785,7 @@ async function enrol(
     );
 
     show(
-      "Could not load the selected course."
+      "We could not find the selected course."
     );
 
     return;
@@ -968,60 +802,195 @@ async function enrol(
   }
 
 
-  const price =
-    Number(
-      course.price || 0
+  // ----------------------------------------
+  // CHECK EXISTING ENROLMENT
+  // ----------------------------------------
+
+  const {
+    data: existing,
+    error: existingError
+  } = await db
+    .from("enrollments")
+    .select("id, enrollment_status")
+    .eq("student_id", studentId)
+    .eq("course_id", courseId)
+    .maybeSingle();
+
+
+  if (existingError) {
+
+    console.error(
+      "Existing enrolment check error:",
+      existingError
     );
 
+    show(
+      "We could not check your enrolment."
+    );
 
-  // ----------------------------------------
-  // CONFIRM ENROLMENT
-  // ----------------------------------------
+    return;
+  }
 
-  const confirmed =
-    confirm(
-      "Send an enrolment request for " +
+
+  if (existing) {
+
+    show(
+      "You are already enrolled in " +
       course.name +
-      "?\n\n" +
-      "Course price: R" +
-      price.toLocaleString("en-ZA")
+      ".",
+      true
     );
 
+    // Remove pending course from storage
+    localStorage.removeItem(
+      "funda_pending_course"
+    );
 
-  if (!confirmed) {
+    // Remove enrol parameter from URL
+    window.history.replaceState(
+      {},
+      document.title,
+      "dashboard.html"
+    );
 
     return;
   }
 
 
   // ----------------------------------------
-  // CHECK SESSION
+  // CREATE ENROLMENT
   // ----------------------------------------
+
+  show(
+    "Sending your enrolment request...",
+    true
+  );
+
+
+  const {
+    error
+  } = await db
+    .from("enrollments")
+    .insert({
+
+      student_id:
+        studentId,
+
+      course_id:
+        courseId,
+
+      enrollment_status:
+        "pending"
+
+    });
+
+
+  if (error) {
+
+    console.error(
+      "Automatic enrolment error:",
+      error
+    );
+
+
+    show(
+      "Could not enrol you in this course: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  // ----------------------------------------
+  // SUCCESS
+  // ----------------------------------------
+
+  localStorage.removeItem(
+    "funda_pending_course"
+  );
+
+
+  window.history.replaceState(
+    {},
+    document.title,
+    "dashboard.html"
+  );
+
+
+  show(
+    "You have successfully requested enrolment for " +
+    course.name +
+    ".",
+    true
+  );
+
+
+  // Refresh enrolments
+  await loadEnrollments(
+    studentId
+  );
+
+
+  // Refresh available courses
+  await loadAvailableCourses(
+    studentId
+  );
+}
+
+
+// ==========================================
+// MANUAL ENROLMENT
+// ==========================================
+
+async function enrol(
+  courseId,
+  studentId
+) {
+
+  const confirmed =
+    confirm(
+      "Send an enrolment request for this course?"
+    );
+
+
+  if (!confirmed) return;
+
+
+  await createEnrollment(
+    courseId,
+    studentId
+  );
+}
+
+
+// ==========================================
+// CREATE ENROLMENT
+// ==========================================
+
+async function createEnrollment(
+  courseId,
+  studentId
+) {
 
   const {
     data: { session }
   } = await db.auth.getSession();
 
 
-  if (
-    !session ||
-    !session.user
-  ) {
+  if (!session || !session.user) {
 
     show(
       "Your session has expired. Please log in again."
     );
 
 
-    setTimeout(
-      () => {
+    setTimeout(() => {
 
-        location.href =
-          "auth.html";
+      location.href =
+        "auth.html";
 
-      },
-      1500
-    );
+    }, 1500);
 
 
     return;
@@ -1038,14 +1007,8 @@ async function enrol(
   } = await db
     .from("enrollments")
     .select("id")
-    .eq(
-      "student_id",
-      studentId
-    )
-    .eq(
-      "course_id",
-      courseId
-    )
+    .eq("student_id", studentId)
+    .eq("course_id", courseId)
     .maybeSingle();
 
 
@@ -1061,6 +1024,7 @@ async function enrol(
       "Could not check your existing enrolment."
     );
 
+
     return;
   }
 
@@ -1071,6 +1035,7 @@ async function enrol(
       "You have already requested this course."
     );
 
+
     return;
   }
 
@@ -1080,7 +1045,6 @@ async function enrol(
   // ----------------------------------------
 
   const {
-    data: newEnrollment,
     error
   } = await db
     .from("enrollments")
@@ -1095,9 +1059,7 @@ async function enrol(
       enrollment_status:
         "pending"
 
-    })
-    .select()
-    .single();
+    });
 
 
   if (error) {
@@ -1113,19 +1075,10 @@ async function enrol(
       error.message
     );
 
+
     return;
   }
 
-
-  console.log(
-    "Enrollment created:",
-    newEnrollment
-  );
-
-
-  // ----------------------------------------
-  // SUCCESS
-  // ----------------------------------------
 
   show(
     "Enrolment request sent successfully.",
@@ -1133,10 +1086,7 @@ async function enrol(
   );
 
 
-  // ----------------------------------------
-  // REFRESH
-  // ----------------------------------------
-
+  // Refresh
   await loadEnrollments(
     studentId
   );
@@ -1153,9 +1103,7 @@ async function enrol(
 // ==========================================
 
 const logoutButton =
-  document.getElementById(
-    "logout"
-  );
+  document.getElementById("logout");
 
 
 if (logoutButton) {
@@ -1170,12 +1118,17 @@ if (logoutButton) {
       await db.auth.signOut();
 
 
+      // Clear any pending course
+      localStorage.removeItem(
+        "funda_pending_course"
+      );
+
+
       location.href =
         "index.html";
 
     }
   );
-
 }
 
 
@@ -1183,4 +1136,4 @@ if (logoutButton) {
 // START DASHBOARD
 // ==========================================
 
-init();
+init(); 
