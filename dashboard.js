@@ -187,7 +187,7 @@ async function getCurrentUser() {
   if (error) {
 
     console.error(
-      "Auth error:",
+      "Authentication error:",
       error
     );
 
@@ -210,7 +210,18 @@ if (logoutBtn) {
 
       try {
 
-        await db.auth.signOut();
+        logoutBtn.disabled = true;
+
+        logoutBtn.textContent =
+          "Logging out…";
+
+        const {
+          error
+        } = await db.auth.signOut();
+
+        if (error) {
+          throw error;
+        }
 
         window.location.href =
           "login.html";
@@ -221,6 +232,11 @@ if (logoutBtn) {
           "Logout error:",
           error
         );
+
+        logoutBtn.disabled = false;
+
+        logoutBtn.textContent =
+          "Logout";
 
         showMessage(
           "Unable to log out. Please try again."
@@ -238,6 +254,14 @@ if (logoutBtn) {
 // ==========================================================
 
 async function loadStudent() {
+
+  if (!currentUser) {
+
+    throw new Error(
+      "You are not logged in."
+    );
+  }
+
 
   const {
     data,
@@ -270,7 +294,7 @@ async function loadStudent() {
   if (!data) {
 
     throw new Error(
-      "Your student profile could not be found."
+      "Your student profile could not be found. Please contact the academy."
     );
   }
 
@@ -281,7 +305,8 @@ async function loadStudent() {
   if (userNameEl) {
 
     userNameEl.textContent =
-      data.full_name || "Student";
+      data.full_name ||
+      "Student";
   }
 
 
@@ -293,6 +318,70 @@ async function loadStudent() {
       "";
   }
 
+}
+
+
+// ==========================================================
+// LOAD COURSES
+// ==========================================================
+
+async function loadCourses() {
+
+  if (!coursesEl) return;
+
+
+  coursesEl.innerHTML =
+    '<p class="loading">Loading courses…</p>';
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("courses")
+    .select(
+      "id,title,price,active"
+    )
+    .eq(
+      "active",
+      true
+    )
+    .order(
+      "title",
+      {
+        ascending: true
+      }
+    );
+
+
+  if (error) {
+
+    console.error(
+      "Courses error:",
+      error
+    );
+
+    coursesEl.innerHTML = `
+      <div class="card">
+
+        <h3>Courses</h3>
+
+        <p class="error">
+          Unable to load courses.
+        </p>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  currentCourses =
+    data || [];
+
+
+  renderCourses();
 }
 
 
@@ -336,8 +425,17 @@ async function loadEnrolments() {
       error
     );
 
-    enrolmentsEl.innerHTML =
-      '<p class="error">Unable to load your enrolments.</p>';
+    enrolmentsEl.innerHTML = `
+      <div class="card">
+
+        <h3>Enrolments</h3>
+
+        <p class="error">
+          Unable to load your enrolments.
+        </p>
+
+      </div>
+    `;
 
     return;
   }
@@ -347,7 +445,7 @@ async function loadEnrolments() {
     data || [];
 
 
-  await renderEnrolments();
+  renderEnrolments();
 }
 
 
@@ -355,7 +453,7 @@ async function loadEnrolments() {
 // RENDER ENROLMENTS
 // ==========================================================
 
-async function renderEnrolments() {
+function renderEnrolments() {
 
   if (!enrolmentsEl) return;
 
@@ -376,65 +474,6 @@ async function renderEnrolments() {
     `;
 
     return;
-  }
-
-
-  const courseIds = [
-    ...new Set(
-      currentEnrolments
-        .map(item => item.course_id)
-        .filter(Boolean)
-    )
-  ];
-
-
-  if (courseIds.length) {
-
-    const {
-      data,
-      error
-    } = await db
-      .from("courses")
-      .select(
-        "id,title,price,active"
-      )
-      .in(
-        "id",
-        courseIds
-      );
-
-
-    if (error) {
-
-      console.error(
-        "Enrolment courses error:",
-        error
-      );
-
-    } else {
-
-      const existingIds =
-        new Set(
-          currentCourses.map(
-            course => course.id
-          )
-        );
-
-
-      (data || []).forEach(
-        course => {
-
-          if (!existingIds.has(course.id)) {
-
-            currentCourses.push(course);
-
-          }
-
-        }
-      );
-
-    }
-
   }
 
 
@@ -510,6 +549,7 @@ async function renderEnrolments() {
 
             </div>
           `;
+
         }
       )
       .join("");
@@ -517,54 +557,12 @@ async function renderEnrolments() {
 
 
 // ==========================================================
-// LOAD ALL ACTIVE COURSES
+// RENDER AVAILABLE COURSES
 // ==========================================================
 
-async function loadCourses() {
+function renderCourses() {
 
   if (!coursesEl) return;
-
-
-  coursesEl.innerHTML =
-    '<p class="loading">Loading courses…</p>';
-
-
-  const {
-    data,
-    error
-  } = await db
-    .from("courses")
-    .select(
-      "id,title,price,active"
-    )
-    .eq(
-      "active",
-      true
-    )
-    .order(
-      "title",
-      {
-        ascending: true
-      }
-    );
-
-
-  if (error) {
-
-    console.error(
-      "Courses error:",
-      error
-    );
-
-    coursesEl.innerHTML =
-      '<p class="error">Unable to load courses.</p>';
-
-    return;
-  }
-
-
-  currentCourses =
-    data || [];
 
 
   if (!currentCourses.length) {
@@ -650,6 +648,7 @@ async function loadCourses() {
 
             </div>
           `;
+
         }
       )
       .join("");
@@ -674,7 +673,6 @@ async function loadCourses() {
 
       }
     );
-
 }
 
 
@@ -743,47 +741,86 @@ async function enrolInCourse(
   hideMessage();
 
 
-  const {
-    data,
-    error
-  } = await db
-    .from("enrollments")
-    .insert({
-      student_id:
-        currentStudent.id,
+  try {
 
-      course_id:
-        courseId,
-
-      enrollment_status:
-        "pending"
-    })
-    .select()
-    .single();
-
-
-  if (error) {
-
-    console.error(
-      "Enrolment insert error:",
+    const {
+      data,
       error
+    } = await db
+      .from("enrollments")
+      .insert({
+
+        student_id:
+          currentStudent.id,
+
+        course_id:
+          courseId,
+
+        enrollment_status:
+          "pending"
+
+      })
+      .select()
+      .single();
+
+
+    if (error) {
+
+      console.error(
+        "Enrolment insert error:",
+        error
+      );
+
+
+      if (error.code === "23505") {
+
+        showMessage(
+          "You are already enrolled in this course."
+        );
+
+      } else {
+
+        showMessage(
+          "We could not complete your enrolment. Please try again."
+        );
+
+      }
+
+
+      return;
+    }
+
+
+    currentEnrolments.unshift(
+      data
     );
 
 
-    if (error.code === "23505") {
+    showMessage(
+      `${course.title} enrolment submitted successfully.`,
+      true
+    );
 
-      showMessage(
-        "You are already enrolled in this course."
-      );
 
-    } else {
+    renderEnrolments();
 
-      showMessage(
-        "We could not complete your enrolment. Please try again."
-      );
+    renderCourses();
 
-    }
+    renderPayments();
 
+
+  } catch (error) {
+
+    console.error(
+      "Enrolment error:",
+      error
+    );
+
+    showMessage(
+      "Unable to submit your enrolment. Please try again."
+    );
+
+  } finally {
 
     if (button) {
 
@@ -791,28 +828,10 @@ async function enrolInCourse(
 
       button.textContent =
         "Enrol Now";
+
     }
 
-    return;
   }
-
-
-  currentEnrolments.unshift(
-    data
-  );
-
-
-  showMessage(
-    `${course.title} enrolment submitted successfully.`,
-    true
-  );
-
-
-  await renderEnrolments();
-
-  await loadCourses();
-
-  await loadPayments();
 
 }
 
@@ -943,6 +962,7 @@ function renderPayments() {
         your payment information.
       </p>
 
+
       <form id="payment-form">
 
         <label for="payment-enrolment">
@@ -984,6 +1004,7 @@ function renderPayments() {
                     )}
                   </option>
                 `;
+
               }
             )
             .join("")}
@@ -1080,7 +1101,9 @@ function renderPayments() {
       </h3>
 
       <div id="payment-history-list">
+
         ${renderPaymentHistory()}
+
       </div>
 
     </div>
