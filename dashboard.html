@@ -1,52 +1,125 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Student Dashboard | Funda Online Academy</title>
-<link rel="stylesheet" href="styles.css">
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>
+    Student Dashboard | Funda Online Academy
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="styles.css?v=4"
+  >
+
 </head>
+
 
 <body>
 
+
+<!-- ==========================================
+     HEADER
+========================================== -->
+
 <header>
+
   <div class="wrap nav">
 
-    <a class="logo" href="index.html">
-      <img src="logo.png" alt="Funda Online Academy logo">
+    <a
+      class="logo"
+      href="index.html"
+    >
+
+      <img
+        src="logo.png"
+        alt="Funda Online Academy logo"
+      >
+
       <span>
+
         Funda Online Academy Pty Ltd
-        <small>Student Dashboard</small>
+
+        <small>
+          Student Dashboard
+        </small>
+
       </span>
+
     </a>
 
+
     <div class="nav-actions">
-      <span id="user-email" class="user-email"></span>
-      <button id="logout" class="btn ghost">Logout</button>
+
+      <span
+        id="user-email"
+        class="user-email"
+      ></span>
+
+
+      <button
+        id="logout"
+        class="btn ghost"
+        type="button"
+      >
+        Logout
+      </button>
+
     </div>
 
   </div>
+
 </header>
 
+
+
+<!-- ==========================================
+     DASHBOARD
+========================================== -->
 
 <main class="dashboard">
 
   <div class="wrap">
 
+
+    <!-- ======================================
+         DASHBOARD HEADER
+    ======================================= -->
+
     <div class="dash-head">
 
       <div>
-        <span class="badge">STUDENT AREA</span>
+
+        <span class="badge">
+          STUDENT AREA
+        </span>
+
 
         <h1>
+
           Welcome,
-          <span id="user-name">Student</span>
+
+          <span id="user-name">
+            Student
+          </span>
+
         </h1>
 
+
         <p>
-          Manage your profile and course enrolments.
+          Manage your profile and course
+          enrolments.
         </p>
+
       </div>
+
 
       <a
         class="btn green"
@@ -58,168 +131,10 @@
     </div>
 
 
-    <!-- =====================================
-         PAYMENTS
-         ===================================== -->
 
-    <section
-      class="dashboard-section"
-      id="payments"
-    >
-
-      <h2>Payments</h2>
-
-      <div
-        id="payment-message"
-        class="message hidden"
-      ></div>
-
-
-      <!-- PAYMENT FORM -->
-
-      <div id="payment-form-container">
-
-        <div class="card">
-
-          <h3>Submit Payment</h3>
-
-          <p>
-            Select one of your enrolments below
-            and submit your payment information.
-          </p>
-
-
-          <form id="payment-form">
-
-
-            <!-- COURSE -->
-
-            <label for="payment-enrolment">
-              Course
-            </label>
-
-            <select
-              id="payment-enrolment"
-              required
-            >
-
-              <option value="">
-                Select your course
-              </option>
-
-            </select>
-
-
-            <!-- AMOUNT -->
-
-            <label for="payment-amount">
-              Amount Paid (R)
-            </label>
-
-            <input
-              type="number"
-              id="payment-amount"
-              min="0"
-              step="0.01"
-              placeholder="Enter amount"
-              required
-            >
-
-
-            <!-- PAYMENT METHOD -->
-
-            <label for="payment-method">
-              Payment Method
-            </label>
-
-            <select
-              id="payment-method"
-              required
-            >
-
-              <option value="">
-                Select payment method
-              </option>
-
-              <option value="EFT">
-                EFT
-              </option>
-
-              <option value="Card">
-                Card
-              </option>
-
-              <option value="Cash">
-                Cash
-              </option>
-
-              <option value="Other">
-                Other
-              </option>
-
-            </select>
-
-
-            <!-- PROOF -->
-
-            <label for="payment-proof">
-              Proof of Payment
-            </label>
-
-            <input
-              type="file"
-              id="payment-proof"
-              accept=".pdf,.jpg,.jpeg,.png"
-            >
-
-            <small>
-              Accepted formats:
-              PDF, JPG, JPEG or PNG.
-            </small>
-
-
-            <!-- NOTES -->
-
-            <label for="payment-notes">
-              Notes
-            </label>
-
-            <textarea
-              id="payment-notes"
-              rows="4"
-              placeholder="Optional payment notes"
-            ></textarea>
-
-
-            <!-- SUBMIT -->
-
-            <button
-              type="submit"
-              id="payment-submit"
-              class="btn green"
-              style="width:100%;margin-top:15px;"
-            >
-              Submit Payment
-            </button>
-
-          </form>
-
-        </div>
-
-      </div>
-
-
-      <!-- PAYMENT HISTORY -->
-
-      <div
-        id="payment-list"
-        style="margin-top:20px;"
-      ></div>
-
-    </section>
-
-
-    <!-- GENERAL MESSAGE -->
+    <!-- ======================================
+         MESSAGE
+    ======================================= -->
 
     <div
       id="message"
@@ -227,13 +142,54 @@
     ></div>
 
 
-    <!-- =====================================
+
+    <!-- ======================================
+         PAYMENTS
+    ======================================= -->
+
+    <section
+      class="dashboard-section"
+      id="payments"
+    >
+
+      <h2>
+        Payments
+      </h2>
+
+
+      <div id="payment-list">
+
+        <div class="card">
+
+          <h3>
+            Course Payments
+          </h3>
+
+
+          <p>
+            Your payment information will
+            appear here after you enrol in
+            a course.
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- ======================================
          MY ENROLMENTS
-         ===================================== -->
+    ======================================= -->
 
     <section>
 
-      <h2>My Enrolments</h2>
+      <h2>
+        My Enrolments
+      </h2>
+
 
       <div
         id="enrolments"
@@ -249,13 +205,17 @@
     </section>
 
 
-    <!-- =====================================
+
+    <!-- ======================================
          AVAILABLE COURSES
-         ===================================== -->
+    ======================================= -->
 
     <section>
 
-      <h2>Available Courses</h2>
+      <h2>
+        Available Courses
+      </h2>
+
 
       <div
         id="available-courses"
@@ -276,15 +236,37 @@
 </main>
 
 
-<!-- =====================================
-     SCRIPTS
-     ===================================== -->
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- ==========================================
+     SUPABASE
+========================================== -->
 
-<script src="supabase-config.js"></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
 
-<script src="dashboard.js"></script>
+
+<!-- ==========================================
+     SUPABASE CONFIG
+========================================== -->
+
+<script
+  src="supabase-config.js?v=4"
+></script>
+
+
+<!-- ==========================================
+     DASHBOARD JAVASCRIPT
+
+     VERSION NUMBER FORCES THE BROWSER
+     TO LOAD THE NEW FILE.
+========================================== -->
+
+<script
+  src="dashboard.js?v=4"
+></script>
+
 
 </body>
-</html>
+
+</html> 
