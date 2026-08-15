@@ -3,31 +3,27 @@
 
 <head>
 
-  <meta charset="utf-8">
+<meta charset="utf-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1"
+>
 
-  <title>
-    Student Dashboard | Funda Online Academy
-  </title>
+<title>
+  Student Dashboard | Funda Online Academy
+</title>
 
-  <link
-    rel="stylesheet"
-    href="styles.css?v=4"
-  >
+<link
+  rel="stylesheet"
+  href="styles.css"
+>
 
 </head>
 
 
 <body>
 
-
-<!-- ==========================================
-     HEADER
-========================================== -->
 
 <header>
 
@@ -80,18 +76,14 @@
 
 
 
-<!-- ==========================================
-     DASHBOARD
-========================================== -->
-
 <main class="dashboard">
 
   <div class="wrap">
 
 
-    <!-- ======================================
+    <!-- =====================================
          DASHBOARD HEADER
-    ======================================= -->
+    ====================================== -->
 
     <div class="dash-head">
 
@@ -114,8 +106,7 @@
 
 
         <p>
-          Manage your profile and course
-          enrolments.
+          Manage your profile and course enrolments.
         </p>
 
       </div>
@@ -132,9 +123,9 @@
 
 
 
-    <!-- ======================================
+    <!-- =====================================
          MESSAGE
-    ======================================= -->
+    ====================================== -->
 
     <div
       id="message"
@@ -143,9 +134,9 @@
 
 
 
-    <!-- ======================================
+    <!-- =====================================
          PAYMENTS
-    ======================================= -->
+    ====================================== -->
 
     <section
       class="dashboard-section"
@@ -167,9 +158,8 @@
 
 
           <p>
-            Your payment information will
-            appear here after you enrol in
-            a course.
+            Your payment information will appear
+            here after you enrol in a course.
           </p>
 
         </div>
@@ -180,9 +170,9 @@
 
 
 
-    <!-- ======================================
+    <!-- =====================================
          MY ENROLMENTS
-    ======================================= -->
+    ====================================== -->
 
     <section>
 
@@ -197,7 +187,7 @@
       >
 
         <p class="loading">
-          Loading…
+          Loading...
         </p>
 
       </div>
@@ -206,9 +196,9 @@
 
 
 
-    <!-- ======================================
+    <!-- =====================================
          AVAILABLE COURSES
-    ======================================= -->
+    ====================================== -->
 
     <section>
 
@@ -223,7 +213,7 @@
       >
 
         <p class="loading">
-          Loading…
+          Loading...
         </p>
 
       </div>
@@ -237,33 +227,34 @@
 
 
 
-<!-- ==========================================
+<!-- =====================================
      SUPABASE
-========================================== -->
+====================================== -->
 
 <script
   src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
 ></script>
 
 
-<!-- ==========================================
+<!-- =====================================
      SUPABASE CONFIG
-========================================== -->
+====================================== -->
 
 <script
-  src="supabase-config.js?v=4"
+  src="supabase-config.js"
 ></script>
 
 
-<!-- ==========================================
-     DASHBOARD JAVASCRIPT
-
-     VERSION NUMBER FORCES THE BROWSER
-     TO LOAD THE NEW FILE.
-========================================== -->
+<!-- =====================================
+     DASHBOARD
+     
+     CACHE-BUSTER:
+     The version number forces the browser
+     to download the newest dashboard.js.
+====================================== -->
 
 <script
-  src="dashboard.js?v=4"
+  src="dashboard.js?v=20260815-3"
 ></script>
 
 
