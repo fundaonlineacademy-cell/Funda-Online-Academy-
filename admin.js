@@ -12,47 +12,41 @@ const db = createClient(
   window.SUPABASE_ANON_KEY
 );
 
-const msg = document.getElementById("message");
-
 let courses = [];
-let editingId = null;
+let editingCourseId = null;
 
 
 // ============================================================
-// MESSAGES
+// HELPERS
 // ============================================================
 
 function show(message, ok = false) {
 
+  const msg = document.getElementById("message");
+
   if (!msg) return;
 
   msg.textContent = message;
+
   msg.className =
     "message " + (ok ? "success" : "error");
-
 }
 
-
-// ============================================================
-// ESCAPE HTML
-// ============================================================
 
 function esc(value) {
 
-  return String(value ?? "").replace(/[&<>"']/g, m => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[m]));
-
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    character => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[character])
+  );
 }
 
-
-// ============================================================
-// DATE
-// ============================================================
 
 function formatDate(date) {
 
@@ -69,7 +63,14 @@ function formatDate(date) {
     month: "short",
     day: "numeric"
   });
+}
 
+
+function money(amount) {
+
+  return "R" + Number(amount || 0).toLocaleString(
+    "en-ZA"
+  );
 }
 
 
@@ -77,9 +78,9 @@ function formatDate(date) {
 // COURSE FORM
 // ============================================================
 
-function resetForm() {
+function resetCourseForm() {
 
-  editingId = null;
+  editingCourseId = null;
 
   const form =
     document.getElementById("course-form");
@@ -103,17 +104,12 @@ function resetForm() {
   if (button) {
     button.textContent = "Save Course";
   }
-
 }
 
 
-// ============================================================
-// FILL COURSE FORM
-// ============================================================
+function fillCourse(course) {
 
-function fill(course) {
-
-  editingId = course.id;
+  editingCourseId = course.id;
 
   const id =
     document.getElementById("course-id");
@@ -152,19 +148,23 @@ function fill(course) {
   }
 
   if (price) {
-    price.value = course.price || 0;
+    price.value =
+      course.price || 0;
   }
 
   if (category) {
-    category.value = course.category || "";
+    category.value =
+      course.category || "";
   }
 
   if (duration) {
-    duration.value = course.duration || "";
+    duration.value =
+      course.duration || "";
   }
 
   if (image) {
-    image.value = course.image_url || "";
+    image.value =
+      course.image_url || "";
   }
 
   if (description) {
@@ -188,7 +188,8 @@ function fill(course) {
     );
 
   if (button) {
-    button.textContent = "Update Course";
+    button.textContent =
+      "Update Course";
   }
 
 
@@ -196,7 +197,6 @@ function fill(course) {
     top: 0,
     behavior: "smooth"
   });
-
 }
 
 
@@ -204,116 +204,145 @@ function fill(course) {
 // ADMIN INITIALISATION
 // ============================================================
 
-async function init() {
+async function initAdmin() {
 
-  if (
-    !window.SUPABASE_URL ||
-    !window.SUPABASE_ANON_KEY ||
-    window.SUPABASE_URL.includes("PASTE_")
-  ) {
+  try {
 
-    show(
-      "Supabase is not connected. Please check supabase-config.js."
-    );
+    if (
+      !window.SUPABASE_URL ||
+      !window.SUPABASE_ANON_KEY ||
+      window.SUPABASE_URL.includes("PASTE_")
+    ) {
 
-    return;
-  }
+      show(
+        "Supabase is not connected. Please check supabase-config.js."
+      );
 
-
-  const {
-    data: { session },
-    error: sessionError
-  } =
-    await db.auth.getSession();
+      return;
+    }
 
 
-  if (sessionError) {
-
-    console.error(sessionError);
-
-    show(sessionError.message);
-
-    return;
-  }
+    const {
+      data: sessionData,
+      error: sessionError
+    } =
+      await db.auth.getSession();
 
 
-  if (!session) {
+    if (sessionError) {
 
-    window.location.href =
-      "auth.html";
+      console.error(sessionError);
 
-    return;
-  }
+      show(sessionError.message);
 
-
-  const adminEmail =
-    document.getElementById("admin-email");
-
-  if (adminEmail) {
-
-    adminEmail.textContent =
-      session.user.email || "";
-
-  }
+      return;
+    }
 
 
-  // ==========================================================
-  // CHECK ADMIN ROLE
-  // ==========================================================
-
-  const {
-    data: profile,
-    error: profileError
-  } =
-    await db
-      .from("profiles")
-      .select("role")
-      .eq("id", session.user.id)
-      .maybeSingle();
+    const session =
+      sessionData?.session;
 
 
-  if (profileError) {
-
-    console.error(profileError);
-
-    show(profileError.message);
-
-    return;
-  }
-
-
-  if (
-    !profile ||
-    profile.role !== "admin"
-  ) {
-
-    show(
-      "This account is not authorised as an administrator."
-    );
-
-    setTimeout(() => {
+    if (!session) {
 
       window.location.href =
-        "dashboard.html";
+        "auth.html";
 
-    }, 1800);
+      return;
+    }
 
-    return;
+
+    const adminEmail =
+      document.getElementById(
+        "admin-email"
+      );
+
+    if (adminEmail) {
+
+      adminEmail.textContent =
+        session.user.email || "";
+
+    }
+
+
+    // --------------------------------------------------------
+    // CHECK ADMIN ROLE
+    // --------------------------------------------------------
+
+    const {
+      data: profile,
+      error: profileError
+    } =
+      await db
+        .from("profiles")
+        .select("role")
+        .eq(
+          "id",
+          session.user.id
+        )
+        .maybeSingle();
+
+
+    if (profileError) {
+
+      console.error(profileError);
+
+      show(
+        "Could not verify administrator account: " +
+        profileError.message
+      );
+
+      return;
+    }
+
+
+    if (
+      !profile ||
+      profile.role !== "admin"
+    ) {
+
+      show(
+        "This account is not authorised as an administrator."
+      );
+
+      setTimeout(() => {
+
+        window.location.href =
+          "dashboard.html";
+
+      }, 1800);
+
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // LOAD ALL ADMIN SECTIONS
+    // --------------------------------------------------------
+
+    await loadCourses();
+
+    await Promise.all([
+      loadStudents(),
+      loadEnrolments(),
+      loadPayments(),
+      loadAssessments()
+    ]);
+
   }
 
+  catch (error) {
 
-  // ==========================================================
-  // LOAD EVERYTHING
-  // ==========================================================
+    console.error(
+      "Admin initialisation error:",
+      error
+    );
 
-  await Promise.all([
-    loadStudents(),
-    loadCourses(),
-    loadEnrolments(),
-    loadPayments(),
-    loadAssessments()
-  ]);
-
+    show(
+      error.message ||
+      "Something went wrong while loading the admin dashboard."
+    );
+  }
 }
 
 
@@ -351,10 +380,16 @@ async function loadStudents() {
         role,
         created_at
       `)
-      .neq("role", "admin")
-      .order("created_at", {
-        ascending: false
-      });
+      .neq(
+        "role",
+        "admin"
+      )
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
 
 
   if (error) {
@@ -366,12 +401,8 @@ async function loadStudents() {
 
     box.innerHTML = `
       <div class="admin-error">
-        <strong>
-          Could not load students.
-        </strong>
-
-        <br>
-
+        <strong>Could not load students.</strong>
+        <br><br>
         ${esc(error.message)}
       </div>
     `;
@@ -384,16 +415,12 @@ async function loadStudents() {
 
     box.innerHTML = `
       <div class="empty-state">
-
-        <strong>
-          No registered students yet.
-        </strong>
+        <strong>No registered students yet.</strong>
 
         <p>
           Students will appear here after
           they create an account.
         </p>
-
       </div>
     `;
 
@@ -405,264 +432,264 @@ async function loadStudents() {
 
     <div class="student-list">
 
-      ${data.map(student => {
+      ${data.map(student => `
 
-        const name =
-          student.full_name ||
-          "Student";
+        <div class="student-card">
 
-        const gender =
-          student.gender ||
-          "Not provided";
+          <div class="student-card-header">
 
-        const idNumber =
-          student.id_number ||
-          "Not provided";
-
-        const email =
-          student.email ||
-          "Not provided";
-
-        const phone =
-          student.phone ||
-          "Not provided";
-
-
-        return `
-
-          <div class="student-card">
-
-            <div class="student-card-header">
-
-              <div class="student-avatar">
-                🎓
-              </div>
-
-              <div>
-
-                <h3>
-                  ${esc(name)}
-                </h3>
-
-                <span class="student-role">
-                  ${esc(
-                    student.role ||
-                    "student"
-                  )}
-                </span>
-
-              </div>
-
+            <div class="student-avatar">
+              🎓
             </div>
 
+            <div>
 
-            <div class="student-details">
+              <h3>
+                ${esc(
+                  student.full_name ||
+                  "Student"
+                )}
+              </h3>
 
-              <div class="student-detail">
-
-                <span class="detail-label">
-                  Gender
-                </span>
-
-                <strong>
-                  ${esc(gender)}
-                </strong>
-
-              </div>
-
-
-              <div class="student-detail sensitive">
-
-                <span class="detail-label">
-                  South African ID Number
-                </span>
-
-                <strong>
-                  ${esc(idNumber)}
-                </strong>
-
-              </div>
-
-
-              <div class="student-detail">
-
-                <span class="detail-label">
-                  Email
-                </span>
-
-                <strong>
-                  ${esc(email)}
-                </strong>
-
-              </div>
-
-
-              <div class="student-detail">
-
-                <span class="detail-label">
-                  WhatsApp / Mobile
-                </span>
-
-                <strong>
-                  ${esc(phone)}
-                </strong>
-
-              </div>
-
-
-              <div class="student-detail">
-
-                <span class="detail-label">
-                  Registered
-                </span>
-
-                <strong>
-                  ${formatDate(
-                    student.created_at
-                  )}
-                </strong>
-
-              </div>
+              <span class="student-role">
+                ${esc(
+                  student.role ||
+                  "student"
+                )}
+              </span>
 
             </div>
 
           </div>
 
-        `;
 
-      }).join("")}
+          <div class="student-details">
+
+            <div class="student-detail">
+
+              <span class="detail-label">
+                Gender
+              </span>
+
+              <strong>
+                ${esc(
+                  student.gender ||
+                  "Not provided"
+                )}
+              </strong>
+
+            </div>
+
+
+            <div class="student-detail sensitive">
+
+              <span class="detail-label">
+                South African ID Number
+              </span>
+
+              <strong>
+                ${esc(
+                  student.id_number ||
+                  "Not provided"
+                )}
+              </strong>
+
+            </div>
+
+
+            <div class="student-detail">
+
+              <span class="detail-label">
+                Email
+              </span>
+
+              <strong>
+                ${esc(
+                  student.email ||
+                  "Not provided"
+                )}
+              </strong>
+
+            </div>
+
+
+            <div class="student-detail">
+
+              <span class="detail-label">
+                WhatsApp / Mobile
+              </span>
+
+              <strong>
+                ${esc(
+                  student.phone ||
+                  "Not provided"
+                )}
+              </strong>
+
+            </div>
+
+
+            <div class="student-detail">
+
+              <span class="detail-label">
+                Registered
+              </span>
+
+              <strong>
+                ${formatDate(
+                  student.created_at
+                )}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      `).join("")}
 
     </div>
 
   `;
 
 
+  addStudentStyles();
+}
+
+
+// ============================================================
+// STUDENT STYLES
+// ============================================================
+
+function addStudentStyles() {
+
   if (
-    !document.getElementById(
-      "student-mobile-style"
+    document.getElementById(
+      "student-admin-style"
     )
   ) {
-
-    const style =
-      document.createElement("style");
-
-    style.id =
-      "student-mobile-style";
-
-
-    style.textContent = `
-
-      .student-list {
-        display: grid;
-        gap: 18px;
-        width: 100%;
-      }
-
-      .student-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 18px;
-        box-shadow: 0 4px 14px rgba(0,0,0,.05);
-      }
-
-      .student-card-header {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 18px;
-        padding-bottom: 14px;
-        border-bottom: 1px solid #edf2f7;
-      }
-
-      .student-avatar {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        background: #f0fdf4;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 25px;
-        flex-shrink: 0;
-      }
-
-      .student-card h3 {
-        margin: 0 0 5px;
-        font-size: 19px;
-        color: #0f172a;
-      }
-
-      .student-role {
-        display: inline-block;
-        background: #e8f5e9;
-        color: #166534;
-        border-radius: 20px;
-        padding: 4px 10px;
-        font-size: 12px;
-        font-weight: bold;
-        text-transform: capitalize;
-      }
-
-      .student-details {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-
-      .student-detail {
-        padding: 11px 12px;
-        background: #f8fafc;
-        border-radius: 9px;
-      }
-
-      .detail-label {
-        display: block;
-        color: #64748b;
-        font-size: 12px;
-        margin-bottom: 4px;
-        font-weight: 600;
-      }
-
-      .student-detail strong {
-        display: block;
-        color: #0f172a;
-        font-size: 14px;
-        word-break: break-word;
-      }
-
-      .student-detail.sensitive {
-        background: #fffaf0;
-      }
-
-      .empty-state {
-        padding: 25px;
-        text-align: center;
-        color: #64748b;
-      }
-
-      .admin-error {
-        padding: 18px;
-        border-radius: 10px;
-        background: #fef2f2;
-        color: #991b1b;
-      }
-
-      @media (min-width: 700px) {
-
-        .student-details {
-          grid-template-columns: 1fr 1fr;
-        }
-
-      }
-
-    `;
-
-
-    document.head.appendChild(style);
-
+    return;
   }
 
+
+  const style =
+    document.createElement("style");
+
+  style.id =
+    "student-admin-style";
+
+
+  style.textContent = `
+
+    .student-list {
+      display: grid;
+      gap: 18px;
+      width: 100%;
+    }
+
+    .student-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 4px 14px rgba(0,0,0,.05);
+    }
+
+    .student-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    .student-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #f0fdf4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 25px;
+      flex-shrink: 0;
+    }
+
+    .student-card h3 {
+      margin: 0 0 5px;
+      font-size: 19px;
+      color: #0f172a;
+    }
+
+    .student-role {
+      display: inline-block;
+      background: #e8f5e9;
+      color: #166534;
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: capitalize;
+    }
+
+    .student-details {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .student-detail {
+      padding: 11px 12px;
+      background: #f8fafc;
+      border-radius: 9px;
+    }
+
+    .detail-label {
+      display: block;
+      color: #64748b;
+      font-size: 12px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .student-detail strong {
+      display: block;
+      color: #0f172a;
+      font-size: 14px;
+      word-break: break-word;
+    }
+
+    .student-detail.sensitive {
+      background: #fffaf0;
+    }
+
+    .empty-state {
+      padding: 25px;
+      text-align: center;
+      color: #64748b;
+    }
+
+    .admin-error {
+      padding: 18px;
+      border-radius: 10px;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
+    @media (min-width: 700px) {
+
+      .student-details {
+        grid-template-columns: 1fr 1fr;
+      }
+
+    }
+
+  `;
+
+
+  document.head.appendChild(style);
 }
 
 
@@ -671,6 +698,12 @@ async function loadStudents() {
 // ============================================================
 
 async function loadCourses() {
+
+  const box =
+    document.getElementById(
+      "admin-courses"
+    );
+
 
   const {
     data,
@@ -684,9 +717,18 @@ async function loadCourses() {
 
   if (error) {
 
-    console.error(error);
+    console.error(
+      "Course loading error:",
+      error
+    );
 
-    show(error.message);
+    if (box) {
+      box.innerHTML = `
+        <div class="admin-error">
+          ${esc(error.message)}
+        </div>
+      `;
+    }
 
     return;
   }
@@ -696,18 +738,21 @@ async function loadCourses() {
     data || [];
 
 
-  const box =
-    document.getElementById(
-      "admin-courses"
-    );
-
-
   if (!box) return;
 
 
-  box.innerHTML =
+  if (courses.length === 0) {
 
-    courses.map(course => `
+    box.innerHTML =
+      "<p>No courses available.</p>";
+
+    return;
+  }
+
+
+  box.innerHTML = `
+
+    ${courses.map(course => `
 
       <div class="admin-row">
 
@@ -727,9 +772,7 @@ async function loadCourses() {
               course.category || ""
             )}
 
-            · R${Number(
-              course.price || 0
-            ).toLocaleString("en-ZA")}
+            · ${money(course.price)}
 
             · ${esc(
               course.duration || ""
@@ -745,42 +788,50 @@ async function loadCourses() {
           <button
             type="button"
             class="btn small ghost"
-            data-edit="${course.id}">
+            data-edit-course="${esc(course.id)}">
+
             Edit
+
           </button>
 
 
           <button
             type="button"
             class="btn small danger"
-            data-delete="${course.id}">
+            data-delete-course="${esc(course.id)}">
+
             Delete
+
           </button>
 
         </div>
 
       </div>
 
-    `).join("")
+    `).join("")}
 
-    || "<p>No courses available.</p>";
+  `;
 
 
   box
-    .querySelectorAll("[data-edit]")
+    .querySelectorAll(
+      "[data-edit-course]"
+    )
     .forEach(button => {
 
       button.onclick = () => {
 
         const course =
           courses.find(
-            c =>
-              c.id ===
-              button.dataset.edit
+            item =>
+              String(item.id) ===
+              String(
+                button.dataset.editCourse
+              )
           );
 
         if (course) {
-          fill(course);
+          fillCourse(course);
         }
 
       };
@@ -789,19 +840,20 @@ async function loadCourses() {
 
 
   box
-    .querySelectorAll("[data-delete]")
+    .querySelectorAll(
+      "[data-delete-course]"
+    )
     .forEach(button => {
 
       button.onclick = () => {
 
         deleteCourse(
-          button.dataset.delete
+          button.dataset.deleteCourse
         );
 
       };
 
     });
-
 }
 
 
@@ -813,7 +865,9 @@ async function deleteCourse(id) {
 
   const course =
     courses.find(
-      c => c.id === id
+      item =>
+        String(item.id) ===
+        String(id)
     );
 
 
@@ -841,14 +895,20 @@ async function deleteCourse(id) {
     await db
       .from("courses")
       .delete()
-      .eq("id", id);
+      .eq(
+        "id",
+        id
+      );
 
 
   if (error) {
 
     console.error(error);
 
-    show(error.message);
+    show(
+      "Could not delete course: " +
+      error.message
+    );
 
     return;
   }
@@ -861,7 +921,6 @@ async function deleteCourse(id) {
 
 
   await loadCourses();
-
 }
 
 
@@ -869,15 +928,18 @@ async function deleteCourse(id) {
 // SAVE COURSE
 // ============================================================
 
-const courseForm =
-  document.getElementById(
-    "course-form"
-  );
+function setupCourseForm() {
+
+  const form =
+    document.getElementById(
+      "course-form"
+    );
 
 
-if (courseForm) {
+  if (!form) return;
 
-  courseForm.onsubmit =
+
+  form.onsubmit =
     async event => {
 
       event.preventDefault();
@@ -885,10 +947,8 @@ if (courseForm) {
 
       const title =
         document
-          .getElementById(
-            "course-name"
-          )
-          .value
+          .getElementById("course-name")
+          ?.value
           .trim();
 
 
@@ -902,59 +962,51 @@ if (courseForm) {
       }
 
 
+      const modulesText =
+        document
+          .getElementById("course-modules")
+          ?.value || "";
+
+
       const payload = {
 
-        title: title,
+        title,
 
         price:
           Number(
             document
-              .getElementById(
-                "course-price"
-              )
-              .value
+              .getElementById("course-price")
+              ?.value
           ) || 0,
 
         category:
           document
-            .getElementById(
-              "course-category"
-            )
-            .value
-            .trim(),
+            .getElementById("course-category")
+            ?.value
+            .trim() || null,
 
         duration:
           document
-            .getElementById(
-              "course-duration"
-            )
-            .value
-            .trim(),
+            .getElementById("course-duration")
+            ?.value
+            .trim() || null,
 
         image_url:
           document
-            .getElementById(
-              "course-image"
-            )
-            .value
+            .getElementById("course-image")
+            ?.value
             .trim() || null,
 
         description:
           document
-            .getElementById(
-              "course-description"
-            )
-            .value
-            .trim(),
+            .getElementById("course-description")
+            ?.value
+            .trim() || null,
 
         modules:
-          document
-            .getElementById(
-              "course-modules"
-            )
-            .value
+          modulesText
             .split("\n")
-            .map(x => x.trim())
+            .map(item => item.trim())
             .filter(Boolean),
 
         active: true,
@@ -968,7 +1020,7 @@ if (courseForm) {
       let result;
 
 
-      if (editingId) {
+      if (editingCourseId) {
 
         result =
           await db
@@ -976,10 +1028,12 @@ if (courseForm) {
             .update(payload)
             .eq(
               "id",
-              editingId
+              editingCourseId
             );
 
-      } else {
+      }
+
+      else {
 
         result =
           await db
@@ -992,6 +1046,7 @@ if (courseForm) {
       if (result.error) {
 
         console.error(
+          "Course save error:",
           result.error
         );
 
@@ -1004,55 +1059,18 @@ if (courseForm) {
 
 
       show(
-        editingId
+        editingCourseId
           ? "Course updated successfully."
           : "Course added successfully.",
         true
       );
 
 
-      resetForm();
+      resetCourseForm();
 
       await loadCourses();
 
     };
-
-}
-
-
-// ============================================================
-// NEW COURSE BUTTON
-// ============================================================
-
-const newCourse =
-  document.getElementById(
-    "new-course"
-  );
-
-
-if (newCourse) {
-
-  newCourse.onclick =
-    resetForm;
-
-}
-
-
-// ============================================================
-// CANCEL EDIT
-// ============================================================
-
-const cancelEdit =
-  document.getElementById(
-    "cancel-edit"
-  );
-
-
-if (cancelEdit) {
-
-  cancelEdit.onclick =
-    resetForm;
-
 }
 
 
@@ -1077,34 +1095,31 @@ async function loadEnrolments() {
 
   const {
     data: enrolments,
-    error: enrolmentError
+    error
   } =
     await db
       .from("enrollments")
-      .select("*");
+      .select("*")
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
 
 
-  if (enrolmentError) {
+  if (error) {
 
     console.error(
       "Enrolment loading error:",
-      enrolmentError
+      error
     );
-
 
     box.innerHTML = `
       <div class="admin-error">
-
-        <strong>
-          Could not load enrolments.
-        </strong>
-
+        <strong>Could not load enrolments.</strong>
         <br><br>
-
-        ${esc(
-          enrolmentError.message
-        )}
-
+        ${esc(error.message)}
       </div>
     `;
 
@@ -1125,8 +1140,7 @@ async function loadEnrolments() {
         </strong>
 
         <p>
-          Student course requests will
-          appear here.
+          Student course requests will appear here.
         </p>
 
       </div>
@@ -1139,51 +1153,83 @@ async function loadEnrolments() {
   const courseIds = [
     ...new Set(
       enrolments
-        .map(e => e.course_id)
+        .map(item => item.course_id)
+        .filter(Boolean)
+    )
+  ];
+
+
+  const studentIds = [
+    ...new Set(
+      enrolments
+        .map(item => item.student_id)
         .filter(Boolean)
     )
   ];
 
 
   let courseData = [];
+  let studentData = [];
 
 
   if (courseIds.length > 0) {
 
-    const {
-      data,
-      error
-    } =
+    const result =
       await db
         .from("courses")
-        .select(`
-          id,
-          title,
-          price
-        `)
+        .select(
+          "id,title,price"
+        )
         .in(
           "id",
           courseIds
         );
 
-
-    if (!error) {
-
+    if (!result.error) {
       courseData =
-        data || [];
-
+        result.data || [];
     }
+  }
 
+
+  if (studentIds.length > 0) {
+
+    const result =
+      await db
+        .from("profiles")
+        .select(
+          "id,full_name,email"
+        )
+        .in(
+          "id",
+          studentIds
+        );
+
+    if (!result.error) {
+      studentData =
+        result.data || [];
+    }
   }
 
 
   const courseLookup = {};
+  const studentLookup = {};
 
 
   courseData.forEach(course => {
 
-    courseLookup[course.id] =
-      course;
+    courseLookup[
+      course.id
+    ] = course;
+
+  });
+
+
+  studentData.forEach(student => {
+
+    studentLookup[
+      student.id
+    ] = student;
 
   });
 
@@ -1211,134 +1257,141 @@ async function loadEnrolments() {
 
         <tbody>
 
-          ${enrolments.map(
-            enrolment => {
+          ${enrolments.map(enrolment => {
 
-              const course =
-                courseLookup[
-                  enrolment.course_id
-                ] || {};
-
-
-              const courseName =
-                course.title ||
-                course.name ||
-                "Course";
+            const course =
+              courseLookup[
+                enrolment.course_id
+              ] || {};
 
 
-              const price =
-                course.price ||
-                enrolment.amount ||
-                0;
+            const student =
+              studentLookup[
+                enrolment.student_id
+              ] || {};
 
 
-              const status =
-                enrolment.enrollment_status ||
-                "pending";
+            const status =
+              enrolment.enrollment_status ||
+              "pending";
 
 
-              const date =
-                enrolment.enrolled_at ||
-                enrolment.created_at ||
-                null;
+            const date =
+              enrolment.enrolled_at ||
+              enrolment.created_at;
 
 
-              return `
+            return `
 
-                <tr>
+              <tr>
 
-                  <td>
+                <td>
+
+                  <strong>
                     ${esc(
-                      enrolment.student_id
+                      student.full_name ||
+                      "Student"
                     )}
-                  </td>
+                  </strong>
 
-                  <td>
-                    ${esc(courseName)}
-                  </td>
-
-                  <td>
-                    R${Number(
-                      price
-                    ).toLocaleString(
-                      "en-ZA"
+                  <small>
+                    ${esc(
+                      student.email || ""
                     )}
-                  </td>
+                  </small>
 
-                  <td>
+                </td>
 
-                    <span
-                      class="enrolment-status ${esc(
-                        status
-                      )}">
 
-                      ${esc(status)}
+                <td>
+                  ${esc(
+                    course.title ||
+                    "Course"
+                  )}
+                </td>
 
-                    </span>
 
-                  </td>
+                <td>
+                  ${money(
+                    course.price ||
+                    enrolment.amount
+                  )}
+                </td>
 
-                  <td>
-                    ${formatDate(date)}
-                  </td>
 
-                  <td>
+                <td>
 
-                    <select
-                      data-enrolment-status="${esc(
-                        enrolment.id
-                      )}">
+                  <span
+                    class="enrolment-status ${esc(status)}">
 
-                      <option
-                        value="pending"
-                        ${
-                          status === "pending"
-                            ? "selected"
-                            : ""
-                        }>
-                        Pending
-                      </option>
+                    ${esc(status)}
 
-                      <option
-                        value="approved"
-                        ${
-                          status === "approved"
-                            ? "selected"
-                            : ""
-                        }>
-                        Approved
-                      </option>
+                  </span>
 
-                      <option
-                        value="completed"
-                        ${
-                          status === "completed"
-                            ? "selected"
-                            : ""
-                        }>
-                        Completed
-                      </option>
+                </td>
 
-                      <option
-                        value="cancelled"
-                        ${
-                          status === "cancelled"
-                            ? "selected"
-                            : ""
-                        }>
-                        Cancelled
-                      </option>
 
-                    </select>
+                <td>
+                  ${formatDate(date)}
+                </td>
 
-                  </td>
 
-                </tr>
+                <td>
 
-              `;
+                  <select
+                    data-enrolment-status="${esc(
+                      enrolment.id
+                    )}">
 
-            }
-          ).join("")}
+                    <option
+                      value="pending"
+                      ${
+                        status === "pending"
+                          ? "selected"
+                          : ""
+                      }>
+                      Pending
+                    </option>
+
+                    <option
+                      value="approved"
+                      ${
+                        status === "approved"
+                          ? "selected"
+                          : ""
+                      }>
+                      Approved
+                    </option>
+
+                    <option
+                      value="completed"
+                      ${
+                        status === "completed"
+                          ? "selected"
+                          : ""
+                      }>
+                      Completed
+                    </option>
+
+                    <option
+                      value="cancelled"
+                      ${
+                        status === "cancelled"
+                          ? "selected"
+                          : ""
+                      }>
+                      Cancelled
+                    </option>
+
+                  </select>
+
+                </td>
+
+              </tr>
+
+            `;
+
+          }).join("")}
 
         </tbody>
 
@@ -1359,7 +1412,7 @@ async function loadEnrolments() {
         async () => {
 
           const {
-            error
+            error: updateError
           } =
             await db
               .from("enrollments")
@@ -1373,11 +1426,11 @@ async function loadEnrolments() {
               );
 
 
-          if (error) {
+          if (updateError) {
 
             show(
               "Could not update enrolment: " +
-              error.message
+              updateError.message
             );
 
             return;
@@ -1395,7 +1448,6 @@ async function loadEnrolments() {
         };
 
     });
-
 }
 
 
@@ -1450,7 +1502,6 @@ async function loadPayments() {
       error
     );
 
-
     box.innerHTML = `
       <div class="admin-error">
 
@@ -1460,9 +1511,7 @@ async function loadPayments() {
 
         <br><br>
 
-        ${esc(
-          error.message
-        )}
+        ${esc(error.message)}
 
       </div>
     `;
@@ -1476,11 +1525,107 @@ async function loadPayments() {
     payments.length === 0
   ) {
 
-    box.innerHTML =
-      "<p>Payment records will appear here.</p>";
+    box.innerHTML = `
+      <div class="empty-state">
+
+        <strong>
+          No payment records yet.
+        </strong>
+
+        <p>
+          Student payments will appear here
+          after they submit them.
+        </p>
+
+      </div>
+    `;
 
     return;
   }
+
+
+  const studentIds = [
+    ...new Set(
+      payments
+        .map(payment => payment.student_id)
+        .filter(Boolean)
+    )
+  ];
+
+
+  const enrolmentIds = [
+    ...new Set(
+      payments
+        .map(payment => payment.enrolment_id)
+        .filter(Boolean)
+    )
+  ];
+
+
+  let students = [];
+  let enrolments = [];
+
+
+  if (studentIds.length > 0) {
+
+    const result =
+      await db
+        .from("profiles")
+        .select(
+          "id,full_name,email"
+        )
+        .in(
+          "id",
+          studentIds
+        );
+
+    if (!result.error) {
+      students =
+        result.data || [];
+    }
+  }
+
+
+  if (enrolmentIds.length > 0) {
+
+    const result =
+      await db
+        .from("enrollments")
+        .select(
+          "id,course_id"
+        )
+        .in(
+          "id",
+          enrolmentIds
+        );
+
+    if (!result.error) {
+      enrolments =
+        result.data || [];
+    }
+  }
+
+
+  const studentLookup = {};
+  const enrolmentLookup = {};
+
+
+  students.forEach(student => {
+
+    studentLookup[
+      student.id
+    ] = student;
+
+  });
+
+
+  enrolments.forEach(enrolment => {
+
+    enrolmentLookup[
+      enrolment.id
+    ] = enrolment;
+
+  });
 
 
   box.innerHTML = `
@@ -1493,11 +1638,14 @@ async function loadPayments() {
 
           <tr>
 
+            <th>Student</th>
+            <th>Course</th>
             <th>Amount</th>
             <th>Method</th>
             <th>Status</th>
             <th>Proof</th>
             <th>Date</th>
+            <th>Action</th>
 
           </tr>
 
@@ -1505,32 +1653,91 @@ async function loadPayments() {
 
         <tbody>
 
-          ${payments.map(
-            payment => `
+          ${payments.map(payment => {
+
+            const student =
+              studentLookup[
+                payment.student_id
+              ] || {};
+
+
+            const enrolment =
+              enrolmentLookup[
+                payment.enrolment_id
+              ] || {};
+
+
+            const course =
+              courses.find(
+                item =>
+                  String(item.id) ===
+                  String(
+                    enrolment.course_id
+                  )
+              );
+
+
+            const status =
+              payment.status ||
+              "pending";
+
+
+            return `
 
               <tr>
 
                 <td>
-                  R${Number(
-                    payment.amount || 0
-                  ).toLocaleString(
-                    "en-ZA"
+
+                  <strong>
+                    ${esc(
+                      student.full_name ||
+                      "Student"
+                    )}
+                  </strong>
+
+                  <small>
+                    ${esc(
+                      student.email || ""
+                    )}
+                  </small>
+
+                </td>
+
+
+                <td>
+                  ${esc(
+                    course?.title ||
+                    "Course"
                   )}
                 </td>
+
+
+                <td>
+                  ${money(
+                    payment.amount
+                  )}
+                </td>
+
 
                 <td>
                   ${esc(
                     payment.payment_method ||
-                    ""
+                    "—"
                   )}
                 </td>
 
+
                 <td>
-                  ${esc(
-                    payment.status ||
-                    "pending"
-                  )}
+
+                  <span
+                    class="payment-status ${esc(status)}">
+
+                    ${esc(status)}
+
+                  </span>
+
                 </td>
+
 
                 <td>
 
@@ -1542,8 +1749,11 @@ async function loadPayments() {
                             payment.proof_url
                           )}"
                           target="_blank"
-                          rel="noopener">
+                          rel="noopener noreferrer"
+                          class="proof-link">
+
                           View Proof
+
                         </a>
                       `
                       : "No proof"
@@ -1551,16 +1761,60 @@ async function loadPayments() {
 
                 </td>
 
+
                 <td>
                   ${formatDate(
                     payment.created_at
                   )}
                 </td>
 
+
+                <td>
+
+                  <select
+                    data-payment-status="${esc(
+                      payment.id
+                    )}">
+
+                    <option
+                      value="pending"
+                      ${
+                        status === "pending"
+                          ? "selected"
+                          : ""
+                      }>
+                      Pending
+                    </option>
+
+                    <option
+                      value="approved"
+                      ${
+                        status === "approved"
+                          ? "selected"
+                          : ""
+                      }>
+                      Approved
+                    </option>
+
+                    <option
+                      value="rejected"
+                      ${
+                        status === "rejected"
+                          ? "selected"
+                          : ""
+                      }>
+                      Rejected
+                    </option>
+
+                  </select>
+
+                </td>
+
               </tr>
 
-            `
-          ).join("")}
+            `;
+
+          }).join("")}
 
         </tbody>
 
@@ -1570,6 +1824,60 @@ async function loadPayments() {
 
   `;
 
+
+  box
+    .querySelectorAll(
+      "[data-payment-status]"
+    )
+    .forEach(select => {
+
+      select.onchange =
+        async () => {
+
+          const paymentId =
+            select.dataset.paymentStatus;
+
+
+          const newStatus =
+            select.value;
+
+
+          const {
+            error: updateError
+          } =
+            await db
+              .from("payments")
+              .update({
+                status: newStatus
+              })
+              .eq(
+                "id",
+                paymentId
+              );
+
+
+          if (updateError) {
+
+            show(
+              "Could not update payment: " +
+              updateError.message
+            );
+
+            return;
+          }
+
+
+          show(
+            "Payment status updated successfully.",
+            true
+          );
+
+
+          await loadPayments();
+
+        };
+
+    });
 }
 
 
@@ -1607,6 +1915,7 @@ async function loadAssessments() {
 
         </div>
 
+
         <button
           type="button"
           class="btn green"
@@ -1642,16 +1951,21 @@ async function loadAssessments() {
   addAssessmentStyles();
 
 
-  document
-    .getElementById(
+  const createButton =
+    document.getElementById(
       "create-assessment-btn"
-    )
-    .onclick =
+    );
+
+
+  if (createButton) {
+
+    createButton.onclick =
       () => showAssessmentForm();
+
+  }
 
 
   await renderAssessmentList();
-
 }
 
 
@@ -1698,7 +2012,10 @@ async function renderAssessmentList() {
 
   if (error) {
 
-    console.error(error);
+    console.error(
+      "Assessment loading error:",
+      error
+    );
 
     box.innerHTML = `
       <div class="admin-error">
@@ -1744,16 +2061,12 @@ async function renderAssessmentList() {
 
         const course =
           courses.find(
-            c =>
-              c.id ===
-              assessment.course_id
+            item =>
+              String(item.id) ===
+              String(
+                assessment.course_id
+              )
           );
-
-
-        const courseName =
-          course?.title ||
-          course?.name ||
-          "Course";
 
 
         const questions =
@@ -1773,14 +2086,21 @@ async function renderAssessmentList() {
               <div>
 
                 <span class="assessment-course">
-                  ${esc(courseName)}
+
+                  ${esc(
+                    course?.title ||
+                    "Course"
+                  )}
+
                 </span>
+
 
                 <h3>
                   ${esc(
                     assessment.title
                   )}
                 </h3>
+
 
                 <p>
                   ${esc(
@@ -1819,6 +2139,7 @@ async function renderAssessmentList() {
                 </strong>
               </span>
 
+
               <span>
                 Total marks:
                 <strong>
@@ -1827,6 +2148,7 @@ async function renderAssessmentList() {
                   )}
                 </strong>
               </span>
+
 
               <span>
                 Pass mark:
@@ -1845,31 +2167,45 @@ async function renderAssessmentList() {
               <button
                 type="button"
                 class="btn small ghost"
-                data-edit-assessment="${assessment.id}">
+                data-edit-assessment="${esc(
+                  assessment.id
+                )}">
+
                 Edit
+
               </button>
 
 
               <button
                 type="button"
                 class="btn small ghost"
-                data-view-submissions="${assessment.id}">
+                data-view-submissions="${esc(
+                  assessment.id
+                )}">
+
                 Student Submissions
+
               </button>
 
 
               <button
                 type="button"
                 class="btn small danger"
-                data-delete-assessment="${assessment.id}">
+                data-delete-assessment="${esc(
+                  assessment.id
+                )}">
+
                 Delete
+
               </button>
 
             </div>
 
 
             <div
-              id="submissions-${assessment.id}"
+              id="submissions-${esc(
+                assessment.id
+              )}"
               class="submissions-area hidden">
             </div>
 
@@ -1894,15 +2230,20 @@ async function renderAssessmentList() {
 
         const assessment =
           assessments.find(
-            a =>
-              a.id ===
-              button.dataset.editAssessment
+            item =>
+              String(item.id) ===
+              String(
+                button.dataset.editAssessment
+              )
           );
 
+
         if (assessment) {
+
           showAssessmentForm(
             assessment
           );
+
         }
 
       };
@@ -1917,10 +2258,13 @@ async function renderAssessmentList() {
     .forEach(button => {
 
       button.onclick =
-        () =>
+        () => {
+
           loadSubmissions(
             button.dataset.viewSubmissions
           );
+
+        };
 
     });
 
@@ -1932,13 +2276,15 @@ async function renderAssessmentList() {
     .forEach(button => {
 
       button.onclick =
-        () =>
+        () => {
+
           deleteAssessment(
             button.dataset.deleteAssessment
           );
 
-    });
+        };
 
+    });
 }
 
 
@@ -1959,12 +2305,16 @@ function showAssessmentForm(existing = null) {
 
   const questions =
     existing &&
-    Array.isArray(existing.questions)
+    Array.isArray(
+      existing.questions
+    )
       ? existing.questions
       : [];
 
 
-  area.classList.remove("hidden");
+  area.classList.remove(
+    "hidden"
+  );
 
 
   area.innerHTML = `
@@ -1984,39 +2334,35 @@ function showAssessmentForm(existing = null) {
         Course
       </label>
 
-      <select id="assessment-course" required>
+      <select
+        id="assessment-course"
+        required>
 
         <option value="">
           Select a course
         </option>
 
-        ${courses.map(course => {
+        ${courses.map(course => `
 
-          const name =
-            course.title ||
-            course.name ||
-            "Course";
+          <option
+            value="${esc(course.id)}"
+            ${
+              existing &&
+              String(existing.course_id) ===
+              String(course.id)
+                ? "selected"
+                : ""
+            }>
 
+            ${esc(
+              course.title ||
+              course.name ||
+              "Course"
+            )}
 
-          return `
+          </option>
 
-            <option
-              value="${course.id}"
-              ${
-                existing &&
-                existing.course_id ===
-                course.id
-                  ? "selected"
-                  : ""
-              }>
-
-              ${esc(name)}
-
-            </option>
-
-          `;
-
-        }).join("")}
+        `).join("")}
 
       </select>
 
@@ -2108,6 +2454,7 @@ function showAssessmentForm(existing = null) {
             Questions
           </h4>
 
+
           <button
             type="button"
             class="btn small green"
@@ -2120,9 +2467,7 @@ function showAssessmentForm(existing = null) {
         </div>
 
 
-        <div id="question-list">
-
-        </div>
+        <div id="question-list"></div>
 
       </div>
 
@@ -2155,17 +2500,14 @@ function showAssessmentForm(existing = null) {
   `;
 
 
-  const questionList =
-    document.getElementById(
-      "question-list"
-    );
-
-
   questions.forEach(
-    question =>
+    question => {
+
       addQuestionRow(
         question
-      )
+      );
+
+    }
   );
 
 
@@ -2198,16 +2540,18 @@ function showAssessmentForm(existing = null) {
       "save-assessment-btn"
     )
     .onclick =
-      () =>
+      () => {
+
         saveAssessment(
           existing?.id || null
         );
 
+      };
 }
 
 
 // ============================================================
-// ADD QUESTION ROW
+// ADD QUESTION
 // ============================================================
 
 function addQuestionRow(question = null) {
@@ -2222,7 +2566,9 @@ function addQuestionRow(question = null) {
 
 
   const row =
-    document.createElement("div");
+    document.createElement(
+      "div"
+    );
 
 
   row.className =
@@ -2245,6 +2591,7 @@ function addQuestionRow(question = null) {
         Question
       </strong>
 
+
       <button
         type="button"
         class="btn small danger remove-question">
@@ -2260,6 +2607,7 @@ function addQuestionRow(question = null) {
       Question text
     </label>
 
+
     <textarea
       class="question-text"
       placeholder="Enter the question..."
@@ -2272,6 +2620,7 @@ function addQuestionRow(question = null) {
       Question type
     </label>
 
+
     <select class="question-type">
 
       <option
@@ -2281,8 +2630,11 @@ function addQuestionRow(question = null) {
             ? "selected"
             : ""
         }>
+
         Written answer
+
       </option>
+
 
       <option
         value="multiple_choice"
@@ -2292,7 +2644,9 @@ function addQuestionRow(question = null) {
             ? "selected"
             : ""
         }>
+
         Multiple choice
+
       </option>
 
     </select>
@@ -2301,6 +2655,7 @@ function addQuestionRow(question = null) {
     <label>
       Marks
     </label>
+
 
     <input
       type="number"
@@ -2313,11 +2668,16 @@ function addQuestionRow(question = null) {
 
 
     <label>
+
       Options
+
       <small>
-        One option per line. Use this for multiple-choice questions.
+        One option per line.
+        Use this for multiple-choice questions.
       </small>
+
     </label>
+
 
     <textarea
       class="question-options"
@@ -2326,11 +2686,15 @@ function addQuestionRow(question = null) {
 
 
     <label>
+
       Correct answer
+
       <small>
         For multiple choice, enter the exact correct option.
       </small>
+
     </label>
+
 
     <input
       class="question-correct"
@@ -2351,8 +2715,9 @@ function addQuestionRow(question = null) {
       () => row.remove();
 
 
-  list.appendChild(row);
-
+  list.appendChild(
+    row
+  );
 }
 
 
@@ -2360,7 +2725,9 @@ function addQuestionRow(question = null) {
 // SAVE ASSESSMENT
 // ============================================================
 
-async function saveAssessment(id = null) {
+async function saveAssessment(
+  id = null
+) {
 
   const courseId =
     document.getElementById(
@@ -2394,7 +2761,7 @@ async function saveAssessment(id = null) {
       document.getElementById(
         "assessment-pass"
       )?.value
-    ) || 50;
+    );
 
 
   if (!courseId) {
@@ -2418,6 +2785,7 @@ async function saveAssessment(id = null) {
 
 
   if (
+    !Number.isFinite(passMark) ||
     passMark < 0 ||
     passMark > 100
   ) {
@@ -2430,81 +2798,105 @@ async function saveAssessment(id = null) {
   }
 
 
-  const rows =
-    [
-      ...document.querySelectorAll(
-        "#question-list .question-row"
-      )
-    ];
+  const rows = [
+    ...document.querySelectorAll(
+      "#question-list .question-row"
+    )
+  ];
 
 
   const questions =
-    rows.map(row => {
+    rows
+      .map(row => {
 
-      const text =
-        row.querySelector(
-          ".question-text"
-        )?.value
-          .trim() || "";
-
-
-      const type =
-        row.querySelector(
-          ".question-type"
-        )?.value ||
-        "text";
+        const text =
+          row
+            .querySelector(
+              ".question-text"
+            )
+            ?.value
+            .trim() || "";
 
 
-      const marks =
-        Number(
-          row.querySelector(
-            ".question-marks"
-          )?.value
-        ) || 1;
+        const type =
+          row
+            .querySelector(
+              ".question-type"
+            )
+            ?.value ||
+          "text";
 
 
-      const options =
-        row.querySelector(
-          ".question-options"
-        )?.value
-          .split("\n")
-          .map(x => x.trim())
-          .filter(Boolean) || [];
+        const marks =
+          Number(
+            row
+              .querySelector(
+                ".question-marks"
+              )
+              ?.value
+          ) || 1;
 
 
-      const correctAnswer =
-        row.querySelector(
-          ".question-correct"
-        )?.value
-          .trim() || "";
+        const options =
+          (
+            row
+              .querySelector(
+                ".question-options"
+              )
+              ?.value || ""
+          )
+            .split("\n")
+            .map(item => item.trim())
+            .filter(Boolean);
 
 
-      return {
+        const correctAnswer =
+          row
+            .querySelector(
+              ".question-correct"
+            )
+            ?.value
+            .trim() || "";
 
-        text,
 
-        type,
+        return {
 
-        marks,
+          text,
 
-        options,
+          type,
 
-        correct_answer:
-          correctAnswer
+          marks,
 
-      };
+          options,
 
-    })
-    .filter(
-      question =>
-        question.text
+          correct_answer:
+            correctAnswer
+
+        };
+
+      })
+      .filter(
+        question =>
+          question.text
+      );
+
+
+  if (
+    questions.length === 0
+  ) {
+
+    show(
+      "Please add at least one question."
     );
+
+    return;
+  }
 
 
   const calculatedTotal =
     questions.reduce(
-      (sum, question) =>
-        sum +
+      (total, question) =>
+        total +
         Number(
           question.marks || 0
         ),
@@ -2522,23 +2914,12 @@ async function saveAssessment(id = null) {
         ) || 0;
 
 
-  if (questions.length === 0) {
-
-    show(
-      "Please add at least one question."
-    );
-
-    return;
-  }
-
-
   const payload = {
 
     course_id:
       courseId,
 
-    title:
-      title,
+    title,
 
     description:
       description || null,
@@ -2546,8 +2927,7 @@ async function saveAssessment(id = null) {
     instructions:
       instructions || null,
 
-    questions:
-      questions,
+    questions,
 
     total_marks:
       totalMarks,
@@ -2578,7 +2958,9 @@ async function saveAssessment(id = null) {
           id
         );
 
-  } else {
+  }
+
+  else {
 
     result =
       await db
@@ -2594,7 +2976,6 @@ async function saveAssessment(id = null) {
       "Assessment save error:",
       result.error
     );
-
 
     show(
       result.error.message
@@ -2630,7 +3011,6 @@ async function saveAssessment(id = null) {
 
 
   await renderAssessmentList();
-
 }
 
 
@@ -2638,11 +3018,13 @@ async function saveAssessment(id = null) {
 // DELETE ASSESSMENT
 // ============================================================
 
-async function deleteAssessment(id) {
+async function deleteAssessment(
+  id
+) {
 
   if (
     !confirm(
-      "Delete this assessment? Student submissions for this assessment will also be deleted."
+      "Delete this assessment?"
     )
   ) {
     return;
@@ -2663,6 +3045,11 @@ async function deleteAssessment(id) {
 
   if (error) {
 
+    console.error(
+      "Assessment delete error:",
+      error
+    );
+
     show(
       error.message
     );
@@ -2678,12 +3065,11 @@ async function deleteAssessment(id) {
 
 
   await renderAssessmentList();
-
 }
 
 
 // ============================================================
-// LOAD STUDENT SUBMISSIONS
+// STUDENT SUBMISSIONS
 // ============================================================
 
 async function loadSubmissions(
@@ -2740,7 +3126,10 @@ async function loadSubmissions(
 
   if (error) {
 
-    console.error(error);
+    console.error(
+      "Submission loading error:",
+      error
+    );
 
     box.innerHTML = `
       <div class="admin-error">
@@ -2758,6 +3147,7 @@ async function loadSubmissions(
   ) {
 
     box.innerHTML = `
+
       <div class="empty-state">
 
         <strong>
@@ -2770,6 +3160,7 @@ async function loadSubmissions(
         </p>
 
       </div>
+
     `;
 
     return;
@@ -2779,7 +3170,7 @@ async function loadSubmissions(
   const studentIds = [
     ...new Set(
       submissions
-        .map(s => s.student_id)
+        .map(item => item.student_id)
         .filter(Boolean)
     )
   ];
@@ -2790,27 +3181,22 @@ async function loadSubmissions(
 
   if (studentIds.length > 0) {
 
-    const {
-      data,
-      error: studentError
-    } =
+    const result =
       await db
         .from("profiles")
-        .select(`
-          id,
-          full_name,
-          email
-        `)
+        .select(
+          "id,full_name,email"
+        )
         .in(
           "id",
           studentIds
         );
 
 
-    if (!studentError) {
+    if (!result.error) {
 
       students =
-        data || [];
+        result.data || [];
 
     }
 
@@ -2841,12 +3227,6 @@ async function loadSubmissions(
           ] || {};
 
 
-        const studentName =
-          student.full_name ||
-          student.email ||
-          "Student";
-
-
         return `
 
           <div class="submission-card">
@@ -2856,7 +3236,11 @@ async function loadSubmissions(
               <div>
 
                 <strong>
-                  ${esc(studentName)}
+                  ${esc(
+                    student.full_name ||
+                    student.email ||
+                    "Student"
+                  )}
                 </strong>
 
                 <small>
@@ -2868,9 +3252,11 @@ async function loadSubmissions(
               </div>
 
 
-              <span class="result-badge ${esc(
-                submission.status || "submitted"
-              )}">
+              <span
+                class="result-badge ${esc(
+                  submission.status ||
+                  "submitted"
+                )}">
 
                 ${esc(
                   submission.status ||
@@ -2885,38 +3271,51 @@ async function loadSubmissions(
             <div class="submission-meta">
 
               <span>
+
                 Score:
+
                 <strong>
+
                   ${
                     submission.score === null ||
                     submission.score === undefined
                       ? "Not marked"
                       : submission.score
                   }
+
                 </strong>
+
               </span>
 
 
               <span>
+
                 Percentage:
+
                 <strong>
+
                   ${
                     submission.percentage === null ||
                     submission.percentage === undefined
                       ? "Not marked"
                       : submission.percentage + "%"
                   }
+
                 </strong>
+
               </span>
 
 
               <span>
+
                 Submitted:
+
                 <strong>
                   ${formatDate(
                     submission.submitted_at
                   )}
                 </strong>
+
               </span>
 
             </div>
@@ -2988,6 +3387,7 @@ async function loadSubmissions(
                 Feedback
               </label>
 
+
               <textarea
                 class="mark-feedback"
                 placeholder="Enter feedback for the student..."
@@ -2999,7 +3399,9 @@ async function loadSubmissions(
               <button
                 type="button"
                 class="btn green save-result"
-                data-submission-id="${submission.id}">
+                data-submission-id="${esc(
+                  submission.id
+                )}">
 
                 Save Result
 
@@ -3025,22 +3427,26 @@ async function loadSubmissions(
     .forEach(button => {
 
       button.onclick =
-        () =>
+        () => {
+
           saveStudentResult(
             button.dataset.submissionId,
             box
           );
 
-    });
+        };
 
+    });
 }
 
 
 // ============================================================
-// RENDER STUDENT ANSWERS
+// RENDER ANSWERS
 // ============================================================
 
-function renderAnswers(answers) {
+function renderAnswers(
+  answers
+) {
 
   if (
     !answers ||
@@ -3065,14 +3471,14 @@ function renderAnswers(answers) {
         (answer, index) => {
 
           const question =
-            answer.question ||
-            answer.question_text ||
+            answer?.question ||
+            answer?.question_text ||
             `Question ${index + 1}`;
 
 
           const value =
-            answer.answer ??
-            answer.value ??
+            answer?.answer ??
+            answer?.value ??
             "";
 
 
@@ -3098,7 +3504,6 @@ function renderAnswers(answers) {
     </div>
 
   `;
-
 }
 
 
@@ -3111,10 +3516,17 @@ async function saveStudentResult(
   container
 ) {
 
-  const card =
+  const button =
     container.querySelector(
       `[data-submission-id="${submissionId}"]`
-    )?.closest(
+    );
+
+
+  if (!button) return;
+
+
+  const card =
+    button.closest(
       ".submission-card"
     );
 
@@ -3124,30 +3536,34 @@ async function saveStudentResult(
 
   const score =
     Number(
-      card.querySelector(
-        ".mark-score"
-      )?.value
+      card
+        .querySelector(
+          ".mark-score"
+        )
+        ?.value
     );
 
 
   const percentage =
     Number(
-      card.querySelector(
-        ".mark-percentage"
-      )?.value
+      card
+        .querySelector(
+          ".mark-percentage"
+        )
+        ?.value
     );
 
 
   const feedback =
-    card.querySelector(
-      ".mark-feedback"
-    )?.value
+    card
+      .querySelector(
+        ".mark-feedback"
+      )
+      ?.value
       .trim() || null;
 
 
-  if (
-    !Number.isFinite(score)
-  ) {
+  if (!Number.isFinite(score)) {
 
     show(
       "Please enter the student's score."
@@ -3177,10 +3593,9 @@ async function saveStudentResult(
   } =
     await db
       .from("assessment_submissions")
-      .select(`
-        id,
-        assessment_id
-      `)
+      .select(
+        "id,assessment_id"
+      )
       .eq(
         "id",
         submissionId
@@ -3214,10 +3629,9 @@ async function saveStudentResult(
   } =
     await db
       .from("assessments")
-      .select(`
-        id,
-        pass_mark
-      `)
+      .select(
+        "id,pass_mark"
+      )
       .eq(
         "id",
         submission.assessment_id
@@ -3235,21 +3649,26 @@ async function saveStudentResult(
   }
 
 
-  const status =
-    percentage >=
+  const passMark =
     Number(
       assessment?.pass_mark || 50
-    )
+    );
+
+
+  const status =
+    percentage >= passMark
       ? "passed"
       : "failed";
 
 
   const {
-    data: {
-      session
-    }
+    data: sessionData
   } =
     await db.auth.getSession();
+
+
+  const session =
+    sessionData?.session;
 
 
   const {
@@ -3307,7 +3726,6 @@ async function saveStudentResult(
   await loadSubmissions(
     submission.assessment_id
   );
-
 }
 
 
@@ -3327,7 +3745,9 @@ function addAssessmentStyles() {
 
 
   const style =
-    document.createElement("style");
+    document.createElement(
+      "style"
+    );
 
 
   style.id =
@@ -3490,7 +3910,9 @@ function addAssessmentStyles() {
     }
 
     .assessment-active,
-    .result-badge {
+    .result-badge,
+    .payment-status,
+    .enrolment-status {
       display: inline-block;
       padding: 5px 9px;
       border-radius: 20px;
@@ -3500,25 +3922,27 @@ function addAssessmentStyles() {
     }
 
     .assessment-active.active,
-    .result-badge.passed {
+    .result-badge.passed,
+    .payment-status.approved,
+    .enrolment-status.approved,
+    .enrolment-status.completed {
       background: #dcfce7;
       color: #166534;
     }
 
     .assessment-active.inactive,
-    .result-badge.failed {
+    .result-badge.failed,
+    .payment-status.rejected,
+    .enrolment-status.cancelled {
       background: #fee2e2;
       color: #991b1b;
     }
 
-    .result-badge.submitted {
+    .result-badge.submitted,
+    .payment-status.pending,
+    .enrolment-status.pending {
       background: #fef3c7;
       color: #92400e;
-    }
-
-    .result-badge.marked {
-      background: #dbeafe;
-      color: #1e40af;
     }
 
     .assessment-meta,
@@ -3603,6 +4027,16 @@ function addAssessmentStyles() {
       border-top: 1px solid #dbe3ea;
     }
 
+    .proof-link {
+      font-weight: 700;
+      color: #15803d;
+      text-decoration: none;
+    }
+
+    .proof-link:hover {
+      text-decoration: underline;
+    }
+
     .hidden {
       display: none !important;
     }
@@ -3629,38 +4063,81 @@ function addAssessmentStyles() {
   `;
 
 
-  document.head.appendChild(style);
-
-}
-
-
-// ============================================================
-// LOGOUT
-// ============================================================
-
-const logout =
-  document.getElementById(
-    "logout"
+  document.head.appendChild(
+    style
   );
-
-
-if (logout) {
-
-  logout.onclick =
-    async () => {
-
-      await db.auth.signOut();
-
-      window.location.href =
-        "index.html";
-
-    };
-
 }
 
 
 // ============================================================
-// START ADMIN DASHBOARD
+// BUTTONS
 // ============================================================
 
-init();
+function setupButtons() {
+
+  const newCourse =
+    document.getElementById(
+      "new-course"
+    );
+
+
+  if (newCourse) {
+
+    newCourse.onclick =
+      resetCourseForm;
+
+  }
+
+
+  const cancelEdit =
+    document.getElementById(
+      "cancel-edit"
+    );
+
+
+  if (cancelEdit) {
+
+    cancelEdit.onclick =
+      resetCourseForm;
+
+  }
+
+
+  const logout =
+    document.getElementById(
+      "logout"
+    );
+
+
+  if (logout) {
+
+    logout.onclick =
+      async () => {
+
+        await db.auth.signOut();
+
+        window.location.href =
+          "index.html";
+
+      };
+
+  }
+}
+
+
+// ============================================================
+// START
+// ============================================================
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    setupCourseForm();
+
+    setupButtons();
+
+    initAdmin();
+
+  }
+);
