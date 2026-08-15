@@ -84,6 +84,9 @@ nav a{
   text-decoration:none;
   font-weight:bold;
   margin:5px;
+  border:none;
+  cursor:pointer;
+  font-size:16px;
 }
 
 .btn-main{
@@ -173,6 +176,7 @@ footer{
 }
 
 @media(max-width:700px){
+
   .nav{
     flex-direction:column;
   }
@@ -192,540 +196,138 @@ footer{
 <body>
 
 <header>
+
 <div class="nav">
 
 <div class="logo">
-<img src="logo.png" alt="Funda Online Academy Logo">
-<span>Funda Online Academy</span>
+
+<img
+  src="logo.png"
+  alt="Funda Online Academy Logo"
+>
+
+<span>
+Funda Online Academy
+</span>
+
 </div>
 
 <nav>
-<a href="#courses">Courses</a>
-<a href="#payment">Payment</a>
-<a href="#assessment">Assessments</a>
-<a href="#results">Results</a>
-<a href="auth.html">Student Login</a>
+
+<a href="#courses">
+Courses
+</a>
+
+<a href="#payment">
+Payment
+</a>
+
+<a href="#assessment">
+Assessments
+</a>
+
+<a href="#results">
+Results
+</a>
+
+<a href="auth.html">
+Student Login
+</a>
+
 </nav>
 
 </div>
+
 </header>
 
 
+<!-- ==========================================
+     HERO
+========================================== -->
+
 <section class="hero">
 
-<h1>Funda Online Academy Pty Ltd</h1>
+<h1>
+Funda Online Academy Pty Ltd
+</h1>
 
 <p>
-Learn valuable skills online, study at your own pace and build your future
-from the comfort of your home.
+Learn valuable skills online, study at your own pace
+and build your future from the comfort of your home.
 </p>
 
-<a href="#courses" class="btn btn-main">
+<a
+  href="#courses"
+  class="btn btn-main"
+>
 View Courses
 </a>
 
-<a href="auth.html" class="btn btn-light">
+<a
+  href="auth.html"
+  class="btn btn-light"
+>
 Student Login
 </a>
 
 </section>
 
+
+<!-- ==========================================
+     WHY CHOOSE US
+========================================== -->
 
 <section>
 
 <div class="container">
 
 <div class="section-title">
-<h2>Why Choose Funda Online Academy?</h2>
+
+<h2>
+Why Choose Funda Online Academy?
+</h2>
+
 </div>
+
 
 <div class="cards">
 
+
 <div class="card">
-<h3>🎓 Online Learning</h3>
+
+<h3>
+🎓 Online Learning
+</h3>
+
 <p>
 Study from anywhere and learn at your own convenience.
 </p>
+
 </div>
 
+
 <div class="card">
-<h3>📚 Practical Courses</h3>
+
+<h3>
+📚 Practical Courses
+</h3>
+
 <p>
-Develop useful skills for employment, business and personal development.
+Develop useful skills for employment, business
+and personal development.
 </p>
+
 </div>
 
+
 <div class="card">
-<h3>📝 Assessments</h3>
+
+<h3>
+📝 Assessments
+</h3>
+
 <p>
 Complete assessments as part of your learning journey.
 </p>
-</div>
-
-<div class="card">
-<h3>📊 Student Results</h3>
-<p>
-Students can access their assessment results through the student area.
-</p>
-</div>
 
 </div>
-</div>
-</section>
-
-
-<!-- ==========================================
-     COURSES
-========================================== -->
-
-<section id="courses" class="info">
-
-<div class="container">
-
-<div class="section-title">
-<h2>Our Courses</h2>
-
-<p>
-Choose a course and start learning online.
-</p>
-</div>
-
-
-<div class="cards">
-
-
-<!-- CHILDCARE -->
-
-<div class="card">
-
-<h3>
-Skills in Childcare and Young People Development
-</h3>
-
-<p>
-Learn important skills for working with children and young people.
-</p>
-
-<div class="price">
-R900
-</div>
-
-<a
-href="auth.html?course=Skills%20in%20Childcare%20and%20Young%20People%20Development"
-class="btn btn-main"
->
-Enrol Now
-</a>
-
-</div>
-
-
-<!-- FIRE AND SAFETY -->
-
-<div class="card">
-
-<h3>
-Introduction to Fire and Safety
-</h3>
-
-<p>
-Learn essential fire prevention and workplace safety principles.
-</p>
-
-<div class="price">
-R499
-</div>
-
-<a
-href="auth.html?course=Introduction%20to%20Fire%20and%20Safety"
-class="btn btn-main"
->
-Enrol Now
-</a>
-
-</div>
-
-
-<!-- RETAIL -->
-
-<div class="card">
-
-<h3>
-Retail Short Course
-</h3>
-
-<p>
-Learn customer service, POS/till basics, cash handling and retail operations.
-</p>
-
-<div class="price">
-R450
-</div>
-
-<a
-href="auth.html?course=Retail%20Short%20Course"
-class="btn btn-main"
->
-Enrol Now
-</a>
-
-</div>
-
-
-<!-- MERCHANDISING -->
-
-<div class="card">
-
-<h3>
-Merchandising Short Course
-</h3>
-
-<p>
-Learn product presentation, displays, stock and merchandising principles.
-</p>
-
-<div class="price">
-R440
-</div>
-
-<a
-href="auth.html?course=Merchandising%20Short%20Course"
-class="btn btn-main"
->
-Enrol Now
-</a>
-
-</div>
-
-
-<!-- HOTEL RECEPTIONIST -->
-
-<div class="card">
-
-<h3>
-Hotel Receptionist Short Course
-</h3>
-
-<p>
-Learn front-office duties, guest service and hotel reception skills.
-</p>
-
-<div class="price">
-R550
-</div>
-
-<a
-href="auth.html?course=Hotel%20Receptionist%20Short%20Course"
-class="btn btn-main"
->
-Enrol Now
-</a>
-
-</div>
-
-
-<!-- CUSTOMER SERVICE -->
-
-<div class="card">
-
-<h3>
-Customer Service Short Course
-</h3>
-
-<p>
-Develop professional communication and customer service skills.
-</p>
-
-<div class="price">
-R550
-</div>
-
-<a
-href="auth.html?course=Customer%20Service%20Short%20Course"
-class="btn btn-main"
->
-Enrol Now
-</a>
-
-</div>
-
-
-<!-- FOOD AND BEVERAGE -->
-
-<div class="card">
-
-<h3>
-Food and Beverage Short Course
-</h3>
-
-<p>
-Learn basic food service, beverage service and hospitality skills.
-</p>
-
-<div class="price">
-R450
-</div>
-
-<a
-href="auth.html?course=Food%20and%20Beverage%20Short%20Course"
-class="btn btn-main"
->
-Enrol Now
-</a>
-
-</div>
-
-
-</div>
-</div>
-</section>
-
-
-<!-- ==========================================
-     PAYMENT
-========================================== -->
-
-<section id="payment">
-
-<div class="container">
-
-<div class="section-title">
-
-<h2>
-Payment Methods
-</h2>
-
-<p>
-Choose a convenient payment option.
-</p>
-
-</div>
-
-
-<div class="cards">
-
-
-<div class="card payment">
-
-<h3>
-💳 EFT / Bank Transfer
-</h3>
-
-<p>
-Students can pay directly into the academy's bank account.
-</p>
-
-<p>
-<strong>
-Banking details will be provided during enrolment.
-</strong>
-</p>
-
-</div>
-
-
-<div class="card payment">
-
-<h3>
-📱 Mobile Payment
-</h3>
-
-<p>
-Mobile payment options can be provided to students during registration.
-</p>
-
-</div>
-
-
-<div class="card payment">
-
-<h3>
-📲 WhatsApp Enrolment
-</h3>
-
-<p>
-Contact Funda Online Academy through WhatsApp to receive payment and
-enrolment instructions.
-</p>
-
-</div>
-
-
-</div>
-</div>
-</section>
-
-
-<!-- ==========================================
-     ASSESSMENTS
-========================================== -->
-
-<section id="assessment" class="info">
-
-<div class="container">
-
-<div class="section-title">
-
-<h2>
-Assessments
-</h2>
-
-</div>
-
-
-<div class="cards">
-
-
-<div class="card assessment">
-
-<h3>
-📝 Online Assessments
-</h3>
-
-<p>
-Students complete assessments after studying their course material.
-</p>
-
-</div>
-
-
-<div class="card assessment">
-
-<h3>
-📚 Course Activities
-</h3>
-
-<p>
-Learning activities help students understand and apply the course content.
-</p>
-
-</div>
-
-
-<div class="card assessment">
-
-<h3>
-📊 Assessment Results
-</h3>
-
-<p>
-Results can be made available to students through their student account.
-</p>
-
-</div>
-
-
-</div>
-</div>
-</section>
-
-
-<!-- ==========================================
-     RESULTS
-========================================== -->
-
-<section id="results" class="results">
-
-<div class="container">
-
-<div class="section-title">
-
-<h2>
-Student Results
-</h2>
-
-</div>
-
-
-<div class="card">
-
-<h3>
-View Your Results
-</h3>
-
-<p>
-Registered students can log in to access their assessment information
-and results.
-</p>
-
-<br>
-
-<a
-href="auth.html"
-class="btn btn-main"
->
-Student Login
-</a>
-
-</div>
-
-</div>
-</section>
-
-
-<!-- ==========================================
-     CONTACT
-========================================== -->
-
-<section class="contact">
-
-<div class="container">
-
-<div class="section-title">
-
-<h2>
-Ready to Start Learning?
-</h2>
-
-<p>
-Register today and study from the comfort of your home.
-</p>
-
-</div>
-
-
-<a
-href="auth.html"
-class="btn btn-main"
->
-Register / Login
-</a>
-
-
-<a
-href="https://wa.me/"
-class="btn btn-light"
->
-WhatsApp Us
-</a>
-
-</div>
-
-</section>
-
-
-<!-- ==========================================
-     FOOTER
-========================================== -->
-
-<footer>
-
-<p>
-<strong>
-Funda Online Academy Pty Ltd
-</strong>
-</p>
-
-<p>
-Online Learning • Skills Development • Student Support
-</p>
-
-<p>
-© 2026 Funda Online Academy Pty Ltd. All rights reserved.
-</p>
-
-</footer>
-
-
-</body>
-</html> 
