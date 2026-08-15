@@ -32,6 +32,30 @@ const coursesEl =
 const paymentListEl =
   document.getElementById("payment-list");
 
+const paymentForm =
+  document.getElementById("payment-form");
+
+const paymentEnrolmentEl =
+  document.getElementById("payment-enrolment");
+
+const paymentAmountEl =
+  document.getElementById("payment-amount");
+
+const paymentMethodEl =
+  document.getElementById("payment-method");
+
+const paymentProofEl =
+  document.getElementById("payment-proof");
+
+const paymentNotesEl =
+  document.getElementById("payment-notes");
+
+const paymentSubmitEl =
+  document.getElementById("payment-submit");
+
+const paymentMessageEl =
+  document.getElementById("payment-message");
+
 const messageEl =
   document.getElementById("message");
 
@@ -57,6 +81,32 @@ function showMessage(text, success = false) {
 
     messageEl.style.background = "#fef2f2";
     messageEl.style.color = "#991b1b";
+
+  }
+}
+
+
+// ==========================================
+// PAYMENT MESSAGE
+// ==========================================
+
+function showPaymentMessage(text, success = false) {
+
+  if (!paymentMessageEl) return;
+
+  paymentMessageEl.textContent = text;
+
+  paymentMessageEl.classList.remove("hidden");
+
+  if (success) {
+
+    paymentMessageEl.style.background = "#e8f5e9";
+    paymentMessageEl.style.color = "#166534";
+
+  } else {
+
+    paymentMessageEl.style.background = "#fef2f2";
+    paymentMessageEl.style.color = "#991b1b";
 
   }
 }
@@ -169,8 +219,6 @@ async function loadStudentDetails(user) {
   }
 
 
-  // Fallback to Supabase user metadata
-
   const metadata =
     user.user_metadata || {};
 
@@ -192,7 +240,10 @@ async function loadStudentDetails(user) {
 // LOAD COURSES
 // ==========================================
 
-async function loadCourses(user, student) {
+async function loadCourses(
+  user,
+  student
+) {
 
   if (!coursesEl) return;
 
@@ -200,10 +251,6 @@ async function loadCourses(user, student) {
   coursesEl.innerHTML =
     '<p class="loading">Loading courses…</p>';
 
-
-  // ----------------------------------------
-  // GET ALL ACTIVE COURSES
-  // ----------------------------------------
 
   const {
     data: courses,
@@ -245,17 +292,15 @@ async function loadCourses(user, student) {
     coursesEl.innerHTML = `
       <div class="card">
         <h3>No courses available</h3>
-        <p>There are currently no active courses available.</p>
+        <p>
+          There are currently no active courses available.
+        </p>
       </div>
     `;
 
     return;
   }
 
-
-  // ----------------------------------------
-  // GET STUDENT'S EXISTING ENROLMENTS
-  // ----------------------------------------
 
   let enrolledCourseIds = [];
 
@@ -295,10 +340,6 @@ async function loadCourses(user, student) {
     }
   }
 
-
-  // ----------------------------------------
-  // DISPLAY COURSES
-  // ----------------------------------------
 
   coursesEl.innerHTML =
     courses.map(function(course) {
@@ -413,10 +454,6 @@ async function loadCourses(user, student) {
     }).join("");
 
 
-  // ----------------------------------------
-  // ENROL BUTTONS
-  // ----------------------------------------
-
   const buttons =
     coursesEl.querySelectorAll(
       ".enrol-btn"
@@ -479,10 +516,6 @@ async function requestEnrolment(
     "Requesting…";
 
 
-  // ----------------------------------------
-  // CHECK AGAIN
-  // ----------------------------------------
-
   const {
     data: existing,
     error: checkError
@@ -528,10 +561,6 @@ async function requestEnrolment(
     return;
   }
 
-
-  // ----------------------------------------
-  // CREATE ENROLMENT
-  // ----------------------------------------
 
   const {
     error: insertError
@@ -588,6 +617,10 @@ async function requestEnrolment(
     user,
     student
   );
+
+  await loadPaymentEnrolments(
+    student
+  );
 }
 
 
@@ -621,10 +654,6 @@ async function loadEnrolments(
     return;
   }
 
-
-  // ----------------------------------------
-  // GET ENROLMENTS
-  // ----------------------------------------
 
   const {
     data: enrolments,
@@ -693,10 +722,6 @@ async function loadEnrolments(
   }
 
 
-  // ----------------------------------------
-  // GET COURSE DETAILS
-  // ----------------------------------------
-
   const courseIds =
     enrolments.map(function(item) {
 
@@ -741,10 +766,6 @@ async function loadEnrolments(
     return;
   }
 
-
-  // ----------------------------------------
-  // DISPLAY ENROLMENTS
-  // ----------------------------------------
 
   enrolmentsEl.innerHTML =
     enrolments.map(function(enrolment) {
@@ -827,179 +848,62 @@ async function loadEnrolments(
 
 
 // ==========================================
-// PAYMENTS
-// ==========================================
-//
-// IMPORTANT:
-// There is currently NO payments table in
-// the database structure you provided.
-//
-// Therefore we DO NOT query a payments table.
-// This prevents the dashboard from showing
-// a database error.
-//
-// We will build the real payment system later.
+// LOAD PAYMENT ENROLMENTS
 // ==========================================
 
-function loadPayments() {
+async function loadPaymentEnrolments(
+  student
+) {
 
-  if (!paymentListEl) return;
-
-
-  paymentListEl.innerHTML = `
-    <div class="card">
-
-      <h3>
-        Course Payments
-      </h3>
-
-      <p>
-        Payment information will appear here
-        after your course enrolment has been
-        processed.
-      </p>
-
-      <p style="
-        margin-top:12px;
-        color:#666;
-      ">
-        Your payment status will be updated
-        by Funda Online Academy.
-      </p>
-
-    </div>
-  `;
-}
+  if (!paymentEnrolmentEl) return;
 
 
-// ==========================================
-// LOGOUT
-// ==========================================
-
-if (logoutBtn) {
-
-  logoutBtn.addEventListener(
-    "click",
-    async function() {
-
-      logoutBtn.disabled = true;
-
-      logoutBtn.textContent =
-        "Logging out…";
+  paymentEnrolmentEl.innerHTML =
+    '<option value="">Loading courses…</option>';
 
 
-      const {
-        error
-      } = await db.auth.signOut();
+  if (!student) {
+
+    paymentEnrolmentEl.innerHTML =
+      '<option value="">Student profile not found</option>';
+
+    return;
+  }
 
 
-      if (error) {
-
-        console.error(
-          "LOGOUT ERROR:",
-          error
-        );
-
-        alert(
-          "Could not log out. Please try again."
-        );
-
-        logoutBtn.disabled = false;
-
-        logoutBtn.textContent =
-          "Logout";
-
-        return;
+  const {
+    data: enrolments,
+    error
+  } = await db
+    .from("enrollments")
+    .select(
+      "id, course_id, enrollment_status"
+    )
+    .eq(
+      "student_id",
+      student.id
+    )
+    .order(
+      "enrolled_at",
+      {
+        ascending: false
       }
-
-
-      window.location.href =
-        "login.html";
-
-    }
-  );
-}
-
-
-// ==========================================
-// INITIALISE DASHBOARD
-// ==========================================
-
-async function initDashboard() {
-
-  try {
-
-    // --------------------------------------
-    // CHECK LOGIN
-    // --------------------------------------
-
-    const user =
-      await getCurrentUser();
-
-
-    if (!user) {
-
-      window.location.href =
-        "login.html";
-
-      return;
-    }
-
-
-    // --------------------------------------
-    // STUDENT DETAILS
-    // --------------------------------------
-
-    const student =
-      await loadStudentDetails(
-        user
-      );
-
-
-    // --------------------------------------
-    // LOAD ENROLMENTS
-    // --------------------------------------
-
-    await loadEnrolments(
-      user,
-      student
     );
 
 
-    // --------------------------------------
-    // LOAD COURSES
-    // --------------------------------------
-
-    await loadCourses(
-      user,
-      student
-    );
-
-
-    // --------------------------------------
-    // LOAD PAYMENTS
-    // --------------------------------------
-
-    loadPayments();
-
-
-  } catch (error) {
+  if (error) {
 
     console.error(
-      "DASHBOARD ERROR:",
+      "PAYMENT ENROLMENTS ERROR:",
       error
     );
 
-    showMessage(
-      "Something went wrong while loading your dashboard."
-    );
+    paymentEnrolmentEl.innerHTML =
+      '<option value="">Could not load enrolments</option>';
 
+    return;
   }
-}
 
 
-// ==========================================
-// START
-// ==========================================
-
-initDashboard(); 
+  if (
+    !en
