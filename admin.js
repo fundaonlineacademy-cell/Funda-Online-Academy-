@@ -1,7 +1,7 @@
 // ============================================================
 // FUNDA ONLINE ACADEMY
 // ADMIN DASHBOARD
-// Students • Courses • Enrolments
+// Students • Courses • Enrolments • Payments
 // ============================================================
 
 const { createClient } = supabase;
@@ -26,7 +26,8 @@ function show(message, ok = false) {
   if (!msg) return;
 
   msg.textContent = message;
-  msg.className = "message " + (ok ? "success" : "error");
+  msg.className =
+    "message " + (ok ? "success" : "error");
 }
 
 
@@ -47,11 +48,14 @@ function formatDate(date) {
 
   if (!date) return "";
 
-  return new Date(date).toLocaleDateString("en-ZA", {
-    year: "numeric",
-    month: "short",
-    day: "numeric"
-  });
+  return new Date(date).toLocaleDateString(
+    "en-ZA",
+    {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    }
+  );
 
 }
 
@@ -64,21 +68,24 @@ function resetForm() {
 
   editingId = null;
 
-  const form = document.getElementById("course-form");
+  const form =
+    document.getElementById("course-form");
 
   if (form) {
     form.reset();
   }
 
-  const id = document.getElementById("course-id");
+  const id =
+    document.getElementById("course-id");
 
   if (id) {
     id.value = "";
   }
 
-  const button = document.querySelector(
-    "#course-form button[type='submit']"
-  );
+  const button =
+    document.querySelector(
+      "#course-form button[type='submit']"
+    );
 
   if (button) {
     button.textContent = "Save Course";
@@ -91,22 +98,59 @@ function fill(course) {
 
   editingId = course.id;
 
-  const id = document.getElementById("course-id");
-  const name = document.getElementById("course-name");
-  const price = document.getElementById("course-price");
-  const category = document.getElementById("course-category");
-  const duration = document.getElementById("course-duration");
-  const image = document.getElementById("course-image");
-  const description = document.getElementById("course-description");
-  const modules = document.getElementById("course-modules");
+  const id =
+    document.getElementById("course-id");
 
-  if (id) id.value = course.id;
-  if (name) name.value = course.title || "";
-  if (price) price.value = course.price || 0;
-  if (category) category.value = course.category || "";
-  if (duration) duration.value = course.duration || "";
-  if (image) image.value = course.image_url || "";
-  if (description) description.value = course.description || "";
+  const name =
+    document.getElementById("course-name");
+
+  const price =
+    document.getElementById("course-price");
+
+  const category =
+    document.getElementById("course-category");
+
+  const duration =
+    document.getElementById("course-duration");
+
+  const image =
+    document.getElementById("course-image");
+
+  const description =
+    document.getElementById("course-description");
+
+  const modules =
+    document.getElementById("course-modules");
+
+
+  if (id) {
+    id.value = course.id;
+  }
+
+  if (name) {
+    name.value = course.title || "";
+  }
+
+  if (price) {
+    price.value = course.price || 0;
+  }
+
+  if (category) {
+    category.value = course.category || "";
+  }
+
+  if (duration) {
+    duration.value = course.duration || "";
+  }
+
+  if (image) {
+    image.value = course.image_url || "";
+  }
+
+  if (description) {
+    description.value =
+      course.description || "";
+  }
 
   if (modules) {
 
@@ -117,13 +161,16 @@ function fill(course) {
 
   }
 
-  const button = document.querySelector(
-    "#course-form button[type='submit']"
-  );
+
+  const button =
+    document.querySelector(
+      "#course-form button[type='submit']"
+    );
 
   if (button) {
     button.textContent = "Update Course";
   }
+
 
   window.scrollTo({
     top: 0,
@@ -156,7 +203,8 @@ async function init() {
   const {
     data: { session },
     error: sessionError
-  } = await db.auth.getSession();
+  } =
+    await db.auth.getSession();
 
 
   if (sessionError) {
@@ -171,7 +219,8 @@ async function init() {
 
   if (!session) {
 
-    window.location.href = "auth.html";
+    window.location.href =
+      "auth.html";
 
     return;
   }
@@ -195,11 +244,12 @@ async function init() {
   const {
     data: profile,
     error: profileError
-  } = await db
-    .from("profiles")
-    .select("role")
-    .eq("id", session.user.id)
-    .maybeSingle();
+  } =
+    await db
+      .from("profiles")
+      .select("role")
+      .eq("id", session.user.id)
+      .maybeSingle();
 
 
   if (profileError) {
@@ -212,7 +262,10 @@ async function init() {
   }
 
 
-  if (!profile || profile.role !== "admin") {
+  if (
+    !profile ||
+    profile.role !== "admin"
+  ) {
 
     show(
       "This account is not authorised as an administrator."
@@ -220,7 +273,8 @@ async function init() {
 
     setTimeout(() => {
 
-      window.location.href = "dashboard.html";
+      window.location.href =
+        "dashboard.html";
 
     }, 1800);
 
@@ -249,9 +303,12 @@ async function init() {
 async function loadStudents() {
 
   const box =
-    document.getElementById("admin-students");
+    document.getElementById(
+      "admin-students"
+    );
 
   if (!box) return;
+
 
   box.innerHTML =
     "<p>Loading registered students...</p>";
@@ -260,22 +317,26 @@ async function loadStudents() {
   const {
     data,
     error
-  } = await db
-    .from("profiles")
-    .select(`
-      id,
-      full_name,
-      gender,
-      id_number,
-      email,
-      phone,
-      role,
-      created_at
-    `)
-    .neq("role", "admin")
-    .order("created_at", {
-      ascending: false
-    });
+  } =
+    await db
+      .from("profiles")
+      .select(`
+        id,
+        full_name,
+        gender,
+        id_number,
+        email,
+        phone,
+        role,
+        created_at
+      `)
+      .neq("role", "admin")
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
 
 
   if (error) {
@@ -287,7 +348,9 @@ async function loadStudents() {
 
     box.innerHTML = `
       <div class="admin-error">
-        <strong>Could not load students.</strong>
+        <strong>
+          Could not load students.
+        </strong>
         <br>
         ${esc(error.message)}
       </div>
@@ -301,10 +364,13 @@ async function loadStudents() {
 
     box.innerHTML = `
       <div class="empty-state">
-        <strong>No registered students yet.</strong>
+        <strong>
+          No registered students yet.
+        </strong>
+
         <p>
-          Students will appear here after they create
-          an account.
+          Students will appear here after
+          they create an account.
         </p>
       </div>
     `;
@@ -339,6 +405,7 @@ async function loadStudents() {
           student.phone ||
           "Not provided";
 
+
         return `
 
           <div class="student-card">
@@ -356,12 +423,16 @@ async function loadStudents() {
                 </h3>
 
                 <span class="student-role">
-                  ${esc(student.role || "student")}
+                  ${esc(
+                    student.role ||
+                    "student"
+                  )}
                 </span>
 
               </div>
 
             </div>
+
 
             <div class="student-details">
 
@@ -377,6 +448,7 @@ async function loadStudents() {
 
               </div>
 
+
               <div class="student-detail sensitive">
 
                 <span class="detail-label">
@@ -388,6 +460,7 @@ async function loadStudents() {
                 </strong>
 
               </div>
+
 
               <div class="student-detail">
 
@@ -401,6 +474,7 @@ async function loadStudents() {
 
               </div>
 
+
               <div class="student-detail">
 
                 <span class="detail-label">
@@ -413,6 +487,7 @@ async function loadStudents() {
 
               </div>
 
+
               <div class="student-detail">
 
                 <span class="detail-label">
@@ -420,7 +495,9 @@ async function loadStudents() {
                 </span>
 
                 <strong>
-                  ${formatDate(student.created_at)}
+                  ${formatDate(
+                    student.created_at
+                  )}
                 </strong>
 
               </div>
@@ -438,13 +515,22 @@ async function loadStudents() {
   `;
 
 
-  if (!document.getElementById("student-mobile-style")) {
+  // ==========================================================
+  // STUDENT MOBILE STYLING
+  // ==========================================================
+
+  if (
+    !document.getElementById(
+      "student-mobile-style"
+    )
+  ) {
 
     const style =
       document.createElement("style");
 
     style.id =
       "student-mobile-style";
+
 
     style.textContent = `
 
@@ -459,7 +545,8 @@ async function loadStudents() {
         border: 1px solid #e2e8f0;
         border-radius: 16px;
         padding: 18px;
-        box-shadow: 0 4px 14px rgba(0,0,0,.05);
+        box-shadow:
+          0 4px 14px rgba(0,0,0,.05);
       }
 
       .student-card-header {
@@ -468,7 +555,8 @@ async function loadStudents() {
         gap: 14px;
         margin-bottom: 18px;
         padding-bottom: 14px;
-        border-bottom: 1px solid #edf2f7;
+        border-bottom:
+          1px solid #edf2f7;
       }
 
       .student-avatar {
@@ -547,7 +635,8 @@ async function loadStudents() {
       @media (min-width: 700px) {
 
         .student-details {
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns:
+            1fr 1fr;
         }
 
       }
@@ -570,10 +659,11 @@ async function loadCourses() {
   const {
     data,
     error
-  } = await db
-    .from("courses")
-    .select("*")
-    .order("title");
+  } =
+    await db
+      .from("courses")
+      .select("*")
+      .order("title");
 
 
   if (error) {
@@ -590,85 +680,101 @@ async function loadCourses() {
 
 
   const box =
-    document.getElementById("admin-courses");
+    document.getElementById(
+      "admin-courses"
+    );
 
   if (!box) return;
 
 
-  box.innerHTML = courses.map(course => `
+  box.innerHTML =
+    courses.map(course => `
 
-    <div class="admin-row">
+      <div class="admin-row">
 
-      <div>
+        <div>
 
-        <strong>
-          ${esc(course.title)}
-        </strong>
+          <strong>
+            ${esc(course.title)}
+          </strong>
 
-        <small>
-          ${esc(course.category || "")}
-          · R${Number(
-            course.price || 0
-          ).toLocaleString("en-ZA")}
-          · ${esc(course.duration || "")}
-        </small>
+          <small>
+            ${esc(
+              course.category || ""
+            )}
+
+            · R${Number(
+              course.price || 0
+            ).toLocaleString("en-ZA")}
+
+            · ${esc(
+              course.duration || ""
+            )}
+          </small>
+
+        </div>
+
+
+        <div class="row-actions">
+
+          <button
+            type="button"
+            class="btn small ghost"
+            data-edit="${course.id}">
+            Edit
+          </button>
+
+
+          <button
+            type="button"
+            class="btn small danger"
+            data-delete="${course.id}">
+            Delete
+          </button>
+
+        </div>
 
       </div>
 
-      <div class="row-actions">
-
-        <button
-          type="button"
-          class="btn small ghost"
-          data-edit="${course.id}">
-          Edit
-        </button>
-
-        <button
-          type="button"
-          class="btn small danger"
-          data-delete="${course.id}">
-          Delete
-        </button>
-
-      </div>
-
-    </div>
-
-  `).join("") || "<p>No courses available.</p>";
+    `).join("") ||
+    "<p>No courses available.</p>";
 
 
-  box.querySelectorAll("[data-edit]")
-    .forEach(button => {
+  box.querySelectorAll(
+    "[data-edit]"
+  ).forEach(button => {
 
-      button.onclick = () => {
+    button.onclick = () => {
 
-        const course =
-          courses.find(
-            c => c.id === button.dataset.edit
-          );
-
-        if (course) {
-          fill(course);
-        }
-
-      };
-
-    });
-
-
-  box.querySelectorAll("[data-delete]")
-    .forEach(button => {
-
-      button.onclick = () => {
-
-        deleteCourse(
-          button.dataset.delete
+      const course =
+        courses.find(
+          c =>
+            c.id ===
+            button.dataset.edit
         );
 
-      };
+      if (course) {
+        fill(course);
+      }
 
-    });
+    };
+
+  });
+
+
+  box.querySelectorAll(
+    "[data-delete]"
+  ).forEach(button => {
+
+    button.onclick = () => {
+
+      deleteCourse(
+        button.dataset.delete
+      );
+
+    };
+
+  });
 
 }
 
@@ -680,7 +786,9 @@ async function loadCourses() {
 async function deleteCourse(id) {
 
   const course =
-    courses.find(c => c.id === id);
+    courses.find(
+      c => c.id === id
+    );
 
   if (!course) return;
 
@@ -727,7 +835,9 @@ async function deleteCourse(id) {
 // ============================================================
 
 const courseForm =
-  document.getElementById("course-form");
+  document.getElementById(
+    "course-form"
+  );
 
 
 if (courseForm) {
@@ -740,7 +850,9 @@ if (courseForm) {
 
       const title =
         document
-          .getElementById("course-name")
+          .getElementById(
+            "course-name"
+          )
           .value
           .trim();
 
@@ -759,39 +871,52 @@ if (courseForm) {
 
         title: title,
 
-        price: Number(
-          document
-            .getElementById("course-price")
-            .value
-        ) || 0,
+        price:
+          Number(
+            document
+              .getElementById(
+                "course-price"
+              )
+              .value
+          ) || 0,
 
         category:
           document
-            .getElementById("course-category")
+            .getElementById(
+              "course-category"
+            )
             .value
             .trim(),
 
         duration:
           document
-            .getElementById("course-duration")
+            .getElementById(
+              "course-duration"
+            )
             .value
             .trim(),
 
         image_url:
           document
-            .getElementById("course-image")
+            .getElementById(
+              "course-image"
+            )
             .value
             .trim() || null,
 
         description:
           document
-            .getElementById("course-description")
+            .getElementById(
+              "course-description"
+            )
             .value
             .trim(),
 
         modules:
           document
-            .getElementById("course-modules")
+            .getElementById(
+              "course-modules"
+            )
             .value
             .split("\n")
             .map(x => x.trim())
@@ -814,23 +939,32 @@ if (courseForm) {
           await db
             .from("courses")
             .update(payload)
-            .eq("id", editingId);
+            .eq(
+              "id",
+              editingId
+            );
 
       } else {
 
         result =
           await db
             .from("courses")
-            .insert(payload);
+            .insert(
+              payload
+            );
 
       }
 
 
       if (result.error) {
 
-        console.error(result.error);
+        console.error(
+          result.error
+        );
 
-        show(result.error.message);
+        show(
+          result.error.message
+        );
 
         return;
       }
@@ -858,35 +992,43 @@ if (courseForm) {
 // ============================================================
 
 const newCourse =
-  document.getElementById("new-course");
+  document.getElementById(
+    "new-course"
+  );
 
 
 if (newCourse) {
-  newCourse.onclick = resetForm;
+  newCourse.onclick =
+    resetForm;
 }
 
 
 const cancelEdit =
-  document.getElementById("cancel-edit");
+  document.getElementById(
+    "cancel-edit"
+  );
 
 
 if (cancelEdit) {
-  cancelEdit.onclick = resetForm;
+  cancelEdit.onclick =
+    resetForm;
 }
 
 
 // ============================================================
 // ENROLMENTS
+//
 // IMPORTANT:
-// Your database uses enrollment_status,
-// NOT status.
-// We also DO NOT join profiles directly.
+// Database uses enrollment_status.
+// We do not join profiles directly.
 // ============================================================
 
 async function loadEnrolments() {
 
   const box =
-    document.getElementById("admin-enrolments");
+    document.getElementById(
+      "admin-enrolments"
+    );
 
 
   if (!box) return;
@@ -896,26 +1038,26 @@ async function loadEnrolments() {
     "<p>Loading student enrolments...</p>";
 
 
-  // ----------------------------------------------------------
-  // LOAD ENROLMENTS
-  // ----------------------------------------------------------
-
   const {
     data: enrolments,
     error: enrolmentError
-  } = await db
-    .from("enrollments")
-    .select(`
-      id,
-      student_id,
-      course_id,
-      enrollment_status,
-      created_at,
-      courses(title,price)
-    `)
-    .order("created_at", {
-      ascending: false
-    });
+  } =
+    await db
+      .from("enrollments")
+      .select(`
+        id,
+        student_id,
+        course_id,
+        enrollment_status,
+        created_at,
+        courses(title,price)
+      `)
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
 
 
   if (enrolmentError) {
@@ -925,11 +1067,20 @@ async function loadEnrolments() {
       enrolmentError
     );
 
+
     box.innerHTML = `
       <div class="admin-error">
-        <strong>Could not load enrolments.</strong>
+
+        <strong>
+          Could not load enrolments.
+        </strong>
+
         <br>
-        ${esc(enrolmentError.message)}
+
+        ${esc(
+          enrolmentError.message
+        )}
+
       </div>
     `;
 
@@ -937,7 +1088,10 @@ async function loadEnrolments() {
   }
 
 
-  if (!enrolments || enrolments.length === 0) {
+  if (
+    !enrolments ||
+    enrolments.length === 0
+  ) {
 
     box.innerHTML =
       "<p>No enrolment requests yet.</p>";
@@ -953,7 +1107,9 @@ async function loadEnrolments() {
   const studentIds = [
     ...new Set(
       enrolments
-        .map(e => e.student_id)
+        .map(
+          e => e.student_id
+        )
         .filter(Boolean)
     )
   ];
@@ -967,13 +1123,17 @@ async function loadEnrolments() {
     const {
       data,
       error
-    } = await db
-      .from("students")
-      .select(`
-        id,
-        user_id
-      `)
-      .in("id", studentIds);
+    } =
+      await db
+        .from("students")
+        .select(`
+          id,
+          user_id
+        `)
+        .in(
+          "id",
+          studentIds
+        );
 
 
     if (error) {
@@ -985,7 +1145,8 @@ async function loadEnrolments() {
 
     } else {
 
-      students = data || [];
+      students =
+        data || [];
 
     }
 
@@ -999,7 +1160,9 @@ async function loadEnrolments() {
   const userIds = [
     ...new Set(
       students
-        .map(s => s.user_id)
+        .map(
+          s => s.user_id
+        )
         .filter(Boolean)
     )
   ];
@@ -1013,14 +1176,18 @@ async function loadEnrolments() {
     const {
       data,
       error
-    } = await db
-      .from("profiles")
-      .select(`
-        id,
-        full_name,
-        email
-      `)
-      .in("id", userIds);
+    } =
+      await db
+        .from("profiles")
+        .select(`
+          id,
+          full_name,
+          email
+        `)
+        .in(
+          "id",
+          userIds
+        );
 
 
     if (error) {
@@ -1032,7 +1199,8 @@ async function loadEnrolments() {
 
     } else {
 
-      profiles = data || [];
+      profiles =
+        data || [];
 
     }
 
@@ -1050,11 +1218,15 @@ async function loadEnrolments() {
 
     const profile =
       profiles.find(
-        p => p.id === student.user_id
+        p =>
+          p.id ===
+          student.user_id
       );
 
 
-    studentLookup[student.id] = {
+    studentLookup[
+      student.id
+    ] = {
 
       name:
         profile?.full_name ||
@@ -1076,9 +1248,9 @@ async function loadEnrolments() {
 
   box.innerHTML = `
 
-    <div style="overflow-x:auto; width:100%;">
+    <div class="admin-table-wrap">
 
-      <table>
+      <table class="admin-data-table">
 
         <thead>
 
@@ -1095,116 +1267,144 @@ async function loadEnrolments() {
 
         </thead>
 
+
         <tbody>
 
-          ${enrolments.map(enrolment => {
+          ${enrolments.map(
+            enrolment => {
 
-            const student =
-              studentLookup[enrolment.student_id] || {};
-
-            const studentName =
-              student.name ||
-              "Student";
-
-            const courseName =
-              enrolment.courses?.title ||
-              "Course";
-
-            const price =
-              enrolment.courses?.price || 0;
-
-            const status =
-              enrolment.enrollment_status ||
-              "pending";
+              const student =
+                studentLookup[
+                  enrolment.student_id
+                ] || {};
 
 
-            return `
+              const studentName =
+                student.name ||
+                "Student";
 
-              <tr>
 
-                <td>
-                  ${esc(studentName)}
-                </td>
+              const courseName =
+                enrolment
+                  .courses?.title ||
+                "Course";
 
-                <td>
-                  ${esc(courseName)}
-                </td>
 
-                <td>
-                  R${Number(
-                    price
-                  ).toLocaleString("en-ZA")}
-                </td>
+              const price =
+                enrolment
+                  .courses?.price ||
+                0;
 
-                <td>
 
-                  <span class="enrolment-status ${esc(status)}">
-                    ${esc(status)}
-                  </span>
+              const status =
+                enrolment
+                  .enrollment_status ||
+                "pending";
 
-                </td>
 
-                <td>
-                  ${formatDate(
-                    enrolment.created_at
-                  )}
-                </td>
+              return `
 
-                <td>
+                <tr>
 
-                  <select
-                    data-status="${enrolment.id}"
-                  >
+                  <td>
+                    ${esc(
+                      studentName
+                    )}
+                  </td>
 
-                    <option
-                      value="pending"
-                      ${
-                        status === "pending"
-                          ? "selected"
-                          : ""
-                      }>
-                      Pending
-                    </option>
+                  <td>
+                    ${esc(
+                      courseName
+                    )}
+                  </td>
 
-                    <option
-                      value="approved"
-                      ${
-                        status === "approved"
-                          ? "selected"
-                          : ""
-                      }>
-                      Approved
-                    </option>
+                  <td>
+                    R${Number(
+                      price
+                    ).toLocaleString(
+                      "en-ZA"
+                    )}
+                  </td>
 
-                    <option
-                      value="completed"
-                      ${
-                        status === "completed"
-                          ? "selected"
-                          : ""
-                      }>
-                      Completed
-                    </option>
+                  <td>
 
-                    <option
-                      value="cancelled"
-                      ${
-                        status === "cancelled"
-                          ? "selected"
-                          : ""
-                      }>
-                      Cancelled
-                    </option>
+                    <span
+                      class="
+                        enrolment-status
+                        ${esc(status)}
+                      "
+                    >
+                      ${esc(status)}
+                    </span>
 
-                  </select>
+                  </td>
 
-                </td>
+                  <td>
+                    ${formatDate(
+                      enrolment.created_at
+                    )}
+                  </td>
 
-              </tr>
+                  <td>
 
-            `;
+                    <select
+                      data-status="${enrolment.id}"
+                    >
 
-          }).join("")}
+                      <option
+                        value="pending"
+                        ${
+                          status ===
+                          "pending"
+                            ? "selected"
+                            : ""
+                        }>
+                        Pending
+                      </option>
+
+                      <option
+                        value="approved"
+                        ${
+                          status ===
+                          "approved"
+                            ? "selected"
+                            : ""
+                        }>
+                        Approved
+                      </option>
+
+                      <option
+                        value="completed"
+                        ${
+                          status ===
+                          "completed"
+                            ? "selected"
+                            : ""
+                        }>
+                        Completed
+                      </option>
+
+                      <option
+                        value="cancelled"
+                        ${
+                          status ===
+                          "cancelled"
+                            ? "selected"
+                            : ""
+                        }>
+                        Cancelled
+                      </option>
+
+                    </select>
+
+                  </td>
+
+                </tr>
+
+              `;
+
+            }
+          ).join("")}
 
         </tbody>
 
@@ -1217,25 +1417,26 @@ async function loadEnrolments() {
 
   // ----------------------------------------------------------
   // STATUS UPDATES
-  // IMPORTANT: UPDATE enrollment_status
   // ----------------------------------------------------------
 
-  box.querySelectorAll("[data-status]")
-    .forEach(select => {
+  box.querySelectorAll(
+    "[data-status]"
+  ).forEach(select => {
 
-      select.onchange =
-        async () => {
+    select.onchange =
+      async () => {
 
-          const newStatus =
-            select.value;
+        const newStatus =
+          select.value;
 
-          const enrolmentId =
-            select.dataset.status;
+        const enrolmentId =
+          select.dataset.status;
 
 
-          const {
-            error
-          } = await db
+        const {
+          error
+        } =
+          await db
             .from("enrollments")
             .update({
 
@@ -1249,29 +1450,29 @@ async function loadEnrolments() {
             );
 
 
-          if (error) {
+        if (error) {
 
-            console.error(error);
+          console.error(error);
 
-            show(
-              "Could not update enrolment: " +
-              error.message
-            );
+          show(
+            "Could not update enrolment: " +
+            error.message
+          );
 
-          } else {
+        } else {
 
-            show(
-              "Enrolment status updated successfully.",
-              true
-            );
+          show(
+            "Enrolment status updated successfully.",
+            true
+          );
 
-            await loadEnrolments();
+          await loadEnrolments();
 
-          }
+        }
 
-        };
+      };
 
-    });
+  });
 
 }
 
@@ -1283,7 +1484,9 @@ async function loadEnrolments() {
 async function loadPayments() {
 
   const box =
-    document.getElementById("admin-payments");
+    document.getElementById(
+      "admin-payments"
+    );
 
 
   if (!box) return;
@@ -1296,22 +1499,26 @@ async function loadPayments() {
   const {
     data: payments,
     error
-  } = await db
-    .from("payments")
-    .select(`
-      id,
-      student_id,
-      enrolment_id,
-      amount,
-      payment_method,
-      status,
-      proof_url,
-      notes,
-      created_at
-    `)
-    .order("created_at", {
-      ascending: false
-    });
+  } =
+    await db
+      .from("payments")
+      .select(`
+        id,
+        student_id,
+        enrolment_id,
+        amount,
+        payment_method,
+        status,
+        proof_url,
+        notes,
+        created_at
+      `)
+      .order(
+        "created_at",
+        {
+          ascending: false
+        }
+      );
 
 
   if (error) {
@@ -1321,11 +1528,20 @@ async function loadPayments() {
       error
     );
 
+
     box.innerHTML = `
       <div class="admin-error">
-        <strong>Could not load payments.</strong>
+
+        <strong>
+          Could not load payments.
+        </strong>
+
         <br>
-        ${esc(error.message)}
+
+        ${esc(
+          error.message
+        )}
+
       </div>
     `;
 
@@ -1333,95 +1549,402 @@ async function loadPayments() {
   }
 
 
-  if (!payments || payments.length === 0) {
+  if (
+    !payments ||
+    payments.length === 0
+  ) {
 
-    box.innerHTML =
-      "<p>Payment records will appear here.</p>";
+    box.innerHTML = `
+      <div class="empty-state">
+
+        <strong>
+          No payment records yet.
+        </strong>
+
+        <p>
+          Student payment submissions
+          will appear here.
+        </p>
+
+      </div>
+    `;
 
     return;
   }
 
 
+  // ==========================================================
+  // PAYMENT CARDS
+  // ==========================================================
+
   box.innerHTML = `
 
-    <div style="overflow-x:auto; width:100%;">
+    <div class="payment-list">
 
-      <table>
+      ${payments.map(payment => {
 
-        <thead>
+        const amount =
+          Number(
+            payment.amount || 0
+          ).toLocaleString(
+            "en-ZA"
+          );
 
-          <tr>
-            <th>Amount</th>
-            <th>Method</th>
-            <th>Status</th>
-            <th>Proof</th>
-            <th>Date</th>
-          </tr>
 
-        </thead>
+        const method =
+          payment.payment_method ||
+          "Not provided";
 
-        <tbody>
 
-          ${payments.map(payment => `
+        const status =
+          payment.status ||
+          "pending";
 
-            <tr>
 
-              <td>
-                R${Number(
-                  payment.amount || 0
-                ).toLocaleString("en-ZA")}
-              </td>
+        const statusClass =
+          String(status)
+            .toLowerCase()
+            .replace(
+              /[^a-z0-9_-]/g,
+              ""
+            );
 
-              <td>
-                ${esc(
-                  payment.payment_method || ""
-                )}
-              </td>
 
-              <td>
+        const proof =
+          payment.proof_url
+            ? `
+              <a
+                class="payment-proof-button"
+                href="${esc(
+                  payment.proof_url
+                )}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                📄 View Payment Proof
+              </a>
+            `
+            : `
+              <span class="no-proof">
+                No payment proof uploaded
+              </span>
+            `;
 
-                <span class="payment-status">
-                  ${esc(
-                    payment.status || "pending"
-                  )}
+
+        const notes =
+          payment.notes
+            ? `
+              <div class="payment-field">
+
+                <span>
+                  Notes
                 </span>
 
-              </td>
+                <strong>
+                  ${esc(
+                    payment.notes
+                  )}
+                </strong>
 
-              <td>
+              </div>
+            `
+            : "";
 
-                ${
-                  payment.proof_url
-                    ? `
-                      <a
-                        href="${esc(payment.proof_url)}"
-                        target="_blank"
-                        rel="noopener">
-                        View Proof
-                      </a>
-                    `
-                    : "No proof"
-                }
 
-              </td>
+        return `
 
-              <td>
-                ${formatDate(
-                  payment.created_at
-                )}
-              </td>
+          <div class="payment-card">
 
-            </tr>
+            <div class="payment-card-top">
 
-          `).join("")}
+              <div>
 
-        </tbody>
+                <span class="payment-label">
+                  Payment Amount
+                </span>
 
-      </table>
+                <div class="payment-amount">
+                  R${amount}
+                </div>
+
+              </div>
+
+
+              <span
+                class="
+                  payment-status-badge
+                  ${statusClass}
+                "
+              >
+                ${esc(status)}
+              </span>
+
+            </div>
+
+
+            <div class="payment-fields">
+
+              <div class="payment-field">
+
+                <span>
+                  Payment Method
+                </span>
+
+                <strong>
+                  ${esc(method)}
+                </strong>
+
+              </div>
+
+
+              <div class="payment-field">
+
+                <span>
+                  Payment Date
+                </span>
+
+                <strong>
+                  ${formatDate(
+                    payment.created_at
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div class="payment-field">
+
+                <span>
+                  Payment ID
+                </span>
+
+                <strong class="payment-id">
+                  ${esc(payment.id)}
+                </strong>
+
+              </div>
+
+
+              ${notes}
+
+            </div>
+
+
+            <div class="payment-proof">
+
+              ${proof}
+
+            </div>
+
+          </div>
+
+        `;
+
+      }).join("")}
 
     </div>
 
   `;
+
+
+  // ==========================================================
+  // PAYMENT MOBILE STYLING
+  // ==========================================================
+
+  if (
+    !document.getElementById(
+      "payment-mobile-style"
+    )
+  ) {
+
+    const style =
+      document.createElement(
+        "style"
+      );
+
+
+    style.id =
+      "payment-mobile-style";
+
+
+    style.textContent = `
+
+      .payment-list {
+        display: grid;
+        gap: 18px;
+        width: 100%;
+      }
+
+
+      .payment-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow:
+          0 4px 14px rgba(0,0,0,.05);
+      }
+
+
+      .payment-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 15px;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+        border-bottom:
+          1px solid #edf2f7;
+      }
+
+
+      .payment-label {
+        display: block;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+
+      .payment-amount {
+        color: #0f172a;
+        font-size: 28px;
+        font-weight: 800;
+      }
+
+
+      .payment-status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        padding: 7px 12px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: capitalize;
+        background: #fef3c7;
+        color: #92400e;
+        white-space: nowrap;
+      }
+
+
+      .payment-status-badge.pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+
+      .payment-status-badge.submitted {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+
+      .payment-status-badge.verified {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+
+      .payment-status-badge.rejected {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+
+      .payment-fields {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+
+      .payment-field {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 11px 12px;
+      }
+
+
+      .payment-field span {
+        display: block;
+        color: #64748b;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+
+      .payment-field strong {
+        display: block;
+        color: #0f172a;
+        font-size: 14px;
+        word-break: break-word;
+      }
+
+
+      .payment-id {
+        font-size: 11px !important;
+        color: #475569 !important;
+      }
+
+
+      .payment-proof {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top:
+          1px solid #edf2f7;
+      }
+
+
+      .payment-proof-button {
+        display: block;
+        width: 100%;
+        text-align: center;
+        text-decoration: none;
+        background: #2f9e20;
+        color: #ffffff;
+        padding: 12px 15px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+
+      .payment-proof-button:hover {
+        opacity: .9;
+      }
+
+
+      .no-proof {
+        display: block;
+        background: #f8fafc;
+        color: #64748b;
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+        font-size: 13px;
+      }
+
+
+      @media (min-width: 700px) {
+
+        .payment-fields {
+          grid-template-columns:
+            1fr 1fr;
+        }
+
+      }
+
+    `;
+
+
+    document.head.appendChild(
+      style
+    );
+
+  }
 
 }
 
@@ -1431,7 +1954,9 @@ async function loadPayments() {
 // ============================================================
 
 const logout =
-  document.getElementById("logout");
+  document.getElementById(
+    "logout"
+  );
 
 
 if (logout) {
