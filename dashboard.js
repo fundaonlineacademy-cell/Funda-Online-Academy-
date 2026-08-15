@@ -1,6 +1,7 @@
 // ==========================================
 // FUNDA ONLINE ACADEMY
 // STUDENT DASHBOARD
+// STABLE VERSION
 // COURSES • ENROLMENTS • PAYMENTS • LOGOUT
 // ==========================================
 
@@ -14,38 +15,30 @@ const db = supabase.createClient(
 // PAGE ELEMENTS
 // ==========================================
 
-const userEmailEl = document.getElementById("user-email");
-const userNameEl = document.getElementById("user-name");
-const logoutBtn = document.getElementById("logout");
-const enrolmentsEl = document.getElementById("enrolments");
-const coursesEl = document.getElementById("available-courses");
-const paymentListEl = document.getElementById("payment-list");
-const messageEl = document.getElementById("message");
+const userEmailEl =
+  document.getElementById("user-email");
+
+const userNameEl =
+  document.getElementById("user-name");
+
+const logoutBtn =
+  document.getElementById("logout");
+
+const enrolmentsEl =
+  document.getElementById("enrolments");
+
+const coursesEl =
+  document.getElementById("available-courses");
+
+const paymentListEl =
+  document.getElementById("payment-list");
+
+const messageEl =
+  document.getElementById("message");
 
 
 // ==========================================
-// MESSAGE
-// ==========================================
-
-function showMessage(text, success = false) {
-
-  if (!messageEl) return;
-
-  messageEl.textContent = text;
-  messageEl.classList.remove("hidden");
-
-  if (success) {
-    messageEl.style.background = "#e8f5e9";
-    messageEl.style.color = "#166534";
-  } else {
-    messageEl.style.background = "#fef2f2";
-    messageEl.style.color = "#991b1b";
-  }
-}
-
-
-// ==========================================
-// ESCAPE HTML
+// HTML ESCAPE
 // ==========================================
 
 function escapeHTML(value) {
@@ -64,10 +57,39 @@ function escapeHTML(value) {
 
 
 // ==========================================
-// GET CURRENT USER
+// SHOW ERROR
+// ==========================================
+
+function showError(element, title, error) {
+
+  if (!element) return;
+
+  const text =
+    error && error.message
+      ? error.message
+      : "Unknown error.";
+
+  element.innerHTML = `
+    <div class="card">
+
+      <h3>${escapeHTML(title)}</h3>
+
+      <p style="color:#991b1b;">
+        ${escapeHTML(text)}
+      </p>
+
+    </div>
+  `;
+}
+
+
+// ==========================================
+// GET LOGGED-IN USER
 // ==========================================
 
 async function getCurrentUser() {
+
+  console.log("1. Checking logged-in user...");
 
   const {
     data,
@@ -76,24 +98,39 @@ async function getCurrentUser() {
 
   if (error) {
 
-    console.error("AUTH ERROR:", error);
-
-    showMessage(
-      "We could not verify your login. Please log in again."
+    console.error(
+      "AUTH ERROR:",
+      error
     );
 
-    return null;
+    throw error;
   }
 
-  return data.user || null;
+  if (!data || !data.user) {
+
+    throw new Error(
+      "No logged-in user was found."
+    );
+  }
+
+  console.log(
+    "2. Logged-in user:",
+    data.user.email
+  );
+
+  return data.user;
 }
 
 
 // ==========================================
-// GET STUDENT RECORD
+// GET STUDENT PROFILE
 // ==========================================
 
 async function getStudent(userId) {
+
+  console.log(
+    "3. Loading student profile..."
+  );
 
   const {
     data,
@@ -103,53 +140,61 @@ async function getStudent(userId) {
     .select(
       "id, user_id, full_name, gender, south_african_id, email, mobile_whatsapp"
     )
-    .eq("user_id", userId)
+    .eq(
+      "user_id",
+      userId
+    )
     .maybeSingle();
 
   if (error) {
 
-    console.error("STUDENT ERROR:", error);
+    console.error(
+      "STUDENT PROFILE ERROR:",
+      error
+    );
 
-    return null;
+    throw error;
   }
+
+  if (!data) {
+
+    throw new Error(
+      "Your student profile could not be found."
+    );
+  }
+
+  console.log(
+    "4. Student profile found:",
+    data.full_name
+  );
 
   return data;
 }
 
 
 // ==========================================
-// LOAD STUDENT DETAILS
+// LOAD STUDENT INFORMATION
 // ==========================================
 
 async function loadStudentDetails(user) {
 
   if (userEmailEl) {
-    userEmailEl.textContent = user.email || "";
+
+    userEmailEl.textContent =
+      user.email || "";
   }
 
-  const student = await getStudent(user.id);
-
-  if (student) {
-
-    if (userNameEl) {
-      userNameEl.textContent =
-        student.full_name || "Student";
-    }
-
-    return student;
-  }
-
-  const metadata = user.user_metadata || {};
+  const student =
+    await getStudent(user.id);
 
   if (userNameEl) {
 
     userNameEl.textContent =
-      metadata.full_name ||
-      metadata.name ||
+      student.full_name ||
       "Student";
   }
 
-  return null;
+  return student;
 }
 
 
@@ -157,34 +202,16 @@ async function loadStudentDetails(user) {
 // LOAD ENROLMENTS
 // ==========================================
 
-async function loadEnrolments(user, student) {
+async function loadEnrolments(student) {
 
-  if (!enrolmentsEl) return;
-
-  enrolmentsEl.innerHTML =
-    '<p class="loading">Loading...</p>';
-
-  if (!student) {
-
-    enrolmentsEl.innerHTML = `
-      <div class="card">
-        <h3>Student profile not found</h3>
-        <p>
-          Your login was successful, but your student
-          profile could not be found.
-        </p>
-      </div>
-    `;
-
-    return;
-  }
-
+  if (!enrolmentsEl) return [];
 
   console.log(
-    "Loading enrolments for student:",
-    student.id
+    "5. Loading enrolments..."
   );
 
+  enrolmentsEl.innerHTML =
+    '<p class="loading">Loading enrolments…</p>';
 
   const {
     data: enrolments,
@@ -205,7 +232,6 @@ async function loadEnrolments(user, student) {
       }
     );
 
-
   if (error) {
 
     console.error(
@@ -213,37 +239,38 @@ async function loadEnrolments(user, student) {
       error
     );
 
-    enrolmentsEl.innerHTML = `
-      <div class="card">
-        <h3>Could not load your enrolments</h3>
-        <p>
-          ${escapeHTML(error.message)}
-        </p>
-      </div>
-    `;
+    showError(
+      enrolmentsEl,
+      "Could not load your enrolments",
+      error
+    );
 
-    return;
+    return [];
   }
 
-
   console.log(
-    "Enrolments found:",
+    "6. Enrolments found:",
     enrolments
   );
 
-
-  if (!enrolments || enrolments.length === 0) {
+  if (
+    !enrolments ||
+    enrolments.length === 0
+  ) {
 
     enrolmentsEl.innerHTML = `
       <div class="card">
+
         <h3>No enrolments yet</h3>
+
         <p>
-          Choose a course below to request enrolment.
+          You have not enrolled in a course yet.
         </p>
+
       </div>
     `;
 
-    return;
+    return [];
   }
 
 
@@ -251,9 +278,17 @@ async function loadEnrolments(user, student) {
   // GET COURSE INFORMATION
   // ----------------------------------------
 
-  const courseIds = enrolments.map(function(item) {
-    return item.course_id;
-  });
+  const courseIds =
+    enrolments.map(function(item) {
+
+      return item.course_id;
+
+    });
+
+
+  console.log(
+    "7. Loading enrolled course details..."
+  );
 
 
   const {
@@ -262,7 +297,7 @@ async function loadEnrolments(user, student) {
   } = await db
     .from("courses")
     .select(
-      "id, title, description, duration, price"
+      "id, title, description, duration, price, active"
     )
     .in(
       "id",
@@ -273,21 +308,24 @@ async function loadEnrolments(user, student) {
   if (coursesError) {
 
     console.error(
-      "ENROLMENT COURSES ERROR:",
+      "ENROLLED COURSE ERROR:",
       coursesError
     );
 
-    enrolmentsEl.innerHTML = `
-      <div class="card">
-        <h3>Could not load course information</h3>
-        <p>
-          ${escapeHTML(coursesError.message)}
-        </p>
-      </div>
-    `;
+    showError(
+      enrolmentsEl,
+      "Could not load your course information",
+      coursesError
+    );
 
-    return;
+    return enrolments;
   }
+
+
+  console.log(
+    "8. Enrolled courses found:",
+    courses
+  );
 
 
   // ----------------------------------------
@@ -298,21 +336,27 @@ async function loadEnrolments(user, student) {
     enrolments.map(function(enrolment) {
 
       const course =
-        (courses || []).find(function(item) {
+        (courses || []).find(
+          function(item) {
 
-          return item.id === enrolment.course_id;
+            return item.id ===
+              enrolment.course_id;
 
-        });
+          }
+        );
 
 
       if (!course) {
 
         return `
           <div class="card">
+
             <h3>Course</h3>
+
             <p>
               Course information unavailable.
             </p>
+
           </div>
         `;
       }
@@ -351,7 +395,8 @@ async function loadEnrolments(user, student) {
           <p>
             <strong>Duration:</strong>
             ${escapeHTML(
-              course.duration || "Flexible"
+              course.duration ||
+              "Flexible"
             )}
           </p>
 
@@ -362,10 +407,28 @@ async function loadEnrolments(user, student) {
             </span>
           </p>
 
+          ${
+            status.toLowerCase() === "pending"
+              ? `
+                <p style="
+                  margin-top:15px;
+                  color:#9a6700;
+                  font-weight:600;
+                ">
+                  Your enrolment is awaiting
+                  processing by Funda Online Academy.
+                </p>
+              `
+              : ""
+          }
+
         </div>
       `;
 
     }).join("");
+
+
+  return enrolments;
 }
 
 
@@ -373,15 +436,16 @@ async function loadEnrolments(user, student) {
 // LOAD AVAILABLE COURSES
 // ==========================================
 
-async function loadCourses(user, student) {
+async function loadCourses(student) {
 
   if (!coursesEl) return;
 
+  console.log(
+    "9. Loading available courses..."
+  );
+
   coursesEl.innerHTML =
-    '<p class="loading">Loading...</p>';
-
-
-  console.log("Loading active courses...");
+    '<p class="loading">Loading courses…</p>';
 
 
   const {
@@ -407,33 +471,30 @@ async function loadCourses(user, student) {
   if (error) {
 
     console.error(
-      "COURSES ERROR:",
+      "AVAILABLE COURSES ERROR:",
       error
     );
 
-    coursesEl.innerHTML = `
-      <div class="card">
-
-        <h3>Could not load courses</h3>
-
-        <p>
-          ${escapeHTML(error.message)}
-        </p>
-
-      </div>
-    `;
+    showError(
+      coursesEl,
+      "Could not load available courses",
+      error
+    );
 
     return;
   }
 
 
   console.log(
-    "Courses found:",
+    "10. Available courses found:",
     courses
   );
 
 
-  if (!courses || courses.length === 0) {
+  if (
+    !courses ||
+    courses.length === 0
+  ) {
 
     coursesEl.innerHTML = `
       <div class="card">
@@ -452,7 +513,7 @@ async function loadCourses(user, student) {
 
 
   // ----------------------------------------
-  // FIND ALREADY ENROLLED COURSES
+  // FIND COURSES ALREADY ENROLLED IN
   // ----------------------------------------
 
   let enrolledCourseIds = [];
@@ -474,21 +535,23 @@ async function loadCourses(user, student) {
       );
 
 
-    if (enrolmentError) {
+    if (!enrolmentError) {
 
-      console.error(
-        "ENROLMENT CHECK ERROR:",
-        enrolmentError
-      );
+      enrolledCourseIds =
+        (enrolments || [])
+          .map(function(item) {
+
+            return item.course_id;
+
+          });
 
     } else {
 
-      enrolledCourseIds =
-        (enrolments || []).map(function(item) {
+      console.warn(
+        "Could not check existing enrolments:",
+        enrolmentError
+      );
 
-          return item.course_id;
-
-        });
     }
   }
 
@@ -520,64 +583,43 @@ async function loadCourses(user, student) {
       return `
         <div class="card">
 
-          ${
-            course.image_url
-              ? `
-                <img
-                  src="${escapeHTML(course.image_url)}"
-                  alt="${escapeHTML(course.title)}"
-                  style="
-                    width:100%;
-                    max-height:220px;
-                    object-fit:cover;
-                    border-radius:12px;
-                    margin-bottom:15px;
-                  "
-                >
-              `
-              : ""
-          }
-
           <h3>
             ${escapeHTML(course.title)}
           </h3>
 
           <hr>
 
-          <p>
-            ${
-              escapeHTML(
-                course.description ||
-                "Online short course from Funda Online Academy."
-              )
-            }
+          <p style="
+            color:#2f9e1c;
+            font-size:1.4rem;
+            font-weight:700;
+            margin:15px 0;
+          ">
+            R${price}
           </p>
 
-          <div style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            gap:15px;
-            margin:20px 0;
-          ">
+          ${
+            course.duration
+              ? `
+                <p>
+                  <strong>Duration:</strong>
+                  ${escapeHTML(course.duration)}
+                </p>
+              `
+              : ""
+          }
 
-            <strong style="
-              color:#2f9e1c;
-              font-size:1.4rem;
-            ">
-              R${price}
-            </strong>
 
-            <span style="
-              color:#666;
-              font-weight:600;
-            ">
-              ${escapeHTML(
-                course.duration || "Flexible"
-              )}
-            </span>
+          ${
+            course.description
+              ? `
+                <p style="margin-top:12px;">
+                  ${escapeHTML(course.description)}
+                </p>
+              `
+              : ""
+          }
 
-          </div>
 
           ${
             alreadyEnrolled
@@ -586,7 +628,10 @@ async function loadCourses(user, student) {
                 <button
                   class="btn ghost"
                   disabled
-                  style="width:100%;"
+                  style="
+                    width:100%;
+                    margin-top:18px;
+                  "
                 >
                   Already Enrolled
                 </button>
@@ -596,432 +641,4 @@ async function loadCourses(user, student) {
                 <button
                   class="btn green enrol-btn"
                   data-course-id="${escapeHTML(course.id)}"
-                  data-course-title="${escapeHTML(course.title)}"
-                  style="width:100%;"
-                >
-                  Enrol Now
-                </button>
-              `
-          }
-
-        </div>
-      `;
-
-    }).join("");
-
-
-  // ----------------------------------------
-  // ENROL BUTTONS
-  // ----------------------------------------
-
-  const buttons =
-    coursesEl.querySelectorAll(
-      ".enrol-btn"
-    );
-
-
-  buttons.forEach(function(button) {
-
-    button.addEventListener(
-      "click",
-      async function() {
-
-        if (!student) {
-
-          alert(
-            "Your student profile could not be found."
-          );
-
-          return;
-        }
-
-
-        const courseId =
-          button.dataset.courseId;
-
-        const courseTitle =
-          button.dataset.courseTitle;
-
-
-        await requestEnrolment(
-          student,
-          courseId,
-          courseTitle,
-          button
-        );
-
-      }
-    );
-
-  });
-}
-
-
-// ==========================================
-// REQUEST ENROLMENT
-// ==========================================
-
-async function requestEnrolment(
-  student,
-  courseId,
-  courseTitle,
-  button
-) {
-
-  button.disabled = true;
-
-  button.textContent =
-    "Requesting...";
-
-
-  // ----------------------------------------
-  // CHECK EXISTING ENROLMENT
-  // ----------------------------------------
-
-  const {
-    data: existing,
-    error: checkError
-  } = await db
-    .from("enrollments")
-    .select("id")
-    .eq(
-      "student_id",
-      student.id
-    )
-    .eq(
-      "course_id",
-      courseId
-    )
-    .maybeSingle();
-
-
-  if (checkError) {
-
-    console.error(
-      "ENROLMENT CHECK ERROR:",
-      checkError
-    );
-
-    alert(
-      "We could not check your enrolment."
-    );
-
-    button.disabled = false;
-    button.textContent = "Enrol Now";
-
-    return;
-  }
-
-
-  if (existing) {
-
-    button.textContent =
-      "Already Enrolled";
-
-    return;
-  }
-
-
-  // ----------------------------------------
-  // CREATE ENROLMENT
-  // ----------------------------------------
-
-  const {
-    error: insertError
-  } = await db
-    .from("enrollments")
-    .insert({
-
-      student_id:
-        student.id,
-
-      course_id:
-        courseId,
-
-      enrollment_status:
-        "pending"
-
-    });
-
-
-  if (insertError) {
-
-    console.error(
-      "ENROLMENT INSERT ERROR:",
-      insertError
-    );
-
-    alert(
-      "Your enrolment could not be submitted.\n\n" +
-      insertError.message
-    );
-
-    button.disabled = false;
-    button.textContent = "Enrol Now";
-
-    return;
-  }
-
-
-  alert(
-    "Your enrolment request for " +
-    courseTitle +
-    " was submitted successfully."
-  );
-
-
-  button.textContent =
-    "Enrolment Requested";
-
-  button.disabled = true;
-
-
-  // Refresh the enrolments
-  const user =
-    await getCurrentUser();
-
-  if (user) {
-
-    await loadEnrolments(
-      user,
-      student
-    );
-  }
-}
-
-
-// ==========================================
-// LOAD PAYMENTS
-// ==========================================
-
-function loadPayments() {
-
-  if (!paymentListEl) return;
-
-
-  paymentListEl.innerHTML = `
-    <div class="card">
-
-      <h3>
-        Course Payments
-      </h3>
-
-      <p>
-        Payment information will appear here
-        after your enrolment has been processed.
-      </p>
-
-      <p style="
-        margin-top:12px;
-        color:#666;
-      ">
-        Your payment status will be updated
-        by Funda Online Academy.
-      </p>
-
-    </div>
-  `;
-}
-
-
-// ==========================================
-// LOGOUT
-// ==========================================
-
-if (logoutBtn) {
-
-  logoutBtn.addEventListener(
-    "click",
-    async function() {
-
-      logoutBtn.disabled = true;
-
-      logoutBtn.textContent =
-        "Logging out...";
-
-
-      const {
-        error
-      } = await db.auth.signOut();
-
-
-      if (error) {
-
-        console.error(
-          "LOGOUT ERROR:",
-          error
-        );
-
-        alert(
-          "Could not log out. Please try again."
-        );
-
-        logoutBtn.disabled = false;
-        logoutBtn.textContent = "Logout";
-
-        return;
-      }
-
-
-      window.location.href =
-        "login.html";
-
-    }
-  );
-}
-
-
-// ==========================================
-// INITIALISE DASHBOARD
-// ==========================================
-
-async function initDashboard() {
-
-  console.log(
-    "================================"
-  );
-
-  console.log(
-    "FUNDA STUDENT DASHBOARD STARTING"
-  );
-
-  console.log(
-    "================================"
-  );
-
-
-  try {
-
-    // --------------------------------------
-    // CHECK LOGIN
-    // --------------------------------------
-
-    const user =
-      await getCurrentUser();
-
-
-    if (!user) {
-
-      window.location.href =
-        "login.html";
-
-      return;
-    }
-
-
-    console.log(
-      "Logged in user:",
-      user.id
-    );
-
-
-    // --------------------------------------
-    // STUDENT DETAILS
-    // --------------------------------------
-
-    const student =
-      await loadStudentDetails(
-        user
-      );
-
-
-    console.log(
-      "Student record:",
-      student
-    );
-
-
-    // --------------------------------------
-    // LOAD ENROLMENTS
-    // --------------------------------------
-
-    await loadEnrolments(
-      user,
-      student
-    );
-
-
-    // --------------------------------------
-    // LOAD COURSES
-    // --------------------------------------
-
-    await loadCourses(
-      user,
-      student
-    );
-
-
-    // --------------------------------------
-    // LOAD PAYMENTS
-    // --------------------------------------
-
-    loadPayments();
-
-
-    console.log(
-      "DASHBOARD LOADED SUCCESSFULLY"
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "DASHBOARD ERROR:",
-      error
-    );
-
-
-    if (enrolmentsEl) {
-
-      enrolmentsEl.innerHTML = `
-        <div class="card">
-
-          <h3>
-            Dashboard error
-          </h3>
-
-          <p>
-            ${escapeHTML(
-              error.message ||
-              "Something went wrong."
-            )}
-          </p>
-
-        </div>
-      `;
-    }
-
-
-    if (coursesEl) {
-
-      coursesEl.innerHTML = `
-        <div class="card">
-
-          <h3>
-            Dashboard error
-          </h3>
-
-          <p>
-            ${escapeHTML(
-              error.message ||
-              "Something went wrong."
-            )}
-          </p>
-
-        </div>
-      `;
-    }
-
-
-    showMessage(
-      "Something went wrong while loading your dashboard."
-    );
-  }
-}
-
-
-// ==========================================
-// START DASHBOARD
-// ==========================================
-
-initDashboard();
+                  data-course-title="${escape 
