@@ -12,17 +12,17 @@ const db = createClient(
   window.SUPABASE_ANON_KEY
 );
 
+const msg = document.getElementById("message");
+
 let courses = [];
-let editingCourseId = null;
+let editingId = null;
 
 
 // ============================================================
-// HELPERS
+// MESSAGE
 // ============================================================
 
 function show(message, ok = false) {
-
-  const msg = document.getElementById("message");
 
   if (!msg) return;
 
@@ -33,20 +33,26 @@ function show(message, ok = false) {
 }
 
 
+// ============================================================
+// ESCAPE HTML
+// ============================================================
+
 function esc(value) {
 
-  return String(value ?? "").replace(
-    /[&<>"']/g,
-    character => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    }[character])
-  );
+  return String(value ?? "").replace(/[&<>"']/g, m => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  }[m]));
+
 }
 
+
+// ============================================================
+// FORMAT DATE
+// ============================================================
 
 function formatDate(date) {
 
@@ -63,24 +69,17 @@ function formatDate(date) {
     month: "short",
     day: "numeric"
   });
-}
 
-
-function money(amount) {
-
-  return "R" + Number(amount || 0).toLocaleString(
-    "en-ZA"
-  );
 }
 
 
 // ============================================================
-// COURSE FORM
+// COURSE FORM RESET
 // ============================================================
 
-function resetCourseForm() {
+function resetForm() {
 
-  editingCourseId = null;
+  editingId = null;
 
   const form =
     document.getElementById("course-form");
@@ -104,12 +103,17 @@ function resetCourseForm() {
   if (button) {
     button.textContent = "Save Course";
   }
+
 }
 
 
-function fillCourse(course) {
+// ============================================================
+// FILL COURSE FORM
+// ============================================================
 
-  editingCourseId = course.id;
+function fill(course) {
+
+  editingId = course.id;
 
   const id =
     document.getElementById("course-id");
@@ -197,6 +201,7 @@ function fillCourse(course) {
     top: 0,
     behavior: "smooth"
   });
+
 }
 
 
@@ -204,7 +209,7 @@ function fillCourse(course) {
 // ADMIN INITIALISATION
 // ============================================================
 
-async function initAdmin() {
+async function init() {
 
   try {
 
@@ -223,7 +228,7 @@ async function initAdmin() {
 
 
     const {
-      data: sessionData,
+      data: { session },
       error: sessionError
     } =
       await db.auth.getSession();
@@ -233,14 +238,12 @@ async function initAdmin() {
 
       console.error(sessionError);
 
-      show(sessionError.message);
+      show(
+        sessionError.message
+      );
 
       return;
     }
-
-
-    const session =
-      sessionData?.session;
 
 
     if (!session) {
@@ -265,9 +268,9 @@ async function initAdmin() {
     }
 
 
-    // --------------------------------------------------------
+    // ========================================================
     // CHECK ADMIN ROLE
-    // --------------------------------------------------------
+    // ========================================================
 
     const {
       data: profile,
@@ -285,10 +288,12 @@ async function initAdmin() {
 
     if (profileError) {
 
-      console.error(profileError);
+      console.error(
+        "Profile error:",
+        profileError
+      );
 
       show(
-        "Could not verify administrator account: " +
         profileError.message
       );
 
@@ -316,22 +321,19 @@ async function initAdmin() {
     }
 
 
-    // --------------------------------------------------------
-    // LOAD ALL ADMIN SECTIONS
-    // --------------------------------------------------------
-
-    await loadCourses();
+    // ========================================================
+    // LOAD DASHBOARD
+    // ========================================================
 
     await Promise.all([
       loadStudents(),
+      loadCourses(),
       loadEnrolments(),
       loadPayments(),
       loadAssessments()
     ]);
 
-  }
-
-  catch (error) {
+  } catch (error) {
 
     console.error(
       "Admin initialisation error:",
@@ -340,9 +342,11 @@ async function initAdmin() {
 
     show(
       error.message ||
-      "Something went wrong while loading the admin dashboard."
+      "Could not load the admin dashboard."
     );
+
   }
+
 }
 
 
@@ -401,8 +405,12 @@ async function loadStudents() {
 
     box.innerHTML = `
       <div class="admin-error">
-        <strong>Could not load students.</strong>
+        <strong>
+          Could not load students.
+        </strong>
+
         <br><br>
+
         ${esc(error.message)}
       </div>
     `;
@@ -411,16 +419,23 @@ async function loadStudents() {
   }
 
 
-  if (!data || data.length === 0) {
+  if (
+    !data ||
+    data.length === 0
+  ) {
 
     box.innerHTML = `
       <div class="empty-state">
-        <strong>No registered students yet.</strong>
+
+        <strong>
+          No registered students yet.
+        </strong>
 
         <p>
           Students will appear here after
           they create an account.
         </p>
+
       </div>
     `;
 
@@ -432,122 +447,126 @@ async function loadStudents() {
 
     <div class="student-list">
 
-      ${data.map(student => `
+      ${data.map(student => {
 
-        <div class="student-card">
+        return `
 
-          <div class="student-card-header">
+          <div class="student-card">
 
-            <div class="student-avatar">
-              🎓
+            <div class="student-card-header">
+
+              <div class="student-avatar">
+                🎓
+              </div>
+
+              <div>
+
+                <h3>
+                  ${esc(
+                    student.full_name ||
+                    "Student"
+                  )}
+                </h3>
+
+                <span class="student-role">
+                  ${esc(
+                    student.role ||
+                    "student"
+                  )}
+                </span>
+
+              </div>
+
             </div>
 
-            <div>
 
-              <h3>
-                ${esc(
-                  student.full_name ||
-                  "Student"
-                )}
-              </h3>
+            <div class="student-details">
 
-              <span class="student-role">
-                ${esc(
-                  student.role ||
-                  "student"
-                )}
-              </span>
+              <div class="student-detail">
+
+                <span class="detail-label">
+                  Gender
+                </span>
+
+                <strong>
+                  ${esc(
+                    student.gender ||
+                    "Not provided"
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div class="student-detail sensitive">
+
+                <span class="detail-label">
+                  South African ID Number
+                </span>
+
+                <strong>
+                  ${esc(
+                    student.id_number ||
+                    "Not provided"
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div class="student-detail">
+
+                <span class="detail-label">
+                  Email
+                </span>
+
+                <strong>
+                  ${esc(
+                    student.email ||
+                    "Not provided"
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div class="student-detail">
+
+                <span class="detail-label">
+                  WhatsApp / Mobile
+                </span>
+
+                <strong>
+                  ${esc(
+                    student.phone ||
+                    "Not provided"
+                  )}
+                </strong>
+
+              </div>
+
+
+              <div class="student-detail">
+
+                <span class="detail-label">
+                  Registered
+                </span>
+
+                <strong>
+                  ${formatDate(
+                    student.created_at
+                  )}
+                </strong>
+
+              </div>
 
             </div>
 
           </div>
 
+        `;
 
-          <div class="student-details">
-
-            <div class="student-detail">
-
-              <span class="detail-label">
-                Gender
-              </span>
-
-              <strong>
-                ${esc(
-                  student.gender ||
-                  "Not provided"
-                )}
-              </strong>
-
-            </div>
-
-
-            <div class="student-detail sensitive">
-
-              <span class="detail-label">
-                South African ID Number
-              </span>
-
-              <strong>
-                ${esc(
-                  student.id_number ||
-                  "Not provided"
-                )}
-              </strong>
-
-            </div>
-
-
-            <div class="student-detail">
-
-              <span class="detail-label">
-                Email
-              </span>
-
-              <strong>
-                ${esc(
-                  student.email ||
-                  "Not provided"
-                )}
-              </strong>
-
-            </div>
-
-
-            <div class="student-detail">
-
-              <span class="detail-label">
-                WhatsApp / Mobile
-              </span>
-
-              <strong>
-                ${esc(
-                  student.phone ||
-                  "Not provided"
-                )}
-              </strong>
-
-            </div>
-
-
-            <div class="student-detail">
-
-              <span class="detail-label">
-                Registered
-              </span>
-
-              <strong>
-                ${formatDate(
-                  student.created_at
-                )}
-              </strong>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      `).join("")}
+      }).join("")}
 
     </div>
 
@@ -555,18 +574,19 @@ async function loadStudents() {
 
 
   addStudentStyles();
+
 }
 
 
 // ============================================================
-// STUDENT STYLES
+// STUDENT CSS
 // ============================================================
 
 function addStudentStyles() {
 
   if (
     document.getElementById(
-      "student-admin-style"
+      "student-mobile-style"
     )
   ) {
     return;
@@ -577,7 +597,7 @@ function addStudentStyles() {
     document.createElement("style");
 
   style.id =
-    "student-admin-style";
+    "student-mobile-style";
 
 
   style.textContent = `
@@ -676,6 +696,7 @@ function addStudentStyles() {
       border-radius: 10px;
       background: #fef2f2;
       color: #991b1b;
+      overflow-wrap: break-word;
     }
 
     @media (min-width: 700px) {
@@ -690,6 +711,7 @@ function addStudentStyles() {
 
 
   document.head.appendChild(style);
+
 }
 
 
@@ -698,12 +720,6 @@ function addStudentStyles() {
 // ============================================================
 
 async function loadCourses() {
-
-  const box =
-    document.getElementById(
-      "admin-courses"
-    );
-
 
   const {
     data,
@@ -722,13 +738,9 @@ async function loadCourses() {
       error
     );
 
-    if (box) {
-      box.innerHTML = `
-        <div class="admin-error">
-          ${esc(error.message)}
-        </div>
-      `;
-    }
+    show(
+      error.message
+    );
 
     return;
   }
@@ -736,6 +748,12 @@ async function loadCourses() {
 
   courses =
     data || [];
+
+
+  const box =
+    document.getElementById(
+      "admin-courses"
+    );
 
 
   if (!box) return;
@@ -750,9 +768,9 @@ async function loadCourses() {
   }
 
 
-  box.innerHTML = `
+  box.innerHTML =
 
-    ${courses.map(course => `
+    courses.map(course => `
 
       <div class="admin-row">
 
@@ -772,7 +790,9 @@ async function loadCourses() {
               course.category || ""
             )}
 
-            · ${money(course.price)}
+            · R${Number(
+              course.price || 0
+            ).toLocaleString("en-ZA")}
 
             · ${esc(
               course.duration || ""
@@ -788,7 +808,7 @@ async function loadCourses() {
           <button
             type="button"
             class="btn small ghost"
-            data-edit-course="${esc(course.id)}">
+            data-edit="${esc(course.id)}">
 
             Edit
 
@@ -798,7 +818,7 @@ async function loadCourses() {
           <button
             type="button"
             class="btn small danger"
-            data-delete-course="${esc(course.id)}">
+            data-delete="${esc(course.id)}">
 
             Delete
 
@@ -808,30 +828,24 @@ async function loadCourses() {
 
       </div>
 
-    `).join("")}
-
-  `;
+    `).join("");
 
 
   box
-    .querySelectorAll(
-      "[data-edit-course]"
-    )
+    .querySelectorAll("[data-edit]")
     .forEach(button => {
 
       button.onclick = () => {
 
         const course =
           courses.find(
-            item =>
-              String(item.id) ===
-              String(
-                button.dataset.editCourse
-              )
+            c =>
+              String(c.id) ===
+              String(button.dataset.edit)
           );
 
         if (course) {
-          fillCourse(course);
+          fill(course);
         }
 
       };
@@ -840,20 +854,19 @@ async function loadCourses() {
 
 
   box
-    .querySelectorAll(
-      "[data-delete-course]"
-    )
+    .querySelectorAll("[data-delete]")
     .forEach(button => {
 
       button.onclick = () => {
 
         deleteCourse(
-          button.dataset.deleteCourse
+          button.dataset.delete
         );
 
       };
 
     });
+
 }
 
 
@@ -865,8 +878,8 @@ async function deleteCourse(id) {
 
   const course =
     courses.find(
-      item =>
-        String(item.id) ===
+      c =>
+        String(c.id) ===
         String(id)
     );
 
@@ -906,7 +919,6 @@ async function deleteCourse(id) {
     console.error(error);
 
     show(
-      "Could not delete course: " +
       error.message
     );
 
@@ -921,35 +933,37 @@ async function deleteCourse(id) {
 
 
   await loadCourses();
+
 }
 
 
 // ============================================================
-// SAVE COURSE
+// COURSE FORM
 // ============================================================
 
-function setupCourseForm() {
-
-  const form =
-    document.getElementById(
-      "course-form"
-    );
+const courseForm =
+  document.getElementById(
+    "course-form"
+  );
 
 
-  if (!form) return;
+if (courseForm) {
 
-
-  form.onsubmit =
+  courseForm.onsubmit =
     async event => {
 
       event.preventDefault();
 
 
+      const titleElement =
+        document.getElementById(
+          "course-name"
+        );
+
+
       const title =
-        document
-          .getElementById("course-name")
-          ?.value
-          .trim();
+        titleElement?.value
+          ?.trim() || "";
 
 
       if (!title) {
@@ -962,52 +976,48 @@ function setupCourseForm() {
       }
 
 
-      const modulesText =
-        document
-          .getElementById("course-modules")
-          ?.value || "";
-
-
       const payload = {
 
         title,
 
         price:
           Number(
-            document
-              .getElementById("course-price")
-              ?.value
+            document.getElementById(
+              "course-price"
+            )?.value
           ) || 0,
 
         category:
-          document
-            .getElementById("course-category")
-            ?.value
-            .trim() || null,
+          document.getElementById(
+            "course-category"
+          )?.value
+            ?.trim() || "",
 
         duration:
-          document
-            .getElementById("course-duration")
-            ?.value
-            .trim() || null,
+          document.getElementById(
+            "course-duration"
+          )?.value
+            ?.trim() || "",
 
         image_url:
-          document
-            .getElementById("course-image")
-            ?.value
-            .trim() || null,
+          document.getElementById(
+            "course-image"
+          )?.value
+            ?.trim() || null,
 
         description:
-          document
-            .getElementById("course-description")
-            ?.value
-            .trim() || null,
+          document.getElementById(
+            "course-description"
+          )?.value
+            ?.trim() || "",
 
         modules:
-          modulesText
-            .split("\n")
-            .map(item => item.trim())
-            .filter(Boolean),
+          document.getElementById(
+            "course-modules"
+          )?.value
+            ?.split("\n")
+            .map(x => x.trim())
+            .filter(Boolean) || [],
 
         active: true,
 
@@ -1020,7 +1030,7 @@ function setupCourseForm() {
       let result;
 
 
-      if (editingCourseId) {
+      if (editingId) {
 
         result =
           await db
@@ -1028,12 +1038,10 @@ function setupCourseForm() {
             .update(payload)
             .eq(
               "id",
-              editingCourseId
+              editingId
             );
 
-      }
-
-      else {
+      } else {
 
         result =
           await db
@@ -1059,23 +1067,63 @@ function setupCourseForm() {
 
 
       show(
-        editingCourseId
+        editingId
           ? "Course updated successfully."
           : "Course added successfully.",
         true
       );
 
 
-      resetCourseForm();
+      resetForm();
 
       await loadCourses();
 
     };
+
+}
+
+
+// ============================================================
+// NEW COURSE
+// ============================================================
+
+const newCourse =
+  document.getElementById(
+    "new-course"
+  );
+
+
+if (newCourse) {
+
+  newCourse.onclick =
+    resetForm;
+
+}
+
+
+// ============================================================
+// CANCEL COURSE EDIT
+// ============================================================
+
+const cancelEdit =
+  document.getElementById(
+    "cancel-edit"
+  );
+
+
+if (cancelEdit) {
+
+  cancelEdit.onclick =
+    resetForm;
+
 }
 
 
 // ============================================================
 // ENROLMENTS
+// IMPORTANT:
+// We use SELECT * so the code does NOT require a
+// created_at column.
 // ============================================================
 
 async function loadEnrolments() {
@@ -1099,13 +1147,7 @@ async function loadEnrolments() {
   } =
     await db
       .from("enrollments")
-      .select("*")
-      .order(
-        "created_at",
-        {
-          ascending: false
-        }
-      );
+      .select("*");
 
 
   if (error) {
@@ -1115,11 +1157,20 @@ async function loadEnrolments() {
       error
     );
 
+
     box.innerHTML = `
       <div class="admin-error">
-        <strong>Could not load enrolments.</strong>
+
+        <strong>
+          Could not load enrolments.
+        </strong>
+
         <br><br>
-        ${esc(error.message)}
+
+        ${esc(
+          error.message
+        )}
+
       </div>
     `;
 
@@ -1140,7 +1191,8 @@ async function loadEnrolments() {
         </strong>
 
         <p>
-          Student course requests will appear here.
+          Student course requests will
+          appear here.
         </p>
 
       </div>
@@ -1150,70 +1202,52 @@ async function loadEnrolments() {
   }
 
 
+  // ==========================================================
+  // GET COURSE IDs
+  // ==========================================================
+
   const courseIds = [
     ...new Set(
       enrolments
-        .map(item => item.course_id)
-        .filter(Boolean)
-    )
-  ];
-
-
-  const studentIds = [
-    ...new Set(
-      enrolments
-        .map(item => item.student_id)
+        .map(e => e.course_id)
         .filter(Boolean)
     )
   ];
 
 
   let courseData = [];
-  let studentData = [];
 
 
   if (courseIds.length > 0) {
 
-    const result =
+    const {
+      data,
+      error: courseError
+    } =
       await db
         .from("courses")
-        .select(
-          "id,title,price"
-        )
+        .select(`
+          id,
+          title,
+          price
+        `)
         .in(
           "id",
           courseIds
         );
 
-    if (!result.error) {
+
+    if (!courseError) {
+
       courseData =
-        result.data || [];
+        data || [];
+
     }
-  }
 
-
-  if (studentIds.length > 0) {
-
-    const result =
-      await db
-        .from("profiles")
-        .select(
-          "id,full_name,email"
-        )
-        .in(
-          "id",
-          studentIds
-        );
-
-    if (!result.error) {
-      studentData =
-        result.data || [];
-    }
   }
 
 
   const courseLookup = {};
-  const studentLookup = {};
 
 
   courseData.forEach(course => {
@@ -1225,14 +1259,9 @@ async function loadEnrolments() {
   });
 
 
-  studentData.forEach(student => {
-
-    studentLookup[
-      student.id
-    ] = student;
-
-  });
-
+  // ==========================================================
+  // ENROLMENT TABLE
+  // ==========================================================
 
   box.innerHTML = `
 
@@ -1255,143 +1284,167 @@ async function loadEnrolments() {
 
         </thead>
 
+
         <tbody>
 
-          ${enrolments.map(enrolment => {
+          ${enrolments.map(
+            enrolment => {
 
-            const course =
-              courseLookup[
-                enrolment.course_id
-              ] || {};
-
-
-            const student =
-              studentLookup[
-                enrolment.student_id
-              ] || {};
+              const course =
+                courseLookup[
+                  enrolment.course_id
+                ] || {};
 
 
-            const status =
-              enrolment.enrollment_status ||
-              "pending";
+              const courseName =
+                course.title ||
+                "Course";
 
 
-            const date =
-              enrolment.enrolled_at ||
-              enrolment.created_at;
+              const price =
+                course.price ??
+                enrolment.amount ??
+                0;
 
 
-            return `
+              const status =
+                enrolment.enrollment_status ||
+                enrolment.status ||
+                "pending";
 
-              <tr>
 
-                <td>
+              // IMPORTANT:
+              // Do NOT use created_at because
+              // your table does not contain it.
 
-                  <strong>
+              const date =
+                enrolment.enrolled_at ||
+                enrolment.enrolment_date ||
+                enrolment.updated_at ||
+                enrolment.submitted_at ||
+                enrolment.date ||
+                null;
+
+
+              return `
+
+                <tr>
+
+                  <td>
                     ${esc(
-                      student.full_name ||
+                      enrolment.student_id ||
                       "Student"
                     )}
-                  </strong>
+                  </td>
 
-                  <small>
+
+                  <td>
                     ${esc(
-                      student.email || ""
+                      courseName
                     )}
-                  </small>
-
-                </td>
+                  </td>
 
 
-                <td>
-                  ${esc(
-                    course.title ||
-                    "Course"
-                  )}
-                </td>
+                  <td>
+                    R${Number(
+                      price
+                    ).toLocaleString(
+                      "en-ZA"
+                    )}
+                  </td>
 
 
-                <td>
-                  ${money(
-                    course.price ||
-                    enrolment.amount
-                  )}
-                </td>
+                  <td>
+
+                    <span
+                      class="enrolment-status ${esc(
+                        status
+                      )}">
+
+                      ${esc(
+                        status
+                      )}
+
+                    </span>
+
+                  </td>
 
 
-                <td>
-
-                  <span
-                    class="enrolment-status ${esc(status)}">
-
-                    ${esc(status)}
-
-                  </span>
-
-                </td>
+                  <td>
+                    ${formatDate(
+                      date
+                    )}
+                  </td>
 
 
-                <td>
-                  ${formatDate(date)}
-                </td>
+                  <td>
+
+                    <select
+                      data-enrolment-status="${esc(
+                        enrolment.id
+                      )}">
+
+                      <option
+                        value="pending"
+                        ${
+                          status === "pending"
+                            ? "selected"
+                            : ""
+                        }>
+
+                        Pending
+
+                      </option>
 
 
-                <td>
+                      <option
+                        value="approved"
+                        ${
+                          status === "approved"
+                            ? "selected"
+                            : ""
+                        }>
 
-                  <select
-                    data-enrolment-status="${esc(
-                      enrolment.id
-                    )}">
+                        Approved
 
-                    <option
-                      value="pending"
-                      ${
-                        status === "pending"
-                          ? "selected"
-                          : ""
-                      }>
-                      Pending
-                    </option>
+                      </option>
 
-                    <option
-                      value="approved"
-                      ${
-                        status === "approved"
-                          ? "selected"
-                          : ""
-                      }>
-                      Approved
-                    </option>
 
-                    <option
-                      value="completed"
-                      ${
-                        status === "completed"
-                          ? "selected"
-                          : ""
-                      }>
-                      Completed
-                    </option>
+                      <option
+                        value="completed"
+                        ${
+                          status === "completed"
+                            ? "selected"
+                            : ""
+                        }>
 
-                    <option
-                      value="cancelled"
-                      ${
-                        status === "cancelled"
-                          ? "selected"
-                          : ""
-                      }>
-                      Cancelled
-                    </option>
+                        Completed
 
-                  </select>
+                      </option>
 
-                </td>
 
-              </tr>
+                      <option
+                        value="cancelled"
+                        ${
+                          status === "cancelled"
+                            ? "selected"
+                            : ""
+                        }>
 
-            `;
+                        Cancelled
 
-          }).join("")}
+                      </option>
+
+                    </select>
+
+                  </td>
+
+                </tr>
+
+              `;
+
+            }
+          ).join("")}
 
         </tbody>
 
@@ -1401,6 +1454,10 @@ async function loadEnrolments() {
 
   `;
 
+
+  // ==========================================================
+  // CHANGE ENROLMENT STATUS
+  // ==========================================================
 
   box
     .querySelectorAll(
@@ -1412,7 +1469,7 @@ async function loadEnrolments() {
         async () => {
 
           const {
-            error: updateError
+            error
           } =
             await db
               .from("enrollments")
@@ -1426,11 +1483,16 @@ async function loadEnrolments() {
               );
 
 
-          if (updateError) {
+          if (error) {
+
+            console.error(
+              "Enrolment update error:",
+              error
+            );
 
             show(
               "Could not update enrolment: " +
-              updateError.message
+              error.message
             );
 
             return;
@@ -1448,6 +1510,7 @@ async function loadEnrolments() {
         };
 
     });
+
 }
 
 
@@ -1502,6 +1565,7 @@ async function loadPayments() {
       error
     );
 
+
     box.innerHTML = `
       <div class="admin-error">
 
@@ -1511,7 +1575,9 @@ async function loadPayments() {
 
         <br><br>
 
-        ${esc(error.message)}
+        ${esc(
+          error.message
+        )}
 
       </div>
     `;
@@ -1525,107 +1591,11 @@ async function loadPayments() {
     payments.length === 0
   ) {
 
-    box.innerHTML = `
-      <div class="empty-state">
-
-        <strong>
-          No payment records yet.
-        </strong>
-
-        <p>
-          Student payments will appear here
-          after they submit them.
-        </p>
-
-      </div>
-    `;
+    box.innerHTML =
+      "<p>Payment records will appear here.</p>";
 
     return;
   }
-
-
-  const studentIds = [
-    ...new Set(
-      payments
-        .map(payment => payment.student_id)
-        .filter(Boolean)
-    )
-  ];
-
-
-  const enrolmentIds = [
-    ...new Set(
-      payments
-        .map(payment => payment.enrolment_id)
-        .filter(Boolean)
-    )
-  ];
-
-
-  let students = [];
-  let enrolments = [];
-
-
-  if (studentIds.length > 0) {
-
-    const result =
-      await db
-        .from("profiles")
-        .select(
-          "id,full_name,email"
-        )
-        .in(
-          "id",
-          studentIds
-        );
-
-    if (!result.error) {
-      students =
-        result.data || [];
-    }
-  }
-
-
-  if (enrolmentIds.length > 0) {
-
-    const result =
-      await db
-        .from("enrollments")
-        .select(
-          "id,course_id"
-        )
-        .in(
-          "id",
-          enrolmentIds
-        );
-
-    if (!result.error) {
-      enrolments =
-        result.data || [];
-    }
-  }
-
-
-  const studentLookup = {};
-  const enrolmentLookup = {};
-
-
-  students.forEach(student => {
-
-    studentLookup[
-      student.id
-    ] = student;
-
-  });
-
-
-  enrolments.forEach(enrolment => {
-
-    enrolmentLookup[
-      enrolment.id
-    ] = enrolment;
-
-  });
 
 
   box.innerHTML = `
@@ -1638,83 +1608,29 @@ async function loadPayments() {
 
           <tr>
 
-            <th>Student</th>
-            <th>Course</th>
             <th>Amount</th>
             <th>Method</th>
             <th>Status</th>
             <th>Proof</th>
             <th>Date</th>
-            <th>Action</th>
 
           </tr>
 
         </thead>
 
+
         <tbody>
 
-          ${payments.map(payment => {
-
-            const student =
-              studentLookup[
-                payment.student_id
-              ] || {};
-
-
-            const enrolment =
-              enrolmentLookup[
-                payment.enrolment_id
-              ] || {};
-
-
-            const course =
-              courses.find(
-                item =>
-                  String(item.id) ===
-                  String(
-                    enrolment.course_id
-                  )
-              );
-
-
-            const status =
-              payment.status ||
-              "pending";
-
-
-            return `
+          ${payments.map(
+            payment => `
 
               <tr>
 
                 <td>
-
-                  <strong>
-                    ${esc(
-                      student.full_name ||
-                      "Student"
-                    )}
-                  </strong>
-
-                  <small>
-                    ${esc(
-                      student.email || ""
-                    )}
-                  </small>
-
-                </td>
-
-
-                <td>
-                  ${esc(
-                    course?.title ||
-                    "Course"
-                  )}
-                </td>
-
-
-                <td>
-                  ${money(
-                    payment.amount
+                  R${Number(
+                    payment.amount || 0
+                  ).toLocaleString(
+                    "en-ZA"
                   )}
                 </td>
 
@@ -1722,17 +1638,22 @@ async function loadPayments() {
                 <td>
                   ${esc(
                     payment.payment_method ||
-                    "—"
+                    ""
                   )}
                 </td>
 
 
                 <td>
 
-                  <span
-                    class="payment-status ${esc(status)}">
+                  <span class="payment-status ${esc(
+                    payment.status ||
+                    "pending"
+                  )}">
 
-                    ${esc(status)}
+                    ${esc(
+                      payment.status ||
+                      "pending"
+                    )}
 
                   </span>
 
@@ -1749,8 +1670,7 @@ async function loadPayments() {
                             payment.proof_url
                           )}"
                           target="_blank"
-                          rel="noopener noreferrer"
-                          class="proof-link">
+                          rel="noopener noreferrer">
 
                           View Proof
 
@@ -1768,53 +1688,10 @@ async function loadPayments() {
                   )}
                 </td>
 
-
-                <td>
-
-                  <select
-                    data-payment-status="${esc(
-                      payment.id
-                    )}">
-
-                    <option
-                      value="pending"
-                      ${
-                        status === "pending"
-                          ? "selected"
-                          : ""
-                      }>
-                      Pending
-                    </option>
-
-                    <option
-                      value="approved"
-                      ${
-                        status === "approved"
-                          ? "selected"
-                          : ""
-                      }>
-                      Approved
-                    </option>
-
-                    <option
-                      value="rejected"
-                      ${
-                        status === "rejected"
-                          ? "selected"
-                          : ""
-                      }>
-                      Rejected
-                    </option>
-
-                  </select>
-
-                </td>
-
               </tr>
 
-            `;
-
-          }).join("")}
+            `
+          ).join("")}
 
         </tbody>
 
@@ -1824,60 +1701,6 @@ async function loadPayments() {
 
   `;
 
-
-  box
-    .querySelectorAll(
-      "[data-payment-status]"
-    )
-    .forEach(select => {
-
-      select.onchange =
-        async () => {
-
-          const paymentId =
-            select.dataset.paymentStatus;
-
-
-          const newStatus =
-            select.value;
-
-
-          const {
-            error: updateError
-          } =
-            await db
-              .from("payments")
-              .update({
-                status: newStatus
-              })
-              .eq(
-                "id",
-                paymentId
-              );
-
-
-          if (updateError) {
-
-            show(
-              "Could not update payment: " +
-              updateError.message
-            );
-
-            return;
-          }
-
-
-          show(
-            "Payment status updated successfully.",
-            true
-          );
-
-
-          await loadPayments();
-
-        };
-
-    });
 }
 
 
@@ -1960,12 +1783,14 @@ async function loadAssessments() {
   if (createButton) {
 
     createButton.onclick =
-      () => showAssessmentForm();
+      () =>
+        showAssessmentForm();
 
   }
 
 
   await renderAssessmentList();
+
 }
 
 
@@ -2019,7 +1844,11 @@ async function renderAssessmentList() {
 
     box.innerHTML = `
       <div class="admin-error">
-        ${esc(error.message)}
+
+        ${esc(
+          error.message
+        )}
+
       </div>
     `;
 
@@ -2057,163 +1886,182 @@ async function renderAssessmentList() {
 
     <div class="assessment-list">
 
-      ${assessments.map(assessment => {
+      ${assessments.map(
+        assessment => {
 
-        const course =
-          courses.find(
-            item =>
-              String(item.id) ===
-              String(
-                assessment.course_id
-              )
-          );
-
-
-        const questions =
-          Array.isArray(
-            assessment.questions
-          )
-            ? assessment.questions
-            : [];
+          const course =
+            courses.find(
+              c =>
+                String(c.id) ===
+                String(
+                  assessment.course_id
+                )
+            );
 
 
-        return `
+          const courseName =
+            course?.title ||
+            course?.name ||
+            "Course";
 
-          <div class="assessment-card">
 
-            <div class="assessment-card-top">
+          const questions =
+            Array.isArray(
+              assessment.questions
+            )
+              ? assessment.questions
+              : [];
 
-              <div>
 
-                <span class="assessment-course">
+          return `
 
-                  ${esc(
-                    course?.title ||
-                    "Course"
-                  )}
+            <div class="assessment-card">
+
+              <div class="assessment-card-top">
+
+                <div>
+
+                  <span class="assessment-course">
+
+                    ${esc(
+                      courseName
+                    )}
+
+                  </span>
+
+
+                  <h3>
+
+                    ${esc(
+                      assessment.title
+                    )}
+
+                  </h3>
+
+
+                  <p>
+
+                    ${esc(
+                      assessment.description ||
+                      "No description provided."
+                    )}
+
+                  </p>
+
+                </div>
+
+
+                <span
+                  class="assessment-active ${
+                    assessment.active
+                      ? "active"
+                      : "inactive"
+                  }">
+
+                  ${
+                    assessment.active
+                      ? "Active"
+                      : "Inactive"
+                  }
 
                 </span>
-
-
-                <h3>
-                  ${esc(
-                    assessment.title
-                  )}
-                </h3>
-
-
-                <p>
-                  ${esc(
-                    assessment.description ||
-                    "No description provided."
-                  )}
-                </p>
 
               </div>
 
 
-              <span
-                class="assessment-active ${
-                  assessment.active
-                    ? "active"
-                    : "inactive"
-                }">
+              <div class="assessment-meta">
 
-                ${
-                  assessment.active
-                    ? "Active"
-                    : "Inactive"
-                }
+                <span>
 
-              </span>
+                  Questions:
+                  <strong>
+                    ${questions.length}
+                  </strong>
 
-            </div>
+                </span>
 
 
-            <div class="assessment-meta">
+                <span>
 
-              <span>
-                Questions:
-                <strong>
-                  ${questions.length}
-                </strong>
-              </span>
+                  Total marks:
+                  <strong>
+                    ${Number(
+                      assessment.total_marks || 0
+                    )}
 
+                  </strong>
 
-              <span>
-                Total marks:
-                <strong>
-                  ${Number(
-                    assessment.total_marks || 0
-                  )}
-                </strong>
-              </span>
+                </span>
 
 
-              <span>
-                Pass mark:
-                <strong>
-                  ${Number(
-                    assessment.pass_mark || 0
-                  )}%
-                </strong>
-              </span>
+                <span>
 
-            </div>
+                  Pass mark:
+                  <strong>
+                    ${Number(
+                      assessment.pass_mark || 0
+                    )}%
+
+                  </strong>
+
+                </span>
+
+              </div>
 
 
-            <div class="assessment-actions">
+              <div class="assessment-actions">
 
-              <button
-                type="button"
-                class="btn small ghost"
-                data-edit-assessment="${esc(
+                <button
+                  type="button"
+                  class="btn small ghost"
+                  data-edit-assessment="${esc(
+                    assessment.id
+                  )}">
+
+                  Edit
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="btn small ghost"
+                  data-view-submissions="${esc(
+                    assessment.id
+                  )}">
+
+                  Student Submissions
+
+                </button>
+
+
+                <button
+                  type="button"
+                  class="btn small danger"
+                  data-delete-assessment="${esc(
+                    assessment.id
+                  )}">
+
+                  Delete
+
+                </button>
+
+              </div>
+
+
+              <div
+                id="submissions-${esc(
                   assessment.id
-                )}">
-
-                Edit
-
-              </button>
-
-
-              <button
-                type="button"
-                class="btn small ghost"
-                data-view-submissions="${esc(
-                  assessment.id
-                )}">
-
-                Student Submissions
-
-              </button>
-
-
-              <button
-                type="button"
-                class="btn small danger"
-                data-delete-assessment="${esc(
-                  assessment.id
-                )}">
-
-                Delete
-
-              </button>
+                )}"
+                class="submissions-area hidden">
+              </div>
 
             </div>
 
+          `;
 
-            <div
-              id="submissions-${esc(
-                assessment.id
-              )}"
-              class="submissions-area hidden">
-            </div>
-
-          </div>
-
-        `;
-
-      }).join("")}
+        }
+      ).join("")}
 
     </div>
 
@@ -2230,8 +2078,8 @@ async function renderAssessmentList() {
 
         const assessment =
           assessments.find(
-            item =>
-              String(item.id) ===
+            a =>
+              String(a.id) ===
               String(
                 button.dataset.editAssessment
               )
@@ -2258,13 +2106,10 @@ async function renderAssessmentList() {
     .forEach(button => {
 
       button.onclick =
-        () => {
-
+        () =>
           loadSubmissions(
             button.dataset.viewSubmissions
           );
-
-        };
 
     });
 
@@ -2276,15 +2121,13 @@ async function renderAssessmentList() {
     .forEach(button => {
 
       button.onclick =
-        () => {
-
+        () =>
           deleteAssessment(
             button.dataset.deleteAssessment
           );
 
-        };
-
     });
+
 }
 
 
@@ -2292,7 +2135,9 @@ async function renderAssessmentList() {
 // SHOW ASSESSMENT FORM
 // ============================================================
 
-function showAssessmentForm(existing = null) {
+function showAssessmentForm(
+  existing = null
+) {
 
   const area =
     document.getElementById(
@@ -2322,17 +2167,20 @@ function showAssessmentForm(existing = null) {
     <div class="assessment-editor">
 
       <h3>
+
         ${
           existing
             ? "Edit Assessment"
             : "Create Assessment"
         }
+
       </h3>
 
 
       <label>
         Course
       </label>
+
 
       <select
         id="assessment-course"
@@ -2342,27 +2190,40 @@ function showAssessmentForm(existing = null) {
           Select a course
         </option>
 
-        ${courses.map(course => `
 
-          <option
-            value="${esc(course.id)}"
-            ${
-              existing &&
-              String(existing.course_id) ===
-              String(course.id)
-                ? "selected"
-                : ""
-            }>
+        ${courses.map(
+          course => {
 
-            ${esc(
+            const name =
               course.title ||
               course.name ||
-              "Course"
-            )}
+              "Course";
 
-          </option>
 
-        `).join("")}
+            return `
+
+              <option
+                value="${esc(course.id)}"
+                ${
+                  existing &&
+                  String(
+                    existing.course_id
+                  ) ===
+                  String(
+                    course.id
+                  )
+                    ? "selected"
+                    : ""
+                }>
+
+                ${esc(name)}
+
+              </option>
+
+            `;
+
+          }
+        ).join("")}
 
       </select>
 
@@ -2370,6 +2231,7 @@ function showAssessmentForm(existing = null) {
       <label>
         Assessment title
       </label>
+
 
       <input
         id="assessment-title"
@@ -2385,6 +2247,7 @@ function showAssessmentForm(existing = null) {
         Description
       </label>
 
+
       <textarea
         id="assessment-description"
         placeholder="Briefly describe this assessment..."
@@ -2396,6 +2259,7 @@ function showAssessmentForm(existing = null) {
       <label>
         Instructions
       </label>
+
 
       <textarea
         id="assessment-instructions"
@@ -2437,7 +2301,7 @@ function showAssessmentForm(existing = null) {
             min="0"
             max="100"
             value="${Number(
-              existing?.pass_mark || 50
+              existing?.pass_mark ?? 50
             )}"
           >
 
@@ -2501,13 +2365,10 @@ function showAssessmentForm(existing = null) {
 
 
   questions.forEach(
-    question => {
-
+    question =>
       addQuestionRow(
         question
-      );
-
-    }
+      )
   );
 
 
@@ -2515,15 +2376,19 @@ function showAssessmentForm(existing = null) {
     .getElementById(
       "add-question-btn"
     )
-    .onclick =
-      () => addQuestionRow();
+    ?.addEventListener(
+      "click",
+      () =>
+        addQuestionRow()
+    );
 
 
   document
     .getElementById(
       "cancel-assessment-btn"
     )
-    .onclick =
+    ?.addEventListener(
+      "click",
       () => {
 
         area.classList.add(
@@ -2532,21 +2397,22 @@ function showAssessmentForm(existing = null) {
 
         area.innerHTML = "";
 
-      };
+      }
+    );
 
 
   document
     .getElementById(
       "save-assessment-btn"
     )
-    .onclick =
-      () => {
-
+    ?.addEventListener(
+      "click",
+      () =>
         saveAssessment(
           existing?.id || null
-        );
+        )
+    );
 
-      };
 }
 
 
@@ -2554,7 +2420,9 @@ function showAssessmentForm(existing = null) {
 // ADD QUESTION
 // ============================================================
 
-function addQuestionRow(question = null) {
+function addQuestionRow(
+  question = null
+) {
 
   const list =
     document.getElementById(
@@ -2672,8 +2540,7 @@ function addQuestionRow(question = null) {
       Options
 
       <small>
-        One option per line.
-        Use this for multiple-choice questions.
+        One option per line. Use this for multiple-choice questions.
       </small>
 
     </label>
@@ -2682,7 +2549,9 @@ function addQuestionRow(question = null) {
     <textarea
       class="question-options"
       placeholder="Option A&#10;Option B&#10;Option C&#10;Option D"
-    >${esc(options)}</textarea>
+    >${esc(
+      options
+    )}</textarea>
 
 
     <label>
@@ -2711,13 +2580,17 @@ function addQuestionRow(question = null) {
     .querySelector(
       ".remove-question"
     )
-    .onclick =
-      () => row.remove();
+    ?.addEventListener(
+      "click",
+      () =>
+        row.remove()
+    );
 
 
   list.appendChild(
     row
   );
+
 }
 
 
@@ -2739,21 +2612,21 @@ async function saveAssessment(
     document.getElementById(
       "assessment-title"
     )?.value
-      .trim();
+      ?.trim() || "";
 
 
   const description =
     document.getElementById(
       "assessment-description"
     )?.value
-      .trim();
+      ?.trim() || "";
 
 
   const instructions =
     document.getElementById(
       "assessment-instructions"
     )?.value
-      .trim();
+      ?.trim() || "";
 
 
   const passMark =
@@ -2798,11 +2671,12 @@ async function saveAssessment(
   }
 
 
-  const rows = [
-    ...document.querySelectorAll(
-      "#question-list .question-row"
-    )
-  ];
+  const rows =
+    [
+      ...document.querySelectorAll(
+        "#question-list .question-row"
+      )
+    ];
 
 
   const questions =
@@ -2810,53 +2684,44 @@ async function saveAssessment(
       .map(row => {
 
         const text =
-          row
-            .querySelector(
-              ".question-text"
-            )
-            ?.value
-            .trim() || "";
+          row.querySelector(
+            ".question-text"
+          )?.value
+            ?.trim() || "";
 
 
         const type =
-          row
-            .querySelector(
-              ".question-type"
-            )
-            ?.value ||
+          row.querySelector(
+            ".question-type"
+          )?.value ||
           "text";
 
 
         const marks =
           Number(
-            row
-              .querySelector(
-                ".question-marks"
-              )
-              ?.value
+            row.querySelector(
+              ".question-marks"
+            )?.value
           ) || 1;
 
 
         const options =
-          (
-            row
-              .querySelector(
-                ".question-options"
-              )
-              ?.value || ""
-          )
-            .split("\n")
-            .map(item => item.trim())
-            .filter(Boolean);
+          row.querySelector(
+            ".question-options"
+          )?.value
+            ?.split("\n")
+            .map(
+              x => x.trim()
+            )
+            .filter(Boolean) ||
+            [];
 
 
         const correctAnswer =
-          row
-            .querySelector(
-              ".question-correct"
-            )
-            ?.value
-            .trim() || "";
+          row.querySelector(
+            ".question-correct"
+          )?.value
+            ?.trim() || "";
 
 
         return {
@@ -2895,8 +2760,11 @@ async function saveAssessment(
 
   const calculatedTotal =
     questions.reduce(
-      (total, question) =>
-        total +
+      (
+        sum,
+        question
+      ) =>
+        sum +
         Number(
           question.marks || 0
         ),
@@ -2919,7 +2787,8 @@ async function saveAssessment(
     course_id:
       courseId,
 
-    title,
+    title:
+      title,
 
     description:
       description || null,
@@ -2927,7 +2796,8 @@ async function saveAssessment(
     instructions:
       instructions || null,
 
-    questions,
+    questions:
+      questions,
 
     total_marks:
       totalMarks,
@@ -2958,14 +2828,14 @@ async function saveAssessment(
           id
         );
 
-  }
-
-  else {
+  } else {
 
     result =
       await db
         .from("assessments")
-        .insert(payload);
+        .insert(
+          payload
+        );
 
   }
 
@@ -3011,6 +2881,7 @@ async function saveAssessment(
 
 
   await renderAssessmentList();
+
 }
 
 
@@ -3024,7 +2895,7 @@ async function deleteAssessment(
 
   if (
     !confirm(
-      "Delete this assessment?"
+      "Delete this assessment? Student submissions for this assessment may also be deleted depending on your database rules."
     )
   ) {
     return;
@@ -3065,6 +2936,7 @@ async function deleteAssessment(
 
 
   await renderAssessmentList();
+
 }
 
 
@@ -3133,7 +3005,11 @@ async function loadSubmissions(
 
     box.innerHTML = `
       <div class="admin-error">
-        ${esc(error.message)}
+
+        ${esc(
+          error.message
+        )}
+
       </div>
     `;
 
@@ -3170,7 +3046,9 @@ async function loadSubmissions(
   const studentIds = [
     ...new Set(
       submissions
-        .map(item => item.student_id)
+        .map(
+          s => s.student_id
+        )
         .filter(Boolean)
     )
   ];
@@ -3179,24 +3057,31 @@ async function loadSubmissions(
   let students = [];
 
 
-  if (studentIds.length > 0) {
+  if (
+    studentIds.length > 0
+  ) {
 
-    const result =
+    const {
+      data,
+      error: studentError
+    } =
       await db
         .from("profiles")
-        .select(
-          "id,full_name,email"
-        )
+        .select(`
+          id,
+          full_name,
+          email
+        `)
         .in(
           "id",
           studentIds
         );
 
 
-    if (!result.error) {
+    if (!studentError) {
 
       students =
-        result.data || [];
+        data || [];
 
     }
 
@@ -3206,214 +3091,228 @@ async function loadSubmissions(
   const studentLookup = {};
 
 
-  students.forEach(student => {
+  students.forEach(
+    student => {
 
-    studentLookup[
-      student.id
-    ] = student;
+      studentLookup[
+        student.id
+      ] = student;
 
-  });
+    }
+  );
 
 
   box.innerHTML = `
 
     <div class="submission-list">
 
-      ${submissions.map(submission => {
+      ${submissions.map(
+        submission => {
 
-        const student =
-          studentLookup[
-            submission.student_id
-          ] || {};
+          const student =
+            studentLookup[
+              submission.student_id
+            ] || {};
 
 
-        return `
+          const studentName =
+            student.full_name ||
+            student.email ||
+            "Student";
 
-          <div class="submission-card">
 
-            <div class="submission-header">
+          return `
 
-              <div>
+            <div class="submission-card">
 
-                <strong>
+              <div class="submission-header">
+
+                <div>
+
+                  <strong>
+                    ${esc(
+                      studentName
+                    )}
+                  </strong>
+
+                  <small>
+                    ${esc(
+                      student.email || ""
+                    )}
+                  </small>
+
+                </div>
+
+
+                <span
+                  class="result-badge ${esc(
+                    submission.status ||
+                    "submitted"
+                  )}">
+
                   ${esc(
-                    student.full_name ||
-                    student.email ||
-                    "Student"
+                    submission.status ||
+                    "submitted"
                   )}
-                </strong>
 
-                <small>
-                  ${esc(
-                    student.email || ""
-                  )}
-                </small>
+                </span>
 
               </div>
 
 
-              <span
-                class="result-badge ${esc(
-                  submission.status ||
-                  "submitted"
-                )}">
+              <div class="submission-meta">
 
-                ${esc(
-                  submission.status ||
-                  "submitted"
+                <span>
+
+                  Score:
+
+                  <strong>
+
+                    ${
+                      submission.score === null ||
+                      submission.score === undefined
+                        ? "Not marked"
+                        : submission.score
+                    }
+
+                  </strong>
+
+                </span>
+
+
+                <span>
+
+                  Percentage:
+
+                  <strong>
+
+                    ${
+                      submission.percentage === null ||
+                      submission.percentage === undefined
+                        ? "Not marked"
+                        : submission.percentage + "%"
+                    }
+
+                  </strong>
+
+                </span>
+
+
+                <span>
+
+                  Submitted:
+
+                  <strong>
+
+                    ${formatDate(
+                      submission.submitted_at
+                    )}
+
+                  </strong>
+
+                </span>
+
+              </div>
+
+
+              <div class="submission-answers">
+
+                <h4>
+                  Student Answers
+                </h4>
+
+
+                ${renderAnswers(
+                  submission.answers
                 )}
 
-              </span>
-
-            </div>
-
-
-            <div class="submission-meta">
-
-              <span>
-
-                Score:
-
-                <strong>
-
-                  ${
-                    submission.score === null ||
-                    submission.score === undefined
-                      ? "Not marked"
-                      : submission.score
-                  }
-
-                </strong>
-
-              </span>
-
-
-              <span>
-
-                Percentage:
-
-                <strong>
-
-                  ${
-                    submission.percentage === null ||
-                    submission.percentage === undefined
-                      ? "Not marked"
-                      : submission.percentage + "%"
-                  }
-
-                </strong>
-
-              </span>
-
-
-              <span>
-
-                Submitted:
-
-                <strong>
-                  ${formatDate(
-                    submission.submitted_at
-                  )}
-                </strong>
-
-              </span>
-
-            </div>
-
-
-            <div class="submission-answers">
-
-              <h4>
-                Student Answers
-              </h4>
-
-              ${renderAnswers(
-                submission.answers
-              )}
-
-            </div>
-
-
-            <div class="mark-submission">
-
-              <h4>
-                Mark Result
-              </h4>
-
-
-              <div class="mark-grid">
-
-                <div>
-
-                  <label>
-                    Score
-                  </label>
-
-                  <input
-                    type="number"
-                    min="0"
-                    class="mark-score"
-                    value="${
-                      submission.score ?? ""
-                    }"
-                  >
-
-                </div>
-
-
-                <div>
-
-                  <label>
-                    Percentage
-                  </label>
-
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    step="0.01"
-                    class="mark-percentage"
-                    value="${
-                      submission.percentage ?? ""
-                    }"
-                  >
-
-                </div>
-
               </div>
 
 
-              <label>
-                Feedback
-              </label>
+              <div class="mark-submission">
+
+                <h4>
+                  Mark Result
+                </h4>
 
 
-              <textarea
-                class="mark-feedback"
-                placeholder="Enter feedback for the student..."
-              >${esc(
-                submission.feedback || ""
-              )}</textarea>
+                <div class="mark-grid">
+
+                  <div>
+
+                    <label>
+                      Score
+                    </label>
+
+                    <input
+                      type="number"
+                      min="0"
+                      class="mark-score"
+                      value="${
+                        submission.score ??
+                        ""
+                      }"
+                    >
+
+                  </div>
 
 
-              <button
-                type="button"
-                class="btn green save-result"
-                data-submission-id="${esc(
-                  submission.id
-                )}">
+                  <div>
 
-                Save Result
+                    <label>
+                      Percentage
+                    </label>
 
-              </button>
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      class="mark-percentage"
+                      value="${
+                        submission.percentage ??
+                        ""
+                      }"
+                    >
+
+                  </div>
+
+                </div>
+
+
+                <label>
+                  Feedback
+                </label>
+
+
+                <textarea
+                  class="mark-feedback"
+                  placeholder="Enter feedback for the student..."
+                >${esc(
+                  submission.feedback ||
+                  ""
+                )}</textarea>
+
+
+                <button
+                  type="button"
+                  class="btn green save-result"
+                  data-submission-id="${esc(
+                    submission.id
+                  )}">
+
+                  Save Result
+
+                </button>
+
+              </div>
 
             </div>
 
-          </div>
+          `;
 
-        `;
-
-      }).join("")}
+        }
+      ).join("")}
 
     </div>
 
@@ -3427,16 +3326,14 @@ async function loadSubmissions(
     .forEach(button => {
 
       button.onclick =
-        () => {
-
+        () =>
           saveStudentResult(
             button.dataset.submissionId,
             box
           );
 
-        };
-
     });
+
 }
 
 
@@ -3468,17 +3365,20 @@ function renderAnswers(
     <div class="answer-list">
 
       ${answers.map(
-        (answer, index) => {
+        (
+          answer,
+          index
+        ) => {
 
           const question =
-            answer?.question ||
-            answer?.question_text ||
+            answer.question ||
+            answer.question_text ||
             `Question ${index + 1}`;
 
 
           const value =
-            answer?.answer ??
-            answer?.value ??
+            answer.answer ??
+            answer.value ??
             "";
 
 
@@ -3487,11 +3387,15 @@ function renderAnswers(
             <div class="answer-item">
 
               <strong>
-                ${esc(question)}
+                ${esc(
+                  question
+                )}
               </strong>
 
               <p>
-                ${esc(value)}
+                ${esc(
+                  value
+                )}
               </p>
 
             </div>
@@ -3504,6 +3408,7 @@ function renderAnswers(
     </div>
 
   `;
+
 }
 
 
@@ -3522,11 +3427,8 @@ async function saveStudentResult(
     );
 
 
-  if (!button) return;
-
-
   const card =
-    button.closest(
+    button?.closest(
       ".submission-card"
     );
 
@@ -3536,34 +3438,30 @@ async function saveStudentResult(
 
   const score =
     Number(
-      card
-        .querySelector(
-          ".mark-score"
-        )
-        ?.value
+      card.querySelector(
+        ".mark-score"
+      )?.value
     );
 
 
   const percentage =
     Number(
-      card
-        .querySelector(
-          ".mark-percentage"
-        )
-        ?.value
+      card.querySelector(
+        ".mark-percentage"
+      )?.value
     );
 
 
   const feedback =
-    card
-      .querySelector(
-        ".mark-feedback"
-      )
-      ?.value
-      .trim() || null;
+    card.querySelector(
+      ".mark-feedback"
+    )?.value
+      ?.trim() || null;
 
 
-  if (!Number.isFinite(score)) {
+  if (
+    !Number.isFinite(score)
+  ) {
 
     show(
       "Please enter the student's score."
@@ -3593,9 +3491,10 @@ async function saveStudentResult(
   } =
     await db
       .from("assessment_submissions")
-      .select(
-        "id,assessment_id"
-      )
+      .select(`
+        id,
+        assessment_id
+      `)
       .eq(
         "id",
         submissionId
@@ -3629,9 +3528,10 @@ async function saveStudentResult(
   } =
     await db
       .from("assessments")
-      .select(
-        "id,pass_mark"
-      )
+      .select(`
+        id,
+        pass_mark
+      `)
       .eq(
         "id",
         submission.assessment_id
@@ -3649,26 +3549,22 @@ async function saveStudentResult(
   }
 
 
-  const passMark =
-    Number(
-      assessment?.pass_mark || 50
-    );
-
-
   const status =
-    percentage >= passMark
+    percentage >=
+    Number(
+      assessment?.pass_mark ||
+      50
+    )
       ? "passed"
       : "failed";
 
 
   const {
-    data: sessionData
+    data: {
+      session
+    }
   } =
     await db.auth.getSession();
-
-
-  const session =
-    sessionData?.session;
 
 
   const {
@@ -3690,7 +3586,8 @@ async function saveStudentResult(
           new Date().toISOString(),
 
         marked_by:
-          session?.user?.id || null,
+          session?.user?.id ||
+          null,
 
         updated_at:
           new Date().toISOString()
@@ -3726,6 +3623,7 @@ async function saveStudentResult(
   await loadSubmissions(
     submission.assessment_id
   );
+
 }
 
 
@@ -3910,9 +3808,7 @@ function addAssessmentStyles() {
     }
 
     .assessment-active,
-    .result-badge,
-    .payment-status,
-    .enrolment-status {
+    .result-badge {
       display: inline-block;
       padding: 5px 9px;
       border-radius: 20px;
@@ -3922,27 +3818,25 @@ function addAssessmentStyles() {
     }
 
     .assessment-active.active,
-    .result-badge.passed,
-    .payment-status.approved,
-    .enrolment-status.approved,
-    .enrolment-status.completed {
+    .result-badge.passed {
       background: #dcfce7;
       color: #166534;
     }
 
     .assessment-active.inactive,
-    .result-badge.failed,
-    .payment-status.rejected,
-    .enrolment-status.cancelled {
+    .result-badge.failed {
       background: #fee2e2;
       color: #991b1b;
     }
 
-    .result-badge.submitted,
-    .payment-status.pending,
-    .enrolment-status.pending {
+    .result-badge.submitted {
       background: #fef3c7;
       color: #92400e;
+    }
+
+    .result-badge.marked {
+      background: #dbeafe;
+      color: #1e40af;
     }
 
     .assessment-meta,
@@ -4027,18 +3921,90 @@ function addAssessmentStyles() {
       border-top: 1px solid #dbe3ea;
     }
 
-    .proof-link {
-      font-weight: 700;
-      color: #15803d;
-      text-decoration: none;
-    }
-
-    .proof-link:hover {
-      text-decoration: underline;
-    }
-
     .hidden {
       display: none !important;
+    }
+
+    .payment-status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: capitalize;
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .payment-status.approved,
+    .payment-status.paid {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .payment-status.rejected,
+    .payment-status.failed {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .enrolment-status {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: capitalize;
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .enrolment-status.approved,
+    .enrolment-status.completed {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .enrolment-status.cancelled {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .admin-table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-table {
+      width: 100%;
+      min-width: 700px;
+      border-collapse: collapse;
+    }
+
+    .admin-table th,
+    .admin-table td {
+      padding: 13px 12px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: middle;
+    }
+
+    .admin-table th {
+      color: #334155;
+      font-weight: 800;
+      background: #f8fafc;
+    }
+
+    .admin-table td {
+      color: #334155;
+    }
+
+    .admin-table select {
+      padding: 7px 9px;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      background: #ffffff;
     }
 
     @media (max-width: 650px) {
@@ -4066,78 +4032,37 @@ function addAssessmentStyles() {
   document.head.appendChild(
     style
   );
+
 }
 
 
 // ============================================================
-// BUTTONS
+// LOGOUT
 // ============================================================
 
-function setupButtons() {
-
-  const newCourse =
-    document.getElementById(
-      "new-course"
-    );
+const logout =
+  document.getElementById(
+    "logout"
+  );
 
 
-  if (newCourse) {
+if (logout) {
 
-    newCourse.onclick =
-      resetCourseForm;
+  logout.onclick =
+    async () => {
 
-  }
+      await db.auth.signOut();
 
+      window.location.href =
+        "index.html";
 
-  const cancelEdit =
-    document.getElementById(
-      "cancel-edit"
-    );
+    };
 
-
-  if (cancelEdit) {
-
-    cancelEdit.onclick =
-      resetCourseForm;
-
-  }
-
-
-  const logout =
-    document.getElementById(
-      "logout"
-    );
-
-
-  if (logout) {
-
-    logout.onclick =
-      async () => {
-
-        await db.auth.signOut();
-
-        window.location.href =
-          "index.html";
-
-      };
-
-  }
 }
 
 
 // ============================================================
-// START
+// START ADMIN DASHBOARD
 // ============================================================
 
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-
-    setupCourseForm();
-
-    setupButtons();
-
-    initAdmin();
-
-  }
-);
+init();
