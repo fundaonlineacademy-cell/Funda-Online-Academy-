@@ -718,4 +718,64 @@ footer{
   }
 }
 
-.dash-head
+.dash-head/* ==========================================================
+   FINAL PAYMENT FORM MOBILE LAYOUT
+   ========================================================== */
+
+#payment-form {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  width: 100% !important;
+}
+
+#payment-form label {
+  display: block !important;
+  width: 100% !important;
+  margin: 16px 0 7px 0 !important;
+  white-space: normal !important;
+}
+
+#payment-form input:not([type="file"]),
+#payment-form select,
+#payment-form textarea {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+#payment-form input[type="file"] {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+#payment-form small {
+  display: block !important;
+  width: 100% !important;
+  margin-top: 7px !important;
+}
+
+#payment-form .btn {
+  display: block !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-top: 20px !important;
+}
+
+@media (max-width: 600px) {
+
+  #payment-form label {
+    font-size: 16px !important;
+  }
+
+  #payment-form input,
+  #payment-form select,
+  #payment-form textarea {
+    font-size: 16px !important;
+  }
+
+}
