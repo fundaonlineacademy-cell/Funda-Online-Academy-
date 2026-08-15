@@ -1,7 +1,7 @@
 // ============================================================
 // FUNDA ONLINE ACADEMY
 // ADMIN DASHBOARD
-// Students • Courses • Enrolments • Payments
+// Students • Courses • Enrolments
 // ============================================================
 
 const { createClient } = supabase;
@@ -22,6 +22,7 @@ let editingId = null;
 // ============================================================
 
 function show(message, ok = false) {
+
   if (!msg) return;
 
   msg.textContent = message;
@@ -29,11 +30,8 @@ function show(message, ok = false) {
 }
 
 
-// ============================================================
-// SAFE HTML
-// ============================================================
-
 function esc(value) {
+
   return String(value ?? "").replace(/[&<>"']/g, m => ({
     "&": "&amp;",
     "<": "&lt;",
@@ -41,14 +39,12 @@ function esc(value) {
     '"': "&quot;",
     "'": "&#039;"
   }[m]));
+
 }
 
 
-// ============================================================
-// DATE
-// ============================================================
-
 function formatDate(date) {
+
   if (!date) return "";
 
   return new Date(date).toLocaleDateString("en-ZA", {
@@ -56,6 +52,84 @@ function formatDate(date) {
     month: "short",
     day: "numeric"
   });
+
+}
+
+
+// ============================================================
+// COURSE FORM
+// ============================================================
+
+function resetForm() {
+
+  editingId = null;
+
+  const form = document.getElementById("course-form");
+
+  if (form) {
+    form.reset();
+  }
+
+  const id = document.getElementById("course-id");
+
+  if (id) {
+    id.value = "";
+  }
+
+  const button = document.querySelector(
+    "#course-form button[type='submit']"
+  );
+
+  if (button) {
+    button.textContent = "Save Course";
+  }
+
+}
+
+
+function fill(course) {
+
+  editingId = course.id;
+
+  const id = document.getElementById("course-id");
+  const name = document.getElementById("course-name");
+  const price = document.getElementById("course-price");
+  const category = document.getElementById("course-category");
+  const duration = document.getElementById("course-duration");
+  const image = document.getElementById("course-image");
+  const description = document.getElementById("course-description");
+  const modules = document.getElementById("course-modules");
+
+  if (id) id.value = course.id;
+  if (name) name.value = course.title || "";
+  if (price) price.value = course.price || 0;
+  if (category) category.value = course.category || "";
+  if (duration) duration.value = course.duration || "";
+  if (image) image.value = course.image_url || "";
+  if (description) description.value = course.description || "";
+
+  if (modules) {
+
+    modules.value =
+      Array.isArray(course.modules)
+        ? course.modules.join("\n")
+        : "";
+
+  }
+
+  const button = document.querySelector(
+    "#course-form button[type='submit']"
+  );
+
+  if (button) {
+    button.textContent = "Update Course";
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
 }
 
 
@@ -64,10 +138,6 @@ function formatDate(date) {
 // ============================================================
 
 async function init() {
-
-  // ----------------------------------------------------------
-  // CHECK SUPABASE
-  // ----------------------------------------------------------
 
   if (
     !window.SUPABASE_URL ||
@@ -82,10 +152,6 @@ async function init() {
     return;
   }
 
-
-  // ----------------------------------------------------------
-  // CHECK SESSION
-  // ----------------------------------------------------------
 
   const {
     data: { session },
@@ -111,10 +177,6 @@ async function init() {
   }
 
 
-  // ----------------------------------------------------------
-  // SHOW ADMIN EMAIL
-  // ----------------------------------------------------------
-
   const adminEmail =
     document.getElementById("admin-email");
 
@@ -126,9 +188,9 @@ async function init() {
   }
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // CHECK ADMIN ROLE
-  // ----------------------------------------------------------
+  // ==========================================================
 
   const {
     data: profile,
@@ -144,10 +206,7 @@ async function init() {
 
     console.error(profileError);
 
-    show(
-      "Could not verify administrator account: " +
-      profileError.message
-    );
+    show(profileError.message);
 
     return;
   }
@@ -161,8 +220,7 @@ async function init() {
 
     setTimeout(() => {
 
-      window.location.href =
-        "dashboard.html";
+      window.location.href = "dashboard.html";
 
     }, 1800);
 
@@ -170,9 +228,9 @@ async function init() {
   }
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // LOAD ADMIN DATA
-  // ----------------------------------------------------------
+  // ==========================================================
 
   await Promise.all([
     loadStudents(),
@@ -194,7 +252,6 @@ async function loadStudents() {
     document.getElementById("admin-students");
 
   if (!box) return;
-
 
   box.innerHTML =
     "<p>Loading registered students...</p>";
@@ -230,15 +287,9 @@ async function loadStudents() {
 
     box.innerHTML = `
       <div class="admin-error">
-
-        <strong>
-          Could not load students.
-        </strong>
-
-        <br><br>
-
+        <strong>Could not load students.</strong>
+        <br>
         ${esc(error.message)}
-
       </div>
     `;
 
@@ -250,16 +301,11 @@ async function loadStudents() {
 
     box.innerHTML = `
       <div class="empty-state">
-
-        <strong>
-          No registered students yet.
-        </strong>
-
+        <strong>No registered students yet.</strong>
         <p>
           Students will appear here after they create
           an account.
         </p>
-
       </div>
     `;
 
@@ -272,6 +318,26 @@ async function loadStudents() {
     <div class="student-list">
 
       ${data.map(student => {
+
+        const name =
+          student.full_name ||
+          "Student";
+
+        const gender =
+          student.gender ||
+          "Not provided";
+
+        const idNumber =
+          student.id_number ||
+          "Not provided";
+
+        const email =
+          student.email ||
+          "Not provided";
+
+        const phone =
+          student.phone ||
+          "Not provided";
 
         return `
 
@@ -286,23 +352,16 @@ async function loadStudents() {
               <div>
 
                 <h3>
-                  ${esc(
-                    student.full_name ||
-                    "Student"
-                  )}
+                  ${esc(name)}
                 </h3>
 
                 <span class="student-role">
-                  ${esc(
-                    student.role ||
-                    "student"
-                  )}
+                  ${esc(student.role || "student")}
                 </span>
 
               </div>
 
             </div>
-
 
             <div class="student-details">
 
@@ -313,14 +372,10 @@ async function loadStudents() {
                 </span>
 
                 <strong>
-                  ${esc(
-                    student.gender ||
-                    "Not provided"
-                  )}
+                  ${esc(gender)}
                 </strong>
 
               </div>
-
 
               <div class="student-detail sensitive">
 
@@ -329,14 +384,10 @@ async function loadStudents() {
                 </span>
 
                 <strong>
-                  ${esc(
-                    student.id_number ||
-                    "Not provided"
-                  )}
+                  ${esc(idNumber)}
                 </strong>
 
               </div>
-
 
               <div class="student-detail">
 
@@ -345,14 +396,10 @@ async function loadStudents() {
                 </span>
 
                 <strong>
-                  ${esc(
-                    student.email ||
-                    "Not provided"
-                  )}
+                  ${esc(email)}
                 </strong>
 
               </div>
-
 
               <div class="student-detail">
 
@@ -361,14 +408,10 @@ async function loadStudents() {
                 </span>
 
                 <strong>
-                  ${esc(
-                    student.phone ||
-                    "Not provided"
-                  )}
+                  ${esc(phone)}
                 </strong>
 
               </div>
-
 
               <div class="student-detail">
 
@@ -377,9 +420,7 @@ async function loadStudents() {
                 </span>
 
                 <strong>
-                  ${formatDate(
-                    student.created_at
-                  )}
+                  ${formatDate(student.created_at)}
                 </strong>
 
               </div>
@@ -397,15 +438,7 @@ async function loadStudents() {
   `;
 
 
-  // ----------------------------------------------------------
-  // MOBILE STUDENT STYLE
-  // ----------------------------------------------------------
-
-  if (
-    !document.getElementById(
-      "student-mobile-style"
-    )
-  ) {
+  if (!document.getElementById("student-mobile-style")) {
 
     const style =
       document.createElement("style");
@@ -547,10 +580,7 @@ async function loadCourses() {
 
     console.error(error);
 
-    show(
-      "Could not load courses: " +
-      error.message
-    );
+    show(error.message);
 
     return;
   }
@@ -560,88 +590,66 @@ async function loadCourses() {
 
 
   const box =
-    document.getElementById(
-      "admin-courses"
-    );
-
+    document.getElementById("admin-courses");
 
   if (!box) return;
 
 
-  box.innerHTML =
-    courses.map(course => `
+  box.innerHTML = courses.map(course => `
 
-      <div class="admin-row">
+    <div class="admin-row">
 
-        <div>
+      <div>
 
-          <strong>
-            ${esc(course.title)}
-          </strong>
+        <strong>
+          ${esc(course.title)}
+        </strong>
 
-          <small>
-
-            ${esc(
-              course.category || ""
-            )}
-
-            · R${Number(
-              course.price || 0
-            ).toLocaleString("en-ZA")}
-
-            · ${esc(
-              course.duration || ""
-            )}
-
-          </small>
-
-        </div>
-
-
-        <div class="row-actions">
-
-          <button
-            type="button"
-            class="btn small ghost"
-            data-edit="${course.id}">
-            Edit
-          </button>
-
-
-          <button
-            type="button"
-            class="btn small danger"
-            data-delete="${course.id}">
-            Delete
-          </button>
-
-        </div>
+        <small>
+          ${esc(course.category || "")}
+          · R${Number(
+            course.price || 0
+          ).toLocaleString("en-ZA")}
+          · ${esc(course.duration || "")}
+        </small>
 
       </div>
 
-    `).join("") ||
-    "<p>No courses available.</p>";
+      <div class="row-actions">
+
+        <button
+          type="button"
+          class="btn small ghost"
+          data-edit="${course.id}">
+          Edit
+        </button>
+
+        <button
+          type="button"
+          class="btn small danger"
+          data-delete="${course.id}">
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+
+  `).join("") || "<p>No courses available.</p>";
 
 
-  // EDIT BUTTONS
-
-  box
-    .querySelectorAll("[data-edit]")
+  box.querySelectorAll("[data-edit]")
     .forEach(button => {
 
       button.onclick = () => {
 
         const course =
           courses.find(
-            c =>
-              c.id ===
-              button.dataset.edit
+            c => c.id === button.dataset.edit
           );
 
         if (course) {
-
           fill(course);
-
         }
 
       };
@@ -649,10 +657,7 @@ async function loadCourses() {
     });
 
 
-  // DELETE BUTTONS
-
-  box
-    .querySelectorAll("[data-delete]")
+  box.querySelectorAll("[data-delete]")
     .forEach(button => {
 
       button.onclick = () => {
@@ -669,203 +674,13 @@ async function loadCourses() {
 
 
 // ============================================================
-// COURSE FORM
-// ============================================================
-
-function resetForm() {
-
-  editingId = null;
-
-  const form =
-    document.getElementById(
-      "course-form"
-    );
-
-  if (form) {
-
-    form.reset();
-
-  }
-
-
-  const id =
-    document.getElementById(
-      "course-id"
-    );
-
-  if (id) {
-
-    id.value = "";
-
-  }
-
-
-  const button =
-    document.querySelector(
-      "#course-form button[type='submit']"
-    );
-
-  if (button) {
-
-    button.textContent =
-      "Save Course";
-
-  }
-
-}
-
-
-// ============================================================
-// FILL COURSE
-// ============================================================
-
-function fill(course) {
-
-  editingId =
-    course.id;
-
-
-  const id =
-    document.getElementById(
-      "course-id"
-    );
-
-  if (id) {
-
-    id.value =
-      course.id;
-
-  }
-
-
-  const name =
-    document.getElementById(
-      "course-name"
-    );
-
-  if (name) {
-
-    name.value =
-      course.title || "";
-
-  }
-
-
-  const price =
-    document.getElementById(
-      "course-price"
-    );
-
-  if (price) {
-
-    price.value =
-      course.price || 0;
-
-  }
-
-
-  const category =
-    document.getElementById(
-      "course-category"
-    );
-
-  if (category) {
-
-    category.value =
-      course.category || "";
-
-  }
-
-
-  const duration =
-    document.getElementById(
-      "course-duration"
-    );
-
-  if (duration) {
-
-    duration.value =
-      course.duration || "";
-
-  }
-
-
-  const image =
-    document.getElementById(
-      "course-image"
-    );
-
-  if (image) {
-
-    image.value =
-      course.image_url || "";
-
-  }
-
-
-  const description =
-    document.getElementById(
-      "course-description"
-    );
-
-  if (description) {
-
-    description.value =
-      course.description || "";
-
-  }
-
-
-  const modules =
-    document.getElementById(
-      "course-modules"
-    );
-
-  if (modules) {
-
-    modules.value =
-      Array.isArray(course.modules)
-        ? course.modules.join("\n")
-        : "";
-
-  }
-
-
-  const button =
-    document.querySelector(
-      "#course-form button[type='submit']"
-    );
-
-  if (button) {
-
-    button.textContent =
-      "Update Course";
-
-  }
-
-
-  window.scrollTo({
-
-    top: 0,
-
-    behavior: "smooth"
-
-  });
-
-}
-
-
-// ============================================================
 // DELETE COURSE
 // ============================================================
 
 async function deleteCourse(id) {
 
   const course =
-    courses.find(
-      c => c.id === id
-    );
-
+    courses.find(c => c.id === id);
 
   if (!course) return;
 
@@ -875,9 +690,7 @@ async function deleteCourse(id) {
       `Delete "${course.title}"?`
     )
   ) {
-
     return;
-
   }
 
 
@@ -892,10 +705,7 @@ async function deleteCourse(id) {
 
     console.error(error);
 
-    show(
-      "Could not delete course: " +
-      error.message
-    );
+    show(error.message);
 
     return;
   }
@@ -913,13 +723,11 @@ async function deleteCourse(id) {
 
 
 // ============================================================
-// SAVE / UPDATE COURSE
+// SAVE COURSE
 // ============================================================
 
 const courseForm =
-  document.getElementById(
-    "course-form"
-  );
+  document.getElementById("course-form");
 
 
 if (courseForm) {
@@ -932,9 +740,7 @@ if (courseForm) {
 
       const title =
         document
-          .getElementById(
-            "course-name"
-          )
+          .getElementById("course-name")
           .value
           .trim();
 
@@ -946,7 +752,6 @@ if (courseForm) {
         );
 
         return;
-
       }
 
 
@@ -956,49 +761,37 @@ if (courseForm) {
 
         price: Number(
           document
-            .getElementById(
-              "course-price"
-            )
+            .getElementById("course-price")
             .value
         ) || 0,
 
         category:
           document
-            .getElementById(
-              "course-category"
-            )
+            .getElementById("course-category")
             .value
             .trim(),
 
         duration:
           document
-            .getElementById(
-              "course-duration"
-            )
+            .getElementById("course-duration")
             .value
             .trim(),
 
         image_url:
           document
-            .getElementById(
-              "course-image"
-            )
+            .getElementById("course-image")
             .value
             .trim() || null,
 
         description:
           document
-            .getElementById(
-              "course-description"
-            )
+            .getElementById("course-description")
             .value
             .trim(),
 
         modules:
           document
-            .getElementById(
-              "course-modules"
-            )
+            .getElementById("course-modules")
             .value
             .split("\n")
             .map(x => x.trim())
@@ -1021,10 +814,7 @@ if (courseForm) {
           await db
             .from("courses")
             .update(payload)
-            .eq(
-              "id",
-              editingId
-            );
+            .eq("id", editingId);
 
       } else {
 
@@ -1038,27 +828,19 @@ if (courseForm) {
 
       if (result.error) {
 
-        console.error(
-          result.error
-        );
+        console.error(result.error);
 
-        show(
-          result.error.message
-        );
+        show(result.error.message);
 
         return;
-
       }
 
 
       show(
-
         editingId
           ? "Course updated successfully."
           : "Course added successfully.",
-
         true
-
       );
 
 
@@ -1076,46 +858,35 @@ if (courseForm) {
 // ============================================================
 
 const newCourse =
-  document.getElementById(
-    "new-course"
-  );
+  document.getElementById("new-course");
 
 
 if (newCourse) {
-
-  newCourse.onclick =
-    resetForm;
-
+  newCourse.onclick = resetForm;
 }
 
 
 const cancelEdit =
-  document.getElementById(
-    "cancel-edit"
-  );
+  document.getElementById("cancel-edit");
 
 
 if (cancelEdit) {
-
-  cancelEdit.onclick =
-    resetForm;
-
+  cancelEdit.onclick = resetForm;
 }
 
 
 // ============================================================
 // ENROLMENTS
 // IMPORTANT:
-// Your database column is enrollment_status
-// NOT status
+// Your database uses enrollment_status,
+// NOT status.
+// We also DO NOT join profiles directly.
 // ============================================================
 
 async function loadEnrolments() {
 
   const box =
-    document.getElementById(
-      "admin-enrolments"
-    );
+    document.getElementById("admin-enrolments");
 
 
   if (!box) return;
@@ -1126,7 +897,7 @@ async function loadEnrolments() {
 
 
   // ----------------------------------------------------------
-  // LOAD ENROLMENTS WITHOUT PROFILES RELATION
+  // LOAD ENROLMENTS
   // ----------------------------------------------------------
 
   const {
@@ -1139,7 +910,8 @@ async function loadEnrolments() {
       student_id,
       course_id,
       enrollment_status,
-      created_at
+      created_at,
+      courses(title,price)
     `)
     .order("created_at", {
       ascending: false
@@ -1154,42 +926,28 @@ async function loadEnrolments() {
     );
 
     box.innerHTML = `
-
       <div class="admin-error">
-
-        <strong>
-          Could not load enrolments.
-        </strong>
-
-        <br><br>
-
-        ${esc(
-          enrolmentError.message
-        )}
-
+        <strong>Could not load enrolments.</strong>
+        <br>
+        ${esc(enrolmentError.message)}
       </div>
-
     `;
 
     return;
   }
 
 
-  if (
-    !enrolments ||
-    enrolments.length === 0
-  ) {
+  if (!enrolments || enrolments.length === 0) {
 
     box.innerHTML =
       "<p>No enrolment requests yet.</p>";
 
     return;
-
   }
 
 
   // ----------------------------------------------------------
-  // GET STUDENT IDS
+  // GET STUDENT IDs
   // ----------------------------------------------------------
 
   const studentIds = [
@@ -1201,27 +959,56 @@ async function loadEnrolments() {
   ];
 
 
+  let students = [];
+
+
+  if (studentIds.length > 0) {
+
+    const {
+      data,
+      error
+    } = await db
+      .from("students")
+      .select(`
+        id,
+        user_id
+      `)
+      .in("id", studentIds);
+
+
+    if (error) {
+
+      console.error(
+        "Student relationship error:",
+        error
+      );
+
+    } else {
+
+      students = data || [];
+
+    }
+
+  }
+
+
   // ----------------------------------------------------------
-  // GET COURSE IDS
+  // GET PROFILE INFORMATION
   // ----------------------------------------------------------
 
-  const courseIds = [
+  const userIds = [
     ...new Set(
-      enrolments
-        .map(e => e.course_id)
+      students
+        .map(s => s.user_id)
         .filter(Boolean)
     )
   ];
 
 
-  // ----------------------------------------------------------
-  // LOAD STUDENTS
-  // ----------------------------------------------------------
-
-  let students = [];
+  let profiles = [];
 
 
-  if (studentIds.length > 0) {
+  if (userIds.length > 0) {
 
     const {
       data,
@@ -1233,23 +1020,19 @@ async function loadEnrolments() {
         full_name,
         email
       `)
-      .in(
-        "id",
-        studentIds
-      );
+      .in("id", userIds);
 
 
     if (error) {
 
       console.error(
-        "Student lookup error:",
+        "Profile loading error:",
         error
       );
 
     } else {
 
-      students =
-        data || [];
+      profiles = data || [];
 
     }
 
@@ -1257,71 +1040,34 @@ async function loadEnrolments() {
 
 
   // ----------------------------------------------------------
-  // LOAD COURSES
+  // CREATE LOOKUP
   // ----------------------------------------------------------
 
-  let courseList = [];
+  const studentLookup = {};
 
 
-  if (courseIds.length > 0) {
+  students.forEach(student => {
 
-    const {
-      data,
-      error
-    } = await db
-      .from("courses")
-      .select(`
-        id,
-        title,
-        price
-      `)
-      .in(
-        "id",
-        courseIds
+    const profile =
+      profiles.find(
+        p => p.id === student.user_id
       );
 
 
-    if (error) {
+    studentLookup[student.id] = {
 
-      console.error(
-        "Course lookup error:",
-        error
-      );
+      name:
+        profile?.full_name ||
+        profile?.email ||
+        "Student",
 
-    } else {
+      email:
+        profile?.email ||
+        ""
 
-      courseList =
-        data || [];
+    };
 
-    }
-
-  }
-
-
-  // ----------------------------------------------------------
-  // CREATE LOOKUPS
-  // ----------------------------------------------------------
-
-  const studentMap =
-    Object.fromEntries(
-      students.map(
-        student => [
-          student.id,
-          student
-        ]
-      )
-    );
-
-
-  const courseMap =
-    Object.fromEntries(
-      courseList.map(
-        course => [
-          course.id,
-          course
-        ]
-      )
-    );
+  });
 
 
   // ----------------------------------------------------------
@@ -1330,12 +1076,7 @@ async function loadEnrolments() {
 
   box.innerHTML = `
 
-    <div
-      style="
-        overflow-x:auto;
-        width:100%;
-      "
-    >
+    <div style="overflow-x:auto; width:100%;">
 
       <table>
 
@@ -1343,55 +1084,36 @@ async function loadEnrolments() {
 
           <tr>
 
-            <th>
-              Student
-            </th>
-
-            <th>
-              Email
-            </th>
-
-            <th>
-              Course
-            </th>
-
-            <th>
-              Price
-            </th>
-
-            <th>
-              Status
-            </th>
-
-            <th>
-              Date
-            </th>
-
-            <th>
-              Action
-            </th>
+            <th>Student</th>
+            <th>Course</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Date</th>
+            <th>Action</th>
 
           </tr>
 
         </thead>
-
 
         <tbody>
 
           ${enrolments.map(enrolment => {
 
             const student =
-              studentMap[
-                enrolment.student_id
-              ] || {};
+              studentLookup[enrolment.student_id] || {};
 
-            const course =
-              courseMap[
-                enrolment.course_id
-              ] || {};
+            const studentName =
+              student.name ||
+              "Student";
 
+            const courseName =
+              enrolment.courses?.title ||
+              "Course";
 
-            const currentStatus =
+            const price =
+              enrolment.courses?.price || 0;
+
+            const status =
               enrolment.enrollment_status ||
               "pending";
 
@@ -1401,122 +1123,76 @@ async function loadEnrolments() {
               <tr>
 
                 <td>
-
-                  ${esc(
-                    student.full_name ||
-                    "Student"
-                  )}
-
+                  ${esc(studentName)}
                 </td>
 
-
                 <td>
-
-                  ${esc(
-                    student.email ||
-                    ""
-                  )}
-
+                  ${esc(courseName)}
                 </td>
 
-
                 <td>
-
-                  ${esc(
-                    course.title ||
-                    "Course"
-                  )}
-
-                </td>
-
-
-                <td>
-
                   R${Number(
-                    course.price || 0
-                  ).toLocaleString(
-                    "en-ZA"
-                  )}
-
+                    price
+                  ).toLocaleString("en-ZA")}
                 </td>
-
 
                 <td>
 
-                  <strong>
-
-                    ${esc(
-                      currentStatus
-                    )}
-
-                  </strong>
+                  <span class="enrolment-status ${esc(status)}">
+                    ${esc(status)}
+                  </span>
 
                 </td>
 
-
                 <td>
-
                   ${formatDate(
                     enrolment.created_at
                   )}
-
                 </td>
-
 
                 <td>
 
                   <select
-                    data-enrollment-status="${enrolment.id}"
+                    data-status="${enrolment.id}"
                   >
 
                     <option
                       value="pending"
                       ${
-                        currentStatus ===
-                        "pending"
+                        status === "pending"
                           ? "selected"
                           : ""
-                      }
-                    >
+                      }>
                       Pending
                     </option>
-
 
                     <option
                       value="approved"
                       ${
-                        currentStatus ===
-                        "approved"
+                        status === "approved"
                           ? "selected"
                           : ""
-                      }
-                    >
+                      }>
                       Approved
                     </option>
-
 
                     <option
                       value="completed"
                       ${
-                        currentStatus ===
-                        "completed"
+                        status === "completed"
                           ? "selected"
                           : ""
-                      }
-                    >
+                      }>
                       Completed
                     </option>
-
 
                     <option
                       value="cancelled"
                       ${
-                        currentStatus ===
-                        "cancelled"
+                        status === "cancelled"
                           ? "selected"
                           : ""
-                      }
-                    >
+                      }>
                       Cancelled
                     </option>
 
@@ -1540,29 +1216,21 @@ async function loadEnrolments() {
 
 
   // ----------------------------------------------------------
-  // STATUS UPDATE
+  // STATUS UPDATES
+  // IMPORTANT: UPDATE enrollment_status
   // ----------------------------------------------------------
 
-  box
-    .querySelectorAll(
-      "[data-enrollment-status]"
-    )
+  box.querySelectorAll("[data-status]")
     .forEach(select => {
 
       select.onchange =
         async () => {
 
-          const enrollmentId =
-            select.dataset
-              .enrollmentStatus;
-
-
           const newStatus =
             select.value;
 
-
-          select.disabled =
-            true;
+          const enrolmentId =
+            select.dataset.status;
 
 
           const {
@@ -1577,35 +1245,29 @@ async function loadEnrolments() {
             })
             .eq(
               "id",
-              enrollmentId
+              enrolmentId
             );
-
-
-          select.disabled =
-            false;
 
 
           if (error) {
 
-            console.error(
-              "Status update error:",
-              error
-            );
+            console.error(error);
 
             show(
               "Could not update enrolment: " +
               error.message
             );
 
-            return;
+          } else {
+
+            show(
+              "Enrolment status updated successfully.",
+              true
+            );
+
+            await loadEnrolments();
 
           }
-
-
-          show(
-            "Enrolment status updated successfully.",
-            true
-          );
 
         };
 
@@ -1621,9 +1283,7 @@ async function loadEnrolments() {
 async function loadPayments() {
 
   const box =
-    document.getElementById(
-      "admin-payments"
-    );
+    document.getElementById("admin-payments");
 
 
   if (!box) return;
@@ -1661,235 +1321,99 @@ async function loadPayments() {
       error
     );
 
-
     box.innerHTML = `
-
       <div class="admin-error">
-
-        <strong>
-          Could not load payments.
-        </strong>
-
-        <br><br>
-
-        ${esc(
-          error.message
-        )}
-
+        <strong>Could not load payments.</strong>
+        <br>
+        ${esc(error.message)}
       </div>
-
     `;
 
     return;
-
   }
 
 
-  if (
-    !payments ||
-    payments.length === 0
-  ) {
+  if (!payments || payments.length === 0) {
 
-    box.innerHTML = `
-      <p>
-        No payment records yet.
-      </p>
-    `;
+    box.innerHTML =
+      "<p>Payment records will appear here.</p>";
 
     return;
-
   }
 
-
-  // ----------------------------------------------------------
-  // STUDENT IDS
-  // ----------------------------------------------------------
-
-  const studentIds = [
-    ...new Set(
-      payments
-        .map(p => p.student_id)
-        .filter(Boolean)
-    )
-  ];
-
-
-  let students = [];
-
-
-  if (studentIds.length > 0) {
-
-    const {
-      data,
-      error:
-        studentError
-    } = await db
-      .from("profiles")
-      .select(`
-        id,
-        full_name,
-        email
-      `)
-      .in(
-        "id",
-        studentIds
-      );
-
-
-    if (!studentError) {
-
-      students =
-        data || [];
-
-    }
-
-  }
-
-
-  const studentMap =
-    Object.fromEntries(
-      students.map(
-        student => [
-          student.id,
-          student
-        ]
-      )
-    );
-
-
-  // ----------------------------------------------------------
-  // DISPLAY PAYMENTS
-  // ----------------------------------------------------------
 
   box.innerHTML = `
 
-    <div
-      style="
-        overflow-x:auto;
-        width:100%;
-      "
-    >
+    <div style="overflow-x:auto; width:100%;">
 
       <table>
 
         <thead>
 
           <tr>
-
-            <th>
-              Student
-            </th>
-
-            <th>
-              Email
-            </th>
-
-            <th>
-              Amount
-            </th>
-
-            <th>
-              Method
-            </th>
-
-            <th>
-              Status
-            </th>
-
-            <th>
-              Date
-            </th>
-
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Status</th>
+            <th>Proof</th>
+            <th>Date</th>
           </tr>
 
         </thead>
 
-
         <tbody>
 
-          ${payments.map(payment => {
+          ${payments.map(payment => `
 
-            const student =
-              studentMap[
-                payment.student_id
-              ] || {};
+            <tr>
 
+              <td>
+                R${Number(
+                  payment.amount || 0
+                ).toLocaleString("en-ZA")}
+              </td>
 
-            return `
+              <td>
+                ${esc(
+                  payment.payment_method || ""
+                )}
+              </td>
 
-              <tr>
+              <td>
 
-                <td>
-
+                <span class="payment-status">
                   ${esc(
-                    student.full_name ||
-                    "Student"
+                    payment.status || "pending"
                   )}
+                </span>
 
-                </td>
+              </td>
 
+              <td>
 
-                <td>
+                ${
+                  payment.proof_url
+                    ? `
+                      <a
+                        href="${esc(payment.proof_url)}"
+                        target="_blank"
+                        rel="noopener">
+                        View Proof
+                      </a>
+                    `
+                    : "No proof"
+                }
 
-                  ${esc(
-                    student.email ||
-                    ""
-                  )}
+              </td>
 
-                </td>
+              <td>
+                ${formatDate(
+                  payment.created_at
+                )}
+              </td>
 
+            </tr>
 
-                <td>
-
-                  R${Number(
-                    payment.amount || 0
-                  ).toLocaleString(
-                    "en-ZA",
-                    {
-                      minimumFractionDigits: 2
-                    }
-                  )}
-
-                </td>
-
-
-                <td>
-
-                  ${esc(
-                    payment.payment_method ||
-                    ""
-                  )}
-
-                </td>
-
-
-                <td>
-
-                  <strong>
-
-                    ${esc(
-                      payment.status ||
-                      "pending"
-                    )}
-
-                  </strong>
-
-                </td>
-
-
-                <td>
-
-                  ${formatDate(
-                    payment.created_at
-                  )}
-
-                </td>
-
-              </tr>
-
-            `;
-
-          }).join("")}
+          `).join("")}
 
         </tbody>
 
@@ -1907,9 +1431,7 @@ async function loadPayments() {
 // ============================================================
 
 const logout =
-  document.getElementById(
-    "logout"
-  );
+  document.getElementById("logout");
 
 
 if (logout) {
@@ -1931,4 +1453,4 @@ if (logout) {
 // START
 // ============================================================
 
-init(); 
+init();
