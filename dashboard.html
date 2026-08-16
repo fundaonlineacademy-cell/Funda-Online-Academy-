@@ -1,84 +1,1165 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Student Dashboard | Funda Online Academy</title>
-<link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Online Learning | Funda Online Academy</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
 <style>
-html,body{overflow-x:hidden}
-.dashboard{min-height:calc(100vh - 78px)}
-.dashboard .wrap{max-width:1140px;margin:auto}
-.dash-head{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:28px}
-.dashboard-section{margin-bottom:30px}
-.dashboard section{margin-bottom:30px}
-.dashboard section h2{margin-bottom:14px}
-.dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.dashboard-grid .card{min-width:0;width:100%;margin:0}
-.funda-card-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
-.funda-status{display:inline-block;padding:7px 13px;border-radius:999px;font-weight:700;text-transform:capitalize;margin-bottom:10px;background:#fff1c7;color:#8a6500}
-.funda-status.approved,.funda-status.active,.funda-status.paid{background:#dff4dc;color:#197019}
-.funda-status.rejected,.funda-status.failed,.funda-status.cancelled{background:#fde8e8;color:#a51d1d}
-.funda-info{margin:7px 0}
-.payment-card{border:1px solid #e4ece3;border-radius:12px;padding:18px;background:#fff}
-@media(max-width:900px){.dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:700px){.dash-head{display:block}.dash-head .btn{display:inline-block;margin-top:14px}.dashboard-grid{grid-template-columns:1fr}.dashboard .wrap{width:92%;}.funda-card-actions{flex-direction:column}.funda-card-actions .btn{width:100%}}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  background:#f4f8f5;
+  color:#10251d;
+}
+
+header{
+  background:white;
+  border-bottom:1px solid #ddd;
+  padding:18px 28px;
+}
+
+.header-inner{
+  max-width:1200px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+
+.logo{
+  width:110px;
+  height:110px;
+  object-fit:contain;
+}
+
+.brand h1{
+  color:#237a22;
+  font-size:30px;
+  line-height:1.1;
+}
+
+.brand p{
+  color:#11649a;
+  font-size:20px;
+  font-weight:bold;
+  margin-top:6px;
+}
+
+.container{
+  max-width:1100px;
+  margin:35px auto;
+  padding:0 20px;
+}
+
+.top-buttons{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  margin-bottom:35px;
+}
+
+.btn{
+  display:block;
+  width:100%;
+  padding:22px;
+  border-radius:50px;
+  text-align:center;
+  text-decoration:none;
+  font-size:25px;
+  cursor:pointer;
+  border:2px solid #d8e3da;
+  background:white;
+  color:#287b27;
+}
+
+.btn.green{
+  background:#2fa51f;
+  color:white;
+  border-color:#2fa51f;
+}
+
+.card{
+  background:white;
+  border-radius:38px;
+  padding:40px;
+  margin-bottom:30px;
+  box-shadow:0 3px 15px rgba(0,0,0,.05);
+}
+
+.badge{
+  display:inline-block;
+  padding:15px 28px;
+  border-radius:40px;
+  background:#e1f3df;
+  color:#287b27;
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:25px;
+}
+
+.course-title{
+  font-size:48px;
+  line-height:1.15;
+  margin-bottom:18px;
+}
+
+.course-description{
+  font-size:22px;
+  color:#66716c;
+  line-height:1.6;
+}
+
+.price{
+  margin-top:20px;
+  font-size:23px;
+  font-weight:bold;
+}
+
+.section-title{
+  font-size:38px;
+  margin-bottom:28px;
+}
+
+.progress-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:25px;
+  font-weight:bold;
+  margin-bottom:18px;
+}
+
+.progress-bar{
+  width:100%;
+  height:28px;
+  background:#e4e8e6;
+  border-radius:30px;
+  overflow:hidden;
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:#2fa51f;
+  border-radius:30px;
+  transition:.4s;
+}
+
+.module{
+  border:1px solid #e0e5e2;
+  border-radius:25px;
+  padding:25px;
+  margin-bottom:18px;
+  background:#fbfcfb;
+}
+
+.module-number{
+  color:#2c8a29;
+  font-size:18px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.module h3{
+  font-size:25px;
+  margin-bottom:12px;
+}
+
+.module p{
+  color:#69736e;
+  font-size:18px;
+  line-height:1.6;
+}
+
+.assessment{
+  border:1px solid #dfe6e1;
+  border-radius:25px;
+  padding:25px;
+  margin-bottom:18px;
+}
+
+.assessment h3{
+  font-size:24px;
+  margin-bottom:12px;
+}
+
+.assessment p{
+  color:#69736e;
+  font-size:18px;
+  line-height:1.5;
+}
+
+.status{
+  display:inline-block;
+  margin-top:15px;
+  padding:10px 18px;
+  border-radius:30px;
+  background:#fff1bf;
+  color:#806600;
+  font-weight:bold;
+}
+
+.result{
+  margin-top:15px;
+  padding:18px;
+  border-radius:18px;
+  background:#edf8eb;
+}
+
+.loading{
+  font-size:23px;
+  color:#68736e;
+  padding:25px 0;
+}
+
+.error{
+  background:#fff0f0;
+  border:1px solid #efbcbc;
+  color:#a52222;
+  border-radius:20px;
+  padding:25px;
+  font-size:18px;
+  line-height:1.6;
+}
+
+.empty{
+  color:#68736e;
+  font-size:20px;
+  line-height:1.6;
+}
+
+@media(max-width:700px){
+
+  header{
+    padding:15px 20px;
+  }
+
+  .header-inner{
+    gap:12px;
+  }
+
+  .logo{
+    width:105px;
+    height:105px;
+  }
+
+  .brand h1{
+    font-size:24px;
+  }
+
+  .brand p{
+    font-size:17px;
+  }
+
+  .container{
+    padding:0 15px;
+    margin-top:25px;
+  }
+
+  .card{
+    padding:32px 25px;
+    border-radius:32px;
+  }
+
+  .course-title{
+    font-size:40px;
+  }
+
+  .section-title{
+    font-size:34px;
+  }
+
+  .btn{
+    font-size:22px;
+    padding:20px;
+  }
+}
 </style>
 </head>
+
 <body>
+
 <header>
-  <div class="wrap nav">
-    <a class="logo" href="index.html">
-      <img src="logo.png" alt="Funda Online Academy logo">
-      <span>Funda Online Academy Pty Ltd<small>Student Dashboard</small></span>
-    </a>
-    <div class="nav-actions">
-      <span id="user-email" class="user-email"></span>
-      <button id="logout" class="btn ghost" type="button">Logout</button>
+  <div class="header-inner">
+
+    <img
+      class="logo"
+      src="logo.png"
+      alt="Funda Online Academy"
+      onerror="this.style.display='none'"
+    >
+
+    <div class="brand">
+      <h1>Funda Online Academy Pty Ltd</h1>
+      <p>Online Learning</p>
     </div>
+
   </div>
 </header>
 
-<main class="dashboard">
-<div class="wrap">
+<main class="container">
 
-  <div class="dash-head">
-    <div>
-      <span class="badge">STUDENT AREA</span>
-      <h1>Welcome, <span id="user-name">Student</span></h1>
-      <p>Manage your courses, enrolments and payments.</p>
-    </div>
-    <a class="btn green" href="index.html#courses">Browse Courses</a>
+  <div class="top-buttons">
+
+    <a href="student-dashboard.html" class="btn">
+      ← Back to Dashboard
+    </a>
+
+    <a href="index.html#courses" class="btn green">
+      Browse Courses
+    </a>
+
   </div>
 
-  <div id="message" class="message hidden"></div>
 
-  <section class="dashboard-section" id="payments">
-    <h2>Payments</h2>
-    <div id="payment-list">
-      <div class="card"><p class="loading">Loading payment history…</p></div>
+  <!-- COURSE INFORMATION -->
+
+  <section class="card">
+
+    <div class="badge">
+      ONLINE COURSE
     </div>
+
+    <h2 id="courseTitle" class="course-title">
+      Loading course...
+    </h2>
+
+    <p id="courseDescription" class="course-description">
+      Loading course information...
+    </p>
+
+    <div id="coursePrice" class="price"></div>
+
   </section>
 
-  <section>
-    <h2>My Enrolments</h2>
-    <div id="enrolments" class="dashboard-grid">
-      <p class="loading">Loading enrolments…</p>
+
+  <!-- PROGRESS -->
+
+  <section class="card">
+
+    <div class="progress-header">
+
+      <span>Course Progress</span>
+
+      <span id="progressText">0%</span>
+
     </div>
+
+    <div class="progress-bar">
+
+      <div
+        id="progressFill"
+        class="progress-fill">
+      </div>
+
+    </div>
+
   </section>
 
-  <section>
-    <h2>Available Courses</h2>
-    <div id="available-courses" class="dashboard-grid">
-      <p class="loading">Loading courses…</p>
+
+  <!-- MODULES -->
+
+  <section class="card">
+
+    <h2 class="section-title">
+      Course Modules
+    </h2>
+
+    <div id="modules">
+
+      <div class="loading">
+        Loading modules...
+      </div>
+
     </div>
+
   </section>
 
-</div>
+
+  <!-- ASSESSMENTS -->
+
+  <section class="card">
+
+    <h2 class="section-title">
+      Assessments
+    </h2>
+
+    <div id="assessments">
+
+      <div class="loading">
+        Loading assessments...
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- RESULTS -->
+
+  <section class="card">
+
+    <h2 class="section-title">
+      Results
+    </h2>
+
+    <div id="results">
+
+      <div class="empty">
+        Your assessment results will appear here after your
+        assessments have been marked.
+      </div>
+
+    </div>
+
+  </section>
+
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js?v=20260816-1"></script>
-<script src="dashboard.js?v=20260816-1"></script>
+
+<script>
+
+const db = window.supabase.createClient(
+  window.SUPABASE_URL,
+  window.SUPABASE_ANON_KEY
+);
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function $(id){
+  return document.getElementById(id);
+}
+
+
+function showError(message){
+
+  $("courseTitle").textContent = "Unable to load course";
+
+  $("courseDescription").innerHTML =
+    '<div class="error">' +
+    message +
+    '</div>';
+
+  $("modules").innerHTML =
+    '<div class="error">' +
+    message +
+    '</div>';
+
+}
+
+
+/* =========================================================
+   GET COURSE ID
+========================================================= */
+
+function getCourseId(){
+
+  const params = new URLSearchParams(
+    window.location.search
+  );
+
+  const id = params.get("id");
+
+  if(id){
+    return id;
+  }
+
+  const saved =
+    localStorage.getItem("selected_course_id");
+
+  if(saved){
+    return saved;
+  }
+
+  return null;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+async function init(){
+
+  try{
+
+    const courseId = getCourseId();
+
+    if(!courseId){
+
+      showError(
+        "No course was selected. Please return to the dashboard and open your enrolled course again."
+      );
+
+      return;
+    }
+
+
+    /* -----------------------------------------------------
+       AUTHENTICATION
+    ----------------------------------------------------- */
+
+    const {
+      data: authData,
+      error: authError
+    } = await db.auth.getUser();
+
+
+    if(authError){
+      throw authError;
+    }
+
+
+    const user = authData.user;
+
+
+    if(!user){
+
+      window.location.href = "login.html";
+
+      return;
+    }
+
+
+    /* -----------------------------------------------------
+       COURSE
+    ----------------------------------------------------- */
+
+    const {
+      data: course,
+      error: courseError
+    } = await db
+      .from("courses")
+      .select("*")
+      .eq("id", courseId)
+      .maybeSingle();
+
+
+    if(courseError){
+      throw courseError;
+    }
+
+
+    if(!course){
+
+      showError(
+        "The selected course could not be found."
+      );
+
+      return;
+    }
+
+
+    localStorage.setItem(
+      "selected_course_id",
+      courseId
+    );
+
+
+    $("courseTitle").textContent =
+      course.title ||
+      course.name ||
+      "Online Course";
+
+
+    $("courseDescription").textContent =
+      course.description ||
+      course.summary ||
+      "Course information is available below.";
+
+
+    if(course.price !== null && course.price !== undefined){
+
+      $("coursePrice").textContent =
+        "Course Price: R" +
+        Number(course.price).toFixed(2);
+
+    }
+
+
+    /* -----------------------------------------------------
+       STUDENT
+    ----------------------------------------------------- */
+
+    const {
+      data: student,
+      error: studentError
+    } = await db
+      .from("students")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+
+    if(studentError){
+      console.warn(
+        "Student lookup:",
+        studentError.message
+      );
+    }
+
+
+    let studentId =
+      student?.id ||
+      student?.student_id ||
+      null;
+
+
+    /* -----------------------------------------------------
+       CHECK ENROLMENT
+    ----------------------------------------------------- */
+
+    if(studentId){
+
+      const {
+        data: enrolment,
+        error: enrolmentError
+      } = await db
+        .from("enrollments")
+        .select("*")
+        .eq("student_id", studentId)
+        .eq("course_id", courseId)
+        .maybeSingle();
+
+
+      if(enrolmentError){
+
+        console.warn(
+          "Enrolment lookup:",
+          enrolmentError.message
+        );
+
+      }
+
+    }
+
+
+    /* -----------------------------------------------------
+       MODULES
+    ----------------------------------------------------- */
+
+    await loadModules(
+      courseId,
+      course
+    );
+
+
+    /* -----------------------------------------------------
+       PROGRESS
+    ----------------------------------------------------- */
+
+    await loadProgress(
+      courseId,
+      studentId
+    );
+
+
+    /* -----------------------------------------------------
+       ASSESSMENTS
+    ----------------------------------------------------- */
+
+    await loadAssessments(
+      courseId,
+      studentId
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    showError(
+      "There was a problem loading this course. " +
+      "Please refresh the page. Technical message: " +
+      error.message
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   MODULES
+========================================================= */
+
+async function loadModules(courseId, course){
+
+  const box = $("modules");
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("course_modules")
+    .select("*")
+    .eq("course_id", courseId)
+    .order("module_order", {
+      ascending:true
+    });
+
+
+  if(error){
+
+    console.warn(
+      "course_modules:",
+      error.message
+    );
+
+  }
+
+
+  let modules = data || [];
+
+
+  /*
+     FALLBACK:
+     Some older courses may still have modules
+     stored inside courses.modules as JSON.
+  */
+
+  if(
+    modules.length === 0 &&
+    course.modules
+  ){
+
+    try{
+
+      if(
+        typeof course.modules === "string"
+      ){
+
+        modules =
+          JSON.parse(course.modules);
+
+      }else{
+
+        modules =
+          course.modules;
+
+      }
+
+    }catch(e){
+
+      console.warn(
+        "Could not read course.modules",
+        e
+      );
+
+    }
+
+  }
+
+
+  if(!modules || modules.length === 0){
+
+    box.innerHTML =
+      '<div class="empty">' +
+      'No modules have been added to this course yet.' +
+      '</div>';
+
+    return;
+  }
+
+
+  box.innerHTML = "";
+
+
+  modules.forEach(
+    (module,index) => {
+
+      const title =
+        module.title ||
+        module.name ||
+        "Module " + (index + 1);
+
+
+      const description =
+        module.description ||
+        module.content ||
+        module.learning_outcome ||
+        module.learning_outcomes ||
+        "Course learning material for this module.";
+
+
+      const div =
+        document.createElement("div");
+
+
+      div.className =
+        "module";
+
+
+      div.innerHTML = `
+
+        <div class="module-number">
+          MODULE ${index + 1}
+        </div>
+
+        <h3>
+          ${escapeHtml(title)}
+        </h3>
+
+        <p>
+          ${escapeHtml(description)}
+        </p>
+
+      `;
+
+
+      box.appendChild(div);
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+async function loadProgress(
+  courseId,
+  studentId
+){
+
+  if(!studentId){
+
+    setProgress(0);
+
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("course_progress")
+    .select("*")
+    .eq("student_id", studentId)
+    .eq("course_id", courseId)
+    .maybeSingle();
+
+
+  if(error){
+
+    console.warn(
+      "Progress:",
+      error.message
+    );
+
+    setProgress(0);
+
+    return;
+  }
+
+
+  if(!data){
+
+    setProgress(0);
+
+    return;
+  }
+
+
+  const progress =
+    Number(
+      data.progress_percentage ??
+      data.progress ??
+      data.percentage ??
+      0
+    );
+
+
+  setProgress(progress);
+
+}
+
+
+function setProgress(value){
+
+  let progress =
+    Number(value) || 0;
+
+
+  progress =
+    Math.max(
+      0,
+      Math.min(100, progress)
+    );
+
+
+  $("progressText").textContent =
+    progress + "%";
+
+
+  $("progressFill").style.width =
+    progress + "%";
+
+}
+
+
+/* =========================================================
+   ASSESSMENTS
+========================================================= */
+
+async function loadAssessments(
+  courseId,
+  studentId
+){
+
+  const box =
+    $("assessments");
+
+
+  const results =
+    $("results");
+
+
+  const {
+    data: assessments,
+    error
+  } = await db
+    .from("assessments")
+    .select("*")
+    .eq("course_id", courseId)
+    .order("created_at", {
+      ascending:true
+    });
+
+
+  if(error){
+
+    console.warn(
+      "Assessments:",
+      error.message
+    );
+
+    box.innerHTML =
+      '<div class="empty">' +
+      'Assessments are not available yet.' +
+      '</div>';
+
+    return;
+  }
+
+
+  if(!assessments ||
+     assessments.length === 0){
+
+    box.innerHTML =
+      '<div class="empty">' +
+      'No assessments have been added to this course yet.' +
+      '</div>';
+
+    return;
+  }
+
+
+  box.innerHTML = "";
+
+
+  let resultHtml = "";
+
+
+  for(
+    const assessment of assessments
+  ){
+
+    let studentAssessment = null;
+
+
+    if(studentId){
+
+      const response =
+        await db
+          .from("student_assessments")
+          .select("*")
+          .eq(
+            "assessment_id",
+            assessment.id
+          )
+          .eq(
+            "student_id",
+            studentId
+          )
+          .maybeSingle();
+
+
+      studentAssessment =
+        response.data || null;
+
+    }
+
+
+    const status =
+      studentAssessment?.status ||
+      "not_started";
+
+
+    const marks =
+      studentAssessment?.marks_obtained;
+
+
+    const total =
+      assessment.total_marks || 100;
+
+
+    const passMark =
+      assessment.pass_mark || 50;
+
+
+    const assessmentDiv =
+      document.createElement("div");
+
+
+    assessmentDiv.className =
+      "assessment";
+
+
+    assessmentDiv.innerHTML = `
+
+      <h3>
+        ${escapeHtml(
+          assessment.title ||
+          "Assessment"
+        )}
+      </h3>
+
+      <p>
+        ${escapeHtml(
+          assessment.description ||
+          "Assessment for this course."
+        )}
+      </p>
+
+      <p style="margin-top:12px;">
+        <strong>Total marks:</strong>
+        ${total}
+      </p>
+
+      <p>
+        <strong>Pass mark:</strong>
+        ${passMark}
+      </p>
+
+      <span class="status">
+        ${escapeHtml(status)}
+      </span>
+
+    `;
+
+
+    box.appendChild(
+      assessmentDiv
+    );
+
+
+    if(
+      marks !== null &&
+      marks !== undefined
+    ){
+
+      const passed =
+        Number(marks) >=
+        Number(passMark);
+
+
+      resultHtml += `
+
+        <div class="result">
+
+          <strong>
+            ${escapeHtml(
+              assessment.title ||
+              "Assessment"
+            )}
+          </strong>
+
+          <p style="margin-top:8px;">
+            Mark:
+            ${marks}/${total}
+          </p>
+
+          <p>
+            Result:
+            ${passed ? "Passed" : "Not Passed"}
+          </p>
+
+          ${
+            studentAssessment.feedback
+            ?
+            `<p style="margin-top:8px;">
+              Feedback:
+              ${escapeHtml(
+                studentAssessment.feedback
+              )}
+            </p>`
+            :
+            ""
+          }
+
+        </div>
+
+      `;
+
+    }
+
+  }
+
+
+  if(resultHtml){
+
+    results.innerHTML =
+      resultHtml;
+
+  }
+
+}
+
+
+/* =========================================================
+   SECURITY / HTML ESCAPE
+========================================================= */
+
+function escapeHtml(value){
+
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  init
+);
+
+</script>
+
 </body>
-</html>
+  </html>
