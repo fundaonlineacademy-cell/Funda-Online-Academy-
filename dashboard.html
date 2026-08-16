@@ -1,340 +1,630 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Student Dashboard | Funda Online Academy</title>
+<title>Student Dashboard | Funda Online Academy</title>
 
-  <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css">
 
-  <style>
-    html,
-    body {
-      width: 100%;
-      max-width: 100%;
-      overflow-x: hidden;
-    }
+<style>
 
-    body {
-      margin: 0;
-    }
+/* =========================================================
+   FUNDA STUDENT DASHBOARD - ISOLATED LAYOUT
+   ========================================================= */
 
-    .dashboard {
-      width: 100%;
-      max-width: 100%;
-    }
+*{
+  box-sizing:border-box;
+}
 
-    .dashboard .wrap {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      box-sizing: border-box;
-    }
+body{
+  margin:0;
+  background:#f6f9f7;
+  color:#10251c;
+  font-family:Arial,Helvetica,sans-serif;
+}
 
-    .dashboard-section,
-    .dashboard section {
-      width: 100%;
-      margin: 0 0 35px 0;
-    }
+.student-dashboard-page{
+  width:100%;
+  min-height:100vh;
+  display:block !important;
+  visibility:visible !important;
+  opacity:1 !important;
+}
 
-    .dash-head {
-      width: 100%;
-      margin-bottom: 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-    }
+.student-container{
+  width:100%;
+  max-width:1200px;
+  margin:0 auto;
+  padding:35px 20px 70px;
+}
 
-    #enrolments,
-    #available-courses {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 20px;
-      box-sizing: border-box;
-    }
+/* =========================================================
+   HEADER
+   ========================================================= */
 
-    #enrolments .card,
-    #available-courses .card {
-      width: 100%;
-      min-width: 0;
-      box-sizing: border-box;
-    }
+.student-header{
+  background:#ffffff;
+  border-bottom:1px solid #e1e7e3;
+}
 
-    #payment-list {
-      width: 100%;
-      box-sizing: border-box;
-    }
+.student-header-inner{
+  width:100%;
+  max-width:1200px;
+  margin:auto;
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
 
-    #payment-list .card {
-      width: 100%;
-      box-sizing: border-box;
-    }
+.student-brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+}
 
-    .funda-status {
-      display: inline-block;
-      padding: 7px 13px;
-      border-radius: 20px;
-      font-weight: 700;
-      font-size: 14px;
-      text-transform: capitalize;
-      margin-bottom: 12px;
-    }
+.student-brand img{
+  width:110px;
+  height:110px;
+  object-fit:contain;
+  flex-shrink:0;
+}
 
-    .funda-status.pending {
-      background: #fff3cd;
-      color: #856404;
-    }
+.student-brand-text{
+  min-width:0;
+}
 
-    .funda-status.approved,
-    .funda-status.active,
-    .funda-status.paid {
-      background: #d4edda;
-      color: #155724;
-    }
+.student-brand-name{
+  font-size:28px;
+  font-weight:800;
+  color:#247d1b;
+  line-height:1.05;
+}
 
-    .funda-status.rejected,
-    .funda-status.failed {
-      background: #f8d7da;
-      color: #721c24;
-    }
+.student-brand-subtitle{
+  margin-top:8px;
+  font-size:20px;
+  font-weight:700;
+  color:#17619a;
+}
 
-    .funda-info {
-      margin: 10px 0;
-      line-height: 1.5;
-    }
+/* =========================================================
+   LOGOUT
+   ========================================================= */
 
-    .funda-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 18px;
-    }
+.student-logout{
+  border:2px solid #2f8f20;
+  background:#ffffff;
+  color:#28761d;
+  border-radius:40px;
+  padding:15px 30px;
+  font-size:18px;
+  cursor:pointer;
+  white-space:nowrap;
+}
 
-    #message {
-      width: 100%;
-      box-sizing: border-box;
-      margin-bottom: 25px;
-    }
+.student-logout:hover{
+  background:#2f8f20;
+  color:#ffffff;
+}
 
-    .funda-error-box {
-      background: #fff3f3;
-      border: 1px solid #e5bcbc;
-      border-radius: 10px;
-      padding: 18px;
-      margin-bottom: 20px;
-    }
+/* =========================================================
+   WELCOME
+   ========================================================= */
 
-    .funda-loading {
-      padding: 20px;
-    }
+.student-welcome{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:30px;
+  margin-bottom:45px;
+}
 
-    @media (max-width: 900px) {
-      #enrolments,
-      #available-courses {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
+.student-badge{
+  display:inline-block;
+  background:#e5f4df;
+  color:#28761d;
+  border-radius:30px;
+  padding:10px 22px;
+  font-weight:700;
+  font-size:16px;
+}
 
-    @media (max-width: 700px) {
-      .dashboard .wrap {
-        padding: 16px;
-      }
+.student-welcome h1{
+  margin:22px 0 10px;
+  font-size:48px;
+  line-height:1.05;
+}
 
-      .dash-head {
-        display: block;
-      }
+.student-name{
+  color:#2d9720;
+}
 
-      .dash-head .btn {
-        display: inline-block;
-        margin-top: 15px;
-      }
+.student-welcome p{
+  margin:0;
+  color:#53625b;
+  font-size:20px;
+  line-height:1.5;
+}
 
-      #enrolments,
-      #available-courses {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
+.student-browse{
+  display:inline-block;
+  text-decoration:none;
+  background:#2f981f;
+  color:#ffffff;
+  border-radius:45px;
+  padding:18px 28px;
+  font-size:19px;
+  font-weight:600;
+  text-align:center;
+}
 
-      #enrolments .card,
-      #available-courses .card {
-        width: 100%;
-      }
+/* =========================================================
+   MESSAGE
+   ========================================================= */
 
-      .funda-actions {
-        flex-direction: column;
-      }
+.student-message{
+  width:100%;
+  padding:15px 18px;
+  margin-bottom:30px;
+  border-radius:12px;
+  display:none;
+}
 
-      .funda-actions .btn {
-        width: 100%;
-      }
-    }
-  </style>
+.student-message.show{
+  display:block;
+}
+
+.student-message.success{
+  background:#e5f5e1;
+  color:#226e1b;
+}
+
+.student-message.error{
+  background:#fde8e8;
+  color:#9d2020;
+}
+
+/* =========================================================
+   SECTION
+   ========================================================= */
+
+.student-section{
+  width:100%;
+  margin-bottom:45px;
+}
+
+.student-section-title{
+  font-size:34px;
+  margin:0 0 20px;
+}
+
+/* =========================================================
+   PAYMENT / ENROLMENT / COURSE GRID
+   ========================================================= */
+
+.student-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:20px;
+  width:100%;
+}
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.student-card{
+  width:100%;
+  background:#ffffff;
+  border:1px solid #e1e7e3;
+  border-radius:25px;
+  padding:28px;
+  box-shadow:0 5px 20px rgba(0,0,0,0.04);
+}
+
+.student-card h3{
+  margin:0 0 15px;
+  font-size:28px;
+}
+
+.student-card p{
+  color:#65716c;
+  font-size:18px;
+  line-height:1.55;
+}
+
+.student-info{
+  margin:12px 0;
+}
+
+.student-info strong{
+  color:#425049;
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.student-status{
+  display:inline-block;
+  padding:10px 18px;
+  border-radius:30px;
+  font-weight:700;
+  margin-bottom:18px;
+  text-transform:capitalize;
+}
+
+.student-status.pending{
+  background:#e8f6e2;
+  color:#28751f;
+}
+
+.student-status.approved,
+.student-status.active,
+.student-status.paid{
+  background:#dff4dc;
+  color:#197019;
+}
+
+.student-status.rejected,
+.student-status.failed{
+  background:#fde7e7;
+  color:#a51e1e;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.student-button{
+  display:inline-block;
+  border:0;
+  border-radius:35px;
+  background:#2f981f;
+  color:#ffffff;
+  padding:14px 24px;
+  font-size:17px;
+  cursor:pointer;
+  text-decoration:none;
+}
+
+.student-button:hover{
+  background:#237515;
+}
+
+.student-button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
+/* =========================================================
+   PAYMENT CARD
+   ========================================================= */
+
+.payment-list{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+
+.payment-card{
+  border:1px solid #e2e7e4;
+  border-radius:20px;
+  padding:24px;
+  background:#ffffff;
+}
+
+.payment-card h3{
+  margin-top:0;
+}
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.student-loading{
+  padding:25px;
+  text-align:center;
+  color:#68746e;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media(max-width:700px){
+
+  .student-header-inner{
+    padding:12px 16px;
+  }
+
+  .student-brand{
+    gap:10px;
+  }
+
+  .student-brand img{
+    width:90px;
+    height:90px;
+  }
+
+  .student-brand-name{
+    font-size:22px;
+  }
+
+  .student-brand-subtitle{
+    font-size:16px;
+  }
+
+  .student-logout{
+    padding:12px 20px;
+    font-size:16px;
+  }
+
+  .student-container{
+    padding:28px 20px 60px;
+  }
+
+  .student-welcome{
+    display:block;
+    margin-bottom:40px;
+  }
+
+  .student-welcome h1{
+    font-size:42px;
+  }
+
+  .student-welcome p{
+    font-size:18px;
+  }
+
+  .student-browse{
+    margin-top:22px;
+    width:100%;
+  }
+
+  .student-section{
+    margin-bottom:38px;
+  }
+
+  .student-section-title{
+    font-size:31px;
+  }
+
+  .student-card{
+    padding:25px;
+    border-radius:22px;
+  }
+
+  .student-card h3{
+    font-size:26px;
+  }
+
+  .student-button{
+    width:100%;
+    text-align:center;
+  }
+}
+
+</style>
 </head>
 
 <body>
 
-<header>
-  <div class="wrap nav">
+<!-- =========================================================
+     HEADER
+     ========================================================= -->
 
-    <a class="logo" href="index.html">
+<header class="student-header">
+
+  <div class="student-header-inner">
+
+    <div class="student-brand">
 
       <img
         src="logo.png"
-        alt="Funda Online Academy logo"
+        alt="Funda Online Academy"
       >
 
-      <span>
-        Funda Online Academy Pty Ltd
+      <div class="student-brand-text">
 
-        <small>
+        <div class="student-brand-name">
+          Funda Online Academy Pty Ltd
+        </div>
+
+        <div class="student-brand-subtitle">
           Student Dashboard
-        </small>
-      </span>
+        </div>
 
-    </a>
-
-    <div class="nav-actions">
-
-      <span
-        id="user-email"
-        class="user-email"
-      ></span>
-
-      <button
-        id="logout"
-        class="btn ghost"
-        type="button"
-      >
-        Logout
-      </button>
+      </div>
 
     </div>
 
+    <button
+      id="logout"
+      class="student-logout"
+      type="button"
+    >
+      Logout
+    </button>
+
   </div>
+
 </header>
 
-<main class="dashboard">
 
-  <div class="wrap">
+<!-- =========================================================
+     STUDENT DASHBOARD
+     ========================================================= -->
 
-    <div class="dash-head">
+<main
+  class="student-dashboard-page"
+  id="student-dashboard-page"
+>
+
+  <div class="student-container">
+
+
+    <!-- =====================================================
+         WELCOME
+         ===================================================== -->
+
+    <section class="student-welcome">
 
       <div>
 
-        <span class="badge">
+        <span class="student-badge">
           STUDENT AREA
         </span>
 
         <h1>
           Welcome,
-          <span id="user-name">
+          <span
+            id="user-name"
+            class="student-name"
+          >
             Student
           </span>
         </h1>
 
         <p>
-          Manage your profile, courses,
-          enrolments and payments.
+          Manage your profile,
+          payments and course enrolments.
         </p>
+
+        <p
+          id="user-email"
+          style="margin-top:8px;"
+        ></p>
 
       </div>
 
       <a
-        class="btn green"
+        class="student-browse"
         href="index.html#courses"
       >
         Browse Courses
       </a>
 
-    </div>
+    </section>
+
+
+    <!-- =====================================================
+         MESSAGE
+         ===================================================== -->
 
     <div
       id="message"
-      class="message hidden"
+      class="student-message"
     ></div>
 
-    <!-- PAYMENTS -->
 
-    <section
-      class="dashboard-section"
-      id="payments"
-    >
+    <!-- =====================================================
+         PAYMENTS
+         ===================================================== -->
 
-      <h2>
+    <section class="student-section">
+
+      <h2 class="student-section-title">
         Payments
       </h2>
 
-      <div id="payment-list">
+      <div
+        id="payment-list"
+        class="payment-list"
+      >
 
-        <div class="card">
+        <div class="student-card">
+
           <h3>
             Payment History
           </h3>
 
-          <p>
-            Loading payment information...
-          </p>
+          <div class="student-loading">
+            Loading payment history…
+          </div>
+
         </div>
 
       </div>
 
     </section>
 
-    <!-- ENROLMENTS -->
 
-    <section>
+    <!-- =====================================================
+         MY ENROLMENTS
+         ===================================================== -->
 
-      <h2>
+    <section class="student-section">
+
+      <h2 class="student-section-title">
         My Enrolments
       </h2>
 
-      <div id="enrolments">
+      <div
+        id="enrolments"
+        class="student-grid"
+      >
 
-        <div class="card funda-loading">
-          Loading enrolments...
+        <div class="student-card">
+
+          <div class="student-loading">
+            Loading enrolments…
+          </div>
+
         </div>
 
       </div>
 
     </section>
 
-    <!-- COURSES -->
 
-    <section>
+    <!-- =====================================================
+         AVAILABLE COURSES
+         ===================================================== -->
 
-      <h2>
+    <section class="student-section">
+
+      <h2 class="student-section-title">
         Available Courses
       </h2>
 
-      <div id="available-courses">
+      <div
+        id="available-courses"
+        class="student-grid"
+      >
 
-        <div class="card funda-loading">
-          Loading courses...
+        <div class="student-card">
+
+          <div class="student-loading">
+            Loading courses…
+          </div>
+
         </div>
 
       </div>
 
     </section>
+
 
   </div>
 
 </main>
 
-<script
-  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-></script>
 
-<script
-  src="supabase-config.js?v=20260816-1"
-></script>
+<!-- =========================================================
+     SUPABASE
+     ========================================================= -->
 
-<script
-  src="dashboard.js?v=20260816-1"
-></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="supabase-config.js?v=20260816"></script>
+
+<script src="dashboard.js?v=20260816-6"></script>
 
 </body>
-</html>
+      </html>
