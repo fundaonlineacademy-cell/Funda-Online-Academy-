@@ -19,26 +19,22 @@
     href="styles.css"
   >
 
+  <!-- ========================================================
+       DASHBOARD LAYOUT FIX
+       ======================================================== -->
+
   <style>
 
-    /* =========================================================
-       FUNDA ONLINE ACADEMY
-       STUDENT DASHBOARD
-       MOBILE + DESKTOP LAYOUT
-       ========================================================= */
-
-    * {
-      box-sizing: border-box;
-    }
-
+    html,
     body {
-      margin: 0;
+      width: 100%;
+      max-width: 100%;
       overflow-x: hidden;
     }
 
     .dashboard {
-      padding: 40px 0 70px;
       width: 100%;
+      max-width: 100%;
     }
 
     .dashboard .wrap {
@@ -49,385 +45,185 @@
       padding-right: 20px;
     }
 
-    /* =========================================================
-       HEADER
-       ========================================================= */
-
-    .dash-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 25px;
-      margin-bottom: 30px;
-    }
-
-    .dash-head h1 {
-      margin: 10px 0;
-    }
-
-    .dash-head p {
-      margin: 0;
-      color: #66736c;
-    }
-
-    .user-email {
-      margin-right: 12px;
-      font-size: 14px;
-      color: #555;
-    }
-
-    /* =========================================================
-       SECTIONS
-       ========================================================= */
+    /* ======================================================
+       DASHBOARD SECTIONS
+       ====================================================== */
 
     .dashboard-section,
-    .dashboard > .wrap > section {
+    .dashboard section {
       width: 100%;
-      margin-top: 35px;
+      max-width: 100%;
+      margin-bottom: 45px;
     }
 
-    .dashboard-section h2,
-    .dashboard > .wrap > section h2 {
-      margin-bottom: 20px;
-    }
-
-    /* =========================================================
+    /* ======================================================
        IMPORTANT:
-       FORCE THE COURSE / ENROLMENT GRID TO USE FULL WIDTH
-       ========================================================= */
+       ENROLMENTS AND COURSES MUST USE FULL WIDTH
+       ====================================================== */
 
-    .grid3 {
-      width: 100% !important;
-      max-width: 100% !important;
-
-      display: grid !important;
-
-      grid-template-columns:
-        repeat(3, minmax(0, 1fr)) !important;
-
-      gap: 24px !important;
-
-      align-items: stretch !important;
-    }
-
-    .grid3 > * {
-      width: 100% !important;
-      max-width: none !important;
-      min-width: 0 !important;
-    }
-
-    /* =========================================================
-       CARDS
-       ========================================================= */
-
-    .card {
-      width: 100%;
-      max-width: none;
-      min-width: 0;
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
-
-    .course-card {
-      width: 100%;
-      height: 100%;
-    }
-
-    /* =========================================================
-       PROFILE
-       ========================================================= */
-
-    .student-info-card {
-      width: 100%;
-      margin-bottom: 30px;
-    }
-
-    .student-info-grid {
-      width: 100%;
+    #enrolments.grid3,
+    #available-courses.grid3 {
 
       display: grid;
 
       grid-template-columns:
-        repeat(
-          auto-fit,
-          minmax(180px, 1fr)
-        );
+        minmax(0, 1fr);
 
-      gap: 15px;
-      margin-top: 15px;
+      width: 100%;
+      max-width: 100%;
+
+      gap: 20px;
+
+      margin: 0;
+      padding: 0;
+
     }
 
-    .student-info-item {
-      padding: 14px;
-      background: #f7f9f8;
-      border-radius: 10px;
+    /* ======================================================
+       CARDS
+       ====================================================== */
+
+    #enrolments .card,
+    #available-courses .card {
+
+      width: 100%;
+      max-width: 100%;
+
       min-width: 0;
+
+      margin: 0;
+
+      box-sizing: border-box;
+
     }
 
-    .student-info-item small {
-      display: block;
-      color: #68756e;
-      margin-bottom: 5px;
-    }
+    /* ======================================================
+       PAYMENT AREA
+       ====================================================== */
 
-    .student-info-item strong {
-      display: block;
-      overflow-wrap: anywhere;
-    }
-
-    /* =========================================================
-       COURSE INFORMATION
-       ========================================================= */
-
-    .course-description {
-      line-height: 1.6;
-    }
-
-    .course-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 12px 0;
-    }
-
-    .course-meta span {
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: #f0f3f1;
-      font-size: 13px;
-    }
-
-    .course-price {
-      font-size: 20px;
-      font-weight: 800;
-      margin: 15px 0;
-    }
-
-    .course-image {
+    #payment-list {
       width: 100%;
-      height: 190px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin-bottom: 15px;
+      max-width: 100%;
     }
 
-    .course-image-placeholder {
+    #payment-list .card {
       width: 100%;
-      height: 150px;
-      border-radius: 12px;
-      margin-bottom: 15px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: #eef5f0;
-      color: #4f6257;
-      font-weight: 700;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
-    /* =========================================================
-       STATUS
-       ========================================================= */
+    /* ======================================================
+       TABLES ON SMALL SCREENS
+       ====================================================== */
 
-    .status-badge {
-      display: inline-block;
-
-      padding: 7px 14px;
-
-      border-radius: 999px;
-
-      font-size: 13px;
-      font-weight: 700;
-
-      text-transform: capitalize;
-    }
-
-    .status-pending {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    .status-approved,
-    .status-active,
-    .status-paid,
-    .status-completed {
-      background: #dff5e7;
-      color: #176b3a;
-    }
-
-    .status-rejected,
-    .status-cancelled,
-    .status-failed {
-      background: #fde2e2;
-      color: #a12626;
-    }
-
-    /* =========================================================
-       PAYMENT TABLE
-       ========================================================= */
-
-    .payment-table-wrap {
+    #payment-list table {
       width: 100%;
-      overflow-x: auto;
+      min-width: 600px;
     }
 
-    .payment-table {
-      width: 100%;
-      min-width: 650px;
-      border-collapse: collapse;
-    }
-
-    .payment-table th,
-    .payment-table td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #e8ece9;
-    }
-
-    .payment-table th {
-      font-weight: 700;
-    }
-
-    /* =========================================================
-       MESSAGES
-       ========================================================= */
-
-    .message {
-      width: 100%;
-      padding: 14px 18px;
-      border-radius: 10px;
-      margin: 20px 0;
-    }
-
-    .message.hidden {
-      display: none;
-    }
-
-    .message.success {
-      background: #e5f7eb;
-      color: #176b3a;
-    }
-
-    .message.error {
-      background: #fde8e8;
-      color: #a12626;
-    }
-
-    .loading {
-      color: #66736c;
-    }
-
-    /* =========================================================
-       ACTIONS
-       ========================================================= */
-
-    .action-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 15px;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    /* =========================================================
-       EMPTY CARD
-       ========================================================= */
-
-    .empty-card {
-      width: 100%;
-      padding: 25px;
-      text-align: center;
-    }
-
-    /* =========================================================
+    /* ======================================================
        MOBILE
-       ========================================================= */
+       ====================================================== */
 
-    @media (max-width: 800px) {
-
-      .dashboard {
-        padding-top: 25px;
-      }
+    @media (max-width: 700px) {
 
       .dashboard .wrap {
+
         width: 100%;
+
         padding-left: 16px;
         padding-right: 16px;
+
+        box-sizing: border-box;
+
       }
 
-      .dash-head {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      /*
-        THIS IS THE IMPORTANT FIX.
-
-        On phones every card gets the entire width.
-      */
-
-      .grid3 {
-        width: 100% !important;
+      #enrolments.grid3,
+      #available-courses.grid3 {
 
         grid-template-columns:
-          minmax(0, 1fr) !important;
+          minmax(0, 1fr);
 
-        gap: 18px !important;
+        width: 100%;
+
       }
 
-      .grid3 > * {
-        width: 100% !important;
-        max-width: 100% !important;
-      }
+      #enrolments .card,
+      #available-courses .card {
 
-      .card {
-        width: 100% !important;
-        max-width: 100% !important;
-      }
+        width: 100%;
 
-      .student-info-grid {
-        grid-template-columns:
-          1fr;
-      }
+        min-width: 0;
 
-    }
+        box-sizing: border-box;
 
-    /* =========================================================
-       SMALL PHONES
-       ========================================================= */
-
-    @media (max-width: 480px) {
-
-      .dashboard .wrap {
-        padding-left: 14px;
-        padding-right: 14px;
       }
 
       .dashboard-section,
-      .dashboard > .wrap > section {
-        margin-top: 28px;
+      .dashboard section {
+
+        width: 100%;
+
       }
 
-      .grid3 {
-        width: 100% !important;
-        grid-template-columns: 1fr !important;
+      .dash-head {
+
+        width: 100%;
+
       }
 
-      .grid3 > .card {
-        width: 100% !important;
-        min-width: 0 !important;
+    }
+
+    /* ======================================================
+       TABLET / DESKTOP
+       ====================================================== */
+
+    @media (min-width: 701px) {
+
+      #enrolments.grid3,
+      #available-courses.grid3 {
+
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+
       }
 
-      .user-email {
-        max-width: 160px;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    }
+
+    @media (min-width: 1000px) {
+
+      #enrolments.grid3,
+      #available-courses.grid3 {
+
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
+
       }
+
+    }
+
+    /* ======================================================
+       BUTTONS
+       ====================================================== */
+
+    .study-btn,
+    .enrol-btn {
+
+      max-width: 100%;
+
+    }
+
+    /* ======================================================
+       MESSAGE
+       ====================================================== */
+
+    #message {
+
+      width: 100%;
+
+      box-sizing: border-box;
+
+      margin-bottom: 25px;
 
     }
 
@@ -439,9 +235,9 @@
 <body>
 
 
-<!-- =========================================================
+<!-- ========================================================
      HEADER
-     ========================================================= -->
+     ======================================================== -->
 
 <header>
 
@@ -494,18 +290,18 @@
 
 
 
-<!-- =========================================================
+<!-- ========================================================
      MAIN DASHBOARD
-     ========================================================= -->
+     ======================================================== -->
 
 <main class="dashboard">
 
   <div class="wrap">
 
 
-    <!-- =======================================================
+    <!-- ====================================================
          WELCOME
-         ======================================================= -->
+         ==================================================== -->
 
     <div class="dash-head">
 
@@ -519,6 +315,7 @@
         <h1>
 
           Welcome,
+
           <span id="user-name">
             Student
           </span>
@@ -527,8 +324,8 @@
 
 
         <p>
-          Manage your profile, enrolments,
-          courses and payments.
+          Manage your profile and
+          course enrolments.
         </p>
 
       </div>
@@ -545,9 +342,9 @@
 
 
 
-    <!-- =======================================================
+    <!-- ====================================================
          MESSAGE
-         ======================================================= -->
+         ==================================================== -->
 
     <div
       id="message"
@@ -556,38 +353,9 @@
 
 
 
-    <!-- =======================================================
-         PROFILE
-         ======================================================= -->
-
-    <section
-      class="dashboard-section"
-      id="student-profile"
-    >
-
-      <h2>
-        My Profile
-      </h2>
-
-
-      <div
-        id="student-profile-content"
-        class="card student-info-card"
-      >
-
-        <p class="loading">
-          Loading profile…
-        </p>
-
-      </div>
-
-    </section>
-
-
-
-    <!-- =======================================================
+    <!-- ====================================================
          PAYMENTS
-         ======================================================= -->
+         ==================================================== -->
 
     <section
       class="dashboard-section"
@@ -608,8 +376,10 @@
           </h3>
 
 
-          <p class="loading">
-            Loading payments…
+          <p>
+            Payment information will appear
+            here after your course enrolment
+            has been processed.
           </p>
 
         </div>
@@ -620,14 +390,11 @@
 
 
 
-    <!-- =======================================================
+    <!-- ====================================================
          MY ENROLMENTS
-         ======================================================= -->
+         ==================================================== -->
 
-    <section
-      class="dashboard-section"
-      id="my-enrolments"
-    >
+    <section>
 
       <h2>
         My Enrolments
@@ -649,14 +416,11 @@
 
 
 
-    <!-- =======================================================
+    <!-- ====================================================
          AVAILABLE COURSES
-         ======================================================= -->
+         ==================================================== -->
 
-    <section
-      class="dashboard-section"
-      id="available-courses-section"
-    >
+    <section>
 
       <h2>
         Available Courses
@@ -683,9 +447,9 @@
 
 
 
-<!-- =========================================================
+<!-- ========================================================
      SUPABASE
-     ========================================================= -->
+     ======================================================== -->
 
 <script
   src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
@@ -693,30 +457,30 @@
 
 
 
-<!-- =========================================================
+<!-- ========================================================
      SUPABASE CONFIG
-     ========================================================= -->
+     ======================================================== -->
 
-<script src="supabase-config.js?v=20260816-2"></script>
-
-
-
-<!-- =========================================================
-     DASHBOARD JAVASCRIPT
-     ========================================================= -->
-
-<script src="dashboard.js?v=20260816-7"></script>
+<script
+  src="supabase-config.js?v=20260816"
+></script>
 
 
 
-<!-- =========================================================
-     TEST
-     ========================================================= -->
+<!-- ========================================================
+     STUDENT DASHBOARD
+     ======================================================== -->
+
+<script
+  src="dashboard.js?v=20260816-5"
+></script>
+
+
 
 <script>
 
   console.log(
-    "FUNDA STUDENT DASHBOARD LOADED - FULL WIDTH VERSION"
+    "FUNDA STUDENT DASHBOARD LOADED"
   );
 
 </script>
@@ -724,4 +488,4 @@
 
 </body>
 
-</html> 
+  </html>
