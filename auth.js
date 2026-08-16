@@ -1,7 +1,7 @@
 // ==========================================
 // FUNDA ONLINE ACADEMY
 // LOGIN • REGISTRATION • PASSWORD RESET
-// SELECTED COURSE ENROLMENT
+// STUDENT / ADMIN LOGIN ROUTING
 // ==========================================
 
 const db = supabase.createClient(
@@ -23,23 +23,15 @@ const messageBox = document.getElementById("message");
 // REMEMBER SELECTED COURSE
 // ==========================================
 
-const authParams =
-  new URLSearchParams(
-    window.location.search
-  );
-
-
-// Accept both:
-// auth.html?course=...
-// auth.html?enrol=...
+const authParams = new URLSearchParams(
+  window.location.search
+);
 
 const courseFromUrl =
   authParams.get("course") ||
   authParams.get("enrol");
 
-
 if (courseFromUrl) {
-
   localStorage.setItem(
     "funda_pending_course",
     courseFromUrl
@@ -48,7 +40,7 @@ if (courseFromUrl) {
 
 
 // ==========================================
-// GET SELECTED COURSE
+// GET PENDING COURSE
 // ==========================================
 
 function getPendingCourse() {
@@ -56,18 +48,17 @@ function getPendingCourse() {
   return localStorage.getItem(
     "funda_pending_course"
   );
+
 }
 
 
 // ==========================================
-// GET AFTER-LOGIN DESTINATION
+// STUDENT DESTINATION
 // ==========================================
 
 function getStudentDestination() {
 
-  const course =
-    getPendingCourse();
-
+  const course = getPendingCourse();
 
   if (course) {
 
@@ -78,8 +69,8 @@ function getStudentDestination() {
 
   }
 
-
   return "dashboard.html";
+
 }
 
 
@@ -94,33 +85,22 @@ function showMessage(
 
   if (!messageBox) return;
 
+  messageBox.textContent = message;
 
-  messageBox.textContent =
-    message;
-
-
-  messageBox.classList.remove(
-    "hidden"
-  );
-
+  messageBox.classList.remove("hidden");
 
   if (success) {
 
-    messageBox.style.background =
-      "#e8f5e9";
-
-    messageBox.style.color =
-      "#166534";
+    messageBox.style.background = "#e8f5e9";
+    messageBox.style.color = "#166534";
 
   } else {
 
-    messageBox.style.background =
-      "#fef2f2";
-
-    messageBox.style.color =
-      "#991b1b";
+    messageBox.style.background = "#fef2f2";
+    messageBox.style.color = "#991b1b";
 
   }
+
 }
 
 
@@ -128,42 +108,29 @@ function clearMessage() {
 
   if (!messageBox) return;
 
+  messageBox.textContent = "";
 
-  messageBox.textContent =
-    "";
+  messageBox.classList.add("hidden");
 
-
-  messageBox.classList.add(
-    "hidden"
-  );
 }
 
 
 // ==========================================
-// SWITCH LOGIN / REGISTRATION
+// LOGIN / SIGNUP TABS
 // ==========================================
 
 function showLogin() {
 
   clearMessage();
 
-
   if (signupForm) {
-
-    signupForm.classList.add(
-      "hidden"
-    );
-
+    signupForm.classList.add("hidden");
   }
-
 
   if (loginForm) {
-
-    loginForm.classList.remove(
-      "hidden"
-    );
-
+    loginForm.classList.remove("hidden");
   }
+
 }
 
 
@@ -171,23 +138,14 @@ function showSignup() {
 
   clearMessage();
 
-
   if (loginForm) {
-
-    loginForm.classList.add(
-      "hidden"
-    );
-
+    loginForm.classList.add("hidden");
   }
-
 
   if (signupForm) {
-
-    signupForm.classList.remove(
-      "hidden"
-    );
-
+    signupForm.classList.remove("hidden");
   }
+
 }
 
 
@@ -224,45 +182,82 @@ if (signupTab) {
 
 
 // ==========================================
+// GET USER ROLE
+// ==========================================
+
+async function getUserRole(userId) {
+
+  if (!userId) {
+    return null;
+  }
+
+  const {
+    data,
+    error
+  } = await db
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (error) {
+
+    console.error(
+      "Role lookup error:",
+      error
+    );
+
+    return null;
+
+  }
+
+  if (!data) {
+
+    return null;
+
+  }
+
+  return data.role;
+
+}
+
+
+// ==========================================
 // SAVE / SYNC STUDENT PROFILE
 // ==========================================
 
-async function syncStudentProfile(
-  user
-) {
+async function syncStudentProfile(user) {
 
   if (!user) return false;
 
-
   const metadata =
     user.user_metadata || {};
-
 
   const fullName =
     metadata.full_name ||
     metadata.name ||
     "";
 
-
   const gender =
     metadata.gender ||
     "";
-
 
   const idNumber =
     metadata.id_number ||
     "";
 
-
   const phone =
     metadata.phone ||
     "";
-
 
   const email =
     user.email ||
     "";
 
+
+  // ----------------------------------------
+  // CHECK IF PROFILE EXISTS
+  // ----------------------------------------
 
   const {
     data: existingProfile,
@@ -282,23 +277,25 @@ async function syncStudentProfile(
     );
 
     return false;
+
   }
 
 
   // ----------------------------------------
-  // UPDATE EXISTING PROFILE
+  // EXISTING PROFILE
   // ----------------------------------------
 
   if (existingProfile) {
 
-    // Never change admin to student
+    // IMPORTANT:
+    // NEVER modify an administrator's profile.
 
     if (
-      existingProfile.role ===
-      "admin"
+      existingProfile.role === "admin"
     ) {
 
       return true;
+
     }
 
 
@@ -308,20 +305,11 @@ async function syncStudentProfile(
       .from("profiles")
       .update({
 
-        full_name:
-          fullName,
-
-        email:
-          email,
-
-        gender:
-          gender,
-
-        id_number:
-          idNumber,
-
-        phone:
-          phone
+        full_name: fullName,
+        email: email,
+        gender: gender,
+        id_number: idNumber,
+        phone: phone
 
       })
       .eq(
@@ -333,20 +321,21 @@ async function syncStudentProfile(
     if (error) {
 
       console.error(
-        "Profile update error:",
+        "Student profile update error:",
         error
       );
 
       return false;
+
     }
 
-
     return true;
+
   }
 
 
   // ----------------------------------------
-  // CREATE NEW STUDENT PROFILE
+  // CREATE STUDENT PROFILE
   // ----------------------------------------
 
   const {
@@ -355,26 +344,13 @@ async function syncStudentProfile(
     .from("profiles")
     .insert({
 
-      id:
-        user.id,
-
-      full_name:
-        fullName,
-
-      email:
-        email,
-
-      gender:
-        gender,
-
-      id_number:
-        idNumber,
-
-      phone:
-        phone,
-
-      role:
-        "student"
+      id: user.id,
+      full_name: fullName,
+      email: email,
+      gender: gender,
+      id_number: idNumber,
+      phone: phone,
+      role: "student"
 
     });
 
@@ -382,15 +358,16 @@ async function syncStudentProfile(
   if (error) {
 
     console.error(
-      "Profile creation error:",
+      "Student profile creation error:",
       error
     );
 
     return false;
+
   }
 
-
   return true;
+
 }
 
 
@@ -398,42 +375,38 @@ async function syncStudentProfile(
 // SAVE / SYNC STUDENT RECORD
 // ==========================================
 
-async function syncStudentRecord(
-  user
-) {
+async function syncStudentRecord(user) {
 
   if (!user) return false;
 
-
   const metadata =
     user.user_metadata || {};
-
 
   const fullName =
     metadata.full_name ||
     metadata.name ||
     "";
 
-
   const gender =
     metadata.gender ||
     "";
-
 
   const idNumber =
     metadata.id_number ||
     "";
 
-
   const phone =
     metadata.phone ||
     "";
-
 
   const email =
     user.email ||
     "";
 
+
+  // ----------------------------------------
+  // CHECK EXISTING STUDENT
+  // ----------------------------------------
 
   const {
     data: existingStudent,
@@ -456,6 +429,7 @@ async function syncStudentRecord(
     );
 
     return false;
+
   }
 
 
@@ -501,15 +475,16 @@ async function syncStudentRecord(
       );
 
       return false;
+
     }
 
-
     return true;
+
   }
 
 
   // ----------------------------------------
-  // CREATE NEW STUDENT
+  // CREATE STUDENT
   // ----------------------------------------
 
   const {
@@ -547,34 +522,55 @@ async function syncStudentRecord(
     );
 
     return false;
+
   }
 
-
   return true;
+
 }
 
 
 // ==========================================
-// SYNC BOTH STUDENT TABLES
+// SYNC STUDENT ACCOUNT ONLY
 // ==========================================
 
-async function syncStudentAccount(
-  user
-) {
+async function syncStudentAccount(user) {
 
   if (!user) return false;
 
 
-  const profileSaved =
-    await syncStudentProfile(
-      user
+  // ----------------------------------------
+  // FIRST CHECK ROLE
+  // ----------------------------------------
+
+  const role =
+    await getUserRole(user.id);
+
+
+  // ----------------------------------------
+  // ADMIN
+  // ----------------------------------------
+
+  if (role === "admin") {
+
+    console.log(
+      "Administrator detected. Student sync skipped."
     );
 
+    return true;
+
+  }
+
+
+  // ----------------------------------------
+  // STUDENT
+  // ----------------------------------------
+
+  const profileSaved =
+    await syncStudentProfile(user);
 
   const studentSaved =
-    await syncStudentRecord(
-      user
-    );
+    await syncStudentRecord(user);
 
 
   if (!profileSaved) {
@@ -599,6 +595,119 @@ async function syncStudentAccount(
     profileSaved &&
     studentSaved
   );
+
+}
+
+
+// ==========================================
+// ROUTE USER AFTER LOGIN
+// ==========================================
+
+async function routeUser(user) {
+
+  if (!user) {
+
+    console.error(
+      "No authenticated user found."
+    );
+
+    return;
+
+  }
+
+
+  // ----------------------------------------
+  // GET ROLE FIRST
+  // ----------------------------------------
+
+  const role =
+    await getUserRole(user.id);
+
+
+  console.log(
+    "Logged-in user:",
+    user.email
+  );
+
+  console.log(
+    "User role:",
+    role
+  );
+
+
+  // ----------------------------------------
+  // ADMIN
+  // ----------------------------------------
+
+  if (role === "admin") {
+
+    showMessage(
+      "Administrator login successful. Opening admin dashboard...",
+      true
+    );
+
+
+    setTimeout(
+      function() {
+
+        window.location.href =
+          "admin.html";
+
+      },
+      300
+    );
+
+
+    return;
+
+  }
+
+
+  // ----------------------------------------
+  // STUDENT
+  // ----------------------------------------
+
+  if (role === "student") {
+
+    await syncStudentAccount(user);
+
+
+    showMessage(
+      "Login successful. Opening student portal...",
+      true
+    );
+
+
+    setTimeout(
+      function() {
+
+        window.location.href =
+          getStudentDestination();
+
+      },
+      300
+    );
+
+
+    return;
+
+  }
+
+
+  // ----------------------------------------
+  // PROFILE DOES NOT EXIST
+  // ----------------------------------------
+
+  console.error(
+    "No valid role found for user:",
+    user.id
+  );
+
+
+  showMessage(
+    "Your account exists, but your account profile could not be found. Please contact Funda Online Academy."
+  );
+
 }
 
 
@@ -622,15 +731,18 @@ async function checkExistingSession() {
     );
 
     return;
+
   }
 
 
   if (
+    !data ||
     !data.session ||
     !data.session.user
   ) {
 
     return;
+
   }
 
 
@@ -638,58 +750,10 @@ async function checkExistingSession() {
     data.session.user;
 
 
-  await syncStudentAccount(
-    user
-  );
+  // IMPORTANT:
+  // Route by role FIRST.
+  await routeUser(user);
 
-
-  const {
-    data: profile,
-    error: profileError
-  } = await db
-    .from("profiles")
-    .select("role")
-    .eq(
-      "id",
-      user.id
-    )
-    .maybeSingle();
-
-
-  if (profileError) {
-
-    console.error(
-      "Profile error:",
-      profileError
-    );
-
-    return;
-  }
-
-
-  // ----------------------------------------
-  // ADMIN
-  // ----------------------------------------
-
-  if (
-    profile &&
-    profile.role ===
-    "admin"
-  ) {
-
-    window.location.href =
-      "admin.html";
-
-    return;
-  }
-
-
-  // ----------------------------------------
-  // STUDENT
-  // ----------------------------------------
-
-  window.location.href =
-    getStudentDestination();
 }
 
 
@@ -723,6 +787,17 @@ if (loginForm) {
         );
 
 
+      if (!emailInput || !passwordInput) {
+
+        showMessage(
+          "Login form could not be loaded correctly."
+        );
+
+        return;
+
+      }
+
+
       const email =
         emailInput.value
           .trim()
@@ -743,6 +818,7 @@ if (loginForm) {
         );
 
         return;
+
       }
 
 
@@ -751,6 +827,10 @@ if (loginForm) {
         true
       );
 
+
+      // ----------------------------------------
+      // SUPABASE LOGIN
+      // ----------------------------------------
 
       const {
         data,
@@ -780,6 +860,7 @@ if (loginForm) {
         );
 
         return;
+
       }
 
 
@@ -793,70 +874,18 @@ if (loginForm) {
         );
 
         return;
+
       }
 
 
-      await syncStudentAccount(
+      // ----------------------------------------
+      // IMPORTANT:
+      // CHECK ADMIN/STUDENT ROLE BEFORE
+      // TOUCHING STUDENT TABLES.
+      // ----------------------------------------
+
+      await routeUser(
         data.user
-      );
-
-
-      const {
-        data: profile,
-        error: profileError
-      } = await db
-        .from("profiles")
-        .select("role")
-        .eq(
-          "id",
-          data.user.id
-        )
-        .maybeSingle();
-
-
-      if (profileError) {
-
-        console.error(
-          "Profile lookup error:",
-          profileError
-        );
-
-
-        showMessage(
-          "Login worked, but we could not load your account profile."
-        );
-
-        return;
-      }
-
-
-      showMessage(
-        "Login successful. Opening your portal...",
-        true
-      );
-
-
-      setTimeout(
-        function() {
-
-          if (
-            profile &&
-            profile.role ===
-            "admin"
-          ) {
-
-            window.location.href =
-              "admin.html";
-
-          } else {
-
-            window.location.href =
-              getStudentDestination();
-
-          }
-
-        },
-        500
       );
 
     }
@@ -880,66 +909,83 @@ if (signupForm) {
       clearMessage();
 
 
-      const name =
-        document
-          .getElementById(
-            "signup-name"
-          )
-          .value
-          .trim();
+      const nameElement =
+        document.getElementById(
+          "signup-name"
+        );
 
+      const genderElement =
+        document.getElementById(
+          "signup-gender"
+        );
+
+      const idElement =
+        document.getElementById(
+          "signup-id-number"
+        );
+
+      const phoneElement =
+        document.getElementById(
+          "signup-phone"
+        );
+
+      const emailElement =
+        document.getElementById(
+          "signup-email"
+        );
+
+      const passwordElement =
+        document.getElementById(
+          "signup-password"
+        );
+
+      const confirmPasswordElement =
+        document.getElementById(
+          "signup-confirm-password"
+        );
+
+
+      if (
+        !nameElement ||
+        !genderElement ||
+        !idElement ||
+        !phoneElement ||
+        !emailElement ||
+        !passwordElement ||
+        !confirmPasswordElement
+      ) {
+
+        showMessage(
+          "Registration form is missing one or more fields."
+        );
+
+        return;
+
+      }
+
+
+      const name =
+        nameElement.value.trim();
 
       const gender =
-        document
-          .getElementById(
-            "signup-gender"
-          )
-          .value
-          .trim();
-
+        genderElement.value.trim();
 
       const idNumber =
-        document
-          .getElementById(
-            "signup-id-number"
-          )
-          .value
-          .trim();
-
+        idElement.value.trim();
 
       const phone =
-        document
-          .getElementById(
-            "signup-phone"
-          )
-          .value
-          .trim();
-
+        phoneElement.value.trim();
 
       const email =
-        document
-          .getElementById(
-            "signup-email"
-          )
-          .value
+        emailElement.value
           .trim()
           .toLowerCase();
 
-
       const password =
-        document
-          .getElementById(
-            "signup-password"
-          )
-          .value;
-
+        passwordElement.value;
 
       const confirmPassword =
-        document
-          .getElementById(
-            "signup-confirm-password"
-          )
-          .value;
+        confirmPasswordElement.value;
 
 
       // ----------------------------------------
@@ -961,6 +1007,7 @@ if (signupForm) {
         );
 
         return;
+
       }
 
 
@@ -975,6 +1022,7 @@ if (signupForm) {
         );
 
         return;
+
       }
 
 
@@ -987,6 +1035,7 @@ if (signupForm) {
         );
 
         return;
+
       }
 
 
@@ -1000,11 +1049,12 @@ if (signupForm) {
         );
 
         return;
+
       }
 
 
       // ----------------------------------------
-      // CREATE ACCOUNT
+      // CREATE AUTH ACCOUNT
       // ----------------------------------------
 
       showMessage(
@@ -1061,6 +1111,7 @@ if (signupForm) {
         );
 
         return;
+
       }
 
 
@@ -1074,6 +1125,7 @@ if (signupForm) {
         );
 
         return;
+
       }
 
 
@@ -1083,13 +1135,18 @@ if (signupForm) {
 
       if (data.session) {
 
-        await syncStudentAccount(
+        // New registrations are students.
+        await syncStudentProfile(
+          data.user
+        );
+
+        await syncStudentRecord(
           data.user
         );
 
 
         showMessage(
-          "Student account created successfully.",
+          "Student account created successfully. Opening your portal...",
           true
         );
 
@@ -1101,11 +1158,12 @@ if (signupForm) {
               getStudentDestination();
 
           },
-          900
+          800
         );
 
 
         return;
+
       }
 
 
@@ -1152,12 +1210,25 @@ if (forgotLink) {
       clearMessage();
 
 
+      const emailElement =
+        document.getElementById(
+          "login-email"
+        );
+
+
+      if (!emailElement) {
+
+        showMessage(
+          "Please enter your email address."
+        );
+
+        return;
+
+      }
+
+
       const email =
-        document
-          .getElementById(
-            "login-email"
-          )
-          .value
+        emailElement.value
           .trim()
           .toLowerCase();
 
@@ -1169,6 +1240,7 @@ if (forgotLink) {
         );
 
         return;
+
       }
 
 
@@ -1201,10 +1273,12 @@ if (forgotLink) {
 
 
         showMessage(
-          error.message
+          error.message ||
+          "Password reset could not be started."
         );
 
         return;
+
       }
 
 
@@ -1216,4 +1290,4 @@ if (forgotLink) {
     }
   );
 
-}
+    }
