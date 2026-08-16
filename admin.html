@@ -6,7 +6,11 @@
 
 <title>Funda Online Academy - Admin Dashboard</title>
 
+<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- EXISTING FUNDA SUPABASE CONFIG -->
+<script src="supabase-config.js?v=20260816"></script>
 
 <style>
 *{
@@ -23,7 +27,7 @@ body{
 }
 
 header{
-  background:#ffffff;
+  background:#fff;
   border-bottom:1px solid #e1e7e3;
   padding:20px;
   position:sticky;
@@ -75,16 +79,17 @@ button{
   font-family:inherit;
 }
 
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
 .logout-btn{
   background:#10251c;
   color:white;
   padding:12px 17px;
   border-radius:10px;
   font-weight:bold;
-}
-
-.logout-btn:hover{
-  opacity:.9;
 }
 
 main{
@@ -203,10 +208,6 @@ main{
   font-weight:bold;
 }
 
-.refresh-btn:hover{
-  background:#087744;
-}
-
 .table-wrap{
   width:100%;
   overflow-x:auto;
@@ -216,7 +217,7 @@ main{
 
 table{
   width:100%;
-  min-width:720px;
+  min-width:700px;
   border-collapse:collapse;
 }
 
@@ -243,11 +244,6 @@ tr:last-child td{
 
 .student-name{
   font-weight:bold;
-  color:#10251c;
-}
-
-.muted{
-  color:#7b8781;
 }
 
 .course-name{
@@ -257,6 +253,10 @@ tr:last-child td{
 .amount{
   font-weight:bold;
   white-space:nowrap;
+}
+
+.muted{
+  color:#7b8781;
 }
 
 .badge{
@@ -276,7 +276,8 @@ tr:last-child td{
 .badge.approved,
 .badge.completed,
 .badge.paid,
-.badge.active{
+.badge.active,
+.badge.success{
   background:#e3f7eb;
   color:#11683d;
 }
@@ -351,6 +352,12 @@ tr:last-child td{
   margin-bottom:9px;
 }
 
+.course-description{
+  color:#68766f;
+  line-height:1.5;
+  font-size:14px;
+}
+
 .course-price{
   font-size:20px;
   font-weight:800;
@@ -388,7 +395,7 @@ tr:last-child td{
 }
 
 .admin-loading{
-  max-width:500px;
+  max-width:520px;
   margin:100px auto;
   background:#fff;
   border-radius:22px;
@@ -422,6 +429,7 @@ tr:last-child td{
 }
 
 @media(max-width:900px){
+
   .dashboard-grid{
     grid-template-columns:repeat(2,1fr);
   }
@@ -432,6 +440,7 @@ tr:last-child td{
 }
 
 @media(max-width:600px){
+
   header{
     padding:14px;
   }
@@ -503,206 +512,273 @@ tr:last-child td{
 
 <body>
 
+<!-- =========================================================
+     ADMIN LOADING
+     ========================================================= -->
+
 <div id="adminLoading" class="admin-loading">
+
   <div class="spinner"></div>
-  <h2>Checking admin access...</h2>
-  <p class="muted">Please wait.</p>
+
+  <h2 id="loadingTitle">
+    Checking admin access...
+  </h2>
+
+  <p id="loadingText" class="muted">
+    Please wait.
+  </p>
+
 </div>
+
+
+<!-- =========================================================
+     DASHBOARD
+     ========================================================= -->
 
 <div id="dashboard" class="hidden">
 
 <header>
+
   <div class="header-inner">
 
     <div class="brand">
-      <div class="brand-icon">🎓</div>
+
+      <div class="brand-icon">
+        🎓
+      </div>
 
       <div>
         <h1>Funda Online Academy</h1>
         <p>Administrator Dashboard</p>
       </div>
+
     </div>
 
-    <button id="logoutBtn" class="logout-btn">
+    <button
+      id="logoutBtn"
+      class="logout-btn"
+      type="button"
+    >
       Logout
     </button>
 
   </div>
+
 </header>
+
 
 <main>
 
-  <div id="message" class="message"></div>
+<div id="message" class="message"></div>
 
-  <!-- ======================================================
-       STATISTICS
-       ====================================================== -->
 
-  <div class="dashboard-grid">
+<!-- =========================================================
+     STATISTICS
+     ========================================================= -->
 
-    <div class="stat">
-      <div class="stat-icon">📚</div>
-      <div class="stat-label">Courses</div>
-      <div id="courseCount" class="stat-value">0</div>
+<div class="dashboard-grid">
+
+  <div class="stat">
+    <div class="stat-icon">📚</div>
+    <div class="stat-label">Courses</div>
+    <div id="courseCount" class="stat-value">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-icon">👨🏽‍🎓</div>
+    <div class="stat-label">Students</div>
+    <div id="studentCount" class="stat-value">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-icon">📝</div>
+    <div class="stat-label">Enrolments</div>
+    <div id="enrollmentCount" class="stat-value">0</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-icon">💳</div>
+    <div class="stat-label">Payments</div>
+    <div id="paymentCount" class="stat-value">0</div>
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     COURSES
+     ========================================================= -->
+
+<section class="card">
+
+  <div class="card-title">
+    <span>📖</span>
+    <h2>Courses</h2>
+  </div>
+
+  <p class="card-description">
+    View all courses available in the Funda Online Academy system.
+  </p>
+
+  <div class="section-tools">
+
+    <div></div>
+
+    <button
+      id="refreshCourses"
+      class="refresh-btn"
+      type="button"
+    >
+      Refresh Courses
+    </button>
+
+  </div>
+
+  <div id="coursesContent">
+    <div class="loading">
+      Loading courses...
+    </div>
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     ENROLMENTS
+     ========================================================= -->
+
+<section class="card">
+
+  <div class="card-title">
+    <span>📝</span>
+    <h2>Student Enrolments</h2>
+  </div>
+
+  <p class="card-description">
+    Review student requests and manage enrolment status.
+  </p>
+
+  <div class="section-tools">
+
+    <div></div>
+
+    <button
+      id="refreshEnrollments"
+      class="refresh-btn"
+      type="button"
+    >
+      Refresh Enrolments
+    </button>
+
+  </div>
+
+  <div id="enrollmentsContent">
+    <div class="loading">
+      Loading enrolments...
+    </div>
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     PAYMENTS
+     ========================================================= -->
+
+<section class="card">
+
+  <div class="card-title">
+    <span>💳</span>
+    <h2>Payments</h2>
+  </div>
+
+  <p class="card-description">
+    View and manage student course payments.
+  </p>
+
+  <div class="section-tools">
+
+    <div></div>
+
+    <button
+      id="refreshPayments"
+      class="refresh-btn"
+      type="button"
+    >
+      Refresh Payments
+    </button>
+
+  </div>
+
+  <div id="paymentsContent">
+    <div class="loading">
+      Loading payments...
+    </div>
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     SYSTEM INFORMATION
+     ========================================================= -->
+
+<section class="card">
+
+  <div class="card-title">
+    <span>⚙️</span>
+    <h2>System Information</h2>
+  </div>
+
+  <p class="card-description">
+    Funda Online Academy administration system.
+  </p>
+
+  <div class="info-grid">
+
+    <div class="info-item">
+      <div class="info-label">
+        System
+      </div>
+
+      <div class="info-value">
+        Funda Online Academy
+      </div>
     </div>
 
-    <div class="stat">
-      <div class="stat-icon">👨🏽‍🎓</div>
-      <div class="stat-label">Students</div>
-      <div id="studentCount" class="stat-value">0</div>
+    <div class="info-item">
+      <div class="info-label">
+        Access
+      </div>
+
+      <div class="info-value">
+        Administrator
+      </div>
     </div>
 
-    <div class="stat">
-      <div class="stat-icon">📝</div>
-      <div class="stat-label">Enrolments</div>
-      <div id="enrollmentCount" class="stat-value">0</div>
+    <div class="info-item">
+      <div class="info-label">
+        Authentication
+      </div>
+
+      <div class="info-value">
+        Supabase Authentication
+      </div>
     </div>
 
-    <div class="stat">
-      <div class="stat-icon">💳</div>
-      <div class="stat-label">Payments</div>
-      <div id="paymentCount" class="stat-value">0</div>
+    <div class="info-item">
+      <div class="info-label">
+        Database
+      </div>
+
+      <div class="info-value">
+        Supabase Database
+      </div>
     </div>
 
   </div>
 
-
-  <!-- ======================================================
-       COURSES
-       ====================================================== -->
-
-  <section class="card">
-
-    <div class="card-title">
-      <span>📖</span>
-      <h2>Courses</h2>
-    </div>
-
-    <p class="card-description">
-      View all courses available in the Funda Online Academy system.
-    </p>
-
-    <div class="section-tools">
-      <div></div>
-
-      <button id="refreshCourses" class="refresh-btn">
-        Refresh Courses
-      </button>
-    </div>
-
-    <div id="coursesContent">
-      <div class="loading">
-        Loading courses...
-      </div>
-    </div>
-
-  </section>
-
-
-  <!-- ======================================================
-       STUDENT ENROLMENTS
-       ====================================================== -->
-
-  <section class="card">
-
-    <div class="card-title">
-      <span>📝</span>
-      <h2>Student Enrolments</h2>
-    </div>
-
-    <p class="card-description">
-      Review student requests and manage enrolment status.
-    </p>
-
-    <div class="section-tools">
-      <div></div>
-
-      <button id="refreshEnrollments" class="refresh-btn">
-        Refresh Enrolments
-      </button>
-    </div>
-
-    <div id="enrollmentsContent">
-      <div class="loading">
-        Loading enrolments...
-      </div>
-    </div>
-
-  </section>
-
-
-  <!-- ======================================================
-       PAYMENTS
-       ====================================================== -->
-
-  <section class="card">
-
-    <div class="card-title">
-      <span>💳</span>
-      <h2>Payments</h2>
-    </div>
-
-    <p class="card-description">
-      View and manage student course payments.
-    </p>
-
-    <div class="section-tools">
-      <div></div>
-
-      <button id="refreshPayments" class="refresh-btn">
-        Refresh Payments
-      </button>
-    </div>
-
-    <div id="paymentsContent">
-      <div class="loading">
-        Loading payments...
-      </div>
-    </div>
-
-  </section>
-
-
-  <!-- ======================================================
-       SYSTEM INFORMATION
-       ====================================================== -->
-
-  <section class="card">
-
-    <div class="card-title">
-      <span>⚙️</span>
-      <h2>System Information</h2>
-    </div>
-
-    <p class="card-description">
-      Funda Online Academy administration system.
-    </p>
-
-    <div class="info-grid">
-
-      <div class="info-item">
-        <div class="info-label">System</div>
-        <div class="info-value">Funda Online Academy</div>
-      </div>
-
-      <div class="info-item">
-        <div class="info-label">Access</div>
-        <div class="info-value">Administrator</div>
-      </div>
-
-      <div class="info-item">
-        <div class="info-label">Authentication</div>
-        <div class="info-value">Supabase Authentication</div>
-      </div>
-
-      <div class="info-item">
-        <div class="info-label">Database</div>
-        <div class="info-value">Supabase Database</div>
-      </div>
-
-    </div>
-
-  </section>
+</section>
 
 </main>
 
@@ -714,27 +790,45 @@ tr:last-child td{
 /* ============================================================
    FUNDA ONLINE ACADEMY
    ADMIN DASHBOARD
+   COMPLETE VERSION
    ============================================================ */
 
 
 /* ============================================================
-   SUPABASE CONNECTION
+   SUPABASE
    ============================================================ */
 
-const SUPABASE_URL =
-  window.SUPABASE_URL ||
-  "https://YOUR-PROJECT.supabase.co";
+let db = null;
 
-const SUPABASE_ANON_KEY =
-  window.SUPABASE_ANON_KEY ||
-  "YOUR-SUPABASE-ANON-KEY";
+function initialiseSupabase(){
 
-const { createClient } = supabase;
+  if(
+    typeof supabase === "undefined"
+  ){
 
-const db = createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+    throw new Error(
+      "Supabase library did not load."
+    );
+
+  }
+
+  if(
+    !window.SUPABASE_URL ||
+    !window.SUPABASE_ANON_KEY
+  ){
+
+    throw new Error(
+      "Supabase configuration was not loaded. Please make sure supabase-config.js exists in the repository."
+    );
+
+  }
+
+  db = supabase.createClient(
+    window.SUPABASE_URL,
+    window.SUPABASE_ANON_KEY
+  );
+
+}
 
 
 /* ============================================================
@@ -743,6 +837,12 @@ const db = createClient(
 
 const adminLoading =
   document.getElementById("adminLoading");
+
+const loadingTitle =
+  document.getElementById("loadingTitle");
+
+const loadingText =
+  document.getElementById("loadingText");
 
 const dashboard =
   document.getElementById("dashboard");
@@ -785,7 +885,7 @@ const refreshPayments =
 
 
 /* ============================================================
-   GLOBAL DATA
+   DATA
    ============================================================ */
 
 let courses = [];
@@ -800,9 +900,10 @@ let currentUser = null;
    MESSAGE
    ============================================================ */
 
-function showMessage(text, type = "info") {
-
-  if (!message) return;
+function showMessage(
+  text,
+  type = "info"
+){
 
   message.textContent = text;
 
@@ -812,15 +913,10 @@ function showMessage(text, type = "info") {
 }
 
 
-/* ============================================================
-   CLEAR MESSAGE
-   ============================================================ */
+function hideMessage(){
 
-function hideMessage() {
-
-  if (!message) return;
-
-  message.className = "message";
+  message.className =
+    "message";
 
 }
 
@@ -829,18 +925,23 @@ function hideMessage() {
    ESCAPE HTML
    ============================================================ */
 
-function escapeHTML(value) {
+function escapeHTML(value){
 
-  if (value === null || value === undefined) {
+  if(
+    value === null ||
+    value === undefined
+  ){
+
     return "";
+
   }
 
   return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
 }
 
@@ -849,21 +950,27 @@ function escapeHTML(value) {
    MONEY
    ============================================================ */
 
-function formatMoney(value) {
+function formatMoney(value){
 
-  if (
+  if(
     value === null ||
     value === undefined ||
     value === ""
-  ) {
+  ){
+
     return "—";
+
   }
 
   const number =
     Number(value);
 
-  if (Number.isNaN(number)) {
+  if(
+    Number.isNaN(number)
+  ){
+
     return escapeHTML(value);
+
   }
 
   return "R" +
@@ -876,17 +983,23 @@ function formatMoney(value) {
    DATE
    ============================================================ */
 
-function formatDate(value) {
+function formatDate(value){
 
-  if (!value) {
+  if(!value){
     return "—";
   }
 
   const date =
     new Date(value);
 
-  if (Number.isNaN(date.getTime())) {
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+
     return escapeHTML(value);
+
   }
 
   return date.toLocaleDateString(
@@ -902,110 +1015,174 @@ function formatDate(value) {
 
 
 /* ============================================================
-   GET CURRENT USER
+   STATUS
    ============================================================ */
 
-async function getCurrentUser() {
+function statusClass(value){
 
-  try {
+  const status =
+    String(
+      value || "other"
+    ).toLowerCase();
 
-    const {
-      data,
-      error
-    } = await db.auth.getUser();
+  if(
+    status === "pending"
+  ){
+    return "pending";
+  }
 
-    if (error) {
+  if(
+    [
+      "approved",
+      "completed",
+      "paid",
+      "active",
+      "success"
+    ].includes(status)
+  ){
+    return "approved";
+  }
 
-      console.error(
-        "Auth error:",
-        error
-      );
+  if(
+    [
+      "rejected",
+      "failed",
+      "cancelled"
+    ].includes(status)
+  ){
+    return "rejected";
+  }
 
-      return null;
-    }
+  return "other";
 
-    return data?.user || null;
+}
 
-  } catch (error) {
 
-    console.error(
-      "Unexpected auth error:",
-      error
+function statusBadge(value){
+
+  const safe =
+    escapeHTML(
+      value || "Unknown"
     );
 
-    return null;
-  }
+  return `
+    <span class="badge ${statusClass(value)}">
+      ${safe}
+    </span>
+  `;
 
 }
 
 
 /* ============================================================
-   CHECK ADMIN
+   GET CURRENT USER
    ============================================================ */
 
-async function checkAdmin(user) {
+async function getCurrentUser(){
 
-  if (!user) {
+  const {
+    data,
+    error
+  } =
+    await db.auth.getUser();
+
+  if(error){
+
+    console.error(
+      "Auth error:",
+      error
+    );
+
+    return null;
+
+  }
+
+  return data?.user || null;
+
+}
+
+
+/* ============================================================
+   ADMIN CHECK
+   ============================================================ */
+
+async function checkAdmin(user){
+
+  if(!user){
     return false;
   }
 
 
-  /* ----------------------------------------------------------
-     FIRST: TRY THE EXISTING is_admin() FUNCTION
-     ---------------------------------------------------------- */
+  /*
+    PRIMARY METHOD:
+    EXISTING is_admin() DATABASE FUNCTION
+  */
 
-  try {
+  try{
 
     const {
       data,
       error
-    } = await db.rpc("is_admin");
+    } =
+      await db.rpc(
+        "is_admin"
+      );
 
-    if (!error && data === true) {
+    if(
+      !error &&
+      data === true
+    ){
 
       return true;
 
     }
 
-  } catch (error) {
+  }catch(error){
 
     console.log(
-      "is_admin check unavailable:",
+      "is_admin RPC unavailable:",
       error
     );
 
   }
 
 
-  /* ----------------------------------------------------------
-     SECOND: CHECK PROFILES ROLE
-     ---------------------------------------------------------- */
+  /*
+    SECOND METHOD:
+    PROFILES ROLE
+  */
 
-  try {
+  try{
 
     const {
       data,
       error
-    } = await db
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
+    } =
+      await db
+        .from("profiles")
+        .select("role")
+        .eq(
+          "id",
+          user.id
+        )
+        .maybeSingle();
 
-    if (
+    if(
       !error &&
       data &&
-      String(data.role).toLowerCase() === "admin"
-    ) {
+      String(
+        data.role
+      ).toLowerCase() === "admin"
+    ){
 
       return true;
 
     }
 
-  } catch (error) {
+  }catch(error){
 
     console.log(
-      "Profile admin check failed:",
+      "Profile role check failed:",
       error
     );
 
@@ -1021,14 +1198,24 @@ async function checkAdmin(user) {
    START DASHBOARD
    ============================================================ */
 
-async function startDashboard() {
+async function startDashboard(){
 
-  try {
+  try{
+
+    loadingTitle.textContent =
+      "Connecting to Funda Online Academy...";
+
+    loadingText.textContent =
+      "Please wait.";
+
+    initialiseSupabase();
+
 
     currentUser =
       await getCurrentUser();
 
-    if (!currentUser) {
+
+    if(!currentUser){
 
       window.location.href =
         "login.html";
@@ -1038,22 +1225,30 @@ async function startDashboard() {
     }
 
 
+    loadingTitle.textContent =
+      "Checking administrator access...";
+
+
     const allowed =
       await checkAdmin(
         currentUser
       );
 
 
-    if (!allowed) {
+    if(!allowed){
 
       adminLoading.innerHTML = `
         <h2>Access denied</h2>
-        <p class="muted">
+
+        <p class="muted" style="margin-top:10px;">
           This page is only available to authorised administrators.
         </p>
+
         <br>
+
         <button
           class="logout-btn"
+          type="button"
           onclick="window.location.href='index.html'"
         >
           Return to website
@@ -1076,18 +1271,43 @@ async function startDashboard() {
 
     await loadEverything();
 
-  } catch (error) {
+
+  }catch(error){
 
     console.error(
       "Dashboard error:",
       error
     );
 
+
     adminLoading.innerHTML = `
-      <h2>Something went wrong</h2>
-      <p class="muted">
+      <h2>Admin dashboard could not load</h2>
+
+      <p
+        class="muted"
+        style="margin-top:12px;line-height:1.6;"
+      >
         ${escapeHTML(error.message)}
       </p>
+
+      <br>
+
+      <button
+        class="logout-btn"
+        type="button"
+        onclick="location.reload()"
+      >
+        Try Again
+      </button>
+
+      <button
+        class="refresh-btn"
+        type="button"
+        style="margin-left:8px;"
+        onclick="window.location.href='index.html'"
+      >
+        Return to Website
+      </button>
     `;
 
   }
@@ -1099,9 +1319,10 @@ async function startDashboard() {
    LOAD EVERYTHING
    ============================================================ */
 
-async function loadEverything() {
+async function loadEverything(){
 
   hideMessage();
+
 
   await Promise.all([
     loadCourses(),
@@ -1109,6 +1330,7 @@ async function loadEverything() {
     loadEnrollments(),
     loadPayments()
   ]);
+
 
   updateStatistics();
 
@@ -1125,7 +1347,7 @@ async function loadEverything() {
    LOAD COURSES
    ============================================================ */
 
-async function loadCourses() {
+async function loadCourses(){
 
   coursesContent.innerHTML = `
     <div class="loading">
@@ -1134,23 +1356,24 @@ async function loadCourses() {
   `;
 
 
-  try {
+  try{
 
     const {
       data,
       error
-    } = await db
-      .from("courses")
-      .select("*")
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      );
+    } =
+      await db
+        .from("courses")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
 
 
-    if (error) {
+    if(error){
 
       console.error(
         "Courses error:",
@@ -1178,7 +1401,7 @@ async function loadCourses() {
         : [];
 
 
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "Courses exception:",
@@ -1204,25 +1427,26 @@ async function loadCourses() {
    LOAD STUDENTS
    ============================================================ */
 
-async function loadStudents() {
+async function loadStudents(){
 
-  try {
+  try{
 
     const {
       data,
       error
-    } = await db
-      .from("students")
-      .select("*")
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      );
+    } =
+      await db
+        .from("students")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
 
 
-    if (error) {
+    if(error){
 
       console.error(
         "Students error:",
@@ -1242,7 +1466,7 @@ async function loadStudents() {
         : [];
 
 
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "Students exception:",
@@ -1260,7 +1484,7 @@ async function loadStudents() {
    LOAD ENROLMENTS
    ============================================================ */
 
-async function loadEnrollments() {
+async function loadEnrollments(){
 
   enrollmentsContent.innerHTML = `
     <div class="loading">
@@ -1269,23 +1493,24 @@ async function loadEnrollments() {
   `;
 
 
-  try {
+  try{
 
     const {
       data,
       error
-    } = await db
-      .from("enrollments")
-      .select("*")
-      .order(
-        "enrolled_at",
-        {
-          ascending:false
-        }
-      );
+    } =
+      await db
+        .from("enrollments")
+        .select("*")
+        .order(
+          "enrolled_at",
+          {
+            ascending:false
+          }
+        );
 
 
-    if (error) {
+    if(error){
 
       console.error(
         "Enrolments error:",
@@ -1313,7 +1538,7 @@ async function loadEnrollments() {
         : [];
 
 
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "Enrolments exception:",
@@ -1339,7 +1564,7 @@ async function loadEnrollments() {
    LOAD PAYMENTS
    ============================================================ */
 
-async function loadPayments() {
+async function loadPayments(){
 
   paymentsContent.innerHTML = `
     <div class="loading">
@@ -1348,23 +1573,24 @@ async function loadPayments() {
   `;
 
 
-  try {
+  try{
 
     const {
       data,
       error
-    } = await db
-      .from("payments")
-      .select("*")
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      );
+    } =
+      await db
+        .from("payments")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
 
 
-    if (error) {
+    if(error){
 
       console.error(
         "Payments error:",
@@ -1392,7 +1618,7 @@ async function loadPayments() {
         : [];
 
 
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "Payments exception:",
@@ -1418,9 +1644,9 @@ async function loadPayments() {
    FIND STUDENT
    ============================================================ */
 
-function findStudent(studentId) {
+function findStudent(studentId){
 
-  if (!studentId) {
+  if(!studentId){
     return null;
   }
 
@@ -1437,9 +1663,9 @@ function findStudent(studentId) {
    FIND COURSE
    ============================================================ */
 
-function findCourse(courseId) {
+function findCourse(courseId){
 
-  if (!courseId) {
+  if(!courseId){
     return null;
   }
 
@@ -1456,16 +1682,14 @@ function findCourse(courseId) {
    GET STUDENT NAME
    ============================================================ */
 
-function getStudentName(studentId) {
+function getStudentName(studentId){
 
   const student =
     findStudent(studentId);
 
 
-  if (!student) {
-
+  if(!student){
     return "Unknown student";
-
   }
 
 
@@ -1484,16 +1708,14 @@ function getStudentName(studentId) {
    GET COURSE NAME
    ============================================================ */
 
-function getCourseName(courseId) {
+function getCourseName(courseId){
 
   const course =
     findCourse(courseId);
 
 
-  if (!course) {
-
+  if(!course){
     return "Unknown course";
-
   }
 
 
@@ -1512,9 +1734,9 @@ function getCourseName(courseId) {
    GET COURSE PRICE
    ============================================================ */
 
-function getCoursePrice(course) {
+function getCoursePrice(course){
 
-  if (!course) {
+  if(!course){
     return null;
   }
 
@@ -1532,9 +1754,620 @@ function getCoursePrice(course) {
    UPDATE STATISTICS
    ============================================================ */
 
-function updateStatistics() {
+function updateStatistics(){
 
   courseCount.textContent =
     courses.length;
 
-  studentCount.textContent 
+  studentCount.textContent =
+    students.length;
+
+  enrollmentCount.textContent =
+    enrollments.length;
+
+  paymentCount.textContent =
+    payments.length;
+
+}
+
+
+/* ============================================================
+   RENDER COURSES
+   ============================================================ */
+
+function renderCourses(){
+
+  if(!courses.length){
+
+    coursesContent.innerHTML = `
+      <div class="empty">
+        No courses found.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  coursesContent.innerHTML = `
+
+    <div class="course-grid">
+
+      ${courses.map(course => {
+
+        const name =
+          course.title ||
+          course.name ||
+          course.course_name ||
+          course.course_title ||
+          "Unnamed course";
+
+        const description =
+          course.description ||
+          course.details ||
+          course.summary ||
+          "";
+
+        const price =
+          getCoursePrice(course);
+
+        const active =
+          course.active ??
+          course.is_active ??
+          course.status === "active";
+
+        return `
+
+          <div class="course-card">
+
+            <h3>
+              ${escapeHTML(name)}
+            </h3>
+
+            ${
+              description
+              ?
+              `
+              <div class="course-description">
+                ${escapeHTML(description)}
+              </div>
+              `
+              :
+              ""
+            }
+
+            <div class="course-price">
+              ${formatMoney(price)}
+            </div>
+
+            <div class="course-status">
+
+              ${statusBadge(
+                active
+                  ? "Active"
+                  : (
+                    course.status ||
+                    "Available"
+                  )
+              )}
+
+            </div>
+
+          </div>
+
+        `;
+
+      }).join("")}
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   RENDER ENROLMENTS
+   ============================================================ */
+
+function renderEnrollments(){
+
+  if(!enrollments.length){
+
+    enrollmentsContent.innerHTML = `
+      <div class="empty">
+        No student enrolments found.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  enrollmentsContent.innerHTML = `
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Student</th>
+
+            <th>Course</th>
+
+            <th>Status</th>
+
+            <th>Date</th>
+
+            <th>Action</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${enrollments.map(enrollment => {
+
+            const studentId =
+              enrollment.student_id ||
+              enrollment.user_id;
+
+            const courseId =
+              enrollment.course_id;
+
+            const studentName =
+              getStudentName(
+                studentId
+              );
+
+            const courseName =
+              getCourseName(
+                courseId
+              );
+
+            const status =
+              enrollment.status ||
+              enrollment.enrollment_status ||
+              "pending";
+
+            const date =
+              enrollment.enrolled_at ||
+              enrollment.created_at;
+
+
+            return `
+
+              <tr>
+
+                <td>
+
+                  <div class="student-name">
+                    ${escapeHTML(studentName)}
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <div class="course-name">
+                    ${escapeHTML(courseName)}
+                  </div>
+
+                </td>
+
+                <td>
+                  ${statusBadge(status)}
+                </td>
+
+                <td>
+                  ${formatDate(date)}
+                </td>
+
+                <td>
+
+                  ${
+                    String(status).toLowerCase()
+                    === "pending"
+
+                    ?
+
+                    `
+
+                    <button
+                      class="action-btn approve-btn"
+                      type="button"
+                      onclick="updateEnrollmentStatus('${escapeHTML(enrollment.id)}','approved')"
+                    >
+                      Approve
+                    </button>
+
+                    <button
+                      class="action-btn reject-btn"
+                      type="button"
+                      onclick="updateEnrollmentStatus('${escapeHTML(enrollment.id)}','rejected')"
+                    >
+                      Reject
+                    </button>
+
+                    `
+
+                    :
+
+                    `<span class="muted">No action</span>`
+
+                  }
+
+                </td>
+
+              </tr>
+
+            `;
+
+          }).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   RENDER PAYMENTS
+   ============================================================ */
+
+function renderPayments(){
+
+  if(!payments.length){
+
+    paymentsContent.innerHTML = `
+      <div class="empty">
+        No payments found.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  paymentsContent.innerHTML = `
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Student</th>
+
+            <th>Course</th>
+
+            <th>Amount</th>
+
+            <th>Status</th>
+
+            <th>Date</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${payments.map(payment => {
+
+            const studentId =
+              payment.student_id ||
+              payment.user_id;
+
+            const courseId =
+              payment.course_id;
+
+            const studentName =
+              getStudentName(
+                studentId
+              );
+
+            const courseName =
+              getCourseName(
+                courseId
+              );
+
+            const amount =
+              payment.amount ||
+              payment.price ||
+              payment.total;
+
+            const status =
+              payment.status ||
+              payment.payment_status ||
+              "pending";
+
+            const date =
+              payment.created_at ||
+              payment.paid_at;
+
+
+            return `
+
+              <tr>
+
+                <td>
+
+                  <div class="student-name">
+                    ${escapeHTML(studentName)}
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <div class="course-name">
+                    ${escapeHTML(courseName)}
+                  </div>
+
+                </td>
+
+                <td>
+
+                  <div class="amount">
+                    ${formatMoney(amount)}
+                  </div>
+
+                </td>
+
+                <td>
+                  ${statusBadge(status)}
+                </td>
+
+                <td>
+                  ${formatDate(date)}
+                </td>
+
+              </tr>
+
+            `;
+
+          }).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   UPDATE ENROLMENT STATUS
+   ============================================================ */
+
+async function updateEnrollmentStatus(
+  enrollmentId,
+  newStatus
+){
+
+  if(!enrollmentId){
+    return;
+  }
+
+
+  try{
+
+    showMessage(
+      "Updating enrolment...",
+      "info"
+    );
+
+
+    const {
+      error
+    } =
+      await db
+        .from("enrollments")
+        .update({
+          status:newStatus
+        })
+        .eq(
+          "id",
+          enrollmentId
+        );
+
+
+    if(error){
+
+      throw error;
+
+    }
+
+
+    showMessage(
+      "Enrolment updated successfully.",
+      "success"
+    );
+
+
+    await loadEnrollments();
+
+    updateStatistics();
+
+    renderEnrollments();
+
+
+  }catch(error){
+
+    console.error(
+      "Enrollment update error:",
+      error
+    );
+
+    showMessage(
+      "Unable to update enrolment: " +
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+logoutBtn.addEventListener(
+  "click",
+  async function(){
+
+    try{
+
+      await db.auth.signOut();
+
+    }catch(error){
+
+      console.error(
+        "Logout error:",
+        error
+      );
+
+    }
+
+    window.location.href =
+      "login.html";
+
+  }
+);
+
+
+/* ============================================================
+   REFRESH COURSES
+   ============================================================ */
+
+refreshCourses.addEventListener(
+  "click",
+  async function(){
+
+    refreshCourses.disabled =
+      true;
+
+    try{
+
+      await loadCourses();
+
+      updateStatistics();
+
+      renderCourses();
+
+      showMessage(
+        "Courses refreshed.",
+        "success"
+      );
+
+    }finally{
+
+      refreshCourses.disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   REFRESH ENROLMENTS
+   ============================================================ */
+
+refreshEnrollments.addEventListener(
+  "click",
+  async function(){
+
+    refreshEnrollments.disabled =
+      true;
+
+    try{
+
+      await loadEnrollments();
+
+      updateStatistics();
+
+      renderEnrollments();
+
+      showMessage(
+        "Enrolments refreshed.",
+        "success"
+      );
+
+    }finally{
+
+      refreshEnrollments.disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   REFRESH PAYMENTS
+   ============================================================ */
+
+refreshPayments.addEventListener(
+  "click",
+  async function(){
+
+    refreshPayments.disabled =
+      true;
+
+    try{
+
+      await loadPayments();
+
+      updateStatistics();
+
+      renderPayments();
+
+      showMessage(
+        "Payments refreshed.",
+        "success"
+      );
+
+    }finally{
+
+      refreshPayments.disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+/* ============================================================
+   START
+   ============================================================ */
+
+startDashboard();
+
+</script>
+
+</body>
+      </html>
