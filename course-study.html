@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Study Course | Funda Online Academy</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.study-wrap{max-width:1000px;margin:35px auto;padding:0 20px}
+.study-head{background:#fff;border:1px solid #e4ece3;border-radius:16px;padding:25px;margin-bottom:22px}
+.module{background:#fff;border:1px solid #e4ece3;border-radius:14px;padding:20px;margin-bottom:14px}
+.module-number{font-weight:800;color:#3b941b}
+.study-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+@media(max-width:700px){.study-wrap{width:92%;padding:0}.study-actions{flex-direction:column}.study-actions .btn{width:100%}}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap nav">
+<a class="logo" href="dashboard.html"><img src="logo.png" alt="Funda Online Academy logo"><span>Funda Online Academy Pty Ltd<small>Online Learning</small></span></a>
+<div class="nav-actions"><button id="logout" class="btn ghost" type="button">Logout</button></div>
+</div>
+</header>
+<main class="study-wrap">
+<div id="message" class="message hidden"></div>
+<div id="course-content"><div class="card"><p class="loading">Loading course…</p></div></div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js?v=20260816-1"></script>
+<script src="course-study.js?v=20260816-1"></script>
+</body>
+</html>
