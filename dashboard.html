@@ -20,7 +20,8 @@
   >
 
   <!-- ========================================================
-       DASHBOARD LAYOUT FIX
+       FUNDA STUDENT DASHBOARD
+       SPACING + MOBILE LAYOUT FIX
        ======================================================== -->
 
   <style>
@@ -43,6 +44,7 @@
       margin: 0 auto;
       padding-left: 20px;
       padding-right: 20px;
+      box-sizing: border-box;
     }
 
     /* ======================================================
@@ -53,12 +55,47 @@
     .dashboard section {
       width: 100%;
       max-width: 100%;
-      margin-bottom: 45px;
+      box-sizing: border-box;
+    }
+
+    /*
+       IMPORTANT:
+       Reduce the space after Payments.
+    */
+
+    #payments {
+      margin-bottom: 20px !important;
+      padding-bottom: 0 !important;
+    }
+
+    /*
+       My Enrolments must start close after Payments.
+    */
+
+    #payments + section {
+      margin-top: 0 !important;
+      padding-top: 0 !important;
+    }
+
+    /*
+       Available Courses also stays reasonably close.
+    */
+
+    #payments + section + section {
+      margin-top: 35px !important;
     }
 
     /* ======================================================
-       IMPORTANT:
-       ENROLMENTS AND COURSES MUST USE FULL WIDTH
+       SECTION HEADINGS
+       ====================================================== */
+
+    #payments h2,
+    #enrolments {
+      margin-top: 0;
+    }
+
+    /* ======================================================
+       ENROLMENTS AND COURSES
        ====================================================== */
 
     #enrolments.grid3,
@@ -76,6 +113,8 @@
 
       margin: 0;
       padding: 0;
+
+      box-sizing: border-box;
 
     }
 
@@ -104,6 +143,7 @@
     #payment-list {
       width: 100%;
       max-width: 100%;
+      box-sizing: border-box;
     }
 
     #payment-list .card {
@@ -113,12 +153,37 @@
     }
 
     /* ======================================================
-       TABLES ON SMALL SCREENS
+       PAYMENT TABLES
        ====================================================== */
 
     #payment-list table {
       width: 100%;
       min-width: 600px;
+    }
+
+    /* ======================================================
+       BUTTONS
+       ====================================================== */
+
+    .study-btn,
+    .enrol-btn {
+
+      max-width: 100%;
+
+    }
+
+    /* ======================================================
+       MESSAGE
+       ====================================================== */
+
+    #message {
+
+      width: 100%;
+
+      box-sizing: border-box;
+
+      margin-bottom: 25px;
+
     }
 
     /* ======================================================
@@ -138,6 +203,34 @@
 
       }
 
+      /* ----------------------------------------------
+         PAYMENT → ENROLMENTS GAP
+         ---------------------------------------------- */
+
+      #payments {
+
+        margin-bottom: 15px !important;
+
+      }
+
+      #payments + section {
+
+        margin-top: 0 !important;
+
+        padding-top: 0 !important;
+
+      }
+
+      #payments + section + section {
+
+        margin-top: 30px !important;
+
+      }
+
+      /* ----------------------------------------------
+         GRIDS
+         ---------------------------------------------- */
+
       #enrolments.grid3,
       #available-courses.grid3 {
 
@@ -146,7 +239,13 @@
 
         width: 100%;
 
+        gap: 20px;
+
       }
+
+      /* ----------------------------------------------
+         CARDS
+         ---------------------------------------------- */
 
       #enrolments .card,
       #available-courses .card {
@@ -158,6 +257,10 @@
         box-sizing: border-box;
 
       }
+
+      /* ----------------------------------------------
+         SECTIONS
+         ---------------------------------------------- */
 
       .dashboard-section,
       .dashboard section {
@@ -190,6 +293,10 @@
 
     }
 
+    /* ======================================================
+       LARGE DESKTOP
+       ====================================================== */
+
     @media (min-width: 1000px) {
 
       #enrolments.grid3,
@@ -199,31 +306,6 @@
           repeat(3, minmax(0, 1fr));
 
       }
-
-    }
-
-    /* ======================================================
-       BUTTONS
-       ====================================================== */
-
-    .study-btn,
-    .enrol-btn {
-
-      max-width: 100%;
-
-    }
-
-    /* ======================================================
-       MESSAGE
-       ====================================================== */
-
-    #message {
-
-      width: 100%;
-
-      box-sizing: border-box;
-
-      margin-bottom: 25px;
 
     }
 
@@ -488,4 +570,4 @@
 
 </body>
 
-  </html>
+</html>
