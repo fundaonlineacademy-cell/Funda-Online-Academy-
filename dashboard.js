@@ -1,424 +1,406 @@
-// ==========================================================
+// ============================================================
 // FUNDA ONLINE ACADEMY
 // STUDENT DASHBOARD
-// COURSES • ENROLMENTS • PAYMENTS
-// ==========================================================
+// ============================================================
+// Features:
+// - Student authentication
+// - Student profile
+// - My enrolments
+// - Available courses
+// - Enrolment
+// - Course modules
+// - Payment information
+// - Safe logout
+// ============================================================
 
-const db = supabase.createClient(
+const { createClient } = supabase;
+
+const db = createClient(
   window.SUPABASE_URL,
   window.SUPABASE_ANON_KEY
 );
 
+// ============================================================
+// ELEMENTS
+// ============================================================
 
-// ==========================================================
-// PAGE ELEMENTS
-// ==========================================================
-
-const userEmailEl = document.getElementById("user-email");
 const userNameEl = document.getElementById("user-name");
+const userEmailEl = document.getElementById("user-email");
+const enrolmentsEl = document.getElementById("enrolments");
+const coursesEl = document.getElementById("available-courses");
+const paymentListEl = document.getElementById("payment-list");
+const messageEl = document.getElementById("message");
 const logoutBtn = document.getElementById("logout");
 
-const messageEl = document.getElementById("message");
-
-const paymentListEl =
-  document.getElementById("payment-list");
-
-const enrolmentsEl =
-  document.getElementById("enrolments");
-
-const coursesEl =
-  document.getElementById("available-courses");
-
-
-// ==========================================================
-// GLOBAL DATA
-// ==========================================================
-
-let currentUser = null;
-let currentStudent = null;
-
-let currentEnrolments = [];
-let currentCourses = [];
-let currentPayments = [];
-
-
-// ==========================================================
+// ============================================================
 // MESSAGE
-// ==========================================================
+// ============================================================
 
 function showMessage(text, success = false) {
-
   if (!messageEl) return;
 
   messageEl.textContent = text;
-
-  messageEl.classList.remove(
-    "hidden",
-    "success",
-    "error"
-  );
-
-  messageEl.classList.add(
-    success ? "success" : "error"
-  );
+  messageEl.className =
+    "message " + (success ? "success" : "error");
 }
 
+// ============================================================
+// ESCAPE HTML
+// ============================================================
 
-function hideMessage() {
-
-  if (!messageEl) return;
-
-  messageEl.textContent = "";
-
-  messageEl.classList.add("hidden");
-}
-
-
-// ==========================================================
-// HTML ESCAPE
-// ==========================================================
-
-function escapeHtml(value) {
-
-  if (
-    value === null ||
-    value === undefined
-  ) {
+function escapeHTML(value) {
+  if (value === null || value === undefined) {
     return "";
   }
 
   return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
+// ============================================================
+// FORMAT MONEY
+// ============================================================
 
-// ==========================================================
-// MONEY
-// ==========================================================
+function formatMoney(amount) {
+  if (
+    amount === null ||
+    amount === undefined ||
+    amount === ""
+  ) {
+    return "R0.00";
+  }
 
-function money(value) {
+  const number = Number(amount);
 
-  const number = Number(value || 0);
+  if (Number.isNaN(number)) {
+    return "R0.00";
+  }
 
-  return "R" + number.toFixed(2);
+  return (
+    "R" +
+    number.toLocaleString("en-ZA", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })
+  );
 }
 
+// ============================================================
+// FORMAT DATE
+// ============================================================
 
-// ==========================================================
-// DATE
-// ==========================================================
+function formatDate(date) {
+  if (!date) return "—";
 
-function formatDate(value) {
+  const d = new Date(date);
 
-  if (!value) return "—";
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
+  if (Number.isNaN(d.getTime())) {
     return "—";
   }
 
-  return date.toLocaleDateString(
-    "en-ZA",
-    {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric"
-    }
-  );
+  return d.toLocaleDateString("en-ZA", {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
 }
 
-
-// ==========================================================
-// STATUS
-// ==========================================================
-
-function statusClass(status) {
-
-  const value =
-    String(status || "pending")
-      .toLowerCase();
-
-  if (value === "approved") {
-    return "approved";
-  }
-
-  if (value === "rejected") {
-    return "rejected";
-  }
-
-  return "pending";
-}
-
-
-function statusText(status) {
-
-  const value =
-    String(status || "pending")
-      .toLowerCase();
-
-  if (value === "approved") {
-    return "APPROVED";
-  }
-
-  if (value === "rejected") {
-    return "REJECTED";
-  }
-
-  return "PENDING APPROVAL";
-}
-
-
-// ==========================================================
-// AUTHENTICATION
-// ==========================================================
+// ============================================================
+// GET CURRENT USER
+// ============================================================
 
 async function getCurrentUser() {
-
-  const {
-    data,
-    error
-  } = await db.auth.getUser();
-
-  if (error) {
-
-    console.error(
-      "Authentication error:",
+  try {
+    const {
+      data,
       error
-    );
+    } = await db.auth.getUser();
 
+    if (error) {
+      console.error("Auth error:", error);
+      return null;
+    }
+
+    return data?.user || null;
+
+  } catch (error) {
+    console.error("Unexpected auth error:", error);
     return null;
   }
-
-  return data?.user || null;
 }
 
+// ============================================================
+// GET STUDENT RECORD
+// ============================================================
 
-// ==========================================================
-// LOGOUT
-// ==========================================================
-
-if (logoutBtn) {
-
-  logoutBtn.addEventListener(
-    "click",
-    async () => {
-
-      try {
-
-        logoutBtn.disabled = true;
-
-        logoutBtn.textContent =
-          "Logging out…";
-
-        const {
-          error
-        } = await db.auth.signOut();
-
-        if (error) {
-          throw error;
-        }
-
-        window.location.href =
-          "login.html";
-
-      } catch (error) {
-
-        console.error(
-          "Logout error:",
-          error
-        );
-
-        logoutBtn.disabled = false;
-
-        logoutBtn.textContent =
-          "Logout";
-
-        showMessage(
-          "Unable to log out. Please try again."
-        );
-      }
-
-    }
-  );
-
-}
-
-
-// ==========================================================
-// LOAD STUDENT
-// ==========================================================
-
-async function loadStudent() {
-
-  if (!currentUser) {
-
-    throw new Error(
-      "You are not logged in."
-    );
-  }
-
+async function getStudent(userId) {
 
   const {
     data,
     error
   } = await db
     .from("students")
-    .select(
-      "id,user_id,full_name,email"
-    )
-    .eq(
-      "user_id",
-      currentUser.id
-    )
+    .select("*")
+    .eq("user_id", userId)
     .maybeSingle();
 
-
   if (error) {
-
-    console.error(
-      "Student query error:",
-      error
-    );
-
-    throw new Error(
-      "We could not load your student profile."
-    );
+    console.error("Student lookup error:", error);
+    throw error;
   }
 
-
-  if (!data) {
-
-    throw new Error(
-      "Your student profile could not be found. Please contact the academy."
-    );
-  }
-
-
-  currentStudent = data;
-
-
-  if (userNameEl) {
-
-    userNameEl.textContent =
-      data.full_name ||
-      "Student";
-  }
-
-
-  if (userEmailEl) {
-
-    userEmailEl.textContent =
-      data.email ||
-      currentUser.email ||
-      "";
-  }
-
+  return data;
 }
 
+// ============================================================
+// LOAD STUDENT HEADER
+// ============================================================
 
-// ==========================================================
-// LOAD COURSES
-// ==========================================================
+async function loadStudentHeader(student) {
 
-async function loadCourses() {
-
-  if (!coursesEl) return;
-
-
-  coursesEl.innerHTML =
-    '<p class="loading">Loading courses…</p>';
-
-
-  const {
-    data,
-    error
-  } = await db
-    .from("courses")
-    .select(
-      "id,title,price,active"
-    )
-    .eq(
-      "active",
-      true
-    )
-    .order(
-      "title",
-      {
-        ascending: true
-      }
-    );
-
-
-  if (error) {
-
-    console.error(
-      "Courses error:",
-      error
-    );
-
-    coursesEl.innerHTML = `
-      <div class="card">
-
-        <h3>Courses</h3>
-
-        <p class="error">
-          Unable to load courses.
-        </p>
-
-      </div>
-    `;
+  if (!student) {
+    if (userNameEl) {
+      userNameEl.textContent = "Student";
+    }
 
     return;
   }
 
+  const name =
+    student.full_name ||
+    student.name ||
+    "Student";
 
-  currentCourses =
-    data || [];
-
-
-  renderCourses();
+  if (userNameEl) {
+    userNameEl.textContent = name;
+  }
 }
 
-
-// ==========================================================
+// ============================================================
 // LOAD ENROLMENTS
-// ==========================================================
+// ============================================================
 
-async function loadEnrolments() {
+async function loadEnrolments(studentId) {
 
   if (!enrolmentsEl) return;
-
 
   enrolmentsEl.innerHTML =
     '<p class="loading">Loading enrolments…</p>';
 
+  try {
 
-  const {
-    data,
-    error
-  } = await db
-    .from("enrollments")
-    .select(
-      "id,student_id,course_id,enrollment_status,enrolled_at"
-    )
-    .eq(
-      "student_id",
-      currentStudent.id
-    )
-    .order(
-      "enrolled_at",
-      {
+    const {
+      data: enrolments,
+      error
+    } = await db
+      .from("enrollments")
+      .select("*")
+      .eq("student_id", studentId)
+      .order("enrolled_at", {
         ascending: false
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    if (!enrolments || enrolments.length === 0) {
+
+      enrolmentsEl.innerHTML = `
+        <div class="card">
+          <h3>No enrolments yet</h3>
+          <p>
+            You have not enrolled in a course yet.
+            Browse the available courses below.
+          </p>
+        </div>
+      `;
+
+      return;
+    }
+
+    // --------------------------------------------------------
+    // Get course IDs
+    // --------------------------------------------------------
+
+    const courseIds = [
+      ...new Set(
+        enrolments
+          .map(item => item.course_id)
+          .filter(Boolean)
+      )
+    ];
+
+    let courses = [];
+
+    if (courseIds.length > 0) {
+
+      const {
+        data,
+        error: courseError
+      } = await db
+        .from("courses")
+        .select("*")
+        .in("id", courseIds);
+
+      if (courseError) {
+        console.error(
+          "Course lookup error:",
+          courseError
+        );
+      } else {
+        courses = data || [];
       }
-    );
+    }
 
+    const courseMap = new Map();
 
-  if (error) {
+    courses.forEach(course => {
+      courseMap.set(course.id, course);
+    });
+
+    // --------------------------------------------------------
+    // Build enrolment cards
+    // --------------------------------------------------------
+
+    enrolmentsEl.innerHTML =
+      enrolments
+        .map(enrolment => {
+
+          const course =
+            courseMap.get(enrolment.course_id);
+
+          const title =
+            course?.title ||
+            course?.name ||
+            "Course";
+
+          const description =
+            course?.description ||
+            "Your enrolled course.";
+
+          const status =
+            enrolment.enrollment_status ||
+            "pending";
+
+          const amount =
+            enrolment.amount ??
+            course?.price ??
+            null;
+
+          const safeTitle =
+            escapeHTML(title);
+
+          const safeDescription =
+            escapeHTML(description);
+
+          return `
+            <div class="card">
+
+              <span class="badge">
+                ${escapeHTML(status)}
+              </span>
+
+              <h3>
+                ${safeTitle}
+              </h3>
+
+              <p>
+                ${safeDescription}
+              </p>
+
+              <p>
+                <strong>
+                  Enrolled:
+                </strong>
+                ${formatDate(enrolment.enrolled_at)}
+              </p>
+
+              <p>
+                <strong>
+                  Course fee:
+                </strong>
+                ${formatMoney(amount)}
+              </p>
+
+              <div
+                style="
+                  display:flex;
+                  gap:10px;
+                  flex-wrap:wrap;
+                  margin-top:15px;
+                "
+              >
+
+                <button
+                  class="btn green study-btn"
+                  type="button"
+                  data-course-id="${escapeHTML(
+                    enrolment.course_id
+                  )}"
+                  ${
+                    status !== "approved" &&
+                    status !== "active"
+                      ? "disabled"
+                      : ""
+                  }
+                >
+                  📚 Study Course
+                </button>
+
+              </div>
+
+              ${
+                status === "pending"
+                  ? `
+                    <p
+                      style="
+                        margin-top:12px;
+                        color:#777;
+                      "
+                    >
+                      Your enrolment is awaiting
+                      approval.
+                    </p>
+                  `
+                  : ""
+              }
+
+            </div>
+          `;
+        })
+        .join("");
+
+    // --------------------------------------------------------
+    // Study buttons
+    // --------------------------------------------------------
+
+    document
+      .querySelectorAll(".study-btn")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const courseId =
+              button.dataset.courseId;
+
+            if (!courseId) return;
+
+            window.location.href =
+              "course-study.html?id=" +
+              encodeURIComponent(courseId);
+          }
+        );
+
+      });
+
+  } catch (error) {
 
     console.error(
       "Enrolments error:",
@@ -428,386 +410,326 @@ async function loadEnrolments() {
     enrolmentsEl.innerHTML = `
       <div class="card">
 
-        <h3>Enrolments</h3>
-
-        <p class="error">
-          Unable to load your enrolments.
-        </p>
-
-      </div>
-    `;
-
-    return;
-  }
-
-
-  currentEnrolments =
-    data || [];
-
-
-  renderEnrolments();
-}
-
-
-// ==========================================================
-// RENDER ENROLMENTS
-// ==========================================================
-
-function renderEnrolments() {
-
-  if (!enrolmentsEl) return;
-
-
-  if (!currentEnrolments.length) {
-
-    enrolmentsEl.innerHTML = `
-      <div class="card">
-
-        <h3>No enrolments yet</h3>
+        <h3>
+          Unable to load enrolments
+        </h3>
 
         <p>
-          You have not enrolled in a course yet.
-          Browse the available courses below to get started.
+          Please refresh the page and try again.
         </p>
 
       </div>
     `;
-
-    return;
   }
-
-
-  const courseMap = {};
-
-
-  currentCourses.forEach(
-    course => {
-
-      courseMap[course.id] =
-        course;
-
-    }
-  );
-
-
-  enrolmentsEl.innerHTML =
-    currentEnrolments
-      .map(
-        enrolment => {
-
-          const course =
-            courseMap[
-              enrolment.course_id
-            ];
-
-
-          const title =
-            course?.title ||
-            "Course";
-
-
-          const price =
-            course?.price || 0;
-
-
-          const status =
-            enrolment.enrollment_status ||
-            "pending";
-
-
-          return `
-            <div class="card">
-
-              <h3>
-                ${escapeHtml(title)}
-              </h3>
-
-              <p>
-                <strong>Course fee:</strong><br>
-                ${money(price)}
-              </p>
-
-              <p>
-                <strong>Status:</strong><br>
-                ${escapeHtml(status)}
-              </p>
-
-              <p>
-                <strong>Enrolled:</strong><br>
-                ${formatDate(
-                  enrolment.enrolled_at
-                )}
-              </p>
-
-              <span
-                class="badge ${statusClass(status)}"
-              >
-                ${escapeHtml(
-                  statusText(status)
-                )}
-              </span>
-
-            </div>
-          `;
-
-        }
-      )
-      .join("");
 }
 
+// ============================================================
+// LOAD AVAILABLE COURSES
+// ============================================================
 
-// ==========================================================
-// RENDER AVAILABLE COURSES
-// ==========================================================
-
-function renderCourses() {
+async function loadAvailableCourses(studentId) {
 
   if (!coursesEl) return;
 
-
-  if (!currentCourses.length) {
-
-    coursesEl.innerHTML = `
-      <div class="card">
-
-        <h3>No courses available</h3>
-
-        <p>
-          There are currently no active courses.
-        </p>
-
-      </div>
-    `;
-
-    return;
-  }
-
-
-  const enrolledCourseIds =
-    new Set(
-      currentEnrolments.map(
-        item =>
-          item.course_id
-      )
-    );
-
-
   coursesEl.innerHTML =
-    currentCourses
-      .map(
-        course => {
+    '<p class="loading">Loading courses…</p>';
+
+  try {
+
+    // --------------------------------------------------------
+    // Get active courses
+    // --------------------------------------------------------
+
+    const {
+      data: courses,
+      error
+    } = await db
+      .from("courses")
+      .select("*")
+      .eq("active", true)
+      .order("title", {
+        ascending: true
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    if (!courses || courses.length === 0) {
+
+      coursesEl.innerHTML = `
+        <div class="card">
+
+          <h3>
+            No courses available
+          </h3>
+
+          <p>
+            Courses will appear here when
+            they become available.
+          </p>
+
+        </div>
+      `;
+
+      return;
+    }
+
+    // --------------------------------------------------------
+    // Existing enrolments
+    // --------------------------------------------------------
+
+    const {
+      data: existing,
+      error: existingError
+    } = await db
+      .from("enrollments")
+      .select("course_id,enrollment_status")
+      .eq("student_id", studentId);
+
+    if (existingError) {
+      console.error(
+        "Existing enrolment lookup error:",
+        existingError
+      );
+    }
+
+    const enrolledMap = new Map();
+
+    (existing || []).forEach(item => {
+
+      enrolledMap.set(
+        item.course_id,
+        item.enrollment_status
+      );
+
+    });
+
+    // --------------------------------------------------------
+    // Build course cards
+    // --------------------------------------------------------
+
+    coursesEl.innerHTML =
+      courses
+        .map(course => {
+
+          const title =
+            course.title ||
+            course.name ||
+            "Course";
+
+          const description =
+            course.description ||
+            "Online short course.";
+
+          const price =
+            course.price ?? 0;
+
+          const status =
+            enrolledMap.get(course.id);
 
           const alreadyEnrolled =
-            enrolledCourseIds.has(
-              course.id
-            );
-
+            Boolean(status);
 
           return `
             <div class="card">
 
               <h3>
-                ${escapeHtml(
-                  course.title
-                )}
+                ${escapeHTML(title)}
               </h3>
+
+              <p>
+                ${escapeHTML(description)}
+              </p>
 
               <p>
                 <strong>
                   Course fee:
-                </strong><br>
-
-                ${money(course.price)}
+                </strong>
+                ${formatMoney(price)}
               </p>
 
               ${
                 alreadyEnrolled
-                ?
-                `
-                  <button
-                    class="btn ghost"
-                    type="button"
-                    disabled
-                  >
-                    Already Enrolled
-                  </button>
-                `
-                :
-                `
-                  <button
-                    class="btn green enrol-btn"
-                    type="button"
-                    data-course-id="${escapeHtml(
-                      course.id
-                    )}"
-                  >
-                    Enrol Now
-                  </button>
-                `
+                  ? `
+                    <span class="badge">
+                      ${escapeHTML(status)}
+                    </span>
+                  `
+                  : `
+                    <button
+                      type="button"
+                      class="btn green enrol-btn"
+                      data-course-id="${escapeHTML(
+                        course.id
+                      )}"
+                    >
+                      Enrol Now
+                    </button>
+                  `
               }
 
             </div>
           `;
+        })
+        .join("");
 
-        }
-      )
-      .join("");
+    // --------------------------------------------------------
+    // Enrol buttons
+    // --------------------------------------------------------
 
-
-  document
-    .querySelectorAll(".enrol-btn")
-    .forEach(
-      button => {
+    document
+      .querySelectorAll(".enrol-btn")
+      .forEach(button => {
 
         button.addEventListener(
           "click",
-          () => {
+          async () => {
 
-            enrolInCourse(
-              button.dataset.courseId,
+            const courseId =
+              button.dataset.courseId;
+
+            await enrolStudent(
+              studentId,
+              courseId,
               button
             );
 
           }
         );
 
-      }
+      });
+
+  } catch (error) {
+
+    console.error(
+      "Courses error:",
+      error
     );
+
+    coursesEl.innerHTML = `
+      <div class="card">
+
+        <h3>
+          Unable to load courses
+        </h3>
+
+        <p>
+          Please refresh the page and try again.
+        </p>
+
+      </div>
+    `;
+  }
 }
 
+// ============================================================
+// ENROL STUDENT
+// ============================================================
 
-// ==========================================================
-// ENROL IN COURSE
-// ==========================================================
-
-async function enrolInCourse(
+async function enrolStudent(
+  studentId,
   courseId,
   button
 ) {
 
-  if (!currentStudent) {
-
-    showMessage(
-      "Your student profile is not available."
-    );
-
+  if (!studentId || !courseId) {
     return;
   }
 
-
-  const course =
-    currentCourses.find(
-      item =>
-        item.id === courseId
-    );
-
-
-  if (!course) {
-
-    showMessage(
-      "The selected course could not be found."
-    );
-
-    return;
-  }
-
-
-  const alreadyEnrolled =
-    currentEnrolments.some(
-      item =>
-        item.course_id === courseId
-    );
-
-
-  if (alreadyEnrolled) {
-
-    showMessage(
-      "You are already enrolled in this course."
-    );
-
-    return;
-  }
-
-
-  if (button) {
-
-    button.disabled = true;
-
-    button.textContent =
-      "Enrolling…";
-  }
-
-
-  hideMessage();
-
+  button.disabled = true;
+  button.textContent = "Enrolling…";
 
   try {
 
+    // --------------------------------------------------------
+    // Check duplicate
+    // --------------------------------------------------------
+
     const {
-      data,
-      error
+      data: existing,
+      error: checkError
     } = await db
       .from("enrollments")
-      .insert({
+      .select("id,enrollment_status")
+      .eq("student_id", studentId)
+      .eq("course_id", courseId)
+      .maybeSingle();
 
-        student_id:
-          currentStudent.id,
+    if (checkError) {
+      throw checkError;
+    }
 
-        course_id:
-          courseId,
+    if (existing) {
 
-        enrollment_status:
-          "pending"
-
-      })
-      .select()
-      .single();
-
-
-    if (error) {
-
-      console.error(
-        "Enrolment insert error:",
-        error
+      showMessage(
+        "You are already enrolled in this course."
       );
 
-
-      if (error.code === "23505") {
-
-        showMessage(
-          "You are already enrolled in this course."
-        );
-
-      } else {
-
-        showMessage(
-          "We could not complete your enrolment. Please try again."
-        );
-
-      }
-
+      button.disabled = true;
+      button.textContent =
+        existing.enrollment_status ||
+        "Already enrolled";
 
       return;
     }
 
+    // --------------------------------------------------------
+    // Get course price
+    // --------------------------------------------------------
 
-    currentEnrolments.unshift(
-      data
-    );
+    const {
+      data: course,
+      error: courseError
+    } = await db
+      .from("courses")
+      .select("id,title,name,price")
+      .eq("id", courseId)
+      .maybeSingle();
 
+    if (courseError) {
+      throw courseError;
+    }
+
+    // --------------------------------------------------------
+    // Create enrolment
+    // --------------------------------------------------------
+
+    const {
+      error: insertError
+    } = await db
+      .from("enrollments")
+      .insert({
+
+        student_id: studentId,
+
+        course_id: courseId,
+
+        enrollment_status: "pending",
+
+        enrolled_at:
+          new Date().toISOString(),
+
+        amount:
+          course?.price ?? null
+
+      });
+
+    if (insertError) {
+      throw insertError;
+    }
 
     showMessage(
-      `${course.title} enrolment submitted successfully.`,
+      "Enrolment submitted successfully.",
       true
     );
 
+    button.textContent =
+      "Pending Approval";
 
-    renderEnrolments();
-
-    renderCourses();
-
-    renderPayments();
-
+    // Refresh enrolments and courses
+    await loadEnrolments(studentId);
+    await loadAvailableCourses(studentId);
 
   } catch (error) {
 
@@ -817,907 +739,343 @@ async function enrolInCourse(
     );
 
     showMessage(
-      "Unable to submit your enrolment. Please try again."
+      "Unable to complete enrolment. Please try again."
     );
 
-  } finally {
-
-    if (button) {
-
-      button.disabled = false;
-
-      button.textContent =
-        "Enrol Now";
-
-    }
-
+    button.disabled = false;
+    button.textContent = "Enrol Now";
   }
-
 }
 
-
-// ==========================================================
+// ============================================================
 // LOAD PAYMENTS
-// ==========================================================
+// ============================================================
 
-async function loadPayments() {
+async function loadPayments(studentId) {
 
   if (!paymentListEl) return;
 
-
   paymentListEl.innerHTML = `
     <div class="card">
-
       <p class="loading">
-        Loading payment information…
+        Loading payments…
       </p>
-
     </div>
   `;
 
+  try {
 
-  const {
-    data,
-    error
-  } = await db
-    .from("payments")
-    .select(
-      "id,student_id,enrolment_id,amount,payment_method,status,proof_url,notes,created_at,updated_at"
-    )
-    .eq(
-      "student_id",
-      currentStudent.id
-    )
-    .order(
-      "created_at",
-      {
+    const {
+      data: payments,
+      error
+    } = await db
+      .from("payments")
+      .select("*")
+      .eq("student_id", studentId)
+      .order("created_at", {
         ascending: false
+      });
+
+    if (error) {
+      throw error;
+    }
+
+    if (!payments || payments.length === 0) {
+
+      paymentListEl.innerHTML = `
+        <div class="card">
+
+          <h3>
+            Course Payments
+          </h3>
+
+          <p>
+            No payment records have been
+            recorded yet.
+          </p>
+
+        </div>
+      `;
+
+      return;
+    }
+
+    // --------------------------------------------------------
+    // Get course IDs
+    // --------------------------------------------------------
+
+    const courseIds = [
+      ...new Set(
+        payments
+          .map(payment => payment.course_id)
+          .filter(Boolean)
+      )
+    ];
+
+    let courses = [];
+
+    if (courseIds.length > 0) {
+
+      const {
+        data,
+        error: courseError
+      } = await db
+        .from("courses")
+        .select("id,title,name")
+        .in("id", courseIds);
+
+      if (courseError) {
+        console.error(
+          "Payment course lookup error:",
+          courseError
+        );
+      } else {
+        courses = data || [];
       }
-    );
+    }
 
+    const courseMap = new Map();
 
-  if (error) {
+    courses.forEach(course => {
+      courseMap.set(course.id, course);
+    });
+
+    // --------------------------------------------------------
+    // Render payments
+    // --------------------------------------------------------
+
+    paymentListEl.innerHTML = `
+      <div class="card">
+
+        <h3>
+          Course Payments
+        </h3>
+
+        <div
+          style="
+            overflow-x:auto;
+            width:100%;
+          "
+        >
+
+          <table
+            style="
+              width:100%;
+              border-collapse:collapse;
+            "
+          >
+
+            <thead>
+
+              <tr>
+
+                <th
+                  style="
+                    text-align:left;
+                    padding:10px;
+                  "
+                >
+                  Course
+                </th>
+
+                <th
+                  style="
+                    text-align:left;
+                    padding:10px;
+                  "
+                >
+                  Amount
+                </th>
+
+                <th
+                  style="
+                    text-align:left;
+                    padding:10px;
+                  "
+                >
+                  Status
+                </th>
+
+                <th
+                  style="
+                    text-align:left;
+                    padding:10px;
+                  "
+                >
+                  Date
+                </th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              ${
+                payments
+                  .map(payment => {
+
+                    const course =
+                      courseMap.get(
+                        payment.course_id
+                      );
+
+                    const title =
+                      course?.title ||
+                      course?.name ||
+                      "Course";
+
+                    const amount =
+                      payment.amount ?? 0;
+
+                    const status =
+                      payment.payment_status ||
+                      payment.status ||
+                      "pending";
+
+                    const date =
+                      payment.created_at ||
+                      payment.paid_at;
+
+                    return `
+                      <tr>
+
+                        <td
+                          style="
+                            padding:10px;
+                            border-top:1px solid #eee;
+                          "
+                        >
+                          ${escapeHTML(title)}
+                        </td>
+
+                        <td
+                          style="
+                            padding:10px;
+                            border-top:1px solid #eee;
+                          "
+                        >
+                          ${formatMoney(amount)}
+                        </td>
+
+                        <td
+                          style="
+                            padding:10px;
+                            border-top:1px solid #eee;
+                          "
+                        >
+                          ${escapeHTML(status)}
+                        </td>
+
+                        <td
+                          style="
+                            padding:10px;
+                            border-top:1px solid #eee;
+                          "
+                        >
+                          ${formatDate(date)}
+                        </td>
+
+                      </tr>
+                    `;
+                  })
+                  .join("")
+              }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+    `;
+
+  } catch (error) {
 
     console.error(
       "Payments error:",
       error
     );
 
-
     paymentListEl.innerHTML = `
       <div class="card">
 
-        <h3>Payments</h3>
+        <h3>
+          Payments
+        </h3>
 
         <p>
-          Payment information could not be loaded.
-        </p>
-
-      </div>
-    `;
-
-    return;
-  }
-
-
-  currentPayments =
-    data || [];
-
-
-  renderPayments();
-}
-
-
-// ==========================================================
-// RENDER PAYMENTS
-// ==========================================================
-
-function renderPayments() {
-
-  if (!paymentListEl) return;
-
-
-  if (!currentEnrolments.length) {
-
-    paymentListEl.innerHTML = `
-      <div class="card">
-
-        <h3>Course Payments</h3>
-
-        <p>
-          Enrol in a course first to submit
-          your payment information.
-        </p>
-
-      </div>
-    `;
-
-    return;
-  }
-
-
-  const courseMap = {};
-
-
-  currentCourses.forEach(
-    course => {
-
-      courseMap[course.id] =
-        course;
-
-    }
-  );
-
-
-  paymentListEl.innerHTML = `
-
-    <div class="card">
-
-      <h3>
-        Submit Payment
-      </h3>
-
-      <p>
-        Select your course and submit
-        your payment information.
-      </p>
-
-
-      <form id="payment-form">
-
-        <label for="payment-enrolment">
-          Course
-        </label>
-
-        <select
-          id="payment-enrolment"
-          required
-        >
-
-          <option value="">
-            Select your course
-          </option>
-
-          ${currentEnrolments
-            .map(
-              enrolment => {
-
-                const course =
-                  courseMap[
-                    enrolment.course_id
-                  ];
-
-
-                return `
-                  <option
-                    value="${escapeHtml(
-                      enrolment.id
-                    )}"
-                  >
-                    ${escapeHtml(
-                      course?.title ||
-                      "Course"
-                    )}
-                    -
-                    ${money(
-                      course?.price || 0
-                    )}
-                  </option>
-                `;
-
-              }
-            )
-            .join("")}
-
-        </select>
-
-
-        <label for="payment-amount">
-          Amount Paid (R)
-        </label>
-
-        <input
-          id="payment-amount"
-          type="number"
-          min="0.01"
-          step="0.01"
-          placeholder="Enter amount"
-          required
-        >
-
-
-        <label for="payment-method">
-          Payment Method
-        </label>
-
-        <select
-          id="payment-method"
-          required
-        >
-
-          <option value="">
-            Select payment method
-          </option>
-
-          <option value="EFT / Bank Transfer">
-            EFT / Bank Transfer
-          </option>
-
-          <option value="Cash Deposit">
-            Cash Deposit
-          </option>
-
-          <option value="Other">
-            Other
-          </option>
-
-        </select>
-
-
-        <label for="payment-proof">
-          Proof of Payment
-        </label>
-
-        <input
-          id="payment-proof"
-          type="file"
-          accept=".pdf,.jpg,.jpeg,.png"
-        >
-
-        <small>
-          Accepted formats: PDF, JPG, JPEG or PNG.
-          Maximum file size: 5 MB.
-        </small>
-
-
-        <label for="payment-notes">
-          Notes
-        </label>
-
-        <textarea
-          id="payment-notes"
-          rows="4"
-          placeholder="Optional payment notes"
-        ></textarea>
-
-
-        <button
-          id="submit-payment"
-          class="btn green"
-          type="submit"
-        >
-          Submit Payment
-        </button>
-
-      </form>
-
-    </div>
-
-
-    <div class="payment-history">
-
-      <h3>
-        Payment History
-      </h3>
-
-      <div id="payment-history-list">
-
-        ${renderPaymentHistory()}
-
-      </div>
-
-    </div>
-
-  `;
-
-
-  const paymentForm =
-    document.getElementById(
-      "payment-form"
-    );
-
-
-  if (paymentForm) {
-
-    paymentForm.addEventListener(
-      "submit",
-      submitPayment
-    );
-
-  }
-
-
-  const enrolmentSelect =
-    document.getElementById(
-      "payment-enrolment"
-    );
-
-
-  if (enrolmentSelect) {
-
-    enrolmentSelect.addEventListener(
-      "change",
-      updatePaymentAmount
-    );
-
-  }
-
-}
-
-
-// ==========================================================
-// UPDATE PAYMENT AMOUNT
-// ==========================================================
-
-function updatePaymentAmount() {
-
-  const select =
-    document.getElementById(
-      "payment-enrolment"
-    );
-
-  const amountInput =
-    document.getElementById(
-      "payment-amount"
-    );
-
-
-  if (
-    !select ||
-    !amountInput
-  ) {
-    return;
-  }
-
-
-  const enrolmentId =
-    select.value;
-
-
-  const enrolment =
-    currentEnrolments.find(
-      item =>
-        item.id === enrolmentId
-    );
-
-
-  if (!enrolment) {
-
-    amountInput.value = "";
-
-    return;
-  }
-
-
-  const course =
-    currentCourses.find(
-      item =>
-        item.id ===
-        enrolment.course_id
-    );
-
-
-  if (!course) {
-
-    amountInput.value = "";
-
-    return;
-  }
-
-
-  amountInput.value =
-    Number(
-      course.price || 0
-    ).toFixed(2);
-
-}
-
-
-// ==========================================================
-// PAYMENT HISTORY
-// ==========================================================
-
-function renderPaymentHistory() {
-
-  if (!currentPayments.length) {
-
-    return `
-      <div class="card">
-
-        <p>
-          No payments have been submitted yet.
+          Payment information could not
+          be loaded right now.
         </p>
 
       </div>
     `;
   }
-
-
-  return currentPayments
-    .map(
-      payment => {
-
-        const enrolment =
-          currentEnrolments.find(
-            item =>
-              item.id ===
-              payment.enrolment_id
-          );
-
-
-        const course =
-          currentCourses.find(
-            item =>
-              item.id ===
-              enrolment?.course_id
-          );
-
-
-        return `
-          <div class="card">
-
-            <h3>
-              ${escapeHtml(
-                course?.title ||
-                "Course Payment"
-              )}
-            </h3>
-
-
-            <p>
-              <strong>
-                Amount paid:
-              </strong><br>
-
-              ${money(
-                payment.amount
-              )}
-            </p>
-
-
-            <p>
-              <strong>
-                Payment method:
-              </strong><br>
-
-              ${escapeHtml(
-                payment.payment_method ||
-                "—"
-              )}
-            </p>
-
-
-            <p>
-              <strong>
-                Date:
-              </strong><br>
-
-              ${formatDate(
-                payment.created_at
-              )}
-            </p>
-
-
-            <span
-              class="badge ${statusClass(
-                payment.status
-              )}"
-            >
-              ${escapeHtml(
-                statusText(
-                  payment.status
-                )
-              )}
-            </span>
-
-
-            ${
-              payment.proof_url
-              ?
-              `
-                <p>
-                  <strong>
-                    Proof of payment:
-                  </strong><br>
-
-                  Submitted
-                </p>
-              `
-              :
-              ""
-            }
-
-          </div>
-        `;
-
-      }
-    )
-    .join("");
 }
 
-
-// ==========================================================
-// SUBMIT PAYMENT
-// ==========================================================
-
-async function submitPayment(event) {
-
-  event.preventDefault();
-
-  hideMessage();
-
-
-  const submitButton =
-    document.getElementById(
-      "submit-payment"
-    );
-
-  const enrolmentSelect =
-    document.getElementById(
-      "payment-enrolment"
-    );
-
-  const amountInput =
-    document.getElementById(
-      "payment-amount"
-    );
-
-  const methodSelect =
-    document.getElementById(
-      "payment-method"
-    );
-
-  const proofInput =
-    document.getElementById(
-      "payment-proof"
-    );
-
-  const notesInput =
-    document.getElementById(
-      "payment-notes"
-    );
-
-
-  const enrolmentId =
-    enrolmentSelect?.value;
-
-
-  const amount =
-    Number(
-      amountInput?.value
-    );
-
-
-  const paymentMethod =
-    methodSelect?.value;
-
-
-  const notes =
-    notesInput?.value.trim() ||
-    null;
-
-
-  if (!enrolmentId) {
-
-    showMessage(
-      "Please select your course."
-    );
-
-    return;
-  }
-
-
-  if (!amount || amount <= 0) {
-
-    showMessage(
-      "Please enter the amount you paid."
-    );
-
-    return;
-  }
-
-
-  if (!paymentMethod) {
-
-    showMessage(
-      "Please select your payment method."
-    );
-
-    return;
-  }
-
-
-  const enrolment =
-    currentEnrolments.find(
-      item =>
-        item.id === enrolmentId
-    );
-
-
-  if (!enrolment) {
-
-    showMessage(
-      "The selected enrolment could not be found."
-    );
-
-    return;
-  }
-
-
-  const existingPending =
-    currentPayments.find(
-      payment =>
-        payment.enrolment_id ===
-          enrolmentId &&
-        String(
-          payment.status || ""
-        ).toLowerCase() ===
-          "pending"
-    );
-
-
-  if (existingPending) {
-
-    showMessage(
-      "You already have a payment awaiting approval for this course."
-    );
-
-    return;
-  }
-
-
-  let proofFile = null;
-
-
-  if (
-    proofInput &&
-    proofInput.files &&
-    proofInput.files.length
-  ) {
-
-    proofFile =
-      proofInput.files[0];
-
-
-    if (
-      proofFile.size >
-      5 * 1024 * 1024
-    ) {
-
-      showMessage(
-        "The proof of payment must be 5 MB or smaller."
-      );
-
-      return;
-    }
-
-
-    const allowedTypes = [
-      "application/pdf",
-      "image/jpeg",
-      "image/png"
-    ];
-
-
-    if (
-      !allowedTypes.includes(
-        proofFile.type
-      )
-    ) {
-
-      showMessage(
-        "Please upload a PDF, JPG, JPEG or PNG file."
-      );
-
-      return;
-    }
-
-  }
-
-
-  if (submitButton) {
-
-    submitButton.disabled = true;
-
-    submitButton.textContent =
-      "Submitting…";
-  }
-
+// ============================================================
+// LOGOUT
+// ============================================================
+
+async function logout() {
 
   try {
 
-    const paymentId =
-      crypto.randomUUID();
-
-
-    let proofPath = null;
-
-
-    // ------------------------------------------------------
-    // UPLOAD PROOF
-    // ------------------------------------------------------
-
-    if (proofFile) {
-
-      const extension =
-        proofFile.name
-          .split(".")
-          .pop()
-          .toLowerCase();
-
-
-      proofPath =
-        `${currentUser.id}/${paymentId}.${extension}`;
-
-
-      const {
-        error: uploadError
-      } = await db.storage
-        .from("payment-proofs")
-        .upload(
-          proofPath,
-          proofFile,
-          {
-            cacheControl: "3600",
-            upsert: false
-          }
-        );
-
-
-      if (uploadError) {
-
-        console.error(
-          "Proof upload error:",
-          uploadError
-        );
-
-        throw new Error(
-          "The proof of payment could not be uploaded."
-        );
-      }
-
-    }
-
-
-    // ------------------------------------------------------
-    // CREATE PAYMENT
-    // DATABASE COLUMN: enrolment_id
-    // ------------------------------------------------------
-
     const {
-      data,
       error
-    } = await db
-      .from("payments")
-      .insert({
-
-        id:
-          paymentId,
-
-        student_id:
-          currentStudent.id,
-
-        enrolment_id:
-          enrolmentId,
-
-        amount:
-          amount,
-
-        payment_method:
-          paymentMethod,
-
-        status:
-          "pending",
-
-        proof_url:
-          proofPath,
-
-        notes:
-          notes
-
-      })
-      .select()
-      .single();
-
+    } = await db.auth.signOut();
 
     if (error) {
-
-      console.error(
-        "Payment insert error:",
-        error
-      );
-
-
-      if (proofPath) {
-
-        await db.storage
-          .from("payment-proofs")
-          .remove([
-            proofPath
-          ]);
-
-      }
-
-
-      throw new Error(
-        "Your payment could not be submitted."
-      );
+      throw error;
     }
 
-
-    currentPayments.unshift(
-      data
-    );
-
-
-    showMessage(
-      "Payment submitted successfully. Your payment is now awaiting approval.",
-      true
-    );
-
-
-    const form =
-      document.getElementById(
-        "payment-form"
-      );
-
-
-    if (form) {
-
-      form.reset();
-
-    }
-
-
-    await loadPayments();
-
+    window.location.href =
+      "login.html";
 
   } catch (error) {
 
     console.error(
-      "Payment submission error:",
+      "Logout error:",
       error
     );
 
-
     showMessage(
-      error.message ||
-      "Unable to submit payment. Please try again."
+      "Unable to log out. Please try again."
     );
-
-
-  } finally {
-
-    if (submitButton) {
-
-      submitButton.disabled = false;
-
-      submitButton.textContent =
-        "Submit Payment";
-
-    }
-
   }
+}
+
+// ============================================================
+// LOGOUT BUTTON
+// ============================================================
+
+if (logoutBtn) {
+
+  logoutBtn.addEventListener(
+    "click",
+    logout
+  );
 
 }
 
-
-// ==========================================================
+// ============================================================
 // INITIALISE DASHBOARD
-// ==========================================================
+// ============================================================
 
-async function init() {
+async function initDashboard() {
 
   try {
 
-    hideMessage();
+    // --------------------------------------------------------
+    // Check authentication
+    // --------------------------------------------------------
 
-
-    currentUser =
+    const user =
       await getCurrentUser();
 
-
-    if (!currentUser) {
+    if (!user) {
 
       window.location.href =
         "login.html";
@@ -1725,20 +1083,51 @@ async function init() {
       return;
     }
 
+    // --------------------------------------------------------
+    // Show email
+    // --------------------------------------------------------
 
-    await loadStudent();
+    if (userEmailEl) {
 
-    await loadEnrolments();
+      userEmailEl.textContent =
+        user.email || "";
 
-    await loadCourses();
+    }
 
-    await loadPayments();
+    // --------------------------------------------------------
+    // Get student
+    // --------------------------------------------------------
 
+    const student =
+      await getStudent(user.id);
 
-    console.log(
-      "FUNDA STUDENT DASHBOARD READY"
+    if (!student) {
+
+      if (userNameEl) {
+        userNameEl.textContent =
+          "Student";
+      }
+
+      showMessage(
+        "Your student profile could not be found."
+      );
+
+      return;
+    }
+
+    // --------------------------------------------------------
+    // Load dashboard
+    // --------------------------------------------------------
+
+    await loadStudentHeader(
+      student
     );
 
+    await Promise.all([
+      loadEnrolments(student.id),
+      loadAvailableCourses(student.id),
+      loadPayments(student.id)
+    ]);
 
   } catch (error) {
 
@@ -1747,41 +1136,17 @@ async function init() {
       error
     );
 
-
-    if (enrolmentsEl) {
-
-      enrolmentsEl.innerHTML = `
-        <div class="card">
-
-          <h3>
-            Dashboard Error
-          </h3>
-
-          <p>
-            ${escapeHtml(
-              error.message ||
-              "Unable to load the dashboard."
-            )}
-          </p>
-
-        </div>
-      `;
-
-    }
-
-
     showMessage(
-      error.message ||
-      "Unable to load your dashboard."
+      "Unable to load your dashboard. Please refresh the page."
     );
-
   }
-
 }
 
-
-// ==========================================================
+// ============================================================
 // START
-// ==========================================================
+// ============================================================
 
-init();
+document.addEventListener(
+  "DOMContentLoaded",
+  initDashboard
+);
