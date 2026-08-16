@@ -1,9 +1,7 @@
 // ============================================================
 // FUNDA ONLINE ACADEMY
-// AUTHENTICATION SYSTEM
-// LOGIN • REGISTRATION • PASSWORD RESET
-// STUDENT PROFILE • POLICY ACCEPTANCE
-// SELECTED COURSE ENROLMENT
+// STUDENT LOGIN • REGISTRATION • PASSWORD RESET
+// POLICY ACCEPTANCE • DECLARATION RECORD
 // ============================================================
 
 const db = supabase.createClient(
@@ -16,56 +14,44 @@ const db = supabase.createClient(
 // ELEMENTS
 // ============================================================
 
-const loginForm =
-  document.getElementById("login-form");
+const loginForm = document.getElementById("login-form");
+const signupForm = document.getElementById("signup-form");
 
-const signupForm =
-  document.getElementById("signup-form");
+const loginTab = document.getElementById("login-tab");
+const signupTab = document.getElementById("signup-tab");
+const forgotLink = document.getElementById("forgot");
 
-const loginTab =
-  document.getElementById("login-tab");
-
-const signupTab =
-  document.getElementById("signup-tab");
-
-const forgotLink =
-  document.getElementById("forgot");
-
-const messageBox =
-  document.getElementById("message");
+const messageBox = document.getElementById("message");
 
 
 // ============================================================
 // POLICY SETTINGS
 // ============================================================
 
-const POLICY_VERSION = "2026-08-16";
+const POLICY_VERSION = "FOA-2026-01";
 
 const DECLARATION_TEXT =
-  "I declare that the information I have provided is true and correct. " +
-  "I understand and accept Funda Online Academy's payment rules, terms " +
-  "and conditions, assessment requirements, course rules and privacy " +
-  "practices. I understand that I must complete my assessments on time " +
-  "and that no assessments may be submitted through WhatsApp. I understand " +
-  "that course changes are not permitted after a course has started and " +
-  "that there are no refunds for voluntary course drop-outs.";
+  "I declare that the information I have provided is true and correct " +
+  "to the best of my knowledge. I understand the academy's payment " +
+  "rules, student responsibilities, course rules, assessment " +
+  "requirements and privacy information. I understand that accepting " +
+  "these policies creates a record of my acceptance, including the " +
+  "date and time of acceptance.";
 
 
 // ============================================================
 // REMEMBER SELECTED COURSE
 // ============================================================
 
-const authParams =
-  new URLSearchParams(
-    window.location.search
-  );
+const authParams = new URLSearchParams(
+  window.location.search
+);
 
 const courseFromUrl =
   authParams.get("course") ||
   authParams.get("enrol");
 
 if (courseFromUrl) {
-
   localStorage.setItem(
     "funda_pending_course",
     courseFromUrl
@@ -73,26 +59,16 @@ if (courseFromUrl) {
 }
 
 
-// ============================================================
-// GET SELECTED COURSE
-// ============================================================
-
 function getPendingCourse() {
-
   return localStorage.getItem(
     "funda_pending_course"
   );
 }
 
 
-// ============================================================
-// GET AFTER-LOGIN DESTINATION
-// ============================================================
-
 function getStudentDestination() {
 
-  const course =
-    getPendingCourse();
+  const course = getPendingCourse();
 
   if (course) {
 
@@ -108,7 +84,7 @@ function getStudentDestination() {
 
 
 // ============================================================
-// MESSAGES
+// MESSAGE FUNCTIONS
 // ============================================================
 
 function showMessage(
@@ -118,28 +94,20 @@ function showMessage(
 
   if (!messageBox) return;
 
-  messageBox.textContent =
-    message;
+  messageBox.textContent = message;
 
-  messageBox.classList.remove(
-    "hidden"
-  );
+  messageBox.classList.remove("hidden");
 
   if (success) {
 
-    messageBox.style.background =
-      "#e8f5e9";
-
-    messageBox.style.color =
-      "#166534";
+    messageBox.style.background = "#e8f5e9";
+    messageBox.style.color = "#166534";
 
   } else {
 
-    messageBox.style.background =
-      "#fef2f2";
+    messageBox.style.background = "#fef2f2";
+    messageBox.style.color = "#991b1b";
 
-    messageBox.style.color =
-      "#991b1b";
   }
 }
 
@@ -148,12 +116,9 @@ function clearMessage() {
 
   if (!messageBox) return;
 
-  messageBox.textContent =
-    "";
+  messageBox.textContent = "";
 
-  messageBox.classList.add(
-    "hidden"
-  );
+  messageBox.classList.add("hidden");
 }
 
 
@@ -166,17 +131,11 @@ function showLogin() {
   clearMessage();
 
   if (signupForm) {
-
-    signupForm.classList.add(
-      "hidden"
-    );
+    signupForm.classList.add("hidden");
   }
 
   if (loginForm) {
-
-    loginForm.classList.remove(
-      "hidden"
-    );
+    loginForm.classList.remove("hidden");
   }
 }
 
@@ -186,17 +145,11 @@ function showSignup() {
   clearMessage();
 
   if (loginForm) {
-
-    loginForm.classList.add(
-      "hidden"
-    );
+    loginForm.classList.add("hidden");
   }
 
   if (signupForm) {
-
-    signupForm.classList.remove(
-      "hidden"
-    );
+    signupForm.classList.remove("hidden");
   }
 }
 
@@ -213,6 +166,7 @@ if (loginTab) {
 
     }
   );
+
 }
 
 
@@ -228,39 +182,46 @@ if (signupTab) {
 
     }
   );
+
 }
 
 
 // ============================================================
-// FIND POLICY CHECKBOXES
+// FIND POLICY ACCEPTANCE CHECKBOX
+//
+// IMPORTANT:
+// Our auth.html uses:
+// declaration-acceptance
+//
+// We also support older IDs so the system is safer.
 // ============================================================
 
 function getPolicyCheckbox() {
 
-  return (
-    document.getElementById(
-      "accept-policies"
-    ) ||
-    document.getElementById(
-      "policy-accept"
-    ) ||
-    document.getElementById(
-      "accept-terms"
-    )
-  );
-}
+  const possibleIds = [
+    "declaration-acceptance",
+    "terms-acceptance",
+    "policy-acceptance",
+    "accept-policies",
+    "accept-policy",
+    "accept-terms",
+    "accept-declaration",
+    "policy-accept",
+    "declaration-accept"
+  ];
 
+  for (const id of possibleIds) {
 
-function getDeclarationCheckbox() {
+    const checkbox =
+      document.getElementById(id);
 
-  return (
-    document.getElementById(
-      "accept-declaration"
-    ) ||
-    document.getElementById(
-      "declaration-accept"
-    )
-  );
+    if (checkbox) {
+      return checkbox;
+    }
+
+  }
+
+  return null;
 }
 
 
@@ -270,18 +231,10 @@ function getDeclarationCheckbox() {
 
 function validatePolicyAcceptance() {
 
-  const policyCheckbox =
+  const checkbox =
     getPolicyCheckbox();
 
-  const declarationCheckbox =
-    getDeclarationCheckbox();
-
-
-  // If the checkboxes do not exist yet,
-  // stop registration rather than silently
-  // creating an account without acceptance.
-
-  if (!policyCheckbox) {
+  if (!checkbox) {
 
     showMessage(
       "The Terms & Conditions acceptance box is missing. Please contact the academy administrator."
@@ -290,42 +243,47 @@ function validatePolicyAcceptance() {
     return false;
   }
 
-
-  if (!declarationCheckbox) {
+  if (!checkbox.checked) {
 
     showMessage(
-      "The declaration acceptance box is missing. Please contact the academy administrator."
+      "You must read and accept the Funda Online Academy Policies and Declaration before creating your account."
     );
+
+    checkbox.focus();
 
     return false;
   }
-
-
-  if (!policyCheckbox.checked) {
-
-    showMessage(
-      "You must read and accept the Funda Online Academy Terms & Conditions before creating your account."
-    );
-
-    policyCheckbox.focus();
-
-    return false;
-  }
-
-
-  if (!declarationCheckbox.checked) {
-
-    showMessage(
-      "You must accept the student declaration before creating your account."
-    );
-
-    declarationCheckbox.focus();
-
-    return false;
-  }
-
 
   return true;
+}
+
+
+// ============================================================
+// GET STUDENT RECORD
+// ============================================================
+
+async function getStudentRecord(userId) {
+
+  const {
+    data,
+    error
+  } = await db
+    .from("students")
+    .select("id")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (error) {
+
+    console.error(
+      "Student lookup error:",
+      error
+    );
+
+    return null;
+  }
+
+  return data;
 }
 
 
@@ -334,110 +292,54 @@ function validatePolicyAcceptance() {
 // ============================================================
 
 async function savePolicyAcceptance(
-  user
+  user,
+  acceptedAt = null
 ) {
 
   if (!user) {
-
-    throw new Error(
-      "Student account could not be identified."
-    );
-
+    return false;
   }
 
 
-  const policyCheckbox =
+  const checkbox =
     getPolicyCheckbox();
 
-  const declarationCheckbox =
-    getDeclarationCheckbox();
-
-
-  if (
-    !policyCheckbox ||
-    !declarationCheckbox ||
-    !policyCheckbox.checked ||
-    !declarationCheckbox.checked
-  ) {
-
-    throw new Error(
-      "Policy acceptance is required."
-    );
-
-  }
-
-
-  const payload = {
-
-    student_id: null,
-
-    user_id:
-      user.id,
-
-    policy_version:
-      POLICY_VERSION,
-
-    policies_accepted:
-      true,
-
-    declaration_accepted:
-      true,
-
-    declaration_text:
-      DECLARATION_TEXT,
-
-    accepted_at:
-      new Date().toISOString(),
-
-    created_at:
-      new Date().toISOString()
-
-  };
-
-
-  // ----------------------------------------------------------
-  // Find the student's database record.
-  // ----------------------------------------------------------
-
-  const {
-    data: student,
-    error: studentError
-  } = await db
-    .from("students")
-    .select("id")
-    .eq(
-      "user_id",
-      user.id
-    )
-    .maybeSingle();
-
-
-  if (studentError) {
+  if (!checkbox) {
 
     console.error(
-      "Student lookup for policy acceptance:",
-      studentError
+      "Policy acceptance checkbox not found."
     );
 
-    throw studentError;
+    return false;
   }
+
+
+  if (!checkbox.checked) {
+
+    return false;
+  }
+
+
+  // ----------------------------------------------------------
+  // Get student record
+  // ----------------------------------------------------------
+
+  const student =
+    await getStudentRecord(user.id);
 
 
   if (!student) {
 
-    throw new Error(
-      "Your student profile could not be found. Policy acceptance could not be recorded."
+    console.error(
+      "Student record not found for policy acceptance."
     );
 
+    return false;
   }
 
 
-  payload.student_id =
-    student.id;
-
-
   // ----------------------------------------------------------
-  // Prevent duplicate acceptance of the same version.
+  // Check whether this policy version already exists
   // ----------------------------------------------------------
 
   const {
@@ -445,57 +347,84 @@ async function savePolicyAcceptance(
     error: existingError
   } = await db
     .from("policy_acceptances")
-    .select("id")
-    .eq(
-      "user_id",
-      user.id
-    )
-    .eq(
-      "policy_version",
-      POLICY_VERSION
-    )
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("policy_version", POLICY_VERSION)
     .maybeSingle();
 
 
   if (existingError) {
 
     console.error(
-      "Policy acceptance lookup:",
+      "Policy acceptance lookup error:",
       existingError
     );
 
-    throw existingError;
-  }
-
-
-  if (existing) {
-
-    return true;
-
+    return false;
   }
 
 
   // ----------------------------------------------------------
-  // Save acceptance.
+  // Do not create duplicate acceptance records
+  // ----------------------------------------------------------
+
+  if (existing) {
+
+    return true;
+  }
+
+
+  // ----------------------------------------------------------
+  // Actual acceptance time
+  // ----------------------------------------------------------
+
+  const acceptanceTime =
+    acceptedAt ||
+    new Date().toISOString();
+
+
+  // ----------------------------------------------------------
+  // Create policy acceptance record
   // ----------------------------------------------------------
 
   const {
     error
   } = await db
     .from("policy_acceptances")
-    .insert(
-      payload
-    );
+    .insert({
+
+      student_id:
+        student.id,
+
+      user_id:
+        user.id,
+
+      policy_version:
+        POLICY_VERSION,
+
+      policies_accepted:
+        true,
+
+      declaration_accepted:
+        true,
+
+      declaration_text:
+        DECLARATION_TEXT,
+
+      accepted_at:
+        acceptanceTime
+
+    });
 
 
   if (error) {
 
     console.error(
-      "Policy acceptance save:",
+      "Policy acceptance save error:",
       error
     );
 
-    throw error;
+    return false;
   }
 
 
@@ -504,12 +433,188 @@ async function savePolicyAcceptance(
 
 
 // ============================================================
-// SAVE / SYNC STUDENT PROFILE
+// SAVE PENDING POLICY ACCEPTANCE
+//
+// Used when Supabase requires email confirmation and therefore
+// does not immediately provide a session.
 // ============================================================
 
-async function syncStudentProfile(
+function savePendingPolicyAcceptance() {
+
+  const checkbox =
+    getPolicyCheckbox();
+
+  if (!checkbox || !checkbox.checked) {
+    return;
+  }
+
+
+  const pending = {
+
+    policy_version:
+      POLICY_VERSION,
+
+    accepted_at:
+      new Date().toISOString(),
+
+    declaration_text:
+      DECLARATION_TEXT
+
+  };
+
+
+  localStorage.setItem(
+    "funda_pending_policy_acceptance",
+    JSON.stringify(pending)
+  );
+}
+
+
+// ============================================================
+// GET PENDING POLICY ACCEPTANCE
+// ============================================================
+
+function getPendingPolicyAcceptance() {
+
+  const value =
+    localStorage.getItem(
+      "funda_pending_policy_acceptance"
+    );
+
+  if (!value) {
+    return null;
+  }
+
+
+  try {
+
+    return JSON.parse(value);
+
+  } catch (error) {
+
+    console.error(
+      "Pending policy data error:",
+      error
+    );
+
+    return null;
+  }
+}
+
+
+// ============================================================
+// COMPLETE PENDING POLICY ACCEPTANCE
+// ============================================================
+
+async function completePendingPolicyAcceptance(
   user
 ) {
+
+  const pending =
+    getPendingPolicyAcceptance();
+
+
+  if (!pending) {
+    return true;
+  }
+
+
+  const student =
+    await getStudentRecord(user.id);
+
+
+  if (!student) {
+    return false;
+  }
+
+
+  const {
+    data: existing,
+    error: existingError
+  } = await db
+    .from("policy_acceptances")
+    .select("id")
+    .eq("user_id", user.id)
+    .eq(
+      "policy_version",
+      pending.policy_version ||
+      POLICY_VERSION
+    )
+    .maybeSingle();
+
+
+  if (existingError) {
+
+    console.error(
+      "Pending policy lookup error:",
+      existingError
+    );
+
+    return false;
+  }
+
+
+  if (!existing) {
+
+    const {
+      error
+    } = await db
+      .from("policy_acceptances")
+      .insert({
+
+        student_id:
+          student.id,
+
+        user_id:
+          user.id,
+
+        policy_version:
+          pending.policy_version ||
+          POLICY_VERSION,
+
+        policies_accepted:
+          true,
+
+        declaration_accepted:
+          true,
+
+        declaration_text:
+          pending.declaration_text ||
+          DECLARATION_TEXT,
+
+        accepted_at:
+          pending.accepted_at ||
+          new Date().toISOString()
+
+      });
+
+
+    if (error) {
+
+      console.error(
+        "Pending policy save error:",
+        error
+      );
+
+      return false;
+    }
+
+  }
+
+
+  localStorage.removeItem(
+    "funda_pending_policy_acceptance"
+  );
+
+  return true;
+}
+
+
+// ============================================================
+// SAVE / SYNC PROFILE
+// ============================================================
+
+async function syncStudentProfile(user) {
 
   if (!user) return false;
 
@@ -550,10 +655,7 @@ async function syncStudentProfile(
   } = await db
     .from("profiles")
     .select("id, role")
-    .eq(
-      "id",
-      user.id
-    )
+    .eq("id", user.id)
     .maybeSingle();
 
 
@@ -569,12 +671,10 @@ async function syncStudentProfile(
 
 
   // ----------------------------------------------------------
-  // UPDATE EXISTING PROFILE
+  // Existing profile
   // ----------------------------------------------------------
 
   if (existingProfile) {
-
-    // NEVER change an administrator into a student.
 
     if (
       existingProfile.role ===
@@ -629,7 +729,7 @@ async function syncStudentProfile(
 
 
   // ----------------------------------------------------------
-  // CREATE NEW STUDENT PROFILE
+  // New profile
   // ----------------------------------------------------------
 
   const {
@@ -681,9 +781,7 @@ async function syncStudentProfile(
 // SAVE / SYNC STUDENT RECORD
 // ============================================================
 
-async function syncStudentRecord(
-  user
-) {
+async function syncStudentRecord(user) {
 
   if (!user) return false;
 
@@ -743,7 +841,7 @@ async function syncStudentRecord(
 
 
   // ----------------------------------------------------------
-  // UPDATE EXISTING STUDENT
+  // Existing student
   // ----------------------------------------------------------
 
   if (existingStudent) {
@@ -792,7 +890,7 @@ async function syncStudentRecord(
 
 
   // ----------------------------------------------------------
-  // CREATE NEW STUDENT
+  // New student
   // ----------------------------------------------------------
 
   const {
@@ -838,26 +936,20 @@ async function syncStudentRecord(
 
 
 // ============================================================
-// SYNC BOTH STUDENT TABLES
+// SYNC COMPLETE STUDENT ACCOUNT
 // ============================================================
 
-async function syncStudentAccount(
-  user
-) {
+async function syncStudentAccount(user) {
 
   if (!user) return false;
 
 
   const profileSaved =
-    await syncStudentProfile(
-      user
-    );
+    await syncStudentProfile(user);
 
 
   const studentSaved =
-    await syncStudentRecord(
-      user
-    );
+    await syncStudentRecord(user);
 
 
   if (!profileSaved) {
@@ -921,14 +1013,10 @@ async function checkExistingSession() {
     data.session.user;
 
 
-  // ----------------------------------------------------------
-  // DO NOT create policy acceptance here.
-  //
-  // Existing students may log in normally.
-  // Policy acceptance is recorded during registration.
-  // ----------------------------------------------------------
+  await syncStudentAccount(user);
 
-  await syncStudentAccount(
+
+  await completePendingPolicyAcceptance(
     user
   );
 
@@ -957,10 +1045,6 @@ async function checkExistingSession() {
   }
 
 
-  // ----------------------------------------------------------
-  // ADMIN
-  // ----------------------------------------------------------
-
   if (
     profile &&
     profile.role ===
@@ -973,10 +1057,6 @@ async function checkExistingSession() {
     return;
   }
 
-
-  // ----------------------------------------------------------
-  // STUDENT
-  // ----------------------------------------------------------
 
   window.location.href =
     getStudentDestination();
@@ -1091,6 +1171,14 @@ if (loginForm) {
       );
 
 
+      // Complete acceptance if it was
+      // waiting for email confirmation.
+
+      await completePendingPolicyAcceptance(
+        data.user
+      );
+
+
       const {
         data: profile,
         error: profileError
@@ -1169,6 +1257,22 @@ if (signupForm) {
 
       clearMessage();
 
+
+      // --------------------------------------------------------
+      // CHECK POLICY FIRST
+      // --------------------------------------------------------
+
+      if (
+        !validatePolicyAcceptance()
+      ) {
+
+        return;
+      }
+
+
+      // --------------------------------------------------------
+      // GET FORM VALUES
+      // --------------------------------------------------------
 
       const name =
         document
@@ -1254,14 +1358,16 @@ if (signupForm) {
       }
 
 
+      // --------------------------------------------------------
+      // SUPPORT SOUTH AFRICAN ID OR PASSPORT
+      // --------------------------------------------------------
+
       if (
-        !/^\d{13}$/.test(
-          idNumber
-        )
+        idNumber.length < 6
       ) {
 
         showMessage(
-          "Please enter a valid 13-digit South African ID number."
+          "Please enter a valid ID or passport number."
         );
 
         return;
@@ -1294,15 +1400,13 @@ if (signupForm) {
 
 
       // --------------------------------------------------------
-      // POLICY ACCEPTANCE
+      // SAVE THE ACCEPTANCE TIME NOW
+      //
+      // This is the actual time the student accepted.
       // --------------------------------------------------------
 
-      if (
-        !validatePolicyAcceptance()
-      ) {
-
-        return;
-      }
+      const acceptedAt =
+        new Date().toISOString();
 
 
       // --------------------------------------------------------
@@ -1385,31 +1489,33 @@ if (signupForm) {
 
       if (data.session) {
 
-        try {
-
+        const synced =
           await syncStudentAccount(
             data.user
           );
 
 
-          await savePolicyAcceptance(
-            data.user
-          );
-
-
-        } catch (policyError) {
-
-          console.error(
-            "Policy acceptance error:",
-            policyError
-          );
-
-
-          // The account has already been created,
-          // so tell the student exactly what happened.
+        if (!synced) {
 
           showMessage(
-            "Your account was created, but we could not record your policy acceptance. Please contact Funda Online Academy before continuing."
+            "Your account was created, but your student record could not be saved. Please contact the academy."
+          );
+
+          return;
+        }
+
+
+        const policySaved =
+          await savePolicyAcceptance(
+            data.user,
+            acceptedAt
+          );
+
+
+        if (!policySaved) {
+
+          showMessage(
+            "Your account was created, but your policy acceptance could not be recorded. Please contact the academy."
           );
 
           return;
@@ -1417,12 +1523,10 @@ if (signupForm) {
 
 
         showMessage(
-          "Student account created successfully. Your Terms & Conditions acceptance has been recorded.",
+          "Student account created successfully. Your policies and declaration have been recorded.",
           true
         );
 
-
-        // Course enrolment is handled after login.
 
         setTimeout(
           function() {
@@ -1431,7 +1535,7 @@ if (signupForm) {
               getStudentDestination();
 
           },
-          1200
+          1000
         );
 
 
@@ -1443,8 +1547,11 @@ if (signupForm) {
       // EMAIL CONFIRMATION REQUIRED
       // --------------------------------------------------------
 
+      savePendingPolicyAcceptance();
+
+
       showMessage(
-        "Your student account has been created. Please check your email to confirm your account, then log in. Your policy acceptance will be recorded after your account is confirmed.",
+        "Your student account has been created. Please check your email to confirm your account. Your policy acceptance will be recorded when you log in.",
         true
       );
 
