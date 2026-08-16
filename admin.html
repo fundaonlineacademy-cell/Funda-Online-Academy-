@@ -32,48 +32,10 @@ button{
   display:none!important;
 }
 
-/* ============================================================
-   LOADING
-   ============================================================ */
-
-.admin-loading{
-  max-width:500px;
-  margin:100px auto;
-  background:#fff;
-  border-radius:22px;
-  padding:30px;
-  text-align:center;
-  border:1px solid #e1e7e3;
-}
-
-.admin-loading h2{
-  margin-bottom:10px;
-}
-
-.spinner{
-  width:38px;
-  height:38px;
-  border:4px solid #dce8e1;
-  border-top-color:#0c8f55;
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-  margin:20px auto;
-}
-
-@keyframes spin{
-  to{
-    transform:rotate(360deg);
-  }
-}
-
-/* ============================================================
-   HEADER
-   ============================================================ */
-
 header{
-  background:#064c3d;
+  background:#064c3b;
   color:white;
-  padding:28px 20px;
+  padding:25px 20px;
 }
 
 .header-inner{
@@ -95,51 +57,39 @@ header{
   width:52px;
   height:52px;
   border-radius:14px;
-  background:#ffffff;
-  color:#064c3d;
+  background:white;
+  color:#0c8f55;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:27px;
+  font-size:28px;
 }
 
 .brand h1{
-  font-size:27px;
+  font-size:25px;
   line-height:1.2;
 }
 
 .brand p{
-  color:#d7ebe5;
+  color:#d7eee5;
   font-size:15px;
-  margin-top:4px;
+  margin-top:5px;
 }
 
 .logout-btn{
-  background:#fff;
-  color:#064c3d;
-  padding:15px 25px;
+  background:white;
+  color:#064c3b;
+  padding:14px 20px;
   border-radius:12px;
   font-weight:bold;
   font-size:15px;
 }
-
-.logout-btn:hover{
-  opacity:.9;
-}
-
-/* ============================================================
-   MAIN
-   ============================================================ */
 
 main{
   max-width:1200px;
   margin:auto;
   padding:28px 16px 60px;
 }
-
-/* ============================================================
-   MESSAGE
-   ============================================================ */
 
 .message{
   padding:15px 18px;
@@ -171,50 +121,27 @@ main{
   border:1px solid #cbdff5;
 }
 
-/* ============================================================
-   WELCOME
-   ============================================================ */
-
-.welcome-card{
-  background:#fff;
-  border:1px solid #e2e8e4;
-  border-radius:24px;
-  padding:32px;
-  margin-bottom:22px;
-  box-shadow:0 8px 30px rgba(16,37,28,.04);
-}
-
-.welcome-card h2{
-  font-size:32px;
-  margin-bottom:8px;
-}
-
-.welcome-card p{
-  color:#68766f;
-  font-size:17px;
-}
-
-/* ============================================================
+/* =========================
    STATISTICS
-   ============================================================ */
+   ========================= */
 
 .dashboard-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
   gap:16px;
-  margin-bottom:24px;
+  margin-bottom:25px;
 }
 
 .stat{
   background:white;
   border:1px solid #e2e8e4;
-  border-radius:20px;
+  border-radius:18px;
   padding:22px;
   box-shadow:0 5px 20px rgba(16,37,28,.04);
 }
 
 .stat-icon{
-  font-size:27px;
+  font-size:25px;
   margin-bottom:10px;
 }
 
@@ -224,15 +151,15 @@ main{
 }
 
 .stat-value{
-  font-size:32px;
+  font-size:30px;
   font-weight:800;
   margin-top:5px;
-  color:#14915f;
+  color:#0c8f55;
 }
 
-/* ============================================================
-   CARD
-   ============================================================ */
+/* =========================
+   ADMINISTRATION TABS
+   ========================= */
 
 .card{
   background:white;
@@ -242,6 +169,62 @@ main{
   margin-bottom:24px;
   box-shadow:0 8px 30px rgba(16,37,28,.04);
   overflow:hidden;
+}
+
+.admin-navigation{
+  margin-bottom:24px;
+}
+
+.admin-navigation h2{
+  font-size:34px;
+  margin-bottom:22px;
+}
+
+.admin-tabs{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.admin-tab{
+  width:100%;
+  background:#064c3b;
+  color:white;
+  border-radius:20px;
+  padding:20px 18px;
+  text-align:center;
+  transition:.2s ease;
+}
+
+.admin-tab:hover{
+  background:#075c48;
+  transform:translateY(-1px);
+}
+
+.admin-tab.active{
+  background:#0c8f55;
+}
+
+.admin-tab-title{
+  display:block;
+  font-size:24px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.admin-tab-description{
+  display:block;
+  font-size:16px;
+  line-height:1.4;
+  color:#f1faf6;
+}
+
+.section{
+  display:none;
+}
+
+.section.active{
+  display:block;
 }
 
 .card-title{
@@ -263,65 +246,7 @@ main{
   color:#68766f;
   font-size:17px;
   line-height:1.55;
-  margin-bottom:22px;
-}
-
-/* ============================================================
-   ADMINISTRATION TABS
-   ============================================================ */
-
-.admin-tabs{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:16px;
-}
-
-.admin-tab{
-  background:#064c3d;
-  color:white;
-  padding:25px 18px;
-  border-radius:18px;
-  text-align:center;
-  transition:.2s ease;
-}
-
-.admin-tab:hover{
-  background:#075b49;
-  transform:translateY(-2px);
-}
-
-.admin-tab.active{
-  background:#0c8f55;
-}
-
-.admin-tab .tab-icon{
-  font-size:31px;
-  margin-bottom:8px;
-}
-
-.admin-tab strong{
-  display:block;
-  font-size:22px;
-  margin-bottom:8px;
-}
-
-.admin-tab span{
-  display:block;
-  font-size:15px;
-  color:#e5f5ef;
-  line-height:1.4;
-}
-
-/* ============================================================
-   TAB CONTENT
-   ============================================================ */
-
-.tab-section{
-  display:none;
-}
-
-.tab-section.active{
-  display:block;
+  margin-bottom:20px;
 }
 
 .section-tools{
@@ -345,17 +270,9 @@ main{
   background:#087744;
 }
 
-.back-btn{
-  background:#e9f0ec;
-  color:#164b39;
-  padding:11px 16px;
-  border-radius:10px;
-  font-weight:bold;
-}
-
-/* ============================================================
+/* =========================
    TABLES
-   ============================================================ */
+   ========================= */
 
 .table-wrap{
   width:100%;
@@ -366,7 +283,7 @@ main{
 
 table{
   width:100%;
-  min-width:750px;
+  min-width:720px;
   border-collapse:collapse;
 }
 
@@ -409,10 +326,6 @@ tr:last-child td{
   white-space:nowrap;
 }
 
-/* ============================================================
-   BADGES
-   ============================================================ */
-
 .badge{
   display:inline-block;
   padding:6px 10px;
@@ -430,7 +343,8 @@ tr:last-child td{
 .badge.approved,
 .badge.completed,
 .badge.paid,
-.badge.active{
+.badge.active,
+.badge.passed{
   background:#e3f7eb;
   color:#11683d;
 }
@@ -446,10 +360,6 @@ tr:last-child td{
   background:#eef1ef;
   color:#4d5a53;
 }
-
-/* ============================================================
-   ACTION BUTTONS
-   ============================================================ */
 
 .action-btn{
   padding:8px 11px;
@@ -469,9 +379,31 @@ tr:last-child td{
   color:#fff;
 }
 
-/* ============================================================
-   COURSES
-   ============================================================ */
+.empty{
+  text-align:center;
+  padding:30px 15px;
+  color:#6d7973;
+  font-size:15px;
+}
+
+.loading{
+  padding:20px 0;
+  color:#68766f;
+  font-size:17px;
+}
+
+.error-box{
+  background:#fff4f4;
+  color:#9c2626;
+  border:1px solid #efcaca;
+  border-radius:12px;
+  padding:15px;
+  line-height:1.5;
+}
+
+/* =========================
+   COURSE CARDS
+   ========================= */
 
 .course-grid{
   display:grid;
@@ -491,11 +423,6 @@ tr:last-child td{
   margin-bottom:9px;
 }
 
-.course-card p{
-  color:#68766f;
-  line-height:1.45;
-}
-
 .course-price{
   font-size:20px;
   font-weight:800;
@@ -507,9 +434,9 @@ tr:last-child td{
   margin-top:10px;
 }
 
-/* ============================================================
-   INFO
-   ============================================================ */
+/* =========================
+   STUDENT DETAILS
+   ========================= */
 
 .info-grid{
   display:grid;
@@ -536,44 +463,43 @@ tr:last-child td{
   word-break:break-word;
 }
 
-/* ============================================================
-   EMPTY / LOADING / ERROR
-   ============================================================ */
+/* =========================
+   LOADING
+   ========================= */
 
-.empty{
+.admin-loading{
+  max-width:500px;
+  margin:100px auto;
+  background:#fff;
+  border-radius:22px;
+  padding:30px;
   text-align:center;
-  padding:30px 15px;
-  color:#6d7973;
-  font-size:15px;
+  border:1px solid #e1e7e3;
 }
 
-.loading{
-  padding:20px 0;
-  color:#68766f;
-  font-size:17px;
-  text-align:center;
+.admin-loading h2{
+  margin-bottom:10px;
 }
 
-.error-box{
-  background:#fff4f4;
-  color:#9c2626;
-  border:1px solid #efcaca;
-  border-radius:12px;
-  padding:15px;
-  line-height:1.5;
+.spinner{
+  width:38px;
+  height:38px;
+  border:4px solid #dce8e1;
+  border-top-color:#0c8f55;
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:20px auto;
 }
 
-.not-ready{
-  background:#f7f9f8;
-  border-radius:16px;
-  padding:25px;
-  color:#52615a;
-  line-height:1.6;
+@keyframes spin{
+  to{
+    transform:rotate(360deg);
+  }
 }
 
-/* ============================================================
+/* =========================
    MOBILE
-   ============================================================ */
+   ========================= */
 
 @media(max-width:900px){
 
@@ -590,11 +516,11 @@ tr:last-child td{
 @media(max-width:600px){
 
   header{
-    padding:20px 14px;
+    padding:18px 14px;
   }
 
   .header-inner{
-    align-items:center;
+    align-items:flex-start;
   }
 
   .brand h1{
@@ -612,24 +538,12 @@ tr:last-child td{
   }
 
   .logout-btn{
-    padding:11px 14px;
+    padding:10px 13px;
     font-size:12px;
   }
 
   main{
     padding:18px 10px 40px;
-  }
-
-  .welcome-card{
-    padding:25px 20px;
-  }
-
-  .welcome-card h2{
-    font-size:28px;
-  }
-
-  .welcome-card p{
-    font-size:15px;
   }
 
   .dashboard-grid{
@@ -641,18 +555,31 @@ tr:last-child td{
     padding:15px;
   }
 
-  .stat-icon{
-    font-size:22px;
-  }
-
   .stat-value{
-    font-size:25px;
+    font-size:24px;
   }
 
   .card{
-    padding:22px 14px;
+    padding:20px 14px;
     border-radius:20px;
     margin-bottom:18px;
+  }
+
+  .admin-navigation h2{
+    font-size:30px;
+  }
+
+  .admin-tab{
+    border-radius:18px;
+    padding:18px 12px;
+  }
+
+  .admin-tab-title{
+    font-size:23px;
+  }
+
+  .admin-tab-description{
+    font-size:15px;
   }
 
   .card-title h2{
@@ -667,19 +594,6 @@ tr:last-child td{
     font-size:15px;
   }
 
-  .admin-tabs{
-    grid-template-columns:1fr;
-    gap:12px;
-  }
-
-  .admin-tab{
-    padding:21px 15px;
-  }
-
-  .admin-tab strong{
-    font-size:20px;
-  }
-
   .course-grid{
     grid-template-columns:1fr;
   }
@@ -689,37 +603,13 @@ tr:last-child td{
   }
 
 }
-
-/* ============================================================
-   PRINT
-   ============================================================ */
-
-@media print{
-
-  header,
-  .admin-tabs,
-  .section-tools,
-  .logout-btn{
-    display:none!important;
-  }
-
-  body{
-    background:#fff;
-  }
-
-  .card{
-    box-shadow:none;
-    border:1px solid #ccc;
-  }
-
-}
 </style>
 </head>
 
 <body>
 
 <!-- ============================================================
-     LOADING SCREEN
+     ADMIN LOADING
      ============================================================ -->
 
 <div id="adminLoading" class="admin-loading">
@@ -779,28 +669,7 @@ tr:last-child td{
 
 <main>
 
-<!-- ============================================================
-     MESSAGE
-     ============================================================ -->
-
 <div id="message" class="message"></div>
-
-
-<!-- ============================================================
-     WELCOME
-     ============================================================ -->
-
-<section class="welcome-card">
-
-  <h2>
-    Welcome, Administrator
-  </h2>
-
-  <p id="adminEmail">
-    Administrator
-  </p>
-
-</section>
 
 
 <!-- ============================================================
@@ -892,27 +761,14 @@ tr:last-child td{
 
 
 <!-- ============================================================
-     ADMINISTRATION
+     EXACT SIX ADMINISTRATION TABS
      ============================================================ -->
 
-<section class="card">
+<section class="card admin-navigation">
 
-  <div class="card-title">
-
-    <span>
-      ⚙️
-    </span>
-
-    <h2>
-      Administration
-    </h2>
-
-  </div>
-
-  <p class="card-description">
-    Manage the Funda Online Academy system from one place.
-  </p>
-
+  <h2>
+    Administration
+  </h2>
 
   <div class="admin-tabs">
 
@@ -921,15 +777,11 @@ tr:last-child td{
       data-tab="students"
     >
 
-      <div class="tab-icon">
-        👨🏽‍🎓
-      </div>
-
-      <strong>
+      <span class="admin-tab-title">
         Students
-      </strong>
+      </span>
 
-      <span>
+      <span class="admin-tab-description">
         Manage registered students
       </span>
 
@@ -941,15 +793,11 @@ tr:last-child td{
       data-tab="courses"
     >
 
-      <div class="tab-icon">
-        📚
-      </div>
-
-      <strong>
+      <span class="admin-tab-title">
         Courses
-      </strong>
+      </span>
 
-      <span>
+      <span class="admin-tab-description">
         Manage courses and modules
       </span>
 
@@ -958,18 +806,14 @@ tr:last-child td{
 
     <button
       class="admin-tab"
-      data-tab="enrollments"
+      data-tab="enrolments"
     >
 
-      <div class="tab-icon">
-        📝
-      </div>
-
-      <strong>
+      <span class="admin-tab-title">
         Enrolments
-      </strong>
+      </span>
 
-      <span>
+      <span class="admin-tab-description">
         View student enrolments
       </span>
 
@@ -981,15 +825,11 @@ tr:last-child td{
       data-tab="assessments"
     >
 
-      <div class="tab-icon">
-        📝
-      </div>
-
-      <strong>
+      <span class="admin-tab-title">
         Assessments
-      </strong>
+      </span>
 
-      <span>
+      <span class="admin-tab-description">
         Manage assessments and results
       </span>
 
@@ -1001,15 +841,11 @@ tr:last-child td{
       data-tab="payments"
     >
 
-      <div class="tab-icon">
-        💳
-      </div>
-
-      <strong>
+      <span class="admin-tab-title">
         Payments
-      </strong>
+      </span>
 
-      <span>
+      <span class="admin-tab-description">
         Manage student payments
       </span>
 
@@ -1021,15 +857,11 @@ tr:last-child td{
       data-tab="certificates"
     >
 
-      <div class="tab-icon">
-        🎓
-      </div>
-
-      <strong>
+      <span class="admin-tab-title">
         Certificates
-      </strong>
+      </span>
 
-      <span>
+      <span class="admin-tab-description">
         Manage certificates
       </span>
 
@@ -1041,12 +873,12 @@ tr:last-child td{
 
 
 <!-- ============================================================
-     STUDENTS
+     STUDENTS TAB
      ============================================================ -->
 
 <section
-  id="tab-students"
-  class="card tab-section active"
+  id="section-students"
+  class="card section active"
 >
 
   <div class="card-title">
@@ -1062,19 +894,13 @@ tr:last-child td{
   </div>
 
   <p class="card-description">
-    View registered students and their administration information.
+    Manage registered Funda Online Academy students.
   </p>
+
 
   <div class="section-tools">
 
-    <div>
-      <button
-        class="back-btn"
-        onclick="showOverview()"
-      >
-        ← Administration
-      </button>
-    </div>
+    <div></div>
 
     <button
       id="refreshStudents"
@@ -1084,6 +910,7 @@ tr:last-child td{
     </button>
 
   </div>
+
 
   <div id="studentsContent">
 
@@ -1097,18 +924,18 @@ tr:last-child td{
 
 
 <!-- ============================================================
-     COURSES
+     COURSES TAB
      ============================================================ -->
 
 <section
-  id="tab-courses"
-  class="card tab-section"
+  id="section-courses"
+  class="card section"
 >
 
   <div class="card-title">
 
     <span>
-      📚
+      📖
     </span>
 
     <h2>
@@ -1118,19 +945,13 @@ tr:last-child td{
   </div>
 
   <p class="card-description">
-    View all courses currently available in the Funda Online Academy system.
+    Manage the courses available in the Funda Online Academy system.
   </p>
+
 
   <div class="section-tools">
 
-    <div>
-      <button
-        class="back-btn"
-        onclick="showOverview()"
-      >
-        ← Administration
-      </button>
-    </div>
+    <div></div>
 
     <button
       id="refreshCourses"
@@ -1140,6 +961,7 @@ tr:last-child td{
     </button>
 
   </div>
+
 
   <div id="coursesContent">
 
@@ -1153,12 +975,12 @@ tr:last-child td{
 
 
 <!-- ============================================================
-     ENROLMENTS
+     ENROLMENTS TAB
      ============================================================ -->
 
 <section
-  id="tab-enrollments"
-  class="card tab-section"
+  id="section-enrolments"
+  class="card section"
 >
 
   <div class="card-title">
@@ -1174,19 +996,13 @@ tr:last-child td{
   </div>
 
   <p class="card-description">
-    Review student course enrolment requests and manage their status.
+    Review student requests and manage enrolment status.
   </p>
+
 
   <div class="section-tools">
 
-    <div>
-      <button
-        class="back-btn"
-        onclick="showOverview()"
-      >
-        ← Administration
-      </button>
-    </div>
+    <div></div>
 
     <button
       id="refreshEnrollments"
@@ -1196,6 +1012,7 @@ tr:last-child td{
     </button>
 
   </div>
+
 
   <div id="enrollmentsContent">
 
@@ -1209,18 +1026,18 @@ tr:last-child td{
 
 
 <!-- ============================================================
-     ASSESSMENTS
+     ASSESSMENTS TAB
      ============================================================ -->
 
 <section
-  id="tab-assessments"
-  class="card tab-section"
+  id="section-assessments"
+  class="card section"
 >
 
   <div class="card-title">
 
     <span>
-      📝
+      📊
     </span>
 
     <h2>
@@ -1233,16 +1050,10 @@ tr:last-child td{
     Manage student assessments, marks and results.
   </p>
 
+
   <div class="section-tools">
 
-    <div>
-      <button
-        class="back-btn"
-        onclick="showOverview()"
-      >
-        ← Administration
-      </button>
-    </div>
+    <div></div>
 
     <button
       id="refreshAssessments"
@@ -1252,6 +1063,7 @@ tr:last-child td{
     </button>
 
   </div>
+
 
   <div id="assessmentsContent">
 
@@ -1265,12 +1077,12 @@ tr:last-child td{
 
 
 <!-- ============================================================
-     PAYMENTS
+     PAYMENTS TAB
      ============================================================ -->
 
 <section
-  id="tab-payments"
-  class="card tab-section"
+  id="section-payments"
+  class="card section"
 >
 
   <div class="card-title">
@@ -1286,19 +1098,13 @@ tr:last-child td{
   </div>
 
   <p class="card-description">
-    View student course payments and payment status.
+    View and manage student course payments.
   </p>
+
 
   <div class="section-tools">
 
-    <div>
-      <button
-        class="back-btn"
-        onclick="showOverview()"
-      >
-        ← Administration
-      </button>
-    </div>
+    <div></div>
 
     <button
       id="refreshPayments"
@@ -1308,6 +1114,7 @@ tr:last-child td{
     </button>
 
   </div>
+
 
   <div id="paymentsContent">
 
@@ -1321,12 +1128,12 @@ tr:last-child td{
 
 
 <!-- ============================================================
-     CERTIFICATES
+     CERTIFICATES TAB
      ============================================================ -->
 
 <section
-  id="tab-certificates"
-  class="card tab-section"
+  id="section-certificates"
+  class="card section"
 >
 
   <div class="card-title">
@@ -1342,19 +1149,13 @@ tr:last-child td{
   </div>
 
   <p class="card-description">
-    Manage certificates issued to students who successfully complete their courses.
+    Manage certificates issued to students.
   </p>
+
 
   <div class="section-tools">
 
-    <div>
-      <button
-        class="back-btn"
-        onclick="showOverview()"
-      >
-        ← Administration
-      </button>
-    </div>
+    <div></div>
 
     <button
       id="refreshCertificates"
@@ -1364,6 +1165,7 @@ tr:last-child td{
     </button>
 
   </div>
+
 
   <div id="certificatesContent">
 
@@ -1377,7 +1179,7 @@ tr:last-child td{
 
 
 <!-- ============================================================
-     SYSTEM STATUS
+     SYSTEM INFORMATION
      ============================================================ -->
 
 <section class="card">
@@ -1389,14 +1191,15 @@ tr:last-child td{
     </span>
 
     <h2>
-      System Status
+      System Information
     </h2>
 
   </div>
 
   <p class="card-description">
-    Current connection and administrator session status.
+    Funda Online Academy administration system.
   </p>
+
 
   <div class="info-grid">
 
@@ -1445,11 +1248,8 @@ tr:last-child td{
         Database
       </div>
 
-      <div
-        id="databaseStatus"
-        class="info-value"
-      >
-        Checking...
+      <div class="info-value">
+        Supabase Database
       </div>
 
     </div>
@@ -1457,6 +1257,7 @@ tr:last-child td{
   </div>
 
 </section>
+
 
 </main>
 
@@ -1472,16 +1273,16 @@ tr:last-child td{
 
 
 /* ============================================================
-   SUPABASE CONFIGURATION
+   SUPABASE CONNECTION
    ============================================================ */
 
 const SUPABASE_URL =
   window.SUPABASE_URL ||
-  "https://YOUR-PROJECT.supabase.co";
+  "YOUR-PROJECT.supabase.co";
 
 const SUPABASE_ANON_KEY =
   window.SUPABASE_ANON_KEY ||
-  "YOUR-SUPABASE-ANON-KEY";
+  "YOUR-SUPABASE-PUBLISHABLE-KEY";
 
 
 const { createClient } = supabase;
@@ -1506,9 +1307,6 @@ const dashboard =
 const message =
   document.getElementById("message");
 
-const adminEmail =
-  document.getElementById("adminEmail");
-
 const courseCount =
   document.getElementById("courseCount");
 
@@ -1520,9 +1318,6 @@ const enrollmentCount =
 
 const paymentCount =
   document.getElementById("paymentCount");
-
-const databaseStatus =
-  document.getElementById("databaseStatus");
 
 const studentsContent =
   document.getElementById("studentsContent");
@@ -1545,34 +1340,16 @@ const certificatesContent =
 const logoutBtn =
   document.getElementById("logoutBtn");
 
-const refreshStudents =
-  document.getElementById("refreshStudents");
-
-const refreshCourses =
-  document.getElementById("refreshCourses");
-
-const refreshEnrollments =
-  document.getElementById("refreshEnrollments");
-
-const refreshAssessments =
-  document.getElementById("refreshAssessments");
-
-const refreshPayments =
-  document.getElementById("refreshPayments");
-
-const refreshCertificates =
-  document.getElementById("refreshCertificates");
-
 
 /* ============================================================
    DATA
    ============================================================ */
 
-let courses = [];
 let students = [];
+let courses = [];
 let enrollments = [];
-let payments = [];
 let assessments = [];
+let payments = [];
 let certificates = [];
 
 let currentUser = null;
@@ -1582,9 +1359,9 @@ let currentUser = null;
    MESSAGE
    ============================================================ */
 
-function showMessage(text,type="info"){
+function showMessage(text, type = "info") {
 
-  if(!message) return;
+  if (!message) return;
 
   message.textContent = text;
 
@@ -1594,9 +1371,9 @@ function showMessage(text,type="info"){
 }
 
 
-function hideMessage(){
+function hideMessage() {
 
-  if(!message) return;
+  if (!message) return;
 
   message.className =
     "message";
@@ -1608,12 +1385,12 @@ function hideMessage(){
    ESCAPE HTML
    ============================================================ */
 
-function escapeHTML(value){
+function escapeHTML(value) {
 
-  if(
+  if (
     value === null ||
     value === undefined
-  ){
+  ) {
     return "";
   }
 
@@ -1628,23 +1405,25 @@ function escapeHTML(value){
 
 
 /* ============================================================
-   FORMAT MONEY
+   MONEY
    ============================================================ */
 
-function formatMoney(value){
+function formatMoney(value) {
 
-  if(
+  if (
     value === null ||
     value === undefined ||
     value === ""
-  ){
+  ) {
     return "—";
   }
 
   const number =
     Number(value);
 
-  if(Number.isNaN(number)){
+  if (
+    Number.isNaN(number)
+  ) {
     return escapeHTML(value);
   }
 
@@ -1655,23 +1434,23 @@ function formatMoney(value){
 
 
 /* ============================================================
-   FORMAT DATE
+   DATE
    ============================================================ */
 
-function formatDate(value){
+function formatDate(value) {
 
-  if(!value){
+  if (!value) {
     return "—";
   }
 
   const date =
     new Date(value);
 
-  if(
+  if (
     Number.isNaN(
       date.getTime()
     )
-  ){
+  ) {
     return escapeHTML(value);
   }
 
@@ -1691,42 +1470,48 @@ function formatDate(value){
    STATUS BADGE
    ============================================================ */
 
-function statusBadge(value){
+function statusBadge(value) {
 
   const status =
-    String(
-      value || "pending"
-    ).toLowerCase();
+    value ||
+    "other";
+
+  const clean =
+    String(status)
+      .toLowerCase()
+      .replace(/\s+/g,"-");
 
   let className =
     "other";
 
-  if(
-    status === "pending"
-  ){
+  if (
+    [
+      "pending"
+    ].includes(clean)
+  ) {
     className = "pending";
   }
 
-  if(
+  if (
     [
       "approved",
       "completed",
       "paid",
       "active",
       "passed"
-    ].includes(status)
-  ){
-    className = "approved";
+    ].includes(clean)
+  ) {
+    className = clean;
   }
 
-  if(
+  if (
     [
       "rejected",
       "failed",
       "cancelled"
-    ].includes(status)
-  ){
-    className = "rejected";
+    ].includes(clean)
+  ) {
+    className = clean;
   }
 
   return `
@@ -1742,9 +1527,9 @@ function statusBadge(value){
    CURRENT USER
    ============================================================ */
 
-async function getCurrentUser(){
+async function getCurrentUser() {
 
-  try{
+  try {
 
     const {
       data,
@@ -1752,7 +1537,7 @@ async function getCurrentUser(){
     } =
       await db.auth.getUser();
 
-    if(error){
+    if (error) {
 
       console.error(
         "Auth error:",
@@ -1764,10 +1549,10 @@ async function getCurrentUser(){
 
     return data?.user || null;
 
-  }catch(error){
+  } catch(error) {
 
     console.error(
-      "Auth exception:",
+      "Unexpected auth error:",
       error
     );
 
@@ -1779,41 +1564,41 @@ async function getCurrentUser(){
 
 
 /* ============================================================
-   CHECK ADMIN
+   ADMIN CHECK
    ============================================================ */
 
-async function checkAdmin(user){
+async function checkAdmin(user) {
 
-  if(!user){
+  if (!user) {
     return false;
   }
 
 
   /* ----------------------------------------------------------
-     METHOD 1 — is_admin()
+     CHECK is_admin() RPC
      ---------------------------------------------------------- */
 
-  try{
+  try {
 
     const {
       data,
       error
     } =
-      await db.rpc("is_admin");
+      await db.rpc(
+        "is_admin"
+      );
 
-    if(
+    if (
       !error &&
       data === true
-    ){
-
+    ) {
       return true;
-
     }
 
-  }catch(error){
+  } catch(error) {
 
     console.log(
-      "is_admin unavailable:",
+      "RPC admin check unavailable.",
       error
     );
 
@@ -1821,10 +1606,10 @@ async function checkAdmin(user){
 
 
   /* ----------------------------------------------------------
-     METHOD 2 — PROFILES ROLE
+     CHECK PROFILES ROLE
      ---------------------------------------------------------- */
 
-  try{
+  try {
 
     const {
       data,
@@ -1839,22 +1624,22 @@ async function checkAdmin(user){
         )
         .maybeSingle();
 
-    if(
+    if (
       !error &&
       data &&
       String(
         data.role
       ).toLowerCase() === "admin"
-    ){
+    ) {
 
       return true;
 
     }
 
-  }catch(error){
+  } catch(error) {
 
     console.log(
-      "Profile admin check failed:",
+      "Profiles admin check unavailable.",
       error
     );
 
@@ -1867,18 +1652,18 @@ async function checkAdmin(user){
 
 
 /* ============================================================
-   START
+   START DASHBOARD
    ============================================================ */
 
-async function startDashboard(){
+async function startDashboard() {
 
-  try{
+  try {
 
     currentUser =
       await getCurrentUser();
 
 
-    if(!currentUser){
+    if (!currentUser) {
 
       window.location.href =
         "login.html";
@@ -1894,7 +1679,7 @@ async function startDashboard(){
       );
 
 
-    if(!allowed){
+    if (!allowed) {
 
       adminLoading.innerHTML = `
 
@@ -1922,11 +1707,6 @@ async function startDashboard(){
     }
 
 
-    adminEmail.textContent =
-      currentUser.email ||
-      "Administrator";
-
-
     adminLoading.classList.add(
       "hidden"
     );
@@ -1936,14 +1716,10 @@ async function startDashboard(){
     );
 
 
-    databaseStatus.textContent =
-      "Connected";
+    await loadEverything();
 
 
-    await loadDashboard();
-
-
-  }catch(error){
+  } catch(error) {
 
     console.error(
       "Dashboard error:",
@@ -1968,54 +1744,30 @@ async function startDashboard(){
 
 
 /* ============================================================
-   LOAD DASHBOARD
+   LOAD EVERYTHING
    ============================================================ */
 
-async function loadDashboard(){
+async function loadEverything() {
 
   hideMessage();
-
 
   await Promise.all([
     loadStudents(),
     loadCourses(),
     loadEnrollments(),
-    loadPayments()
+    loadAssessments(),
+    loadPayments(),
+    loadCertificates()
   ]);
 
-
   updateStatistics();
-
 
   renderStudents();
   renderCourses();
   renderEnrollments();
+  renderAssessments();
   renderPayments();
-
-
-  loadAssessments();
-  loadCertificates();
-
-}
-
-
-/* ============================================================
-   UPDATE STATISTICS
-   ============================================================ */
-
-function updateStatistics(){
-
-  courseCount.textContent =
-    courses.length;
-
-  studentCount.textContent =
-    students.length;
-
-  enrollmentCount.textContent =
-    enrollments.length;
-
-  paymentCount.textContent =
-    payments.length;
+  renderCertificates();
 
 }
 
@@ -2024,7 +1776,7 @@ function updateStatistics(){
    LOAD STUDENTS
    ============================================================ */
 
-async function loadStudents(){
+async function loadStudents() {
 
   studentsContent.innerHTML = `
     <div class="loading">
@@ -2032,8 +1784,7 @@ async function loadStudents(){
     </div>
   `;
 
-
-  try{
+  try {
 
     const {
       data,
@@ -2050,7 +1801,7 @@ async function loadStudents(){
         );
 
 
-    if(error){
+    if (error) {
 
       console.error(
         "Students error:",
@@ -2078,7 +1829,7 @@ async function loadStudents(){
         : [];
 
 
-  }catch(error){
+  } catch(error) {
 
     students = [];
 
@@ -2096,123 +1847,10 @@ async function loadStudents(){
 
 
 /* ============================================================
-   RENDER STUDENTS
-   ============================================================ */
-
-function renderStudents(){
-
-  if(!students.length){
-
-    studentsContent.innerHTML = `
-      <div class="empty">
-        No registered students found.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  let rows = "";
-
-
-  students.forEach(student => {
-
-    rows += `
-
-      <tr>
-
-        <td>
-          <div class="student-name">
-            ${escapeHTML(
-              student.full_name ||
-              student.name ||
-              "Unnamed student"
-            )}
-          </div>
-        </td>
-
-        <td>
-          ${escapeHTML(
-            student.gender || "—"
-          )}
-        </td>
-
-        <td>
-          ${escapeHTML(
-            student.south_african_id ||
-            student.id_number ||
-            student.sa_id ||
-            "—"
-          )}
-        </td>
-
-        <td>
-          ${escapeHTML(
-            student.email || "—"
-          )}
-        </td>
-
-        <td>
-          ${escapeHTML(
-            student.mobile_whatsapp ||
-            student.mobile ||
-            student.phone ||
-            "—"
-          )}
-        </td>
-
-        <td>
-          ${formatDate(
-            student.created_at
-          )}
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  studentsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Full Name</th>
-            <th>Gender</th>
-            <th>South African ID</th>
-            <th>Email</th>
-            <th>Mobile / WhatsApp</th>
-            <th>Registered</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
-    </div>
-
-  `;
-
-}
-
-
-/* ============================================================
    LOAD COURSES
    ============================================================ */
 
-async function loadCourses(){
+async function loadCourses() {
 
   coursesContent.innerHTML = `
     <div class="loading">
@@ -2220,8 +1858,7 @@ async function loadCourses(){
     </div>
   `;
 
-
-  try{
+  try {
 
     const {
       data,
@@ -2238,7 +1875,7 @@ async function loadCourses(){
         );
 
 
-    if(error){
+    if (error) {
 
       console.error(
         "Courses error:",
@@ -2266,7 +1903,7 @@ async function loadCourses(){
         : [];
 
 
-  }catch(error){
+  } catch(error) {
 
     courses = [];
 
@@ -2284,131 +1921,10 @@ async function loadCourses(){
 
 
 /* ============================================================
-   COURSE PRICE
-   ============================================================ */
-
-function getCoursePrice(course){
-
-  if(!course){
-    return null;
-  }
-
-  return (
-    course.price ??
-    course.amount ??
-    course.course_price ??
-    null
-  );
-
-}
-
-
-/* ============================================================
-   COURSE NAME
-   ============================================================ */
-
-function getCourseName(course){
-
-  if(!course){
-    return "Unknown course";
-  }
-
-  return (
-    course.title ||
-    course.name ||
-    course.course_name ||
-    course.course_title ||
-    "Unnamed course"
-  );
-
-}
-
-
-/* ============================================================
-   RENDER COURSES
-   ============================================================ */
-
-function renderCourses(){
-
-  if(!courses.length){
-
-    coursesContent.innerHTML = `
-      <div class="empty">
-        No courses found.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  let html = `
-    <div class="course-grid">
-  `;
-
-
-  courses.forEach(course => {
-
-    const name =
-      getCourseName(course);
-
-    const price =
-      getCoursePrice(course);
-
-    const description =
-      course.description ||
-      course.summary ||
-      course.learning_outcomes ||
-      "Course information available in the academy system.";
-
-
-    html += `
-
-      <div class="course-card">
-
-        <h3>
-          ${escapeHTML(name)}
-        </h3>
-
-        <p>
-          ${escapeHTML(description)}
-        </p>
-
-        <div class="course-price">
-          ${formatMoney(price)}
-        </div>
-
-        <div class="course-status">
-          ${statusBadge(
-            course.status ||
-            "active"
-          )}
-        </div>
-
-      </div>
-
-    `;
-
-  });
-
-
-  html += `
-    </div>
-  `;
-
-
-  coursesContent.innerHTML =
-    html;
-
-}
-
-
-/* ============================================================
    LOAD ENROLMENTS
    ============================================================ */
 
-async function loadEnrollments(){
+async function loadEnrollments() {
 
   enrollmentsContent.innerHTML = `
     <div class="loading">
@@ -2416,8 +1932,7 @@ async function loadEnrollments(){
     </div>
   `;
 
-
-  try{
+  try {
 
     const {
       data,
@@ -2434,7 +1949,7 @@ async function loadEnrollments(){
         );
 
 
-    if(error){
+    if (error) {
 
       console.error(
         "Enrolments error:",
@@ -2462,7 +1977,7 @@ async function loadEnrollments(){
         : [];
 
 
-  }catch(error){
+  } catch(error) {
 
     enrollments = [];
 
@@ -2480,276 +1995,74 @@ async function loadEnrollments(){
 
 
 /* ============================================================
-   FIND STUDENT
+   LOAD ASSESSMENTS
    ============================================================ */
 
-function findStudent(studentId){
+async function loadAssessments() {
 
-  if(!studentId){
-    return null;
-  }
-
-  return students.find(
-    student =>
-      String(student.id) ===
-      String(studentId)
-  ) || null;
-
-}
-
-
-/* ============================================================
-   FIND COURSE
-   ============================================================ */
-
-function findCourse(courseId){
-
-  if(!courseId){
-    return null;
-  }
-
-  return courses.find(
-    course =>
-      String(course.id) ===
-      String(courseId)
-  ) || null;
-
-}
-
-
-/* ============================================================
-   STUDENT NAME
-   ============================================================ */
-
-function getStudentName(studentId){
-
-  const student =
-    findStudent(studentId);
-
-
-  if(!student){
-    return "Unknown student";
-  }
-
-
-  return (
-    student.full_name ||
-    student.name ||
-    student.fullName ||
-    student.email ||
-    "Unnamed student"
-  );
-
-}
-
-
-/* ============================================================
-   RENDER ENROLMENTS
-   ============================================================ */
-
-function renderEnrollments(){
-
-  if(!enrollments.length){
-
-    enrollmentsContent.innerHTML = `
-      <div class="empty">
-        No student enrolments found.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  let rows = "";
-
-
-  enrollments.forEach(enrollment => {
-
-    const studentId =
-      enrollment.student_id ||
-      enrollment.user_id;
-
-
-    const courseId =
-      enrollment.course_id;
-
-
-    const status =
-      enrollment.status ||
-      "pending";
-
-
-    rows += `
-
-      <tr>
-
-        <td>
-          <div class="student-name">
-            ${escapeHTML(
-              getStudentName(studentId)
-            )}
-          </div>
-        </td>
-
-        <td>
-          <div class="course-name">
-            ${escapeHTML(
-              getCourseName(
-                courseId
-              )
-            )}
-          </div>
-        </td>
-
-        <td>
-          ${statusBadge(status)}
-        </td>
-
-        <td>
-          ${formatDate(
-            enrollment.enrolled_at ||
-            enrollment.created_at
-          )}
-        </td>
-
-        <td>
-
-          ${
-            String(status).toLowerCase() ===
-            "pending"
-            ?
-
-            `
-              <button
-                class="action-btn approve-btn"
-                onclick="updateEnrollmentStatus('${escapeHTML(enrollment.id)}','approved')"
-              >
-                Approve
-              </button>
-
-              <button
-                class="action-btn reject-btn"
-                onclick="updateEnrollmentStatus('${escapeHTML(enrollment.id)}','rejected')"
-              >
-                Reject
-              </button>
-            `
-
-            :
-
-            `<span class="muted">No action</span>`
-
-          }
-
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  enrollmentsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
+  assessmentsContent.innerHTML = `
+    <div class="loading">
+      Loading assessments...
     </div>
-
   `;
 
-}
-
-
-/* ============================================================
-   UPDATE ENROLMENT STATUS
-   ============================================================ */
-
-async function updateEnrollmentStatus(
-  enrollmentId,
-  newStatus
-){
-
-  if(!enrollmentId){
-    return;
-  }
-
-
-  try{
-
-    showMessage(
-      "Updating enrolment...",
-      "info"
-    );
-
+  try {
 
     const {
+      data,
       error
     } =
       await db
-        .from("enrollments")
-        .update({
-          status:newStatus
-        })
-        .eq(
-          "id",
-          enrollmentId
+        .from("assessments")
+        .select("*")
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
         );
 
 
-    if(error){
+    if (error) {
 
-      throw error;
+      console.error(
+        "Assessments error:",
+        error
+      );
+
+      assessments = [];
+
+      assessmentsContent.innerHTML = `
+        <div class="error-box">
+          The Assessments tab is working, but the
+          <strong>assessments</strong> database table is not available yet.
+          <br><br>
+          ${escapeHTML(error.message)}
+        </div>
+      `;
+
+      return;
 
     }
 
 
-    showMessage(
-      "Enrolment updated successfully.",
-      "success"
-    );
+    assessments =
+      Array.isArray(data)
+        ? data
+        : [];
 
 
-    await loadEnrollments();
+  } catch(error) {
 
-    updateStatistics();
+    assessments = [];
 
-    renderEnrollments();
-
-
-  }catch(error){
-
-    console.error(
-      error
-    );
-
-    showMessage(
-      "Unable to update enrolment: " +
-      error.message,
-      "error"
-    );
+    assessmentsContent.innerHTML = `
+      <div class="error-box">
+        Unable to load assessments.
+        <br><br>
+        ${escapeHTML(error.message)}
+      </div>
+    `;
 
   }
 
@@ -2760,7 +2073,7 @@ async function updateEnrollmentStatus(
    LOAD PAYMENTS
    ============================================================ */
 
-async function loadPayments(){
+async function loadPayments() {
 
   paymentsContent.innerHTML = `
     <div class="loading">
@@ -2768,8 +2081,7 @@ async function loadPayments(){
     </div>
   `;
 
-
-  try{
+  try {
 
     const {
       data,
@@ -2786,7 +2098,7 @@ async function loadPayments(){
         );
 
 
-    if(error){
+    if (error) {
 
       console.error(
         "Payments error:",
@@ -2814,7 +2126,7 @@ async function loadPayments(){
         : [];
 
 
-  }catch(error){
+  } catch(error) {
 
     payments = [];
 
@@ -2832,329 +2144,10 @@ async function loadPayments(){
 
 
 /* ============================================================
-   RENDER PAYMENTS
+   LOAD CERTIFICATES
    ============================================================ */
 
-function renderPayments(){
-
-  if(!payments.length){
-
-    paymentsContent.innerHTML = `
-      <div class="empty">
-        No payments found.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  let rows = "";
-
-
-  payments.forEach(payment => {
-
-    const studentId =
-      payment.student_id ||
-      payment.user_id;
-
-
-    const courseId =
-      payment.course_id;
-
-
-    const amount =
-      payment.amount ||
-      payment.total ||
-      payment.price;
-
-
-    const status =
-      payment.status ||
-      "pending";
-
-
-    rows += `
-
-      <tr>
-
-        <td>
-          <div class="student-name">
-            ${escapeHTML(
-              getStudentName(studentId)
-            )}
-          </div>
-        </td>
-
-        <td>
-          ${escapeHTML(
-            getCourseName(courseId)
-          )}
-        </td>
-
-        <td class="amount">
-          ${formatMoney(amount)}
-        </td>
-
-        <td>
-          ${statusBadge(status)}
-        </td>
-
-        <td>
-          ${formatDate(
-            payment.created_at ||
-            payment.payment_date
-          )}
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  paymentsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Date</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
-    </div>
-
-  `;
-
-}
-
-
-/* ============================================================
-   ASSESSMENTS
-   ============================================================ */
-
-async function loadAssessments(){
-
-  assessmentsContent.innerHTML = `
-    <div class="loading">
-      Loading assessments...
-    </div>
-  `;
-
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-      await db
-        .from("assessments")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false
-          }
-        );
-
-
-    if(error){
-
-      console.log(
-        "Assessments table:",
-        error.message
-      );
-
-
-      assessmentsContent.innerHTML = `
-
-        <div class="not-ready">
-
-          <strong>
-            Assessments section is ready.
-          </strong>
-
-          <br><br>
-
-          The assessment database table has not been connected yet.
-
-          <br><br>
-
-          We can connect this section to student assessments, marks,
-          pass/fail results and feedback next.
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-
-    assessments =
-      Array.isArray(data)
-        ? data
-        : [];
-
-
-    renderAssessments();
-
-
-  }catch(error){
-
-    assessmentsContent.innerHTML = `
-
-      <div class="not-ready">
-
-        Assessments are ready to be connected.
-
-      </div>
-
-    `;
-
-  }
-
-}
-
-
-/* ============================================================
-   RENDER ASSESSMENTS
-   ============================================================ */
-
-function renderAssessments(){
-
-  if(!assessments.length){
-
-    assessmentsContent.innerHTML = `
-      <div class="empty">
-        No assessments found.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  let rows = "";
-
-
-  assessments.forEach(item => {
-
-    const studentId =
-      item.student_id ||
-      item.user_id;
-
-
-    const courseId =
-      item.course_id;
-
-
-    const mark =
-      item.mark ??
-      item.score ??
-      item.percentage ??
-      "—";
-
-
-    const result =
-      item.result ||
-      item.status ||
-      "Pending";
-
-
-    rows += `
-
-      <tr>
-
-        <td>
-          ${escapeHTML(
-            getStudentName(studentId)
-          )}
-        </td>
-
-        <td>
-          ${escapeHTML(
-            getCourseName(courseId)
-          )}
-        </td>
-
-        <td>
-          ${escapeHTML(mark)}
-        </td>
-
-        <td>
-          ${statusBadge(result)}
-        </td>
-
-        <td>
-          ${formatDate(
-            item.created_at
-          )}
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  assessmentsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Mark</th>
-            <th>Result</th>
-            <th>Date</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
-    </div>
-
-  `;
-
-}
-
-
-/* ============================================================
-   CERTIFICATES
-   ============================================================ */
-
-async function loadCertificates(){
+async function loadCertificates() {
 
   certificatesContent.innerHTML = `
     <div class="loading">
@@ -3162,8 +2155,7 @@ async function loadCertificates(){
     </div>
   `;
 
-
-  try{
+  try {
 
     const {
       data,
@@ -3180,33 +2172,22 @@ async function loadCertificates(){
         );
 
 
-    if(error){
+    if (error) {
 
-      console.log(
-        "Certificates table:",
-        error.message
+      console.error(
+        "Certificates error:",
+        error
       );
 
+      certificates = [];
 
       certificatesContent.innerHTML = `
-
-        <div class="not-ready">
-
-          <strong>
-            Certificates section is ready.
-          </strong>
-
+        <div class="error-box">
+          The Certificates tab is working, but the
+          <strong>certificates</strong> database table is not available yet.
           <br><br>
-
-          The certificate database table has not been connected yet.
-
-          <br><br>
-
-          We will connect this section so completed students
-          can have their certificates managed from the administrator dashboard.
-
+          ${escapeHTML(error.message)}
         </div>
-
       `;
 
       return;
@@ -3220,19 +2201,16 @@ async function loadCertificates(){
         : [];
 
 
-    renderCertificates();
+  } catch(error) {
 
-
-  }catch(error){
+    certificates = [];
 
     certificatesContent.innerHTML = `
-
-      <div class="not-ready">
-
-        Certificates are ready to be connected.
-
+      <div class="error-box">
+        Unable to load certificates.
+        <br><br>
+        ${escapeHTML(error.message)}
       </div>
-
     `;
 
   }
@@ -3241,83 +2219,151 @@ async function loadCertificates(){
 
 
 /* ============================================================
-   RENDER CERTIFICATES
+   UPDATE STATISTICS
    ============================================================ */
 
-function renderCertificates(){
+function updateStatistics() {
 
-  if(!certificates.length){
+  courseCount.textContent =
+    courses.length;
 
-    certificatesContent.innerHTML = `
+  studentCount.textContent =
+    students.length;
+
+  enrollmentCount.textContent =
+    enrollments.length;
+
+  paymentCount.textContent =
+    payments.length;
+
+}
+
+
+/* ============================================================
+   FIND STUDENT
+   ============================================================ */
+
+function findStudent(studentId) {
+
+  if (!studentId) {
+    return null;
+  }
+
+  return students.find(
+    student =>
+      String(student.id) ===
+      String(studentId)
+  ) || null;
+
+}
+
+
+/* ============================================================
+   FIND COURSE
+   ============================================================ */
+
+function findCourse(courseId) {
+
+  if (!courseId) {
+    return null;
+  }
+
+  return courses.find(
+    course =>
+      String(course.id) ===
+      String(courseId)
+  ) || null;
+
+}
+
+
+/* ============================================================
+   STUDENT NAME
+   ============================================================ */
+
+function getStudentName(studentId) {
+
+  const student =
+    findStudent(studentId);
+
+  if (!student) {
+    return "Unknown student";
+  }
+
+  return (
+    student.full_name ||
+    student.name ||
+    student.fullName ||
+    student.email ||
+    "Unnamed student"
+  );
+
+}
+
+
+/* ============================================================
+   COURSE NAME
+   ============================================================ */
+
+function getCourseName(courseId) {
+
+  const course =
+    findCourse(courseId);
+
+  if (!course) {
+    return "Unknown course";
+  }
+
+  return (
+    course.title ||
+    course.name ||
+    course.course_name ||
+    course.course_title ||
+    "Unnamed course"
+  );
+
+}
+
+
+/* ============================================================
+   COURSE PRICE
+   ============================================================ */
+
+function getCoursePrice(course) {
+
+  if (!course) {
+    return null;
+  }
+
+  return (
+    course.price ??
+    course.amount ??
+    course.course_price ??
+    null
+  );
+
+}
+
+
+/* ============================================================
+   RENDER STUDENTS
+   ============================================================ */
+
+function renderStudents() {
+
+  if (!students.length) {
+
+    studentsContent.innerHTML = `
       <div class="empty">
-        No certificates found.
+        No registered students found.
       </div>
     `;
 
     return;
-
   }
 
 
-  let rows = "";
-
-
-  certificates.forEach(certificate => {
-
-    const studentId =
-      certificate.student_id ||
-      certificate.user_id;
-
-
-    const courseId =
-      certificate.course_id;
-
-
-    rows += `
-
-      <tr>
-
-        <td>
-          ${escapeHTML(
-            getStudentName(studentId)
-          )}
-        </td>
-
-        <td>
-          ${escapeHTML(
-            getCourseName(courseId)
-          )}
-        </td>
-
-        <td>
-          ${escapeHTML(
-            certificate.certificate_number ||
-            certificate.number ||
-            "—"
-          )}
-        </td>
-
-        <td>
-          ${statusBadge(
-            certificate.status ||
-            "active"
-          )}
-        </td>
-
-        <td>
-          ${formatDate(
-            certificate.created_at
-          )}
-        </td>
-
-      </tr>
-
-    `;
-
-  });
-
-
-  certificatesContent.innerHTML = `
+  studentsContent.innerHTML = `
 
     <div class="table-wrap">
 
@@ -3326,17 +2372,90 @@ function renderCertificates(){
         <thead>
 
           <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Certificate Number</th>
-            <th>Status</th>
-            <th>Date</th>
+
+            <th>
+              Student
+            </th>
+
+            <th>
+              Gender
+            </th>
+
+            <th>
+              ID Number
+            </th>
+
+            <th>
+              Email
+            </th>
+
+            <th>
+              Mobile / WhatsApp
+            </th>
+
+            <th>
+              Registered
+            </th>
+
           </tr>
 
         </thead>
 
         <tbody>
-          ${rows}
+
+          ${students.map(student => `
+
+            <tr>
+
+              <td>
+                <div class="student-name">
+                  ${escapeHTML(
+                    student.full_name ||
+                    student.name ||
+                    "Unnamed"
+                  )}
+                </div>
+              </td>
+
+              <td>
+                ${escapeHTML(
+                  student.gender || "—"
+                )}
+              </td>
+
+              <td>
+                ${escapeHTML(
+                  student.south_african_id ||
+                  student.id_number ||
+                  "—"
+                )}
+              </td>
+
+              <td>
+                ${escapeHTML(
+                  student.email || "—"
+                )}
+              </td>
+
+              <td>
+                ${escapeHTML(
+                  student.mobile_whatsapp ||
+                  student.mobile ||
+                  student.phone ||
+                  "—"
+                )}
+              </td>
+
+              <td>
+                ${formatDate(
+                  student.created_at
+                )}
+              </td>
+
+            </tr>
+
+          `).join("")}
+
         </tbody>
 
       </table>
@@ -3349,119 +2468,862 @@ function renderCertificates(){
 
 
 /* ============================================================
-   TAB SYSTEM
+   RENDER COURSES
    ============================================================ */
 
-const adminTabs =
-  document.querySelectorAll(
-    ".admin-tab"
-  );
+function renderCourses() {
 
+  if (!courses.length) {
 
-const tabSections =
-  document.querySelectorAll(
-    ".tab-section"
-  );
+    coursesContent.innerHTML = `
+      <div class="empty">
+        No courses found.
+      </div>
+    `;
 
-
-function openTab(tabName){
-
-  adminTabs.forEach(tab => {
-
-    tab.classList.toggle(
-      "active",
-      tab.dataset.tab === tabName
-    );
-
-  });
-
-
-  tabSections.forEach(section => {
-
-    section.classList.toggle(
-      "active",
-      section.id ===
-      "tab-" + tabName
-    );
-
-  });
-
-
-  const target =
-    document.getElementById(
-      "tab-" + tabName
-    );
-
-
-  if(target){
-
-    setTimeout(() => {
-
-      target.scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-      });
-
-    },50);
-
+    return;
   }
 
 
-  if(tabName === "assessments"){
-    loadAssessments();
+  coursesContent.innerHTML = `
+
+    <div class="course-grid">
+
+      ${courses.map(course => {
+
+        const title =
+          course.title ||
+          course.name ||
+          course.course_name ||
+          course.course_title ||
+          "Unnamed course";
+
+
+        const price =
+          getCoursePrice(course);
+
+
+        const status =
+          course.status ||
+          "active";
+
+
+        return `
+
+          <div class="course-card">
+
+            <h3>
+              ${escapeHTML(title)}
+            </h3>
+
+            <div class="muted">
+
+              ${
+                escapeHTML(
+                  course.description ||
+                  course.summary ||
+                  "Course available through Funda Online Academy."
+                )
+              }
+
+            </div>
+
+            <div class="course-price">
+
+              ${formatMoney(price)}
+
+            </div>
+
+            <div class="course-status">
+
+              ${statusBadge(status)}
+
+            </div>
+
+          </div>
+
+        `;
+
+      }).join("")}
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   RENDER ENROLMENTS
+   ============================================================ */
+
+function renderEnrollments() {
+
+  if (!enrollments.length) {
+
+    enrollmentsContent.innerHTML = `
+      <div class="empty">
+        No student enrolments found.
+      </div>
+    `;
+
+    return;
   }
 
 
-  if(tabName === "certificates"){
-    loadCertificates();
+  enrollmentsContent.innerHTML = `
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Student
+            </th>
+
+            <th>
+              Course
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Enrolled
+            </th>
+
+            <th>
+              Actions
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${enrollments.map(enrollment => {
+
+            const status =
+              enrollment.status ||
+              "pending";
+
+
+            return `
+
+              <tr>
+
+                <td>
+                  <div class="student-name">
+                    ${escapeHTML(
+                      getStudentName(
+                        enrollment.student_id
+                      )
+                    )}
+                  </div>
+                </td>
+
+                <td>
+
+                  <div class="course-name">
+                    ${escapeHTML(
+                      getCourseName(
+                        enrollment.course_id
+                      )
+                    )}
+                  </div>
+
+                </td>
+
+                <td>
+                  ${statusBadge(status)}
+                </td>
+
+                <td>
+                  ${formatDate(
+                    enrollment.enrolled_at ||
+                    enrollment.created_at
+                  )}
+                </td>
+
+                <td>
+
+                  ${
+                    String(status).toLowerCase()
+                    === "pending"
+
+                    ? `
+
+                      <button
+                        class="action-btn approve-btn"
+                        onclick="updateEnrollmentStatus(
+                          '${escapeHTML(enrollment.id)}',
+                          'approved'
+                        )"
+                      >
+                        Approve
+                      </button>
+
+                      <button
+                        class="action-btn reject-btn"
+                        onclick="updateEnrollmentStatus(
+                          '${escapeHTML(enrollment.id)}',
+                          'rejected'
+                        )"
+                      >
+                        Reject
+                      </button>
+
+                    `
+
+                    : `<span class="muted">No action</span>`
+                  }
+
+                </td>
+
+              </tr>
+
+            `;
+
+          }).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   UPDATE ENROLMENT STATUS
+   ============================================================ */
+
+async function updateEnrollmentStatus(
+  enrollmentId,
+  newStatus
+) {
+
+  if (!enrollmentId) {
+    return;
+  }
+
+
+  const answer =
+    confirm(
+      "Change this enrolment to " +
+      newStatus +
+      "?"
+    );
+
+
+  if (!answer) {
+    return;
+  }
+
+
+  try {
+
+    const {
+      error
+    } =
+      await db
+        .from("enrollments")
+        .update({
+          status:newStatus
+        })
+        .eq(
+          "id",
+          enrollmentId
+        );
+
+
+    if (error) {
+
+      showMessage(
+        error.message,
+        "error"
+      );
+
+      return;
+    }
+
+
+    showMessage(
+      "Enrolment updated successfully.",
+      "success"
+    );
+
+
+    await loadEnrollments();
+
+    updateStatistics();
+
+    renderEnrollments();
+
+  } catch(error) {
+
+    showMessage(
+      error.message,
+      "error"
+    );
+
   }
 
 }
 
 
-adminTabs.forEach(tab => {
+/* ============================================================
+   RENDER ASSESSMENTS
+   ============================================================ */
 
-  tab.addEventListener(
-    "click",
-    () => {
+function renderAssessments() {
 
-      openTab(
-        tab.dataset.tab
-      );
+  if (!assessments.length) {
 
-    }
-  );
+    assessmentsContent.innerHTML = `
+      <div class="empty">
+        No assessments found yet.
+      </div>
+    `;
 
-});
+    return;
+  }
+
+
+  const first =
+    assessments[0];
+
+
+  const keys =
+    Object.keys(first);
+
+
+  const preferredKeys = [
+    "student_id",
+    "course_id",
+    "assessment_name",
+    "title",
+    "mark",
+    "score",
+    "percentage",
+    "result",
+    "status",
+    "created_at"
+  ];
+
+
+  const columns =
+    preferredKeys.filter(
+      key => keys.includes(key)
+    );
+
+
+  const finalColumns =
+    columns.length
+      ? columns
+      : keys.slice(0,8);
+
+
+  assessmentsContent.innerHTML = `
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            ${finalColumns.map(key => `
+
+              <th>
+                ${escapeHTML(
+                  key.replace(/_/g," ")
+                )}
+              </th>
+
+            `).join("")}
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${assessments.map(item => `
+
+            <tr>
+
+              ${finalColumns.map(key => {
+
+                let value =
+                  item[key];
+
+
+                if (
+                  key === "student_id"
+                ) {
+
+                  value =
+                    getStudentName(
+                      value
+                    );
+
+                }
+
+
+                if (
+                  key === "course_id"
+                ) {
+
+                  value =
+                    getCourseName(
+                      value
+                    );
+
+                }
+
+
+                if (
+                  key === "created_at" ||
+                  key === "updated_at"
+                ) {
+
+                  value =
+                    formatDate(value);
+
+                }
+
+
+                if (
+                  key === "status" ||
+                  key === "result"
+                ) {
+
+                  return `
+                    <td>
+                      ${statusBadge(value)}
+                    </td>
+                  `;
+
+                }
+
+
+                return `
+
+                  <td>
+                    ${escapeHTML(
+                      value ?? "—"
+                    )}
+                  </td>
+
+                `;
+
+              }).join("")}
+
+            </tr>
+
+          `).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
 
 
 /* ============================================================
-   SHOW ADMINISTRATION OVERVIEW
+   RENDER PAYMENTS
    ============================================================ */
 
-function showOverview(){
+function renderPayments() {
 
-  adminTabs.forEach(tab => {
+  if (!payments.length) {
 
-    tab.classList.remove(
-      "active"
+    paymentsContent.innerHTML = `
+      <div class="empty">
+        No payments found.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  paymentsContent.innerHTML = `
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              Student
+            </th>
+
+            <th>
+              Course
+            </th>
+
+            <th>
+              Amount
+            </th>
+
+            <th>
+              Status
+            </th>
+
+            <th>
+              Reference
+            </th>
+
+            <th>
+              Date
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${payments.map(payment => `
+
+            <tr>
+
+              <td>
+
+                <div class="student-name">
+                  ${escapeHTML(
+                    getStudentName(
+                      payment.student_id
+                    )
+                  )}
+                </div>
+
+              </td>
+
+              <td>
+
+                ${escapeHTML(
+                  getCourseName(
+                    payment.course_id
+                  )
+                )}
+
+              </td>
+
+              <td>
+
+                <span class="amount">
+                  ${formatMoney(
+                    payment.amount ||
+                    payment.price ||
+                    payment.total
+                  )}
+                </span>
+
+              </td>
+
+              <td>
+
+                ${statusBadge(
+                  payment.status ||
+                  "pending"
+                )}
+
+              </td>
+
+              <td>
+
+                ${escapeHTML(
+                  payment.reference ||
+                  payment.payment_reference ||
+                  payment.transaction_id ||
+                  "—"
+                )}
+
+              </td>
+
+              <td>
+
+                ${formatDate(
+                  payment.created_at
+                )}
+
+              </td>
+
+            </tr>
+
+          `).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   RENDER CERTIFICATES
+   ============================================================ */
+
+function renderCertificates() {
+
+  if (!certificates.length) {
+
+    certificatesContent.innerHTML = `
+      <div class="empty">
+        No certificates found yet.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  const first =
+    certificates[0];
+
+
+  const keys =
+    Object.keys(first);
+
+
+  const preferredKeys = [
+    "student_id",
+    "course_id",
+    "certificate_number",
+    "certificate_no",
+    "certificate_code",
+    "status",
+    "issued_at",
+    "created_at"
+  ];
+
+
+  const columns =
+    preferredKeys.filter(
+      key => keys.includes(key)
     );
 
-  });
+
+  const finalColumns =
+    columns.length
+      ? columns
+      : keys.slice(0,8);
 
 
-  tabSections.forEach(section => {
+  certificatesContent.innerHTML = `
 
-    section.classList.remove(
-      "active"
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            ${finalColumns.map(key => `
+
+              <th>
+                ${escapeHTML(
+                  key.replace(/_/g," ")
+                )}
+              </th>
+
+            `).join("")}
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${certificates.map(item => `
+
+            <tr>
+
+              ${finalColumns.map(key => {
+
+                let value =
+                  item[key];
+
+
+                if (
+                  key === "student_id"
+                ) {
+
+                  value =
+                    getStudentName(
+                      value
+                    );
+
+                }
+
+
+                if (
+                  key === "course_id"
+                ) {
+
+                  value =
+                    getCourseName(
+                      value
+                    );
+
+                }
+
+
+                if (
+                  key === "issued_at" ||
+                  key === "created_at"
+                ) {
+
+                  value =
+                    formatDate(value);
+
+                }
+
+
+                if (
+                  key === "status"
+                ) {
+
+                  return `
+                    <td>
+                      ${statusBadge(value)}
+                    </td>
+                  `;
+
+                }
+
+
+                return `
+
+                  <td>
+                    ${escapeHTML(
+                      value ?? "—"
+                    )}
+                  </td>
+
+                `;
+
+              }).join("")}
+
+            </tr>
+
+          `).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   TAB NAVIGATION
+   ============================================================ */
+
+function setupTabs() {
+
+  const tabs =
+    document.querySelectorAll(
+      ".admin-tab"
     );
 
-  });
+
+  const sections =
+    document.querySelectorAll(
+      ".section"
+    );
 
 
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
+  tabs.forEach(tab => {
+
+    tab.addEventListener(
+      "click",
+      function() {
+
+        const target =
+          this.dataset.tab;
+
+
+        /* REMOVE ACTIVE FROM ALL TABS */
+
+        tabs.forEach(item => {
+
+          item.classList.remove(
+            "active"
+          );
+
+        });
+
+
+        /* HIDE ALL SECTIONS */
+
+        sections.forEach(section => {
+
+          section.classList.remove(
+            "active"
+          );
+
+        });
+
+
+        /* ACTIVATE CLICKED TAB */
+
+        this.classList.add(
+          "active"
+        );
+
+
+        const targetSection =
+          document.getElementById(
+            "section-" + target
+          );
+
+
+        if (targetSection) {
+
+          targetSection.classList.add(
+            "active"
+          );
+
+          targetSection.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+          });
+
+        }
+
+      }
+    );
+
   });
 
 }
@@ -3471,11 +3333,13 @@ function showOverview(){
    REFRESH STUDENTS
    ============================================================ */
 
-if(refreshStudents){
-
-  refreshStudents.addEventListener(
+document
+  .getElementById(
+    "refreshStudents"
+  )
+  .addEventListener(
     "click",
-    async () => {
+    async function() {
 
       await loadStudents();
 
@@ -3491,18 +3355,18 @@ if(refreshStudents){
     }
   );
 
-}
-
 
 /* ============================================================
    REFRESH COURSES
    ============================================================ */
 
-if(refreshCourses){
-
-  refreshCourses.addEventListener(
+document
+  .getElementById(
+    "refreshCourses"
+  )
+  .addEventListener(
     "click",
-    async () => {
+    async function() {
 
       await loadCourses();
 
@@ -3518,18 +3382,18 @@ if(refreshCourses){
     }
   );
 
-}
-
 
 /* ============================================================
    REFRESH ENROLMENTS
    ============================================================ */
 
-if(refreshEnrollments){
-
-  refreshEnrollments.addEventListener(
+document
+  .getElementById(
+    "refreshEnrollments"
+  )
+  .addEventListener(
     "click",
-    async () => {
+    async function() {
 
       await loadEnrollments();
 
@@ -3545,18 +3409,43 @@ if(refreshEnrollments){
     }
   );
 
-}
+
+/* ============================================================
+   REFRESH ASSESSMENTS
+   ============================================================ */
+
+document
+  .getElementById(
+    "refreshAssessments"
+  )
+  .addEventListener(
+    "click",
+    async function() {
+
+      await loadAssessments();
+
+      renderAssessments();
+
+      showMessage(
+        "Assessments refreshed.",
+        "success"
+      );
+
+    }
+  );
 
 
 /* ============================================================
    REFRESH PAYMENTS
    ============================================================ */
 
-if(refreshPayments){
-
-  refreshPayments.addEventListener(
+document
+  .getElementById(
+    "refreshPayments"
+  )
+  .addEventListener(
     "click",
-    async () => {
+    async function() {
 
       await loadPayments();
 
@@ -3572,43 +3461,22 @@ if(refreshPayments){
     }
   );
 
-}
-
-
-/* ============================================================
-   REFRESH ASSESSMENTS
-   ============================================================ */
-
-if(refreshAssessments){
-
-  refreshAssessments.addEventListener(
-    "click",
-    async () => {
-
-      await loadAssessments();
-
-      showMessage(
-        "Assessments refreshed.",
-        "success"
-      );
-
-    }
-  );
-
-}
-
 
 /* ============================================================
    REFRESH CERTIFICATES
    ============================================================ */
 
-if(refreshCertificates){
-
-  refreshCertificates.addEventListener(
+document
+  .getElementById(
+    "refreshCertificates"
+  )
+  .addEventListener(
     "click",
-    async () => {
+    async function() {
 
       await loadCertificates();
+
+      renderCertificates();
 
       showMessage(
         "Certificates refreshed.",
@@ -3618,8 +3486,6 @@ if(refreshCertificates){
     }
   );
 
-}
-
 
 /* ============================================================
    LOGOUT
@@ -3627,36 +3493,37 @@ if(refreshCertificates){
 
 logoutBtn.addEventListener(
   "click",
-  async () => {
+  async function() {
 
-    try{
+    try {
 
       await db.auth.signOut();
 
-    }catch(error){
+      window.location.href =
+        "login.html";
 
-      console.error(
-        "Logout error:",
-        error
+    } catch(error) {
+
+      showMessage(
+        error.message,
+        "error"
       );
 
     }
-
-
-    window.location.href =
-      "login.html";
 
   }
 );
 
 
 /* ============================================================
-   START APPLICATION
+   START
    ============================================================ */
+
+setupTabs();
 
 startDashboard();
 
 </script>
 
 </body>
-  </html>
+      </html>
