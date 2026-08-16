@@ -294,6 +294,25 @@ tr:last-child td{
   color:#4d5a53;
 }
 
+/* POLICY BADGES */
+
+.policy-accepted{
+  background:#e3f7eb;
+  color:#11683d;
+}
+
+.policy-not-accepted{
+  background:#ffe9e9;
+  color:#a12626;
+}
+
+.policy-version{
+  font-weight:bold;
+  color:#0c8f55;
+}
+
+/* END POLICY BADGES */
+
 .action-btn{
   padding:8px 11px;
   border-radius:8px;
@@ -720,6 +739,49 @@ tr:last-child td{
 
 
 <!-- =========================================================
+     POLICY ACCEPTANCE
+     THIS IS THE NEW ADMIN-SIDE SECTION
+     ========================================================= -->
+
+<section class="card">
+
+  <div class="card-title">
+    <span>📋</span>
+    <h2>Policy Acceptance Records</h2>
+  </div>
+
+  <p class="card-description">
+    View student acceptance of the Funda Online Academy policies
+    and student declaration. Acceptance records are stored with
+    the policy version and date/time of acceptance.
+  </p>
+
+  <div class="section-tools">
+
+    <div></div>
+
+    <button
+      id="refreshPolicyAcceptances"
+      class="refresh-btn"
+      type="button"
+    >
+      Refresh Policy Records
+    </button>
+
+  </div>
+
+  <div id="policyAcceptancesContent">
+
+    <div class="loading">
+      Loading policy acceptance records...
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
      SYSTEM INFORMATION
      ========================================================= -->
 
@@ -791,6 +853,8 @@ tr:last-child td{
    FUNDA ONLINE ACADEMY
    ADMIN DASHBOARD
    COMPLETE VERSION
+   EXISTING LAYOUT PRESERVED
+   POLICY ACCEPTANCE ADDED
    ============================================================ */
 
 
@@ -871,6 +935,11 @@ const enrollmentsContent =
 const paymentsContent =
   document.getElementById("paymentsContent");
 
+const policyAcceptancesContent =
+  document.getElementById(
+    "policyAcceptancesContent"
+  );
+
 const logoutBtn =
   document.getElementById("logoutBtn");
 
@@ -883,6 +952,11 @@ const refreshEnrollments =
 const refreshPayments =
   document.getElementById("refreshPayments");
 
+const refreshPolicyAcceptances =
+  document.getElementById(
+    "refreshPolicyAcceptances"
+  );
+
 
 /* ============================================================
    DATA
@@ -892,8 +966,17 @@ let courses = [];
 let students = [];
 let enrollments = [];
 let payments = [];
+let policyAcceptances = [];
 
 let currentUser = null;
+
+
+/* ============================================================
+   POLICY VERSION
+   ============================================================ */
+
+const CURRENT_POLICY_VERSION =
+  "FOA-2026-01";
 
 
 /* ============================================================
@@ -1015,6 +1098,43 @@ function formatDate(value){
 
 
 /* ============================================================
+   DATE + TIME
+   ============================================================ */
+
+function formatDateTime(value){
+
+  if(!value){
+    return "—";
+  }
+
+  const date =
+    new Date(value);
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+
+    return escapeHTML(value);
+
+  }
+
+  return date.toLocaleString(
+    "en-ZA",
+    {
+      year:"numeric",
+      month:"short",
+      day:"numeric",
+      hour:"2-digit",
+      minute:"2-digit"
+    }
+  );
+
+}
+
+
+/* ============================================================
    STATUS
    ============================================================ */
 
@@ -1068,6 +1188,33 @@ function statusBadge(value){
   return `
     <span class="badge ${statusClass(value)}">
       ${safe}
+    </span>
+  `;
+
+}
+
+
+/* ============================================================
+   POLICY BADGE
+   ============================================================ */
+
+function policyBadge(
+  accepted
+){
+
+  if(accepted === true){
+
+    return `
+      <span class="badge policy-accepted">
+        Accepted
+      </span>
+    `;
+
+  }
+
+  return `
+    <span class="badge policy-not-accepted">
+      Not Accepted
     </span>
   `;
 
@@ -1328,7 +1475,8 @@ async function loadEverything(){
     loadCourses(),
     loadStudents(),
     loadEnrollments(),
-    loadPayments()
+    loadPayments(),
+    loadPolicyAcceptances()
   ]);
 
 
@@ -1339,6 +1487,8 @@ async function loadEverything(){
   renderEnrollments();
 
   renderPayments();
+
+  renderPolicyAcceptances();
 
 }
 
@@ -1641,6 +1791,87 @@ async function loadPayments(){
 
 
 /* ============================================================
+   LOAD POLICY ACCEPTANCES
+   ============================================================ */
+
+async function loadPolicyAcceptances(){
+
+  policyAcceptancesContent.innerHTML = `
+    <div class="loading">
+      Loading policy acceptance records...
+    </div>
+  `;
+
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await db
+        .from("policy_acceptances")
+        .select("*")
+        .order(
+          "accepted_at",
+          {
+            ascending:false,
+            nullsFirst:false
+          }
+        );
+
+
+    if(error){
+
+      console.error(
+        "Policy acceptance error:",
+        error
+      );
+
+      policyAcceptances = [];
+
+      policyAcceptancesContent.innerHTML = `
+        <div class="error-box">
+          Unable to load policy acceptance records.
+          <br><br>
+          ${escapeHTML(error.message)}
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    policyAcceptances =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+  }catch(error){
+
+    console.error(
+      "Policy acceptance exception:",
+      error
+    );
+
+    policyAcceptances = [];
+
+    policyAcceptancesContent.innerHTML = `
+      <div class="error-box">
+        Unable to load policy acceptance records.
+        <br><br>
+        ${escapeHTML(error.message)}
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* ============================================================
    FIND STUDENT
    ============================================================ */
 
@@ -1654,6 +1885,25 @@ function findStudent(studentId){
     student =>
       String(student.id) ===
       String(studentId)
+  ) || null;
+
+}
+
+
+/* ============================================================
+   FIND STUDENT BY USER ID
+   ============================================================ */
+
+function findStudentByUserId(userId){
+
+  if(!userId){
+    return null;
+  }
+
+  return students.find(
+    student =>
+      String(student.user_id) ===
+      String(userId)
   ) || null;
 
 }
@@ -1700,6 +1950,52 @@ function getStudentName(studentId){
     student.email ||
     "Unnamed student"
   );
+
+}
+
+
+/* ============================================================
+   GET POLICY STUDENT
+   ============================================================ */
+
+function getPolicyStudent(record){
+
+  /*
+    POLICY RECORDS CAN LINK THROUGH:
+    student_id
+    OR
+    user_id
+  */
+
+  if(record.student_id){
+
+    const student =
+      findStudent(
+        record.student_id
+      );
+
+    if(student){
+      return student;
+    }
+
+  }
+
+
+  if(record.user_id){
+
+    const student =
+      findStudentByUserId(
+        record.user_id
+      );
+
+    if(student){
+      return student;
+    }
+
+  }
+
+
+  return null;
 
 }
 
@@ -2155,6 +2451,162 @@ function renderPayments(){
 
 
 /* ============================================================
+   RENDER POLICY ACCEPTANCES
+   ============================================================ */
+
+function renderPolicyAcceptances(){
+
+  if(!policyAcceptances.length){
+
+    policyAcceptancesContent.innerHTML = `
+      <div class="empty">
+        No policy acceptance records found yet.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  policyAcceptancesContent.innerHTML = `
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Student</th>
+
+            <th>Policy Version</th>
+
+            <th>Policies</th>
+
+            <th>Declaration</th>
+
+            <th>Accepted</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          ${policyAcceptances.map(record => {
+
+            const student =
+              getPolicyStudent(record);
+
+            const studentName =
+              student
+                ? (
+                    student.full_name ||
+                    student.name ||
+                    student.email ||
+                    "Unnamed student"
+                  )
+                : (
+                    record.user_id
+                      ? "Registered student"
+                      : "Unknown student"
+                  );
+
+            const version =
+              record.policy_version ||
+              CURRENT_POLICY_VERSION;
+
+            const policiesAccepted =
+              record.policies_accepted === true;
+
+            const declarationAccepted =
+              record.declaration_accepted === true;
+
+            const acceptedAt =
+              record.accepted_at ||
+              record.created_at ||
+              null;
+
+
+            return `
+
+              <tr>
+
+                <td>
+
+                  <div class="student-name">
+                    ${escapeHTML(studentName)}
+                  </div>
+
+                  ${
+                    student?.email
+                    ?
+                    `
+                    <div
+                      class="muted"
+                      style="margin-top:5px;"
+                    >
+                      ${escapeHTML(student.email)}
+                    </div>
+                    `
+                    :
+                    ""
+                  }
+
+                </td>
+
+                <td>
+
+                  <span class="policy-version">
+                    ${escapeHTML(version)}
+                  </span>
+
+                </td>
+
+                <td>
+
+                  ${policyBadge(
+                    policiesAccepted
+                  )}
+
+                </td>
+
+                <td>
+
+                  ${policyBadge(
+                    declarationAccepted
+                  )}
+
+                </td>
+
+                <td>
+
+                  ${formatDateTime(
+                    acceptedAt
+                  )}
+
+                </td>
+
+              </tr>
+
+            `;
+
+          }).join("")}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
    UPDATE ENROLMENT STATUS
    ============================================================ */
 
@@ -2362,6 +2814,39 @@ refreshPayments.addEventListener(
 
 
 /* ============================================================
+   REFRESH POLICY ACCEPTANCES
+   ============================================================ */
+
+refreshPolicyAcceptances.addEventListener(
+  "click",
+  async function(){
+
+    refreshPolicyAcceptances.disabled =
+      true;
+
+    try{
+
+      await loadPolicyAcceptances();
+
+      renderPolicyAcceptances();
+
+      showMessage(
+        "Policy acceptance records refreshed.",
+        "success"
+      );
+
+    }finally{
+
+      refreshPolicyAcceptances.disabled =
+        false;
+
+    }
+
+  }
+);
+
+
+/* ============================================================
    START
    ============================================================ */
 
@@ -2370,4 +2855,4 @@ startDashboard();
 </script>
 
 </body>
-      </html>
+</html>
