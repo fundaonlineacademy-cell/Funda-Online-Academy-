@@ -26,10 +26,10 @@ body{
 
 .auth-container{
   width:100%;
-  max-width:620px;
+  max-width:560px;
   background:#fff;
-  border-radius:20px;
-  padding:32px 24px;
+  border-radius:22px;
+  padding:30px 24px;
   box-shadow:0 12px 35px rgba(0,0,0,.3);
 }
 
@@ -40,28 +40,28 @@ body{
 
 .logo h1{
   color:#0b4773;
-  font-size:32px;
+  font-size:30px;
   line-height:1.2;
 }
 
 .logo p{
   color:#666;
   margin-top:7px;
-  font-size:19px;
+  font-size:18px;
 }
 
 form h2{
   text-align:center;
-  margin-bottom:24px;
+  margin-bottom:22px;
   color:#071e35;
-  font-size:29px;
+  font-size:28px;
 }
 
 label{
   display:block;
-  margin:15px 0 7px;
+  margin:14px 0 7px;
   font-weight:bold;
-  font-size:17px;
+  font-size:16px;
 }
 
 input,
@@ -72,18 +72,18 @@ select{
   border-radius:10px;
   font-size:16px;
   outline:none;
-  background:white;
+  background:#fff;
 }
 
 input:focus,
 select:focus{
   border-color:#0b4773;
-  box-shadow:0 0 0 3px rgba(11,71,115,.1);
+  box-shadow:0 0 0 2px rgba(11,71,115,.12);
 }
 
 button{
   width:100%;
-  padding:16px;
+  padding:15px;
   margin-top:20px;
   border:0;
   border-radius:10px;
@@ -98,10 +98,15 @@ button:hover{
   background:#071e35;
 }
 
+button:disabled{
+  opacity:.6;
+  cursor:not-allowed;
+}
+
 .switch{
   text-align:center;
-  margin-top:20px;
-  font-size:17px;
+  margin-top:18px;
+  font-size:16px;
   line-height:1.6;
 }
 
@@ -115,7 +120,7 @@ button:hover{
 .forgot{
   display:block;
   text-align:center;
-  margin-top:15px;
+  margin-top:14px;
   color:#0b4773;
   font-weight:bold;
   cursor:pointer;
@@ -123,9 +128,9 @@ button:hover{
 }
 
 .message{
-  padding:12px;
+  padding:13px;
   margin-bottom:18px;
-  border-radius:9px;
+  border-radius:10px;
   text-align:center;
   font-size:15px;
   line-height:1.5;
@@ -141,7 +146,7 @@ button:hover{
   margin-top:22px;
   color:#0b4773;
   text-decoration:none;
-  font-size:17px;
+  font-size:16px;
 }
 
 .note{
@@ -156,127 +161,118 @@ button:hover{
 }
 
 /* ==========================================
-   POLICY SECTION
+   POLICY AREA
 ========================================== */
 
-.policy-section{
-  margin-top:28px;
+.policy-box{
+  margin-top:25px;
   padding:20px;
-  border-radius:14px;
-  background:#f3f8f5;
-  border:1px solid #dce9e1;
+  border-radius:15px;
+  background:#f2f8f5;
+  border:1px solid #d8e8df;
 }
 
-.policy-section h3{
+.policy-box h3{
   color:#071e35;
-  font-size:22px;
-  margin-bottom:15px;
+  margin-bottom:12px;
+  font-size:21px;
 }
 
-.policy-section h4{
+.policy-box h4{
   color:#0b4773;
   margin-top:18px;
   margin-bottom:8px;
   font-size:17px;
 }
 
-.policy-section p{
+.policy-box p{
   color:#444;
-  font-size:15px;
+  font-size:14px;
   line-height:1.6;
-  margin-bottom:9px;
+  margin-bottom:8px;
 }
 
-.policy-section ul{
-  margin:8px 0 12px 20px;
+.policy-box ul{
+  padding-left:20px;
+  margin-bottom:8px;
 }
 
-.policy-section li{
-  margin-bottom:7px;
-  line-height:1.5;
-  font-size:15px;
-}
-
-.payment-box{
-  background:#fff;
-  border:1px solid #dce5df;
-  border-radius:10px;
-  padding:14px;
-  margin-top:10px;
-}
-
-.payment-box strong{
-  color:#0b4773;
-}
-
-.declaration-box{
-  margin-top:20px;
-  padding:20px;
-  background:#eaf4ef;
-  border-radius:14px;
-}
-
-.declaration-box h3{
-  margin-bottom:14px;
-  color:#071e35;
-}
-
-.declaration-text{
-  font-size:16px;
-  line-height:1.6;
+.policy-box li{
   color:#444;
+  font-size:14px;
+  line-height:1.6;
+  margin-bottom:5px;
 }
 
 /* ==========================================
-   ACCEPTANCE CHECKBOX
+   ACCEPTANCE BOX
 ========================================== */
 
-.acceptance-box{
+.acceptance-card{
   margin-top:18px;
   padding:18px;
   background:#fff;
-  border:2px solid #d8e3dd;
-  border-radius:14px;
+  border:1px solid #d5dfda;
+  border-radius:15px;
 }
 
-.policy-check{
+.acceptance-row{
   display:flex;
   align-items:flex-start;
   gap:14px;
-  margin:0;
-  cursor:pointer;
-  font-weight:normal;
 }
 
-.policy-check input[type="checkbox"]{
-  width:38px;
-  min-width:38px;
-  height:38px;
-  margin:2px 0 0 0;
+.acceptance-row input[type="checkbox"]{
+  width:25px;
+  height:25px;
+  min-width:25px;
+  margin:3px 0 0 0;
   padding:0;
-  cursor:pointer;
   accent-color:#0b4773;
+  cursor:pointer;
 }
 
-.policy-check span{
-  display:block;
-  font-size:16px;
+.acceptance-text{
+  font-size:15px;
   line-height:1.55;
-  color:#222;
+  color:#333;
 }
 
-.policy-check strong{
+.acceptance-text strong{
   display:block;
-  font-size:18px;
-  margin-bottom:5px;
+  font-size:17px;
   color:#071e35;
+  margin-bottom:6px;
 }
 
 .policy-version{
-  margin-top:12px !important;
-  margin-bottom:0 !important;
-  color:#777 !important;
-  font-size:14px !important;
+  margin-top:14px;
+  color:#777;
+  font-size:13px;
+}
+
+/* ==========================================
+   DECLARATION
+========================================== */
+
+.declaration{
+  margin-top:18px;
+  padding:18px;
+  border-radius:14px;
+  background:#edf6f1;
+  border:1px solid #d7e7df;
+}
+
+.declaration h3{
+  color:#071e35;
+  margin-bottom:10px;
+  font-size:20px;
+}
+
+.declaration p{
+  color:#444;
+  line-height:1.65;
+  font-size:14px;
 }
 
 /* ==========================================
@@ -287,48 +283,33 @@ button:hover{
 
   body{
     padding:10px;
-    align-items:flex-start;
   }
 
   .auth-container{
-    margin-top:10px;
-    padding:28px 18px;
-    border-radius:18px;
+    padding:25px 18px;
+    border-radius:20px;
   }
 
   .logo h1{
-    font-size:29px;
+    font-size:28px;
   }
 
   form h2{
-    font-size:27px;
+    font-size:26px;
   }
 
   input,
   select{
+    font-size:16px;
     padding:14px;
   }
 
-  .policy-section{
+  .policy-box{
     padding:16px;
   }
 
-  .acceptance-box{
-    padding:16px;
-  }
-
-  .policy-check{
-    gap:12px;
-  }
-
-  .policy-check input[type="checkbox"]{
-    width:34px;
-    min-width:34px;
-    height:34px;
-  }
-
-  .policy-check strong{
-    font-size:17px;
+  .acceptance-card{
+    padding:15px;
   }
 }
 </style>
@@ -339,24 +320,43 @@ button:hover{
 <div class="auth-container">
 
   <!-- ==========================================
-       LOGO / HEADER
+       LOGO
   =========================================== -->
 
   <div class="logo">
-    <h1>Funda Online Academy</h1>
-    <p>Student Portal</p>
+
+    <h1>
+      Funda Online Academy
+    </h1>
+
+    <p>
+      Student Portal
+    </p>
+
   </div>
 
-  <div id="message" class="message hidden"></div>
+
+  <!-- ==========================================
+       MESSAGE
+  =========================================== -->
+
+  <div
+    id="message"
+    class="message hidden">
+  </div>
 
 
   <!-- ==========================================
        LOGIN FORM
   =========================================== -->
 
-  <form id="login-form">
+  <form
+    id="login-form">
 
-    <h2>Student Login</h2>
+    <h2>
+      Student Login
+    </h2>
+
 
     <label for="login-email">
       Email Address
@@ -370,6 +370,7 @@ button:hover{
       required
     >
 
+
     <label for="login-password">
       Password
     </label>
@@ -382,23 +383,37 @@ button:hover{
       required
     >
 
-    <button type="submit">
+
+    <button
+      type="submit">
+
       Login
+
     </button>
+
 
     <a
       href="#"
       id="forgot"
-      class="forgot"
-    >
+      class="forgot">
+
       Forgot Password?
+
     </a>
 
+
     <div class="switch">
+
       Don't have an account?
-      <a href="#" id="signup-tab">
+
+      <a
+        href="#"
+        id="signup-tab">
+
         Create Account
+
       </a>
+
     </div>
 
   </form>
@@ -408,15 +423,22 @@ button:hover{
        REGISTRATION FORM
   =========================================== -->
 
-  <form id="signup-form" class="hidden">
+  <form
+    id="signup-form"
+    class="hidden">
 
-    <h2>Create Student Account</h2>
+    <h2>
+      Create Student Account
+    </h2>
 
 
     <!-- FULL NAME -->
 
     <label for="signup-name">
-      Full Name <span class="required">*</span>
+
+      Full Name
+      <span class="required">*</span>
+
     </label>
 
     <input
@@ -431,13 +453,16 @@ button:hover{
     <!-- GENDER -->
 
     <label for="signup-gender">
-      Gender <span class="required">*</span>
+
+      Gender
+      <span class="required">*</span>
+
     </label>
 
     <select
       id="signup-gender"
-      required
-    >
+      required>
+
       <option value="">
         Select gender
       </option>
@@ -457,36 +482,43 @@ button:hover{
       <option value="Prefer not to say">
         Prefer not to say
       </option>
+
     </select>
 
 
     <!-- ID / PASSPORT -->
 
     <label for="signup-id-number">
+
       South African ID / Passport Number
       <span class="required">*</span>
+
     </label>
 
     <input
       type="text"
       id="signup-id-number"
       placeholder="Enter ID or passport number"
-      inputmode="text"
       autocomplete="off"
       required
     >
 
     <div class="note">
-      Your identification information is private and should only
-      be accessible to authorised academy personnel.
+
+      Your identification information is private
+      and should only be accessible to authorised
+      academy personnel.
+
     </div>
 
 
     <!-- PHONE -->
 
     <label for="signup-phone">
+
       WhatsApp / Mobile Number
       <span class="required">*</span>
+
     </label>
 
     <input
@@ -501,8 +533,10 @@ button:hover{
     <!-- EMAIL -->
 
     <label for="signup-email">
+
       Email Address
       <span class="required">*</span>
+
     </label>
 
     <input
@@ -517,8 +551,10 @@ button:hover{
     <!-- PASSWORD -->
 
     <label for="signup-password">
+
       Password
       <span class="required">*</span>
+
     </label>
 
     <input
@@ -531,15 +567,19 @@ button:hover{
     >
 
     <div class="note">
+
       Password must contain at least 6 characters.
+
     </div>
 
 
     <!-- CONFIRM PASSWORD -->
 
     <label for="signup-confirm-password">
+
       Confirm Password
       <span class="required">*</span>
+
     </label>
 
     <input
@@ -553,92 +593,65 @@ button:hover{
 
 
     <!-- ==========================================
-         POLICIES
+         POLICIES AND TERMS
     =========================================== -->
 
-    <div class="policy-section">
+    <div class="policy-box">
 
       <h3>
-        Funda Online Academy Policies
+        Funda Online Academy
+        Policies & Terms
       </h3>
 
-
-      <!-- PAYMENT RULES -->
 
       <h4>
         Payment Rules
       </h4>
 
       <ul>
+
         <li>
-          Courses below R2,000 must be paid in full.
+          Courses below R2,000 must be paid
+          in full before the course starts.
         </li>
 
         <li>
-          Courses above R2,000 require a minimum 50% upfront payment.
+          Courses above R2,000 require
+          50% payment upfront.
         </li>
 
         <li>
-          The remaining balance must be paid according to the
-          agreed payment arrangement and before course completion.
+          The remaining balance must be paid
+          according to the agreed payment
+          arrangement and before completion.
         </li>
 
         <li>
-          Where applicable, a payment plan may be arranged with
-          the academy before the course starts.
+          A payment plan may be arranged
+          with the academy where applicable.
         </li>
+
       </ul>
 
 
-      <!-- BANKING -->
-
       <h4>
-        How to Pay
+        Banking Information
       </h4>
 
-      <div class="payment-box">
+      <p>
+        <strong>TymeBank</strong><br>
+        Account Name: Funda Online Academy<br>
+        Account Number: 53001794582<br>
+        Branch Code: 678910
+      </p>
 
-        <p>
-          <strong>TymeBank</strong>
-        </p>
+      <p>
+        <strong>Capitec Bank</strong><br>
+        Account Name: Funda Online Academy<br>
+        Account Number: 2535397664<br>
+        Branch Code: 470010
+      </p>
 
-        <p>
-          Account Name: Funda Online Academy
-        </p>
-
-        <p>
-          Account Number: 53001794582
-        </p>
-
-        <p>
-          Branch Code: 678910
-        </p>
-
-      </div>
-
-
-      <div class="payment-box">
-
-        <p>
-          <strong>Capitec Bank</strong>
-        </p>
-
-        <p>
-          Account Name: Funda Online Academy
-        </p>
-
-        <p>
-          Account Number: 2535397664
-        </p>
-
-        <p>
-          Branch Code: 470010
-        </p>
-
-      </div>
-
-
-      <!-- STUDENT RESPONSIBILITIES -->
 
       <h4>
         Student Responsibilities
@@ -647,37 +660,32 @@ button:hover{
       <ul>
 
         <li>
-          Students must be committed to completing their course.
+          Students must be committed to their
+          chosen course.
         </li>
 
         <li>
-          Students must treat academy staff and other students
-          with respect.
+          Students must treat academy staff
+          and other students with respect.
         </li>
 
         <li>
-          Students must follow all Funda Online Academy rules
+          Students must follow academy rules
           and instructions.
         </li>
 
         <li>
-          Students must submit assessments within the required
-          deadlines.
+          Assessments must be submitted on time.
         </li>
 
         <li>
-          Assessments must not be submitted through WhatsApp.
-        </li>
-
-        <li>
-          Students are responsible for maintaining access to
-          their student account.
+          Assessments must not be submitted
+          through WhatsApp unless specifically
+          authorised by the academy.
         </li>
 
       </ul>
 
-
-      <!-- COURSE RULES -->
 
       <h4>
         Course Rules
@@ -686,163 +694,211 @@ button:hover{
       <ul>
 
         <li>
-          No course changes are permitted after the course has started.
+          Students must carefully select their
+          course before enrolment.
         </li>
 
         <li>
-          Students who voluntarily drop out are not entitled
-          to a refund.
+          Course changes are not permitted
+          after the course has started unless
+          approved by the academy.
         </li>
 
         <li>
-          Students must complete the required learning activities
-          and assessments.
+          Students who voluntarily drop out
+          are not entitled to a refund.
         </li>
 
         <li>
-          Course completion is subject to meeting the academy's
-          assessment and completion requirements.
+          Students must complete their
+          assessments according to academy
+          requirements.
         </li>
 
       </ul>
 
 
-      <!-- PRIVACY -->
-
       <h4>
-        Privacy and Information Protection
-      </h4>
-
-      <p>
-        Funda Online Academy respects the privacy of students.
-        Personal information provided during registration and
-        enrolment will be handled responsibly and protected
-        against unauthorised access.
-      </p>
-
-      <p>
-        Identification information, including ID or passport
-        information, should only be accessible to authorised
-        academy personnel for legitimate administrative,
-        enrolment, assessment and certificate purposes.
-      </p>
-
-
-      <!-- ASSESSMENTS -->
-
-      <h4>
-        Assessments
+        Information & Privacy
       </h4>
 
       <ul>
 
         <li>
-          Students must complete assessments according to
-          the requirements of their course.
+          Students must provide accurate
+          information during registration.
         </li>
 
         <li>
-          Students must submit their own work.
+          Funda Online Academy will take
+          reasonable measures to protect
+          student information.
         </li>
 
         <li>
-          Academic dishonesty or submitting another person's
-          work may result in disciplinary action.
+          Identification information is
+          restricted to authorised academy
+          personnel where required for
+          administration, verification and
+          certification.
         </li>
 
         <li>
-          Assessments must be submitted through the official
-          academy system and not through WhatsApp.
+          Students must keep their login
+          passwords confidential.
         </li>
 
       </ul>
 
 
-      <!-- DECLARATION -->
+      <h4>
+        Contact
+      </h4>
 
-      <div class="declaration-box">
+      <p>
+        Email:
+        fundaonlineacademy@gmail.com
+      </p>
+
+      <p>
+        WhatsApp / Phone:
+        069 960 8590
+      </p>
+
+
+      <!-- ========================================
+           STUDENT DECLARATION
+      ========================================= -->
+
+      <div class="declaration">
 
         <h3>
           Student Declaration
         </h3>
 
-        <p class="declaration-text">
-          I declare that the information I have provided is true
-          and correct to the best of my knowledge. I understand
-          the academy's payment rules, student responsibilities,
-          course rules, assessment requirements and privacy
-          information.
-        </p>
+        <p>
 
-        <p class="declaration-text">
-          I understand that accepting these policies creates a
-          record of my acceptance, including the date and time
-          of acceptance.
+          I declare that the information I
+          have provided is true and correct
+          to the best of my knowledge. I
+          understand the academy's payment
+          rules, student responsibilities,
+          course rules, assessment
+          requirements and privacy information.
+          I understand that accepting these
+          policies creates a record of my
+          acceptance, including the date and
+          time of acceptance.
+
         </p>
 
       </div>
 
 
-      <!-- ==========================================
-           ACCEPTANCE CHECKBOX
+      <!-- ========================================
+           POLICY ACCEPTANCE
+      ========================================= -->
 
-           IMPORTANT:
-           ID MUST BE:
-           declaration-acceptance
-      =========================================== -->
+      <div class="acceptance-card">
 
-      <div class="acceptance-box">
-
-        <label
-          for="declaration-acceptance"
-          class="policy-check"
-        >
+        <div class="acceptance-row">
 
           <input
             type="checkbox"
-            id="declaration-acceptance"
-            name="declaration_acceptance"
+            id="accept-policies"
+            name="accept_policies"
             required
           >
 
-          <span>
+          <div class="acceptance-text">
 
             <strong>
               I Accept the Policies and Declaration
             </strong>
 
-            I confirm that I have read, understood and agree
-            to the Funda Online Academy policies and declaration
-            above.
+            I confirm that I have read,
+            understood and agree to the
+            Funda Online Academy policies
+            and declaration above.
 
-            <span class="required">*</span>
+          </div>
 
-          </span>
+        </div>
 
-        </label>
 
-        <p class="policy-version">
-          Policy version: FOA-2026-01
-        </p>
+        <div class="policy-version">
+
+          Policy version:
+          <strong>FOA-2026-01</strong>
+
+        </div>
 
       </div>
+
+
+      <!-- ========================================
+           TERMS ACCEPTANCE
+      ========================================= -->
+
+      <div class="acceptance-card">
+
+        <div class="acceptance-row">
+
+          <input
+            type="checkbox"
+            id="accept-terms"
+            name="accept_terms"
+            required
+          >
+
+          <div class="acceptance-text">
+
+            <strong>
+              I Accept the Terms & Conditions
+            </strong>
+
+            I confirm that I have read,
+            understood and agree to the
+            Funda Online Academy Terms &
+            Conditions, payment rules,
+            course rules and student
+            responsibilities.
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- ========================================
+           CREATE ACCOUNT
+      ========================================= -->
+
+      <button
+        type="submit">
+
+        Create Account
+
+      </button>
 
     </div>
 
 
-    <!-- CREATE ACCOUNT -->
-
-    <button type="submit">
-      Create Account
-    </button>
-
+    <!-- ==========================================
+         LOGIN SWITCH
+    =========================================== -->
 
     <div class="switch">
 
       Already have an account?
 
-      <a href="#" id="login-tab">
+      <a
+        href="#"
+        id="login-tab">
+
         Login
+
       </a>
 
     </div>
@@ -850,13 +906,16 @@ button:hover{
   </form>
 
 
-  <!-- BACK TO MAIN WEBSITE -->
+  <!-- ==========================================
+       BACK TO WEBSITE
+  =========================================== -->
 
   <a
     class="back"
-    href="index.html"
-  >
+    href="index.html">
+
     ← Back to Funda Online Academy
+
   </a>
 
 </div>
@@ -864,13 +923,23 @@ button:hover{
 
 <!-- ==========================================
      SUPABASE
-========================================== -->
+=========================================== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="supabase-config.js?v=20260816-3"></script>
 
-<script src="auth.js?v=20260816-3"></script>
+<!-- ==========================================
+     SUPABASE CONFIG
+=========================================== -->
+
+<script src="supabase-config.js?v=20260816-10"></script>
+
+
+<!-- ==========================================
+     AUTHENTICATION
+=========================================== -->
+
+<script src="auth.js?v=20260816-10"></script>
 
 </body>
-      </html>
+  </html>
