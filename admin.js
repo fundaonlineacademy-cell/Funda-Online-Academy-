@@ -21,24 +21,57 @@ const message = document.getElementById("message");
 const adminEmail = document.getElementById("admin-email");
 const logoutBtn = document.getElementById("logout");
 
-const studentsBox = document.getElementById("admin-students");
-const coursesBox = document.getElementById("admin-courses");
-const enrolmentsBox = document.getElementById("admin-enrolments");
-const paymentsBox = document.getElementById("admin-payments");
-const resultsBox = document.getElementById("admin-results");
-const certificatesBox = document.getElementById("admin-certificates");
+const studentsBox =
+  document.getElementById("admin-students");
 
-const courseForm = document.getElementById("course-form");
-const courseId = document.getElementById("course-id");
-const courseName = document.getElementById("course-name");
-const coursePrice = document.getElementById("course-price");
-const courseCategory = document.getElementById("course-category");
-const courseDuration = document.getElementById("course-duration");
-const courseImage = document.getElementById("course-image");
-const courseDescription = document.getElementById("course-description");
-const courseModules = document.getElementById("course-modules");
-const cancelEdit = document.getElementById("cancel-edit");
-const newCourseBtn = document.getElementById("new-course");
+const coursesBox =
+  document.getElementById("admin-courses");
+
+const enrolmentsBox =
+  document.getElementById("admin-enrolments");
+
+const paymentsBox =
+  document.getElementById("admin-payments");
+
+const resultsBox =
+  document.getElementById("admin-results");
+
+const certificatesBox =
+  document.getElementById("admin-certificates");
+
+
+const courseForm =
+  document.getElementById("course-form");
+
+const courseId =
+  document.getElementById("course-id");
+
+const courseName =
+  document.getElementById("course-name");
+
+const coursePrice =
+  document.getElementById("course-price");
+
+const courseCategory =
+  document.getElementById("course-category");
+
+const courseDuration =
+  document.getElementById("course-duration");
+
+const courseImage =
+  document.getElementById("course-image");
+
+const courseDescription =
+  document.getElementById("course-description");
+
+const courseModules =
+  document.getElementById("course-modules");
+
+const cancelEdit =
+  document.getElementById("cancel-edit");
+
+const newCourseBtn =
+  document.getElementById("new-course");
 
 
 // ============================================================
@@ -50,7 +83,9 @@ function showMessage(text, type = "error") {
   if (!message) return;
 
   message.textContent = text;
-  message.className = "message " + type;
+
+  message.className =
+    "message " + type;
 }
 
 
@@ -60,7 +95,10 @@ function showMessage(text, type = "error") {
 
 function escapeHTML(value) {
 
-  if (value === null || value === undefined) {
+  if (
+    value === null ||
+    value === undefined
+  ) {
     return "";
   }
 
@@ -83,17 +121,25 @@ function formatDate(value) {
     return "—";
   }
 
-  const date = new Date(value);
+  const date =
+    new Date(value);
 
-  if (Number.isNaN(date.getTime())) {
+  if (
+    Number.isNaN(
+      date.getTime()
+    )
+  ) {
     return escapeHTML(value);
   }
 
-  return date.toLocaleDateString("en-ZA", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric"
-  });
+  return date.toLocaleDateString(
+    "en-ZA",
+    {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    }
+  );
 }
 
 
@@ -111,13 +157,19 @@ function formatMoney(value) {
     return "—";
   }
 
-  const number = Number(value);
+  const number =
+    Number(value);
 
-  if (Number.isNaN(number)) {
+  if (
+    Number.isNaN(number)
+  ) {
     return escapeHTML(value);
   }
 
-  return "R" + number.toFixed(2);
+  return (
+    "R" +
+    number.toFixed(2)
+  );
 }
 
 
@@ -131,35 +183,31 @@ function getStudentName(student) {
     return "Unknown student";
   }
 
-  if (student.full_name) {
-    return student.full_name;
-  }
-
-  if (student.name) {
-    return student.name;
-  }
-
-  if (student.student_name) {
-    return student.student_name;
-  }
-
-  if (student.first_name || student.last_name) {
-
-    return (
-      `${student.first_name || ""} ${student.last_name || ""}`
+  if (
+    student.full_name &&
+    String(student.full_name).trim()
+  ) {
+    return String(
+      student.full_name
     ).trim();
   }
 
-  if (student.email) {
-    return student.email;
+  if (
+    student.email &&
+    String(student.email).trim()
+  ) {
+    return String(
+      student.email
+    ).trim();
   }
 
-  if (student.mobile) {
-    return student.mobile;
-  }
-
-  if (student.phone) {
-    return student.phone;
+  if (
+    student.mobile_whatsapp &&
+    String(student.mobile_whatsapp).trim()
+  ) {
+    return String(
+      student.mobile_whatsapp
+    ).trim();
   }
 
   return "Unknown student";
@@ -178,8 +226,6 @@ function getCourseName(course) {
 
   return (
     course.title ||
-    course.name ||
-    course.course_name ||
     "Unknown course"
   );
 }
@@ -203,14 +249,6 @@ function getCoursePrice(course) {
     return course.price;
   }
 
-  if (
-    course.amount !== null &&
-    course.amount !== undefined &&
-    course.amount !== ""
-  ) {
-    return course.amount;
-  }
-
   return null;
 }
 
@@ -222,13 +260,13 @@ function getCoursePrice(course) {
 function statusBadge(status) {
 
   const clean =
-    status ||
-    "Pending";
+    status || "Pending";
 
   const lower =
     String(clean).toLowerCase();
 
-  let className = "pending";
+  let className =
+    "pending";
 
   if (
     lower === "approved" ||
@@ -236,7 +274,8 @@ function statusBadge(status) {
     lower === "paid" ||
     lower === "completed"
   ) {
-    className = "approved";
+    className =
+      "approved";
   }
 
   if (
@@ -244,7 +283,8 @@ function statusBadge(status) {
     lower === "cancelled" ||
     lower === "failed"
   ) {
-    className = "rejected";
+    className =
+      "rejected";
   }
 
   return `
@@ -252,6 +292,55 @@ function statusBadge(status) {
       ${escapeHTML(clean)}
     </span>
   `;
+}
+
+
+// ============================================================
+// CREATE COURSE SLUG
+// ============================================================
+
+function createSlug(title) {
+
+  return String(title || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+
+// ============================================================
+// MODULES
+// ============================================================
+
+function modulesToArray(value) {
+
+  if (!value) {
+    return [];
+  }
+
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  return String(value)
+    .split(/\r?\n/)
+    .map(item => item.trim())
+    .filter(Boolean);
+}
+
+
+function modulesToText(value) {
+
+  if (!value) {
+    return "";
+  }
+
+  if (Array.isArray(value)) {
+    return value.join("\n");
+  }
+
+  return String(value);
 }
 
 
@@ -276,10 +365,6 @@ function addAdminStyles() {
     "funda-admin-extra-styles";
 
   style.textContent = `
-
-    /* =========================================
-       ADMIN TABLE
-       ========================================= */
 
     .funda-admin-table-wrap {
       width: 100%;
@@ -311,11 +396,6 @@ function addAdminStyles() {
       background: #fafcfb;
     }
 
-
-    /* =========================================
-       STATUS
-       ========================================= */
-
     .status-badge {
       display: inline-block;
       padding: 8px 15px;
@@ -339,11 +419,6 @@ function addAdminStyles() {
       color: #a52c2c;
     }
 
-
-    /* =========================================
-       ACTION SELECT
-       ========================================= */
-
     .funda-action-select {
       padding: 9px 12px;
       border: 1px solid #b8c0bc;
@@ -352,11 +427,6 @@ function addAdminStyles() {
       font-size: 15px;
       min-width: 125px;
     }
-
-
-    /* =========================================
-       PROOF
-       ========================================= */
 
     .funda-proof-link {
       color: #14804a;
@@ -367,11 +437,6 @@ function addAdminStyles() {
     .funda-proof-link:hover {
       text-decoration: underline;
     }
-
-
-    /* =========================================
-       COURSE BUTTONS
-       ========================================= */
 
     .funda-course-actions {
       display: flex;
@@ -397,11 +462,6 @@ function addAdminStyles() {
       color: #a72828;
     }
 
-
-    /* =========================================
-       EMPTY / LOADING
-       ========================================= */
-
     .funda-empty {
       padding: 25px;
       text-align: center;
@@ -414,52 +474,7 @@ function addAdminStyles() {
       color: #69756f;
     }
 
-
-    /* =========================================
-       PAYMENT RECORD
-       ========================================= */
-
-    .funda-payment-record {
-      background: #ffffff;
-      border: 1px solid #e5eae7;
-      border-radius: 16px;
-      padding: 18px;
-      margin-bottom: 14px;
-      box-shadow: 0 4px 14px rgba(0,0,0,.04);
-    }
-
-    .funda-payment-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 10px 0;
-      border-bottom: 1px solid #edf0ee;
-    }
-
-    .funda-payment-row:last-child {
-      border-bottom: 0;
-    }
-
-    .funda-payment-label {
-      font-weight: 700;
-      color: #4c5853;
-    }
-
-    .funda-payment-value {
-      text-align: right;
-      overflow-wrap: anywhere;
-    }
-
-
-    /* =========================================
-       MOBILE
-       ========================================= */
-
     @media (max-width: 700px) {
-
-      .funda-admin-table-wrap {
-        overflow-x: auto;
-      }
 
       .funda-admin-table {
         min-width: 760px;
@@ -494,6 +509,7 @@ async function checkAdminLogin() {
   } = await db.auth.getUser();
 
   if (error) {
+
     console.error(
       "Authentication error:",
       error
@@ -558,10 +574,24 @@ async function loadStudents() {
     error
   } = await db
     .from("students")
-    .select("*")
-    .order("id", {
-      ascending: false
-    });
+    .select(`
+      id,
+      user_id,
+      full_name,
+      gender,
+      south_african_id,
+      email,
+      mobile_whatsapp,
+      address,
+      created_at,
+      updated_at
+    `)
+    .order(
+      "created_at",
+      {
+        ascending: false
+      }
+    );
 
   if (error) {
 
@@ -572,9 +602,17 @@ async function loadStudents() {
 
     studentsBox.innerHTML = `
       <div class="funda-empty">
-        <strong>Could not load students.</strong>
+
+        <strong>
+          Could not load students.
+        </strong>
+
         <br><br>
-        ${escapeHTML(error.message)}
+
+        ${escapeHTML(
+          error.message
+        )}
+
       </div>
     `;
 
@@ -605,7 +643,7 @@ async function loadStudents() {
           <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>Mobile</th>
+            <th>Mobile / WhatsApp</th>
             <th>Gender</th>
             <th>Registration</th>
           </tr>
@@ -621,7 +659,9 @@ async function loadStudents() {
               <td>
                 <strong>
                   ${escapeHTML(
-                    getStudentName(student)
+                    getStudentName(
+                      student
+                    )
                   )}
                 </strong>
               </td>
@@ -629,16 +669,13 @@ async function loadStudents() {
               <td>
                 ${escapeHTML(
                   student.email ||
-                  student.email_address ||
                   "—"
                 )}
               </td>
 
               <td>
                 ${escapeHTML(
-                  student.mobile ||
-                  student.phone ||
-                  student.whatsapp ||
+                  student.mobile_whatsapp ||
                   "—"
                 )}
               </td>
@@ -652,8 +689,7 @@ async function loadStudents() {
 
               <td>
                 ${formatDate(
-                  student.created_at ||
-                  student.registered_at
+                  student.created_at
                 )}
               </td>
 
@@ -691,10 +727,25 @@ async function loadCourses() {
     error
   } = await db
     .from("courses")
-    .select("*")
-    .order("id", {
-      ascending: false
-    });
+    .select(`
+      id,
+      title,
+      slug,
+      description,
+      duration,
+      price,
+      image_url,
+      modules,
+      active,
+      created_at,
+      updated_at
+    `)
+    .order(
+      "created_at",
+      {
+        ascending: false
+      }
+    );
 
   if (error) {
 
@@ -705,9 +756,17 @@ async function loadCourses() {
 
     coursesBox.innerHTML = `
       <div class="funda-empty">
-        <strong>Could not load courses.</strong>
+
+        <strong>
+          Could not load courses.
+        </strong>
+
         <br><br>
-        ${escapeHTML(error.message)}
+
+        ${escapeHTML(
+          error.message
+        )}
+
       </div>
     `;
 
@@ -736,11 +795,13 @@ async function loadCourses() {
         <thead>
 
           <tr>
+
             <th>Course</th>
             <th>Price</th>
-            <th>Category</th>
             <th>Duration</th>
+            <th>Active</th>
             <th>Action</th>
+
           </tr>
 
         </thead>
@@ -755,7 +816,9 @@ async function loadCourses() {
 
                 <strong>
                   ${escapeHTML(
-                    getCourseName(course)
+                    getCourseName(
+                      course
+                    )
                   )}
                 </strong>
 
@@ -763,14 +826,7 @@ async function loadCourses() {
 
               <td>
                 ${formatMoney(
-                  getCoursePrice(course)
-                )}
-              </td>
-
-              <td>
-                ${escapeHTML(
-                  course.category ||
-                  "—"
+                  course.price
                 )}
               </td>
 
@@ -783,15 +839,27 @@ async function loadCourses() {
 
               <td>
 
+                ${statusBadge(
+                  course.active
+                    ? "Active"
+                    : "Inactive"
+                )}
+
+              </td>
+
+              <td>
+
                 <div class="funda-course-actions">
 
                   <button
+                    type="button"
                     class="funda-btn funda-btn-edit"
                     onclick="editCourse('${escapeHTML(course.id)}')">
                     Edit
                   </button>
 
                   <button
+                    type="button"
                     class="funda-btn funda-btn-delete"
                     onclick="deleteCourse('${escapeHTML(course.id)}')">
                     Delete
@@ -817,15 +885,6 @@ async function loadCourses() {
 
 // ============================================================
 // ENROLMENTS
-//
-// IMPORTANT:
-//
-// The enrollments table DOES NOT contain "amount".
-//
-// Therefore we only request columns that actually belong
-// to the enrolments table.
-//
-// The amount is taken from the related course price.
 // ============================================================
 
 async function loadEnrolments() {
@@ -852,9 +911,12 @@ async function loadEnrolments() {
       enrollment_status,
       enrolled_at
     `)
-    .order("enrolled_at", {
-      ascending: false
-    });
+    .order(
+      "enrolled_at",
+      {
+        ascending: false
+      }
+    );
 
 
   if (error) {
@@ -873,7 +935,9 @@ async function loadEnrolments() {
 
         <br><br>
 
-        ${escapeHTML(error.message)}
+        ${escapeHTML(
+          error.message
+        )}
 
       </div>
     `;
@@ -903,10 +967,16 @@ async function loadEnrolments() {
   const studentIds = [
     ...new Set(
       enrolments
-        .map(row => row.student_id)
+        .map(
+          row => row.student_id
+        )
         .filter(Boolean)
+        .map(
+          id => String(id)
+        )
     )
   ];
+
 
   let students = [];
 
@@ -918,17 +988,53 @@ async function loadEnrolments() {
     const result =
       await db
         .from("students")
-        .select("*")
+        .select(`
+          id,
+          user_id,
+          full_name,
+          gender,
+          south_african_id,
+          email,
+          mobile_whatsapp,
+          address,
+          created_at,
+          updated_at
+        `)
         .in(
           "id",
           studentIds
         );
 
-    if (!result.error) {
 
-      students =
-        result.data || [];
+    if (result.error) {
+
+      console.error(
+        "Enrolment student lookup error:",
+        result.error
+      );
+
+      enrolmentsBox.innerHTML = `
+        <div class="funda-empty">
+
+          <strong>
+            Could not load student information.
+          </strong>
+
+          <br><br>
+
+          ${escapeHTML(
+            result.error.message
+          )}
+
+        </div>
+      `;
+
+      return;
     }
+
+
+    students =
+      result.data || [];
   }
 
 
@@ -939,10 +1045,16 @@ async function loadEnrolments() {
   const courseIds = [
     ...new Set(
       enrolments
-        .map(row => row.course_id)
+        .map(
+          row => row.course_id
+        )
         .filter(Boolean)
+        .map(
+          id => String(id)
+        )
     )
   ];
+
 
   let courses = [];
 
@@ -954,17 +1066,54 @@ async function loadEnrolments() {
     const result =
       await db
         .from("courses")
-        .select("*")
+        .select(`
+          id,
+          title,
+          slug,
+          description,
+          duration,
+          price,
+          image_url,
+          modules,
+          active,
+          created_at,
+          updated_at
+        `)
         .in(
           "id",
           courseIds
         );
 
-    if (!result.error) {
 
-      courses =
-        result.data || [];
+    if (result.error) {
+
+      console.error(
+        "Enrolment course lookup error:",
+        result.error
+      );
+
+      enrolmentsBox.innerHTML = `
+        <div class="funda-empty">
+
+          <strong>
+            Could not load course information.
+          </strong>
+
+          <br><br>
+
+          ${escapeHTML(
+            result.error.message
+          )}
+
+        </div>
+      `;
+
+      return;
     }
+
+
+    courses =
+      result.data || [];
   }
 
 
@@ -974,13 +1123,16 @@ async function loadEnrolments() {
 
   const studentMap = {};
 
-  students.forEach(student => {
 
-    studentMap[
-      String(student.id)
-    ] = student;
+  students.forEach(
+    student => {
 
-  });
+      studentMap[
+        String(student.id)
+      ] = student;
+
+    }
+  );
 
 
   // ==========================================================
@@ -989,17 +1141,20 @@ async function loadEnrolments() {
 
   const courseMap = {};
 
-  courses.forEach(course => {
 
-    courseMap[
-      String(course.id)
-    ] = course;
+  courses.forEach(
+    course => {
 
-  });
+      courseMap[
+        String(course.id)
+      ] = course;
+
+    }
+  );
 
 
   // ==========================================================
-  // RENDER
+  // RENDER ENROLMENTS
   // ==========================================================
 
   enrolmentsBox.innerHTML = `
@@ -1013,15 +1168,11 @@ async function loadEnrolments() {
           <tr>
 
             <th>Student</th>
-
+            <th>Email</th>
             <th>Course</th>
-
             <th>Amount</th>
-
             <th>Status</th>
-
             <th>Date</th>
-
             <th>Action</th>
 
           </tr>
@@ -1034,16 +1185,22 @@ async function loadEnrolments() {
 
             const student =
               studentMap[
-                String(row.student_id)
+                String(
+                  row.student_id
+                )
               ];
 
             const course =
               courseMap[
-                String(row.course_id)
+                String(
+                  row.course_id
+                )
               ];
 
             const amount =
-              getCoursePrice(course);
+              getCoursePrice(
+                course
+              );
 
             return `
 
@@ -1053,7 +1210,9 @@ async function loadEnrolments() {
 
                   <strong>
                     ${escapeHTML(
-                      getStudentName(student)
+                      getStudentName(
+                        student
+                      )
                     )}
                   </strong>
 
@@ -1062,14 +1221,27 @@ async function loadEnrolments() {
                 <td>
 
                   ${escapeHTML(
-                    getCourseName(course)
+                    student?.email ||
+                    "—"
                   )}
 
                 </td>
 
                 <td>
 
-                  ${formatMoney(amount)}
+                  ${escapeHTML(
+                    getCourseName(
+                      course
+                    )
+                  )}
+
+                </td>
+
+                <td>
+
+                  ${formatMoney(
+                    amount
+                  )}
 
                 </td>
 
@@ -1099,50 +1271,60 @@ async function loadEnrolments() {
                     )">
 
                     <option
-                      value="Pending"
+                      value="pending"
                       ${String(
-                        row.enrollment_status || ""
-                      ).toLowerCase() === "pending"
+                        row.enrollment_status ||
+                        ""
+                      ).toLowerCase() ===
+                      "pending"
                         ? "selected"
                         : ""}>
                       Pending
                     </option>
 
                     <option
-                      value="Approved"
+                      value="approved"
                       ${String(
-                        row.enrollment_status || ""
-                      ).toLowerCase() === "approved"
+                        row.enrollment_status ||
+                        ""
+                      ).toLowerCase() ===
+                      "approved"
                         ? "selected"
                         : ""}>
                       Approved
                     </option>
 
                     <option
-                      value="Active"
+                      value="active"
                       ${String(
-                        row.enrollment_status || ""
-                      ).toLowerCase() === "active"
+                        row.enrollment_status ||
+                        ""
+                      ).toLowerCase() ===
+                      "active"
                         ? "selected"
                         : ""}>
                       Active
                     </option>
 
                     <option
-                      value="Completed"
+                      value="completed"
                       ${String(
-                        row.enrollment_status || ""
-                      ).toLowerCase() === "completed"
+                        row.enrollment_status ||
+                        ""
+                      ).toLowerCase() ===
+                      "completed"
                         ? "selected"
                         : ""}>
                       Completed
                     </option>
 
                     <option
-                      value="Rejected"
+                      value="rejected"
                       ${String(
-                        row.enrollment_status || ""
-                      ).toLowerCase() === "rejected"
+                        row.enrollment_status ||
+                        ""
+                      ).toLowerCase() ===
+                      "rejected"
                         ? "selected"
                         : ""}>
                       Rejected
@@ -1188,9 +1370,13 @@ async function changeEnrollmentStatus(
   } = await db
     .from("enrollments")
     .update({
-      enrollment_status: status
+      enrollment_status:
+        status
     })
-    .eq("id", id);
+    .eq(
+      "id",
+      id
+    );
 
 
   if (error) {
@@ -1254,9 +1440,12 @@ async function loadPayments() {
       created_at,
       updated_at
     `)
-    .order("created_at", {
-      ascending: false
-    });
+    .order(
+      "created_at",
+      {
+        ascending: false
+      }
+    );
 
 
   if (error) {
@@ -1275,7 +1464,9 @@ async function loadPayments() {
 
         <br><br>
 
-        ${escapeHTML(error.message)}
+        ${escapeHTML(
+          error.message
+        )}
 
       </div>
     `;
@@ -1299,21 +1490,19 @@ async function loadPayments() {
 
 
   // ==========================================================
-  // GET ENROLMENTS FIRST
-  //
-  // This is important.
-  //
-  // The payment record contains enrolment_id.
-  // The enrolment contains student_id and course_id.
-  //
-  // Therefore we use the enrolment as the main connection.
+  // GET ENROLMENTS
   // ==========================================================
 
   const enrolmentIds = [
     ...new Set(
       payments
-        .map(row => row.enrolment_id)
+        .map(
+          row => row.enrolment_id
+        )
         .filter(Boolean)
+        .map(
+          id => String(id)
+        )
     )
   ];
 
@@ -1341,23 +1530,23 @@ async function loadPayments() {
         );
 
 
-    if (!result.error) {
-
-      enrolments =
-        result.data || [];
-
-    } else {
+    if (result.error) {
 
       console.error(
         "Payment enrolment lookup error:",
         result.error
       );
+
+    } else {
+
+      enrolments =
+        result.data || [];
     }
   }
 
 
   // ==========================================================
-  // ADD STUDENT IDS FROM BOTH SOURCES
+  // STUDENT IDS
   // ==========================================================
 
   const allStudentIds = [
@@ -1372,7 +1561,9 @@ async function loadPayments() {
         )
       ]
       .filter(Boolean)
-      .map(id => String(id))
+      .map(
+        id => String(id)
+      )
     )
   ];
 
@@ -1387,7 +1578,18 @@ async function loadPayments() {
     const result =
       await db
         .from("students")
-        .select("*")
+        .select(`
+          id,
+          user_id,
+          full_name,
+          gender,
+          south_african_id,
+          email,
+          mobile_whatsapp,
+          address,
+          created_at,
+          updated_at
+        `)
         .in(
           "id",
           allStudentIds
@@ -1410,873 +1612,12 @@ async function loadPayments() {
 
 
   // ==========================================================
-  // GET COURSES
+  // COURSE IDS
   // ==========================================================
 
   const allCourseIds = [
     ...new Set(
       enrolments
-        .map(row => row.course_id)
-        .filter(Boolean)
-        .map(id => String(id))
-    )
-  ];
-
-
-  let courses = [];
-
-
-  if (
-    allCourseIds.length > 0
-  ) {
-
-    const result =
-      await db
-        .from("courses")
-        .select("*")
-        .in(
-          "id",
-          allCourseIds
-        );
-
-
-    if (!result.error) {
-
-      courses =
-        result.data || [];
-
-    } else {
-
-      console.error(
-        "Payment course lookup error:",
-        result.error
-      );
-    }
-  }
-
-
-  // ==========================================================
-  // MAP STUDENTS
-  // ==========================================================
-
-  const studentMap = {};
-
-  students.forEach(student => {
-
-    studentMap[
-      String(student.id)
-    ] = student;
-
-  });
-
-
-  // ==========================================================
-  // MAP ENROLMENTS
-  // ==========================================================
-
-  const enrolmentMap = {};
-
-  enrolments.forEach(enrolment => {
-
-    enrolmentMap[
-      String(enrolment.id)
-    ] = enrolment;
-
-  });
-
-
-  // ==========================================================
-  // MAP COURSES
-  // ==========================================================
-
-  const courseMap = {};
-
-  courses.forEach(course => {
-
-    courseMap[
-      String(course.id)
-    ] = course;
-
-  });
-
-
-  // ==========================================================
-  // RENDER PAYMENTS
-  // ==========================================================
-
-  paymentsBox.innerHTML = `
-
-    <div class="funda-admin-table-wrap">
-
-      <table class="funda-admin-table">
-
-        <thead>
-
-          <tr>
-
-            <th>Student</th>
-
-            <th>Course</th>
-
-            <th>Amount</th>
-
-            <th>Method</th>
-
-            <th>Status</th>
-
-            <th>Proof</th>
-
-            <th>Date</th>
-
-            <th>Action</th>
-
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          ${payments.map(payment => {
-
-            // ------------------------------------------------
-            // Find enrolment
-            // ------------------------------------------------
-
-            const enrolment =
-              enrolmentMap[
-                String(
-                  payment.enrolment_id
-                )
-              ];
-
-
-            // ------------------------------------------------
-            // Prefer student from enrolment
-            // ------------------------------------------------
-
-            let student = null;
-
-
-            if (enrolment) {
-
-              student =
-                studentMap[
-                  String(
-                    enrolment.student_id
-                  )
-                ];
-            }
-
-
-            // ------------------------------------------------
-            // Fallback to payment student_id
-            // ------------------------------------------------
-
-            if (!student) {
-
-              student =
-                studentMap[
-                  String(
-                    payment.student_id
-                  )
-                ];
-            }
-
-
-            // ------------------------------------------------
-            // Course
-            // ------------------------------------------------
-
-            const course =
-              enrolment
-                ? courseMap[
-                    String(
-                      enrolment.course_id
-                    )
-                  ]
-                : null;
-
-
-            return `
-
-              <tr>
-
-                <td>
-
-                  <strong>
-                    ${escapeHTML(
-                      getStudentName(student)
-                    )}
-                  </strong>
-
-                </td>
-
-                <td>
-
-                  ${escapeHTML(
-                    getCourseName(course)
-                  )}
-
-                </td>
-
-                <td>
-
-                  ${formatMoney(
-                    payment.amount
-                  )}
-
-                </td>
-
-                <td>
-
-                  ${escapeHTML(
-                    payment.payment_method ||
-                    "—"
-                  )}
-
-                </td>
-
-                <td>
-
-                  ${statusBadge(
-                    payment.status
-                  )}
-
-                </td>
-
-                <td>
-
-                  ${
-                    payment.proof_url
-
-                    ? `
-
-                      <a
-                        class="funda-proof-link"
-                        href="${escapeHTML(
-                          payment.proof_url
-                        )}"
-                        target="_blank"
-                        rel="noopener noreferrer">
-
-                        View Proof
-
-                      </a>
-
-                    `
-
-                    : "No proof"
-                  }
-
-                </td>
-
-                <td>
-
-                  ${formatDate(
-                    payment.created_at
-                  )}
-
-                </td>
-
-                <td>
-
-                  <select
-                    class="funda-action-select"
-                    onchange="changePaymentStatus(
-                      '${escapeHTML(payment.id)}',
-                      this.value
-                    )">
-
-                    <option
-                      value="Pending"
-                      ${String(
-                        payment.status || ""
-                      ).toLowerCase() === "pending"
-                        ? "selected"
-                        : ""}>
-                      Pending
-                    </option>
-
-                    <option
-                      value="Paid"
-                      ${String(
-                        payment.status || ""
-                      ).toLowerCase() === "paid"
-                        ? "selected"
-                        : ""}>
-                      Paid
-                    </option>
-
-                    <option
-                      value="Approved"
-                      ${String(
-                        payment.status || ""
-                      ).toLowerCase() === "approved"
-                        ? "selected"
-                        : ""}>
-                      Approved
-                    </option>
-
-                    <option
-                      value="Rejected"
-                      ${String(
-                        payment.status || ""
-                      ).toLowerCase() === "rejected"
-                        ? "selected"
-                        : ""}>
-                      Rejected
-                    </option>
-
-                  </select>
-
-                </td>
-
-              </tr>
-
-            `;
-
-          }).join("")}
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  `;
-}
-
-
-// ============================================================
-// CHANGE PAYMENT STATUS
-// ============================================================
-
-async function changePaymentStatus(
-  id,
-  status
-) {
-
-  showMessage(
-    "Updating payment...",
-    "success"
-  );
-
-
-  const {
-    error
-  } = await db
-    .from("payments")
-    .update({
-      status: status
-    })
-    .eq("id", id);
-
-
-  if (error) {
-
-    console.error(error);
-
-    showMessage(
-      "Could not update payment: " +
-      error.message,
-      "error"
-    );
-
-    return;
-  }
-
-
-  showMessage(
-    "Payment status updated successfully.",
-    "success"
-  );
-
-
-  await loadPayments();
-}
-
-
-window.changePaymentStatus =
-  changePaymentStatus;
-
-
-// ============================================================
-// COURSE FORM
-// ============================================================
-
-if (courseForm) {
-
-  courseForm.addEventListener(
-    "submit",
-    async function(event) {
-
-      event.preventDefault();
-
-
-      showMessage(
-        "Saving course...",
-        "success"
-      );
-
-
-      const courseData = {
-
-        title:
-          courseName
-            ? courseName.value.trim()
-            : "",
-
-        price:
-          coursePrice
-            ? Number(
-                coursePrice.value
-              )
-            : 0,
-
-        category:
-          courseCategory
-            ? courseCategory.value.trim()
-            : "",
-
-        duration:
-          courseDuration
-            ? courseDuration.value.trim()
-            : "",
-
-        image:
-          courseImage
-            ? courseImage.value.trim()
-            : "",
-
-        description:
-          courseDescription
-            ? courseDescription.value.trim()
-            : "",
-
-        modules:
-          courseModules
-            ? courseModules.value.trim()
-            : ""
-
-      };
-
-
-      if (!courseData.title) {
-
-        showMessage(
-          "Please enter a course name.",
-          "error"
-        );
-
-        return;
-      }
-
-
-      let result;
-
-
-      if (
-        courseId &&
-        courseId.value
-      ) {
-
-        result =
-          await db
-            .from("courses")
-            .update(courseData)
-            .eq(
-              "id",
-              courseId.value
-            );
-
-      } else {
-
-        result =
-          await db
-            .from("courses")
-            .insert(
-              courseData
-            );
-      }
-
-
-      if (result.error) {
-
-        console.error(
-          result.error
-        );
-
-        showMessage(
-          "Could not save course: " +
-          result.error.message,
-          "error"
-        );
-
-        return;
-      }
-
-
-      showMessage(
-        "Course saved successfully.",
-        "success"
-      );
-
-
-      courseForm.reset();
-
-
-      if (courseId) {
-        courseId.value = "";
-      }
-
-
-      if (cancelEdit) {
-
-        cancelEdit.style.display =
-          "none";
-      }
-
-
-      await loadCourses();
-
-    }
-  );
-}
-
-
-// ============================================================
-// EDIT COURSE
-// ============================================================
-
-async function editCourse(id) {
-
-  const {
-    data,
-    error
-  } = await db
-    .from("courses")
-    .select("*")
-    .eq("id", id)
-    .single();
-
-
-  if (error) {
-
-    console.error(error);
-
-    showMessage(
-      "Could not load course: " +
-      error.message,
-      "error"
-    );
-
-    return;
-  }
-
-
-  if (courseId) {
-    courseId.value =
-      data.id || "";
-  }
-
-
-  if (courseName) {
-
-    courseName.value =
-      data.title ||
-      data.name ||
-      "";
-  }
-
-
-  if (coursePrice) {
-
-    coursePrice.value =
-      data.price ||
-      data.amount ||
-      "";
-  }
-
-
-  if (courseCategory) {
-
-    courseCategory.value =
-      data.category ||
-      "";
-  }
-
-
-  if (courseDuration) {
-
-    courseDuration.value =
-      data.duration ||
-      "";
-  }
-
-
-  if (courseImage) {
-
-    courseImage.value =
-      data.image ||
-      data.image_url ||
-      "";
-  }
-
-
-  if (courseDescription) {
-
-    courseDescription.value =
-      data.description ||
-      "";
-  }
-
-
-  if (courseModules) {
-
-    let modules =
-      data.modules ||
-      "";
-
-    if (
-      Array.isArray(modules)
-    ) {
-
-      modules =
-        modules.join("\n");
-    }
-
-    courseModules.value =
-      modules;
-  }
-
-
-  if (cancelEdit) {
-
-    cancelEdit.style.display =
-      "inline-block";
-  }
-
-
-  if (courseForm) {
-
-    courseForm.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-
-  }
-}
-
-
-window.editCourse =
-  editCourse;
-
-
-// ============================================================
-// DELETE COURSE
-// ============================================================
-
-async function deleteCourse(id) {
-
-  const confirmed =
-    window.confirm(
-      "Are you sure you want to delete this course?"
-    );
-
-
-  if (!confirmed) {
-    return;
-  }
-
-
-  const {
-    error
-  } = await db
-    .from("courses")
-    .delete()
-    .eq("id", id);
-
-
-  if (error) {
-
-    console.error(error);
-
-    showMessage(
-      "Could not delete course: " +
-      error.message,
-      "error"
-    );
-
-    return;
-  }
-
-
-  showMessage(
-    "Course deleted successfully.",
-    "success"
-  );
-
-
-  await loadCourses();
-}
-
-
-window.deleteCourse =
-  deleteCourse;
-
-
-// ============================================================
-// NEW COURSE
-// ============================================================
-
-if (newCourseBtn) {
-
-  newCourseBtn.addEventListener(
-    "click",
-    () => {
-
-      if (courseForm) {
-        courseForm.reset();
-      }
-
-
-      if (courseId) {
-        courseId.value = "";
-      }
-
-
-      if (cancelEdit) {
-
-        cancelEdit.style.display =
-          "none";
-      }
-
-
-      if (courseForm) {
-
-        courseForm.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
-        });
-
-      }
-
-    }
-  );
-}
-
-
-// ============================================================
-// CANCEL EDIT
-// ============================================================
-
-if (cancelEdit) {
-
-  cancelEdit.addEventListener(
-    "click",
-    () => {
-
-      if (courseForm) {
-        courseForm.reset();
-      }
-
-
-      if (courseId) {
-        courseId.value = "";
-      }
-
-
-      cancelEdit.style.display =
-        "none";
-
-    }
-  );
-}
-
-
-// ============================================================
-// RESULTS
-// ============================================================
-
-async function loadResults() {
-
-  if (!resultsBox) {
-    return;
-  }
-
-  resultsBox.innerHTML = `
-    <div class="funda-empty">
-
-      Results management will appear here
-      once the results system is connected.
-
-    </div>
-  `;
-}
-
-
-// ============================================================
-// CERTIFICATES
-// ============================================================
-
-async function loadCertificates() {
-
-  if (!certificatesBox) {
-    return;
-  }
-
-  certificatesBox.innerHTML = `
-    <div class="funda-empty">
-
-      Certificate management will appear here
-      once the certificate system is connected.
-
-    </div>
-  `;
-}
-
-
-// ============================================================
-// LOAD DASHBOARD
-// ============================================================
-
-async function loadDashboard() {
-
-  addAdminStyles();
-
-
-  const user =
-    await checkAdminLogin();
-
-
-  if (!user) {
-    return;
-  }
-
-
-  await Promise.all([
-
-    loadStudents(),
-
-    loadCourses(),
-
-    loadEnrolments(),
-
-    loadPayments(),
-
-    loadResults(),
-
-    loadCertificates()
-
-  ]);
-}
-
-
-// ============================================================
-// START
-// ============================================================
-
-document.addEventListener(
-  "DOMContentLoaded",
-  loadDashboard
-);
+        .map(
+          row => row.course_id
+        )
