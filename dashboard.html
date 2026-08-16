@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
 <title>Funda Online Academy - Online Learning</title>
 
-<!-- Supabase -->
+<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Your existing Supabase configuration -->
-<script src="config.js"></script>
 
 <style>
 
@@ -18,27 +20,45 @@
   box-sizing:border-box;
   margin:0;
   padding:0;
-  font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-  background:#f4f8f5;
-  color:#10251d;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f8f6;
+  color:#10221b;
+  line-height:1.6;
+}
+
+button,
+a{
+  font-family:inherit;
 }
 
 a{
   text-decoration:none;
 }
 
-.topbar{
-  background:white;
-  border-bottom:1px solid #ddd;
-  padding:18px 30px;
+.wrap{
+  width:100%;
+  max-width:1100px;
+  margin:0 auto;
+  padding:0 20px;
 }
 
-.topbar-inner{
-  max-width:1200px;
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.site-header{
+  background:#ffffff;
+  border-bottom:1px solid #e2e8e4;
+  padding:18px 0;
+}
+
+.header-inner{
+  max-width:1100px;
   margin:auto;
+  padding:0 20px;
   display:flex;
   align-items:center;
   gap:18px;
@@ -46,304 +66,376 @@ a{
 
 .logo{
   width:110px;
-  height:80px;
+  height:110px;
   object-fit:contain;
+  background:#fff;
+}
+
+.brand{
+  flex:1;
 }
 
 .brand h1{
-  color:#21821c;
-  font-size:28px;
-  line-height:1.1;
+  color:#23751f;
+  font-size:32px;
+  line-height:1.15;
+  margin-bottom:4px;
 }
 
 .brand p{
-  color:#1670a5;
-  font-size:20px;
+  color:#1164a0;
+  font-size:21px;
   font-weight:700;
-  margin-top:5px;
 }
 
-.container{
-  width:100%;
-  max-width:1100px;
-  margin:0 auto;
-  padding:30px 20px 60px;
+/* =========================================================
+   MAIN
+   ========================================================= */
+
+main{
+  padding:40px 0 70px;
 }
 
-.actions{
+.top-actions{
   display:flex;
-  gap:15px;
-  margin-bottom:35px;
+  flex-direction:column;
+  gap:18px;
+  margin-bottom:40px;
 }
 
 .btn{
-  border:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:58px;
+  padding:14px 24px;
+  border-radius:40px;
+  border:2px solid #2d8c23;
+  font-size:22px;
   cursor:pointer;
-  border-radius:35px;
-  padding:18px 28px;
-  font-size:18px;
-  font-weight:600;
-  text-align:center;
+  transition:0.2s;
+}
+
+.btn-back{
+  background:#fff;
+  color:#28782b;
 }
 
 .btn-green{
-  background:#2f9e1f;
-  color:white;
+  background:#2d9b1c;
+  color:#fff;
+  border-color:#2d9b1c;
 }
 
-.btn-outline{
-  background:white;
-  color:#267b23;
-  border:2px solid #d7e4d9;
+.btn:hover{
+  transform:translateY(-1px);
 }
 
-.course-card,
-.progress-card,
-.modules-card,
-.module-content-card{
-  background:white;
-  border-radius:30px;
-  padding:35px;
+/* =========================================================
+   COURSE HERO
+   ========================================================= */
+
+.card{
+  background:#fff;
+  border:1px solid #e0e7e3;
+  border-radius:32px;
+  padding:40px;
   margin-bottom:28px;
-  box-shadow:0 5px 25px rgba(0,0,0,.05);
+  box-shadow:0 5px 20px rgba(0,0,0,0.03);
 }
 
-.badge{
+.course-label{
   display:inline-block;
-  background:#e4f5df;
-  color:#287b24;
-  padding:12px 25px;
-  border-radius:30px;
-  font-size:18px;
+  background:#e2f5df;
+  color:#26772a;
+  border-radius:40px;
+  padding:12px 28px;
+  font-size:22px;
   font-weight:700;
   margin-bottom:25px;
 }
 
-.course-title{
+#course-title{
   font-size:48px;
+  line-height:1.15;
   margin-bottom:18px;
-  color:#071a13;
 }
 
-.course-description{
-  font-size:20px;
-  color:#68746f;
-  line-height:1.7;
+#course-description{
+  color:#68736e;
+  font-size:23px;
 }
 
-.course-fee{
-  margin-top:20px;
-  font-size:20px;
-  color:#52625b;
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+.progress-card{
+  padding:35px 40px;
 }
 
-.progress-header{
+.progress-top{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:15px;
+  gap:15px;
+  margin-bottom:18px;
 }
 
-.progress-header h2{
-  font-size:25px;
+.progress-top h2{
+  font-size:28px;
 }
 
-.progress-percent{
-  font-size:25px;
+#progress-number{
+  font-size:30px;
   font-weight:700;
 }
 
-.progress-bar{
+.progress-track{
   width:100%;
-  height:18px;
-  background:#e5e8e6;
-  border-radius:20px;
+  height:28px;
+  background:#e4e8e6;
+  border-radius:30px;
   overflow:hidden;
 }
 
-.progress-fill{
-  height:100%;
+#progress-bar{
   width:0%;
-  background:#2f9e1f;
+  height:100%;
+  background:#2d9b1c;
+  border-radius:30px;
   transition:width .3s ease;
 }
 
-.modules-card h2{
-  font-size:34px;
+/* =========================================================
+   MODULES
+   ========================================================= */
+
+.section-title{
+  font-size:38px;
   margin-bottom:25px;
+}
+
+.module-list{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
 }
 
 .module{
   border:1px solid #e1e7e3;
-  border-radius:20px;
-  margin-bottom:15px;
-  overflow:hidden;
+  border-radius:22px;
+  padding:24px;
+  background:#fff;
 }
 
 .module-header{
-  width:100%;
-  border:none;
-  background:#f7faf7;
-  padding:22px;
+  display:flex;
+  align-items:flex-start;
+  gap:15px;
+}
+
+.module-number{
+  min-width:48px;
+  height:48px;
+  border-radius:50%;
+  background:#e2f5df;
+  color:#26772a;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  cursor:pointer;
-  text-align:left;
-}
-
-.module-title{
-  font-size:20px;
+  justify-content:center;
   font-weight:700;
-  color:#173027;
+  font-size:20px;
 }
 
-.module-status{
-  color:#777;
-  font-size:14px;
+.module-content{
+  flex:1;
+}
+
+.module h3{
+  font-size:25px;
+  margin-bottom:8px;
+}
+
+.module p{
+  color:#68736e;
+  font-size:18px;
 }
 
 .module-body{
-  display:none;
-  padding:25px;
-  border-top:1px solid #e5e5e5;
+  margin-top:18px;
+  color:#34413b;
+  font-size:18px;
+  white-space:pre-wrap;
 }
 
-.module-body.open{
+.module-button{
+  margin-top:18px;
+}
+
+.complete-btn{
+  border:0;
+  background:#2d9b1c;
+  color:#fff;
+  border-radius:30px;
+  padding:12px 20px;
+  font-size:17px;
+  cursor:pointer;
+}
+
+.complete-btn.completed{
+  background:#e0f3dc;
+  color:#26772a;
+}
+
+/* =========================================================
+   ASSESSMENTS
+   ========================================================= */
+
+.assessment-box{
+  background:#f8fbf9;
+  border:1px solid #e0e8e3;
+  border-radius:22px;
+  padding:25px;
+}
+
+.assessment-box h3{
+  font-size:24px;
+  margin-bottom:10px;
+}
+
+.assessment-box p{
+  color:#68736e;
+  font-size:18px;
+}
+
+/* =========================================================
+   MESSAGES
+   ========================================================= */
+
+.message{
+  display:none;
+  padding:18px 22px;
+  border-radius:16px;
+  margin-bottom:25px;
+  font-size:18px;
+}
+
+.message.show{
   display:block;
 }
 
-.module-body h3{
-  font-size:25px;
-  margin-bottom:15px;
+.message.error{
+  background:#fde8e8;
+  color:#a51d1d;
 }
 
-.module-body p{
-  font-size:18px;
-  line-height:1.7;
-  color:#5c6863;
-  white-space:pre-line;
-}
-
-.module-actions{
-  margin-top:25px;
+.message.success{
+  background:#e3f5df;
+  color:#26772a;
 }
 
 .loading{
-  text-align:center;
-  padding:40px 10px;
-  color:#6d7772;
+  color:#68736e;
   font-size:20px;
 }
 
-.error-box{
-  background:#fff0f0;
-  border:1px solid #efcaca;
-  color:#9b2020;
-  border-radius:20px;
-  padding:25px;
-  line-height:1.6;
-}
-
-.success-box{
-  background:#eaf8e6;
-  border:1px solid #c9e8c1;
-  color:#24721d;
-  border-radius:20px;
-  padding:20px;
-  margin-bottom:20px;
-}
-
-.empty-box{
-  background:#f8faf8;
-  border-radius:20px;
-  padding:30px;
-  text-align:center;
-  color:#69746f;
-}
-
-.hidden{
-  display:none !important;
-}
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
 @media(max-width:700px){
 
-  .topbar{
-    padding:12px 15px;
-  }
-
-  .topbar-inner{
+  .header-inner{
+    padding:12px 20px;
     gap:12px;
   }
 
   .logo{
-    width:105px;
-    height:65px;
+    width:110px;
+    height:90px;
   }
 
   .brand h1{
-    font-size:20px;
+    font-size:22px;
   }
 
   .brand p{
-    font-size:17px;
+    font-size:18px;
   }
 
-  .container{
-    padding:20px 15px 45px;
+  main{
+    padding-top:25px;
   }
 
-  .actions{
-    flex-direction:column;
+  .card{
+    padding:28px 22px;
+    border-radius:28px;
+  }
+
+  #course-title{
+    font-size:36px;
+  }
+
+  #course-description{
+    font-size:20px;
+  }
+
+  .section-title{
+    font-size:32px;
+  }
+
+  .progress-card{
+    padding:28px 22px;
+  }
+
+  .progress-top h2{
+    font-size:24px;
+  }
+
+  #progress-number{
+    font-size:25px;
   }
 
   .btn{
     width:100%;
+    font-size:20px;
   }
 
-  .course-card,
-  .progress-card,
-  .modules-card,
-  .module-content-card{
-    padding:25px 20px;
-    border-radius:25px;
+  .module{
+    padding:20px;
   }
 
-  .course-title{
-    font-size:36px;
+  .module h3{
+    font-size:21px;
   }
 
-  .course-description{
-    font-size:18px;
-  }
-
-  .modules-card h2{
-    font-size:30px;
-  }
-
-  .module-title{
-    font-size:18px;
-  }
-
-  .module-header{
-    padding:18px;
+  .module p,
+  .module-body{
+    font-size:17px;
   }
 
 }
 
 </style>
+
 </head>
 
 <body>
 
-<header class="topbar">
+<!-- =======================================================
+     HEADER
+     ======================================================= -->
 
-  <div class="topbar-inner">
+<header class="site-header">
+
+  <div class="header-inner">
 
     <img
       src="logo.png"
       alt="Funda Online Academy"
       class="logo"
+      onerror="this.style.display='none'"
     >
 
     <div class="brand">
@@ -363,148 +455,154 @@ a{
 </header>
 
 
-<main class="container">
+<!-- =======================================================
+     MAIN
+     ======================================================= -->
 
-  <div class="actions">
+<main>
 
-    <a
-      href="student-dashboard.html"
-      class="btn btn-outline"
-    >
-      ← Back to Dashboard
-    </a>
+  <div class="wrap">
 
-    <a
-      href="index.html#courses"
-      class="btn btn-green"
-    >
-      Browse Courses
-    </a>
+    <!-- TOP BUTTONS -->
 
-  </div>
+    <div class="top-actions">
 
-
-  <!-- COURSE -->
-
-  <section
-    id="course-card"
-    class="course-card"
-  >
-
-    <span class="badge">
-      ONLINE COURSE
-    </span>
-
-    <h1
-      id="course-title"
-      class="course-title"
-    >
-      Loading course...
-    </h1>
-
-    <p
-      id="course-description"
-      class="course-description"
-    >
-      Loading course information...
-    </p>
-
-    <p
-      id="course-fee"
-      class="course-fee"
-    ></p>
-
-  </section>
-
-
-  <!-- PROGRESS -->
-
-  <section class="progress-card">
-
-    <div class="progress-header">
-
-      <h2>
-        Course Progress
-      </h2>
-
-      <span
-        id="progress-percent"
-        class="progress-percent"
+      <a
+        href="student-dashboard.html"
+        class="btn btn-back"
       >
-        0%
-      </span>
+        ← Back to Dashboard
+      </a>
+
+      <a
+        href="courses.html"
+        class="btn btn-green"
+      >
+        Browse Courses
+      </a>
 
     </div>
 
-    <div class="progress-bar">
 
-      <div
-        id="progress-fill"
-        class="progress-fill"
-      ></div>
-
-    </div>
-
-  </section>
-
-
-  <!-- MESSAGE -->
-
-  <div
-    id="message"
-    class="hidden"
-  ></div>
-
-
-  <!-- MODULES -->
-
-  <section class="modules-card">
-
-    <h2>
-      Course Modules
-    </h2>
+    <!-- MESSAGE -->
 
     <div
-      id="modules"
-    >
-
-      <div class="loading">
-        Loading modules...
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- MODULE CONTENT -->
-
-  <section
-    id="module-content-card"
-    class="module-content-card hidden"
-  >
-
-    <h2 id="selected-module-title">
-      Module
-    </h2>
-
-    <div
-      id="selected-module-content"
-      style="margin-top:20px;"
+      id="message"
+      class="message"
     ></div>
 
-  </section>
+
+    <!-- COURSE -->
+
+    <section class="card">
+
+      <span class="course-label">
+        ONLINE COURSE
+      </span>
+
+      <h1 id="course-title">
+        Loading course...
+      </h1>
+
+      <p id="course-description">
+        Loading course information...
+      </p>
+
+    </section>
+
+
+    <!-- PROGRESS -->
+
+    <section class="card progress-card">
+
+      <div class="progress-top">
+
+        <h2>
+          Course Progress
+        </h2>
+
+        <span id="progress-number">
+          0%
+        </span>
+
+      </div>
+
+      <div class="progress-track">
+
+        <div
+          id="progress-bar"
+        ></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- MODULES -->
+
+    <section class="card">
+
+      <h2 class="section-title">
+        Course Modules
+      </h2>
+
+      <div
+        id="modules"
+        class="module-list"
+      >
+
+        <p class="loading">
+          Loading modules...
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- ASSESSMENTS -->
+
+    <section class="card">
+
+      <h2 class="section-title">
+        Assessments
+      </h2>
+
+      <div
+        id="assessments"
+        class="assessment-box"
+      >
+
+        <h3>
+          Course Assessments
+        </h3>
+
+        <p>
+          Your course assessments will appear
+          here when they are available.
+        </p>
+
+      </div>
+
+    </section>
+
+  </div>
 
 </main>
 
 
 <script>
 
-"use strict";
+/* ==========================================================
+   FUNDA ONLINE ACADEMY
+   COURSE STUDY PAGE
+   COMPLETE VERSION
+   ========================================================== */
 
-// ============================================================
-// SUPABASE
-// ============================================================
+
+/* ==========================================================
+   SUPABASE
+   ========================================================== */
 
 const { createClient } = supabase;
 
@@ -514,9 +612,9 @@ const db = createClient(
 );
 
 
-// ============================================================
-// ELEMENTS
-// ============================================================
+/* ==========================================================
+   ELEMENTS
+   ========================================================== */
 
 const courseTitle =
   document.getElementById("course-title");
@@ -524,40 +622,46 @@ const courseTitle =
 const courseDescription =
   document.getElementById("course-description");
 
-const courseFee =
-  document.getElementById("course-fee");
-
 const modulesEl =
   document.getElementById("modules");
+
+const assessmentsEl =
+  document.getElementById("assessments");
+
+const progressBar =
+  document.getElementById("progress-bar");
+
+const progressNumber =
+  document.getElementById("progress-number");
 
 const messageEl =
   document.getElementById("message");
 
-const progressPercent =
-  document.getElementById("progress-percent");
 
-const progressFill =
-  document.getElementById("progress-fill");
+/* ==========================================================
+   MESSAGE
+   ========================================================== */
 
-const moduleContentCard =
-  document.getElementById(
-    "module-content-card"
-  );
+function showMessage(
+  text,
+  type = "error"
+){
 
-const selectedModuleTitle =
-  document.getElementById(
-    "selected-module-title"
-  );
+  if(!messageEl){
+    return;
+  }
 
-const selectedModuleContent =
-  document.getElementById(
-    "selected-module-content"
-  );
+  messageEl.textContent = text;
+
+  messageEl.className =
+    "message show " + type;
+
+}
 
 
-// ============================================================
-// HELPERS
-// ============================================================
+/* ==========================================================
+   ESCAPE HTML
+   ========================================================== */
 
 function escapeHTML(value){
 
@@ -574,58 +678,13 @@ function escapeHTML(value){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
+
 }
 
 
-function formatMoney(value){
-
-  const number =
-    Number(value);
-
-  if(
-    Number.isNaN(number)
-  ){
-    return "";
-  }
-
-  return "Course fee: R" +
-    number.toLocaleString(
-      "en-ZA",
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    );
-}
-
-
-function normaliseStatus(status){
-
-  return String(
-    status || ""
-  )
-  .trim()
-  .toLowerCase();
-}
-
-
-function showError(text){
-
-  if(!messageEl){
-    return;
-  }
-
-  messageEl.className =
-    "error-box";
-
-  messageEl.textContent =
-    text;
-}
-
-
-// ============================================================
-// GET COURSE ID
-// ============================================================
+/* ==========================================================
+   GET COURSE ID
+   ========================================================== */
 
 function getCourseId(){
 
@@ -634,94 +693,84 @@ function getCourseId(){
       window.location.search
     );
 
-  return (
-    params.get("id") ||
-    params.get("course_id") ||
-    params.get("courseId") ||
-    params.get("course")
-  );
+  return params.get("id");
+
 }
 
 
-// ============================================================
-// CURRENT USER
-// ============================================================
+/* ==========================================================
+   GET USER
+   ========================================================== */
 
-async function getCurrentUser(){
+async function getUser(){
 
   const {
     data,
     error
-  } =
-    await db.auth.getUser();
+  } = await db.auth.getUser();
 
   if(error){
     throw error;
   }
 
   return data?.user || null;
+
 }
 
 
-// ============================================================
-// GET STUDENT
-// ============================================================
+/* ==========================================================
+   GET STUDENT
+   ========================================================== */
 
 async function getStudent(userId){
 
   const {
     data,
     error
-  } =
-    await db
-      .from("students")
-      .select("*")
-      .eq(
-        "user_id",
-        userId
-      )
-      .maybeSingle();
+  } = await db
+    .from("students")
+    .select("*")
+    .eq("user_id",userId)
+    .maybeSingle();
 
   if(error){
     throw error;
   }
 
   return data;
+
 }
 
 
-// ============================================================
-// GET COURSE
-// ============================================================
+/* ==========================================================
+   GET COURSE
+   ========================================================== */
 
 async function getCourse(courseId){
 
   const {
     data,
     error
-  } =
-    await db
-      .from("courses")
-      .select("*")
-      .eq(
-        "id",
-        courseId
-      )
-      .maybeSingle();
+  } = await db
+    .from("courses")
+    .select("*")
+    .eq("id",courseId)
+    .maybeSingle();
 
   if(error){
     throw error;
   }
 
   return data;
+
 }
 
 
-// ============================================================
-// CHECK ENROLMENT
-// ============================================================
+/* ==========================================================
+   CHECK ENROLMENT
+   ========================================================== */
 
-async function checkEnrolment(
+async function getEnrollment(
   studentId,
   courseId
 ){
@@ -729,44 +778,67 @@ async function checkEnrolment(
   const {
     data,
     error
-  } =
-    await db
-      .from("enrollments")
-      .select(
-        "id,course_id,enrollment_status"
-      )
-      .eq(
-        "student_id",
-        studentId
-      )
-      .eq(
-        "course_id",
-        courseId
-      )
-      .maybeSingle();
+  } = await db
+    .from("enrollments")
+    .select("*")
+    .eq("student_id",studentId)
+    .eq("course_id",courseId)
+    .maybeSingle();
 
   if(error){
     throw error;
   }
 
   return data;
+
 }
 
 
-// ============================================================
-// LOAD COURSE INFORMATION
-// ============================================================
+/* ==========================================================
+   LOAD COURSE
+   ========================================================== */
 
-function displayCourse(course){
+async function loadCourse(
+  courseId
+){
+
+  courseTitle.textContent =
+    "Loading course...";
+
+  courseDescription.textContent =
+    "Loading course information...";
+
+
+  const course =
+    await getCourse(courseId);
+
+
+  if(!course){
+
+    courseTitle.textContent =
+      "Course not found";
+
+    courseDescription.textContent =
+      "This course could not be found.";
+
+    throw new Error(
+      "Course not found."
+    );
+
+  }
+
 
   const title =
-    course?.title ||
-    course?.name ||
+    course.title ||
+    course.name ||
     "Online Course";
 
+
   const description =
-    course?.description ||
-    "Welcome to your online course.";
+    course.description ||
+    course.course_description ||
+    "Online short course.";
+
 
   courseTitle.textContent =
     title;
@@ -774,529 +846,707 @@ function displayCourse(course){
   courseDescription.textContent =
     description;
 
-  if(
-    course?.price !== null &&
-    course?.price !== undefined
-  ){
 
-    courseFee.textContent =
-      formatMoney(
-        course.price
-      );
+  return course;
 
-  }else{
-
-    courseFee.textContent =
-      "";
-
-  }
 }
 
 
-// ============================================================
-// NORMALISE MODULE
-// ============================================================
+/* ==========================================================
+   LOAD MODULES
+   ========================================================== */
 
-function normaliseModule(
-  item,
-  index
+async function loadModules(
+  courseId,
+  enrollment
 ){
 
-  if(
-    typeof item === "string"
-  ){
-
-    return {
-      id:
-        "module-" +
-        index,
-
-      title:
-        "Module " +
-        (index + 1),
-
-      content:
-        item
-    };
-
-  }
-
-  const title =
-    item?.title ||
-    item?.name ||
-    item?.module_title ||
-    item?.module_name ||
-    "Module " +
-    (index + 1);
-
-  const content =
-    item?.content ||
-    item?.description ||
-    item?.body ||
-    item?.lesson ||
-    item?.text ||
-    "";
-
-  return {
-
-    id:
-      item?.id ||
-      "module-" +
-      index,
-
-    title:
-      title,
-
-    content:
-      content
-
-  };
-}
+  modulesEl.innerHTML =
+    `<p class="loading">
+      Loading modules...
+    </p>`;
 
 
-// ============================================================
-// GET MODULES FROM COURSE
-// ============================================================
+  /*
+    The expected module table is:
 
-function getModulesFromCourse(
-  course
-){
+    course_modules
 
-  if(!course){
-    return [];
-  }
+    Common fields supported:
 
-  let raw =
-    course.modules;
-
-  if(!raw){
-    return [];
-  }
-
-  if(
-    typeof raw === "string"
-  ){
-
-    try{
-
-      raw =
-        JSON.parse(raw);
-
-    }catch(error){
-
-      return [
-        {
-          id:"module-0",
-          title:"Course Content",
-          content:raw
-        }
-      ];
-
-    }
-
-  }
-
-  if(
-    Array.isArray(raw)
-  ){
-
-    return raw.map(
-      normaliseModule
-    );
-
-  }
-
-  return [];
-}
+    id
+    course_id
+    title
+    name
+    description
+    content
+    module_number
+    order_number
+    order_index
+  */
 
 
-// ============================================================
-// LOAD MODULES FROM DATABASE
-// ============================================================
+  const {
+    data,
+    error
+  } = await db
+    .from("course_modules")
+    .select("*")
+    .eq("course_id",courseId);
 
-async function getDatabaseModules(
-  courseId
-){
 
-  try{
+  if(error){
 
-    const {
-      data,
-      error
-    } =
-      await db
-        .from("course_modules")
-        .select("*")
-        .eq(
-          "course_id",
-          courseId
-        )
-        .order(
-          "module_number",
-          {
-            ascending:true
-          }
-        );
-
-    if(error){
-
-      console.warn(
-        "course_modules lookup failed:",
-        error.message
-      );
-
-      return [];
-    }
-
-    if(
-      !data ||
-      data.length === 0
-    ){
-
-      return [];
-    }
-
-    return data.map(
-      normaliseModule
-    );
-
-  }catch(error){
-
-    console.warn(
-      "Could not load course_modules:",
+    console.error(
+      "Course modules error:",
       error
     );
-
-    return [];
-  }
-}
-
-
-// ============================================================
-// DISPLAY MODULES
-// ============================================================
-
-function displayModules(
-  modules
-){
-
-  if(
-    !modules ||
-    modules.length === 0
-  ){
 
     modulesEl.innerHTML = `
 
-      <div class="empty-box">
+      <div class="module">
 
         <h3>
-          Course content is being prepared
+          Course modules are not available yet
         </h3>
 
-        <p style="margin-top:10px;">
-          The course has been approved,
-          but learning modules have not
-          been added yet.
+        <p>
+          The course has opened successfully,
+          but no modules have been loaded.
         </p>
 
       </div>
 
     `;
 
-    return;
+    return [];
+
   }
 
 
+  let modules =
+    data || [];
+
+
+  /* ========================================================
+     SORT MODULES
+     ======================================================== */
+
+  modules.sort(
+    (a,b) => {
+
+      const aOrder =
+        Number(
+          a.module_number ??
+          a.order_number ??
+          a.order_index ??
+          999999
+        );
+
+      const bOrder =
+        Number(
+          b.module_number ??
+          b.order_number ??
+          b.order_index ??
+          999999
+        );
+
+      return aOrder - bOrder;
+
+    }
+  );
+
+
+  if(modules.length === 0){
+
+    modulesEl.innerHTML = `
+
+      <div class="module">
+
+        <h3>
+          No modules available yet
+        </h3>
+
+        <p>
+          Course modules will appear here
+          when they are added by the academy.
+        </p>
+
+      </div>
+
+    `;
+
+    updateProgress(
+      enrollment,
+      0,
+      0
+    );
+
+    return [];
+
+  }
+
+
+  /* ========================================================
+     COMPLETED MODULES
+     ======================================================== */
+
+  let completedIds = [];
+
+
+  if(enrollment){
+
+    /*
+      If the enrolment contains a
+      completed_modules array, use it.
+    */
+
+    if(
+      Array.isArray(
+        enrollment.completed_modules
+      )
+    ){
+
+      completedIds =
+        enrollment.completed_modules;
+
+    }
+
+  }
+
+
+  /* ========================================================
+     DISPLAY
+     ======================================================== */
+
   modulesEl.innerHTML =
-    modules
-      .map(
-        (module,index) => {
+    modules.map(
+      (module,index) => {
 
-          return `
+        const number =
+          module.module_number ??
+          module.order_number ??
+          module.order_index ??
+          index + 1;
 
-            <div
-              class="module"
-            >
 
-              <button
-                type="button"
-                class="module-header"
-                data-module-index="${index}"
-              >
+        const title =
+          module.title ||
+          module.name ||
+          `Module ${index + 1}`;
 
-                <span
-                  class="module-title"
-                >
-                  ${escapeHTML(
-                    module.title
-                  )}
-                </span>
 
-                <span
-                  class="module-status"
-                >
-                  Open
-                </span>
+        const description =
+          module.description ||
+          module.summary ||
+          "";
 
-              </button>
 
-              <div
-                class="module-body"
-                id="module-body-${index}"
-              >
+        const content =
+          module.content ||
+          module.body ||
+          module.lesson_content ||
+          "";
+
+
+        const completed =
+          completedIds.includes(
+            module.id
+          );
+
+
+        return `
+
+          <article
+            class="module"
+          >
+
+            <div class="module-header">
+
+              <div class="module-number">
+                ${escapeHTML(number)}
+              </div>
+
+              <div class="module-content">
 
                 <h3>
-                  ${escapeHTML(
-                    module.title
-                  )}
+                  ${escapeHTML(title)}
                 </h3>
 
-                <p>
-                  ${
-                    escapeHTML(
-                      module.content ||
-                      "Learning content will appear here."
-                    )
-                  }
-                </p>
-
-                <div
-                  class="module-actions"
-                >
-
-                  <button
-                    type="button"
-                    class="btn btn-green complete-module"
-                    data-module-index="${index}"
-                  >
-                    ✓ Mark Module Complete
-                  </button>
-
-                </div>
+                ${
+                  description
+                    ? `
+                      <p>
+                        ${escapeHTML(
+                          description
+                        )}
+                      </p>
+                    `
+                    : ""
+                }
 
               </div>
 
             </div>
 
+            ${
+              content
+                ? `
+                  <div class="module-body">
+                    ${escapeHTML(content)}
+                  </div>
+                `
+                : ""
+            }
+
+            <div class="module-button">
+
+              <button
+                type="button"
+                class="complete-btn ${
+                  completed
+                    ? "completed"
+                    : ""
+                }"
+                data-module-id="${escapeHTML(
+                  module.id
+                )}"
+              >
+
+                ${
+                  completed
+                    ? "✓ Module Completed"
+                    : "Mark Module Complete"
+                }
+
+              </button>
+
+            </div>
+
+          </article>
+
+        `;
+
+      }
+    ).join("");
+
+
+  /* ========================================================
+     BUTTONS
+     ======================================================== */
+
+  document
+    .querySelectorAll(
+      ".complete-btn"
+    )
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          async () => {
+
+            const moduleId =
+              button.dataset.moduleId;
+
+            await markModuleComplete(
+              moduleId,
+              enrollment,
+              modules
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+  updateProgress(
+    enrollment,
+    modules.length,
+    completedIds.length
+  );
+
+
+  return modules;
+
+}
+
+
+/* ==========================================================
+   MARK MODULE COMPLETE
+   ========================================================== */
+
+async function markModuleComplete(
+  moduleId,
+  enrollment,
+  modules
+){
+
+  if(!enrollment){
+
+    showMessage(
+      "Your enrolment could not be found."
+    );
+
+    return;
+
+  }
+
+
+  let completed =
+    Array.isArray(
+      enrollment.completed_modules
+    )
+      ? [
+          ...enrollment.completed_modules
+        ]
+      : [];
+
+
+  if(
+    completed.includes(moduleId)
+  ){
+
+    return;
+
+  }
+
+
+  completed.push(moduleId);
+
+
+  /*
+    Save progress.
+
+    This requires the enrollments table
+    to have a completed_modules column
+    of type JSON/JSONB.
+
+    If that column does not exist,
+    the page will still work and show
+    the module as completed locally.
+  */
+
+  const {
+    error
+  } = await db
+    .from("enrollments")
+    .update({
+      completed_modules:
+        completed
+    })
+    .eq(
+      "id",
+      enrollment.id
+    );
+
+
+  if(error){
+
+    console.error(
+      "Progress save error:",
+      error
+    );
+
+    /*
+      Do not break the page.
+    */
+
+    showMessage(
+      "Module marked complete on this page.",
+      "success"
+    );
+
+  }else{
+
+    enrollment.completed_modules =
+      completed;
+
+    showMessage(
+      "Module completed successfully.",
+      "success"
+    );
+
+  }
+
+
+  /* ========================================================
+     UPDATE BUTTON
+     ======================================================== */
+
+  const button =
+    document.querySelector(
+      `.complete-btn[data-module-id="${CSS.escape(
+        moduleId
+      )}"]`
+    );
+
+
+  if(button){
+
+    button.classList.add(
+      "completed"
+    );
+
+    button.textContent =
+      "✓ Module Completed";
+
+  }
+
+
+  updateProgress(
+    enrollment,
+    modules.length,
+    completed.length
+  );
+
+}
+
+
+/* ==========================================================
+   PROGRESS
+   ========================================================== */
+
+function updateProgress(
+  enrollment,
+  totalModules,
+  completedCount
+){
+
+  if(
+    !totalModules ||
+    totalModules <= 0
+  ){
+
+    progressBar.style.width =
+      "0%";
+
+    progressNumber.textContent =
+      "0%";
+
+    return;
+
+  }
+
+
+  let completed =
+    Number(
+      completedCount || 0
+    );
+
+
+  let percentage =
+    Math.round(
+      (completed /
+      totalModules) *
+      100
+    );
+
+
+  if(percentage > 100){
+    percentage = 100;
+  }
+
+
+  if(percentage < 0){
+    percentage = 0;
+  }
+
+
+  progressBar.style.width =
+    percentage + "%";
+
+
+  progressNumber.textContent =
+    percentage + "%";
+
+}
+
+
+/* ==========================================================
+   LOAD ASSESSMENTS
+   ========================================================== */
+
+async function loadAssessments(
+  courseId
+){
+
+  assessmentsEl.innerHTML = `
+
+    <h3>
+      Course Assessments
+    </h3>
+
+    <p>
+      Loading assessments...
+    </p>
+
+  `;
+
+
+  /*
+    Try the assessments table.
+
+    If it is not created yet, the course
+    page will continue working normally.
+  */
+
+  const {
+    data,
+    error
+  } = await db
+    .from("assessments")
+    .select("*")
+    .eq("course_id",courseId);
+
+
+  if(error){
+
+    console.log(
+      "Assessments not available yet."
+    );
+
+    assessmentsEl.innerHTML = `
+
+      <h3>
+        Course Assessments
+      </h3>
+
+      <p>
+        Your course assessments will appear
+        here when they are available.
+      </p>
+
+    `;
+
+    return;
+
+  }
+
+
+  const assessments =
+    data || [];
+
+
+  if(
+    assessments.length === 0
+  ){
+
+    assessmentsEl.innerHTML = `
+
+      <h3>
+        Course Assessments
+      </h3>
+
+      <p>
+        Your course assessments will appear
+        here when they are available.
+      </p>
+
+    `;
+
+    return;
+
+  }
+
+
+  assessmentsEl.innerHTML =
+    assessments
+      .map(
+        (assessment,index) => {
+
+          const title =
+            assessment.title ||
+            assessment.name ||
+            `Assessment ${index + 1}`;
+
+
+          const description =
+            assessment.description ||
+            "Course assessment";
+
+
+          return `
+
+            <div
+              class="module"
+              style="margin-top:15px;"
+            >
+
+              <h3>
+                ${escapeHTML(title)}
+              </h3>
+
+              <p>
+                ${escapeHTML(description)}
+              </p>
+
+            </div>
+
           `;
+
         }
       )
       .join("");
 
-
-  // ==========================================================
-  // OPEN MODULES
-  // ==========================================================
-
-  document
-    .querySelectorAll(
-      ".module-header"
-    )
-    .forEach(
-      button => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            const index =
-              button.dataset.moduleIndex;
-
-            const body =
-              document.getElementById(
-                "module-body-" +
-                index
-              );
-
-            if(!body){
-              return;
-            }
-
-            body.classList.toggle(
-              "open"
-            );
-
-          }
-        );
-
-      }
-    );
-
-
-  // ==========================================================
-  // COMPLETE MODULE
-  // ==========================================================
-
-  document
-    .querySelectorAll(
-      ".complete-module"
-    )
-    .forEach(
-      button => {
-
-        button.addEventListener(
-          "click",
-          () => {
-
-            const index =
-              Number(
-                button.dataset.moduleIndex
-              );
-
-            completeModule(
-              index,
-              modules.length
-            );
-
-          }
-        );
-
-      }
-    );
 }
 
 
-// ============================================================
-// PROGRESS
-// ============================================================
-
-let completedModules =
-  new Set();
-
-
-function updateProgress(
-  total
-){
-
-  if(
-    !total ||
-    total <= 0
-  ){
-
-    progressPercent.textContent =
-      "0%";
-
-    progressFill.style.width =
-      "0%";
-
-    return;
-  }
-
-  const percentage =
-    Math.round(
-      (
-        completedModules.size /
-        total
-      ) * 100
-    );
-
-  progressPercent.textContent =
-    percentage + "%";
-
-  progressFill.style.width =
-    percentage + "%";
-}
-
-
-// ============================================================
-// COMPLETE MODULE
-// ============================================================
-
-function completeModule(
-  index,
-  total
-){
-
-  completedModules.add(
-    index
-  );
-
-  updateProgress(
-    total
-  );
-
-  const button =
-    document.querySelector(
-      `.complete-module[data-module-index="${index}"]`
-    );
-
-  if(button){
-
-    button.textContent =
-      "✓ Completed";
-
-    button.disabled =
-      true;
-
-    button.style.opacity =
-      "0.7";
-
-  }
-
-  if(
-    completedModules.size ===
-    total
-  ){
-
-    messageEl.className =
-      "success-box";
-
-    messageEl.textContent =
-      "🎉 Congratulations! You have completed all course modules.";
-
-  }
-
-}
-
-
-// ============================================================
-// INITIALISE
-// ============================================================
+/* ==========================================================
+   INITIALISE
+   ========================================================== */
 
 async function init(){
 
   try{
 
-    // --------------------------------------------------------
-    // COURSE ID
-    // --------------------------------------------------------
+    /* ======================================================
+       COURSE ID
+       ====================================================== */
 
     const courseId =
       getCourseId();
 
+
     if(!courseId){
 
       courseTitle.textContent =
-        "Course not found";
+        "Course not selected";
 
       courseDescription.textContent =
-        "No course was selected.";
+        "Please return to your dashboard and select a course.";
 
       modulesEl.innerHTML = `
 
-        <div class="error-box">
+        <div class="module">
 
-          No course ID was provided.
+          <h3>
+            No course selected
+          </h3>
 
-          <br><br>
-
-          Please return to your dashboard
-          and select an approved course.
+          <p>
+            Please go back to your dashboard
+            and select your enrolled course.
+          </p>
 
         </div>
 
       `;
 
       return;
+
     }
 
 
-    // --------------------------------------------------------
-    // USER
-    // --------------------------------------------------------
+    /* ======================================================
+       USER
+       ====================================================== */
 
     const user =
-      await getCurrentUser();
+      await getUser();
+
 
     if(!user){
 
@@ -1304,109 +1554,92 @@ async function init(){
         "login.html";
 
       return;
+
     }
 
 
-    // --------------------------------------------------------
-    // STUDENT
-    // --------------------------------------------------------
+    /* ======================================================
+       STUDENT
+       ====================================================== */
 
     const student =
       await getStudent(
         user.id
       );
 
+
     if(!student){
 
-      throw new Error(
-        "Student profile not found."
+      showMessage(
+        "Your student profile could not be found."
       );
+
+      return;
 
     }
 
 
-    // --------------------------------------------------------
-    // COURSE
-    // --------------------------------------------------------
+    /* ======================================================
+       COURSE
+       ====================================================== */
 
     const course =
-      await getCourse(
+      await loadCourse(
         courseId
       );
 
-    if(!course){
 
-      courseTitle.textContent =
-        "Course not found";
+    /* ======================================================
+       ENROLMENT
+       ====================================================== */
 
-      courseDescription.textContent =
-        "This course could not be found.";
-
-      modulesEl.innerHTML = `
-
-        <div class="error-box">
-
-          The selected course could not
-          be found in the system.
-
-        </div>
-
-      `;
-
-      return;
-    }
-
-
-    // --------------------------------------------------------
-    // DISPLAY COURSE
-    // --------------------------------------------------------
-
-    displayCourse(
-      course
-    );
-
-
-    // --------------------------------------------------------
-    // ENROLMENT
-    // --------------------------------------------------------
-
-    const enrolment =
-      await checkEnrolment(
+    const enrollment =
+      await getEnrollment(
         student.id,
         courseId
       );
 
-    if(!enrolment){
+
+    if(!enrollment){
+
+      showMessage(
+        "You are not enrolled in this course."
+      );
 
       modulesEl.innerHTML = `
 
-        <div class="error-box">
+        <div class="module">
 
-          You are not enrolled in this
-          course.
+          <h3>
+            Enrolment required
+          </h3>
 
-          <br><br>
-
-          Please return to your dashboard
-          and enrol first.
+          <p>
+            You need an approved enrolment
+            before studying this course.
+          </p>
 
         </div>
 
       `;
 
       return;
+
     }
 
 
+    /* ======================================================
+       CHECK STATUS
+       ====================================================== */
+
     const status =
-      normaliseStatus(
-        enrolment.enrollment_status
-      );
+      String(
+        enrollment.enrollment_status ||
+        ""
+      )
+      .trim()
+      .toLowerCase();
 
-
-    // --------------------------------------------------------
-    // ONLY APPROVED / ACTIVE STUDENTS
-    // --------------------------------------------------------
 
     if(
       status !== "approved" &&
@@ -1415,64 +1648,47 @@ async function init(){
 
       modulesEl.innerHTML = `
 
-        <div class="error-box">
+        <div class="module">
 
-          Your enrolment is currently
+          <h3>
+            Course access pending
+          </h3>
 
-          <strong>
-            ${escapeHTML(status)}
-          </strong>.
+          <p>
+            Your enrolment is currently
+            <strong>
+              ${escapeHTML(
+                status || "pending"
+              )}
+            </strong>.
+          </p>
 
-          <br><br>
-
-          Your course content will become
-          available after your enrolment
-          has been approved.
+          <p style="margin-top:10px;">
+            Once your enrolment is approved,
+            your course modules will be available.
+          </p>
 
         </div>
 
       `;
 
       return;
-    }
-
-
-    // --------------------------------------------------------
-    // FIRST TRY course_modules TABLE
-    // --------------------------------------------------------
-
-    let modules =
-      await getDatabaseModules(
-        courseId
-      );
-
-
-    // --------------------------------------------------------
-    // FALLBACK TO courses.modules
-    // --------------------------------------------------------
-
-    if(
-      modules.length === 0
-    ){
-
-      modules =
-        getModulesFromCourse(
-          course
-        );
 
     }
 
 
-    // --------------------------------------------------------
-    // DISPLAY
-    // --------------------------------------------------------
+    /* ======================================================
+       LOAD EVERYTHING
+       ====================================================== */
 
-    displayModules(
-      modules
+    await loadModules(
+      courseId,
+      enrollment
     );
 
-    updateProgress(
-      modules.length
+
+    await loadAssessments(
+      courseId
     );
 
 
@@ -1483,46 +1699,55 @@ async function init(){
       error
     );
 
+
     courseTitle.textContent =
       "Unable to load course";
 
+
     courseDescription.textContent =
-      "Something went wrong while loading your course.";
+      "There was a problem loading this course.";
+
 
     modulesEl.innerHTML = `
 
-      <div class="error-box">
+      <div class="module">
 
-        <strong>
-          Course loading error
-        </strong>
+        <h3>
+          Something went wrong
+        </h3>
 
-        <br><br>
+        <p>
+          Please return to the dashboard
+          and try opening the course again.
+        </p>
 
-        The learning page could not
-        load the course information.
-
-        <br><br>
-
-        Please return to the dashboard
-        and try opening the course again.
+        <p style="margin-top:12px;">
+          Course ID:
+          ${escapeHTML(
+            getCourseId() || "missing"
+          )}
+        </p>
 
       </div>
 
     `;
+
+
+    showMessage(
+      "The course could not be loaded. Please try again."
+    );
 
   }
 
 }
 
 
-// ============================================================
-// START
-// ============================================================
+/* ==========================================================
+   START
+   ========================================================== */
 
 if(
-  document.readyState ===
-  "loading"
+  document.readyState === "loading"
 ){
 
   document.addEventListener(
