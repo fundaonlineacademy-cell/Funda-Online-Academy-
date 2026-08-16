@@ -2,14 +2,18 @@
 // FUNDA ONLINE ACADEMY
 // STUDENT DASHBOARD
 // ============================================================
-// Features:
+// COMPLETE STUDENT DASHBOARD
+//
+// Includes:
 // - Student authentication
 // - Student profile
 // - My enrolments
 // - Available courses
-// - Enrolment
-// - Course modules
-// - Payment information
+// - Course enrolment
+// - Course study access
+// - Payment history
+// - Assessments
+// - Assessment results
 // - Safe logout
 // ============================================================
 
@@ -40,8 +44,11 @@ function showMessage(text, success = false) {
   if (!messageEl) return;
 
   messageEl.textContent = text;
+
   messageEl.className =
     "message " + (success ? "success" : "error");
+
+  messageEl.classList.remove("hidden");
 }
 
 // ============================================================
@@ -138,7 +145,6 @@ async function getCurrentUser() {
 // ============================================================
 
 async function getStudent(userId) {
-
   const {
     data,
     error
@@ -160,8 +166,7 @@ async function getStudent(userId) {
 // LOAD STUDENT HEADER
 // ============================================================
 
-async function loadStudentHeader(student) {
-
+function loadStudentHeader(student) {
   if (!student) {
     if (userNameEl) {
       userNameEl.textContent = "Student";
@@ -185,14 +190,12 @@ async function loadStudentHeader(student) {
 // ============================================================
 
 async function loadEnrolments(studentId) {
-
   if (!enrolmentsEl) return;
 
   enrolmentsEl.innerHTML =
     '<p class="loading">Loading enrolments…</p>';
 
   try {
-
     const {
       data: enrolments,
       error
@@ -209,10 +212,10 @@ async function loadEnrolments(studentId) {
     }
 
     if (!enrolments || enrolments.length === 0) {
-
       enrolmentsEl.innerHTML = `
         <div class="card">
           <h3>No enrolments yet</h3>
+
           <p>
             You have not enrolled in a course yet.
             Browse the available courses below.
@@ -222,10 +225,6 @@ async function loadEnrolments(studentId) {
 
       return;
     }
-
-    // --------------------------------------------------------
-    // Get course IDs
-    // --------------------------------------------------------
 
     const courseIds = [
       ...new Set(
@@ -238,7 +237,6 @@ async function loadEnrolments(studentId) {
     let courses = [];
 
     if (courseIds.length > 0) {
-
       const {
         data,
         error: courseError
@@ -263,14 +261,9 @@ async function loadEnrolments(studentId) {
       courseMap.set(course.id, course);
     });
 
-    // --------------------------------------------------------
-    // Build enrolment cards
-    // --------------------------------------------------------
-
     enrolmentsEl.innerHTML =
       enrolments
         .map(enrolment => {
-
           const course =
             courseMap.get(enrolment.course_id);
 
@@ -292,11 +285,9 @@ async function loadEnrolments(studentId) {
             course?.price ??
             null;
 
-          const safeTitle =
-            escapeHTML(title);
-
-          const safeDescription =
-            escapeHTML(description);
+          const approved =
+            status === "approved" ||
+            status === "active";
 
           return `
             <div class="card">
@@ -306,24 +297,20 @@ async function loadEnrolments(studentId) {
               </span>
 
               <h3>
-                ${safeTitle}
+                ${escapeHTML(title)}
               </h3>
 
               <p>
-                ${safeDescription}
+                ${escapeHTML(description)}
               </p>
 
               <p>
-                <strong>
-                  Enrolled:
-                </strong>
+                <strong>Enrolled:</strong>
                 ${formatDate(enrolment.enrolled_at)}
               </p>
 
               <p>
-                <strong>
-                  Course fee:
-                </strong>
+                <strong>Course fee:</strong>
                 ${formatMoney(amount)}
               </p>
 
@@ -342,12 +329,7 @@ async function loadEnrolments(studentId) {
                   data-course-id="${escapeHTML(
                     enrolment.course_id
                   )}"
-                  ${
-                    status !== "approved" &&
-                    status !== "active"
-                      ? "disabled"
-                      : ""
-                  }
+                  ${approved ? "" : "disabled"}
                 >
                   📚 Study Course
                 </button>
@@ -355,7 +337,7 @@ async function loadEnrolments(studentId) {
               </div>
 
               ${
-                status === "pending"
+                !approved
                   ? `
                     <p
                       style="
@@ -367,7 +349,16 @@ async function loadEnrolments(studentId) {
                       approval.
                     </p>
                   `
-                  : ""
+                  : `
+                    <p
+                      style="
+                        margin-top:12px;
+                        color:#198754;
+                      "
+                    >
+                      You can access your course.
+                    </p>
+                  `
               }
 
             </div>
@@ -375,18 +366,12 @@ async function loadEnrolments(studentId) {
         })
         .join("");
 
-    // --------------------------------------------------------
-    // Study buttons
-    // --------------------------------------------------------
-
     document
       .querySelectorAll(".study-btn")
       .forEach(button => {
-
         button.addEventListener(
           "click",
           () => {
-
             const courseId =
               button.dataset.courseId;
 
@@ -397,11 +382,9 @@ async function loadEnrolments(studentId) {
               encodeURIComponent(courseId);
           }
         );
-
       });
 
   } catch (error) {
-
     console.error(
       "Enrolments error:",
       error
@@ -428,18 +411,12 @@ async function loadEnrolments(studentId) {
 // ============================================================
 
 async function loadAvailableCourses(studentId) {
-
   if (!coursesEl) return;
 
   coursesEl.innerHTML =
     '<p class="loading">Loading courses…</p>';
 
   try {
-
-    // --------------------------------------------------------
-    // Get active courses
-    // --------------------------------------------------------
-
     const {
       data: courses,
       error
@@ -456,7 +433,6 @@ async function loadAvailableCourses(studentId) {
     }
 
     if (!courses || courses.length === 0) {
-
       coursesEl.innerHTML = `
         <div class="card">
 
@@ -474,10 +450,6 @@ async function loadAvailableCourses(studentId) {
 
       return;
     }
-
-    // --------------------------------------------------------
-    // Existing enrolments
-    // --------------------------------------------------------
 
     const {
       data: existing,
@@ -497,22 +469,17 @@ async function loadAvailableCourses(studentId) {
     const enrolledMap = new Map();
 
     (existing || []).forEach(item => {
-
-      enrolledMap.set(
-        item.course_id,
-        item.enrollment_status
-      );
-
+      if (!enrolledMap.has(item.course_id)) {
+        enrolledMap.set(
+          item.course_id,
+          item.enrollment_status
+        );
+      }
     });
-
-    // --------------------------------------------------------
-    // Build course cards
-    // --------------------------------------------------------
 
     coursesEl.innerHTML =
       courses
         .map(course => {
-
           const title =
             course.title ||
             course.name ||
@@ -574,18 +541,12 @@ async function loadAvailableCourses(studentId) {
         })
         .join("");
 
-    // --------------------------------------------------------
-    // Enrol buttons
-    // --------------------------------------------------------
-
     document
       .querySelectorAll(".enrol-btn")
       .forEach(button => {
-
         button.addEventListener(
           "click",
           async () => {
-
             const courseId =
               button.dataset.courseId;
 
@@ -594,14 +555,11 @@ async function loadAvailableCourses(studentId) {
               courseId,
               button
             );
-
           }
         );
-
       });
 
   } catch (error) {
-
     console.error(
       "Courses error:",
       error
@@ -632,7 +590,6 @@ async function enrolStudent(
   courseId,
   button
 ) {
-
   if (!studentId || !courseId) {
     return;
   }
@@ -641,42 +598,34 @@ async function enrolStudent(
   button.textContent = "Enrolling…";
 
   try {
-
-    // --------------------------------------------------------
-    // Check duplicate
-    // --------------------------------------------------------
-
     const {
-      data: existing,
+      data: existingRows,
       error: checkError
     } = await db
       .from("enrollments")
       .select("id,enrollment_status")
       .eq("student_id", studentId)
       .eq("course_id", courseId)
-      .maybeSingle();
+      .limit(1);
 
     if (checkError) {
       throw checkError;
     }
 
-    if (existing) {
+    const existing =
+      existingRows?.[0] || null;
 
+    if (existing) {
       showMessage(
         "You are already enrolled in this course."
       );
 
-      button.disabled = true;
       button.textContent =
         existing.enrollment_status ||
         "Already enrolled";
 
       return;
     }
-
-    // --------------------------------------------------------
-    // Get course price
-    // --------------------------------------------------------
 
     const {
       data: course,
@@ -691,28 +640,18 @@ async function enrolStudent(
       throw courseError;
     }
 
-    // --------------------------------------------------------
-    // Create enrolment
-    // --------------------------------------------------------
-
     const {
       error: insertError
     } = await db
       .from("enrollments")
       .insert({
-
         student_id: studentId,
-
         course_id: courseId,
-
         enrollment_status: "pending",
-
         enrolled_at:
           new Date().toISOString(),
-
         amount:
           course?.price ?? null
-
       });
 
     if (insertError) {
@@ -727,12 +666,10 @@ async function enrolStudent(
     button.textContent =
       "Pending Approval";
 
-    // Refresh enrolments and courses
     await loadEnrolments(studentId);
     await loadAvailableCourses(studentId);
 
   } catch (error) {
-
     console.error(
       "Enrolment error:",
       error
@@ -752,7 +689,6 @@ async function enrolStudent(
 // ============================================================
 
 async function loadPayments(studentId) {
-
   if (!paymentListEl) return;
 
   paymentListEl.innerHTML = `
@@ -764,7 +700,6 @@ async function loadPayments(studentId) {
   `;
 
   try {
-
     const {
       data: payments,
       error
@@ -781,7 +716,6 @@ async function loadPayments(studentId) {
     }
 
     if (!payments || payments.length === 0) {
-
       paymentListEl.innerHTML = `
         <div class="card">
 
@@ -800,10 +734,6 @@ async function loadPayments(studentId) {
       return;
     }
 
-    // --------------------------------------------------------
-    // Get course IDs
-    // --------------------------------------------------------
-
     const courseIds = [
       ...new Set(
         payments
@@ -815,7 +745,6 @@ async function loadPayments(studentId) {
     let courses = [];
 
     if (courseIds.length > 0) {
-
       const {
         data,
         error: courseError
@@ -840,10 +769,6 @@ async function loadPayments(studentId) {
       courseMap.set(course.id, course);
     });
 
-    // --------------------------------------------------------
-    // Render payments
-    // --------------------------------------------------------
-
     paymentListEl.innerHTML = `
       <div class="card">
 
@@ -862,6 +787,7 @@ async function loadPayments(studentId) {
             style="
               width:100%;
               border-collapse:collapse;
+              min-width:650px;
             "
           >
 
@@ -914,7 +840,6 @@ async function loadPayments(studentId) {
               ${
                 payments
                   .map(payment => {
-
                     const course =
                       courseMap.get(
                         payment.course_id
@@ -992,7 +917,6 @@ async function loadPayments(studentId) {
     `;
 
   } catch (error) {
-
     console.error(
       "Payments error:",
       error
@@ -1016,13 +940,400 @@ async function loadPayments(studentId) {
 }
 
 // ============================================================
+// ASSESSMENTS & RESULTS SECTION
+// ============================================================
+
+function createAssessmentSection() {
+  if (
+    document.getElementById(
+      "student-assessments-section"
+    )
+  ) {
+    return;
+  }
+
+  const main =
+    document.querySelector("main");
+
+  if (!main) return;
+
+  const wrap =
+    main.querySelector(".wrap");
+
+  if (!wrap) return;
+
+  const section =
+    document.createElement("section");
+
+  section.id =
+    "student-assessments-section";
+
+  section.innerHTML = `
+    <h2>
+      📝 Assessments & Results
+    </h2>
+
+    <div
+      id="student-assessments"
+      class="grid3"
+    >
+
+      <div class="card">
+
+        <p class="loading">
+          Loading assessments…
+        </p>
+
+      </div>
+
+    </div>
+  `;
+
+  const sections =
+    wrap.querySelectorAll("section");
+
+  const lastSection =
+    sections[sections.length - 1];
+
+  if (lastSection) {
+    lastSection.insertAdjacentElement(
+      "afterend",
+      section
+    );
+  } else {
+    wrap.appendChild(section);
+  }
+}
+
+// ============================================================
+// LOAD ASSESSMENTS AND RESULTS
+// ============================================================
+
+async function loadAssessments(studentId) {
+  createAssessmentSection();
+
+  const container =
+    document.getElementById(
+      "student-assessments"
+    );
+
+  if (!container) return;
+
+  container.innerHTML = `
+    <div class="card">
+      <p class="loading">
+        Loading assessments…
+      </p>
+    </div>
+  `;
+
+  try {
+    // --------------------------------------------------------
+    // Get student's approved/active enrolments
+    // --------------------------------------------------------
+
+    const {
+      data: enrolments,
+      error: enrolmentError
+    } = await db
+      .from("enrollments")
+      .select("course_id,enrollment_status")
+      .eq("student_id", studentId);
+
+    if (enrolmentError) {
+      throw enrolmentError;
+    }
+
+    const courseIds = [
+      ...new Set(
+        (enrolments || [])
+          .filter(item =>
+            item.enrollment_status === "approved" ||
+            item.enrollment_status === "active"
+          )
+          .map(item => item.course_id)
+          .filter(Boolean)
+      )
+    ];
+
+    if (courseIds.length === 0) {
+      container.innerHTML = `
+        <div class="card">
+
+          <h3>
+            No assessments yet
+          </h3>
+
+          <p>
+            Assessments will appear here after
+            your course enrolment has been approved.
+          </p>
+
+        </div>
+      `;
+
+      return;
+    }
+
+    // --------------------------------------------------------
+    // Get assessments
+    // --------------------------------------------------------
+
+    const {
+      data: assessments,
+      error: assessmentError
+    } = await db
+      .from("assessments")
+      .select("*")
+      .in("course_id", courseIds)
+      .order("created_at", {
+        ascending: true
+      });
+
+    if (assessmentError) {
+      console.error(
+        "Assessment lookup error:",
+        assessmentError
+      );
+
+      container.innerHTML = `
+        <div class="card">
+
+          <h3>
+            Assessments
+          </h3>
+
+          <p>
+            Your assessment area is being prepared.
+          </p>
+
+        </div>
+      `;
+
+      return;
+    }
+
+    if (!assessments || assessments.length === 0) {
+      container.innerHTML = `
+        <div class="card">
+
+          <h3>
+            No assessments available
+          </h3>
+
+          <p>
+            Your assessments will appear here
+            when they are published.
+          </p>
+
+        </div>
+      `;
+
+      return;
+    }
+
+    // --------------------------------------------------------
+    // Get student's submissions/results
+    // --------------------------------------------------------
+
+    let submissions = [];
+
+    const {
+      data: submissionData,
+      error: submissionError
+    } = await db
+      .from("assessment_submissions")
+      .select("*")
+      .eq("student_id", studentId);
+
+    if (submissionError) {
+      console.warn(
+        "Assessment submissions could not be loaded:",
+        submissionError
+      );
+    } else {
+      submissions =
+        submissionData || [];
+    }
+
+    const submissionMap =
+      new Map();
+
+    submissions.forEach(submission => {
+      if (submission.assessment_id) {
+        submissionMap.set(
+          submission.assessment_id,
+          submission
+        );
+      }
+    });
+
+    // --------------------------------------------------------
+    // Render assessments
+    // --------------------------------------------------------
+
+    container.innerHTML =
+      assessments
+        .map(assessment => {
+          const submission =
+            submissionMap.get(
+              assessment.id
+            );
+
+          const title =
+            assessment.title ||
+            assessment.name ||
+            "Assessment";
+
+          const description =
+            assessment.description ||
+            assessment.instructions ||
+            "Complete this assessment.";
+
+          const marks =
+            submission?.marks ??
+            submission?.score ??
+            submission?.mark ??
+            null;
+
+          const resultStatus =
+            submission?.status ||
+            submission?.result ||
+            "Not submitted";
+
+          const feedback =
+            submission?.feedback ||
+            "";
+
+          const submittedDate =
+            submission?.submitted_at ||
+            submission?.created_at ||
+            null;
+
+          let resultText =
+            "Not submitted";
+
+          if (marks !== null) {
+            resultText =
+              String(marks);
+          }
+
+          return `
+            <div class="card">
+
+              <span class="badge">
+                ${escapeHTML(resultStatus)}
+              </span>
+
+              <h3>
+                📝 ${escapeHTML(title)}
+              </h3>
+
+              <p>
+                ${escapeHTML(description)}
+              </p>
+
+              <p>
+                <strong>
+                  Mark:
+                </strong>
+                ${escapeHTML(resultText)}
+              </p>
+
+              ${
+                submittedDate
+                  ? `
+                    <p>
+                      <strong>
+                        Submitted:
+                      </strong>
+                      ${formatDate(
+                        submittedDate
+                      )}
+                    </p>
+                  `
+                  : ""
+              }
+
+              ${
+                feedback
+                  ? `
+                    <div
+                      style="
+                        margin-top:15px;
+                        padding:12px;
+                        border-radius:10px;
+                        background:#f5f7f6;
+                      "
+                    >
+                      <strong>
+                        Feedback
+                      </strong>
+
+                      <p
+                        style="
+                          margin-top:6px;
+                        "
+                      >
+                        ${escapeHTML(
+                          feedback
+                        )}
+                      </p>
+                    </div>
+                  `
+                  : ""
+              }
+
+              ${
+                !submission
+                  ? `
+                    <p
+                      style="
+                        margin-top:12px;
+                        color:#777;
+                      "
+                    >
+                      This assessment has not
+                      been submitted yet.
+                    </p>
+                  `
+                  : ""
+              }
+
+            </div>
+          `;
+        })
+        .join("");
+
+  } catch (error) {
+    console.error(
+      "Assessments error:",
+      error
+    );
+
+    container.innerHTML = `
+      <div class="card">
+
+        <h3>
+          Assessments & Results
+        </h3>
+
+        <p>
+          Assessments could not be loaded
+          right now. Please try again later.
+        </p>
+
+      </div>
+    `;
+  }
+}
+
+// ============================================================
 // LOGOUT
 // ============================================================
 
 async function logout() {
-
   try {
-
     const {
       error
     } = await db.auth.signOut();
@@ -1035,7 +1346,6 @@ async function logout() {
       "login.html";
 
   } catch (error) {
-
     console.error(
       "Logout error:",
       error
@@ -1052,12 +1362,10 @@ async function logout() {
 // ============================================================
 
 if (logoutBtn) {
-
   logoutBtn.addEventListener(
     "click",
     logout
   );
-
 }
 
 // ============================================================
@@ -1065,18 +1373,15 @@ if (logoutBtn) {
 // ============================================================
 
 async function initDashboard() {
-
   try {
-
     // --------------------------------------------------------
-    // Check authentication
+    // Authentication
     // --------------------------------------------------------
 
     const user =
       await getCurrentUser();
 
     if (!user) {
-
       window.location.href =
         "login.html";
 
@@ -1084,25 +1389,22 @@ async function initDashboard() {
     }
 
     // --------------------------------------------------------
-    // Show email
+    // Email
     // --------------------------------------------------------
 
     if (userEmailEl) {
-
       userEmailEl.textContent =
         user.email || "";
-
     }
 
     // --------------------------------------------------------
-    // Get student
+    // Student
     // --------------------------------------------------------
 
     const student =
       await getStudent(user.id);
 
     if (!student) {
-
       if (userNameEl) {
         userNameEl.textContent =
           "Student";
@@ -1116,21 +1418,23 @@ async function initDashboard() {
     }
 
     // --------------------------------------------------------
-    // Load dashboard
+    // Student name
     // --------------------------------------------------------
 
-    await loadStudentHeader(
-      student
-    );
+    loadStudentHeader(student);
+
+    // --------------------------------------------------------
+    // Load main dashboard
+    // --------------------------------------------------------
 
     await Promise.all([
       loadEnrolments(student.id),
       loadAvailableCourses(student.id),
-      loadPayments(student.id)
+      loadPayments(student.id),
+      loadAssessments(student.id)
     ]);
 
   } catch (error) {
-
     console.error(
       "Dashboard initialisation error:",
       error
@@ -1143,7 +1447,7 @@ async function initDashboard() {
 }
 
 // ============================================================
-// START
+// START DASHBOARD
 // ============================================================
 
 document.addEventListener(
