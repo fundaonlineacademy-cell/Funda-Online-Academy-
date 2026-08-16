@@ -1,60 +1,27 @@
-// ============================================================
+// ==========================================
 // FUNDA ONLINE ACADEMY
 // LOGIN • REGISTRATION • PASSWORD RESET
 // SELECTED COURSE ENROLMENT
-// STUDENT + ADMIN LOGIN
-// ============================================================
-
-
-// ============================================================
-// SUPABASE
-// ============================================================
+// ==========================================
 
 const db = supabase.createClient(
   window.SUPABASE_URL,
   window.SUPABASE_ANON_KEY
 );
 
+const loginForm = document.getElementById("login-form");
+const signupForm = document.getElementById("signup-form");
 
-// ============================================================
-// GITHUB PAGES BASE PATH
-// ============================================================
-// Your website is published at:
-//
-// https://fundaonlineacademy-cell.github.io/Funda-Online-Academy-/
-//
-// All internal pages must therefore use this path.
-// ============================================================
+const loginTab = document.getElementById("login-tab");
+const signupTab = document.getElementById("signup-tab");
+const forgotLink = document.getElementById("forgot");
 
-const BASE_PATH = "/Funda-Online-Academy-/";
+const messageBox = document.getElementById("message");
 
 
-// ============================================================
-// PAGE ELEMENTS
-// ============================================================
-
-const loginForm =
-  document.getElementById("login-form");
-
-const signupForm =
-  document.getElementById("signup-form");
-
-const loginTab =
-  document.getElementById("login-tab");
-
-const signupTab =
-  document.getElementById("signup-tab");
-
-const forgotLink =
-  document.getElementById("forgot");
-
-const messageBox =
-  document.getElementById("message");
-
-
-// ============================================================
+// ==========================================
 // REMEMBER SELECTED COURSE
-// ============================================================
+// ==========================================
 
 const authParams =
   new URLSearchParams(
@@ -62,12 +29,8 @@ const authParams =
   );
 
 
-// Accept:
-//
+// Accept both:
 // auth.html?course=...
-//
-// OR
-//
 // auth.html?enrol=...
 
 const courseFromUrl =
@@ -81,26 +44,24 @@ if (courseFromUrl) {
     "funda_pending_course",
     courseFromUrl
   );
-
 }
 
 
-// ============================================================
-// GET PENDING COURSE
-// ============================================================
+// ==========================================
+// GET SELECTED COURSE
+// ==========================================
 
 function getPendingCourse() {
 
   return localStorage.getItem(
     "funda_pending_course"
   );
-
 }
 
 
-// ============================================================
-// GET STUDENT DESTINATION
-// ============================================================
+// ==========================================
+// GET AFTER-LOGIN DESTINATION
+// ==========================================
 
 function getStudentDestination() {
 
@@ -111,7 +72,6 @@ function getStudentDestination() {
   if (course) {
 
     return (
-      BASE_PATH +
       "dashboard.html?enrol=" +
       encodeURIComponent(course)
     );
@@ -119,40 +79,20 @@ function getStudentDestination() {
   }
 
 
-  return (
-    BASE_PATH +
-    "dashboard.html"
-  );
-
+  return "dashboard.html";
 }
 
 
-// ============================================================
-// GET ADMIN DESTINATION
-// ============================================================
-
-function getAdminDestination() {
-
-  return (
-    BASE_PATH +
-    "admin.html"
-  );
-
-}
-
-
-// ============================================================
-// SHOW MESSAGE
-// ============================================================
+// ==========================================
+// MESSAGES
+// ==========================================
 
 function showMessage(
   message,
   success = false
 ) {
 
-  if (!messageBox) {
-    return;
-  }
+  if (!messageBox) return;
 
 
   messageBox.textContent =
@@ -181,19 +121,12 @@ function showMessage(
       "#991b1b";
 
   }
-
 }
 
 
-// ============================================================
-// CLEAR MESSAGE
-// ============================================================
-
 function clearMessage() {
 
-  if (!messageBox) {
-    return;
-  }
+  if (!messageBox) return;
 
 
   messageBox.textContent =
@@ -203,13 +136,12 @@ function clearMessage() {
   messageBox.classList.add(
     "hidden"
   );
-
 }
 
 
-// ============================================================
-// SHOW LOGIN
-// ============================================================
+// ==========================================
+// SWITCH LOGIN / REGISTRATION
+// ==========================================
 
 function showLogin() {
 
@@ -232,13 +164,8 @@ function showLogin() {
     );
 
   }
-
 }
 
-
-// ============================================================
-// SHOW SIGNUP
-// ============================================================
 
 function showSignup() {
 
@@ -261,13 +188,8 @@ function showSignup() {
     );
 
   }
-
 }
 
-
-// ============================================================
-// LOGIN TAB
-// ============================================================
 
 if (loginTab) {
 
@@ -285,10 +207,6 @@ if (loginTab) {
 }
 
 
-// ============================================================
-// SIGNUP TAB
-// ============================================================
-
 if (signupTab) {
 
   signupTab.addEventListener(
@@ -305,74 +223,45 @@ if (signupTab) {
 }
 
 
-// ============================================================
-// GET USER INFORMATION
-// ============================================================
+// ==========================================
+// SAVE / SYNC STUDENT PROFILE
+// ==========================================
 
-function getUserData(user) {
+async function syncStudentProfile(
+  user
+) {
 
-  if (!user) {
-
-    return {
-
-      fullName: "",
-      gender: "",
-      idNumber: "",
-      phone: "",
-      email: ""
-
-    };
-
-  }
+  if (!user) return false;
 
 
   const metadata =
     user.user_metadata || {};
 
 
-  return {
-
-    fullName:
-      metadata.full_name ||
-      metadata.name ||
-      "",
-
-    gender:
-      metadata.gender ||
-      "",
-
-    idNumber:
-      metadata.id_number ||
-      "",
-
-    phone:
-      metadata.phone ||
-      "",
-
-    email:
-      user.email ||
-      ""
-
-  };
-
-}
+  const fullName =
+    metadata.full_name ||
+    metadata.name ||
+    "";
 
 
-// ============================================================
-// SYNC STUDENT PROFILE
-// ============================================================
-
-async function syncStudentProfile(
-  user
-) {
-
-  if (!user) {
-    return false;
-  }
+  const gender =
+    metadata.gender ||
+    "";
 
 
-  const userData =
-    getUserData(user);
+  const idNumber =
+    metadata.id_number ||
+    "";
+
+
+  const phone =
+    metadata.phone ||
+    "";
+
+
+  const email =
+    user.email ||
+    "";
 
 
   const {
@@ -380,13 +269,8 @@ async function syncStudentProfile(
     error: findError
   } = await db
     .from("profiles")
-    .select(
-      "id, role"
-    )
-    .eq(
-      "id",
-      user.id
-    )
+    .select("id, role")
+    .eq("id", user.id)
     .maybeSingle();
 
 
@@ -398,17 +282,16 @@ async function syncStudentProfile(
     );
 
     return false;
-
   }
 
 
-  // ========================================================
-  // EXISTING PROFILE
-  // ========================================================
+  // ----------------------------------------
+  // UPDATE EXISTING PROFILE
+  // ----------------------------------------
 
   if (existingProfile) {
 
-    // NEVER change an admin into a student.
+    // Never change admin to student
 
     if (
       existingProfile.role ===
@@ -416,7 +299,6 @@ async function syncStudentProfile(
     ) {
 
       return true;
-
     }
 
 
@@ -427,19 +309,19 @@ async function syncStudentProfile(
       .update({
 
         full_name:
-          userData.fullName,
+          fullName,
 
         email:
-          userData.email,
+          email,
 
         gender:
-          userData.gender,
+          gender,
 
         id_number:
-          userData.idNumber,
+          idNumber,
 
         phone:
-          userData.phone
+          phone
 
       })
       .eq(
@@ -456,18 +338,16 @@ async function syncStudentProfile(
       );
 
       return false;
-
     }
 
 
     return true;
-
   }
 
 
-  // ========================================================
-  // CREATE STUDENT PROFILE
-  // ========================================================
+  // ----------------------------------------
+  // CREATE NEW STUDENT PROFILE
+  // ----------------------------------------
 
   const {
     error
@@ -479,19 +359,19 @@ async function syncStudentProfile(
         user.id,
 
       full_name:
-        userData.fullName,
+        fullName,
 
       email:
-        userData.email,
+        email,
 
       gender:
-        userData.gender,
+        gender,
 
       id_number:
-        userData.idNumber,
+        idNumber,
 
       phone:
-        userData.phone,
+        phone,
 
       role:
         "student"
@@ -507,30 +387,52 @@ async function syncStudentProfile(
     );
 
     return false;
-
   }
 
 
   return true;
-
 }
 
 
-// ============================================================
-// SYNC STUDENT RECORD
-// ============================================================
+// ==========================================
+// SAVE / SYNC STUDENT RECORD
+// ==========================================
 
 async function syncStudentRecord(
   user
 ) {
 
-  if (!user) {
-    return false;
-  }
+  if (!user) return false;
 
 
-  const userData =
-    getUserData(user);
+  const metadata =
+    user.user_metadata || {};
+
+
+  const fullName =
+    metadata.full_name ||
+    metadata.name ||
+    "";
+
+
+  const gender =
+    metadata.gender ||
+    "";
+
+
+  const idNumber =
+    metadata.id_number ||
+    "";
+
+
+  const phone =
+    metadata.phone ||
+    "";
+
+
+  const email =
+    user.email ||
+    "";
 
 
   const {
@@ -538,9 +440,7 @@ async function syncStudentRecord(
     error: findError
   } = await db
     .from("students")
-    .select(
-      "id"
-    )
+    .select("id")
     .eq(
       "user_id",
       user.id
@@ -556,13 +456,12 @@ async function syncStudentRecord(
     );
 
     return false;
-
   }
 
 
-  // ========================================================
+  // ----------------------------------------
   // UPDATE EXISTING STUDENT
-  // ========================================================
+  // ----------------------------------------
 
   if (existingStudent) {
 
@@ -573,19 +472,19 @@ async function syncStudentRecord(
       .update({
 
         full_name:
-          userData.fullName,
+          fullName,
 
         gender:
-          userData.gender,
+          gender,
 
         south_african_id:
-          userData.idNumber,
+          idNumber,
 
         email:
-          userData.email,
+          email,
 
         mobile_whatsapp:
-          userData.phone
+          phone
 
       })
       .eq(
@@ -602,18 +501,16 @@ async function syncStudentRecord(
       );
 
       return false;
-
     }
 
 
     return true;
-
   }
 
 
-  // ========================================================
+  // ----------------------------------------
   // CREATE NEW STUDENT
-  // ========================================================
+  // ----------------------------------------
 
   const {
     error
@@ -625,19 +522,19 @@ async function syncStudentRecord(
         user.id,
 
       full_name:
-        userData.fullName,
+        fullName,
 
       gender:
-        userData.gender,
+        gender,
 
       south_african_id:
-        userData.idNumber,
+        idNumber,
 
       email:
-        userData.email,
+        email,
 
       mobile_whatsapp:
-        userData.phone
+        phone
 
     });
 
@@ -650,26 +547,22 @@ async function syncStudentRecord(
     );
 
     return false;
-
   }
 
 
   return true;
-
 }
 
 
-// ============================================================
+// ==========================================
 // SYNC BOTH STUDENT TABLES
-// ============================================================
+// ==========================================
 
 async function syncStudentAccount(
   user
 ) {
 
-  if (!user) {
-    return false;
-  }
+  if (!user) return false;
 
 
   const profileSaved =
@@ -706,168 +599,12 @@ async function syncStudentAccount(
     profileSaved &&
     studentSaved
   );
-
 }
 
 
-// ============================================================
-// GET ACCOUNT ROLE
-// ============================================================
-
-async function getAccountRole(
-  userId
-) {
-
-  if (!userId) {
-    return null;
-  }
-
-
-  const {
-    data: profile,
-    error
-  } = await db
-    .from("profiles")
-    .select(
-      "role"
-    )
-    .eq(
-      "id",
-      userId
-    )
-    .maybeSingle();
-
-
-  if (error) {
-
-    console.error(
-      "Role lookup error:",
-      error
-    );
-
-    return null;
-
-  }
-
-
-  if (!profile) {
-
-    return null;
-
-  }
-
-
-  return profile.role;
-
-}
-
-
-// ============================================================
-// REDIRECT USER BASED ON ROLE
-// ============================================================
-
-async function redirectUser(
-  user
-) {
-
-  if (!user) {
-    return;
-  }
-
-
-  const role =
-    await getAccountRole(
-      user.id
-    );
-
-
-  console.log(
-    "FUNDA ACCOUNT ROLE:",
-    role
-  );
-
-
-  // ========================================================
-  // ADMIN
-  // ========================================================
-
-  if (
-    role ===
-    "admin"
-  ) {
-
-    showMessage(
-      "Administrator login successful. Opening admin dashboard...",
-      true
-    );
-
-
-    setTimeout(
-      function() {
-
-        window.location.href =
-          getAdminDestination();
-
-      },
-      500
-    );
-
-
-    return;
-
-  }
-
-
-  // ========================================================
-  // STUDENT
-  // ========================================================
-
-  if (
-    role ===
-    "student"
-  ) {
-
-    showMessage(
-      "Login successful. Opening your student portal...",
-      true
-    );
-
-
-    setTimeout(
-      function() {
-
-        window.location.href =
-          getStudentDestination();
-
-      },
-      500
-    );
-
-
-    return;
-
-  }
-
-
-  // ========================================================
-  // PROFILE DOES NOT HAVE A ROLE
-  // ========================================================
-
-  console.warn(
-    "No valid account role found."
-  );
-
-
-  showMessage(
-    "Your account was found, but the account role could not be loaded. Please contact Funda Online Academy."
-  );
-
-}
-
-
-// ============================================================
+// ==========================================
 // CHECK EXISTING SESSION
-// ============================================================
+// ==========================================
 
 async function checkExistingSession() {
 
@@ -885,18 +622,15 @@ async function checkExistingSession() {
     );
 
     return;
-
   }
 
 
   if (
-    !data ||
     !data.session ||
     !data.session.user
   ) {
 
     return;
-
   }
 
 
@@ -904,68 +638,67 @@ async function checkExistingSession() {
     data.session.user;
 
 
-  // ========================================================
-  // DO NOT CREATE/UPDATE ADMIN AS STUDENT
-  // ========================================================
+  await syncStudentAccount(
+    user
+  );
 
-  const role =
-    await getAccountRole(
+
+  const {
+    data: profile,
+    error: profileError
+  } = await db
+    .from("profiles")
+    .select("role")
+    .eq(
+      "id",
       user.id
+    )
+    .maybeSingle();
+
+
+  if (profileError) {
+
+    console.error(
+      "Profile error:",
+      profileError
     );
 
-
-  if (
-    role !==
-    "admin"
-  ) {
-
-    await syncStudentAccount(
-      user
-    );
-
+    return;
   }
 
 
-  // ========================================================
-  // REDIRECT
-  // ========================================================
+  // ----------------------------------------
+  // ADMIN
+  // ----------------------------------------
 
   if (
-    role ===
+    profile &&
+    profile.role ===
     "admin"
   ) {
 
     window.location.href =
-      getAdminDestination();
+      "admin.html";
 
     return;
-
   }
 
 
-  if (
-    role ===
-    "student"
-  ) {
+  // ----------------------------------------
+  // STUDENT
+  // ----------------------------------------
 
-    window.location.href =
-      getStudentDestination();
-
-    return;
-
-  }
-
+  window.location.href =
+    getStudentDestination();
 }
 
-
-// Run session check.
 
 checkExistingSession();
 
 
-// ============================================================
+// ==========================================
 // LOGIN
-// ============================================================
+// ==========================================
 
 if (loginForm) {
 
@@ -990,20 +723,6 @@ if (loginForm) {
         );
 
 
-      if (
-        !emailInput ||
-        !passwordInput
-      ) {
-
-        showMessage(
-          "Login form fields could not be found."
-        );
-
-        return;
-
-      }
-
-
       const email =
         emailInput.value
           .trim()
@@ -1013,10 +732,6 @@ if (loginForm) {
       const password =
         passwordInput.value;
 
-
-      // ======================================================
-      // VALIDATION
-      // ======================================================
 
       if (
         !email ||
@@ -1028,7 +743,6 @@ if (loginForm) {
         );
 
         return;
-
       }
 
 
@@ -1038,23 +752,18 @@ if (loginForm) {
       );
 
 
-      // ======================================================
-      // SUPABASE LOGIN
-      // ======================================================
-
       const {
         data,
         error
-      } =
-        await db.auth.signInWithPassword({
+      } = await db.auth.signInWithPassword({
 
-          email:
-            email,
+        email:
+          email,
 
-          password:
-            password
+        password:
+          password
 
-        });
+      });
 
 
       if (error) {
@@ -1070,9 +779,7 @@ if (loginForm) {
           "Login failed. Please check your email and password."
         );
 
-
         return;
-
       }
 
 
@@ -1085,111 +792,71 @@ if (loginForm) {
           "Login could not be completed. Please try again."
         );
 
-
         return;
-
       }
 
 
-      const user =
-        data.user;
+      await syncStudentAccount(
+        data.user
+      );
 
 
-      // ======================================================
-      // GET ROLE BEFORE STUDENT SYNC
-      // ======================================================
+      const {
+        data: profile,
+        error: profileError
+      } = await db
+        .from("profiles")
+        .select("role")
+        .eq(
+          "id",
+          data.user.id
+        )
+        .maybeSingle();
 
-      const role =
-        await getAccountRole(
-          user.id
+
+      if (profileError) {
+
+        console.error(
+          "Profile lookup error:",
+          profileError
         );
 
-
-      console.log(
-        "LOGIN USER:",
-        user.email
-      );
-
-
-      console.log(
-        "LOGIN ROLE:",
-        role
-      );
-
-
-      // ======================================================
-      // ADMIN
-      // ======================================================
-
-      if (
-        role ===
-        "admin"
-      ) {
 
         showMessage(
-          "Administrator login successful. Opening admin dashboard...",
-          true
+          "Login worked, but we could not load your account profile."
         );
 
+        return;
+      }
 
-        setTimeout(
-          function() {
+
+      showMessage(
+        "Login successful. Opening your portal...",
+        true
+      );
+
+
+      setTimeout(
+        function() {
+
+          if (
+            profile &&
+            profile.role ===
+            "admin"
+          ) {
 
             window.location.href =
-              getAdminDestination();
+              "admin.html";
 
-          },
-          500
-        );
-
-
-        return;
-
-      }
-
-
-      // ======================================================
-      // STUDENT
-      // ======================================================
-
-      if (
-        role ===
-        "student"
-      ) {
-
-        await syncStudentAccount(
-          user
-        );
-
-
-        showMessage(
-          "Login successful. Opening your student portal...",
-          true
-        );
-
-
-        setTimeout(
-          function() {
+          } else {
 
             window.location.href =
               getStudentDestination();
 
-          },
-          500
-        );
+          }
 
-
-        return;
-
-      }
-
-
-      // ======================================================
-      // NO PROFILE
-      // ======================================================
-
-      showMessage(
-        "Your login was successful, but your account profile could not be found. Please contact Funda Online Academy."
+        },
+        500
       );
 
     }
@@ -1198,9 +865,9 @@ if (loginForm) {
 }
 
 
-// ============================================================
+// ==========================================
 // REGISTRATION
-// ============================================================
+// ==========================================
 
 if (signupForm) {
 
@@ -1213,112 +880,71 @@ if (signupForm) {
       clearMessage();
 
 
-      // ======================================================
-      // GET FIELDS
-      // ======================================================
-
-      const nameInput =
-        document.getElementById(
-          "signup-name"
-        );
-
-
-      const genderInput =
-        document.getElementById(
-          "signup-gender"
-        );
-
-
-      const idInput =
-        document.getElementById(
-          "signup-id-number"
-        );
-
-
-      const phoneInput =
-        document.getElementById(
-          "signup-phone"
-        );
-
-
-      const emailInput =
-        document.getElementById(
-          "signup-email"
-        );
-
-
-      const passwordInput =
-        document.getElementById(
-          "signup-password"
-        );
-
-
-      const confirmPasswordInput =
-        document.getElementById(
-          "signup-confirm-password"
-        );
-
-
-      if (
-        !nameInput ||
-        !genderInput ||
-        !idInput ||
-        !phoneInput ||
-        !emailInput ||
-        !passwordInput ||
-        !confirmPasswordInput
-      ) {
-
-        showMessage(
-          "Registration form fields could not be found."
-        );
-
-        return;
-
-      }
-
-
-      // ======================================================
-      // READ VALUES
-      // ======================================================
-
       const name =
-        nameInput.value
+        document
+          .getElementById(
+            "signup-name"
+          )
+          .value
           .trim();
 
 
       const gender =
-        genderInput.value
+        document
+          .getElementById(
+            "signup-gender"
+          )
+          .value
           .trim();
 
 
       const idNumber =
-        idInput.value
+        document
+          .getElementById(
+            "signup-id-number"
+          )
+          .value
           .trim();
 
 
       const phone =
-        phoneInput.value
+        document
+          .getElementById(
+            "signup-phone"
+          )
+          .value
           .trim();
 
 
       const email =
-        emailInput.value
+        document
+          .getElementById(
+            "signup-email"
+          )
+          .value
           .trim()
           .toLowerCase();
 
 
       const password =
-        passwordInput.value;
+        document
+          .getElementById(
+            "signup-password"
+          )
+          .value;
 
 
       const confirmPassword =
-        confirmPasswordInput.value;
+        document
+          .getElementById(
+            "signup-confirm-password"
+          )
+          .value;
 
 
-      // ======================================================
+      // ----------------------------------------
       // VALIDATION
-      // ======================================================
+      // ----------------------------------------
 
       if (
         !name ||
@@ -1335,13 +961,8 @@ if (signupForm) {
         );
 
         return;
-
       }
 
-
-      // ======================================================
-      // SOUTH AFRICAN ID VALIDATION
-      // ======================================================
 
       if (
         !/^\d{13}$/.test(
@@ -1354,17 +975,11 @@ if (signupForm) {
         );
 
         return;
-
       }
 
 
-      // ======================================================
-      // PASSWORD VALIDATION
-      // ======================================================
-
       if (
-        password.length <
-        6
+        password.length < 6
       ) {
 
         showMessage(
@@ -1372,7 +987,6 @@ if (signupForm) {
         );
 
         return;
-
       }
 
 
@@ -1386,13 +1000,12 @@ if (signupForm) {
         );
 
         return;
-
       }
 
 
-      // ======================================================
+      // ----------------------------------------
       // CREATE ACCOUNT
-      // ======================================================
+      // ----------------------------------------
 
       showMessage(
         "Creating your student account...",
@@ -1403,41 +1016,36 @@ if (signupForm) {
       const {
         data,
         error
-      } =
-        await db.auth.signUp({
+      } = await db.auth.signUp({
 
-          email:
-            email,
+        email:
+          email,
 
-          password:
-            password,
+        password:
+          password,
 
-          options: {
+        options: {
 
-            data: {
+          data: {
 
-              full_name:
-                name,
+            full_name:
+              name,
 
-              gender:
-                gender,
+            gender:
+              gender,
 
-              id_number:
-                idNumber,
+            id_number:
+              idNumber,
 
-              phone:
-                phone
-
-            }
+            phone:
+              phone
 
           }
 
-        });
+        }
 
+      });
 
-      // ======================================================
-      // REGISTRATION ERROR
-      // ======================================================
 
       if (error) {
 
@@ -1452,9 +1060,7 @@ if (signupForm) {
           "Registration failed. Please try again."
         );
 
-
         return;
-
       }
 
 
@@ -1467,19 +1073,15 @@ if (signupForm) {
           "Account could not be created. Please try again."
         );
 
-
         return;
-
       }
 
 
-      // ======================================================
-      // ACCOUNT CREATED + SESSION
-      // ======================================================
+      // ----------------------------------------
+      // ACCOUNT CREATED WITH SESSION
+      // ----------------------------------------
 
-      if (
-        data.session
-      ) {
+      if (data.session) {
 
         await syncStudentAccount(
           data.user
@@ -1487,7 +1089,7 @@ if (signupForm) {
 
 
         showMessage(
-          "Student account created successfully. Opening your student portal...",
+          "Student account created successfully.",
           true
         );
 
@@ -1504,13 +1106,12 @@ if (signupForm) {
 
 
         return;
-
       }
 
 
-      // ======================================================
+      // ----------------------------------------
       // EMAIL CONFIRMATION REQUIRED
-      // ======================================================
+      // ----------------------------------------
 
       showMessage(
         "Your student account has been created. Please check your email to confirm your account, then log in.",
@@ -1536,9 +1137,9 @@ if (signupForm) {
 }
 
 
-// ============================================================
+// ==========================================
 // FORGOT PASSWORD
-// ============================================================
+// ==========================================
 
 if (forgotLink) {
 
@@ -1551,25 +1152,12 @@ if (forgotLink) {
       clearMessage();
 
 
-      const emailInput =
-        document.getElementById(
-          "login-email"
-        );
-
-
-      if (!emailInput) {
-
-        showMessage(
-          "Email field could not be found."
-        );
-
-        return;
-
-      }
-
-
       const email =
-        emailInput.value
+        document
+          .getElementById(
+            "login-email"
+          )
+          .value
           .trim()
           .toLowerCase();
 
@@ -1581,18 +1169,12 @@ if (forgotLink) {
         );
 
         return;
-
       }
 
 
-      // ======================================================
-      // PASSWORD RESET URL
-      // ======================================================
-
       const resetUrl =
         window.location.origin +
-        BASE_PATH +
-        "auth.html";
+        window.location.pathname;
 
 
       const {
@@ -1619,13 +1201,10 @@ if (forgotLink) {
 
 
         showMessage(
-          error.message ||
-          "Password reset could not be requested."
+          error.message
         );
 
-
         return;
-
       }
 
 
@@ -1638,8 +1217,3 @@ if (forgotLink) {
   );
 
 }
-
-
-// ============================================================
-// END OF AUTH.JS
-// ============================================================

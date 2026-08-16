@@ -21,6 +21,3 @@ Follow SETUP.md.
 Initial catalogue contains 27 courses. Prices are stored as individual course prices, not a generic "starting from R440".
 
 The supplied logo is included as logo.png.
-
-
-SYSTEM NOTE: dashboard.html is the student dashboard. course-study.html is the protected learning page opened after an approved enrolment. dashboard.js and course-study.js are the current student-side files.

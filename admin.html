@@ -4,13 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Funda Online Academy - Administration</title>
+<title>Funda Online Academy - Admin Dashboard</title>
 
-<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Your existing Supabase configuration -->
-<script src="supabase-config.js"></script>
 
 <style>
 *{
@@ -127,84 +123,35 @@ main{
   border:1px solid #cbdff5;
 }
 
-
-/* ==========================================================
-   ADMINISTRATION SIX TABS
-   ========================================================== */
-
-.admin-tabs{
-  background:#ffffff;
-  border:1px solid #e2e8e4;
-  border-radius:24px;
-  padding:25px;
-  margin-bottom:25px;
-  box-shadow:0 8px 30px rgba(16,37,28,.04);
-}
-
-.admin-tabs h2{
-  font-size:30px;
-  margin-bottom:8px;
-}
-
-.admin-tabs-description{
-  color:#68766f;
-  margin-bottom:20px;
-  line-height:1.5;
-}
-
-.tab-grid{
+.dashboard-grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
+  grid-template-columns:repeat(4,1fr);
   gap:16px;
+  margin-bottom:22px;
 }
 
-.admin-tab{
-  background:#064b3b;
-  color:#fff;
-  min-height:135px;
-  padding:24px 18px;
-  border-radius:22px;
-  text-align:center;
-  transition:.2s;
+.stat{
+  background:white;
+  border:1px solid #e2e8e4;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 5px 20px rgba(16,37,28,.04);
 }
 
-.admin-tab:hover{
-  background:#08705a;
-  transform:translateY(-2px);
+.stat-icon{
+  font-size:25px;
+  margin-bottom:10px;
 }
 
-.admin-tab.active{
-  background:#0c8f55;
-  box-shadow:0 8px 20px rgba(12,143,85,.25);
+.stat-label{
+  color:#68766f;
+  font-size:14px;
 }
 
-.admin-tab-icon{
-  font-size:34px;
-  margin-bottom:8px;
-}
-
-.admin-tab-title{
-  font-size:22px;
+.stat-value{
+  font-size:30px;
   font-weight:800;
-  margin-bottom:7px;
-}
-
-.admin-tab-description{
-  font-size:15px;
-  line-height:1.35;
-}
-
-
-/* ==========================================================
-   PANELS
-   ========================================================== */
-
-.tab-panel{
-  display:none;
-}
-
-.tab-panel.active{
-  display:block;
+  margin-top:5px;
 }
 
 .card{
@@ -260,47 +207,6 @@ main{
   background:#087744;
 }
 
-
-/* ==========================================================
-   STATISTICS
-   ========================================================== */
-
-.dashboard-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-  margin-bottom:22px;
-}
-
-.stat{
-  background:white;
-  border:1px solid #e2e8e4;
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 5px 20px rgba(16,37,28,.04);
-}
-
-.stat-icon{
-  font-size:25px;
-  margin-bottom:10px;
-}
-
-.stat-label{
-  color:#68766f;
-  font-size:14px;
-}
-
-.stat-value{
-  font-size:30px;
-  font-weight:800;
-  margin-top:5px;
-}
-
-
-/* ==========================================================
-   TABLES
-   ========================================================== */
-
 .table-wrap{
   width:100%;
   overflow-x:auto;
@@ -310,7 +216,7 @@ main{
 
 table{
   width:100%;
-  min-width:760px;
+  min-width:720px;
   border-collapse:collapse;
 }
 
@@ -340,6 +246,10 @@ tr:last-child td{
   color:#10251c;
 }
 
+.muted{
+  color:#7b8781;
+}
+
 .course-name{
   font-weight:600;
 }
@@ -348,15 +258,6 @@ tr:last-child td{
   font-weight:bold;
   white-space:nowrap;
 }
-
-.muted{
-  color:#7b8781;
-}
-
-
-/* ==========================================================
-   BADGES
-   ========================================================== */
 
 .badge{
   display:inline-block;
@@ -375,8 +276,7 @@ tr:last-child td{
 .badge.approved,
 .badge.completed,
 .badge.paid,
-.badge.active,
-.badge.passed{
+.badge.active{
   background:#e3f7eb;
   color:#11683d;
 }
@@ -392,11 +292,6 @@ tr:last-child td{
   background:#eef1ef;
   color:#4d5a53;
 }
-
-
-/* ==========================================================
-   ACTION BUTTONS
-   ========================================================== */
 
 .action-btn{
   padding:8px 11px;
@@ -416,15 +311,27 @@ tr:last-child td{
   color:#fff;
 }
 
-.view-btn{
-  background:#245a91;
-  color:#fff;
+.empty{
+  text-align:center;
+  padding:30px 15px;
+  color:#6d7973;
+  font-size:15px;
 }
 
+.loading{
+  padding:20px 0;
+  color:#68766f;
+  font-size:17px;
+}
 
-/* ==========================================================
-   COURSES
-   ========================================================== */
+.error-box{
+  background:#fff4f4;
+  color:#9c2626;
+  border:1px solid #efcaca;
+  border-radius:12px;
+  padding:15px;
+  line-height:1.5;
+}
 
 .course-grid{
   display:grid;
@@ -444,12 +351,6 @@ tr:last-child td{
   margin-bottom:9px;
 }
 
-.course-description{
-  color:#68766f;
-  line-height:1.5;
-  font-size:14px;
-}
-
 .course-price{
   font-size:20px;
   font-weight:800;
@@ -461,32 +362,29 @@ tr:last-child td{
   margin-top:10px;
 }
 
-
-/* ==========================================================
-   EMPTY / LOADING / ERROR
-   ========================================================== */
-
-.empty{
-  text-align:center;
-  padding:35px 15px;
-  color:#6d7973;
-  font-size:15px;
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
 }
 
-.loading{
-  padding:25px 0;
-  color:#68766f;
-  font-size:17px;
-  text-align:center;
-}
-
-.error-box{
-  background:#fff4f4;
-  color:#9c2626;
-  border:1px solid #efcaca;
+.info-item{
+  background:#f7f9f8;
+  padding:14px;
   border-radius:12px;
-  padding:15px;
-  line-height:1.5;
+}
+
+.info-label{
+  color:#6d7973;
+  font-size:12px;
+  margin-bottom:5px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+}
+
+.info-value{
+  font-weight:600;
+  word-break:break-word;
 }
 
 .admin-loading{
@@ -523,30 +421,7 @@ tr:last-child td{
   display:none!important;
 }
 
-
-/* ==========================================================
-   INFORMATION BOX
-   ========================================================== */
-
-.info-box{
-  background:#f7f9f8;
-  border-radius:14px;
-  padding:18px;
-  margin-bottom:18px;
-  line-height:1.6;
-}
-
-.info-box strong{
-  color:#10251c;
-}
-
-
-/* ==========================================================
-   MOBILE
-   ========================================================== */
-
 @media(max-width:900px){
-
   .dashboard-grid{
     grid-template-columns:repeat(2,1fr);
   }
@@ -554,15 +429,9 @@ tr:last-child td{
   .course-grid{
     grid-template-columns:repeat(2,1fr);
   }
-
-  .tab-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
 }
 
 @media(max-width:600px){
-
   header{
     padding:14px;
   }
@@ -603,24 +472,6 @@ tr:last-child td{
     font-size:24px;
   }
 
-  .admin-tabs{
-    padding:18px 12px;
-    border-radius:20px;
-  }
-
-  .admin-tabs h2{
-    font-size:25px;
-  }
-
-  .tab-grid{
-    grid-template-columns:1fr;
-    gap:12px;
-  }
-
-  .admin-tab{
-    min-height:115px;
-  }
-
   .card{
     padding:20px 14px;
     border-radius:20px;
@@ -643,653 +494,215 @@ tr:last-child td{
     grid-template-columns:1fr;
   }
 
+  .info-grid{
+    grid-template-columns:1fr;
+  }
 }
-
 </style>
 </head>
 
 <body>
 
-
-<!-- ==========================================================
-     ACCESS CHECK
-     ========================================================== -->
-
 <div id="adminLoading" class="admin-loading">
-
   <div class="spinner"></div>
-
-  <h2>Checking administrator access...</h2>
-
-  <p class="muted">
-    Please wait.
-  </p>
-
+  <h2>Checking admin access...</h2>
+  <p class="muted">Please wait.</p>
 </div>
-
-
-<!-- ==========================================================
-     DASHBOARD
-     ========================================================== -->
 
 <div id="dashboard" class="hidden">
 
-
 <header>
-
   <div class="header-inner">
 
     <div class="brand">
-
-      <div class="brand-icon">
-        🎓
-      </div>
+      <div class="brand-icon">🎓</div>
 
       <div>
-
-        <h1>
-          Funda Online Academy
-        </h1>
-
-        <p>
-          Administrator Dashboard
-        </p>
-
+        <h1>Funda Online Academy</h1>
+        <p>Administrator Dashboard</p>
       </div>
-
     </div>
 
-
-    <button
-      id="logoutBtn"
-      class="logout-btn"
-    >
+    <button id="logoutBtn" class="logout-btn">
       Logout
     </button>
 
   </div>
-
 </header>
-
 
 <main>
 
+  <div id="message" class="message"></div>
 
-<div id="message" class="message"></div>
+  <!-- ======================================================
+       STATISTICS
+       ====================================================== -->
 
+  <div class="dashboard-grid">
 
-<!-- ==========================================================
-     STATISTICS
-     ========================================================== -->
-
-<div class="dashboard-grid">
-
-  <div class="stat">
-
-    <div class="stat-icon">
-      📚
+    <div class="stat">
+      <div class="stat-icon">📚</div>
+      <div class="stat-label">Courses</div>
+      <div id="courseCount" class="stat-value">0</div>
     </div>
 
-    <div class="stat-label">
-      Courses
+    <div class="stat">
+      <div class="stat-icon">👨🏽‍🎓</div>
+      <div class="stat-label">Students</div>
+      <div id="studentCount" class="stat-value">0</div>
     </div>
 
-    <div
-      id="courseCount"
-      class="stat-value"
-    >
-      0
+    <div class="stat">
+      <div class="stat-icon">📝</div>
+      <div class="stat-label">Enrolments</div>
+      <div id="enrollmentCount" class="stat-value">0</div>
     </div>
 
-  </div>
-
-
-  <div class="stat">
-
-    <div class="stat-icon">
-      👨🏽‍🎓
-    </div>
-
-    <div class="stat-label">
-      Students
-    </div>
-
-    <div
-      id="studentCount"
-      class="stat-value"
-    >
-      0
+    <div class="stat">
+      <div class="stat-icon">💳</div>
+      <div class="stat-label">Payments</div>
+      <div id="paymentCount" class="stat-value">0</div>
     </div>
 
   </div>
 
 
-  <div class="stat">
+  <!-- ======================================================
+       COURSES
+       ====================================================== -->
 
-    <div class="stat-icon">
-      📝
+  <section class="card">
+
+    <div class="card-title">
+      <span>📖</span>
+      <h2>Courses</h2>
     </div>
 
-    <div class="stat-label">
-      Enrolments
+    <p class="card-description">
+      View all courses available in the Funda Online Academy system.
+    </p>
+
+    <div class="section-tools">
+      <div></div>
+
+      <button id="refreshCourses" class="refresh-btn">
+        Refresh Courses
+      </button>
     </div>
 
-    <div
-      id="enrollmentCount"
-      class="stat-value"
-    >
-      0
+    <div id="coursesContent">
+      <div class="loading">
+        Loading courses...
+      </div>
     </div>
 
-  </div>
+  </section>
 
 
-  <div class="stat">
+  <!-- ======================================================
+       STUDENT ENROLMENTS
+       ====================================================== -->
 
-    <div class="stat-icon">
-      💳
+  <section class="card">
+
+    <div class="card-title">
+      <span>📝</span>
+      <h2>Student Enrolments</h2>
     </div>
 
-    <div class="stat-label">
-      Payments
+    <p class="card-description">
+      Review student requests and manage enrolment status.
+    </p>
+
+    <div class="section-tools">
+      <div></div>
+
+      <button id="refreshEnrollments" class="refresh-btn">
+        Refresh Enrolments
+      </button>
     </div>
 
-    <div
-      id="paymentCount"
-      class="stat-value"
-    >
-      0
+    <div id="enrollmentsContent">
+      <div class="loading">
+        Loading enrolments...
+      </div>
     </div>
 
-  </div>
+  </section>
 
-</div>
 
+  <!-- ======================================================
+       PAYMENTS
+       ====================================================== -->
 
-<!-- ==========================================================
-     EXACT SIX ADMIN TABS
-     ========================================================== -->
+  <section class="card">
 
-<section class="admin-tabs">
-
-  <h2>
-    Administration
-  </h2>
-
-  <p class="admin-tabs-description">
-    Manage the Funda Online Academy student learning journey from registration through enrolment, assessment, payment and certification.
-  </p>
-
-
-  <div class="tab-grid">
-
-
-    <!-- STUDENTS -->
-
-    <button
-      class="admin-tab active"
-      data-tab="students"
-    >
-
-      <div class="admin-tab-icon">
-        👨🏽‍🎓
-      </div>
-
-      <div class="admin-tab-title">
-        Students
-      </div>
-
-      <div class="admin-tab-description">
-        Manage registered students
-      </div>
-
-    </button>
-
-
-    <!-- COURSES -->
-
-    <button
-      class="admin-tab"
-      data-tab="courses"
-    >
-
-      <div class="admin-tab-icon">
-        📚
-      </div>
-
-      <div class="admin-tab-title">
-        Courses
-      </div>
-
-      <div class="admin-tab-description">
-        Manage courses and modules
-      </div>
-
-    </button>
-
-
-    <!-- ENROLMENTS -->
-
-    <button
-      class="admin-tab"
-      data-tab="enrollments"
-    >
-
-      <div class="admin-tab-icon">
-        📝
-      </div>
-
-      <div class="admin-tab-title">
-        Enrolments
-      </div>
-
-      <div class="admin-tab-description">
-        View student enrolments
-      </div>
-
-    </button>
-
-
-    <!-- ASSESSMENTS -->
-
-    <button
-      class="admin-tab"
-      data-tab="assessments"
-    >
-
-      <div class="admin-tab-icon">
-        📋
-      </div>
-
-      <div class="admin-tab-title">
-        Assessments
-      </div>
-
-      <div class="admin-tab-description">
-        Manage assessments and results
-      </div>
-
-    </button>
-
-
-    <!-- PAYMENTS -->
-
-    <button
-      class="admin-tab"
-      data-tab="payments"
-    >
-
-      <div class="admin-tab-icon">
-        💳
-      </div>
-
-      <div class="admin-tab-title">
-        Payments
-      </div>
-
-      <div class="admin-tab-description">
-        Manage student payments
-      </div>
-
-    </button>
-
-
-    <!-- CERTIFICATES -->
-
-    <button
-      class="admin-tab"
-      data-tab="certificates"
-    >
-
-      <div class="admin-tab-icon">
-        🏆
-      </div>
-
-      <div class="admin-tab-title">
-        Certificates
-      </div>
-
-      <div class="admin-tab-description">
-        Manage certificates
-      </div>
-
-    </button>
-
-
-  </div>
-
-</section>
-
-
-<!-- ==========================================================
-     STUDENTS TAB
-     ========================================================== -->
-
-<section
-  id="studentsPanel"
-  class="tab-panel active"
->
-
-<div class="card">
-
-  <div class="card-title">
-
-    <span>
-      👨🏽‍🎓
-    </span>
-
-    <h2>
-      Students
-    </h2>
-
-  </div>
-
-  <p class="card-description">
-    Manage registered Funda Online Academy students.
-  </p>
-
-
-  <div class="section-tools">
-
-    <div></div>
-
-    <button
-      id="refreshStudents"
-      class="refresh-btn"
-    >
-      Refresh Students
-    </button>
-
-  </div>
-
-
-  <div id="studentsContent">
-
-    <div class="loading">
-      Loading students...
+    <div class="card-title">
+      <span>💳</span>
+      <h2>Payments</h2>
     </div>
 
-  </div>
+    <p class="card-description">
+      View and manage student course payments.
+    </p>
 
-</div>
+    <div class="section-tools">
+      <div></div>
 
-</section>
-
-
-<!-- ==========================================================
-     COURSES TAB
-     ========================================================== -->
-
-<section
-  id="coursesPanel"
-  class="tab-panel"
->
-
-<div class="card">
-
-  <div class="card-title">
-
-    <span>
-      📚
-    </span>
-
-    <h2>
-      Courses
-    </h2>
-
-  </div>
-
-  <p class="card-description">
-    Manage the courses available to Funda Online Academy students.
-  </p>
-
-
-  <div class="section-tools">
-
-    <div></div>
-
-    <button
-      id="refreshCourses"
-      class="refresh-btn"
-    >
-      Refresh Courses
-    </button>
-
-  </div>
-
-
-  <div id="coursesContent">
-
-    <div class="loading">
-      Loading courses...
+      <button id="refreshPayments" class="refresh-btn">
+        Refresh Payments
+      </button>
     </div>
 
-  </div>
-
-</div>
-
-</section>
-
-
-<!-- ==========================================================
-     ENROLMENTS TAB
-     ========================================================== -->
-
-<section
-  id="enrollmentsPanel"
-  class="tab-panel"
->
-
-<div class="card">
-
-  <div class="card-title">
-
-    <span>
-      📝
-    </span>
-
-    <h2>
-      Enrolments
-    </h2>
-
-  </div>
-
-  <p class="card-description">
-    Review student course enrolments and manage their status.
-  </p>
-
-
-  <div class="section-tools">
-
-    <div></div>
-
-    <button
-      id="refreshEnrollments"
-      class="refresh-btn"
-    >
-      Refresh Enrolments
-    </button>
-
-  </div>
-
-
-  <div id="enrollmentsContent">
-
-    <div class="loading">
-      Loading enrolments...
+    <div id="paymentsContent">
+      <div class="loading">
+        Loading payments...
+      </div>
     </div>
 
-  </div>
-
-</div>
-
-</section>
+  </section>
 
 
-<!-- ==========================================================
-     ASSESSMENTS TAB
-     ========================================================== -->
+  <!-- ======================================================
+       SYSTEM INFORMATION
+       ====================================================== -->
 
-<section
-  id="assessmentsPanel"
-  class="tab-panel"
->
+  <section class="card">
 
-<div class="card">
-
-  <div class="card-title">
-
-    <span>
-      📋
-    </span>
-
-    <h2>
-      Assessments
-    </h2>
-
-  </div>
-
-  <p class="card-description">
-    Manage student assessments, marks, results and completion status.
-  </p>
-
-
-  <div class="section-tools">
-
-    <div></div>
-
-    <button
-      id="refreshAssessments"
-      class="refresh-btn"
-    >
-      Refresh Assessments
-    </button>
-
-  </div>
-
-
-  <div id="assessmentsContent">
-
-    <div class="loading">
-      Loading assessments...
+    <div class="card-title">
+      <span>⚙️</span>
+      <h2>System Information</h2>
     </div>
 
-  </div>
+    <p class="card-description">
+      Funda Online Academy administration system.
+    </p>
 
-</div>
+    <div class="info-grid">
 
-</section>
+      <div class="info-item">
+        <div class="info-label">System</div>
+        <div class="info-value">Funda Online Academy</div>
+      </div>
 
+      <div class="info-item">
+        <div class="info-label">Access</div>
+        <div class="info-value">Administrator</div>
+      </div>
 
-<!-- ==========================================================
-     PAYMENTS TAB
-     ========================================================== -->
+      <div class="info-item">
+        <div class="info-label">Authentication</div>
+        <div class="info-value">Supabase Authentication</div>
+      </div>
 
-<section
-  id="paymentsPanel"
-  class="tab-panel"
->
+      <div class="info-item">
+        <div class="info-label">Database</div>
+        <div class="info-value">Supabase Database</div>
+      </div>
 
-<div class="card">
-
-  <div class="card-title">
-
-    <span>
-      💳
-    </span>
-
-    <h2>
-      Payments
-    </h2>
-
-  </div>
-
-  <p class="card-description">
-    Manage student course payments and payment status.
-  </p>
-
-
-  <div class="section-tools">
-
-    <div></div>
-
-    <button
-      id="refreshPayments"
-      class="refresh-btn"
-    >
-      Refresh Payments
-    </button>
-
-  </div>
-
-
-  <div id="paymentsContent">
-
-    <div class="loading">
-      Loading payments...
     </div>
 
-  </div>
-
-</div>
-
-</section>
-
-
-<!-- ==========================================================
-     CERTIFICATES TAB
-     ========================================================== -->
-
-<section
-  id="certificatesPanel"
-  class="tab-panel"
->
-
-<div class="card">
-
-  <div class="card-title">
-
-    <span>
-      🏆
-    </span>
-
-    <h2>
-      Certificates
-    </h2>
-
-  </div>
-
-  <p class="card-description">
-    Manage certificates issued to students after successful completion.
-  </p>
-
-
-  <div class="section-tools">
-
-    <div></div>
-
-    <button
-      id="refreshCertificates"
-      class="refresh-btn"
-    >
-      Refresh Certificates
-    </button>
-
-  </div>
-
-
-  <div id="certificatesContent">
-
-    <div class="loading">
-      Loading certificates...
-    </div>
-
-  </div>
-
-</div>
-
-</section>
-
+  </section>
 
 </main>
 
@@ -1300,30 +713,21 @@ tr:last-child td{
 
 /* ============================================================
    FUNDA ONLINE ACADEMY
-   ADMINISTRATION SYSTEM
+   ADMIN DASHBOARD
    ============================================================ */
 
 
 /* ============================================================
-   SUPABASE
+   SUPABASE CONNECTION
    ============================================================ */
 
 const SUPABASE_URL =
-  window.SUPABASE_URL || "";
+  window.SUPABASE_URL ||
+  "https://YOUR-PROJECT.supabase.co";
 
 const SUPABASE_ANON_KEY =
-  window.SUPABASE_ANON_KEY || "";
-
-if(
-  !SUPABASE_URL ||
-  !SUPABASE_ANON_KEY
-){
-
-  console.error(
-    "Supabase configuration was not found."
-  );
-
-}
+  window.SUPABASE_ANON_KEY ||
+  "YOUR-SUPABASE-ANON-KEY";
 
 const { createClient } = supabase;
 
@@ -1338,86 +742,56 @@ const db = createClient(
    ============================================================ */
 
 const adminLoading =
-  document.getElementById(
-    "adminLoading"
-  );
+  document.getElementById("adminLoading");
 
 const dashboard =
-  document.getElementById(
-    "dashboard"
-  );
+  document.getElementById("dashboard");
 
 const message =
-  document.getElementById(
-    "message"
-  );
+  document.getElementById("message");
 
 const courseCount =
-  document.getElementById(
-    "courseCount"
-  );
+  document.getElementById("courseCount");
 
 const studentCount =
-  document.getElementById(
-    "studentCount"
-  );
+  document.getElementById("studentCount");
 
 const enrollmentCount =
-  document.getElementById(
-    "enrollmentCount"
-  );
+  document.getElementById("enrollmentCount");
 
 const paymentCount =
-  document.getElementById(
-    "paymentCount"
-  );
-
-const studentsContent =
-  document.getElementById(
-    "studentsContent"
-  );
+  document.getElementById("paymentCount");
 
 const coursesContent =
-  document.getElementById(
-    "coursesContent"
-  );
+  document.getElementById("coursesContent");
 
 const enrollmentsContent =
-  document.getElementById(
-    "enrollmentsContent"
-  );
-
-const assessmentsContent =
-  document.getElementById(
-    "assessmentsContent"
-  );
+  document.getElementById("enrollmentsContent");
 
 const paymentsContent =
-  document.getElementById(
-    "paymentsContent"
-  );
-
-const certificatesContent =
-  document.getElementById(
-    "certificatesContent"
-  );
+  document.getElementById("paymentsContent");
 
 const logoutBtn =
-  document.getElementById(
-    "logoutBtn"
-  );
+  document.getElementById("logoutBtn");
+
+const refreshCourses =
+  document.getElementById("refreshCourses");
+
+const refreshEnrollments =
+  document.getElementById("refreshEnrollments");
+
+const refreshPayments =
+  document.getElementById("refreshPayments");
 
 
 /* ============================================================
-   DATA
+   GLOBAL DATA
    ============================================================ */
 
-let students = [];
 let courses = [];
+let students = [];
 let enrollments = [];
-let assessments = [];
 let payments = [];
-let certificates = [];
 
 let currentUser = null;
 
@@ -1426,10 +800,9 @@ let currentUser = null;
    MESSAGE
    ============================================================ */
 
-function showMessage(
-  text,
-  type = "info"
-){
+function showMessage(text, type = "info") {
+
+  if (!message) return;
 
   message.textContent = text;
 
@@ -1439,10 +812,15 @@ function showMessage(
 }
 
 
-function hideMessage(){
+/* ============================================================
+   CLEAR MESSAGE
+   ============================================================ */
 
-  message.className =
-    "message";
+function hideMessage() {
+
+  if (!message) return;
+
+  message.className = "message";
 
 }
 
@@ -1451,38 +829,18 @@ function hideMessage(){
    ESCAPE HTML
    ============================================================ */
 
-function escapeHTML(value){
+function escapeHTML(value) {
 
-  if(
-    value === null ||
-    value === undefined
-  ){
-
+  if (value === null || value === undefined) {
     return "";
-
   }
 
   return String(value)
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 }
 
@@ -1491,27 +849,21 @@ function escapeHTML(value){
    MONEY
    ============================================================ */
 
-function formatMoney(value){
+function formatMoney(value) {
 
-  if(
+  if (
     value === null ||
     value === undefined ||
     value === ""
-  ){
-
+  ) {
     return "—";
-
   }
 
   const number =
     Number(value);
 
-  if(
-    Number.isNaN(number)
-  ){
-
+  if (Number.isNaN(number)) {
     return escapeHTML(value);
-
   }
 
   return "R" +
@@ -1524,23 +876,17 @@ function formatMoney(value){
    DATE
    ============================================================ */
 
-function formatDate(value){
+function formatDate(value) {
 
-  if(!value){
+  if (!value) {
     return "—";
   }
 
   const date =
     new Date(value);
 
-  if(
-    Number.isNaN(
-      date.getTime()
-    )
-  ){
-
+  if (Number.isNaN(date.getTime())) {
     return escapeHTML(value);
-
   }
 
   return date.toLocaleDateString(
@@ -1556,89 +902,19 @@ function formatDate(value){
 
 
 /* ============================================================
-   STATUS BADGE
+   GET CURRENT USER
    ============================================================ */
 
-function statusBadge(value){
+async function getCurrentUser() {
 
-  const status =
-    value ||
-    "pending";
-
-  const clean =
-    String(status)
-      .toLowerCase()
-      .replace(
-        /[^a-z0-9_-]/g,
-        ""
-      );
-
-  let className =
-    "other";
-
-  if(
-    [
-      "pending"
-    ].includes(clean)
-  ){
-
-    className =
-      "pending";
-
-  }
-
-  if(
-    [
-      "approved",
-      "completed",
-      "paid",
-      "active",
-      "passed"
-    ].includes(clean)
-  ){
-
-    className =
-      clean;
-
-  }
-
-  if(
-    [
-      "rejected",
-      "failed",
-      "cancelled"
-    ].includes(clean)
-  ){
-
-    className =
-      clean;
-
-  }
-
-  return `
-    <span class="badge ${className}">
-      ${escapeHTML(status)}
-    </span>
-  `;
-
-}
-
-
-/* ============================================================
-   CURRENT USER
-   ============================================================ */
-
-async function getCurrentUser(){
-
-  try{
+  try {
 
     const {
       data,
       error
-    } =
-      await db.auth.getUser();
+    } = await db.auth.getUser();
 
-    if(error){
+    if (error) {
 
       console.error(
         "Auth error:",
@@ -1646,12 +922,11 @@ async function getCurrentUser(){
       );
 
       return null;
-
     }
 
     return data?.user || null;
 
-  }catch(error){
+  } catch (error) {
 
     console.error(
       "Unexpected auth error:",
@@ -1659,50 +934,43 @@ async function getCurrentUser(){
     );
 
     return null;
-
   }
 
 }
 
 
 /* ============================================================
-   ADMIN CHECK
+   CHECK ADMIN
    ============================================================ */
 
-async function checkAdmin(user){
+async function checkAdmin(user) {
 
-  if(!user){
+  if (!user) {
     return false;
   }
 
 
   /* ----------------------------------------------------------
-     METHOD 1: EXISTING is_admin RPC
+     FIRST: TRY THE EXISTING is_admin() FUNCTION
      ---------------------------------------------------------- */
 
-  try{
+  try {
 
     const {
       data,
       error
-    } =
-      await db.rpc(
-        "is_admin"
-      );
+    } = await db.rpc("is_admin");
 
-    if(
-      !error &&
-      data === true
-    ){
+    if (!error && data === true) {
 
       return true;
 
     }
 
-  }catch(error){
+  } catch (error) {
 
     console.log(
-      "is_admin RPC unavailable",
+      "is_admin check unavailable:",
       error
     );
 
@@ -1710,70 +978,36 @@ async function checkAdmin(user){
 
 
   /* ----------------------------------------------------------
-     METHOD 2: PROFILES ROLE
+     SECOND: CHECK PROFILES ROLE
      ---------------------------------------------------------- */
 
-  try{
+  try {
 
     const {
       data,
       error
-    } =
-      await db
-        .from("profiles")
-        .select("role")
-        .eq(
-          "id",
-          user.id
-        )
-        .maybeSingle();
+    } = await db
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
 
-    if(
+    if (
       !error &&
       data &&
-      String(
-        data.role
-      ).toLowerCase()
-      === "admin"
-    ){
+      String(data.role).toLowerCase() === "admin"
+    ) {
 
       return true;
 
     }
 
-  }catch(error){
+  } catch (error) {
 
     console.log(
-      "Profiles check unavailable",
+      "Profile admin check failed:",
       error
     );
-
-  }
-
-
-  /* ----------------------------------------------------------
-     METHOD 3: USER METADATA
-     ---------------------------------------------------------- */
-
-  const metadata =
-    user.user_metadata || {};
-
-  if(
-    String(
-      metadata.role || ""
-    ).toLowerCase()
-    === "admin"
-  ){
-
-    return true;
-
-  }
-
-  if(
-    metadata.is_admin === true
-  ){
-
-    return true;
 
   }
 
@@ -1784,27 +1018,20 @@ async function checkAdmin(user){
 
 
 /* ============================================================
-   START
+   START DASHBOARD
    ============================================================ */
 
-async function startDashboard(){
+async function startDashboard() {
 
-  try{
+  try {
 
     currentUser =
       await getCurrentUser();
 
-
-    if(!currentUser){
-
-      /*
-       * IMPORTANT:
-       * Your repository has auth.html,
-       * NOT login.html.
-       */
+    if (!currentUser) {
 
       window.location.href =
-        "auth.html";
+        "login.html";
 
       return;
 
@@ -1817,27 +1044,20 @@ async function startDashboard(){
       );
 
 
-    if(!allowed){
+    if (!allowed) {
 
       adminLoading.innerHTML = `
-
-        <h2>
-          Access denied
-        </h2>
-
+        <h2>Access denied</h2>
         <p class="muted">
           This page is only available to authorised administrators.
         </p>
-
         <br>
-
         <button
           class="logout-btn"
           onclick="window.location.href='index.html'"
         >
           Return to website
         </button>
-
       `;
 
       return;
@@ -1854,10 +1074,9 @@ async function startDashboard(){
     );
 
 
-    await loadAll();
+    await loadEverything();
 
-
-  }catch(error){
+  } catch (error) {
 
     console.error(
       "Dashboard error:",
@@ -1865,17 +1084,10 @@ async function startDashboard(){
     );
 
     adminLoading.innerHTML = `
-
-      <h2>
-        Something went wrong
-      </h2>
-
+      <h2>Something went wrong</h2>
       <p class="muted">
-        ${escapeHTML(
-          error.message
-        )}
+        ${escapeHTML(error.message)}
       </p>
-
     `;
 
   }
@@ -1884,149 +1096,66 @@ async function startDashboard(){
 
 
 /* ============================================================
-   LOAD ALL
+   LOAD EVERYTHING
    ============================================================ */
 
-async function loadAll(){
+async function loadEverything() {
 
   hideMessage();
 
-
   await Promise.all([
-    loadStudents(),
     loadCourses(),
+    loadStudents(),
     loadEnrollments(),
-    loadAssessments(),
-    loadPayments(),
-    loadCertificates()
+    loadPayments()
   ]);
 
-
   updateStatistics();
-
-  renderStudents();
 
   renderCourses();
 
   renderEnrollments();
 
-  renderAssessments();
-
   renderPayments();
 
-  renderCertificates();
-
 }
 
 
 /* ============================================================
-   STUDENTS
+   LOAD COURSES
    ============================================================ */
 
-async function loadStudents(){
+async function loadCourses() {
 
-  studentsContent.innerHTML =
-    `<div class="loading">
-      Loading students...
-    </div>`;
+  coursesContent.innerHTML = `
+    <div class="loading">
+      Loading courses...
+    </div>
+  `;
 
 
-  try{
+  try {
 
     const {
       data,
       error
-    } =
-      await db
-        .from("students")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false
-          }
-        );
-
-
-    if(error){
-
-      console.error(
-        "Students error:",
-        error
+    } = await db
+      .from("courses")
+      .select("*")
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
       );
 
-      students = [];
 
-      studentsContent.innerHTML = `
-        <div class="error-box">
-          Unable to load students.
-          <br><br>
-          ${escapeHTML(
-            error.message
-          )}
-        </div>
-      `;
+    if (error) {
 
-      return;
-
-    }
-
-
-    students =
-      Array.isArray(data)
-        ? data
-        : [];
-
-
-  }catch(error){
-
-    students = [];
-
-    studentsContent.innerHTML = `
-      <div class="error-box">
-        Unable to load students.
-        <br><br>
-        ${escapeHTML(
-          error.message
-        )}
-      </div>
-    `;
-
-  }
-
-}
-
-
-/* ============================================================
-   COURSES
-   ============================================================ */
-
-async function loadCourses(){
-
-  coursesContent.innerHTML =
-    `<div class="loading">
-      Loading courses...
-    </div>`;
-
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-      await db
-        .from("courses")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false
-          }
-        );
-
-
-    if(error){
+      console.error(
+        "Courses error:",
+        error
+      );
 
       courses = [];
 
@@ -2034,9 +1163,7 @@ async function loadCourses(){
         <div class="error-box">
           Unable to load courses.
           <br><br>
-          ${escapeHTML(
-            error.message
-          )}
+          ${escapeHTML(error.message)}
         </div>
       `;
 
@@ -2051,7 +1178,12 @@ async function loadCourses(){
         : [];
 
 
-  }catch(error){
+  } catch (error) {
+
+    console.error(
+      "Courses exception:",
+      error
+    );
 
     courses = [];
 
@@ -2059,9 +1191,7 @@ async function loadCourses(){
       <div class="error-box">
         Unable to load courses.
         <br><br>
-        ${escapeHTML(
-          error.message
-        )}
+        ${escapeHTML(error.message)}
       </div>
     `;
 
@@ -2071,35 +1201,96 @@ async function loadCourses(){
 
 
 /* ============================================================
-   ENROLMENTS
+   LOAD STUDENTS
    ============================================================ */
 
-async function loadEnrollments(){
+async function loadStudents() {
 
-  enrollmentsContent.innerHTML =
-    `<div class="loading">
-      Loading enrolments...
-    </div>`;
-
-
-  try{
+  try {
 
     const {
       data,
       error
-    } =
-      await db
-        .from("enrollments")
-        .select("*")
-        .order(
-          "enrolled_at",
-          {
-            ascending:false
-          }
-        );
+    } = await db
+      .from("students")
+      .select("*")
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
+      );
 
 
-    if(error){
+    if (error) {
+
+      console.error(
+        "Students error:",
+        error
+      );
+
+      students = [];
+
+      return;
+
+    }
+
+
+    students =
+      Array.isArray(data)
+        ? data
+        : [];
+
+
+  } catch (error) {
+
+    console.error(
+      "Students exception:",
+      error
+    );
+
+    students = [];
+
+  }
+
+}
+
+
+/* ============================================================
+   LOAD ENROLMENTS
+   ============================================================ */
+
+async function loadEnrollments() {
+
+  enrollmentsContent.innerHTML = `
+    <div class="loading">
+      Loading enrolments...
+    </div>
+  `;
+
+
+  try {
+
+    const {
+      data,
+      error
+    } = await db
+      .from("enrollments")
+      .select("*")
+      .order(
+        "enrolled_at",
+        {
+          ascending:false
+        }
+      );
+
+
+    if (error) {
+
+      console.error(
+        "Enrolments error:",
+        error
+      );
 
       enrollments = [];
 
@@ -2107,9 +1298,7 @@ async function loadEnrollments(){
         <div class="error-box">
           Unable to load enrolments.
           <br><br>
-          ${escapeHTML(
-            error.message
-          )}
+          ${escapeHTML(error.message)}
         </div>
       `;
 
@@ -2124,7 +1313,12 @@ async function loadEnrollments(){
         : [];
 
 
-  }catch(error){
+  } catch (error) {
+
+    console.error(
+      "Enrolments exception:",
+      error
+    );
 
     enrollments = [];
 
@@ -2132,9 +1326,7 @@ async function loadEnrollments(){
       <div class="error-box">
         Unable to load enrolments.
         <br><br>
-        ${escapeHTML(
-          error.message
-        )}
+        ${escapeHTML(error.message)}
       </div>
     `;
 
@@ -2144,112 +1336,40 @@ async function loadEnrollments(){
 
 
 /* ============================================================
-   ASSESSMENTS
+   LOAD PAYMENTS
    ============================================================ */
 
-async function loadAssessments(){
+async function loadPayments() {
 
-  assessmentsContent.innerHTML =
-    `<div class="loading">
-      Loading assessments...
-    </div>`;
+  paymentsContent.innerHTML = `
+    <div class="loading">
+      Loading payments...
+    </div>
+  `;
 
 
-  try{
+  try {
 
     const {
       data,
       error
-    } =
-      await db
-        .from("assessments")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false
-          }
-        );
-
-
-    if(error){
-
-      console.warn(
-        "Assessments table:",
-        error.message
+    } = await db
+      .from("payments")
+      .select("*")
+      .order(
+        "created_at",
+        {
+          ascending:false
+        }
       );
 
-      assessments = [];
 
-      assessmentsContent.innerHTML = `
-        <div class="info-box">
-          <strong>Assessments database section is ready.</strong>
-          <br>
-          The assessments table is not currently available in Supabase.
-          Once the table is created, assessments and results will appear here.
-        </div>
-      `;
+    if (error) {
 
-      return;
-
-    }
-
-
-    assessments =
-      Array.isArray(data)
-        ? data
-        : [];
-
-
-  }catch(error){
-
-    assessments = [];
-
-    assessmentsContent.innerHTML = `
-      <div class="info-box">
-        <strong>Assessments section is ready.</strong>
-        <br>
-        ${escapeHTML(
-          error.message
-        )}
-      </div>
-    `;
-
-  }
-
-}
-
-
-/* ============================================================
-   PAYMENTS
-   ============================================================ */
-
-async function loadPayments(){
-
-  paymentsContent.innerHTML =
-    `<div class="loading">
-      Loading payments...
-    </div>`;
-
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-      await db
-        .from("payments")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false
-          }
-        );
-
-
-    if(error){
+      console.error(
+        "Payments error:",
+        error
+      );
 
       payments = [];
 
@@ -2257,9 +1377,7 @@ async function loadPayments(){
         <div class="error-box">
           Unable to load payments.
           <br><br>
-          ${escapeHTML(
-            error.message
-          )}
+          ${escapeHTML(error.message)}
         </div>
       `;
 
@@ -2274,7 +1392,12 @@ async function loadPayments(){
         : [];
 
 
-  }catch(error){
+  } catch (error) {
+
+    console.error(
+      "Payments exception:",
+      error
+    );
 
     payments = [];
 
@@ -2282,86 +1405,7 @@ async function loadPayments(){
       <div class="error-box">
         Unable to load payments.
         <br><br>
-        ${escapeHTML(
-          error.message
-        )}
-      </div>
-    `;
-
-  }
-
-}
-
-
-/* ============================================================
-   CERTIFICATES
-   ============================================================ */
-
-async function loadCertificates(){
-
-  certificatesContent.innerHTML =
-    `<div class="loading">
-      Loading certificates...
-    </div>`;
-
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-      await db
-        .from("certificates")
-        .select("*")
-        .order(
-          "created_at",
-          {
-            ascending:false
-          }
-        );
-
-
-    if(error){
-
-      console.warn(
-        "Certificates table:",
-        error.message
-      );
-
-      certificates = [];
-
-      certificatesContent.innerHTML = `
-        <div class="info-box">
-          <strong>Certificates database section is ready.</strong>
-          <br>
-          The certificates table is not currently available in Supabase.
-          Once the table is created, certificates will appear here.
-        </div>
-      `;
-
-      return;
-
-    }
-
-
-    certificates =
-      Array.isArray(data)
-        ? data
-        : [];
-
-
-  }catch(error){
-
-    certificates = [];
-
-    certificatesContent.innerHTML = `
-      <div class="info-box">
-        <strong>Certificates section is ready.</strong>
-        <br>
-        ${escapeHTML(
-          error.message
-        )}
+        ${escapeHTML(error.message)}
       </div>
     `;
 
@@ -2374,19 +1418,16 @@ async function loadCertificates(){
    FIND STUDENT
    ============================================================ */
 
-function findStudent(id){
+function findStudent(studentId) {
 
-  if(!id){
+  if (!studentId) {
     return null;
   }
 
   return students.find(
     student =>
-      String(
-        student.id
-      )
-      ===
-      String(id)
+      String(student.id) ===
+      String(studentId)
   ) || null;
 
 }
@@ -2396,38 +1437,37 @@ function findStudent(id){
    FIND COURSE
    ============================================================ */
 
-function findCourse(id){
+function findCourse(courseId) {
 
-  if(!id){
+  if (!courseId) {
     return null;
   }
 
   return courses.find(
     course =>
-      String(
-        course.id
-      )
-      ===
-      String(id)
+      String(course.id) ===
+      String(courseId)
   ) || null;
 
 }
 
 
 /* ============================================================
-   STUDENT NAME
+   GET STUDENT NAME
    ============================================================ */
 
-function getStudentName(id){
+function getStudentName(studentId) {
 
   const student =
-    findStudent(id);
+    findStudent(studentId);
 
-  if(!student){
+
+  if (!student) {
 
     return "Unknown student";
 
   }
+
 
   return (
     student.full_name ||
@@ -2441,19 +1481,21 @@ function getStudentName(id){
 
 
 /* ============================================================
-   COURSE NAME
+   GET COURSE NAME
    ============================================================ */
 
-function getCourseName(id){
+function getCourseName(courseId) {
 
   const course =
-    findCourse(id);
+    findCourse(courseId);
 
-  if(!course){
+
+  if (!course) {
 
     return "Unknown course";
 
   }
+
 
   return (
     course.title ||
@@ -2467,12 +1509,12 @@ function getCourseName(id){
 
 
 /* ============================================================
-   COURSE PRICE
+   GET COURSE PRICE
    ============================================================ */
 
-function getCoursePrice(course){
+function getCoursePrice(course) {
 
-  if(!course){
+  if (!course) {
     return null;
   }
 
@@ -2487,1162 +1529,12 @@ function getCoursePrice(course){
 
 
 /* ============================================================
-   STATISTICS
+   UPDATE STATISTICS
    ============================================================ */
 
-function updateStatistics(){
+function updateStatistics() {
 
   courseCount.textContent =
     courses.length;
 
-  studentCount.textContent =
-    students.length;
-
-  enrollmentCount.textContent =
-    enrollments.length;
-
-  paymentCount.textContent =
-    payments.length;
-
-}
-
-
-/* ============================================================
-   RENDER STUDENTS
-   ============================================================ */
-
-function renderStudents(){
-
-  if(!students.length){
-
-    studentsContent.innerHTML = `
-      <div class="empty">
-        No registered students found.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  let rows = "";
-
-
-  students.forEach(
-    student => {
-
-      const name =
-        student.full_name ||
-        student.name ||
-        "Unnamed";
-
-      rows += `
-
-        <tr>
-
-          <td>
-            <div class="student-name">
-              ${escapeHTML(name)}
-            </div>
-          </td>
-
-          <td>
-            ${escapeHTML(
-              student.email || "—"
-            )}
-          </td>
-
-          <td>
-            ${escapeHTML(
-              student.mobile_whatsapp ||
-              student.mobile ||
-              student.phone ||
-              "—"
-            )}
-          </td>
-
-          <td>
-            ${escapeHTML(
-              student.gender || "—"
-            )}
-          </td>
-
-          <td>
-            ${escapeHTML(
-              student.south_african_id ||
-              student.id_number ||
-              "Protected"
-            )}
-          </td>
-
-          <td>
-            ${formatDate(
-              student.created_at
-            )}
-          </td>
-
-        </tr>
-
-      `;
-
-    }
-  );
-
-
-  studentsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Mobile / WhatsApp</th>
-            <th>Gender</th>
-            <th>ID Number</th>
-            <th>Registered</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
-    </div>
-
-  `;
-
-}
-
-
-/* ============================================================
-   RENDER COURSES
-   ============================================================ */
-
-function renderCourses(){
-
-  if(!courses.length){
-
-    coursesContent.innerHTML = `
-      <div class="empty">
-        No courses found.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  coursesContent.innerHTML = `
-
-    <div class="course-grid">
-
-      ${
-        courses.map(
-          course => {
-
-            const name =
-              course.title ||
-              course.name ||
-              course.course_name ||
-              "Unnamed course";
-
-            const price =
-              getCoursePrice(
-                course
-              );
-
-            const description =
-              course.description ||
-              course.summary ||
-              course.details ||
-              "";
-
-            const status =
-              course.status ||
-              (
-                course.active === false
-                  ? "inactive"
-                  : "active"
-              );
-
-
-            return `
-
-              <div class="course-card">
-
-                <h3>
-                  ${escapeHTML(name)}
-                </h3>
-
-                <div class="course-description">
-                  ${escapeHTML(
-                    description
-                  )}
-                </div>
-
-                <div class="course-price">
-                  ${formatMoney(price)}
-                </div>
-
-                <div class="course-status">
-                  ${statusBadge(status)}
-                </div>
-
-              </div>
-
-            `;
-
-          }
-        ).join("")
-      }
-
-    </div>
-
-  `;
-
-}
-
-
-/* ============================================================
-   RENDER ENROLMENTS
-   ============================================================ */
-
-function renderEnrollments(){
-
-  if(!enrollments.length){
-
-    enrollmentsContent.innerHTML = `
-      <div class="empty">
-        No student enrolments found.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  let rows = "";
-
-
-  enrollments.forEach(
-    enrollment => {
-
-      const studentId =
-        enrollment.student_id ||
-        enrollment.user_id;
-
-      const courseId =
-        enrollment.course_id;
-
-
-      const status =
-        enrollment.status ||
-        "pending";
-
-
-      rows += `
-
-        <tr>
-
-          <td>
-            <div class="student-name">
-              ${escapeHTML(
-                getStudentName(
-                  studentId
-                )
-              )}
-            </div>
-          </td>
-
-          <td>
-            <div class="course-name">
-              ${escapeHTML(
-                getCourseName(
-                  courseId
-                )
-              )}
-            </div>
-          </td>
-
-          <td>
-            ${statusBadge(status)}
-          </td>
-
-          <td>
-            ${formatDate(
-              enrollment.enrolled_at ||
-              enrollment.created_at
-            )}
-          </td>
-
-          <td>
-
-            ${
-              String(status).toLowerCase()
-              === "pending"
-
-              ?
-
-              `
-
-                <button
-                  class="action-btn approve-btn"
-                  onclick="updateEnrollmentStatus(
-                    '${escapeHTML(
-                      enrollment.id
-                    )}',
-                    'approved'
-                  )"
-                >
-                  Approve
-                </button>
-
-                <button
-                  class="action-btn reject-btn"
-                  onclick="updateEnrollmentStatus(
-                    '${escapeHTML(
-                      enrollment.id
-                    )}',
-                    'rejected'
-                  )"
-                >
-                  Reject
-                </button>
-
-              `
-
-              :
-
-              `<span class="muted">
-                No action
-              </span>`
-
-            }
-
-          </td>
-
-        </tr>
-
-      `;
-
-    }
-  );
-
-
-  enrollmentsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
-    </div>
-
-  `;
-
-}
-
-
-/* ============================================================
-   UPDATE ENROLMENT
-   ============================================================ */
-
-async function updateEnrollmentStatus(
-  id,
-  status
-){
-
-  if(!id){
-    return;
-  }
-
-
-  try{
-
-    showMessage(
-      "Updating enrolment...",
-      "info"
-    );
-
-
-    const {
-      error
-    } =
-      await db
-        .from("enrollments")
-        .update({
-          status:status
-        })
-        .eq(
-          "id",
-          id
-        );
-
-
-    if(error){
-
-      throw error;
-
-    }
-
-
-    showMessage(
-      "Enrolment updated successfully.",
-      "success"
-    );
-
-
-    await loadEnrollments();
-
-    updateStatistics();
-
-    renderEnrollments();
-
-
-  }catch(error){
-
-    console.error(
-      error
-    );
-
-    showMessage(
-      "Unable to update enrolment: " +
-      error.message,
-      "error"
-    );
-
-  }
-
-}
-
-
-/* ============================================================
-   RENDER ASSESSMENTS
-   ============================================================ */
-
-function renderAssessments(){
-
-  if(!assessments.length){
-
-    /*
-     * Do not overwrite a useful database
-     * message created by loadAssessments().
-     */
-
-    if(
-      !assessmentsContent.innerHTML
-      ||
-      assessmentsContent.innerHTML.includes(
-        "Loading assessments"
-      )
-    ){
-
-      assessmentsContent.innerHTML = `
-        <div class="empty">
-          No assessments found.
-        </div>
-      `;
-
-    }
-
-    return;
-
-  }
-
-
-  let rows = "";
-
-
-  assessments.forEach(
-    assessment => {
-
-      const studentId =
-        assessment.student_id ||
-        assessment.user_id;
-
-      const courseId =
-        assessment.course_id;
-
-
-      const title =
-        assessment.title ||
-        assessment.name ||
-        assessment.assessment_name ||
-        "Assessment";
-
-
-      const mark =
-        assessment.mark ??
-        assessment.score ??
-        assessment.result ??
-        "—";
-
-
-      const status =
-        assessment.status ||
-        "pending";
-
-
-      rows += `
-
-        <tr>
-
-          <td>
-            ${escapeHTML(title)}
-          </td>
-
-          <td>
-            ${escapeHTML(
-              getStudentName(
-                studentId
-              )
-            )}
-          </td>
-
-          <td>
-            ${escapeHTML(
-              getCourseName(
-                courseId
-              )
-            )}
-          </td>
-
-          <td>
-            ${escapeHTML(mark)}
-          </td>
-
-          <td>
-            ${statusBadge(status)}
-          </td>
-
-          <td>
-            ${formatDate(
-              assessment.created_at
-            )}
-          </td>
-
-        </tr>
-
-      `;
-
-    }
-  );
-
-
-  assessmentsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Assessment</th>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Mark / Result</th>
-            <th>Status</th>
-            <th>Date</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
-    </div>
-
-  `;
-
-}
-
-
-/* ============================================================
-   RENDER PAYMENTS
-   ============================================================ */
-
-function renderPayments(){
-
-  if(!payments.length){
-
-    paymentsContent.innerHTML = `
-      <div class="empty">
-        No payments found.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  let rows = "";
-
-
-  payments.forEach(
-    payment => {
-
-      const studentId =
-        payment.student_id ||
-        payment.user_id;
-
-      const courseId =
-        payment.course_id;
-
-
-      const amount =
-        payment.amount ??
-        payment.total ??
-        payment.price;
-
-
-      const status =
-        payment.status ||
-        "pending";
-
-
-      rows += `
-
-        <tr>
-
-          <td>
-            <div class="student-name">
-              ${escapeHTML(
-                getStudentName(
-                  studentId
-                )
-              )}
-            </div>
-          </td>
-
-          <td>
-            ${escapeHTML(
-              getCourseName(
-                courseId
-              )
-            )}
-          </td>
-
-          <td class="amount">
-            ${formatMoney(amount)}
-          </td>
-
-          <td>
-            ${statusBadge(status)}
-          </td>
-
-          <td>
-            ${escapeHTML(
-              payment.payment_method ||
-              payment.method ||
-              "—"
-            )}
-          </td>
-
-          <td>
-            ${formatDate(
-              payment.created_at
-            )}
-          </td>
-
-        </tr>
-
-      `;
-
-    }
-  );
-
-
-  paymentsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Payment Method</th>
-            <th>Date</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
-    </div>
-
-  `;
-
-}
-
-
-/* ============================================================
-   RENDER CERTIFICATES
-   ============================================================ */
-
-function renderCertificates(){
-
-  if(!certificates.length){
-
-    if(
-      !certificatesContent.innerHTML
-      ||
-      certificatesContent.innerHTML.includes(
-        "Loading certificates"
-      )
-    ){
-
-      certificatesContent.innerHTML = `
-        <div class="empty">
-          No certificates found.
-        </div>
-      `;
-
-    }
-
-    return;
-
-  }
-
-
-  let rows = "";
-
-
-  certificates.forEach(
-    certificate => {
-
-      const studentId =
-        certificate.student_id ||
-        certificate.user_id;
-
-
-      const courseId =
-        certificate.course_id;
-
-
-      const certificateNumber =
-        certificate.certificate_number ||
-        certificate.certificate_no ||
-        certificate.number ||
-        "—";
-
-
-      const status =
-        certificate.status ||
-        "active";
-
-
-      rows += `
-
-        <tr>
-
-          <td>
-            <div class="student-name">
-              ${escapeHTML(
-                getStudentName(
-                  studentId
-                )
-              )}
-            </div>
-          </td>
-
-          <td>
-            ${escapeHTML(
-              getCourseName(
-                courseId
-              )
-            )}
-          </td>
-
-          <td>
-            ${escapeHTML(
-              certificateNumber
-            )}
-          </td>
-
-          <td>
-            ${statusBadge(status)}
-          </td>
-
-          <td>
-            ${formatDate(
-              certificate.issued_at ||
-              certificate.created_at
-            )}
-          </td>
-
-        </tr>
-
-      `;
-
-    }
-  );
-
-
-  certificatesContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Certificate No.</th>
-            <th>Status</th>
-            <th>Issued</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
-    </div>
-
-  `;
-
-}
-
-
-/* ============================================================
-   TAB SWITCHING
-   ============================================================ */
-
-document
-  .querySelectorAll(".admin-tab")
-  .forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        async function(){
-
-          const tab =
-            this.dataset.tab;
-
-
-          /*
-           * Remove active state
-           */
-
-          document
-            .querySelectorAll(
-              ".admin-tab"
-            )
-            .forEach(
-              item =>
-                item.classList.remove(
-                  "active"
-                )
-            );
-
-
-          document
-            .querySelectorAll(
-              ".tab-panel"
-            )
-            .forEach(
-              panel =>
-                panel.classList.remove(
-                  "active"
-                )
-            );
-
-
-          /*
-           * Activate selected tab
-           */
-
-          this.classList.add(
-            "active"
-          );
-
-
-          const panel =
-            document.getElementById(
-              tab + "Panel"
-            );
-
-
-          if(panel){
-
-            panel.classList.add(
-              "active"
-            );
-
-          }
-
-
-          /*
-           * Load the selected section
-           */
-
-          if(tab === "students"){
-
-            await loadStudents();
-
-            renderStudents();
-
-          }
-
-          if(tab === "courses"){
-
-            await loadCourses();
-
-            renderCourses();
-
-          }
-
-          if(tab === "enrollments"){
-
-            await loadEnrollments();
-
-            renderEnrollments();
-
-          }
-
-          if(tab === "assessments"){
-
-            await loadAssessments();
-
-            renderAssessments();
-
-          }
-
-          if(tab === "payments"){
-
-            await loadPayments();
-
-            renderPayments();
-
-          }
-
-          if(tab === "certificates"){
-
-            await loadCertificates();
-
-            renderCertificates();
-
-          }
-
-
-          /*
-           * Move the selected section into view
-           */
-
-          if(panel){
-
-            setTimeout(
-              () => {
-
-                panel.scrollIntoView({
-                  behavior:"smooth",
-                  block:"start"
-                });
-
-              },
-              50
-            );
-
-          }
-
-        }
-      );
-
-    }
-  );
-
-
-/* ============================================================
-   REFRESH BUTTONS
-   ============================================================ */
-
-document
-  .getElementById(
-    "refreshStudents"
-  )
-  .addEventListener(
-    "click",
-    async () => {
-
-      await loadStudents();
-
-      renderStudents();
-
-      updateStatistics();
-
-    }
-  );
-
-
-document
-  .getElementById(
-    "refreshCourses"
-  )
-  .addEventListener(
-    "click",
-    async () => {
-
-      await loadCourses();
-
-      renderCourses();
-
-      updateStatistics();
-
-    }
-  );
-
-
-document
-  .getElementById(
-    "refreshEnrollments"
-  )
-  .addEventListener(
-    "click",
-    async () => {
-
-      await loadEnrollments();
-
-      renderEnrollments();
-
-      updateStatistics();
-
-    }
-  );
-
-
-document
-  .getElementById(
-    "refreshAssessments"
-  )
-  .addEventListener(
-    "click",
-    async () => {
-
-      await loadAssessments();
-
-      renderAssessments();
-
-    }
-  );
-
-
-document
-  .getElementById(
-    "refreshPayments"
-  )
-  .addEventListener(
-    "click",
-    async () => {
-
-      await loadPayments();
-
-      renderPayments();
-
-      updateStatistics();
-
-    }
-  );
-
-
-document
-  .getElementById(
-    "refreshCertificates"
-  )
-  .addEventListener(
-    "click",
-    async () => {
-
-      await loadCertificates();
-
-      renderCertificates();
-
-    }
-  );
-
-
-/* ============================================================
-   LOGOUT
-   ============================================================ */
-
-logoutBtn.addEventListener(
-  "click",
-  async () => {
-
-    try{
-
-      await db.auth.signOut();
-
-    }catch(error){
-
-      console.error(
-        "Logout error:",
-        error
-      );
-
-    }
-
-
-    window.location.href =
-      "auth.html";
-
-  }
-);
-
-
-/* ============================================================
-   START
-   ============================================================ */
-
-startDashboard();
-
-</script>
-
-</body>
-  </html>
+  studentCount.textContent 
