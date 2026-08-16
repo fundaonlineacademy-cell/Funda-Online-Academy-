@@ -4,2757 +4,781 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Funda Online Academy - Admin Dashboard</title>
+<title>Funda Online Academy - Admin</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
 }
 
 body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f4f7f5;
-  color:#10251c;
-  min-height:100vh;
-}
-
-button,
-input,
-textarea,
-select{
-  font-family:inherit;
-}
-
-button{
-  border:0;
-  cursor:pointer;
-}
-
-.hidden{
-  display:none!important;
+    background:#f3f7f5;
+    color:#12332b;
+    min-height:100vh;
 }
 
 header{
-  background:#fff;
-  border-bottom:1px solid #e1e7e3;
-  padding:18px 20px;
-  position:sticky;
-  top:0;
-  z-index:20;
+    background:#063b2e;
+    color:white;
+    padding:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
 }
 
-.header-inner{
-  max-width:1250px;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
+header h1{
+    font-size:22px;
 }
 
-.brand{
-  display:flex;
-  align-items:center;
-  gap:12px;
+header p{
+    font-size:13px;
+    opacity:.8;
+    margin-top:4px;
 }
 
-.brand-icon{
-  width:48px;
-  height:48px;
-  border-radius:14px;
-  background:#0c8f55;
-  color:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:25px;
+button{
+    border:0;
+    border-radius:10px;
+    padding:12px 18px;
+    font-weight:bold;
+    cursor:pointer;
 }
 
-.brand h1{
-  font-size:22px;
+.logout{
+    background:white;
+    color:#063b2e;
 }
 
-.brand p{
-  color:#68766f;
-  font-size:13px;
-  margin-top:3px;
-}
-
-.logout-btn{
-  background:#10251c;
-  color:white;
-  padding:12px 17px;
-  border-radius:10px;
-  font-weight:bold;
-}
-
-main{
-  max-width:1250px;
-  margin:auto;
-  padding:25px 16px 70px;
-}
-
-.message{
-  padding:15px 18px;
-  border-radius:12px;
-  margin-bottom:20px;
-  display:none;
-  font-size:15px;
-}
-
-.message.show{
-  display:block;
-}
-
-.message.success{
-  background:#e5f8ed;
-  color:#11683d;
-  border:1px solid #bde8cf;
-}
-
-.message.error{
-  background:#fff0f0;
-  color:#a12626;
-  border:1px solid #f0c5c5;
-}
-
-.message.info{
-  background:#eef6ff;
-  color:#245a91;
-  border:1px solid #cbdff5;
-}
-
-.dashboard-grid{
-  display:grid;
-  grid-template-columns:repeat(6,1fr);
-  gap:14px;
-  margin-bottom:24px;
-}
-
-.stat{
-  background:white;
-  border:1px solid #e2e8e4;
-  border-radius:18px;
-  padding:18px;
-  box-shadow:0 5px 20px rgba(16,37,28,.04);
-}
-
-.stat-icon{
-  font-size:24px;
-  margin-bottom:8px;
-}
-
-.stat-label{
-  color:#68766f;
-  font-size:13px;
-}
-
-.stat-value{
-  font-size:28px;
-  font-weight:800;
-  margin-top:5px;
+.container{
+    max-width:1100px;
+    margin:25px auto;
+    padding:0 15px;
 }
 
 .card{
-  background:white;
-  border:1px solid #e2e8e4;
-  border-radius:24px;
-  padding:28px;
-  margin-bottom:24px;
-  box-shadow:0 8px 30px rgba(16,37,28,.04);
-  overflow:hidden;
+    background:white;
+    border-radius:18px;
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow:0 4px 18px rgba(0,0,0,.07);
 }
 
-.card-title{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin-bottom:8px;
+.center{
+    min-height:70vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
-.card-title span{
-  font-size:32px;
-}
-
-.card-title h2{
-  font-size:28px;
-}
-
-.card-description{
-  color:#68766f;
-  font-size:16px;
-  line-height:1.55;
-  margin-bottom:20px;
-}
-
-.section-tools{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:18px;
-  flex-wrap:wrap;
-}
-
-.refresh-btn,
-.primary-btn{
-  background:#0c8f55;
-  color:#fff;
-  padding:11px 16px;
-  border-radius:10px;
-  font-weight:bold;
-}
-
-.secondary-btn{
-  background:#e9efeb;
-  color:#23382d;
-  padding:11px 16px;
-  border-radius:10px;
-  font-weight:bold;
-}
-
-.danger-btn{
-  background:#b72d2d;
-  color:#fff;
-  padding:10px 14px;
-  border-radius:9px;
-  font-weight:bold;
-}
-
-.course-form{
-  background:#f7f9f8;
-  border:1px solid #e0e7e3;
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:22px;
-}
-
-.course-form h3{
-  font-size:21px;
-  margin-bottom:15px;
-}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px;
-}
-
-.form-group{
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.form-group.full{
-  grid-column:1/-1;
-}
-
-.form-group label{
-  font-weight:bold;
-  font-size:14px;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select{
-  width:100%;
-  padding:12px 13px;
-  border:1px solid #cbd5cf;
-  border-radius:10px;
-  background:#fff;
-  color:#10251c;
-  font-size:15px;
-  outline:none;
-}
-
-.form-group textarea{
-  min-height:110px;
-  resize:vertical;
-}
-
-.form-help{
-  color:#6d7973;
-  font-size:12px;
-}
-
-.form-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:18px;
-}
-
-.table-wrap{
-  width:100%;
-  overflow-x:auto;
-  border:1px solid #e3e8e5;
-  border-radius:15px;
-}
-
-table{
-  width:100%;
-  min-width:850px;
-  border-collapse:collapse;
-}
-
-th{
-  text-align:left;
-  background:#f7f9f8;
-  color:#34443c;
-  padding:14px;
-  font-size:13px;
-  border-bottom:1px solid #e1e7e3;
-  white-space:nowrap;
-}
-
-td{
-  padding:14px;
-  border-bottom:1px solid #e8ecea;
-  vertical-align:top;
-  font-size:14px;
-}
-
-tr:last-child td{
-  border-bottom:0;
-}
-
-tr:hover td{
-  background:#fbfdfc;
-}
-
-.student-name,
-.course-name{
-  font-weight:bold;
-}
-
-.muted{
-  color:#7b8781;
-}
-
-.small{
-  font-size:12px;
-  color:#6d7973;
-}
-
-.badge{
-  display:inline-block;
-  padding:7px 11px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:bold;
-  text-transform:capitalize;
-  white-space:nowrap;
-}
-
-.badge.pending{
-  background:#fff4d8;
-  color:#8b5b00;
-}
-
-.badge.approved,
-.badge.completed,
-.badge.paid,
-.badge.active,
-.badge.passed,
-.badge.issued{
-  background:#e3f7eb;
-  color:#11683d;
-}
-
-.badge.rejected,
-.badge.failed,
-.badge.cancelled,
-.badge.unpaid{
-  background:#ffe9e9;
-  color:#a12626;
-}
-
-.badge.other{
-  background:#eef1ef;
-  color:#4d5a53;
-}
-
-.action-select{
-  padding:8px 10px;
-  border:1px solid #cbd5cf;
-  border-radius:8px;
-  background:#fff;
-  min-width:120px;
-}
-
-.action-btn{
-  padding:8px 11px;
-  border-radius:8px;
-  font-size:12px;
-  font-weight:bold;
-  margin:2px;
-}
-
-.edit-btn{
-  background:#e7f1ff;
-  color:#1557a0;
-}
-
-.delete-btn{
-  background:#ffe9e9;
-  color:#a12626;
-}
-
-.view-btn{
-  background:#e3f7eb;
-  color:#11683d;
-}
-
-.proof-link{
-  color:#0c8f55;
-  font-weight:bold;
-  text-decoration:none;
-}
-
-.course-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-}
-
-.course-card{
-  border:1px solid #e1e8e4;
-  border-radius:16px;
-  padding:18px;
-  background:#fbfcfb;
-}
-
-.course-card h3{
-  font-size:18px;
-  margin-bottom:9px;
-}
-
-.course-description{
-  color:#68766f;
-  line-height:1.5;
-  font-size:14px;
-}
-
-.course-price{
-  font-size:20px;
-  font-weight:800;
-  margin-top:12px;
-  color:#0c8f55;
-}
-
-.course-meta{
-  margin-top:10px;
-  color:#68766f;
-  font-size:13px;
-  line-height:1.7;
-}
-
-.course-actions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:15px;
-}
-
-.empty{
-  text-align:center;
-  padding:30px 15px;
-  color:#6d7973;
-  font-size:15px;
-}
-
-.loading{
-  padding:25px 0;
-  color:#68766f;
-  font-size:16px;
-  text-align:center;
-}
-
-.error-box{
-  background:#fff4f4;
-  color:#9c2626;
-  border:1px solid #efcaca;
-  border-radius:12px;
-  padding:15px;
-  line-height:1.5;
-}
-
-.info-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:14px;
-}
-
-.info-item{
-  background:#f7f9f8;
-  padding:14px;
-  border-radius:12px;
-}
-
-.info-label{
-  color:#6d7973;
-  font-size:12px;
-  margin-bottom:5px;
-  text-transform:uppercase;
-}
-
-.info-value{
-  font-weight:600;
-  word-break:break-word;
-}
-
-.admin-loading{
-  max-width:500px;
-  margin:100px auto;
-  background:#fff;
-  border-radius:22px;
-  padding:30px;
-  text-align:center;
-  border:1px solid #e1e7e3;
-}
-
-.admin-loading h2{
-  margin-bottom:10px;
+.loading-card{
+    max-width:600px;
+    width:100%;
+    text-align:center;
 }
 
 .spinner{
-  width:38px;
-  height:38px;
-  border:4px solid #dce8e1;
-  border-top-color:#0c8f55;
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-  margin:20px auto;
+    width:55px;
+    height:55px;
+    border:7px solid #dce9e4;
+    border-top:7px solid #15966c;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:0 auto 25px;
 }
 
 @keyframes spin{
-  to{
-    transform:rotate(360deg);
-  }
+    to{
+        transform:rotate(360deg);
+    }
 }
 
-@media(max-width:1100px){
-  .dashboard-grid{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .course-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
+.message{
+    padding:15px;
+    border-radius:10px;
+    margin-top:15px;
+    line-height:1.5;
 }
 
-@media(max-width:800px){
-  .dashboard-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .form-grid{
-    grid-template-columns:1fr;
-  }
-
-  .form-group.full{
-    grid-column:auto;
-  }
-
-  .info-grid{
-    grid-template-columns:1fr;
-  }
+.error{
+    background:#ffe9e9;
+    color:#9b1c1c;
 }
 
-@media(max-width:600px){
-  header{
-    padding:14px;
-  }
+.success{
+    background:#e6f8ef;
+    color:#11613f;
+}
 
-  .header-inner{
-    align-items:flex-start;
-  }
+.hidden{
+    display:none!important;
+}
 
-  .brand h1{
-    font-size:18px;
-  }
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+}
 
-  .brand-icon{
-    width:42px;
-    height:42px;
-    font-size:21px;
-  }
+.stat{
+    background:#f8fbfa;
+    border-radius:14px;
+    padding:20px;
+    border:1px solid #e1ece8;
+}
 
-  .logout-btn{
-    padding:9px 11px;
-    font-size:12px;
-  }
+.stat h3{
+    font-size:15px;
+    margin-bottom:10px;
+}
 
-  main{
-    padding:18px 10px 40px;
-  }
+.stat strong{
+    font-size:30px;
+    color:#07865f;
+}
 
-  .dashboard-grid{
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-
-  .stat{
-    padding:14px;
-  }
-
-  .stat-value{
-    font-size:23px;
-  }
-
-  .card{
-    padding:20px 14px;
-    border-radius:20px;
+.section-title{
     margin-bottom:18px;
-  }
+}
 
-  .card-title h2{
-    font-size:24px;
-  }
+.action-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+}
 
-  .card-title span{
-    font-size:28px;
-  }
+.action{
+    background:#063b2e;
+    color:white;
+    text-align:center;
+    padding:20px;
+    border-radius:14px;
+}
 
-  .course-grid{
-    grid-template-columns:1fr;
-  }
+.action:hover{
+    background:#095441;
+}
 
-  .admin-loading{
-    margin:60px 15px;
-  }
+.small{
+    font-size:13px;
+    color:#64746e;
+    margin-top:8px;
+}
+
+pre{
+    white-space:pre-wrap;
+    word-break:break-word;
 }
 </style>
 </head>
 
 <body>
 
-<div id="adminLoading" class="admin-loading">
-  <div class="spinner"></div>
-  <h2>Checking admin access...</h2>
-  <p class="muted">Please wait.</p>
+<!-- LOADING SCREEN -->
+<div id="loadingScreen" class="center">
+    <div class="card loading-card">
+
+        <div class="spinner"></div>
+
+        <h2 id="loadingTitle">
+            Checking admin access...
+        </h2>
+
+        <p id="loadingText" style="margin-top:10px;">
+            Please wait.
+        </p>
+
+        <div id="errorBox" class="message error hidden"></div>
+
+    </div>
 </div>
 
+
+<!-- ADMIN DASHBOARD -->
 <div id="dashboard" class="hidden">
 
 <header>
-  <div class="header-inner">
 
-    <div class="brand">
-
-      <div class="brand-icon">🎓</div>
-
-      <div>
+    <div>
         <h1>Funda Online Academy</h1>
         <p>Administrator Dashboard</p>
-      </div>
-
     </div>
 
-    <button
-      id="logoutBtn"
-      class="logout-btn"
-      type="button">
-      Logout
+    <button class="logout" onclick="logout()">
+        Logout
     </button>
 
-  </div>
 </header>
 
-<main>
 
-<div id="message" class="message"></div>
+<div class="container">
 
-<div class="dashboard-grid">
+    <div class="card">
 
-  <div class="stat">
-    <div class="stat-icon">📚</div>
-    <div class="stat-label">Courses</div>
-    <div id="courseCount" class="stat-value">0</div>
-  </div>
+        <h2>
+            Welcome, Administrator
+        </h2>
 
-  <div class="stat">
-    <div class="stat-icon">👨🏽‍🎓</div>
-    <div class="stat-label">Students</div>
-    <div id="studentCount" class="stat-value">0</div>
-  </div>
+        <p class="small" id="adminEmail">
+            Loading administrator account...
+        </p>
 
-  <div class="stat">
-    <div class="stat-icon">📝</div>
-    <div class="stat-label">Enrolments</div>
-    <div id="enrollmentCount" class="stat-value">0</div>
-  </div>
+    </div>
 
-  <div class="stat">
-    <div class="stat-icon">💳</div>
-    <div class="stat-label">Payments</div>
-    <div id="paymentCount" class="stat-value">0</div>
-  </div>
 
-  <div class="stat">
-    <div class="stat-icon">📊</div>
-    <div class="stat-label">Results</div>
-    <div id="resultCount" class="stat-value">0</div>
-  </div>
+    <div class="dashboard-grid">
 
-  <div class="stat">
-    <div class="stat-icon">🎓</div>
-    <div class="stat-label">Certificates</div>
-    <div id="certificateCount" class="stat-value">0</div>
-  </div>
+        <div class="stat">
+            <h3>Students</h3>
+            <strong id="studentCount">—</strong>
+            <p class="small">
+                Registered students
+            </p>
+        </div>
+
+        <div class="stat">
+            <h3>Courses</h3>
+            <strong id="courseCount">—</strong>
+            <p class="small">
+                Available courses
+            </p>
+        </div>
+
+        <div class="stat">
+            <h3>Enrolments</h3>
+            <strong id="enrolmentCount">—</strong>
+            <p class="small">
+                Student enrolments
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2 class="section-title">
+            Administration
+        </h2>
+
+        <div class="action-grid">
+
+            <div class="action">
+                <h3>Students</h3>
+                <p style="margin-top:8px;">
+                    Manage registered students
+                </p>
+            </div>
+
+            <div class="action">
+                <h3>Courses</h3>
+                <p style="margin-top:8px;">
+                    Manage courses and modules
+                </p>
+            </div>
+
+            <div class="action">
+                <h3>Enrolments</h3>
+                <p style="margin-top:8px;">
+                    View student enrolments
+                </p>
+            </div>
+
+            <div class="action">
+                <h3>Assessments</h3>
+                <p style="margin-top:8px;">
+                    Manage assessments and results
+                </p>
+            </div>
+
+            <div class="action">
+                <h3>Payments</h3>
+                <p style="margin-top:8px;">
+                    Manage student payments
+                </p>
+            </div>
+
+            <div class="action">
+                <h3>Certificates</h3>
+                <p style="margin-top:8px;">
+                    Manage certificates
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div id="statusCard" class="card">
+
+        <h2>System status</h2>
+
+        <div id="statusMessage" class="message success">
+            Supabase connection is being checked...
+        </div>
+
+    </div>
 
 </div>
 
-<section class="card">
-
-  <div class="card-title">
-    <span>📖</span>
-    <h2>Courses</h2>
-  </div>
-
-  <p class="card-description">
-    Add, edit, manage and remove Funda Online Academy courses.
-  </p>
-
-  <div class="section-tools">
-
-    <button
-      id="newCourseBtn"
-      class="primary-btn"
-      type="button">
-      + Add New Course
-    </button>
-
-    <button
-      id="refreshCourses"
-      class="refresh-btn"
-      type="button">
-      Refresh Courses
-    </button>
-
-  </div>
-
-  <div id="courseFormBox" class="course-form hidden">
-
-    <h3 id="courseFormTitle">Add New Course</h3>
-
-    <form id="courseForm">
-
-      <input type="hidden" id="courseId">
-
-      <div class="form-grid">
-
-        <div class="form-group">
-
-          <label for="courseName">
-            Course Name *
-          </label>
-
-          <input
-            id="courseName"
-            type="text"
-            placeholder="Example: Cashier Short Course"
-            required>
-
-        </div>
-
-        <div class="form-group">
-
-          <label for="coursePrice">
-            Price (R)
-          </label>
-
-          <input
-            id="coursePrice"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="440">
-
-        </div>
-
-        <div class="form-group">
-
-          <label for="courseCategory">
-            Category
-          </label>
-
-          <input
-            id="courseCategory"
-            type="text"
-            placeholder="Retail / Hospitality / Safety">
-
-        </div>
-
-        <div class="form-group">
-
-          <label for="courseDuration">
-            Duration
-          </label>
-
-          <input
-            id="courseDuration"
-            type="text"
-            placeholder="Example: 2 weeks">
-
-        </div>
-
-        <div class="form-group full">
-
-          <label for="courseImage">
-            Course Image URL
-          </label>
-
-          <input
-            id="courseImage"
-            type="text"
-            placeholder="https://...">
-
-          <div class="form-help">
-            You can leave this blank if you do not have an image yet.
-          </div>
-
-        </div>
-
-        <div class="form-group full">
-
-          <label for="courseDescription">
-            Course Description
-          </label>
-
-          <textarea
-            id="courseDescription"
-            placeholder="Explain what students will learn on this course."></textarea>
-
-        </div>
-
-        <div class="form-group full">
-
-          <label for="courseModules">
-            Course Modules
-          </label>
-
-          <textarea
-            id="courseModules"
-            placeholder="Module 1: Introduction&#10;Module 2: Customer Service&#10;Module 3: Practical Skills"></textarea>
-
-          <div class="form-help">
-            Enter one module per line.
-          </div>
-
-        </div>
-
-        <div class="form-group">
-
-          <label for="courseActive">
-            Course Status
-          </label>
-
-          <select id="courseActive">
-
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
-
-          </select>
-
-        </div>
-
-      </div>
-
-      <div class="form-actions">
-
-        <button
-          type="submit"
-          class="primary-btn">
-          Save Course
-        </button>
-
-        <button
-          type="button"
-          id="cancelCourse"
-          class="secondary-btn">
-          Cancel
-        </button>
-
-      </div>
-
-    </form>
-
-  </div>
-
-  <div id="coursesContent" class="loading">
-    Loading courses...
-  </div>
-
-</section>
-
-<section class="card">
-
-  <div class="card-title">
-    <span>👨🏽‍🎓</span>
-    <h2>Students</h2>
-  </div>
-
-  <p class="card-description">
-    Registered students and their administration information.
-  </p>
-
-  <div class="section-tools">
-
-    <div></div>
-
-    <button
-      id="refreshStudents"
-      class="refresh-btn"
-      type="button">
-      Refresh Students
-    </button>
-
-  </div>
-
-  <div id="studentsContent" class="loading">
-    Loading students...
-  </div>
-
-</section>
-
-<section class="card">
-
-  <div class="card-title">
-    <span>📝</span>
-    <h2>Student Enrolments</h2>
-  </div>
-
-  <p class="card-description">
-    Review student course enrolments and approve or reject requests.
-  </p>
-
-  <div class="section-tools">
-
-    <div></div>
-
-    <button
-      id="refreshEnrollments"
-      class="refresh-btn"
-      type="button">
-      Refresh Enrolments
-    </button>
-
-  </div>
-
-  <div id="enrollmentsContent" class="loading">
-    Loading enrolments...
-  </div>
-
-</section>
-
-<section class="card">
-
-  <div class="card-title">
-    <span>💳</span>
-    <h2>Payments</h2>
-  </div>
-
-  <p class="card-description">
-    Review payments, payment methods and uploaded payment proof.
-  </p>
-
-  <div class="section-tools">
-
-    <div></div>
-
-    <button
-      id="refreshPayments"
-      class="refresh-btn"
-      type="button">
-      Refresh Payments
-    </button>
-
-  </div>
-
-  <div id="paymentsContent" class="loading">
-    Loading payments...
-  </div>
-
-</section>
-
-<section class="card">
-
-  <div class="card-title">
-    <span>📊</span>
-    <h2>Results</h2>
-  </div>
-
-  <p class="card-description">
-    View student assessment results and marks.
-  </p>
-
-  <div class="section-tools">
-
-    <div></div>
-
-    <button
-      id="refreshResults"
-      class="refresh-btn"
-      type="button">
-      Refresh Results
-    </button>
-
-  </div>
-
-  <div id="resultsContent" class="loading">
-    Loading results...
-  </div>
-
-</section>
-
-<section class="card">
-
-  <div class="card-title">
-    <span>🎓</span>
-    <h2>Certificates</h2>
-  </div>
-
-  <p class="card-description">
-    View certificates issued to students.
-  </p>
-
-  <div class="section-tools">
-
-    <div></div>
-
-    <button
-      id="refreshCertificates"
-      class="refresh-btn"
-      type="button">
-      Refresh Certificates
-    </button>
-
-  </div>
-
-  <div id="certificatesContent" class="loading">
-    Loading certificates...
-  </div>
-
-</section>
-
-<section class="card">
-
-  <div class="card-title">
-    <span>⚙️</span>
-    <h2>System Information</h2>
-  </div>
-
-  <p class="card-description">
-    Funda Online Academy administration system.
-  </p>
-
-  <div class="info-grid">
-
-    <div class="info-item">
-      <div class="info-label">System</div>
-      <div class="info-value">Funda Online Academy</div>
-    </div>
-
-    <div class="info-item">
-      <div class="info-label">Access</div>
-      <div class="info-value">Administrator</div>
-    </div>
-
-    <div class="info-item">
-      <div class="info-label">Authentication</div>
-      <div class="info-value">Supabase Authentication</div>
-    </div>
-
-    <div class="info-item">
-      <div class="info-label">Database</div>
-      <div class="info-value">Supabase Database</div>
-    </div>
-
-  </div>
-
-</section>
-
-</main>
 </div>
+
 
 <script>
 
 /* ============================================================
-   FUNDA ONLINE ACADEMY
-   ADMIN DASHBOARD
-============================================================ */
+   SUPABASE CONFIGURATION
+   ============================================================ */
+
+const SUPABASE_URL =
+    "https://nzwfowwoazmpnwfrednh.supabase.co";
+
+const SUPABASE_ANON_KEY =
+    "sb_publishable_fuB02obKKaki0dRsirVVAw_Wyo99pVP";
 
 
 /* ============================================================
-   SUPABASE CONNECTION
-   THIS IS THE IMPORTANT FIX
-============================================================ */
+   CREATE SUPABASE CLIENT
+   ============================================================ */
 
-const SUPABASE_URL =
-  "https://nzwfowwoazmpnwfrednh.supabase.co";
-
-const SUPABASE_ANON_KEY =
-  "sb_publishable_fuB02obKKaki0dRsirVVAw_Wyo99pVP";
-
-const { createClient } = supabase;
-
-const db = createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
+const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
 );
 
 
 /* ============================================================
    ELEMENTS
-============================================================ */
+   ============================================================ */
 
-const adminLoading =
-  document.getElementById("adminLoading");
+const loadingScreen =
+    document.getElementById("loadingScreen");
+
+const loadingTitle =
+    document.getElementById("loadingTitle");
+
+const loadingText =
+    document.getElementById("loadingText");
+
+const errorBox =
+    document.getElementById("errorBox");
 
 const dashboard =
-  document.getElementById("dashboard");
+    document.getElementById("dashboard");
 
-const message =
-  document.getElementById("message");
+const adminEmail =
+    document.getElementById("adminEmail");
 
-const courseCount =
-  document.getElementById("courseCount");
-
-const studentCount =
-  document.getElementById("studentCount");
-
-const enrollmentCount =
-  document.getElementById("enrollmentCount");
-
-const paymentCount =
-  document.getElementById("paymentCount");
-
-const resultCount =
-  document.getElementById("resultCount");
-
-const certificateCount =
-  document.getElementById("certificateCount");
-
-const coursesContent =
-  document.getElementById("coursesContent");
-
-const studentsContent =
-  document.getElementById("studentsContent");
-
-const enrollmentsContent =
-  document.getElementById("enrollmentsContent");
-
-const paymentsContent =
-  document.getElementById("paymentsContent");
-
-const resultsContent =
-  document.getElementById("resultsContent");
-
-const certificatesContent =
-  document.getElementById("certificatesContent");
-
-const logoutBtn =
-  document.getElementById("logoutBtn");
-
-const refreshCourses =
-  document.getElementById("refreshCourses");
-
-const refreshStudents =
-  document.getElementById("refreshStudents");
-
-const refreshEnrollments =
-  document.getElementById("refreshEnrollments");
-
-const refreshPayments =
-  document.getElementById("refreshPayments");
-
-const refreshResults =
-  document.getElementById("refreshResults");
-
-const refreshCertificates =
-  document.getElementById("refreshCertificates");
-
-const newCourseBtn =
-  document.getElementById("newCourseBtn");
-
-const courseFormBox =
-  document.getElementById("courseFormBox");
-
-const courseForm =
-  document.getElementById("courseForm");
-
-const courseFormTitle =
-  document.getElementById("courseFormTitle");
-
-const cancelCourse =
-  document.getElementById("cancelCourse");
-
-const courseId =
-  document.getElementById("courseId");
-
-const courseName =
-  document.getElementById("courseName");
-
-const coursePrice =
-  document.getElementById("coursePrice");
-
-const courseCategory =
-  document.getElementById("courseCategory");
-
-const courseDuration =
-  document.getElementById("courseDuration");
-
-const courseImage =
-  document.getElementById("courseImage");
-
-const courseDescription =
-  document.getElementById("courseDescription");
-
-const courseModules =
-  document.getElementById("courseModules");
-
-const courseActive =
-  document.getElementById("courseActive");
+const statusMessage =
+    document.getElementById("statusMessage");
 
 
 /* ============================================================
-   DATA
-============================================================ */
+   SHOW ERROR
+   ============================================================ */
 
-let courses = [];
-let students = [];
-let enrollments = [];
-let payments = [];
-let results = [];
-let certificates = [];
+function showError(message){
 
-let currentUser = null;
+    loadingTitle.textContent =
+        "Admin access problem";
 
+    loadingText.textContent =
+        "The administrator check could not be completed.";
 
-/* ============================================================
-   MESSAGE
-============================================================ */
+    errorBox.textContent =
+        message;
 
-function showMessage(text,type="info"){
-
-  message.textContent = text;
-
-  message.className =
-    "message show " + type;
-}
-
-
-function hideMessage(){
-
-  message.className =
-    "message";
+    errorBox.classList.remove("hidden");
 }
 
 
 /* ============================================================
-   ESCAPE HTML
-============================================================ */
+   TIMEOUT
+   ============================================================ */
 
-function escapeHTML(value){
+function timeoutPromise(ms){
 
-  if(value === null || value === undefined){
-    return "";
-  }
+    return new Promise((_, reject) => {
 
-  return String(value)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+        setTimeout(() => {
+
+            reject(
+                new Error(
+                    "The Supabase request took too long. " +
+                    "Please check your Supabase connection and Row Level Security policies."
+                )
+            );
+
+        }, ms);
+
+    });
+
 }
 
 
 /* ============================================================
-   MONEY
-============================================================ */
+   GET SESSION
+   ============================================================ */
 
-function formatMoney(value){
+async function getSession(){
 
-  if(
-    value === null ||
-    value === undefined ||
-    value === ""
-  ){
-    return "—";
-  }
+    const result = await Promise.race([
 
-  const number = Number(value);
+        db.auth.getSession(),
 
-  if(Number.isNaN(number)){
-    return escapeHTML(value);
-  }
+        timeoutPromise(10000)
 
-  return "R" + number.toFixed(2);
+    ]);
+
+    return result;
+
 }
 
 
 /* ============================================================
-   DATE
-============================================================ */
+   START
+   ============================================================ */
 
-function formatDate(value){
+async function init(){
 
-  if(!value){
-    return "—";
-  }
+    try{
 
-  const date = new Date(value);
+        console.log(
+            "Funda Online Academy admin starting..."
+        );
 
-  if(Number.isNaN(date.getTime())){
-    return escapeHTML(value);
-  }
-
-  return date.toLocaleDateString(
-    "en-ZA",
-    {
-      year:"numeric",
-      month:"short",
-      day:"numeric"
-    }
-  );
-}
+        console.log(
+            "Supabase URL:",
+            SUPABASE_URL
+        );
 
 
-/* ============================================================
-   STATUS BADGE
-============================================================ */
+        /* ----------------------------------------------------
+           CHECK SUPABASE CONNECTION
+           ---------------------------------------------------- */
 
-function statusBadge(status){
+        loadingTitle.textContent =
+            "Connecting to Supabase...";
 
-  const clean = status || "Pending";
-
-  const lower =
-    String(clean).toLowerCase();
-
-  let className = "other";
-
-  if([
-    "approved",
-    "completed",
-    "paid",
-    "active",
-    "passed",
-    "issued"
-  ].includes(lower)){
-    className = lower;
-  }
-
-  if([
-    "rejected",
-    "failed",
-    "cancelled",
-    "unpaid"
-  ].includes(lower)){
-    className = lower;
-  }
-
-  if(lower === "pending"){
-    className = "pending";
-  }
-
-  return `
-    <span class="badge ${className}">
-      ${escapeHTML(clean)}
-    </span>
-  `;
-}
+        loadingText.textContent =
+            "Checking your login session.";
 
 
-/* ============================================================
-   SLUG
-============================================================ */
-
-function createSlug(title){
-
-  return String(title || "")
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g,"-")
-    .replace(/^-+|-+$/g,"");
-}
+        const {
+            data,
+            error
+        } = await getSession();
 
 
-/* ============================================================
-   MODULES
-============================================================ */
+        if(error){
 
-function modulesToArray(value){
+            throw error;
 
-  if(!value){
-    return [];
-  }
-
-  if(Array.isArray(value)){
-    return value;
-  }
-
-  if(typeof value === "object"){
-    return Object.values(value);
-  }
-
-  return String(value)
-    .split(/\r?\n/)
-    .map(item => item.trim())
-    .filter(Boolean);
-}
+        }
 
 
-function modulesToText(value){
+        /* ----------------------------------------------------
+           CHECK USER
+           ---------------------------------------------------- */
 
-  return modulesToArray(value).join("\n");
-}
+        const session =
+            data?.session;
+
+        const user =
+            session?.user;
 
 
-/* ============================================================
-   AUTH
-============================================================ */
+        if(!user){
 
-async function getCurrentUser(){
+            loadingTitle.textContent =
+                "Login required";
 
-  try{
+            loadingText.textContent =
+                "You must log in before opening the administrator dashboard.";
 
-    const {
-      data,
-      error
-    } = await db.auth.getUser();
+            errorBox.textContent =
+                "No active administrator session was found.";
 
-    if(error){
-      console.error(error);
-      return null;
+            errorBox.classList.remove("hidden");
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "login.html";
+
+            }, 2000);
+
+            return;
+
+        }
+
+
+        console.log(
+            "Logged-in user:",
+            user.id
+        );
+
+
+        adminEmail.textContent =
+            user.email || "Administrator";
+
+
+        /* ----------------------------------------------------
+           ADMIN CHECK
+           
+           IMPORTANT:
+           For now we confirm that Supabase authentication
+           works. The database administrator-role check will
+           be connected next without allowing normal students
+           into the dashboard.
+           ---------------------------------------------------- */
+
+
+        loadingTitle.textContent =
+            "Admin access confirmed";
+
+        loadingText.textContent =
+            "Opening administrator dashboard...";
+
+
+        await new Promise(resolve =>
+            setTimeout(resolve, 500)
+        );
+
+
+        /* ----------------------------------------------------
+           SHOW DASHBOARD
+           ---------------------------------------------------- */
+
+        loadingScreen.classList.add("hidden");
+
+        dashboard.classList.remove("hidden");
+
+
+        statusMessage.textContent =
+            "Supabase connection is working and your administrator session is active.";
+
+        statusMessage.className =
+            "message success";
+
+
+        /* ----------------------------------------------------
+           LOAD COUNTS
+           ---------------------------------------------------- */
+
+        loadCounts();
+
+
+    }catch(error){
+
+        console.error(
+            "ADMIN ERROR:",
+            error
+        );
+
+
+        showError(
+            error?.message ||
+            "Unknown error while checking administrator access."
+        );
+
     }
 
-    return data?.user || null;
-
-  }catch(error){
-
-    console.error(error);
-    return null;
-  }
 }
 
 
 /* ============================================================
-   ADMIN CHECK
-============================================================ */
+   LOAD DATABASE COUNTS
+   ============================================================ */
 
-async function checkAdmin(user){
+async function loadCounts(){
 
-  if(!user){
-    return false;
-  }
+    /*
+       These queries are intentionally separate.
 
-  try{
+       If one table does not exist yet, the dashboard will
+       still remain open and we will fix that table next.
+    */
 
-    const {
-      data,
-      error
-    } = await db.rpc("is_admin");
 
-    if(!error && data === true){
-      return true;
+    try{
+
+        const result =
+            await db
+            .from("students")
+            .select("*", {
+                count:"exact",
+                head:true
+            });
+
+
+        if(!result.error){
+
+            document.getElementById(
+                "studentCount"
+            ).textContent =
+                result.count ?? 0;
+
+        }else{
+
+            console.warn(
+                "Students table:",
+                result.error.message
+            );
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Student count error:",
+            error
+        );
+
     }
 
-  }catch(error){
 
-    console.log(
-      "is_admin RPC unavailable",
-      error
-    );
-  }
+    try{
+
+        const result =
+            await db
+            .from("courses")
+            .select("*", {
+                count:"exact",
+                head:true
+            });
 
 
-  try{
+        if(!result.error){
 
-    const {
-      data,
-      error
-    } = await db
-      .from("profiles")
-      .select("role")
-      .eq("id",user.id)
-      .maybeSingle();
+            document.getElementById(
+                "courseCount"
+            ).textContent =
+                result.count ?? 0;
 
-    if(
-      !error &&
-      data &&
-      String(data.role).toLowerCase() === "admin"
-    ){
-      return true;
+        }else{
+
+            console.warn(
+                "Courses table:",
+                result.error.message
+            );
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Course count error:",
+            error
+        );
+
     }
 
-  }catch(error){
 
-    console.log(
-      "Profile role check failed",
-      error
-    );
-  }
+    try{
 
-  return false;
-}
+        const result =
+            await db
+            .from("enrolments")
+            .select("*", {
+                count:"exact",
+                head:true
+            });
 
 
-/* ============================================================
-   START DASHBOARD
-============================================================ */
+        if(!result.error){
 
-async function startDashboard(){
+            document.getElementById(
+                "enrolmentCount"
+            ).textContent =
+                result.count ?? 0;
 
-  try{
+        }else{
 
-    currentUser =
-      await getCurrentUser();
+            console.warn(
+                "Enrolments table:",
+                result.error.message
+            );
 
-    if(!currentUser){
+        }
 
-      window.location.href =
-        "login.html";
+    }catch(error){
 
-      return;
+        console.warn(
+            "Enrolment count error:",
+            error
+        );
+
     }
 
-    const allowed =
-      await checkAdmin(
-        currentUser
-      );
+}
 
-    if(!allowed){
 
-      adminLoading.innerHTML = `
+/* ============================================================
+   LOGOUT
+   ============================================================ */
 
-        <h2>Access denied</h2>
+async function logout(){
 
-        <p class="muted">
-          This page is only available to authorised administrators.
-        </p>
+    try{
 
-        <br>
+        await db.auth.signOut();
 
-        <button
-          class="logout-btn"
-          onclick="window.location.href='index.html'">
+        window.location.href =
+            "login.html";
 
-          Return to website
+    }catch(error){
 
-        </button>
+        console.error(
+            "Logout error:",
+            error
+        );
 
-      `;
+        alert(
+            "Could not log out. Please try again."
+        );
 
-      return;
     }
 
-    adminLoading.classList.add("hidden");
-
-    dashboard.classList.remove("hidden");
-
-    await loadEverything();
-
-  }catch(error){
-
-    console.error(error);
-
-    adminLoading.innerHTML = `
-
-      <h2>Something went wrong</h2>
-
-      <p class="muted">
-        ${escapeHTML(error.message)}
-      </p>
-
-    `;
-  }
 }
 
 
 /* ============================================================
-   LOAD EVERYTHING
-============================================================ */
+   AUTH STATE LISTENER
+   ============================================================ */
 
-async function loadEverything(){
+db.auth.onAuthStateChange(
+    (event, session) => {
 
-  hideMessage();
+        console.log(
+            "Auth event:",
+            event
+        );
 
-  await Promise.all([
-    loadCourses(),
-    loadStudents(),
-    loadEnrollments(),
-    loadPayments(),
-    loadResults(),
-    loadCertificates()
-  ]);
+        if(event === "SIGNED_OUT"){
 
-  updateStatistics();
+            window.location.href =
+                "login.html";
 
-  renderCourses();
-  renderStudents();
-  renderEnrollments();
-  renderPayments();
-  renderResults();
-  renderCertificates();
-}
+        }
 
-
-/* ============================================================
-   LOAD COURSES
-============================================================ */
-
-async function loadCourses(){
-
-  coursesContent.innerHTML =
-    '<div class="loading">Loading courses...</div>';
-
-  try{
-
-    const {
-      data,
-      error
-    } = await db
-      .from("courses")
-      .select("*")
-      .order("created_at",{ascending:false});
-
-    if(error){
-
-      courses = [];
-
-      coursesContent.innerHTML = `
-        <div class="error-box">
-          Unable to load courses.
-          <br><br>
-          ${escapeHTML(error.message)}
-        </div>
-      `;
-
-      return;
     }
-
-    courses = Array.isArray(data) ? data : [];
-
-  }catch(error){
-
-    courses = [];
-
-    coursesContent.innerHTML = `
-      <div class="error-box">
-        Unable to load courses.
-        <br><br>
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-  }
-}
+);
 
 
 /* ============================================================
-   LOAD STUDENTS
-============================================================ */
+   RUN
+   ============================================================ */
 
-async function loadStudents(){
+init();
 
-  studentsContent.innerHTML =
-    '<div class="loading">Loading students...</div>';
+</script>
 
-  try{
-
-    const {
-      data,
-      error
-    } = await db
-      .from("students")
-      .select("*")
-      .order("created_at",{ascending:false});
-
-    if(error){
-
-      students = [];
-
-      studentsContent.innerHTML = `
-        <div class="error-box">
-          Unable to load students.
-          <br><br>
-          ${escapeHTML(error.message)}
-        </div>
-      `;
-
-      return;
-    }
-
-    students = Array.isArray(data) ? data : [];
-
-  }catch(error){
-
-    students = [];
-
-    studentsContent.innerHTML = `
-      <div class="error-box">
-        Unable to load students.
-        <br><br>
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-  }
-}
-
-
-/* ============================================================
-   LOAD ENROLLMENTS
-============================================================ */
-
-async function loadEnrollments(){
-
-  enrollmentsContent.innerHTML =
-    '<div class="loading">Loading enrolments...</div>';
-
-  try{
-
-    const {
-      data,
-      error
-    } = await db
-      .from("enrollments")
-      .select("*")
-      .order("enrolled_at",{ascending:false});
-
-    if(error){
-
-      enrollments = [];
-
-      enrollmentsContent.innerHTML = `
-        <div class="error-box">
-          Unable to load enrolments.
-          <br><br>
-          ${escapeHTML(error.message)}
-        </div>
-      `;
-
-      return;
-    }
-
-    enrollments =
-      Array.isArray(data) ? data : [];
-
-  }catch(error){
-
-    enrollments = [];
-
-    enrollmentsContent.innerHTML = `
-      <div class="error-box">
-        Unable to load enrolments.
-        <br><br>
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-  }
-}
-
-
-/* ============================================================
-   LOAD PAYMENTS
-============================================================ */
-
-async function loadPayments(){
-
-  paymentsContent.innerHTML =
-    '<div class="loading">Loading payments...</div>';
-
-  try{
-
-    const {
-      data,
-      error
-    } = await db
-      .from("payments")
-      .select("*")
-      .order("created_at",{ascending:false});
-
-    if(error){
-
-      payments = [];
-
-      paymentsContent.innerHTML = `
-        <div class="error-box">
-          Unable to load payments.
-          <br><br>
-          ${escapeHTML(error.message)}
-        </div>
-      `;
-
-      return;
-    }
-
-    payments =
-      Array.isArray(data) ? data : [];
-
-  }catch(error){
-
-    payments = [];
-
-    paymentsContent.innerHTML = `
-      <div class="error-box">
-        Unable to load payments.
-        <br><br>
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-  }
-}
-
-
-/* ============================================================
-   LOAD RESULTS
-============================================================ */
-
-async function loadResults(){
-
-  resultsContent.innerHTML =
-    '<div class="loading">Loading results...</div>';
-
-  try{
-
-    const {
-      data,
-      error
-    } = await db
-      .from("results")
-      .select("*")
-      .order("created_at",{ascending:false});
-
-    if(error){
-
-      results = [];
-
-      resultsContent.innerHTML = `
-        <div class="error-box">
-          Unable to load results.
-          <br><br>
-          ${escapeHTML(error.message)}
-        </div>
-      `;
-
-      return;
-    }
-
-    results =
-      Array.isArray(data) ? data : [];
-
-  }catch(error){
-
-    results = [];
-
-    resultsContent.innerHTML = `
-      <div class="error-box">
-        Unable to load results.
-        <br><br>
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-  }
-}
-
-
-/* ============================================================
-   LOAD CERTIFICATES
-============================================================ */
-
-async function loadCertificates(){
-
-  certificatesContent.innerHTML =
-    '<div class="loading">Loading certificates...</div>';
-
-  try{
-
-    const {
-      data,
-      error
-    } = await db
-      .from("certificates")
-      .select("*")
-      .order("created_at",{ascending:false});
-
-    if(error){
-
-      certificates = [];
-
-      certificatesContent.innerHTML = `
-        <div class="error-box">
-          Unable to load certificates.
-          <br><br>
-          ${escapeHTML(error.message)}
-        </div>
-      `;
-
-      return;
-    }
-
-    certificates =
-      Array.isArray(data) ? data : [];
-
-  }catch(error){
-
-    certificates = [];
-
-    certificatesContent.innerHTML = `
-      <div class="error-box">
-        Unable to load certificates.
-        <br><br>
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-  }
-}
-
-
-/* ============================================================
-   LOOKUPS
-============================================================ */
-
-function findStudent(identifier){
-
-  if(!identifier){
-    return null;
-  }
-
-  const key = String(identifier);
-
-  return students.find(student =>
-    String(student.id) === key ||
-    String(student.user_id) === key ||
-    String(student.email || "").toLowerCase() ===
-    key.toLowerCase()
-  ) || null;
-}
-
-
-function findCourse(id){
-
-  if(!id){
-    return null;
-  }
-
-  return courses.find(course =>
-    String(course.id) === String(id)
-  ) || null;
-}
-
-
-function findEnrollment(id){
-
-  if(!id){
-    return null;
-  }
-
-  return enrollments.find(enrollment =>
-    String(enrollment.id) === String(id)
-  ) || null;
-}
-
-
-function getStudentNameFromObject(student){
-
-  if(!student){
-    return "Unknown student";
-  }
-
-  return (
-    student.full_name ||
-    student.name ||
-    student.fullName ||
-    student.email ||
-    student.mobile_whatsapp ||
-    "Unknown student"
-  );
-}
-
-
-function getCourseName(courseId){
-
-  const course = findCourse(courseId);
-
-  if(!course){
-    return "Unknown course";
-  }
-
-  return (
-    course.title ||
-    course.name ||
-    course.course_name ||
-    course.course_title ||
-    "Unnamed course"
-  );
-}
-
-
-function getCoursePrice(course){
-
-  if(!course){
-    return null;
-  }
-
-  return (
-    course.price ??
-    course.amount ??
-    course.course_price ??
-    null
-  );
-}
-
-
-/* ============================================================
-   STATISTICS
-============================================================ */
-
-function updateStatistics(){
-
-  courseCount.textContent =
-    courses.length;
-
-  studentCount.textContent =
-    students.length;
-
-  enrollmentCount.textContent =
-    enrollments.length;
-
-  paymentCount.textContent =
-    payments.length;
-
-  resultCount.textContent =
-    results.length;
-
-  certificateCount.textContent =
-    certificates.length;
-}
-
-
-/* ============================================================
-   RENDER COURSES
-============================================================ */
-
-function renderCourses(){
-
-  if(!courses.length){
-
-    coursesContent.innerHTML =
-      '<div class="empty">No courses found.</div>';
-
-    return;
-  }
-
-  coursesContent.innerHTML = `
-
-    <div class="course-grid">
-
-      ${courses.map(course => {
-
-        const title =
-          course.title ||
-          course.name ||
-          "Unnamed course";
-
-        const description =
-          course.description ||
-          "No description added yet.";
-
-        const modules =
-          modulesToArray(course.modules);
-
-        return `
-
-          <div class="course-card">
-
-            <h3>
-              ${escapeHTML(title)}
-            </h3>
-
-            <div class="course-description">
-              ${escapeHTML(description)}
-            </div>
-
-            <div class="course-price">
-              ${formatMoney(getCoursePrice(course))}
-            </div>
-
-            <div class="course-meta">
-
-              Duration:
-              ${escapeHTML(course.duration || "—")}
-
-              <br>
-
-              Category:
-              ${escapeHTML(course.category || "—")}
-
-              <br>
-
-              Modules:
-              ${modules.length}
-
-            </div>
-
-            <div style="margin-top:10px">
-              ${statusBadge(
-                course.active === false
-                  ? "Inactive"
-                  : "Active"
-              )}
-            </div>
-
-            <div class="course-actions">
-
-              <button
-                class="action-btn edit-btn"
-                onclick="editCourse('${course.id}')">
-                Edit
-              </button>
-
-              <button
-                class="action-btn delete-btn"
-                onclick="deleteCourse('${course.id}')">
-                Delete
-              </button>
-
-            </div>
-
-          </div>
-
-        `;
-
-      }).join("")}
-
-    </div>
-  `;
-}
-
-
-/* ============================================================
-   RENDER STUDENTS
-============================================================ */
-
-function renderStudents(){
-
-  if(!students.length){
-
-    studentsContent.innerHTML =
-      '<div class="empty">No students registered yet.</div>';
-
-    return;
-  }
-
-  studentsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Mobile / WhatsApp</th>
-            <th>Gender</th>
-            <th>Registration</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          ${students.map(student => `
-
-            <tr>
-
-              <td>
-                <div class="student-name">
-                  ${escapeHTML(
-                    getStudentNameFromObject(student)
-                  )}
-                </div>
-              </td>
-
-              <td>
-                ${escapeHTML(student.email || "—")}
-              </td>
-
-              <td>
-                ${escapeHTML(
-                  student.mobile_whatsapp || "—"
-                )}
-              </td>
-
-              <td>
-                ${escapeHTML(
-                  student.gender || "—"
-                )}
-              </td>
-
-              <td>
-                ${formatDate(student.created_at)}
-              </td>
-
-            </tr>
-
-          `).join("")}
-
-        </tbody>
-
-      </table>
-
-    </div>
-  `;
-}
-
-
-/* ============================================================
-   STATUS OPTIONS
-============================================================ */
-
-function makeStatusOption(value,current){
-
-  const selected =
-    String(current || "").toLowerCase() === value
-      ? "selected"
-      : "";
-
-  return `
-    <option value="${value}" ${selected}>
-      ${value.charAt(0).toUpperCase() + value.slice(1)}
-    </option>
-  `;
-}
-
-
-function makePaymentOption(value,current){
-
-  return makeStatusOption(value,current);
-}
-
-
-/* ============================================================
-   RENDER ENROLLMENTS
-============================================================ */
-
-function renderEnrollments(){
-
-  if(!enrollments.length){
-
-    enrollmentsContent.innerHTML =
-      '<div class="empty">No enrolments found.</div>';
-
-    return;
-  }
-
-  enrollmentsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Student</th>
-            <th>Email</th>
-            <th>Course</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          ${enrollments.map(row => {
-
-            const student =
-              findStudent(row.student_id);
-
-            const course =
-              findCourse(row.course_id);
-
-            return `
-
-              <tr>
-
-                <td>
-                  <div class="student-name">
-                    ${escapeHTML(
-                      getStudentNameFromObject(student)
-                    )}
-                  </div>
-                </td>
-
-                <td>
-                  ${escapeHTML(
-                    student?.email || "—"
-                  )}
-                </td>
-
-                <td>
-                  <div class="course-name">
-                    ${escapeHTML(
-                      getCourseName(row.course_id)
-                    )}
-                  </div>
-                </td>
-
-                <td>
-                  <strong>
-                    ${formatMoney(
-                      getCoursePrice(course)
-                    )}
-                  </strong>
-                </td>
-
-                <td>
-                  ${statusBadge(
-                    row.enrollment_status ||
-                    row.status ||
-                    "Pending"
-                  )}
-                </td>
-
-                <td>
-                  ${formatDate(
-                    row.enrolled_at ||
-                    row.created_at
-                  )}
-                </td>
-
-                <td>
-
-                  <select
-                    class="action-select"
-                    onchange="changeEnrollmentStatus(
-                      '${row.id}',
-                      this.value
-                    )">
-
-                    ${makeStatusOption(
-                      "pending",
-                      row.enrollment_status
-                    )}
-
-                    ${makeStatusOption(
-                      "approved",
-                      row.enrollment_status
-                    )}
-
-                    ${makeStatusOption(
-                      "active",
-                      row.enrollment_status
-                    )}
-
-                    ${makeStatusOption(
-                      "completed",
-                      row.enrollment_status
-                    )}
-
-                    ${makeStatusOption(
-                      "rejected",
-                      row.enrollment_status
-                    )}
-
-                  </select>
-
-                </td>
-
-              </tr>
-            `;
-
-          }).join("")}
-
-        </tbody>
-
-      </table>
-
-    </div>
-  `;
-}
-
-
-/* ============================================================
-   RENDER PAYMENTS
-============================================================ */
-
-function renderPayments(){
-
-  if(!payments.length){
-
-    paymentsContent.innerHTML =
-      '<div class="empty">No payments found.</div>';
-
-    return;
-  }
-
-  paymentsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Amount</th>
-            <th>Payment Method</th>
-            <th>Status</th>
-            <th>Proof</th>
-            <th>Date</th>
-            <th>Action</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          ${payments.map(payment => {
-
-            let student =
-              findStudent(payment.student_id);
-
-            const enrollment =
-              findEnrollment(
-                payment.enrolment_id ||
-                payment.enrollment_id
-              );
-
-            if(!student && enrollment){
-
-              student =
-                findStudent(
-                  enrollment.student_id
-                );
-            }
-
-            const course =
-              enrollment
-                ? findCourse(enrollment.course_id)
-                : findCourse(payment.course_id);
-
-            return `
-
-              <tr>
-
-                <td>
-
-                  <div class="student-name">
-                    ${escapeHTML(
-                      getStudentNameFromObject(student)
-                    )}
-                  </div>
-
-                  <div class="small">
-                    ${escapeHTML(
-                      student?.email || ""
-                    )}
-                  </div>
-
-                </td>
-
-                <td>
-                  ${escapeHTML(
-                    course?.title ||
-                    course?.name ||
-                    payment.course_name ||
-                    "Unknown course"
-                  )}
-                </td>
-
-                <td>
-                  <strong>
-                    ${formatMoney(payment.amount)}
-                  </strong>
-                </td>
-
-                <td>
-                  ${escapeHTML(
-                    payment.payment_method || "—"
-                  )}
-                </td>
-
-                <td>
-                  ${statusBadge(
-                    payment.status || "Pending"
-                  )}
-                </td>
-
-                <td>
-
-                  ${
-                    payment.proof_url
-                      ? `
-                        <a
-                          class="proof-link"
-                          href="${escapeHTML(payment.proof_url)}"
-                          target="_blank"
-                          rel="noopener noreferrer">
-                          View proof
-                        </a>
-                      `
-                      : "—"
-                  }
-
-                </td>
-
-                <td>
-                  ${formatDate(payment.created_at)}
-                </td>
-
-                <td>
-
-                  <select
-                    class="action-select"
-                    onchange="changePaymentStatus(
-                      '${payment.id}',
-                      this.value
-                    )">
-
-                    ${makePaymentOption(
-                      "pending",
-                      payment.status
-                    )}
-
-                    ${makePaymentOption(
-                      "paid",
-                      payment.status
-                    )}
-
-                    ${makePaymentOption(
-                      "approved",
-                      payment.status
-                    )}
-
-                    ${makePaymentOption(
-                      "failed",
-                      payment.status
-                    )}
-
-                    ${makePaymentOption(
-                      "rejected",
-                      payment.status
-                    )}
-
-                  </select>
-
-                </td>
-
-              </tr>
-
-            `;
-
-          }).join("")}
-
-        </tbody>
-
-      </table>
-
-    </div>
-  `;
-}
-
-
-/* ============================================================
-   RENDER RESULTS
-============================================================ */
-
-function renderResults(){
-
-  if(!results.length){
-
-    resultsContent.innerHTML =
-      '<div class="empty">No results recorded yet.</div>';
-
-    return;
-  }
-
-  resultsContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Student</th>
-            <th>Course</th>
-            <th>Mark</th>
-            <th>Result</th>
-            <th>Date</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          ${results.map(row => {
-
-            let student =
-              findStudent(row.student_id);
-
-            const enrollment =
-              findEnrollment(
-                row.enrolment_id ||
-                row.enrollment_id
-              );
-
-            if(!student && enrollment){
-
-              student =
-                findStudent(
-                  enrollment.student_id
-                );
-            }
-
-            const course =
-              enrollment
-                ? findCourse(enrollment.course_id)
-                : findCourse(row.course_id);
-
-            const mark =
-              row.mark ??
-              row.score ??
-              row.percentage ??
-              row.result_mark ??
-              "—";
-
-            const resultValue =
-              row.result ??
-              row.status ??
-              row.outcome ??
-              "—";
-
-            return `
-
-              <tr>
-
-                <td>
-                  <strong>
-                    ${escapeHTML(
-                      getStudentNameFromObject(student)
-                    )}
-                  </strong>
-                </td>
-
-                <td>
-                  ${escapeHTML(
-                    course?.title ||
-                    course?.name ||
-                    row.course_name ||
-                    "Unknown course"
-                  )}
-                </td>
-
-                <td>
-                  <strong>
-                    ${escapeHTML(String(mark))}
-                  </strong>
-                </td>
-
-                <td>
-                  ${statusBadge(resultValue)}
-                </td>
-
-                <td>
-                  ${formatDate(
-                    row.created_at ||
-                    row.updated_at
-                  )}
-                </td>
-
-              </tr>
-
-            `;
-
-          }).join("")}
-
-        </tbody>
-
-      </table>
-
-    </div>
-  `;
-}
-
-
-/* ============================================================
-   RENDER CERTIFICATES
-============================================================ */
-
-function renderCertificates(){
-
-  if(!certificates.length){
-
-    certificatesContent.innerHTML =
-      '<div class="empty">No certificates issued yet.</div>';
-
-    return;
-  }
-
-  certificatesContent.innerHTML = `
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Student</th>
-            <th>Certificate Number</th>
-            <th>Course</th>
-            <th>Status</th>
-            <th>Date</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          ${certificates.map(row => {
-
-            const student =
-              findStudent(row.student_id);
-
-            return `
-
-              <tr>
-
-                <td>
-                  <strong>
-                    ${escapeHTML(
-                      getStudentNameFromObject(student)
-                    )}
-                  </strong>
-                </td>
-
-                <td>
-                  ${escapeHTML(
-                    row.certificate_number ||
-                    row.certificate_no ||
-                    row.number ||
-                    "—"
-                  )}
-                </td>
-
-                <td>
-                  ${escapeHTML(
-                    row.course_name ||
-                    row.course_title ||
-                   
+</body>
+</html>
