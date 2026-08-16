@@ -9,218 +9,43 @@
 <link rel="stylesheet" href="styles.css">
 
 <style>
-/* =========================================================
-   FUNDA ONLINE ACADEMY
-   STUDENT DASHBOARD - NEW LAYOUT
-   ========================================================= */
-
-html,
-body{
+html,body{
   overflow-x:hidden;
-  margin:0;
 }
 
-body{
-  background:#f4f8f5;
+.dashboard{
+  min-height:calc(100vh - 78px);
+  padding-bottom:60px;
 }
 
-/* HEADER */
-.student-header{
-  background:#ffffff;
-  border-bottom:1px solid #e1e9e4;
-  position:sticky;
-  top:0;
-  z-index:100;
-  box-shadow:0 3px 15px rgba(0,0,0,.04);
-}
-
-.student-header .wrap{
-  max-width:1180px;
-  margin:auto;
-  padding:14px 20px;
-}
-
-.student-nav{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:18px;
-}
-
-.student-logo{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  text-decoration:none;
-  color:#10251c;
-  min-width:0;
-}
-
-.student-logo img{
-  width:52px;
-  height:52px;
-  object-fit:contain;
-  border-radius:14px;
-}
-
-.student-logo-text{
-  font-weight:800;
-  font-size:19px;
-  line-height:1.15;
-}
-
-.student-logo-text small{
-  display:block;
-  font-weight:500;
-  color:#718078;
-  font-size:12px;
-  margin-top:4px;
-}
-
-.student-nav-actions{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.student-email{
-  color:#66756d;
-  font-size:13px;
-}
-
-.logout-button{
-  background:#10251c;
-  color:white;
-  border:0;
-  border-radius:10px;
-  padding:11px 17px;
-  font-weight:700;
-  cursor:pointer;
-}
-
-/* MAIN */
-.student-dashboard{
-  min-height:calc(100vh - 82px);
-  padding:28px 16px 70px;
-}
-
-.student-wrap{
-  max-width:1180px;
+.dashboard .wrap{
+  max-width:1140px;
   margin:auto;
 }
 
-/* WELCOME */
-.welcome-card{
-  background:linear-gradient(135deg,#0c8f55,#087744);
-  color:white;
-  border-radius:24px;
-  padding:30px;
-  margin-bottom:24px;
-  box-shadow:0 10px 30px rgba(12,143,85,.18);
-}
-
-.welcome-top{
+.dash-head{
   display:flex;
-  align-items:center;
   justify-content:space-between;
-  gap:20px;
-}
-
-.welcome-label{
-  font-size:13px;
-  font-weight:800;
-  letter-spacing:.8px;
-  opacity:.85;
-}
-
-.welcome-card h1{
-  font-size:34px;
-  margin:7px 0;
-}
-
-.welcome-card p{
-  margin:0;
-  font-size:16px;
-  line-height:1.5;
-  opacity:.92;
-}
-
-.browse-button{
-  display:inline-block;
-  background:white;
-  color:#087744;
-  text-decoration:none;
-  padding:13px 18px;
-  border-radius:11px;
-  font-weight:800;
-  white-space:nowrap;
-}
-
-/* MESSAGE */
-#message{
-  margin-bottom:22px;
-}
-
-/* QUICK NAV */
-.quick-nav{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px;
+  align-items:center;
+  gap:24px;
   margin-bottom:28px;
 }
 
-.quick-link{
-  background:white;
-  border:1px solid #e1e9e4;
-  border-radius:16px;
-  padding:17px 12px;
-  text-align:center;
-  text-decoration:none;
-  color:#10251c;
-  font-weight:700;
-  box-shadow:0 5px 18px rgba(16,37,28,.04);
-  transition:.2s;
-}
-
-.quick-link:hover{
-  transform:translateY(-2px);
-  border-color:#0c8f55;
-}
-
-.quick-icon{
-  font-size:27px;
-  display:block;
-  margin-bottom:7px;
-}
-
-/* SECTION */
 .dashboard-section{
   margin-bottom:30px;
 }
 
-.section-heading{
-  display:flex;
-  align-items:end;
-  justify-content:space-between;
-  gap:15px;
+.dashboard section{
+  margin-bottom:30px;
+}
+
+.dashboard section h2{
   margin-bottom:14px;
 }
 
-.section-heading h2{
-  margin:0;
-  font-size:26px;
-  color:#10251c;
-}
-
-.section-heading p{
-  margin:4px 0 0;
-  color:#68766f;
-}
-
-/* CARDS */
 .dashboard-grid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-template-columns:repeat(3,minmax(0,1fr));
   gap:16px;
 }
 
@@ -228,18 +53,6 @@ body{
   min-width:0;
   width:100%;
   margin:0;
-}
-
-.card{
-  background:#ffffff;
-  border:1px solid #e1e9e4;
-  border-radius:20px;
-  padding:22px;
-  box-shadow:0 7px 25px rgba(16,37,28,.04);
-}
-
-.card h3{
-  margin-top:0;
 }
 
 .funda-card-actions{
@@ -262,8 +75,7 @@ body{
 
 .funda-status.approved,
 .funda-status.active,
-.funda-status.paid,
-.funda-status.completed{
+.funda-status.paid{
   background:#dff4dc;
   color:#197019;
 }
@@ -277,362 +89,270 @@ body{
 
 .funda-info{
   margin:7px 0;
-  color:#53635a;
 }
 
-/* PAYMENTS */
 .payment-card{
-  border:1px solid #e1e9e4;
-  border-radius:18px;
-  padding:20px;
+  border:1px solid #e4ece3;
+  border-radius:16px;
+  padding:18px;
   background:#fff;
-  margin-bottom:14px;
 }
 
-/* BANKING */
-.banking-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:16px;
-}
-
-.bank-card{
-  background:#f8fbf9;
-  border:1px solid #dfe9e3;
-  border-radius:18px;
-  padding:22px;
-}
-
-.bank-card h3{
-  margin:0 0 16px;
-  font-size:20px;
-}
-
-.bank-name{
-  color:#0c8f55;
-  font-weight:800;
-  font-size:17px;
-  margin-bottom:14px;
-}
-
-.bank-detail{
-  margin:8px 0;
-  color:#53635a;
-}
-
-.bank-detail strong{
-  color:#10251c;
-}
-
-/* PAYMENT RULE */
-.payment-rule{
-  background:#eef8f2;
-  border-left:5px solid #0c8f55;
-  border-radius:12px;
-  padding:17px;
-  margin-top:16px;
-  line-height:1.6;
-}
-
-/* INFORMATION CARDS */
-.info-list{
-  display:grid;
-  gap:11px;
-}
-
-.info-row{
-  background:#f7faf8;
-  border-radius:12px;
-  padding:13px 15px;
-}
-
-.info-row strong{
-  display:block;
-  margin-bottom:3px;
-}
-
-/* POLICIES */
 .policy-card{
-  background:white;
-  border:1px solid #e1e9e4;
+  background:#fff;
+  border:1px solid #dfe8e2;
   border-radius:20px;
   padding:24px;
-  box-shadow:0 7px 25px rgba(16,37,28,.04);
+  box-shadow:0 6px 25px rgba(16,37,28,.05);
 }
 
-.policy-card h3{
-  margin:0 0 12px;
-}
-
-.policy-card ul{
-  margin:0;
-  padding-left:22px;
-}
-
-.policy-card li{
-  margin-bottom:9px;
-  line-height:1.5;
+.policy-intro{
+  background:#f1faf5;
+  border-left:5px solid #0c8f55;
+  padding:16px;
+  border-radius:12px;
+  margin-bottom:22px;
+  line-height:1.6;
 }
 
 .policy-group{
   margin-bottom:24px;
 }
 
-.policy-group:last-child{
-  margin-bottom:0;
-}
-
-/* DECLARATION */
-.declaration{
-  background:#fffdf4;
-  border:1px solid #eadca8;
-  border-radius:18px;
-  padding:22px;
-}
-
-.declaration-text{
-  line-height:1.65;
-  color:#4d514c;
-  margin-bottom:18px;
-}
-
-.accept-box{
-  background:white;
-  border:1px solid #e1e1d5;
-  border-radius:13px;
-  padding:15px;
+.policy-group h3{
   margin-bottom:10px;
+  color:#10251c;
 }
 
-.accept-box label{
-  display:flex;
-  align-items:flex-start;
-  gap:10px;
-  cursor:pointer;
-  font-weight:700;
+.policy-group ul{
+  padding-left:22px;
 }
 
-.accept-box input{
-  margin-top:3px;
-  width:18px;
-  height:18px;
+.policy-group li{
+  margin-bottom:8px;
+  line-height:1.5;
 }
 
-/* CONTACT */
-.contact-grid{
+.bank-grid{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+  margin-top:15px;
 }
 
-.contact-item{
+.bank-card{
   background:#f7faf8;
+  border:1px solid #dfe8e2;
   border-radius:15px;
   padding:18px;
 }
 
-.contact-item span{
-  display:block;
-  font-size:26px;
-  margin-bottom:7px;
+.bank-card h3{
+  margin-bottom:10px;
 }
 
-.contact-item strong{
-  display:block;
-  margin-bottom:4px;
+.bank-detail{
+  margin:7px 0;
 }
 
-/* EMPTY/LOADING */
-.loading{
+.declaration-box{
+  background:#f8faf9;
+  border:1px solid #dce6df;
+  border-radius:16px;
+  padding:20px;
+  margin-top:25px;
+}
+
+.declaration-box h3{
+  margin-bottom:12px;
+}
+
+.declaration-text{
+  line-height:1.65;
+  margin-bottom:18px;
+}
+
+.accept-row{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  padding:15px;
+  background:#fff;
+  border:1px solid #dfe8e2;
+  border-radius:12px;
+}
+
+.accept-row input{
+  width:20px;
+  height:20px;
+  margin-top:3px;
+  flex-shrink:0;
+  cursor:pointer;
+}
+
+.accept-row label{
+  line-height:1.5;
+  cursor:pointer;
+}
+
+.accept-button{
+  margin-top:16px;
+}
+
+.accepted-box{
+  background:#e5f8ed;
+  color:#11683d;
+  border:1px solid #bde8cf;
+  border-radius:15px;
+  padding:18px;
+  line-height:1.6;
+}
+
+.accepted-box strong{
+  display:block;
+  margin-bottom:5px;
+}
+
+.policy-version{
   color:#68766f;
-  padding:20px 0;
+  font-size:13px;
+  margin-top:8px;
 }
 
-/* MOBILE */
-@media(max-width:900px){
+.required-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px 25px;
+}
 
-  .quick-nav{
-    grid-template-columns:repeat(3,1fr);
+.required-list div{
+  padding:8px 0;
+}
+
+.contact-box{
+  background:#10251c;
+  color:#fff;
+  border-radius:16px;
+  padding:20px;
+  margin-top:20px;
+}
+
+.contact-box p{
+  margin:6px 0;
+}
+
+@media(max-width:900px){
+  .dashboard-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
   }
 
-  .banking-grid{
+  .bank-grid{
     grid-template-columns:1fr;
   }
 }
 
 @media(max-width:700px){
-
-  .student-header .wrap{
-    padding:11px 12px;
-  }
-
-  .student-logo img{
-    width:45px;
-    height:45px;
-  }
-
-  .student-logo-text{
-    font-size:16px;
-  }
-
-  .student-email{
-    display:none;
-  }
-
-  .logout-button{
-    padding:9px 12px;
-    font-size:12px;
-  }
-
-  .student-dashboard{
-    padding:18px 10px 50px;
-  }
-
-  .welcome-card{
-    padding:22px 19px;
-    border-radius:20px;
-  }
-
-  .welcome-top{
+  .dash-head{
     display:block;
   }
 
-  .welcome-card h1{
-    font-size:28px;
-  }
-
-  .browse-button{
-    display:block;
-    text-align:center;
-    margin-top:18px;
-  }
-
-  .quick-nav{
-    grid-template-columns:repeat(2,1fr);
-    gap:10px;
-  }
-
-  .quick-link{
-    padding:14px 8px;
-    font-size:13px;
+  .dash-head .btn{
+    display:inline-block;
+    margin-top:14px;
   }
 
   .dashboard-grid{
     grid-template-columns:1fr;
   }
 
-  .section-heading h2{
-    font-size:23px;
+  .dashboard .wrap{
+    width:92%;
   }
 
-  .card,
-  .policy-card{
-    padding:18px;
-    border-radius:18px;
+  .funda-card-actions{
+    flex-direction:column;
   }
 
-  .contact-grid{
+  .funda-card-actions .btn{
+    width:100%;
+  }
+
+  .required-list{
     grid-template-columns:1fr;
   }
 
+  .policy-card{
+    padding:18px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- =========================================================
-     HEADER
-     ========================================================= -->
+<header>
+  <div class="wrap nav">
 
-<header class="student-header">
+    <a class="logo" href="index.html">
+      <img src="logo.png" alt="Funda Online Academy logo">
 
-  <div class="wrap student-nav">
-
-    <a class="student-logo" href="index.html">
-
-      <img
-        src="logo.png"
-        alt="Funda Online Academy logo"
-      >
-
-      <span class="student-logo-text">
+      <span>
         Funda Online Academy Pty Ltd
         <small>Student Dashboard</small>
       </span>
-
     </a>
 
-    <div class="student-nav-actions">
-
-      <span
-        id="user-email"
-        class="student-email">
-      </span>
+    <div class="nav-actions">
+      <span id="user-email" class="user-email"></span>
 
       <button
         id="logout"
-        class="logout-button"
+        class="btn ghost"
         type="button">
         Logout
       </button>
-
     </div>
 
   </div>
-
 </header>
 
 
-<!-- =========================================================
-     MAIN DASHBOARD
-     ========================================================= -->
+<main class="dashboard">
 
-<main class="student-dashboard">
+<div class="wrap">
 
-<div class="student-wrap">
-
-
-  <!-- =======================================================
+  <!-- ======================================================
        WELCOME
-       ======================================================= -->
+       ====================================================== -->
 
-  <section class="welcome-card">
+  <div class="dash-head">
 
-    <div class="welcome-top">
+    <div>
 
-      <div>
+      <span class="badge">
+        STUDENT AREA
+      </span>
 
-        <div class="welcome-label">
-          🎓 FUNDA ONLINE ACADEMY
-        </div>
+      <h1>
+        Welcome,
+        <span id="user-name">Student</span>
+      </h1>
 
-        <h1>
-          Welcome, <span id="user-name">Student</span>
-        </h1>
-
-        <p>
-          Your learning journey starts here.
-          Manage your enrolments, payments and courses
-          from your student dashboard.
-        </p>
-
-      </div>
-
-      <a
-        class="browse-button"
-        href="index.html#courses">
-        Browse Courses
-      </a>
+      <p>
+        Manage your courses, enrolments, payments and
+        Funda Online Academy policies.
+      </p>
 
     </div>
 
-  </section>
+    <a
+      class="btn green"
+      href="index.html#courses">
+      Browse Courses
+    </a>
 
+  </div>
 
-  <!-- =======================================================
-       MESSAGE
-       ======================================================= -->
 
   <div
     id="message"
@@ -640,411 +360,71 @@ body{
   </div>
 
 
-  <!-- =======================================================
-       QUICK NAVIGATION
-       ======================================================= -->
-
-  <nav class="quick-nav">
-
-    <a
-      class="quick-link"
-      href="#my-learning">
-
-      <span class="quick-icon">📚</span>
-      My Learning
-
-    </a>
-
-    <a
-      class="quick-link"
-      href="#payments">
-
-      <span class="quick-icon">💳</span>
-      Payments
-
-    </a>
-
-    <a
-      class="quick-link"
-      href="#banking">
-
-      <span class="quick-icon">🏦</span>
-      Banking
-
-    </a>
-
-    <a
-      class="quick-link"
-      href="#policies">
-
-      <span class="quick-icon">📜</span>
-      Policies
-
-    </a>
-
-    <a
-      class="quick-link"
-      href="#contact">
-
-      <span class="quick-icon">📞</span>
-      Contact Us
-
-    </a>
-
-  </nav>
-
-
-  <!-- =======================================================
-       MY LEARNING
-       ======================================================= -->
+  <!-- ======================================================
+       POLICIES & DECLARATION
+       ====================================================== -->
 
   <section
-    id="my-learning"
-    class="dashboard-section">
-
-    <div class="section-heading">
-
-      <div>
-
-        <h2>📚 My Learning</h2>
-
-        <p>
-          Your enrolled courses and learning journey.
-        </p>
-
-      </div>
-
-    </div>
-
-    <div
-      id="enrolments"
-      class="dashboard-grid">
-
-      <div class="card">
-
-        <p class="loading">
-          Loading enrolments…
-        </p>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =======================================================
-       PAYMENTS
-       ======================================================= -->
-
-  <section
-    id="payments"
-    class="dashboard-section">
-
-    <div class="section-heading">
-
-      <div>
-
-        <h2>💳 My Payments</h2>
-
-        <p>
-          View your payment history and payment status.
-        </p>
-
-      </div>
-
-    </div>
-
-    <div id="payment-list">
-
-      <div class="payment-card">
-
-        <p class="loading">
-          Loading payment history…
-        </p>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =======================================================
-       BANKING INFORMATION
-       ======================================================= -->
-
-  <section
-    id="banking"
-    class="dashboard-section">
-
-    <div class="section-heading">
-
-      <div>
-
-        <h2>🏦 Banking Information</h2>
-
-        <p>
-          Use one of the official Funda Online Academy
-          bank accounts when making a payment.
-        </p>
-
-      </div>
-
-    </div>
-
-
-    <div class="banking-grid">
-
-      <!-- TYME BANK -->
-
-      <div class="bank-card">
-
-        <h3>TymeBank</h3>
-
-        <div class="bank-name">
-          Funda Online Academy
-        </div>
-
-        <div class="bank-detail">
-          <strong>Account number:</strong><br>
-          53001794582
-        </div>
-
-        <div class="bank-detail">
-          <strong>Branch code:</strong><br>
-          678910
-        </div>
-
-      </div>
-
-
-      <!-- CAPITEC -->
-
-      <div class="bank-card">
-
-        <h3>Capitec Bank</h3>
-
-        <div class="bank-name">
-          Funda Online Academy
-        </div>
-
-        <div class="bank-detail">
-          <strong>Account number:</strong><br>
-          2535397664
-        </div>
-
-        <div class="bank-detail">
-          <strong>Branch code:</strong><br>
-          470010
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="payment-rule">
-
-      <strong>💡 Payment Rules</strong>
-
-      <br><br>
-
-      Courses costing <strong>R2,000 or less</strong>
-      require full payment.
-
-      <br>
-
-      Courses costing <strong>more than R2,000</strong>
-      require a minimum 50% upfront payment.
-      The remaining balance may be paid according to
-      an agreed payment plan.
-
-      <br><br>
-
-      <strong>Payment reference:</strong>
-      Use your full name and course name whenever possible.
-
-    </div>
-
-  </section>
-
-
-  <!-- =======================================================
-       AVAILABLE COURSES
-       ======================================================= -->
-
-  <section
-    id="courses"
-    class="dashboard-section">
-
-    <div class="section-heading">
-
-      <div>
-
-        <h2>📖 Available Courses</h2>
-
-        <p>
-          Browse courses available through Funda Online Academy.
-        </p>
-
-      </div>
-
-    </div>
-
-    <div
-      id="available-courses"
-      class="dashboard-grid">
-
-      <div class="card">
-
-        <p class="loading">
-          Loading courses…
-        </p>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =======================================================
-       REQUIRED STUDENT DETAILS
-       ======================================================= -->
-
-  <section
-    id="student-information"
-    class="dashboard-section">
-
-    <div class="section-heading">
-
-      <div>
-
-        <h2>📝 Required Student Information</h2>
-
-        <p>
-          The academy requires accurate information for
-          administration, communication and course records.
-        </p>
-
-      </div>
-
-    </div>
-
-
-    <div class="card">
-
-      <div class="info-list">
-
-        <div class="info-row">
-          <strong>Name and surname</strong>
-          Your full legal name.
-        </div>
-
-        <div class="info-row">
-          <strong>ID / Passport</strong>
-          Your South African ID number or passport number.
-        </div>
-
-        <div class="info-row">
-          <strong>Course name</strong>
-          The course you wish to study.
-        </div>
-
-        <div class="info-row">
-          <strong>Phone number</strong>
-          A working contact number.
-        </div>
-
-        <div class="info-row">
-          <strong>Highest education level</strong>
-          Your highest completed level of education.
-        </div>
-
-        <div class="info-row">
-          <strong>Gender</strong>
-          Required for student administration and records.
-        </div>
-
-        <div class="info-row">
-          <strong>Email address</strong>
-          An active email address.
-        </div>
-
-        <div class="info-row">
-          <strong>Address</strong>
-          Your current residential address.
-        </div>
-
-        <div class="info-row">
-          <strong>How you heard about us</strong>
-          For academy marketing and administration purposes.
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =======================================================
-       POLICIES
-       ======================================================= -->
-
-  <section
-    id="policies"
-    class="dashboard-section">
-
-    <div class="section-heading">
-
-      <div>
-
-        <h2>📜 Policies & Terms</h2>
-
-        <p>
-          Please read the following information carefully.
-        </p>
-
-      </div>
-
-    </div>
-
+    class="dashboard-section"
+    id="policies">
+
+    <h2>
+      📜 Policies, Payment Rules & Declaration
+    </h2>
 
     <div class="policy-card">
 
+      <div class="policy-intro">
 
-      <!-- PAYMENT POLICY -->
+        <strong>
+          Please read this information carefully before
+          enrolling in a course.
+        </strong>
+
+        <br>
+
+        These policies explain the payment rules,
+        student responsibilities, assessment requirements,
+        conduct requirements and how Funda Online Academy
+        protects your personal information.
+
+      </div>
+
+
+      <!-- PAYMENT RULES -->
 
       <div class="policy-group">
 
-        <h3>💳 Payment Policy</h3>
+        <h3>💳 Payment Rules</h3>
 
         <ul>
 
           <li>
-            Courses costing R2,000 or less require full payment.
+            Courses below <strong>R2,000</strong>
+            must be paid in full.
           </li>
 
           <li>
-            Courses costing more than R2,000 require at least
-            50% payment upfront.
+            Courses above <strong>R2,000</strong>
+            require at least half of the course fee
+            upfront.
           </li>
 
           <li>
-            The remaining balance may be paid according to
-            an agreed payment plan.
+            The remaining balance must be paid according
+            to the agreed payment arrangement before
+            completion/certification.
           </li>
 
           <li>
-            Students are responsible for following their
-            agreed payment arrangement.
+            Where applicable, students may request a
+            payment plan. Approval of a payment plan is
+            at the discretion of Funda Online Academy.
           </li>
 
           <li>
-            Payment proof must be submitted through the
-            official student platform where requested.
+            Students remain responsible for agreed
+            outstanding balances.
           </li>
 
         </ul>
@@ -1052,82 +432,131 @@ body{
       </div>
 
 
-      <!-- STUDENT RESPONSIBILITIES -->
+      <!-- BANKING -->
 
       <div class="policy-group">
 
-        <h3>🎓 Student Responsibilities</h3>
+        <h3>🏦 How To Pay</h3>
 
-        <ul>
+        <p>
+          Please use the following official Funda Online
+          Academy banking details when making a payment.
+        </p>
 
-          <li>
-            Students must be committed to completing their course.
-          </li>
 
-          <li>
-            Students must treat academy staff and other students
-            with respect.
-          </li>
+        <div class="bank-grid">
 
-          <li>
-            Students must follow Funda Online Academy rules
-            and instructions.
-          </li>
+          <div class="bank-card">
 
-          <li>
-            Students must keep their login information secure.
-          </li>
+            <h3>TymeBank</h3>
 
-          <li>
-            Students must provide accurate information during
-            registration and enrolment.
-          </li>
+            <p class="bank-detail">
+              <strong>Account name:</strong>
+              Funda Online Academy
+            </p>
 
-        </ul>
+            <p class="bank-detail">
+              <strong>Account number:</strong>
+              53001794582
+            </p>
+
+            <p class="bank-detail">
+              <strong>Branch code:</strong>
+              678910
+            </p>
+
+          </div>
+
+
+          <div class="bank-card">
+
+            <h3>Capitec Bank</h3>
+
+            <p class="bank-detail">
+              <strong>Account name:</strong>
+              Funda Online Academy
+            </p>
+
+            <p class="bank-detail">
+              <strong>Account number:</strong>
+              2535397664
+            </p>
+
+            <p class="bank-detail">
+              <strong>Branch code:</strong>
+              470010
+            </p>
+
+          </div>
+
+        </div>
 
       </div>
 
 
-      <!-- COURSE CHANGES -->
+      <!-- REQUIRED DETAILS -->
 
       <div class="policy-group">
 
-        <h3>📚 Course Rules</h3>
+        <h3>📋 Required Student Information</h3>
 
-        <ul>
+        <p>
+          Students may be required to provide the
+          following information for administration,
+          enrolment, communication and certification:
+        </p>
 
-          <li>
-            Course changes are not permitted after a course
-            has started.
-          </li>
+        <div class="required-list">
 
-          <li>
-            Students should carefully choose their course
-            before completing enrolment.
-          </li>
+          <div>✓ Name</div>
+          <div>✓ Surname</div>
+          <div>✓ ID / Passport</div>
+          <div>✓ Course name</div>
+          <div>✓ Phone number</div>
+          <div>✓ Highest education level</div>
+          <div>✓ Gender</div>
+          <div>✓ Email address</div>
+          <div>✓ Residential address</div>
+          <div>✓ How you heard about us</div>
 
-          <li>
-            Learning materials provided to students are for
-            their personal educational use.
-          </li>
-
-          <li>
-            Students must not copy, sell or redistribute
-            academy learning materials without permission.
-          </li>
-
-        </ul>
+        </div>
 
       </div>
 
 
-      <!-- ASSESSMENTS -->
+      <!-- STUDENT RULES -->
 
       <div class="policy-group">
 
-        <h3>📝 Assessment Rules</h3>
+        <h3>📚 Student Rules & Responsibilities</h3>
 
         <ul>
+
+          <li>
+            Students must remain committed to completing
+            their chosen course.
+          </li>
+
+          <li>
+            Students must treat Funda Online Academy
+            staff and other students with respect.
+          </li>
+
+          <li>
+            Students must follow academy rules and
+            instructions.
+          </li>
+
+          <li>
+            Course changes are generally not permitted
+            after the course has started.
+          </li>
+
+          <li>
+            No refunds will be provided for students who
+            voluntarily drop out after enrolment,
+            subject to applicable law.
+          </li>
 
           <li>
             Assessments must be submitted by the required
@@ -1135,74 +564,29 @@ body{
           </li>
 
           <li>
-            Assessments must be the student's own work.
+            Assessments must be completed through the
+            approved academy learning system.
           </li>
 
           <li>
-            Assessments may not be submitted through WhatsApp.
+            WhatsApp must not be used to submit official
+            assessments unless the academy specifically
+            authorises it.
           </li>
 
           <li>
-            Students must use the official assessment
-            submission system provided by the academy.
+            Students must provide accurate information
+            during registration and enrolment.
           </li>
 
           <li>
-            Academic dishonesty or fraudulent submissions
-            may result in disciplinary action.
-          </li>
-
-        </ul>
-
-      </div>
-
-
-      <!-- REFUNDS -->
-
-      <div class="policy-group">
-
-        <h3>💰 Refunds</h3>
-
-        <ul>
-
-          <li>
-            No refunds are provided for students who voluntarily
-            drop out after starting a course, subject to any
-            applicable legal requirements.
+            Students must not share their account
+            password with another person.
           </li>
 
           <li>
-            Students should contact the academy as soon as
-            possible if they experience circumstances affecting
-            their studies or payments.
-          </li>
-
-        </ul>
-
-      </div>
-
-
-      <!-- CERTIFICATES -->
-
-      <div class="policy-group">
-
-        <h3>🏆 Certificates</h3>
-
-        <ul>
-
-          <li>
-            Certificates are issued after the applicable course
-            requirements have been successfully completed.
-          </li>
-
-          <li>
-            Students must provide accurate personal information
-            for their academic and certificate records.
-          </li>
-
-          <li>
-            Any outstanding requirements or applicable fees
-            may need to be resolved before certificate release.
+            Students must not attempt to access another
+            student's account or information.
           </li>
 
         </ul>
@@ -1214,29 +598,50 @@ body{
 
       <div class="policy-group">
 
-        <h3>🔐 Privacy & Personal Information</h3>
+        <h3>🔐 Privacy & Protection of Information</h3>
+
+        <p style="line-height:1.6">
+
+          Funda Online Academy will take reasonable steps
+          to protect student information and use it for
+          legitimate academy purposes such as
+          administration, enrolment, communication,
+          assessments, records and certification.
+
+          Students must provide accurate information and
+          should notify the academy if their contact
+          information changes.
+
+        </p>
+
+      </div>
+
+
+      <!-- ACADEMIC INTEGRITY -->
+
+      <div class="policy-group">
+
+        <h3>📝 Assessments & Academic Integrity</h3>
 
         <ul>
 
           <li>
-            Funda Online Academy takes reasonable steps to
-            protect student personal information.
+            Students must complete their own assessments.
           </li>
 
           <li>
-            Personal information is used for legitimate
-            registration, administration, communication,
-            learning and certificate purposes.
+            Students must not submit work completed by
+            another person as their own.
           </li>
 
           <li>
-            Students should keep their account credentials
-            confidential.
+            The academy may review assessment submissions
+            where academic integrity concerns arise.
           </li>
 
           <li>
-            Students should notify the academy if their
-            personal information changes.
+            Results may be withheld while an assessment
+            concern is being reviewed.
           </li>
 
         </ul>
@@ -1244,37 +649,45 @@ body{
       </div>
 
 
-      <!-- PLATFORM CONDUCT -->
+      <!-- COMMUNICATION -->
 
       <div class="policy-group">
 
-        <h3>💻 Platform Rules</h3>
+        <h3>📞 Communication</h3>
 
-        <ul>
+        <p style="line-height:1.6">
 
-          <li>
-            Students must use the academy platform responsibly.
-          </li>
+          Students should use the official Funda Online
+          Academy communication channels for support,
+          enquiries and administration.
 
-          <li>
-            Students must not attempt to access another
-            student's account or information.
-          </li>
+        </p>
 
-          <li>
-            Fraudulent activity, abuse of the platform or
-            serious misconduct may result in account
-            suspension or termination.
-          </li>
+      </div>
 
-        </ul>
+
+      <!-- CONTACT -->
+
+      <div class="contact-box">
+
+        <strong>
+          Funda Online Academy
+        </strong>
+
+        <p>
+          📧 fundaonlineacademy@gmail.com
+        </p>
+
+        <p>
+          📱 069 960 8590
+        </p>
 
       </div>
 
 
       <!-- DECLARATION -->
 
-      <div class="declaration">
+      <div class="declaration-box">
 
         <h3>
           ✍️ Student Declaration
@@ -1282,69 +695,66 @@ body{
 
         <p class="declaration-text">
 
-          I confirm that the information I have provided to
-          Funda Online Academy is true and correct.
+          I confirm that I have read and understood the
+          Funda Online Academy payment rules, student
+          requirements, policies, assessment requirements
+          and terms and conditions.
 
-          <br><br>
+          I confirm that the information I provide to
+          Funda Online Academy is true and accurate.
 
-          I confirm that I have read and understood the payment
-          rules, course rules, assessment requirements,
-          terms and conditions and privacy information.
+          I understand that I am responsible for following
+          the academy's rules and completing my course
+          requirements.
 
-          <br><br>
+          I understand the payment obligations associated
+          with my course and agree to comply with the
+          approved payment arrangement.
 
-          I understand that assessments must be submitted
-          through the official academy system and not through
-          WhatsApp.
-
-          <br><br>
-
-          I agree to comply with the rules and policies of
-          Funda Online Academy and understand that failure
-          to comply may affect my enrolment or access to
-          the learning platform.
+          I understand that acceptance of these policies
+          does not automatically mean that my enrolment
+          has been approved.
 
         </p>
 
 
-        <!-- IMPORTANT:
-             These controls are currently the visual declaration.
-             We will connect them to Supabase in dashboard.js
-             so acceptance is actually saved and required.
-        -->
+        <div class="accept-row">
 
-        <div class="accept-box">
+          <input
+            type="checkbox"
+            id="policy-checkbox">
 
-          <label>
+          <label for="policy-checkbox">
 
-            <input
-              type="checkbox"
-              id="policy-accept">
-
-            <span>
-              I have read, understood and agree to the
-              Funda Online Academy policies and declaration.
-            </span>
+            <strong>
+              I accept the Funda Online Academy Terms,
+              Payment Rules, Policies and Student
+              Declaration.
+            </strong>
 
           </label>
 
         </div>
 
 
-        <div class="accept-box">
+        <button
+          type="button"
+          id="accept-policy-btn"
+          class="btn green accept-button">
 
-          <label>
+          ✅ Accept & Continue
 
-            <input
-              type="checkbox"
-              id="policy-reject">
+        </button>
 
-            <span>
-              I do not accept these policies and declaration.
-            </span>
 
-          </label>
+        <p class="policy-version">
+          Policy version: FOA Terms v1.0
+        </p>
 
+        <div
+          id="policy-accepted"
+          class="accepted-box"
+          style="display:none;margin-top:18px">
         </div>
 
       </div>
@@ -1354,119 +764,86 @@ body{
   </section>
 
 
-  <!-- =======================================================
-       CONTACT
-       ======================================================= -->
+  <!-- ======================================================
+       PAYMENTS
+       ====================================================== -->
 
   <section
-    id="contact"
-    class="dashboard-section">
+    class="dashboard-section"
+    id="payments">
 
-    <div class="section-heading">
+    <h2>
+      💳 Payments
+    </h2>
 
-      <div>
+    <div id="payment-list">
 
-        <h2>📞 Contact Funda Online Academy</h2>
-
-        <p>
-          Need help with your course or enrolment?
-          Contact the academy.
+      <div class="card">
+        <p class="loading">
+          Loading payment history…
         </p>
-
-      </div>
-
-    </div>
-
-
-    <div class="contact-grid">
-
-      <div class="contact-item">
-
-        <span>📧</span>
-
-        <strong>Email</strong>
-
-        <a href="mailto:fundaonlineacademy@gmail.com">
-          fundaonlineacademy@gmail.com
-        </a>
-
-      </div>
-
-
-      <div class="contact-item">
-
-        <span>📱</span>
-
-        <strong>Phone / WhatsApp</strong>
-
-        <a href="tel:0699608590">
-          069 960 8590
-        </a>
-
       </div>
 
     </div>
 
   </section>
 
+
+  <!-- ======================================================
+       ENROLMENTS
+       ====================================================== -->
+
+  <section>
+
+    <h2>
+      📝 My Enrolments
+    </h2>
+
+    <div
+      id="enrolments"
+      class="dashboard-grid">
+
+      <p class="loading">
+        Loading enrolments…
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ======================================================
+       AVAILABLE COURSES
+       ====================================================== -->
+
+  <section>
+
+    <h2>
+      📚 Available Courses
+    </h2>
+
+    <div
+      id="available-courses"
+      class="dashboard-grid">
+
+      <p class="loading">
+        Loading courses…
+      </p>
+
+    </div>
+
+  </section>
 
 </div>
 
 </main>
 
 
-<!-- =========================================================
-     SUPABASE
-     ========================================================= -->
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="supabase-config.js?v=20260816-1"></script>
+<script src="supabase-config.js?v=20260816-3"></script>
 
-<script src="dashboard.js?v=20260816-2"></script>
-
-
-<!-- =========================================================
-     POLICY CHECKBOX BEHAVIOUR
-     ========================================================= -->
-
-<script>
-
-const acceptPolicy =
-  document.getElementById("policy-accept");
-
-const rejectPolicy =
-  document.getElementById("policy-reject");
-
-
-if (acceptPolicy && rejectPolicy) {
-
-  acceptPolicy.addEventListener(
-    "change",
-    function(){
-
-      if (this.checked) {
-        rejectPolicy.checked = false;
-      }
-
-    }
-  );
-
-
-  rejectPolicy.addEventListener(
-    "change",
-    function(){
-
-      if (this.checked) {
-        acceptPolicy.checked = false;
-      }
-
-    }
-  );
-
-}
-
-</script>
+<script src="dashboard.js?v=20260816-3"></script>
 
 </body>
-  </html>
+</html>
