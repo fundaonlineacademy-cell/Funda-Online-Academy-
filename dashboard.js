@@ -1,7 +1,7 @@
 // ============================================================
 // FUNDA ONLINE ACADEMY
 // STUDENT DASHBOARD
-// SIX-TAB VERSION
+// COURSES • ENROLMENTS • PAYMENTS • POLICIES
 // ============================================================
 
 const { createClient } = supabase;
@@ -22,9 +22,6 @@ const userNameEl =
 const userEmailEl =
   document.getElementById("user-email");
 
-const studentEmailDisplay =
-  document.getElementById("student-email-display");
-
 const enrolmentsEl =
   document.getElementById("enrolments");
 
@@ -40,42 +37,61 @@ const messageEl =
 const logoutBtn =
   document.getElementById("logout");
 
-const declarationStatus =
-  document.getElementById("declaration-status");
+const policyCheckbox =
+  document.getElementById("policy-checkbox");
 
-const declarationActions =
-  document.getElementById("declaration-actions");
+const acceptPolicyBtn =
+  document.getElementById("accept-policy-btn");
 
-const acceptDeclarationBtn =
-  document.getElementById("accept-declaration");
-
-const rejectDeclarationBtn =
-  document.getElementById("reject-declaration");
+const policyAcceptedEl =
+  document.getElementById("policy-accepted");
 
 
 // ============================================================
-// DATA
+// POLICY VERSION
 // ============================================================
 
-let currentStudent = null;
-
-let currentEnrolments = [];
-
-let currentCourses = [];
-
-let currentPayments = [];
+const POLICY_VERSION =
+  "FOA Terms v1.0";
 
 
 // ============================================================
-// SECURITY
+// DECLARATION
 // ============================================================
 
-function escapeHTML(value){
+const DECLARATION_TEXT = `
+I confirm that I have read and understood the
+Funda Online Academy payment rules, student
+requirements, policies, assessment requirements
+and terms and conditions.
 
-  if(
+I confirm that the information I provide to
+Funda Online Academy is true and accurate.
+
+I understand that I am responsible for following
+the academy's rules and completing my course
+requirements.
+
+I understand the payment obligations associated
+with my course and agree to comply with the
+approved payment arrangement.
+
+I understand that acceptance of these policies
+does not automatically mean that my enrolment
+has been approved.
+`.trim();
+
+
+// ============================================================
+// HELPERS
+// ============================================================
+
+function escapeHTML(value) {
+
+  if (
     value === null ||
     value === undefined
-  ){
+  ) {
     return "";
   }
 
@@ -88,66 +104,57 @@ function escapeHTML(value){
 }
 
 
-// ============================================================
-// MONEY
-// ============================================================
+function formatMoney(value) {
 
-function formatMoney(value){
+  const n =
+    Number(value);
 
-  const n = Number(value);
+  return Number.isFinite(n)
 
-  if(!Number.isFinite(n)){
-    return "R0.00";
-  }
+    ? "R" +
+      n.toLocaleString(
+        "en-ZA",
+        {
+          minimumFractionDigits:2,
+          maximumFractionDigits:2
+        }
+      )
 
-  return "R" +
-    n.toLocaleString(
-      "en-ZA",
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    );
+    : "R0.00";
 }
 
 
-// ============================================================
-// DATE
-// ============================================================
+function formatDate(value) {
 
-function formatDate(value){
-
-  if(!value){
+  if (!value) {
     return "—";
   }
 
   const d =
     new Date(value);
 
-  if(
+  if (
     Number.isNaN(
       d.getTime()
     )
-  ){
+  ) {
     return "—";
   }
 
-  return d.toLocaleDateString(
+  return d.toLocaleString(
     "en-ZA",
     {
       year:"numeric",
       month:"short",
-      day:"numeric"
+      day:"numeric",
+      hour:"2-digit",
+      minute:"2-digit"
     }
   );
 }
 
 
-// ============================================================
-// STATUS
-// ============================================================
-
-function statusOf(row){
+function statusOf(row) {
 
   return String(
     row?.enrollment_status ??
@@ -159,16 +166,12 @@ function statusOf(row){
 }
 
 
-// ============================================================
-// MESSAGE
-// ============================================================
-
 function showMessage(
   text,
-  success=false
-){
+  success = false
+) {
 
-  if(!messageEl){
+  if (!messageEl) {
     return;
   }
 
@@ -180,11 +183,6 @@ function showMessage(
     (success
       ? "success"
       : "error");
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
 }
 
 
@@ -192,17 +190,18 @@ function showMessage(
 // CURRENT USER
 // ============================================================
 
-async function currentUser(){
+async function currentUser() {
 
   const {
     data,
     error
-  } = await db.auth.getUser();
+  } =
+    await db.auth.getUser();
 
-  if(error){
+  if (error) {
 
     console.error(
-      "Auth error:",
+      "Auth:",
       error
     );
 
@@ -214,21 +213,24 @@ async function currentUser(){
 
 
 // ============================================================
-// STUDENT
+// GET STUDENT
 // ============================================================
 
-async function getStudent(userId){
+async function getStudent(
+  userId
+) {
 
   const {
     data,
     error
-  } = await db
-    .from("students")
-    .select("*")
-    .eq("user_id",userId)
-    .maybeSingle();
+  } =
+    await db
+      .from("students")
+      .select("*")
+      .eq("user_id", userId)
+      .maybeSingle();
 
-  if(error){
+  if (error) {
     throw error;
   }
 
@@ -237,10 +239,12 @@ async function getStudent(userId){
 
 
 // ============================================================
-// COURSES
+// GET COURSES
 // ============================================================
 
-async function getCourses(ids=null){
+async function getCourses(
+  ids = null
+) {
 
   let q =
     db
@@ -248,10 +252,10 @@ async function getCourses(ids=null){
       .select("*");
 
 
-  if(
+  if (
     ids &&
     ids.length
-  ){
+  ) {
 
     q =
       q.in(
@@ -259,11 +263,14 @@ async function getCourses(ids=null){
         ids
       );
 
-  }else{
+  } else {
 
     q =
       q
-        .eq("active",true)
+        .eq(
+          "active",
+          true
+        )
         .order(
           "title",
           {
@@ -277,68 +284,78 @@ async function getCourses(ids=null){
   const {
     data,
     error
-  } = await q;
+  } =
+    await q;
 
 
-  if(!error){
-    return data || [];
-  }
+  if (error) {
+
+    console.warn(
+      "Primary course query failed:",
+      error
+    );
 
 
-  // Fallback for older course structure
-
-  if(
-    ids &&
-    ids.length
-  ){
+    // Compatibility with older
+    // course tables
 
     const fallback =
-      await db
-        .from("courses")
-        .select("*")
-        .in("id",ids);
 
-    if(fallback.error){
+      ids && ids.length
+
+        ? await db
+            .from("courses")
+            .select("*")
+            .in(
+              "id",
+              ids
+            )
+
+        : await db
+            .from("courses")
+            .select("*")
+            .eq(
+              "active",
+              true
+            )
+            .order(
+              "name",
+              {
+                ascending:true
+              }
+            );
+
+
+    if (fallback.error) {
       throw error;
     }
 
     return fallback.data || [];
-
   }
 
 
-  const fallback =
-    await db
-      .from("courses")
-      .select("*")
-      .eq("active",true)
-      .order(
-        "name",
-        {
-          ascending:true
-        }
-      );
-
-
-  if(fallback.error){
-    throw error;
-  }
-
-  return fallback.data || [];
+  return data || [];
 }
 
 
 // ============================================================
-// COURSE NAME
+// COURSE TITLE
 // ============================================================
 
-function courseTitle(course){
+function courseTitle(
+  course
+) {
 
   return (
+
     course?.title ||
+
     course?.name ||
+
     course?.course_name ||
+
     "Course"
+
   );
 }
 
@@ -347,150 +364,485 @@ function courseTitle(course){
 // COURSE PRICE
 // ============================================================
 
-function coursePrice(course){
+function coursePrice(
+  course
+) {
 
   return (
+
     course?.price ??
+
     course?.amount ??
+
     course?.course_price ??
+
     0
+
   );
 }
 
 
 // ============================================================
-// PAYMENT RULE
+// POLICY ACCEPTANCE
 // ============================================================
 
-function paymentRuleFor(course){
+async function loadPolicyAcceptance(
+  student
+) {
 
-  const price =
-    Number(
-      coursePrice(course)
-    );
-
-
-  if(
-    Number.isFinite(price) &&
-    price > 2000
-  ){
-
-    return `
-      <div class="payment-rule">
-        <strong>Payment plan:</strong>
-        Minimum 50% upfront.
-        The remaining balance is payable on completion.
-        A payment plan may be arranged with the academy.
-      </div>
-    `;
-
+  if (
+    !student ||
+    !student.id
+  ) {
+    return;
   }
 
 
-  return `
-    <div class="payment-rule">
-      <strong>Payment requirement:</strong>
-      Full course amount must be paid.
-    </div>
-  `;
-}
-
-
-// ============================================================
-// LOAD ENROLMENTS
-// ============================================================
-
-async function loadEnrolments(
-  studentId
-){
-
-  enrolmentsEl.innerHTML =
-    '<p class="loading">Loading enrolments…</p>';
-
-
-  try{
+  try {
 
     const {
-      data:rows,
+      data,
       error
-    } = await db
-      .from("enrollments")
-      .select("*")
-      .eq(
-        "student_id",
-        studentId
-      )
-      .order(
-        "enrolled_at",
-        {
-          ascending:false
-        }
+    } =
+      await db
+        .from(
+          "policy_acceptances"
+        )
+        .select("*")
+        .eq(
+          "student_id",
+          student.id
+        )
+        .eq(
+          "policy_version",
+          POLICY_VERSION
+        )
+        .maybeSingle();
+
+
+    if (error) {
+
+      console.error(
+        "Policy acceptance:",
+        error
       );
-
-
-    if(error){
-      throw error;
-    }
-
-
-    currentEnrolments =
-      rows || [];
-
-
-    updateOverview();
-
-
-    if(!currentEnrolments.length){
-
-      enrolmentsEl.innerHTML = `
-        <div class="empty-card">
-
-          <h3>No enrolments yet</h3>
-
-          <p>
-            Choose a course from the Available Courses tab
-            to start your learning journey.
-          </p>
-
-          <div class="funda-card-actions">
-
-            <button
-              type="button"
-              class="btn green"
-              data-open-tab="courses"
-            >
-              🎓 Browse Courses
-            </button>
-
-          </div>
-
-        </div>
-      `;
-
-      attachTabButtons();
 
       return;
     }
 
 
-    const ids = [
-      ...new Set(
-        currentEnrolments
-          .map(
-            r => r.course_id
+    if (
+      data &&
+      data.policies_accepted === true &&
+      data.declaration_accepted === true
+    ) {
+
+      showPolicyAccepted(
+        data
+      );
+
+    } else {
+
+      showPolicyForm();
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Policy loading error:",
+      error
+    );
+
+  }
+
+}
+
+
+// ============================================================
+// SHOW POLICY FORM
+// ============================================================
+
+function showPolicyForm() {
+
+  if (policyCheckbox) {
+
+    policyCheckbox.checked =
+      false;
+
+    policyCheckbox.disabled =
+      false;
+
+  }
+
+
+  if (acceptPolicyBtn) {
+
+    acceptPolicyBtn.disabled =
+      false;
+
+    acceptPolicyBtn.style.display =
+      "inline-block";
+
+    acceptPolicyBtn.textContent =
+      "✅ Accept & Continue";
+
+  }
+
+
+  if (policyAcceptedEl) {
+
+    policyAcceptedEl.style.display =
+      "none";
+
+    policyAcceptedEl.innerHTML =
+      "";
+
+  }
+
+}
+
+
+// ============================================================
+// SHOW ACCEPTED POLICY
+// ============================================================
+
+function showPolicyAccepted(
+  record
+) {
+
+  if (policyCheckbox) {
+
+    policyCheckbox.checked =
+      true;
+
+    policyCheckbox.disabled =
+      true;
+
+  }
+
+
+  if (acceptPolicyBtn) {
+
+    acceptPolicyBtn.style.display =
+      "none";
+
+  }
+
+
+  if (policyAcceptedEl) {
+
+    policyAcceptedEl.style.display =
+      "block";
+
+    policyAcceptedEl.innerHTML = `
+
+      <strong>
+        ✅ Policies Accepted
+      </strong>
+
+      <div>
+        Your Funda Online Academy policies
+        and declaration have been accepted.
+      </div>
+
+      <div>
+        <strong>
+          Policy version:
+        </strong>
+
+        ${escapeHTML(
+          record.policy_version ||
+          POLICY_VERSION
+        )}
+      </div>
+
+      <div>
+        <strong>
+          Accepted:
+        </strong>
+
+        ${escapeHTML(
+          formatDate(
+            record.accepted_at
           )
-          .filter(Boolean)
+        )}
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+// ============================================================
+// ACCEPT POLICIES
+// ============================================================
+
+async function acceptPolicies() {
+
+  if (!policyCheckbox) {
+    return;
+  }
+
+
+  if (
+    !policyCheckbox.checked
+  ) {
+
+    showMessage(
+      "Please tick the acceptance box before continuing."
+    );
+
+    return;
+  }
+
+
+  if (!currentStudent) {
+
+    showMessage(
+      "Your student profile could not be found."
+    );
+
+    return;
+  }
+
+
+  if (acceptPolicyBtn) {
+
+    acceptPolicyBtn.disabled =
+      true;
+
+    acceptPolicyBtn.textContent =
+      "Saving acceptance…";
+
+  }
+
+
+  try {
+
+    // --------------------------------------------------------
+    // CHECK WHETHER ALREADY ACCEPTED
+    // --------------------------------------------------------
+
+    const {
+      data:existing,
+      error:checkError
+    } =
+      await db
+        .from(
+          "policy_acceptances"
+        )
+        .select("id,accepted_at,policy_version,policies_accepted,declaration_accepted")
+        .eq(
+          "student_id",
+          currentStudent.id
+        )
+        .eq(
+          "policy_version",
+          POLICY_VERSION
+        )
+        .maybeSingle();
+
+
+    if (checkError) {
+      throw checkError;
+    }
+
+
+    if (
+      existing &&
+      existing.policies_accepted === true &&
+      existing.declaration_accepted === true
+    ) {
+
+      showPolicyAccepted(
+        existing
+      );
+
+      showMessage(
+        "Your policies have already been accepted.",
+        true
+      );
+
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // SAVE ACCEPTANCE
+    // --------------------------------------------------------
+
+    const payload = {
+
+      student_id:
+        currentStudent.id,
+
+      user_id:
+        currentUserData.id,
+
+      policy_version:
+        POLICY_VERSION,
+
+      policies_accepted:
+        true,
+
+      declaration_accepted:
+        true,
+
+      declaration_text:
+        DECLARATION_TEXT
+
+    };
+
+
+    const {
+      data,
+      error
+    } =
+      await db
+        .from(
+          "policy_acceptances"
+        )
+        .insert(
+          payload
+        )
+        .select("*")
+        .single();
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    showPolicyAccepted(
+      data
+    );
+
+
+    showMessage(
+      "Policies accepted successfully. Your acceptance has been recorded.",
+      true
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Policy acceptance error:",
+      error
+    );
+
+
+    showMessage(
+      "Unable to save your policy acceptance: " +
+      (
+        error.message ||
+        "Please try again."
       )
-    ];
+    );
 
 
-    const courses =
+    if (acceptPolicyBtn) {
+
+      acceptPolicyBtn.disabled =
+        false;
+
+      acceptPolicyBtn.textContent =
+        "✅ Accept & Continue";
+
+    }
+
+  }
+
+}
+
+
+// ============================================================
+// ENROLMENTS
+// ============================================================
+
+async function loadEnrolments(
+  studentId
+) {
+
+  enrolmentsEl.innerHTML =
+    '<p class="loading">Loading enrolments…</p>';
+
+
+  try {
+
+    const {
+      data:rows,
+      error
+    } =
+      await db
+        .from("enrollments")
+        .select("*")
+        .eq(
+          "student_id",
+          studentId
+        )
+        .order(
+          "enrolled_at",
+          {
+            ascending:false
+          }
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    if (
+      !rows ||
+      !rows.length
+    ) {
+
+      enrolmentsEl.innerHTML = `
+
+        <div class="card">
+
+          <h3>
+            No enrolments yet
+          </h3>
+
+          <p>
+            Choose a course below to start
+            your learning journey.
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+    }
+
+
+    const ids =
+      [
+        ...new Set(
+          rows
+            .map(
+              r => r.course_id
+            )
+            .filter(Boolean)
+        )
+      ];
+
+
+    const courseRows =
       await getCourses(ids);
 
 
     const map =
       new Map(
-        courses.map(
+        courseRows.map(
           c => [
             String(c.id),
             c
@@ -500,105 +852,112 @@ async function loadEnrolments(
 
 
     enrolmentsEl.innerHTML =
-      currentEnrolments
-        .map(row => {
+      rows.map(row => {
 
-          const course =
-            map.get(
-              String(
-                row.course_id
-              )
-            );
-
-
-          const status =
-            statusOf(row);
+        const course =
+          map.get(
+            String(
+              row.course_id
+            )
+          );
 
 
-          const approved =
-            status === "approved" ||
-            status === "active";
+        const status =
+          statusOf(row);
 
 
-          const amount =
-            row.amount ??
-            coursePrice(course);
+        const approved =
+          status === "approved" ||
+          status === "active";
 
 
-          return `
-            <div class="dashboard-card">
+        const amount =
+          row.amount ??
+          coursePrice(course);
 
-              <span
-                class="funda-status ${escapeHTML(status)}"
-              >
-                ${escapeHTML(status)}
-              </span>
 
-              <h3>
-                ${escapeHTML(
-                  courseTitle(course)
-                )}
-              </h3>
+        return `
 
-              <p>
-                ${escapeHTML(
-                  course?.description ||
-                  "Your enrolled online course."
-                )}
-              </p>
+          <div class="card">
 
-              <p style="margin-top:10px">
-                <strong>Course fee:</strong>
-                ${formatMoney(amount)}
-              </p>
+            <span class="funda-status ${escapeHTML(status)}">
+              ${escapeHTML(status)}
+            </span>
 
-              <p>
-                <strong>Enrolled:</strong>
-                ${formatDate(
-                  row.enrolled_at ||
-                  row.created_at
-                )}
-              </p>
+            <h3>
+              ${escapeHTML(
+                courseTitle(course)
+              )}
+            </h3>
 
-              ${
-                approved
+            <p>
+              ${escapeHTML(
+                course?.description ||
+                "Your enrolled online course."
+              )}
+            </p>
+
+            <p class="funda-info">
+              <strong>
+                Course fee:
+              </strong>
+
+              ${formatMoney(amount)}
+            </p>
+
+            <p class="funda-info">
+              <strong>
+                Enrolled:
+              </strong>
+
+              ${formatDate(
+                row.enrolled_at ||
+                row.created_at
+              )}
+            </p>
+
+            ${
+              approved
 
                 ? `
-
-                  ${paymentRuleFor(course)}
 
                   <div class="funda-card-actions">
 
                     <button
                       class="btn green study-btn"
-                      data-course-id="${escapeHTML(
-                        row.course_id
-                      )}"
-                    >
+                      data-course-id="${escapeHTML(row.course_id)}">
+
                       📚 Study Course
+
                     </button>
 
                   </div>
-                `
-
-                :
 
                 `
+
+                : `
+
                   <p style="margin-top:14px;color:#777">
+
                     Your enrolment is awaiting approval.
+
                   </p>
+
                 `
-              }
 
-            </div>
-          `;
+            }
 
-        })
-        .join("");
+          </div>
+
+        `;
+
+      }).join("");
 
 
     document
-      .querySelectorAll(".study-btn")
+      .querySelectorAll(
+        ".study-btn"
+      )
       .forEach(btn => {
 
         btn.addEventListener(
@@ -608,7 +967,7 @@ async function loadEnrolments(
             const id =
               btn.dataset.courseId;
 
-            if(id){
+            if (id) {
 
               location.href =
                 "course-study.html?id=" +
@@ -622,7 +981,7 @@ async function loadEnrolments(
       });
 
 
-  }catch(err){
+  } catch (err) {
 
     console.error(
       "Enrolments:",
@@ -631,7 +990,8 @@ async function loadEnrolments(
 
 
     enrolmentsEl.innerHTML = `
-      <div class="dashboard-card">
+
+      <div class="card">
 
         <h3>
           Unable to load enrolments
@@ -645,6 +1005,7 @@ async function loadEnrolments(
         </p>
 
       </div>
+
     `;
 
   }
@@ -658,37 +1019,37 @@ async function loadEnrolments(
 
 async function loadAvailableCourses(
   studentId
-){
+) {
 
   coursesEl.innerHTML =
     '<p class="loading">Loading courses…</p>';
 
 
-  try{
+  try {
 
     const courses =
       await getCourses();
 
 
-    currentCourses =
-      courses;
-
-
-    updateOverview();
-
-
-    if(!courses.length){
+    if (
+      !courses.length
+    ) {
 
       coursesEl.innerHTML = `
-        <div class="empty-card">
 
-          <h3>No courses available</h3>
+        <div class="card">
+
+          <h3>
+            No courses available
+          </h3>
 
           <p>
-            Courses will appear here when they become available.
+            Courses will appear here when
+            available.
           </p>
 
         </div>
+
       `;
 
       return;
@@ -698,18 +1059,19 @@ async function loadAvailableCourses(
     const {
       data:existing,
       error
-    } = await db
-      .from("enrollments")
-      .select(
-        "course_id,enrollment_status"
-      )
-      .eq(
-        "student_id",
-        studentId
-      );
+    } =
+      await db
+        .from("enrollments")
+        .select(
+          "course_id,enrollment_status"
+        )
+        .eq(
+          "student_id",
+          studentId
+        );
 
 
-    if(error){
+    if (error) {
 
       console.warn(
         "Existing enrolments:",
@@ -721,95 +1083,96 @@ async function loadAvailableCourses(
 
     const enrolled =
       new Map(
-        (existing || [])
-          .map(
-            r => [
-              String(r.course_id),
-              statusOf(r)
-            ]
-          )
+        (existing || []).map(
+          r => [
+            String(
+              r.course_id
+            ),
+            statusOf(r)
+          ]
+        )
       );
 
 
     coursesEl.innerHTML =
-      courses
-        .map(course => {
+      courses.map(course => {
 
-          const id =
-            String(course.id);
-
-          const status =
-            enrolled.get(id);
+        const id =
+          String(course.id);
 
 
-          return `
-            <div class="dashboard-card">
+        const status =
+          enrolled.get(id);
 
-              <div class="card-icon">
-                🎓
-              </div>
 
-              <h3>
-                ${escapeHTML(
-                  courseTitle(course)
-                )}
-              </h3>
+        return `
 
-              <p>
-                ${escapeHTML(
-                  course.description ||
-                  "Online short course."
-                )}
-              </p>
+          <div class="card">
 
-              <p style="margin-top:12px">
-                <strong>Course fee:</strong>
-                ${formatMoney(
-                  coursePrice(course)
-                )}
-              </p>
+            <h3>
+              ${escapeHTML(
+                courseTitle(course)
+              )}
+            </h3>
 
-              ${paymentRuleFor(course)}
+            <p>
+              ${escapeHTML(
+                course.description ||
+                "Online short course."
+              )}
+            </p>
 
-              <div class="funda-card-actions">
+            <p class="funda-info">
 
-                ${
-                  status
+              <strong>
+                Course fee:
+              </strong>
 
-                  ?
+              ${formatMoney(
+                coursePrice(course)
+              )}
 
-                  `
-                    <span
-                      class="funda-status ${escapeHTML(status)}"
-                    >
-                      ${escapeHTML(status)}
-                    </span>
-                  `
+            </p>
 
-                  :
+            ${
+              status
 
-                  `
-                    <button
-                      type="button"
-                      class="btn green enrol-btn"
-                      data-course-id="${escapeHTML(id)}"
-                    >
-                      Enrol Now
-                    </button>
-                  `
-                }
+                ? `
 
-              </div>
+                  <span class="funda-status ${escapeHTML(status)}">
 
-            </div>
-          `;
+                    ${escapeHTML(status)}
 
-        })
-        .join("");
+                  </span>
+
+                `
+
+                : `
+
+                  <button
+                    type="button"
+                    class="btn green enrol-btn"
+                    data-course-id="${escapeHTML(id)}">
+
+                    Enrol Now
+
+                  </button>
+
+                `
+
+            }
+
+          </div>
+
+        `;
+
+      }).join("");
 
 
     document
-      .querySelectorAll(".enrol-btn")
+      .querySelectorAll(
+        ".enrol-btn"
+      )
       .forEach(btn => {
 
         btn.addEventListener(
@@ -828,7 +1191,7 @@ async function loadAvailableCourses(
       });
 
 
-  }catch(err){
+  } catch (err) {
 
     console.error(
       "Courses:",
@@ -837,7 +1200,8 @@ async function loadAvailableCourses(
 
 
     coursesEl.innerHTML = `
-      <div class="dashboard-card">
+
+      <div class="card">
 
         <h3>
           Unable to load courses
@@ -851,6 +1215,7 @@ async function loadAvailableCourses(
         </p>
 
       </div>
+
     `;
 
   }
@@ -866,35 +1231,13 @@ async function enrolStudent(
   studentId,
   courseId,
   button
-){
+) {
 
-  if(
+  if (
     !studentId ||
     !courseId
-  ){
+  ) {
     return;
-  }
-
-
-  // Require declaration
-
-  const accepted =
-    localStorage.getItem(
-      "foa_declaration_accepted"
-    );
-
-
-  if(accepted !== "true"){
-
-    showMessage(
-      "Please read and accept the Student Information Declaration before enrolling."
-    );
-
-
-    openTab("policies");
-
-    return;
-
   }
 
 
@@ -905,33 +1248,100 @@ async function enrolStudent(
     "Enrolling…";
 
 
-  try{
+  try {
+
+    // --------------------------------------------------------
+    // REQUIRE POLICY ACCEPTANCE
+    // --------------------------------------------------------
+
+    const {
+      data:policy,
+      error:policyError
+    } =
+      await db
+        .from(
+          "policy_acceptances"
+        )
+        .select(
+          "id,policies_accepted,declaration_accepted"
+        )
+        .eq(
+          "student_id",
+          studentId
+        )
+        .eq(
+          "policy_version",
+          POLICY_VERSION
+        )
+        .maybeSingle();
+
+
+    if (policyError) {
+      throw policyError;
+    }
+
+
+    if (
+      !policy ||
+      policy.policies_accepted !== true ||
+      policy.declaration_accepted !== true
+    ) {
+
+      showMessage(
+        "Please read and accept the Funda Online Academy policies before enrolling."
+      );
+
+
+      document
+        .getElementById(
+          "policies"
+        )
+        ?.scrollIntoView({
+          behavior:"smooth"
+        });
+
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "Enrol Now";
+
+      return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // CHECK EXISTING ENROLMENT
+    // --------------------------------------------------------
 
     const {
       data:existing,
       error:checkError
-    } = await db
-      .from("enrollments")
-      .select(
-        "id,enrollment_status"
-      )
-      .eq(
-        "student_id",
-        studentId
-      )
-      .eq(
-        "course_id",
-        courseId
-      )
-      .maybeSingle();
+    } =
+      await db
+        .from("enrollments")
+        .select(
+          "id,enrollment_status"
+        )
+        .eq(
+          "student_id",
+          studentId
+        )
+        .eq(
+          "course_id",
+          courseId
+        )
+        .maybeSingle();
 
 
-    if(checkError){
+    if (checkError) {
       throw checkError;
     }
 
 
-    if(existing){
+    if (existing) {
 
       showMessage(
         "You are already enrolled in this course."
@@ -948,23 +1358,32 @@ async function enrolStudent(
     }
 
 
+    // --------------------------------------------------------
+    // GET COURSE
+    // --------------------------------------------------------
+
     const {
       data:course,
       error:courseError
-    } = await db
-      .from("courses")
-      .select("*")
-      .eq(
-        "id",
-        courseId
-      )
-      .maybeSingle();
+    } =
+      await db
+        .from("courses")
+        .select("*")
+        .eq(
+          "id",
+          courseId
+        )
+        .maybeSingle();
 
 
-    if(courseError){
+    if (courseError) {
       throw courseError;
     }
 
+
+    // --------------------------------------------------------
+    // CREATE ENROLMENT
+    // --------------------------------------------------------
 
     const payload = {
 
@@ -989,14 +1408,15 @@ async function enrolStudent(
 
     const {
       error:insertError
-    } = await db
-      .from("enrollments")
-      .insert(
-        payload
-      );
+    } =
+      await db
+        .from("enrollments")
+        .insert(
+          payload
+        );
 
 
-    if(insertError){
+    if (insertError) {
       throw insertError;
     }
 
@@ -1008,15 +1428,19 @@ async function enrolStudent(
 
 
     await Promise.all([
-      loadEnrolments(studentId),
-      loadAvailableCourses(studentId)
+
+      loadEnrolments(
+        studentId
+      ),
+
+      loadAvailableCourses(
+        studentId
+      )
+
     ]);
 
 
-    openTab("enrolments");
-
-
-  }catch(err){
+  } catch (err) {
 
     console.error(
       "Enrolment:",
@@ -1050,80 +1474,68 @@ async function enrolStudent(
 
 async function loadPayments(
   studentId
-){
+) {
 
   paymentListEl.innerHTML = `
-    <div class="dashboard-card">
+
+    <div class="card">
 
       <p class="loading">
         Loading payment history…
       </p>
 
     </div>
+
   `;
 
 
-  try{
+  try {
 
     const {
       data:payments,
       error
-    } = await db
-      .from("payments")
-      .select("*")
-      .eq(
-        "student_id",
-        studentId
-      )
-      .order(
-        "created_at",
-        {
-          ascending:false
-        }
-      );
+    } =
+      await db
+        .from("payments")
+        .select("*")
+        .eq(
+          "student_id",
+          studentId
+        )
+        .order(
+          "created_at",
+          {
+            ascending:false
+          }
+        );
 
 
-    if(error){
+    if (error) {
       throw error;
     }
 
 
-    currentPayments =
-      payments || [];
-
-
-    updateOverview();
-
-
-    if(!currentPayments.length){
+    if (
+      !payments ||
+      !payments.length
+    ) {
 
       paymentListEl.innerHTML = `
-        <div class="dashboard-card">
+
+        <div class="card">
 
           <h3>
             Payment History
           </h3>
 
           <p>
-            No payment records have been recorded yet.
+            No payment records have been
+            recorded yet.
           </p>
 
-          <div class="funda-card-actions">
-
-            <button
-              class="btn green"
-              type="button"
-              data-open-tab="banking"
-            >
-              🏦 View Banking Information
-            </button>
-
-          </div>
-
         </div>
-      `;
 
-      attachTabButtons();
+      `;
 
       return;
 
@@ -1133,7 +1545,7 @@ async function loadPayments(
     const courseIds =
       [
         ...new Set(
-          currentPayments
+          payments
             .map(
               p => p.course_id
             )
@@ -1146,12 +1558,15 @@ async function loadPayments(
       new Map();
 
 
-    if(courseIds.length){
+    if (
+      courseIds.length
+    ) {
 
       const courses =
         await getCourses(
           courseIds
         );
+
 
       courseMap =
         new Map(
@@ -1166,130 +1581,161 @@ async function loadPayments(
     }
 
 
-    paymentListEl.innerHTML =
-      `
-        <div style="
+    paymentListEl.innerHTML = `
+
+      <div
+        style="
           display:flex;
           flex-direction:column;
-          gap:14px;
-        ">
+          gap:14px
+        "
+      >
 
-          ${
-            currentPayments
-              .map(p => {
+        ${
+          payments
+            .map(p => {
 
-                const course =
-                  courseMap.get(
-                    String(
-                      p.course_id
-                    )
-                  );
-
-
-                const status =
+              const course =
+                courseMap.get(
                   String(
-                    p.payment_status ??
-                    p.status ??
-                    "pending"
-                  ).toLowerCase();
+                    p.course_id
+                  )
+                );
 
 
-                const proof =
-                  p.proof_url ||
-                  p.proof_of_payment_url ||
-                  p.receipt_url ||
-                  p.file_url;
+              const status =
+                String(
+                  p.payment_status ??
+                  p.status ??
+                  "pending"
+                )
+                .toLowerCase();
 
 
-                const method =
-                  p.payment_method ||
-                  p.method ||
-                  "Not specified";
+              const proof =
+                p.proof_url ||
+                p.proof_of_payment_url ||
+                p.receipt_url ||
+                p.file_url;
 
 
-                const amount =
-                  p.amount ??
-                  coursePrice(course);
+              const method =
+                p.payment_method ||
+                p.method ||
+                "Not specified";
 
 
-                return `
+              const amount =
+                p.amount ??
+                coursePrice(course);
 
-                  <div class="dashboard-card">
 
-                    <h3>
-                      ${escapeHTML(
-                        courseTitle(course)
-                      )}
-                    </h3>
+              return `
 
-                    <p>
-                      <strong>Amount:</strong>
-                      ${formatMoney(amount)}
-                    </p>
+                <div class="payment-card">
 
-                    <p>
-                      <strong>Method:</strong>
-                      ${escapeHTML(method)}
-                    </p>
+                  <h3>
+                    ${escapeHTML(
+                      courseTitle(course)
+                    )}
+                  </h3>
 
-                    <p>
-                      <strong>Date:</strong>
-                      ${formatDate(
-                        p.created_at ||
-                        p.paid_at
-                      )}
-                    </p>
+                  <p class="funda-info">
 
-                    <p>
-                      <strong>Status:</strong>
+                    <strong>
+                      Amount:
+                    </strong>
 
-                      <span
-                        class="funda-status ${escapeHTML(status)}"
-                      >
-                        ${escapeHTML(status)}
-                      </span>
+                    ${formatMoney(
+                      amount
+                    )}
 
-                    </p>
+                  </p>
 
-                    <p>
-                      <strong>Proof:</strong>
+                  <p class="funda-info">
 
-                      ${
-                        proof
+                    <strong>
+                      Method:
+                    </strong>
 
-                        ?
+                    ${escapeHTML(
+                      method
+                    )}
 
-                        `
+                  </p>
+
+                  <p class="funda-info">
+
+                    <strong>
+                      Date:
+                    </strong>
+
+                    ${formatDate(
+                      p.created_at ||
+                      p.paid_at
+                    )}
+
+                  </p>
+
+                  <p class="funda-info">
+
+                    <strong>
+                      Status:
+                    </strong>
+
+                    <span
+                      class="funda-status ${escapeHTML(status)}">
+
+                      ${escapeHTML(status)}
+
+                    </span>
+
+                  </p>
+
+                  <p class="funda-info">
+
+                    <strong>
+                      Proof:
+                    </strong>
+
+                    ${
+                      proof
+
+                        ? `
+
                           <a
                             class="btn green"
                             target="_blank"
                             rel="noopener noreferrer"
-                            href="${escapeHTML(proof)}"
-                          >
+                            href="${escapeHTML(proof)}">
+
                             View submitted proof
+
                           </a>
+
                         `
 
-                        :
+                        : "Not available"
 
-                        "Not available"
-                      }
+                    }
 
-                    </p>
+                  </p>
 
-                  </div>
+                </div>
 
-                `;
+              `;
 
-              })
-              .join("")
-          }
+            })
+            .join("")
 
-        </div>
-      `;
+        }
+
+      </div>
+
+    `;
 
 
-  }catch(err){
+  } catch (err) {
 
     console.error(
       "Payments:",
@@ -1298,221 +1744,21 @@ async function loadPayments(
 
 
     paymentListEl.innerHTML = `
-      <div class="dashboard-card">
+
+      <div class="card">
 
         <h3>
           Payment History
         </h3>
 
         <p>
-          Payment information could not be loaded right now.
+          Payment information could not
+          be loaded right now.
         </p>
 
       </div>
+
     `;
-
-  }
-
-}
-
-
-// ============================================================
-// DECLARATION
-// ============================================================
-
-function loadDeclaration(){
-
-  const accepted =
-    localStorage.getItem(
-      "foa_declaration_accepted"
-    );
-
-
-  if(
-    accepted === "true"
-  ){
-
-    declarationStatus.innerHTML = `
-      <div class="accepted-box">
-        ✓ Declaration accepted.
-        You may now enrol for courses.
-      </div>
-    `;
-
-    declarationActions.style.display =
-      "none";
-
-  }else{
-
-    declarationStatus.innerHTML = `
-      <p style="margin-bottom:15px;color:#8a6500">
-        Please accept the declaration before enrolling.
-      </p>
-    `;
-
-    declarationActions.style.display =
-      "flex";
-
-  }
-
-}
-
-
-// ============================================================
-// ACCEPT DECLARATION
-// ============================================================
-
-function acceptDeclaration(){
-
-  localStorage.setItem(
-    "foa_declaration_accepted",
-    "true"
-  );
-
-
-  loadDeclaration();
-
-
-  showMessage(
-    "Thank you. Your declaration has been accepted.",
-    true
-  );
-
-}
-
-
-// ============================================================
-// REJECT DECLARATION
-// ============================================================
-
-function rejectDeclaration(){
-
-  localStorage.removeItem(
-    "foa_declaration_accepted"
-  );
-
-
-  loadDeclaration();
-
-
-  showMessage(
-    "You have rejected the declaration. You will need to accept it before enrolling for a course."
-  );
-
-}
-
-
-// ============================================================
-// TAB SYSTEM
-// ============================================================
-
-function openTab(tabName){
-
-  document
-    .querySelectorAll(
-      ".dashboard-tab"
-    )
-    .forEach(tab => {
-
-      tab.classList.toggle(
-        "active",
-        tab.dataset.tab === tabName
-      );
-
-    });
-
-
-  document
-    .querySelectorAll(
-      ".tab-content"
-    )
-    .forEach(section => {
-
-      section.classList.toggle(
-        "active",
-        section.id ===
-        "tab-" + tabName
-      );
-
-    });
-
-
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
-}
-
-
-// ============================================================
-// ATTACH TAB BUTTONS
-// ============================================================
-
-function attachTabButtons(){
-
-  document
-    .querySelectorAll(
-      "[data-open-tab]"
-    )
-    .forEach(button => {
-
-      button.onclick =
-        () => {
-
-          openTab(
-            button.dataset.openTab
-          );
-
-        };
-
-    });
-
-}
-
-
-// ============================================================
-// OVERVIEW
-// ============================================================
-
-function updateOverview(){
-
-  const enrolmentCount =
-    document.getElementById(
-      "overview-enrolment-count"
-    );
-
-  const courseCount =
-    document.getElementById(
-      "overview-course-count"
-    );
-
-  const paymentCount =
-    document.getElementById(
-      "overview-payment-count"
-    );
-
-
-  if(enrolmentCount){
-
-    enrolmentCount.textContent =
-      currentEnrolments.length;
-
-  }
-
-
-  if(courseCount){
-
-    courseCount.textContent =
-      currentCourses.length;
-
-  }
-
-
-  if(paymentCount){
-
-    paymentCount.textContent =
-      currentPayments.length;
 
   }
 
@@ -1523,14 +1769,15 @@ function updateOverview(){
 // LOGOUT
 // ============================================================
 
-async function logout(){
+async function logout() {
 
   const {
     error
-  } = await db.auth.signOut();
+  } =
+    await db.auth.signOut();
 
 
-  if(error){
+  if (error) {
 
     showMessage(
       "Unable to log out. Please try again."
@@ -1543,23 +1790,33 @@ async function logout(){
 
   location.href =
     "auth.html";
-
 }
 
 
 // ============================================================
-// INITIALISE
+// GLOBAL CURRENT USER / STUDENT
 // ============================================================
 
-async function initDashboard(){
+let currentUserData =
+  null;
 
-  try{
+let currentStudent =
+  null;
 
-    const user =
+
+// ============================================================
+// INITIALISE DASHBOARD
+// ============================================================
+
+async function initDashboard() {
+
+  try {
+
+    currentUserData =
       await currentUser();
 
 
-    if(!user){
+    if (!currentUserData) {
 
       location.href =
         "auth.html";
@@ -1569,43 +1826,47 @@ async function initDashboard(){
     }
 
 
-    const student =
+    currentStudent =
       await getStudent(
-        user.id
+        currentUserData.id
       );
 
 
-    if(!student){
+    if (!currentStudent) {
 
       showMessage(
         "Your student profile could not be found. Please contact the academy."
       );
 
 
-      if(userEmailEl){
+      if (userEmailEl) {
 
         userEmailEl.textContent =
-          user.email || "";
+          currentUserData.email ||
+          "";
 
       }
+
 
       return;
 
     }
 
 
-    currentStudent =
-      student;
-
-
     const name =
-      student.full_name ||
-      student.name ||
-      user.user_metadata?.full_name ||
+
+      currentStudent.full_name ||
+
+      currentStudent.name ||
+
+      currentUserData
+        .user_metadata
+        ?.full_name ||
+
       "Student";
 
 
-    if(userNameEl){
+    if (userNameEl) {
 
       userNameEl.textContent =
         name;
@@ -1613,46 +1874,41 @@ async function initDashboard(){
     }
 
 
-    if(userEmailEl){
+    if (userEmailEl) {
 
       userEmailEl.textContent =
-        user.email || "";
+        currentUserData.email ||
+        "";
 
     }
 
 
-    if(studentEmailDisplay){
-
-      studentEmailDisplay.textContent =
-        user.email || "";
-
-    }
-
-
-    loadDeclaration();
-
+    // --------------------------------------------------------
+    // LOAD EVERYTHING
+    // --------------------------------------------------------
 
     await Promise.all([
 
+      loadPolicyAcceptance(
+        currentStudent
+      ),
+
       loadEnrolments(
-        student.id
+        currentStudent.id
       ),
 
       loadAvailableCourses(
-        student.id
+        currentStudent.id
       ),
 
       loadPayments(
-        student.id
+        currentStudent.id
       )
 
     ]);
 
 
-    attachTabButtons();
-
-
-  }catch(err){
+  } catch (err) {
 
     console.error(
       "Dashboard:",
@@ -1677,47 +1933,7 @@ async function initDashboard(){
 // EVENTS
 // ============================================================
 
-document
-  .querySelectorAll(
-    ".dashboard-tab"
-  )
-  .forEach(tab => {
-
-    tab.addEventListener(
-      "click",
-      () => {
-
-        openTab(
-          tab.dataset.tab
-        );
-
-      }
-    );
-
-  });
-
-
-if(acceptDeclarationBtn){
-
-  acceptDeclarationBtn.addEventListener(
-    "click",
-    acceptDeclaration
-  );
-
-}
-
-
-if(rejectDeclarationBtn){
-
-  rejectDeclarationBtn.addEventListener(
-    "click",
-    rejectDeclaration
-  );
-
-}
-
-
-if(logoutBtn){
+if (logoutBtn) {
 
   logoutBtn.addEventListener(
     "click",
@@ -1727,18 +1943,32 @@ if(logoutBtn){
 }
 
 
-if(
+if (acceptPolicyBtn) {
+
+  acceptPolicyBtn.addEventListener(
+    "click",
+    acceptPolicies
+  );
+
+}
+
+
+// ============================================================
+// START
+// ============================================================
+
+if (
   document.readyState ===
   "loading"
-){
+) {
 
   document.addEventListener(
     "DOMContentLoaded",
     initDashboard
   );
 
-}else{
+} else {
 
   initDashboard();
 
-      }
+    }
