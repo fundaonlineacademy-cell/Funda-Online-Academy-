@@ -19,10 +19,254 @@
     href="styles.css"
   >
 
+  <style>
+
+    /* ========================================================
+       FUNDA STUDENT DASHBOARD EXTRA STYLES
+       ======================================================== */
+
+    .dashboard {
+      padding: 40px 0 70px;
+    }
+
+    .dash-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .dash-head h1 {
+      margin: 10px 0;
+    }
+
+    .dash-head p {
+      margin: 0;
+      color: #66736c;
+    }
+
+    .dashboard-section,
+    .dashboard > .wrap > section {
+      margin-top: 35px;
+    }
+
+    .dashboard-section h2,
+    .dashboard > .wrap > section h2 {
+      margin-bottom: 18px;
+    }
+
+    .user-email {
+      margin-right: 12px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .loading {
+      color: #66736c;
+    }
+
+    .message {
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+
+    .message.hidden {
+      display: none;
+    }
+
+    .message.success {
+      background: #e5f7eb;
+      color: #176b3a;
+    }
+
+    .message.error {
+      background: #fde8e8;
+      color: #a12626;
+    }
+
+    .course-card {
+      height: 100%;
+    }
+
+    .course-image {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    .course-image-placeholder {
+      width: 100%;
+      height: 150px;
+      border-radius: 12px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eef5f0;
+      color: #4f6257;
+      font-weight: 700;
+    }
+
+    .course-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .course-meta span {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #f0f3f1;
+      font-size: 13px;
+    }
+
+    .course-price {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 15px 0;
+    }
+
+    .course-description {
+      line-height: 1.6;
+    }
+
+    .modules-list {
+      margin: 15px 0 0;
+      padding-left: 20px;
+    }
+
+    .modules-list li {
+      margin-bottom: 7px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: capitalize;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-approved,
+    .status-active,
+    .status-paid,
+    .status-completed {
+      background: #dff5e7;
+      color: #176b3a;
+    }
+
+    .status-rejected,
+    .status-cancelled,
+    .status-failed {
+      background: #fde2e2;
+      color: #a12626;
+    }
+
+    .payment-table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .payment-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 650px;
+    }
+
+    .payment-table th,
+    .payment-table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e8ece9;
+    }
+
+    .payment-table th {
+      font-weight: 700;
+    }
+
+    .empty-card {
+      padding: 25px;
+      text-align: center;
+    }
+
+    .student-info-card {
+      margin-bottom: 30px;
+    }
+
+    .student-info-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .student-info-item {
+      padding: 14px;
+      background: #f7f9f8;
+      border-radius: 10px;
+    }
+
+    .student-info-item small {
+      display: block;
+      color: #68756e;
+      margin-bottom: 5px;
+    }
+
+    .student-info-item strong {
+      display: block;
+      word-break: break-word;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 700px) {
+
+      .dash-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .nav-actions {
+        gap: 8px;
+      }
+
+      .user-email {
+        max-width: 180px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+    }
+
+  </style>
+
 </head>
 
 
 <body>
+
 
 <header>
 
@@ -39,6 +283,7 @@
       >
 
       <span>
+
         Funda Online Academy Pty Ltd
 
         <small>
@@ -78,9 +323,9 @@
   <div class="wrap">
 
 
-    <!-- ================================= -->
-    <!-- WELCOME -->
-    <!-- ================================= -->
+    <!-- =====================================================
+         WELCOME
+         ===================================================== -->
 
     <div class="dash-head">
 
@@ -92,16 +337,18 @@
 
 
         <h1>
+
           Welcome,
           <span id="user-name">
             Student
           </span>
+
         </h1>
 
 
         <p>
-          Manage your profile and
-          course enrolments.
+          Manage your profile, enrolments,
+          courses and payments.
         </p>
 
       </div>
@@ -118,9 +365,9 @@
 
 
 
-    <!-- ================================= -->
-    <!-- MESSAGE -->
-    <!-- ================================= -->
+    <!-- =====================================================
+         MESSAGE
+         ===================================================== -->
 
     <div
       id="message"
@@ -129,9 +376,38 @@
 
 
 
-    <!-- ================================= -->
-    <!-- PAYMENTS -->
-    <!-- ================================= -->
+    <!-- =====================================================
+         STUDENT PROFILE
+         ===================================================== -->
+
+    <section
+      class="dashboard-section"
+      id="student-profile"
+    >
+
+      <h2>
+        My Profile
+      </h2>
+
+
+      <div
+        id="student-profile-content"
+        class="card student-info-card"
+      >
+
+        <p class="loading">
+          Loading profile…
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         PAYMENTS
+         ===================================================== -->
 
     <section
       class="dashboard-section"
@@ -152,10 +428,8 @@
           </h3>
 
 
-          <p>
-            Payment information will appear
-            here after your course enrolment
-            has been processed.
+          <p class="loading">
+            Loading payments…
           </p>
 
         </div>
@@ -166,11 +440,14 @@
 
 
 
-    <!-- ================================= -->
-    <!-- MY ENROLMENTS -->
-    <!-- ================================= -->
+    <!-- =====================================================
+         MY ENROLMENTS
+         ===================================================== -->
 
-    <section>
+    <section
+      class="dashboard-section"
+      id="my-enrolments"
+    >
 
       <h2>
         My Enrolments
@@ -192,11 +469,14 @@
 
 
 
-    <!-- ================================= -->
-    <!-- AVAILABLE COURSES -->
-    <!-- ================================= -->
+    <!-- =====================================================
+         AVAILABLE COURSES
+         ===================================================== -->
 
-    <section>
+    <section
+      class="dashboard-section"
+      id="available-courses-section"
+    >
 
       <h2>
         Available Courses
@@ -223,38 +503,40 @@
 
 
 
-<!-- ===================================== -->
-<!-- SUPABASE -->
-<!-- ===================================== -->
+<!-- =========================================================
+     SUPABASE
+     ========================================================= -->
 
 <script
   src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
 ></script>
 
 
-<!-- ===================================== -->
-<!-- SUPABASE CONFIG -->
-<!-- ===================================== -->
 
-<script src="supabase-config.js?v=20260815"></script>
+<!-- =========================================================
+     SUPABASE CONFIG
+     ========================================================= -->
 
-
-<!-- ===================================== -->
-<!-- STUDENT DASHBOARD -->
-<!-- CACHE-BUSTED VERSION -->
-<!-- ===================================== -->
-
-<script src="dashboard.js?v=20260815-4"></script>
+<script src="supabase-config.js?v=20260816-1"></script>
 
 
-<!-- ===================================== -->
-<!-- SCRIPT TEST -->
-<!-- ===================================== -->
+
+<!-- =========================================================
+     STUDENT DASHBOARD
+     ========================================================= -->
+
+<script src="dashboard.js?v=20260816-6"></script>
+
+
+
+<!-- =========================================================
+     PAGE TEST
+     ========================================================= -->
 
 <script>
 
   console.log(
-    "FUNDA DASHBOARD HTML LOADED"
+    "FUNDA STUDENT DASHBOARD HTML LOADED"
   );
 
 </script>
@@ -262,4 +544,4 @@
 
 </body>
 
-  </html> 
+  </html>
