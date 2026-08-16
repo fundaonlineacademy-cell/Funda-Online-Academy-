@@ -1,36 +1,23 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
+  <title>Student Dashboard | Funda Online Academy</title>
 
-  <title>
-    Student Dashboard | Funda Online Academy
-  </title>
-
-  <link
-    rel="stylesheet"
-    href="styles.css"
-  >
+  <link rel="stylesheet" href="styles.css">
 
   <style>
-
-    /* ========================================================
-       FUNDA STUDENT DASHBOARD
-       FINAL MOBILE SPACING FIX
-       ======================================================== */
-
     html,
     body {
       width: 100%;
       max-width: 100%;
       overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
     }
 
     .dashboard {
@@ -42,437 +29,158 @@
       width: 100%;
       max-width: 1200px;
       margin: 0 auto;
-      padding-left: 20px;
-      padding-right: 20px;
+      padding: 20px;
       box-sizing: border-box;
     }
 
-
-    /* ========================================================
-       ALL DASHBOARD SECTIONS
-       REMOVE UNWANTED LARGE SPACING
-       ======================================================== */
-
-    .dashboard section,
-    .dashboard-section {
-
+    .dashboard-section,
+    .dashboard section {
       width: 100%;
-      max-width: 100%;
-
-      box-sizing: border-box;
-
-      margin-top: 0 !important;
-      margin-bottom: 25px !important;
-
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
-
-      min-height: 0 !important;
-      height: auto !important;
-
+      margin: 0 0 35px 0;
     }
 
-
-    /* ========================================================
-       PAYMENTS SECTION
-       ======================================================== */
-
-    #payments {
-
+    .dash-head {
       width: 100%;
-      max-width: 100%;
-
-      margin-top: 0 !important;
-      margin-bottom: 15px !important;
-
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
-
-      min-height: 0 !important;
-      height: auto !important;
-
-    }
-
-
-    /* ========================================================
-       PAYMENT LIST
-       ======================================================== */
-
-    #payment-list {
-
-      width: 100%;
-      max-width: 100%;
-
-      margin: 0 !important;
-
-      padding: 0 !important;
-
-      box-sizing: border-box;
-
-    }
-
-
-    #payment-list .card {
-
-      width: 100%;
-      max-width: 100%;
-
-      margin-bottom: 0 !important;
-
-      box-sizing: border-box;
-
-    }
-
-
-    /* ========================================================
-       PAYMENT HEADING
-       ======================================================== */
-
-    #payments h2 {
-
-      margin-top: 0 !important;
-      margin-bottom: 20px !important;
-
-    }
-
-
-    /* ========================================================
-       MY ENROLMENTS
-       FORCE IT CLOSE TO PAYMENTS
-       ======================================================== */
-
-    #payments + section {
-
-      width: 100%;
-      max-width: 100%;
-
-      margin-top: 0 !important;
-      margin-bottom: 25px !important;
-
-      padding-top: 0 !important;
-      padding-bottom: 0 !important;
-
-      min-height: 0 !important;
-      height: auto !important;
-
-    }
-
-
-    #payments + section h2 {
-
-      margin-top: 0 !important;
-      margin-bottom: 20px !important;
-
-    }
-
-
-    /* ========================================================
-       AVAILABLE COURSES
-       ======================================================== */
-
-    #payments + section + section {
-
-      margin-top: 25px !important;
-
-    }
-
-
-    /* ========================================================
-       ENROLMENTS
-       ======================================================== */
-
-    #enrolments.grid3 {
-
-      display: grid;
-
-      grid-template-columns:
-        minmax(0, 1fr);
-
-      width: 100%;
-      max-width: 100%;
-
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       gap: 20px;
-
-      margin: 0 !important;
-      padding: 0 !important;
-
-      box-sizing: border-box;
-
     }
 
-
-    /* ========================================================
-       AVAILABLE COURSES
-       ======================================================== */
-
-    #available-courses.grid3 {
-
-      display: grid;
-
-      grid-template-columns:
-        minmax(0, 1fr);
-
+    #enrolments,
+    #available-courses {
       width: 100%;
-      max-width: 100%;
-
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 20px;
-
-      margin: 0 !important;
-      padding: 0 !important;
-
       box-sizing: border-box;
-
     }
-
-
-    /* ========================================================
-       ENROLMENT CARDS
-       ======================================================== */
 
     #enrolments .card,
     #available-courses .card {
-
       width: 100%;
-      max-width: 100%;
-
       min-width: 0;
-
-      margin: 0;
-
       box-sizing: border-box;
-
     }
 
-
-    /* ========================================================
-       TABLE
-       ======================================================== */
-
-    #payment-list table {
-
+    #payment-list {
       width: 100%;
-      min-width: 600px;
-
+      box-sizing: border-box;
     }
 
+    #payment-list .card {
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-    /* ========================================================
-       MESSAGE
-       ======================================================== */
+    .funda-status {
+      display: inline-block;
+      padding: 7px 13px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: capitalize;
+      margin-bottom: 12px;
+    }
+
+    .funda-status.pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .funda-status.approved,
+    .funda-status.active,
+    .funda-status.paid {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .funda-status.rejected,
+    .funda-status.failed {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .funda-info {
+      margin: 10px 0;
+      line-height: 1.5;
+    }
+
+    .funda-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
 
     #message {
-
       width: 100%;
-
       box-sizing: border-box;
-
       margin-bottom: 25px;
-
     }
 
-
-    /* ========================================================
-       BUTTONS
-       ======================================================== */
-
-    .study-btn,
-    .enrol-btn {
-
-      max-width: 100%;
-
+    .funda-error-box {
+      background: #fff3f3;
+      border: 1px solid #e5bcbc;
+      border-radius: 10px;
+      padding: 18px;
+      margin-bottom: 20px;
     }
 
+    .funda-loading {
+      padding: 20px;
+    }
 
-    /* ========================================================
-       MOBILE
-       ======================================================== */
+    @media (max-width: 900px) {
+      #enrolments,
+      #available-courses {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
 
     @media (max-width: 700px) {
-
       .dashboard .wrap {
-
-        width: 100%;
-
-        padding-left: 16px;
-        padding-right: 16px;
-
-        box-sizing: border-box;
-
+        padding: 16px;
       }
 
-
-      /* ----------------------------------------
-         PAYMENTS
-         ---------------------------------------- */
-
-      #payments {
-
-        margin-top: 0 !important;
-        margin-bottom: 10px !important;
-
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-
-        min-height: 0 !important;
-        height: auto !important;
-
+      .dash-head {
+        display: block;
       }
 
-
-      /* ----------------------------------------
-         PAYMENT CARD
-         ---------------------------------------- */
-
-      #payment-list .card {
-
-        margin-bottom: 0 !important;
-
+      .dash-head .btn {
+        display: inline-block;
+        margin-top: 15px;
       }
 
-
-      /* ----------------------------------------
-         MY ENROLMENTS
-         ---------------------------------------- */
-
-      #payments + section {
-
-        margin-top: 0 !important;
-        margin-bottom: 25px !important;
-
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-
-        min-height: 0 !important;
-        height: auto !important;
-
+      #enrolments,
+      #available-courses {
+        grid-template-columns: 1fr;
+        gap: 16px;
       }
-
-
-      #payments + section h2 {
-
-        margin-top: 0 !important;
-        margin-bottom: 20px !important;
-
-      }
-
-
-      /* ----------------------------------------
-         AVAILABLE COURSES
-         ---------------------------------------- */
-
-      #payments + section + section {
-
-        margin-top: 25px !important;
-
-      }
-
-
-      /* ----------------------------------------
-         GRIDS
-         ---------------------------------------- */
-
-      #enrolments.grid3,
-      #available-courses.grid3 {
-
-        grid-template-columns:
-          minmax(0, 1fr);
-
-        width: 100%;
-
-        gap: 20px;
-
-        margin: 0 !important;
-        padding: 0 !important;
-
-      }
-
-
-      /* ----------------------------------------
-         CARDS
-         ---------------------------------------- */
 
       #enrolments .card,
       #available-courses .card {
-
         width: 100%;
-
-        min-width: 0;
-
-        box-sizing: border-box;
-
       }
 
+      .funda-actions {
+        flex-direction: column;
+      }
 
-      .dashboard-section,
-      .dashboard section {
-
+      .funda-actions .btn {
         width: 100%;
-
       }
-
-
-      .dash-head {
-
-        width: 100%;
-
-      }
-
     }
-
-
-    /* ========================================================
-       TABLET
-       ======================================================== */
-
-    @media (min-width: 701px) {
-
-      #enrolments.grid3,
-      #available-courses.grid3 {
-
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
-
-      }
-
-    }
-
-
-    /* ========================================================
-       DESKTOP
-       ======================================================== */
-
-    @media (min-width: 1000px) {
-
-      #enrolments.grid3,
-      #available-courses.grid3 {
-
-        grid-template-columns:
-          repeat(3, minmax(0, 1fr));
-
-      }
-
-    }
-
   </style>
-
 </head>
-
 
 <body>
 
-
-<!-- ========================================================
-     HEADER
-     ======================================================== -->
-
 <header>
-
   <div class="wrap nav">
 
-    <a
-      class="logo"
-      href="index.html"
-    >
+    <a class="logo" href="index.html">
 
       <img
         src="logo.png"
@@ -480,17 +188,14 @@
       >
 
       <span>
-
         Funda Online Academy Pty Ltd
 
         <small>
           Student Dashboard
         </small>
-
       </span>
 
     </a>
-
 
     <div class="nav-actions">
 
@@ -498,7 +203,6 @@
         id="user-email"
         class="user-email"
       ></span>
-
 
       <button
         id="logout"
@@ -511,10 +215,126 @@
     </div>
 
   </div>
-
 </header>
 
+<main class="dashboard">
 
+  <div class="wrap">
 
-<!-- ========================================================
-     MAIN 
+    <div class="dash-head">
+
+      <div>
+
+        <span class="badge">
+          STUDENT AREA
+        </span>
+
+        <h1>
+          Welcome,
+          <span id="user-name">
+            Student
+          </span>
+        </h1>
+
+        <p>
+          Manage your profile, courses,
+          enrolments and payments.
+        </p>
+
+      </div>
+
+      <a
+        class="btn green"
+        href="index.html#courses"
+      >
+        Browse Courses
+      </a>
+
+    </div>
+
+    <div
+      id="message"
+      class="message hidden"
+    ></div>
+
+    <!-- PAYMENTS -->
+
+    <section
+      class="dashboard-section"
+      id="payments"
+    >
+
+      <h2>
+        Payments
+      </h2>
+
+      <div id="payment-list">
+
+        <div class="card">
+          <h3>
+            Payment History
+          </h3>
+
+          <p>
+            Loading payment information...
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ENROLMENTS -->
+
+    <section>
+
+      <h2>
+        My Enrolments
+      </h2>
+
+      <div id="enrolments">
+
+        <div class="card funda-loading">
+          Loading enrolments...
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- COURSES -->
+
+    <section>
+
+      <h2>
+        Available Courses
+      </h2>
+
+      <div id="available-courses">
+
+        <div class="card funda-loading">
+          Loading courses...
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</main>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+></script>
+
+<script
+  src="supabase-config.js?v=20260816-1"
+></script>
+
+<script
+  src="dashboard.js?v=20260816-1"
+></script>
+
+</body>
+</html>
