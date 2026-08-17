@@ -191,7 +191,6 @@ function courseTitle(course) {
 
   return (
     course.title ||
-    course.name ||
     course.course_name ||
     "Course"
   );
@@ -330,7 +329,110 @@ async function getCoursesByIds(
 
 
 // ============================================================
-// AVAILABLE COURSES
+// COURSE MODULES
+//
+// IMPORTANT:
+// Modules are stored in the separate course_modules table.
+// The database uses:
+//   course_id
+//   module_name
+//   module_number
+// ============================================================
+
+async function getCourseModules(
+  courseIds
+) {
+
+  if (
+    !courseIds ||
+    !courseIds.length
+  ) {
+    return [];
+  }
+
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("course_modules")
+      .select("*")
+      .in(
+        "course_id",
+        courseIds
+      )
+      .order(
+        "module_number",
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+
+    console.error(
+      "Course modules query error:",
+      error
+    );
+
+    throw error;
+  }
+
+
+  return data || [];
+}
+
+
+// ============================================================
+// GROUP MODULES BY COURSE
+// ============================================================
+
+function groupModulesByCourse(
+  modules
+) {
+
+  const grouped =
+    new Map();
+
+
+  (modules || [])
+    .forEach(
+      module => {
+
+        const courseId =
+          String(
+            module.course_id
+          );
+
+
+        if (
+          !grouped.has(courseId)
+        ) {
+
+          grouped.set(
+            courseId,
+            []
+          );
+
+        }
+
+
+        grouped
+          .get(courseId)
+          .push(module);
+
+      }
+    );
+
+
+  return grouped;
+}
+
+
+// ============================================================
+// ALL AVAILABLE COURSES
 // ============================================================
 
 async function getAvailableCourses() {
@@ -353,12 +455,14 @@ async function getAvailableCourses() {
         }
       );
 
+
   if (error) {
 
     console.warn(
       "Active course query failed:",
       error
     );
+
 
     const fallback =
       await db
@@ -371,23 +475,23 @@ async function getAvailableCourses() {
           }
         );
 
+
     if (fallback.error) {
       throw error;
     }
 
+
     return fallback.data || [];
+
   }
+
 
   return data || [];
 }
 
 
 // ============================================================
-// GET STUDENT ENROLMENTS
-//
-// IMPORTANT:
-// The enrollments table does NOT have created_at.
-// We use enrolled_at only.
+// GET ENROLMENTS
 // ============================================================
 
 async function getStudentEnrolments(
@@ -400,15 +504,7 @@ async function getStudentEnrolments(
   } =
     await db
       .from("enrollments")
-      .select(`
-        id,
-        student_id,
-        course_id,
-        enrollment_status,
-        status,
-        amount,
-        enrolled_at
-      `)
+      .select("*")
       .eq(
         "student_id",
         studentId
@@ -420,9 +516,11 @@ async function getStudentEnrolments(
         }
       );
 
+
   if (error) {
     throw error;
   }
+
 
   return data || [];
 }
@@ -439,6 +537,7 @@ async function loadMyStudies(
   if (!studyListEl) {
     return;
   }
+
 
   studyListEl.innerHTML = `
 
@@ -466,13 +565,13 @@ async function loadMyStudies(
 
 
     console.log(
-      "FUNDA - Student enrolments:",
+      "Student enrolments:",
       enrolments
     );
 
 
     // --------------------------------------------------------
-    // APPROVED ENROLMENTS
+    // ONLY APPROVED COURSES
     // --------------------------------------------------------
 
     const approvedEnrolments =
@@ -480,12 +579,6 @@ async function loadMyStudies(
         row =>
           isApproved(row)
       );
-
-
-    console.log(
-      "FUNDA - Approved enrolments:",
-      approvedEnrolments
-    );
 
 
     // --------------------------------------------------------
@@ -543,12 +636,6 @@ async function loadMyStudies(
       ];
 
 
-    console.log(
-      "FUNDA - Approved course IDs:",
-      courseIds
-    );
-
-
     if (!courseIds.length) {
 
       studyListEl.innerHTML = `
@@ -559,11 +646,9 @@ async function loadMyStudies(
             Course information unavailable
           </h3>
 
-          <p style="margin-top:10px">
-
-            Your enrolment is approved, but
+          <p>
+            Your enrolment was approved, but
             the course ID is missing.
-
           </p>
 
         </div>
@@ -575,18 +660,35 @@ async function loadMyStudies(
 
 
     // --------------------------------------------------------
-    // LOAD COURSES
+    // LOAD COURSES AND MODULES
     // --------------------------------------------------------
 
-    const courses =
-      await getCoursesByIds(
-        courseIds
-      );
+    const [
+      courses,
+      modules
+    ] =
+      await Promise.all([
+
+        getCoursesByIds(
+          courseIds
+        ),
+
+        getCourseModules(
+          courseIds
+        )
+
+      ]);
 
 
     console.log(
-      "FUNDA - Courses returned:",
+      "Approved courses:",
       courses
+    );
+
+
+    console.log(
+      "Course modules:",
+      modules
     );
 
 
@@ -601,8 +703,14 @@ async function loadMyStudies(
       );
 
 
+    const moduleMap =
+      groupModulesByCourse(
+        modules
+      );
+
+
     // --------------------------------------------------------
-    // RENDER APPROVED STUDIES
+    // RENDER MY STUDIES
     // --------------------------------------------------------
 
     studyListEl.innerHTML =
@@ -647,10 +755,12 @@ async function loadMyStudies(
             }
 
 
-            const modules =
-              normaliseModules(
-                course.modules
-              );
+            const courseModules =
+              moduleMap.get(
+                String(
+                  course.id
+                )
+              ) || [];
 
 
             return `
@@ -694,25 +804,34 @@ async function loadMyStudies(
                     <div class="study-meta">
 
                       <span>
-                        💰 ${formatMoney(
+
+                        💰
+                        ${formatMoney(
                           enrolment.amount ??
                           coursePrice(course)
                         )}
+
                       </span>
 
 
                       <span>
-                        📅 ${escapeHTML(
+
+                        📅
+                        ${escapeHTML(
                           formatDate(
                             enrolment.enrolled_at
                           )
                         )}
+
                       </span>
 
 
                       <span>
-                        📚 ${modules.length}
-                        module${modules.length === 1 ? "" : "s"}
+
+                        📚
+                        ${courseModules.length}
+                        module${courseModules.length === 1 ? "" : "s"}
+
                       </span>
 
                     </div>
@@ -736,7 +855,7 @@ async function loadMyStudies(
 
 
                 ${
-                  modules.length
+                  courseModules.length
 
                     ? `
 
@@ -748,8 +867,9 @@ async function loadMyStudies(
 
                         </h4>
 
+
                         ${renderStudyModules(
-                          modules,
+                          courseModules,
                           course.id
                         )}
 
@@ -765,10 +885,11 @@ async function loadMyStudies(
 
                           <p>
 
-                            📖 Course modules are being
-                            prepared by the academy.
+                            📖 No modules have been
+                            added to this course yet.
 
                           </p>
+
 
                           <a
                             href="course-study.html?id=${encodeURIComponent(course.id)}"
@@ -784,6 +905,7 @@ async function loadMyStudies(
                       </div>
 
                     `
+
                 }
 
               </article>
@@ -801,7 +923,7 @@ async function loadMyStudies(
   } catch (error) {
 
     console.error(
-      "FUNDA MY STUDIES ERROR:",
+      "MY STUDIES ERROR:",
       error
     );
 
@@ -833,72 +955,6 @@ async function loadMyStudies(
 
 
 // ============================================================
-// NORMALISE MODULES
-// ============================================================
-
-function normaliseModules(
-  modules
-) {
-
-  if (!modules) {
-    return [];
-  }
-
-
-  if (
-    Array.isArray(modules)
-  ) {
-    return modules;
-  }
-
-
-  if (
-    typeof modules === "string"
-  ) {
-
-    try {
-
-      const parsed =
-        JSON.parse(modules);
-
-      if (
-        Array.isArray(parsed)
-      ) {
-        return parsed;
-      }
-
-      return [parsed];
-
-    } catch (error) {
-
-      return [
-        {
-          title: "Course Material",
-          content: modules
-        }
-      ];
-
-    }
-
-  }
-
-
-  if (
-    typeof modules === "object"
-  ) {
-
-    return [
-      modules
-    ];
-
-  }
-
-
-  return [];
-}
-
-
-// ============================================================
 // MODULE TITLE
 // ============================================================
 
@@ -918,7 +974,9 @@ function moduleTitle(
 
   }
 
+
   return (
+    module?.module_name ||
     module?.title ||
     module?.name ||
     module?.module_title ||
@@ -945,11 +1003,13 @@ function moduleContent(
     return module;
   }
 
+
   return (
     module?.content ||
     module?.description ||
     module?.details ||
     module?.text ||
+    module?.learning_outcomes ||
     ""
   );
 }
@@ -970,6 +1030,7 @@ function moduleLessons(
     return [];
   }
 
+
   if (
     Array.isArray(
       module.lessons
@@ -979,6 +1040,7 @@ function moduleLessons(
     return module.lessons;
 
   }
+
 
   return [];
 }
@@ -1028,7 +1090,12 @@ function renderStudyModules(
               <span>
 
                 <span class="module-number">
-                  ${index + 1}
+
+                  ${
+                    module.module_number ??
+                    index + 1
+                  }
+
                 </span>
 
                 ${escapeHTML(title)}
@@ -1058,17 +1125,34 @@ function renderStudyModules(
                         margin-bottom:15px
                       ">
 
-                      ${escapeHTML(content)
-                        .replaceAll(
-                          "\n",
-                          "<br>"
-                        )}
+                      ${escapeHTML(
+                        content
+                      )
+                      .replaceAll(
+                        "\n",
+                        "<br>"
+                      )}
 
                     </p>
 
                   `
 
-                  : ""
+                  : `
+
+                    <p
+                      style="
+                        color:#68766f;
+                        line-height:1.7;
+                        margin-bottom:15px
+                      ">
+
+                      Module learning material
+                      will be available here.
+
+                    </p>
+
+                  `
+
               }
 
 
@@ -1078,19 +1162,28 @@ function renderStudyModules(
                   ? `
 
                     <h4 style="margin-bottom:12px">
+
                       Lessons
+
                     </h4>
+
 
                     ${lessons
                       .map(
-                        (lesson, lessonIndex) => {
+                        (
+                          lesson,
+                          lessonIndex
+                        ) => {
 
                           const lessonTitle =
                             typeof lesson === "string"
 
                               ? (
                                   "Lesson " +
-                                  (lessonIndex + 1)
+                                  (
+                                    lessonIndex +
+                                    1
+                                  )
                                 )
 
                               : (
@@ -1098,7 +1191,10 @@ function renderStudyModules(
                                   lesson?.name ||
                                   (
                                     "Lesson " +
-                                    (lessonIndex + 1)
+                                    (
+                                      lessonIndex +
+                                      1
+                                    )
                                   )
                                 );
 
@@ -1161,6 +1257,7 @@ function renderStudyModules(
                                       `
 
                                       : ""
+
                                   }
 
                                 </div>
@@ -1190,6 +1287,7 @@ function renderStudyModules(
                                   `
 
                                   : ""
+
                               }
 
                             </div>
@@ -1230,7 +1328,7 @@ function renderStudyModules(
 
 
 // ============================================================
-// MODULE EVENTS
+// MODULE BUTTONS
 // ============================================================
 
 function attachModuleEvents() {
@@ -1521,6 +1619,7 @@ async function loadEnrolments(
                       </p>
 
                     `
+
                 }
 
               </div>
@@ -1723,6 +1822,7 @@ async function loadAvailableCourses(
                       </button>
 
                     `
+
                 }
 
               </div>
@@ -1778,7 +1878,7 @@ async function loadAvailableCourses(
 
           ${escapeHTML(
             error.message ||
-            "Please refresh the page and try again."
+            "Please refresh and try again."
           )}
 
         </p>
@@ -1878,7 +1978,7 @@ async function enrolStudent(
 
 
     // --------------------------------------------------------
-    // EXISTING ENROLMENT
+    // CHECK EXISTING ENROLMENT
     // --------------------------------------------------------
 
     const {
@@ -1912,6 +2012,7 @@ async function enrolStudent(
         "You are already enrolled in this course."
       );
 
+
       button.disabled =
         false;
 
@@ -1923,7 +2024,7 @@ async function enrolStudent(
 
 
     // --------------------------------------------------------
-    // COURSE
+    // GET COURSE
     // --------------------------------------------------------
 
     const {
@@ -1946,9 +2047,11 @@ async function enrolStudent(
 
 
     if (!course) {
+
       throw new Error(
         "Course could not be found."
       );
+
     }
 
 
@@ -2292,6 +2395,7 @@ async function loadPayments(
                           `
 
                           : "Not available"
+
                       }
 
                     </p>
@@ -2605,6 +2709,7 @@ async function acceptPolicies() {
         existing
       );
 
+
       showMessage(
         "Your policies have already been accepted.",
         true
@@ -2723,7 +2828,7 @@ async function logout() {
 
 
 // ============================================================
-// INITIALISE DASHBOARD
+// INITIALISE
 // ============================================================
 
 async function initDashboard() {
@@ -2885,4 +2990,4 @@ if (
 
   initDashboard();
 
-  }
+    }
