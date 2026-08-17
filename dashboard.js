@@ -213,6 +213,10 @@ function coursePrice(course) {
 }
 
 
+// ============================================================
+// ENROLMENT STATUS
+// ============================================================
+
 function enrollmentStatus(row) {
 
   return String(
@@ -220,8 +224,8 @@ function enrollmentStatus(row) {
     row?.status ??
     "pending"
   )
-  .trim()
-  .toLowerCase();
+    .trim()
+    .toLowerCase();
 }
 
 
@@ -295,11 +299,7 @@ async function getStudent(
 
 
 // ============================================================
-// COURSES
-// IMPORTANT:
-// We do NOT require active=true when loading an enrolled
-// course. An already-approved student must still be able
-// to see their course.
+// COURSES BY IDS
 // ============================================================
 
 async function getCoursesByIds(
@@ -334,7 +334,7 @@ async function getCoursesByIds(
 
 
 // ============================================================
-// ALL AVAILABLE COURSES
+// AVAILABLE COURSES
 // ============================================================
 
 async function getAvailableCourses() {
@@ -360,11 +360,10 @@ async function getAvailableCourses() {
   if (error) {
 
     console.warn(
-      "Active course query failed:",
+      "Active course query failed. Using compatibility query:",
       error
     );
 
-    // Compatibility with older course tables
     const fallback =
       await db
         .from("courses")
@@ -388,12 +387,21 @@ async function getAvailableCourses() {
 
 
 // ============================================================
-// GET ENROLMENTS
+// GET STUDENT ENROLMENTS
+//
+// IMPORTANT:
+// We deliberately query by student_id.
+// RLS then verifies that this student belongs
+// to the currently authenticated user.
 // ============================================================
 
 async function getStudentEnrolments(
   studentId
 ) {
+
+  if (!studentId) {
+    return [];
+  }
 
   const {
     data,
@@ -401,7 +409,16 @@ async function getStudentEnrolments(
   } =
     await db
       .from("enrollments")
-      .select("*")
+      .select(`
+        id,
+        student_id,
+        course_id,
+        enrollment_status,
+        status,
+        enrolled_at,
+        created_at,
+        amount
+      `)
       .eq(
         "student_id",
         studentId
@@ -448,10 +465,6 @@ async function loadMyStudies(
 
   try {
 
-    // --------------------------------------------------------
-    // GET ALL STUDENT ENROLMENTS
-    // --------------------------------------------------------
-
     const enrolments =
       await getStudentEnrolments(
         studentId
@@ -459,13 +472,18 @@ async function loadMyStudies(
 
 
     console.log(
-      "Student enrolments:",
+      "FUNDA - Student ID:",
+      studentId
+    );
+
+    console.log(
+      "FUNDA - Student enrolments:",
       enrolments
     );
 
 
     // --------------------------------------------------------
-    // ONLY APPROVED / ACTIVE COURSES
+    // APPROVED / ACTIVE ENROLMENTS
     // --------------------------------------------------------
 
     const approvedEnrolments =
@@ -473,6 +491,12 @@ async function loadMyStudies(
         row =>
           isApproved(row)
       );
+
+
+    console.log(
+      "FUNDA - Approved enrolments:",
+      approvedEnrolments
+    );
 
 
     // --------------------------------------------------------
@@ -514,7 +538,7 @@ async function loadMyStudies(
 
 
     // --------------------------------------------------------
-    // GET COURSE IDS
+    // COURSE IDS
     // --------------------------------------------------------
 
     const courseIds =
@@ -530,12 +554,6 @@ async function loadMyStudies(
       ];
 
 
-    console.log(
-      "Approved course IDs:",
-      courseIds
-    );
-
-
     if (!courseIds.length) {
 
       studyListEl.innerHTML = `
@@ -547,7 +565,7 @@ async function loadMyStudies(
           </h3>
 
           <p>
-            Your enrolment was approved, but
+            Your enrolment is approved, but
             the course ID is missing.
           </p>
 
@@ -560,7 +578,7 @@ async function loadMyStudies(
 
 
     // --------------------------------------------------------
-    // GET COURSES
+    // COURSES
     // --------------------------------------------------------
 
     const courses =
@@ -570,7 +588,7 @@ async function loadMyStudies(
 
 
     console.log(
-      "Courses returned:",
+      "FUNDA - Courses returned:",
       courses
     );
 
@@ -603,7 +621,6 @@ async function loadMyStudies(
               );
 
 
-            // Course record missing
             if (!course) {
 
               return `
@@ -650,9 +667,11 @@ async function loadMyStudies(
                   <div>
 
                     <span class="funda-status approved">
+
                       ${escapeHTML(
                         enrollmentStatus(enrolment)
                       )}
+
                     </span>
 
                     <h3 class="study-title">
@@ -762,7 +781,6 @@ async function loadMyStudies(
                       </div>
 
                     `
-
                 }
 
               </article>
@@ -799,14 +817,6 @@ async function loadMyStudies(
             error.message ||
             "Please refresh the page and try again."
           )}
-
-        </p>
-
-        <p style="margin-top:10px;color:#666">
-
-          If your Cashier enrolment has been approved,
-          please contact the academy if it still does
-          not appear.
 
         </p>
 
@@ -972,7 +982,7 @@ function moduleLessons(
 
 
 // ============================================================
-// RENDER MODULES ON DASHBOARD
+// RENDER MODULES
 // ============================================================
 
 function renderStudyModules(
@@ -1005,8 +1015,7 @@ function renderStudyModules(
 
         return `
 
-          <div
-            class="module-card">
+          <div class="module-card">
 
             <button
               type="button"
@@ -1056,7 +1065,6 @@ function renderStudyModules(
                   `
 
                   : ""
-
               }
 
 
@@ -1176,7 +1184,6 @@ function renderStudyModules(
                                     `
 
                                     : ""
-
                                 }
 
                               </div>
@@ -1192,7 +1199,6 @@ function renderStudyModules(
                   `
 
                   : ""
-
               }
 
 
@@ -1219,7 +1225,7 @@ function renderStudyModules(
 
 
 // ============================================================
-// MODULE BUTTONS
+// MODULE EVENTS
 // ============================================================
 
 function attachModuleEvents() {
@@ -1255,7 +1261,6 @@ function attachModuleEvents() {
               );
 
 
-            // Close all
             document
               .querySelectorAll(
                 ".module-content"
@@ -1511,7 +1516,6 @@ async function loadEnrolments(
                       </p>
 
                     `
-
                 }
 
               </div>
@@ -1714,7 +1718,6 @@ async function loadAvailableCourses(
                       </button>
 
                     `
-
                 }
 
               </div>
@@ -1770,7 +1773,7 @@ async function loadAvailableCourses(
 
           ${escapeHTML(
             error.message ||
-            "Please refresh and try again."
+            "Please try again."
           )}
 
         </p>
@@ -1811,10 +1814,6 @@ async function enrolStudent(
 
 
   try {
-
-    // --------------------------------------------------------
-    // POLICY CHECK
-    // --------------------------------------------------------
 
     const {
       data: policy,
@@ -1869,17 +1868,15 @@ async function enrolStudent(
     }
 
 
-    // --------------------------------------------------------
-    // CHECK EXISTING ENROLMENT
-    // --------------------------------------------------------
-
     const {
       data: existing,
       error: checkError
     } =
       await db
         .from("enrollments")
-        .select("id,enrollment_status,status")
+        .select(
+          "id,enrollment_status,status"
+        )
         .eq(
           "student_id",
           studentId
@@ -1912,10 +1909,6 @@ async function enrolStudent(
     }
 
 
-    // --------------------------------------------------------
-    // GET COURSE
-    // --------------------------------------------------------
-
     const {
       data: course,
       error: courseError
@@ -1941,10 +1934,6 @@ async function enrolStudent(
       );
     }
 
-
-    // --------------------------------------------------------
-    // CREATE ENROLMENT
-    // --------------------------------------------------------
 
     const payload = {
 
@@ -2169,8 +2158,8 @@ async function loadPayments(
                     payment.status ??
                     "pending"
                   )
-                  .trim()
-                  .toLowerCase();
+                    .trim()
+                    .toLowerCase();
 
 
                 const method =
@@ -2282,7 +2271,6 @@ async function loadPayments(
                           `
 
                           : "Not available"
-
                       }
 
                     </p>
@@ -2714,7 +2702,7 @@ async function logout() {
 
 
 // ============================================================
-// INITIALISE
+// INITIALISE DASHBOARD
 // ============================================================
 
 async function initDashboard() {
@@ -2722,7 +2710,7 @@ async function initDashboard() {
   try {
 
     // --------------------------------------------------------
-    // USER
+    // AUTH USER
     // --------------------------------------------------------
 
     currentUserData =
@@ -2876,4 +2864,4 @@ if (
 
   initDashboard();
 
-}
+  }
