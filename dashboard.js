@@ -1,7 +1,7 @@
 // ============================================================
 // FUNDA ONLINE ACADEMY
 // STUDENT DASHBOARD
-// COURSES • ENROLMENTS • PAYMENTS • POLICIES
+// STUDIES • ENROLMENTS • COURSES • PAYMENTS • POLICIES
 // ============================================================
 
 const { createClient } = supabase;
@@ -21,6 +21,9 @@ const userNameEl =
 
 const userEmailEl =
   document.getElementById("user-email");
+
+const studyListEl =
+  document.getElementById("study-list");
 
 const enrolmentsEl =
   document.getElementById("enrolments");
@@ -48,16 +51,12 @@ const policyAcceptedEl =
 
 
 // ============================================================
-// POLICY VERSION
+// POLICY
 // ============================================================
 
 const POLICY_VERSION =
   "FOA Terms v1.0";
 
-
-// ============================================================
-// DECLARATION
-// ============================================================
 
 const DECLARATION_TEXT = `
 I confirm that I have read and understood the
@@ -83,6 +82,14 @@ has been approved.
 
 
 // ============================================================
+// GLOBAL USER / STUDENT
+// ============================================================
+
+let currentUserData = null;
+let currentStudent = null;
+
+
+// ============================================================
 // HELPERS
 // ============================================================
 
@@ -96,31 +103,31 @@ function escapeHTML(value) {
   }
 
   return String(value)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 
 function formatMoney(value) {
 
-  const n =
+  const number =
     Number(value);
 
-  return Number.isFinite(n)
+  if (!Number.isFinite(number)) {
+    return "R0.00";
+  }
 
-    ? "R" +
-      n.toLocaleString(
-        "en-ZA",
-        {
-          minimumFractionDigits:2,
-          maximumFractionDigits:2
-        }
-      )
-
-    : "R0.00";
+  return "R" +
+    number.toLocaleString(
+      "en-ZA",
+      {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }
+    );
 }
 
 
@@ -130,39 +137,27 @@ function formatDate(value) {
     return "—";
   }
 
-  const d =
+  const date =
     new Date(value);
 
   if (
     Number.isNaN(
-      d.getTime()
+      date.getTime()
     )
   ) {
     return "—";
   }
 
-  return d.toLocaleString(
+  return date.toLocaleString(
     "en-ZA",
     {
-      year:"numeric",
-      month:"short",
-      day:"numeric",
-      hour:"2-digit",
-      minute:"2-digit"
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
     }
   );
-}
-
-
-function statusOf(row) {
-
-  return String(
-    row?.enrollment_status ??
-    row?.status ??
-    "pending"
-  )
-  .trim()
-  .toLowerCase();
 }
 
 
@@ -180,17 +175,75 @@ function showMessage(
 
   messageEl.className =
     "message " +
-    (success
-      ? "success"
-      : "error");
+    (
+      success
+        ? "success"
+        : "error"
+    );
+}
+
+
+function courseTitle(course) {
+
+  if (!course) {
+    return "Course";
+  }
+
+  return (
+    course.title ||
+    course.name ||
+    course.course_name ||
+    "Course"
+  );
+}
+
+
+function coursePrice(course) {
+
+  if (!course) {
+    return 0;
+  }
+
+  return (
+    course.price ??
+    course.amount ??
+    course.course_price ??
+    0
+  );
+}
+
+
+function enrollmentStatus(row) {
+
+  return String(
+    row?.enrollment_status ??
+    row?.status ??
+    "pending"
+  )
+  .trim()
+  .toLowerCase();
+}
+
+
+function isApproved(row) {
+
+  const status =
+    enrollmentStatus(row);
+
+  return (
+    status === "approved" ||
+    status === "active" ||
+    status === "enrolled" ||
+    status === "completed"
+  );
 }
 
 
 // ============================================================
-// CURRENT USER
+// AUTH
 // ============================================================
 
-async function currentUser() {
+async function getCurrentUser() {
 
   const {
     data,
@@ -201,7 +254,7 @@ async function currentUser() {
   if (error) {
 
     console.error(
-      "Auth:",
+      "Authentication error:",
       error
     );
 
@@ -213,7 +266,7 @@ async function currentUser() {
 
 
 // ============================================================
-// GET STUDENT
+// STUDENT
 // ============================================================
 
 async function getStudent(
@@ -227,7 +280,10 @@ async function getStudent(
     await db
       .from("students")
       .select("*")
-      .eq("user_id", userId)
+      .eq(
+        "user_id",
+        userId
+      )
       .maybeSingle();
 
   if (error) {
@@ -239,92 +295,86 @@ async function getStudent(
 
 
 // ============================================================
-// GET COURSES
+// COURSES
+// IMPORTANT:
+// We do NOT require active=true when loading an enrolled
+// course. An already-approved student must still be able
+// to see their course.
 // ============================================================
 
-async function getCourses(
-  ids = null
+async function getCoursesByIds(
+  ids
 ) {
 
-  let q =
-    db
-      .from("courses")
-      .select("*");
-
-
   if (
-    ids &&
-    ids.length
+    !ids ||
+    !ids.length
   ) {
-
-    q =
-      q.in(
-        "id",
-        ids
-      );
-
-  } else {
-
-    q =
-      q
-        .eq(
-          "active",
-          true
-        )
-        .order(
-          "title",
-          {
-            ascending:true
-          }
-        );
-
+    return [];
   }
-
 
   const {
     data,
     error
   } =
-    await q;
+    await db
+      .from("courses")
+      .select("*")
+      .in(
+        "id",
+        ids
+      );
 
+  if (error) {
+    throw error;
+  }
+
+  return data || [];
+}
+
+
+// ============================================================
+// ALL AVAILABLE COURSES
+// ============================================================
+
+async function getAvailableCourses() {
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("courses")
+      .select("*")
+      .eq(
+        "active",
+        true
+      )
+      .order(
+        "title",
+        {
+          ascending: true
+        }
+      );
 
   if (error) {
 
     console.warn(
-      "Primary course query failed:",
+      "Active course query failed:",
       error
     );
 
-
-    // Compatibility with older
-    // course tables
-
+    // Compatibility with older course tables
     const fallback =
-
-      ids && ids.length
-
-        ? await db
-            .from("courses")
-            .select("*")
-            .in(
-              "id",
-              ids
-            )
-
-        : await db
-            .from("courses")
-            .select("*")
-            .eq(
-              "active",
-              true
-            )
-            .order(
-              "name",
-              {
-                ascending:true
-              }
-            );
-
+      await db
+        .from("courses")
+        .select("*")
+        .order(
+          "title",
+          {
+            ascending: true
+          }
+        );
 
     if (fallback.error) {
       throw error;
@@ -333,52 +383,1951 @@ async function getCourses(
     return fallback.data || [];
   }
 
+  return data || [];
+}
+
+
+// ============================================================
+// GET ENROLMENTS
+// ============================================================
+
+async function getStudentEnrolments(
+  studentId
+) {
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("enrollments")
+      .select("*")
+      .eq(
+        "student_id",
+        studentId
+      )
+      .order(
+        "enrolled_at",
+        {
+          ascending: false
+        }
+      );
+
+  if (error) {
+    throw error;
+  }
 
   return data || [];
 }
 
 
 // ============================================================
-// COURSE TITLE
+// MY STUDIES
 // ============================================================
 
-function courseTitle(
-  course
+async function loadMyStudies(
+  studentId
 ) {
 
+  if (!studyListEl) {
+    return;
+  }
+
+  studyListEl.innerHTML = `
+
+    <div class="card">
+
+      <p class="loading">
+        Loading your studies…
+      </p>
+
+    </div>
+
+  `;
+
+
+  try {
+
+    // --------------------------------------------------------
+    // GET ALL STUDENT ENROLMENTS
+    // --------------------------------------------------------
+
+    const enrolments =
+      await getStudentEnrolments(
+        studentId
+      );
+
+
+    console.log(
+      "Student enrolments:",
+      enrolments
+    );
+
+
+    // --------------------------------------------------------
+    // ONLY APPROVED / ACTIVE COURSES
+    // --------------------------------------------------------
+
+    const approvedEnrolments =
+      enrolments.filter(
+        row =>
+          isApproved(row)
+      );
+
+
+    // --------------------------------------------------------
+    // NO APPROVED COURSES
+    // --------------------------------------------------------
+
+    if (
+      !approvedEnrolments.length
+    ) {
+
+      studyListEl.innerHTML = `
+
+        <div class="empty-study">
+
+          <h3>
+            📚 No approved courses yet
+          </h3>
+
+          <p style="margin-top:10px">
+
+            Your approved courses will appear here.
+
+          </p>
+
+          <p style="margin-top:8px;color:#68766f">
+
+            Once Funda Online Academy approves
+            your enrolment, your course will
+            appear in My Studies.
+
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // GET COURSE IDS
+    // --------------------------------------------------------
+
+    const courseIds =
+      [
+        ...new Set(
+          approvedEnrolments
+            .map(
+              row =>
+                row.course_id
+            )
+            .filter(Boolean)
+        )
+      ];
+
+
+    console.log(
+      "Approved course IDs:",
+      courseIds
+    );
+
+
+    if (!courseIds.length) {
+
+      studyListEl.innerHTML = `
+
+        <div class="empty-study">
+
+          <h3>
+            Course information unavailable
+          </h3>
+
+          <p>
+            Your enrolment was approved, but
+            the course ID is missing.
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // GET COURSES
+    // --------------------------------------------------------
+
+    const courses =
+      await getCoursesByIds(
+        courseIds
+      );
+
+
+    console.log(
+      "Courses returned:",
+      courses
+    );
+
+
+    const courseMap =
+      new Map(
+        courses.map(
+          course => [
+            String(course.id),
+            course
+          ]
+        )
+      );
+
+
+    // --------------------------------------------------------
+    // RENDER MY STUDIES
+    // --------------------------------------------------------
+
+    studyListEl.innerHTML =
+      approvedEnrolments
+        .map(
+          enrolment => {
+
+            const course =
+              courseMap.get(
+                String(
+                  enrolment.course_id
+                )
+              );
+
+
+            // Course record missing
+            if (!course) {
+
+              return `
+
+                <div class="study-card">
+
+                  <span class="funda-status approved">
+                    approved
+                  </span>
+
+                  <h3 class="study-title">
+                    Course
+                  </h3>
+
+                  <p class="study-description">
+
+                    Your enrolment has been approved,
+                    but the course information could
+                    not be loaded.
+
+                  </p>
+
+                </div>
+
+              `;
+
+            }
+
+
+            const modules =
+              normaliseModules(
+                course.modules
+              );
+
+
+            return `
+
+              <article
+                class="study-card"
+                data-course-card="${escapeHTML(course.id)}">
+
+                <div class="study-header">
+
+                  <div>
+
+                    <span class="funda-status approved">
+                      ${escapeHTML(
+                        enrollmentStatus(enrolment)
+                      )}
+                    </span>
+
+                    <h3 class="study-title">
+
+                      ${escapeHTML(
+                        courseTitle(course)
+                      )}
+
+                    </h3>
+
+                    <p class="study-description">
+
+                      ${escapeHTML(
+                        course.description ||
+                        "Your approved Funda Online Academy course."
+                      )}
+
+                    </p>
+
+                    <div class="study-meta">
+
+                      <span>
+                        💰 ${formatMoney(
+                          enrolment.amount ??
+                          coursePrice(course)
+                        )}
+                      </span>
+
+                      <span>
+                        📅 ${escapeHTML(
+                          formatDate(
+                            enrolment.enrolled_at ||
+                            enrolment.created_at
+                          )
+                        )}
+                      </span>
+
+                      <span>
+                        📚 ${modules.length}
+                        module${modules.length === 1 ? "" : "s"}
+                      </span>
+
+                    </div>
+
+                  </div>
+
+
+                  <div class="study-button">
+
+                    <a
+                      class="btn green"
+                      href="course-study.html?id=${encodeURIComponent(course.id)}">
+
+                      📚 Study Course
+
+                    </a>
+
+                  </div>
+
+                </div>
+
+
+                ${
+                  modules.length
+
+                    ? `
+
+                      <div class="modules-container">
+
+                        <h4 style="margin-bottom:14px">
+
+                          📖 Course Modules
+
+                        </h4>
+
+                        ${renderStudyModules(
+                          modules,
+                          course.id
+                        )}
+
+                      </div>
+
+                    `
+
+                    : `
+
+                      <div class="modules-container">
+
+                        <div class="empty-study">
+
+                          <p>
+                            📖 Course modules are being
+                            prepared by the academy.
+                          </p>
+
+                          <a
+                            href="course-study.html?id=${encodeURIComponent(course.id)}"
+                            class="btn green"
+                            style="margin-top:12px">
+
+                            Open Course
+
+                          </a>
+
+                        </div>
+
+                      </div>
+
+                    `
+
+                }
+
+              </article>
+
+            `;
+
+          }
+        )
+        .join("");
+
+
+    attachModuleEvents();
+
+
+  } catch (error) {
+
+    console.error(
+      "MY STUDIES ERROR:",
+      error
+    );
+
+
+    studyListEl.innerHTML = `
+
+      <div class="error-card">
+
+        <h3>
+          Unable to load your studies
+        </h3>
+
+        <p style="margin-top:10px">
+
+          ${escapeHTML(
+            error.message ||
+            "Please refresh the page and try again."
+          )}
+
+        </p>
+
+        <p style="margin-top:10px;color:#666">
+
+          If your Cashier enrolment has been approved,
+          please contact the academy if it still does
+          not appear.
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+// ============================================================
+// NORMALISE MODULES
+// ============================================================
+
+function normaliseModules(
+  modules
+) {
+
+  if (!modules) {
+    return [];
+  }
+
+
+  if (
+    Array.isArray(modules)
+  ) {
+    return modules;
+  }
+
+
+  if (
+    typeof modules === "string"
+  ) {
+
+    try {
+
+      const parsed =
+        JSON.parse(modules);
+
+      if (
+        Array.isArray(parsed)
+      ) {
+        return parsed;
+      }
+
+      return [parsed];
+
+    } catch (error) {
+
+      return [
+        {
+          title: "Course Material",
+          content: modules
+        }
+      ];
+
+    }
+
+  }
+
+
+  if (
+    typeof modules === "object"
+  ) {
+
+    return [
+      modules
+    ];
+
+  }
+
+
+  return [];
+}
+
+
+// ============================================================
+// MODULE TITLE
+// ============================================================
+
+function moduleTitle(
+  module,
+  index
+) {
+
+  if (
+    typeof module === "string"
+  ) {
+
+    return (
+      "Module " +
+      (index + 1)
+    );
+
+  }
+
   return (
-
-    course?.title ||
-
-    course?.name ||
-
-    course?.course_name ||
-
-    "Course"
-
+    module?.title ||
+    module?.name ||
+    module?.module_title ||
+    module?.heading ||
+    (
+      "Module " +
+      (index + 1)
+    )
   );
 }
 
 
 // ============================================================
-// COURSE PRICE
+// MODULE CONTENT
 // ============================================================
 
-function coursePrice(
-  course
+function moduleContent(
+  module
 ) {
 
+  if (
+    typeof module === "string"
+  ) {
+    return module;
+  }
+
   return (
-
-    course?.price ??
-
-    course?.amount ??
-
-    course?.course_price ??
-
-    0
-
+    module?.content ||
+    module?.description ||
+    module?.details ||
+    module?.text ||
+    "Learning material will be added here."
   );
+}
+
+
+// ============================================================
+// LESSONS
+// ============================================================
+
+function moduleLessons(
+  module
+) {
+
+  if (
+    typeof module !== "object" ||
+    !module
+  ) {
+    return [];
+  }
+
+  if (
+    Array.isArray(
+      module.lessons
+    )
+  ) {
+
+    return module.lessons;
+
+  }
+
+  return [];
+}
+
+
+// ============================================================
+// RENDER MODULES ON DASHBOARD
+// ============================================================
+
+function renderStudyModules(
+  modules,
+  courseId
+) {
+
+  return modules
+    .map(
+      (module, index) => {
+
+        const title =
+          moduleTitle(
+            module,
+            index
+          );
+
+
+        const content =
+          moduleContent(
+            module
+          );
+
+
+        const lessons =
+          moduleLessons(
+            module
+          );
+
+
+        return `
+
+          <div
+            class="module-card">
+
+            <button
+              type="button"
+              class="module-header"
+              data-module-index="${index}">
+
+              <span>
+
+                <span class="module-number">
+                  ${index + 1}
+                </span>
+
+                ${escapeHTML(title)}
+
+              </span>
+
+              <span class="module-arrow">
+                +
+              </span>
+
+            </button>
+
+
+            <div
+              class="module-content"
+              data-module-content="${index}">
+
+              ${
+                content
+
+                  ? `
+
+                    <p
+                      style="
+                        line-height:1.7;
+                        margin-bottom:15px
+                      ">
+
+                      ${escapeHTML(content)
+                        .replaceAll(
+                          "\n",
+                          "<br>"
+                        )}
+
+                    </p>
+
+                  `
+
+                  : ""
+
+              }
+
+
+              ${
+                lessons.length
+
+                  ? `
+
+                    <h4 style="margin-bottom:12px">
+                      Lessons
+                    </h4>
+
+                    ${lessons
+                      .map(
+                        (lesson, lessonIndex) => {
+
+                          const lessonTitle =
+                            typeof lesson === "string"
+
+                              ? (
+                                  "Lesson " +
+                                  (lessonIndex + 1)
+                                )
+
+                              : (
+                                  lesson?.title ||
+                                  lesson?.name ||
+                                  (
+                                    "Lesson " +
+                                    (lessonIndex + 1)
+                                  )
+                                );
+
+
+                          const lessonDescription =
+                            typeof lesson === "string"
+
+                              ? lesson
+
+                              : (
+                                  lesson?.description ||
+                                  lesson?.content ||
+                                  ""
+                                );
+
+
+                          const lessonUrl =
+                            typeof lesson === "object"
+
+                              ? (
+                                  lesson?.url ||
+                                  lesson?.link ||
+                                  lesson?.file_url ||
+                                  ""
+                                )
+
+                              : "";
+
+
+                          return `
+
+                            <div class="lesson-item">
+
+                              <div class="lesson-top">
+
+                                <div>
+
+                                  <div class="lesson-title">
+
+                                    ${escapeHTML(
+                                      lessonTitle
+                                    )}
+
+                                  </div>
+
+                                  ${
+                                    lessonDescription
+
+                                      ? `
+
+                                        <div class="lesson-description">
+
+                                          ${escapeHTML(
+                                            lessonDescription
+                                          )}
+
+                                        </div>
+
+                                      `
+
+                                      : ""
+
+                                  }
+
+                                </div>
+
+                              </div>
+
+
+                              <div class="lesson-actions">
+
+                                ${
+                                  lessonUrl
+
+                                    ? `
+
+                                      <a
+                                        href="${escapeHTML(lessonUrl)}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="lesson-link">
+
+                                        📖 Open Lesson
+
+                                      </a>
+
+                                    `
+
+                                    : ""
+
+                                }
+
+                              </div>
+
+                            </div>
+
+                          `;
+
+                        }
+                      )
+                      .join("")}
+
+                  `
+
+                  : ""
+
+              }
+
+
+              <a
+                href="course-study.html?id=${encodeURIComponent(courseId)}"
+                class="btn green"
+                style="margin-top:10px">
+
+                📚 Open Full Course
+
+              </a>
+
+            </div>
+
+          </div>
+
+        `;
+
+      }
+    )
+    .join("");
+
+}
+
+
+// ============================================================
+// MODULE BUTTONS
+// ============================================================
+
+function attachModuleEvents() {
+
+  document
+    .querySelectorAll(
+      ".module-header"
+    )
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const index =
+              button.dataset.moduleIndex;
+
+            const content =
+              document.querySelector(
+                `[data-module-content="${index}"]`
+              );
+
+
+            if (!content) {
+              return;
+            }
+
+
+            const wasOpen =
+              content.classList.contains(
+                "open"
+              );
+
+
+            // Close all
+            document
+              .querySelectorAll(
+                ".module-content"
+              )
+              .forEach(
+                item => {
+
+                  item.classList.remove(
+                    "open"
+                  );
+
+                }
+              );
+
+
+            document
+              .querySelectorAll(
+                ".module-arrow"
+              )
+              .forEach(
+                arrow => {
+
+                  arrow.textContent =
+                    "+";
+
+                }
+              );
+
+
+            if (!wasOpen) {
+
+              content.classList.add(
+                "open"
+              );
+
+
+              const arrow =
+                button.querySelector(
+                  ".module-arrow"
+                );
+
+
+              if (arrow) {
+
+                arrow.textContent =
+                  "−";
+
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+// ============================================================
+// ENROLMENTS
+// ============================================================
+
+async function loadEnrolments(
+  studentId
+) {
+
+  if (!enrolmentsEl) {
+    return;
+  }
+
+
+  enrolmentsEl.innerHTML =
+    '<p class="loading">Loading enrolments…</p>';
+
+
+  try {
+
+    const rows =
+      await getStudentEnrolments(
+        studentId
+      );
+
+
+    if (
+      !rows.length
+    ) {
+
+      enrolmentsEl.innerHTML = `
+
+        <div class="card">
+
+          <h3>
+            No enrolments yet
+          </h3>
+
+          <p>
+            Choose a course below to begin
+            your learning journey.
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+    }
+
+
+    const ids =
+      [
+        ...new Set(
+          rows
+            .map(
+              row =>
+                row.course_id
+            )
+            .filter(Boolean)
+        )
+      ];
+
+
+    const courses =
+      await getCoursesByIds(
+        ids
+      );
+
+
+    const courseMap =
+      new Map(
+        courses.map(
+          course => [
+            String(course.id),
+            course
+          ]
+        )
+      );
+
+
+    enrolmentsEl.innerHTML =
+      rows
+        .map(
+          row => {
+
+            const course =
+              courseMap.get(
+                String(
+                  row.course_id
+                )
+              );
+
+
+            const status =
+              enrollmentStatus(
+                row
+              );
+
+
+            const amount =
+              row.amount ??
+              coursePrice(course);
+
+
+            return `
+
+              <div class="card">
+
+                <span
+                  class="funda-status ${escapeHTML(status)}">
+
+                  ${escapeHTML(status)}
+
+                </span>
+
+
+                <h3>
+
+                  ${escapeHTML(
+                    courseTitle(course)
+                  )}
+
+                </h3>
+
+
+                <p>
+
+                  ${escapeHTML(
+                    course?.description ||
+                    "Funda Online Academy course."
+                  )}
+
+                </p>
+
+
+                <p class="funda-info">
+
+                  <strong>
+                    Course fee:
+                  </strong>
+
+                  ${formatMoney(amount)}
+
+                </p>
+
+
+                <p class="funda-info">
+
+                  <strong>
+                    Enrolled:
+                  </strong>
+
+                  ${escapeHTML(
+                    formatDate(
+                      row.enrolled_at ||
+                      row.created_at
+                    )
+                  )}
+
+                </p>
+
+
+                ${
+                  isApproved(row)
+
+                    ? `
+
+                      <div class="funda-card-actions">
+
+                        <a
+                          href="course-study.html?id=${encodeURIComponent(row.course_id)}"
+                          class="btn green">
+
+                          📚 Study Course
+
+                        </a>
+
+                      </div>
+
+                    `
+
+                    : `
+
+                      <p
+                        style="
+                          margin-top:14px;
+                          color:#777
+                        ">
+
+                        Your enrolment is awaiting
+                        academy approval.
+
+                      </p>
+
+                    `
+
+                }
+
+              </div>
+
+            `;
+
+          }
+        )
+        .join("");
+
+
+  } catch (error) {
+
+    console.error(
+      "Enrolments error:",
+      error
+    );
+
+
+    enrolmentsEl.innerHTML = `
+
+      <div class="card">
+
+        <h3>
+          Unable to load enrolments
+        </h3>
+
+        <p>
+
+          ${escapeHTML(
+            error.message ||
+            "Please refresh and try again."
+          )}
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+// ============================================================
+// AVAILABLE COURSES
+// ============================================================
+
+async function loadAvailableCourses(
+  studentId
+) {
+
+  if (!coursesEl) {
+    return;
+  }
+
+
+  coursesEl.innerHTML =
+    '<p class="loading">Loading courses…</p>';
+
+
+  try {
+
+    const courses =
+      await getAvailableCourses();
+
+
+    if (
+      !courses.length
+    ) {
+
+      coursesEl.innerHTML = `
+
+        <div class="card">
+
+          <h3>
+            No courses available
+          </h3>
+
+          <p>
+            Courses will appear here when
+            available.
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+    }
+
+
+    const {
+      data: existing,
+      error
+    } =
+      await db
+        .from("enrollments")
+        .select(
+          "course_id,enrollment_status,status"
+        )
+        .eq(
+          "student_id",
+          studentId
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    const enrolled =
+      new Map(
+        (existing || [])
+          .map(
+            row => [
+              String(
+                row.course_id
+              ),
+              enrollmentStatus(row)
+            ]
+          )
+      );
+
+
+    coursesEl.innerHTML =
+      courses
+        .map(
+          course => {
+
+            const id =
+              String(course.id);
+
+
+            const status =
+              enrolled.get(id);
+
+
+            return `
+
+              <div class="card">
+
+                <h3>
+
+                  ${escapeHTML(
+                    courseTitle(course)
+                  )}
+
+                </h3>
+
+
+                <p>
+
+                  ${escapeHTML(
+                    course.description ||
+                    "Online short course."
+                  )}
+
+                </p>
+
+
+                <p class="funda-info">
+
+                  <strong>
+                    Course fee:
+                  </strong>
+
+                  ${formatMoney(
+                    coursePrice(course)
+                  )}
+
+                </p>
+
+
+                ${
+                  status
+
+                    ? `
+
+                      <span
+                        class="funda-status ${escapeHTML(status)}">
+
+                        ${escapeHTML(status)}
+
+                      </span>
+
+                    `
+
+                    : `
+
+                      <button
+                        type="button"
+                        class="btn green enrol-btn"
+                        data-course-id="${escapeHTML(id)}">
+
+                        Enrol Now
+
+                      </button>
+
+                    `
+
+                }
+
+              </div>
+
+            `;
+
+          }
+        )
+        .join("");
+
+
+    document
+      .querySelectorAll(
+        ".enrol-btn"
+      )
+      .forEach(
+        button => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              enrolStudent(
+                studentId,
+                button.dataset.courseId,
+                button
+              );
+
+            }
+          );
+
+        }
+      );
+
+
+  } catch (error) {
+
+    console.error(
+      "Available courses error:",
+      error
+    );
+
+
+    coursesEl.innerHTML = `
+
+      <div class="card">
+
+        <h3>
+          Unable to load courses
+        </h3>
+
+        <p>
+
+          ${escapeHTML(
+            error.message ||
+            "Please refresh and try again."
+          )}
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+// ============================================================
+// ENROL STUDENT
+// ============================================================
+
+async function enrolStudent(
+  studentId,
+  courseId,
+  button
+) {
+
+  if (
+    !studentId ||
+    !courseId ||
+    !button
+  ) {
+    return;
+  }
+
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    "Enrolling…";
+
+
+  try {
+
+    // --------------------------------------------------------
+    // POLICY CHECK
+    // --------------------------------------------------------
+
+    const {
+      data: policy,
+      error: policyError
+    } =
+      await db
+        .from("policy_acceptances")
+        .select(
+          "id,policies_accepted,declaration_accepted"
+        )
+        .eq(
+          "student_id",
+          studentId
+        )
+        .eq(
+          "policy_version",
+          POLICY_VERSION
+        )
+        .maybeSingle();
+
+
+    if (policyError) {
+      throw policyError;
+    }
+
+
+    if (
+      !policy ||
+      policy.policies_accepted !== true ||
+      policy.declaration_accepted !== true
+    ) {
+
+      showMessage(
+        "Please accept the Funda Online Academy policies before enrolling."
+      );
+
+
+      document
+        .getElementById("policies")
+        ?.scrollIntoView({
+          behavior: "smooth"
+        });
+
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "Enrol Now";
+
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // CHECK EXISTING ENROLMENT
+    // --------------------------------------------------------
+
+    const {
+      data: existing,
+      error: checkError
+    } =
+      await db
+        .from("enrollments")
+        .select("id,enrollment_status,status")
+        .eq(
+          "student_id",
+          studentId
+        )
+        .eq(
+          "course_id",
+          courseId
+        )
+        .maybeSingle();
+
+
+    if (checkError) {
+      throw checkError;
+    }
+
+
+    if (existing) {
+
+      showMessage(
+        "You are already enrolled in this course."
+      );
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "Enrol Now";
+
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // GET COURSE
+    // --------------------------------------------------------
+
+    const {
+      data: course,
+      error: courseError
+    } =
+      await db
+        .from("courses")
+        .select("*")
+        .eq(
+          "id",
+          courseId
+        )
+        .maybeSingle();
+
+
+    if (courseError) {
+      throw courseError;
+    }
+
+
+    if (!course) {
+      throw new Error(
+        "Course could not be found."
+      );
+    }
+
+
+    // --------------------------------------------------------
+    // CREATE ENROLMENT
+    // --------------------------------------------------------
+
+    const payload = {
+
+      student_id:
+        studentId,
+
+      course_id:
+        courseId,
+
+      enrollment_status:
+        "pending",
+
+      enrolled_at:
+        new Date().toISOString(),
+
+      amount:
+        course.price ??
+        null
+
+    };
+
+
+    const {
+      error: insertError
+    } =
+      await db
+        .from("enrollments")
+        .insert(
+          payload
+        );
+
+
+    if (insertError) {
+      throw insertError;
+    }
+
+
+    showMessage(
+      "Enrolment submitted successfully. Please wait for academy approval.",
+      true
+    );
+
+
+    await Promise.all([
+
+      loadMyStudies(
+        studentId
+      ),
+
+      loadEnrolments(
+        studentId
+      ),
+
+      loadAvailableCourses(
+        studentId
+      )
+
+    ]);
+
+
+  } catch (error) {
+
+    console.error(
+      "Enrolment error:",
+      error
+    );
+
+
+    showMessage(
+      "Unable to complete enrolment: " +
+      (
+        error.message ||
+        "Please try again."
+      )
+    );
+
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "Enrol Now";
+
+  }
+
+}
+
+
+// ============================================================
+// PAYMENTS
+// ============================================================
+
+async function loadPayments(
+  studentId
+) {
+
+  if (!paymentListEl) {
+    return;
+  }
+
+
+  paymentListEl.innerHTML = `
+
+    <div class="card">
+
+      <p class="loading">
+        Loading payment history…
+      </p>
+
+    </div>
+
+  `;
+
+
+  try {
+
+    const {
+      data: payments,
+      error
+    } =
+      await db
+        .from("payments")
+        .select("*")
+        .eq(
+          "student_id",
+          studentId
+        )
+        .order(
+          "created_at",
+          {
+            ascending: false
+          }
+        );
+
+
+    if (error) {
+      throw error;
+    }
+
+
+    if (
+      !payments ||
+      !payments.length
+    ) {
+
+      paymentListEl.innerHTML = `
+
+        <div class="card">
+
+          <h3>
+            Payment History
+          </h3>
+
+          <p>
+            No payment records have been
+            recorded yet.
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+    }
+
+
+    const courseIds =
+      [
+        ...new Set(
+          payments
+            .map(
+              payment =>
+                payment.course_id
+            )
+            .filter(Boolean)
+        )
+      ];
+
+
+    const courses =
+      await getCoursesByIds(
+        courseIds
+      );
+
+
+    const courseMap =
+      new Map(
+        courses.map(
+          course => [
+            String(course.id),
+            course
+          ]
+        )
+      );
+
+
+    paymentListEl.innerHTML = `
+
+      <div
+        style="
+          display:flex;
+          flex-direction:column;
+          gap:14px
+        ">
+
+        ${
+          payments
+            .map(
+              payment => {
+
+                const course =
+                  courseMap.get(
+                    String(
+                      payment.course_id
+                    )
+                  );
+
+
+                const status =
+                  String(
+                    payment.payment_status ??
+                    payment.status ??
+                    "pending"
+                  )
+                  .trim()
+                  .toLowerCase();
+
+
+                const method =
+                  payment.payment_method ||
+                  payment.method ||
+                  "Not specified";
+
+
+                const amount =
+                  payment.amount ??
+                  coursePrice(course);
+
+
+                const proof =
+                  payment.proof_url ||
+                  payment.proof_of_payment_url ||
+                  payment.receipt_url ||
+                  payment.file_url;
+
+
+                return `
+
+                  <div class="payment-card">
+
+                    <h3>
+
+                      ${escapeHTML(
+                        courseTitle(course)
+                      )}
+
+                    </h3>
+
+
+                    <p class="funda-info">
+
+                      <strong>
+                        Amount:
+                      </strong>
+
+                      ${formatMoney(amount)}
+
+                    </p>
+
+
+                    <p class="funda-info">
+
+                      <strong>
+                        Method:
+                      </strong>
+
+                      ${escapeHTML(method)}
+
+                    </p>
+
+
+                    <p class="funda-info">
+
+                      <strong>
+                        Date:
+                      </strong>
+
+                      ${escapeHTML(
+                        formatDate(
+                          payment.created_at ||
+                          payment.paid_at
+                        )
+                      )}
+
+                    </p>
+
+
+                    <p class="funda-info">
+
+                      <strong>
+                        Status:
+                      </strong>
+
+                      <span
+                        class="funda-status ${escapeHTML(status)}">
+
+                        ${escapeHTML(status)}
+
+                      </span>
+
+                    </p>
+
+
+                    <p class="funda-info">
+
+                      <strong>
+                        Proof:
+                      </strong>
+
+                      ${
+                        proof
+
+                          ? `
+
+                            <a
+                              class="btn green"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              href="${escapeHTML(proof)}">
+
+                              View submitted proof
+
+                            </a>
+
+                          `
+
+                          : "Not available"
+
+                      }
+
+                    </p>
+
+                  </div>
+
+                `;
+
+              }
+            )
+            .join("")
+        }
+
+      </div>
+
+    `;
+
+
+  } catch (error) {
+
+    console.error(
+      "Payments error:",
+      error
+    );
+
+
+    paymentListEl.innerHTML = `
+
+      <div class="card">
+
+        <h3>
+          Payment History
+        </h3>
+
+        <p>
+          Payment information could not
+          be loaded right now.
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
 }
 
 
@@ -405,9 +2354,7 @@ async function loadPolicyAcceptance(
       error
     } =
       await db
-        .from(
-          "policy_acceptances"
-        )
+        .from("policy_acceptances")
         .select("*")
         .eq(
           "student_id",
@@ -423,7 +2370,7 @@ async function loadPolicyAcceptance(
     if (error) {
 
       console.error(
-        "Policy acceptance:",
+        "Policy error:",
         error
       );
 
@@ -478,11 +2425,11 @@ function showPolicyForm() {
 
   if (acceptPolicyBtn) {
 
-    acceptPolicyBtn.disabled =
-      false;
-
     acceptPolicyBtn.style.display =
       "inline-block";
+
+    acceptPolicyBtn.disabled =
+      false;
 
     acceptPolicyBtn.textContent =
       "✅ Accept & Continue";
@@ -546,27 +2493,25 @@ function showPolicyAccepted(
         and declaration have been accepted.
       </div>
 
-      <div>
-        <strong>
-          Policy version:
-        </strong>
+      <div class="policy-version">
 
+        Policy version:
         ${escapeHTML(
           record.policy_version ||
           POLICY_VERSION
         )}
+
       </div>
 
-      <div>
-        <strong>
-          Accepted:
-        </strong>
+      <div class="policy-version">
 
+        Accepted:
         ${escapeHTML(
           formatDate(
             record.accepted_at
           )
         )}
+
       </div>
 
     `;
@@ -609,32 +2554,22 @@ async function acceptPolicies() {
   }
 
 
-  if (acceptPolicyBtn) {
+  acceptPolicyBtn.disabled =
+    true;
 
-    acceptPolicyBtn.disabled =
-      true;
-
-    acceptPolicyBtn.textContent =
-      "Saving acceptance…";
-
-  }
+  acceptPolicyBtn.textContent =
+    "Saving acceptance…";
 
 
   try {
 
-    // --------------------------------------------------------
-    // CHECK WHETHER ALREADY ACCEPTED
-    // --------------------------------------------------------
-
     const {
-      data:existing,
-      error:checkError
+      data: existing,
+      error: checkError
     } =
       await db
-        .from(
-          "policy_acceptances"
-        )
-        .select("id,accepted_at,policy_version,policies_accepted,declaration_accepted")
+        .from("policy_acceptances")
+        .select("*")
         .eq(
           "student_id",
           currentStudent.id
@@ -670,10 +2605,6 @@ async function acceptPolicies() {
     }
 
 
-    // --------------------------------------------------------
-    // SAVE ACCEPTANCE
-    // --------------------------------------------------------
-
     const payload = {
 
       student_id:
@@ -702,9 +2633,7 @@ async function acceptPolicies() {
       error
     } =
       await db
-        .from(
-          "policy_acceptances"
-        )
+        .from("policy_acceptances")
         .insert(
           payload
         )
@@ -723,7 +2652,7 @@ async function acceptPolicies() {
 
 
     showMessage(
-      "Policies accepted successfully. Your acceptance has been recorded.",
+      "Policies accepted successfully.",
       true
     );
 
@@ -745,1020 +2674,11 @@ async function acceptPolicies() {
     );
 
 
-    if (acceptPolicyBtn) {
-
-      acceptPolicyBtn.disabled =
-        false;
-
-      acceptPolicyBtn.textContent =
-        "✅ Accept & Continue";
-
-    }
-
-  }
-
-}
-
-
-// ============================================================
-// ENROLMENTS
-// ============================================================
-
-async function loadEnrolments(
-  studentId
-) {
-
-  enrolmentsEl.innerHTML =
-    '<p class="loading">Loading enrolments…</p>';
-
-
-  try {
-
-    const {
-      data:rows,
-      error
-    } =
-      await db
-        .from("enrollments")
-        .select("*")
-        .eq(
-          "student_id",
-          studentId
-        )
-        .order(
-          "enrolled_at",
-          {
-            ascending:false
-          }
-        );
-
-
-    if (error) {
-      throw error;
-    }
-
-
-    if (
-      !rows ||
-      !rows.length
-    ) {
-
-      enrolmentsEl.innerHTML = `
-
-        <div class="card">
-
-          <h3>
-            No enrolments yet
-          </h3>
-
-          <p>
-            Choose a course below to start
-            your learning journey.
-          </p>
-
-        </div>
-
-      `;
-
-      return;
-    }
-
-
-    const ids =
-      [
-        ...new Set(
-          rows
-            .map(
-              r => r.course_id
-            )
-            .filter(Boolean)
-        )
-      ];
-
-
-    const courseRows =
-      await getCourses(ids);
-
-
-    const map =
-      new Map(
-        courseRows.map(
-          c => [
-            String(c.id),
-            c
-          ]
-        )
-      );
-
-
-    enrolmentsEl.innerHTML =
-      rows.map(row => {
-
-        const course =
-          map.get(
-            String(
-              row.course_id
-            )
-          );
-
-
-        const status =
-          statusOf(row);
-
-
-        const approved =
-          status === "approved" ||
-          status === "active";
-
-
-        const amount =
-          row.amount ??
-          coursePrice(course);
-
-
-        return `
-
-          <div class="card">
-
-            <span class="funda-status ${escapeHTML(status)}">
-              ${escapeHTML(status)}
-            </span>
-
-            <h3>
-              ${escapeHTML(
-                courseTitle(course)
-              )}
-            </h3>
-
-            <p>
-              ${escapeHTML(
-                course?.description ||
-                "Your enrolled online course."
-              )}
-            </p>
-
-            <p class="funda-info">
-              <strong>
-                Course fee:
-              </strong>
-
-              ${formatMoney(amount)}
-            </p>
-
-            <p class="funda-info">
-              <strong>
-                Enrolled:
-              </strong>
-
-              ${formatDate(
-                row.enrolled_at ||
-                row.created_at
-              )}
-            </p>
-
-            ${
-              approved
-
-                ? `
-
-                  <div class="funda-card-actions">
-
-                    <button
-                      class="btn green study-btn"
-                      data-course-id="${escapeHTML(row.course_id)}">
-
-                      📚 Study Course
-
-                    </button>
-
-                  </div>
-
-                `
-
-                : `
-
-                  <p style="margin-top:14px;color:#777">
-
-                    Your enrolment is awaiting approval.
-
-                  </p>
-
-                `
-
-            }
-
-          </div>
-
-        `;
-
-      }).join("");
-
-
-    document
-      .querySelectorAll(
-        ".study-btn"
-      )
-      .forEach(btn => {
-
-        btn.addEventListener(
-          "click",
-          () => {
-
-            const id =
-              btn.dataset.courseId;
-
-            if (id) {
-
-              location.href =
-                "course-study.html?id=" +
-                encodeURIComponent(id);
-
-            }
-
-          }
-        );
-
-      });
-
-
-  } catch (err) {
-
-    console.error(
-      "Enrolments:",
-      err
-    );
-
-
-    enrolmentsEl.innerHTML = `
-
-      <div class="card">
-
-        <h3>
-          Unable to load enrolments
-        </h3>
-
-        <p>
-          ${escapeHTML(
-            err.message ||
-            "Please refresh and try again."
-          )}
-        </p>
-
-      </div>
-
-    `;
-
-  }
-
-}
-
-
-// ============================================================
-// AVAILABLE COURSES
-// ============================================================
-
-async function loadAvailableCourses(
-  studentId
-) {
-
-  coursesEl.innerHTML =
-    '<p class="loading">Loading courses…</p>';
-
-
-  try {
-
-    const courses =
-      await getCourses();
-
-
-    if (
-      !courses.length
-    ) {
-
-      coursesEl.innerHTML = `
-
-        <div class="card">
-
-          <h3>
-            No courses available
-          </h3>
-
-          <p>
-            Courses will appear here when
-            available.
-          </p>
-
-        </div>
-
-      `;
-
-      return;
-    }
-
-
-    const {
-      data:existing,
-      error
-    } =
-      await db
-        .from("enrollments")
-        .select(
-          "course_id,enrollment_status"
-        )
-        .eq(
-          "student_id",
-          studentId
-        );
-
-
-    if (error) {
-
-      console.warn(
-        "Existing enrolments:",
-        error
-      );
-
-    }
-
-
-    const enrolled =
-      new Map(
-        (existing || []).map(
-          r => [
-            String(
-              r.course_id
-            ),
-            statusOf(r)
-          ]
-        )
-      );
-
-
-    coursesEl.innerHTML =
-      courses.map(course => {
-
-        const id =
-          String(course.id);
-
-
-        const status =
-          enrolled.get(id);
-
-
-        return `
-
-          <div class="card">
-
-            <h3>
-              ${escapeHTML(
-                courseTitle(course)
-              )}
-            </h3>
-
-            <p>
-              ${escapeHTML(
-                course.description ||
-                "Online short course."
-              )}
-            </p>
-
-            <p class="funda-info">
-
-              <strong>
-                Course fee:
-              </strong>
-
-              ${formatMoney(
-                coursePrice(course)
-              )}
-
-            </p>
-
-            ${
-              status
-
-                ? `
-
-                  <span class="funda-status ${escapeHTML(status)}">
-
-                    ${escapeHTML(status)}
-
-                  </span>
-
-                `
-
-                : `
-
-                  <button
-                    type="button"
-                    class="btn green enrol-btn"
-                    data-course-id="${escapeHTML(id)}">
-
-                    Enrol Now
-
-                  </button>
-
-                `
-
-            }
-
-          </div>
-
-        `;
-
-      }).join("");
-
-
-    document
-      .querySelectorAll(
-        ".enrol-btn"
-      )
-      .forEach(btn => {
-
-        btn.addEventListener(
-          "click",
-          () => {
-
-            enrolStudent(
-              studentId,
-              btn.dataset.courseId,
-              btn
-            );
-
-          }
-        );
-
-      });
-
-
-  } catch (err) {
-
-    console.error(
-      "Courses:",
-      err
-    );
-
-
-    coursesEl.innerHTML = `
-
-      <div class="card">
-
-        <h3>
-          Unable to load courses
-        </h3>
-
-        <p>
-          ${escapeHTML(
-            err.message ||
-            "Please refresh and try again."
-          )}
-        </p>
-
-      </div>
-
-    `;
-
-  }
-
-}
-
-
-// ============================================================
-// ENROL STUDENT
-// ============================================================
-
-async function enrolStudent(
-  studentId,
-  courseId,
-  button
-) {
-
-  if (
-    !studentId ||
-    !courseId
-  ) {
-    return;
-  }
-
-
-  button.disabled =
-    true;
-
-  button.textContent =
-    "Enrolling…";
-
-
-  try {
-
-    // --------------------------------------------------------
-    // REQUIRE POLICY ACCEPTANCE
-    // --------------------------------------------------------
-
-    const {
-      data:policy,
-      error:policyError
-    } =
-      await db
-        .from(
-          "policy_acceptances"
-        )
-        .select(
-          "id,policies_accepted,declaration_accepted"
-        )
-        .eq(
-          "student_id",
-          studentId
-        )
-        .eq(
-          "policy_version",
-          POLICY_VERSION
-        )
-        .maybeSingle();
-
-
-    if (policyError) {
-      throw policyError;
-    }
-
-
-    if (
-      !policy ||
-      policy.policies_accepted !== true ||
-      policy.declaration_accepted !== true
-    ) {
-
-      showMessage(
-        "Please read and accept the Funda Online Academy policies before enrolling."
-      );
-
-
-      document
-        .getElementById(
-          "policies"
-        )
-        ?.scrollIntoView({
-          behavior:"smooth"
-        });
-
-
-      button.disabled =
-        false;
-
-      button.textContent =
-        "Enrol Now";
-
-      return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // CHECK EXISTING ENROLMENT
-    // --------------------------------------------------------
-
-    const {
-      data:existing,
-      error:checkError
-    } =
-      await db
-        .from("enrollments")
-        .select(
-          "id,enrollment_status"
-        )
-        .eq(
-          "student_id",
-          studentId
-        )
-        .eq(
-          "course_id",
-          courseId
-        )
-        .maybeSingle();
-
-
-    if (checkError) {
-      throw checkError;
-    }
-
-
-    if (existing) {
-
-      showMessage(
-        "You are already enrolled in this course."
-      );
-
-      button.disabled =
-        false;
-
-      button.textContent =
-        "Enrol Now";
-
-      return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // GET COURSE
-    // --------------------------------------------------------
-
-    const {
-      data:course,
-      error:courseError
-    } =
-      await db
-        .from("courses")
-        .select("*")
-        .eq(
-          "id",
-          courseId
-        )
-        .maybeSingle();
-
-
-    if (courseError) {
-      throw courseError;
-    }
-
-
-    // --------------------------------------------------------
-    // CREATE ENROLMENT
-    // --------------------------------------------------------
-
-    const payload = {
-
-      student_id:
-        studentId,
-
-      course_id:
-        courseId,
-
-      enrollment_status:
-        "pending",
-
-      enrolled_at:
-        new Date().toISOString(),
-
-      amount:
-        course?.price ??
-        null
-
-    };
-
-
-    const {
-      error:insertError
-    } =
-      await db
-        .from("enrollments")
-        .insert(
-          payload
-        );
-
-
-    if (insertError) {
-      throw insertError;
-    }
-
-
-    showMessage(
-      "Enrolment submitted successfully. Please wait for academy approval.",
-      true
-    );
-
-
-    await Promise.all([
-
-      loadEnrolments(
-        studentId
-      ),
-
-      loadAvailableCourses(
-        studentId
-      )
-
-    ]);
-
-
-  } catch (err) {
-
-    console.error(
-      "Enrolment:",
-      err
-    );
-
-
-    showMessage(
-      "Unable to complete enrolment: " +
-      (
-        err.message ||
-        "Please try again."
-      )
-    );
-
-
-    button.disabled =
+    acceptPolicyBtn.disabled =
       false;
 
-    button.textContent =
-      "Enrol Now";
-
-  }
-
-}
-
-
-// ============================================================
-// PAYMENTS
-// ============================================================
-
-async function loadPayments(
-  studentId
-) {
-
-  paymentListEl.innerHTML = `
-
-    <div class="card">
-
-      <p class="loading">
-        Loading payment history…
-      </p>
-
-    </div>
-
-  `;
-
-
-  try {
-
-    const {
-      data:payments,
-      error
-    } =
-      await db
-        .from("payments")
-        .select("*")
-        .eq(
-          "student_id",
-          studentId
-        )
-        .order(
-          "created_at",
-          {
-            ascending:false
-          }
-        );
-
-
-    if (error) {
-      throw error;
-    }
-
-
-    if (
-      !payments ||
-      !payments.length
-    ) {
-
-      paymentListEl.innerHTML = `
-
-        <div class="card">
-
-          <h3>
-            Payment History
-          </h3>
-
-          <p>
-            No payment records have been
-            recorded yet.
-          </p>
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-
-    const courseIds =
-      [
-        ...new Set(
-          payments
-            .map(
-              p => p.course_id
-            )
-            .filter(Boolean)
-        )
-      ];
-
-
-    let courseMap =
-      new Map();
-
-
-    if (
-      courseIds.length
-    ) {
-
-      const courses =
-        await getCourses(
-          courseIds
-        );
-
-
-      courseMap =
-        new Map(
-          courses.map(
-            c => [
-              String(c.id),
-              c
-            ]
-          )
-        );
-
-    }
-
-
-    paymentListEl.innerHTML = `
-
-      <div
-        style="
-          display:flex;
-          flex-direction:column;
-          gap:14px
-        "
-      >
-
-        ${
-          payments
-            .map(p => {
-
-              const course =
-                courseMap.get(
-                  String(
-                    p.course_id
-                  )
-                );
-
-
-              const status =
-                String(
-                  p.payment_status ??
-                  p.status ??
-                  "pending"
-                )
-                .toLowerCase();
-
-
-              const proof =
-                p.proof_url ||
-                p.proof_of_payment_url ||
-                p.receipt_url ||
-                p.file_url;
-
-
-              const method =
-                p.payment_method ||
-                p.method ||
-                "Not specified";
-
-
-              const amount =
-                p.amount ??
-                coursePrice(course);
-
-
-              return `
-
-                <div class="payment-card">
-
-                  <h3>
-                    ${escapeHTML(
-                      courseTitle(course)
-                    )}
-                  </h3>
-
-                  <p class="funda-info">
-
-                    <strong>
-                      Amount:
-                    </strong>
-
-                    ${formatMoney(
-                      amount
-                    )}
-
-                  </p>
-
-                  <p class="funda-info">
-
-                    <strong>
-                      Method:
-                    </strong>
-
-                    ${escapeHTML(
-                      method
-                    )}
-
-                  </p>
-
-                  <p class="funda-info">
-
-                    <strong>
-                      Date:
-                    </strong>
-
-                    ${formatDate(
-                      p.created_at ||
-                      p.paid_at
-                    )}
-
-                  </p>
-
-                  <p class="funda-info">
-
-                    <strong>
-                      Status:
-                    </strong>
-
-                    <span
-                      class="funda-status ${escapeHTML(status)}">
-
-                      ${escapeHTML(status)}
-
-                    </span>
-
-                  </p>
-
-                  <p class="funda-info">
-
-                    <strong>
-                      Proof:
-                    </strong>
-
-                    ${
-                      proof
-
-                        ? `
-
-                          <a
-                            class="btn green"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            href="${escapeHTML(proof)}">
-
-                            View submitted proof
-
-                          </a>
-
-                        `
-
-                        : "Not available"
-
-                    }
-
-                  </p>
-
-                </div>
-
-              `;
-
-            })
-            .join("")
-
-        }
-
-      </div>
-
-    `;
-
-
-  } catch (err) {
-
-    console.error(
-      "Payments:",
-      err
-    );
-
-
-    paymentListEl.innerHTML = `
-
-      <div class="card">
-
-        <h3>
-          Payment History
-        </h3>
-
-        <p>
-          Payment information could not
-          be loaded right now.
-        </p>
-
-      </div>
-
-    `;
+    acceptPolicyBtn.textContent =
+      "✅ Accept & Continue";
 
   }
 
@@ -1784,93 +2704,37 @@ async function logout() {
     );
 
     return;
-
   }
 
 
-  location.href =
+  window.location.href =
     "auth.html";
+
 }
 
 
 // ============================================================
-// GLOBAL CURRENT USER / STUDENT
-// ============================================================
-
-let currentUserData =
-  null;
-
-let currentStudent =
-  null;
-
-
-// ============================================================
-// INITIALISE DASHBOARD
+// INITIALISE
 // ============================================================
 
 async function initDashboard() {
 
   try {
 
+    // --------------------------------------------------------
+    // USER
+    // --------------------------------------------------------
+
     currentUserData =
-      await currentUser();
+      await getCurrentUser();
 
 
     if (!currentUserData) {
 
-      location.href =
+      window.location.href =
         "auth.html";
 
       return;
-
-    }
-
-
-    currentStudent =
-      await getStudent(
-        currentUserData.id
-      );
-
-
-    if (!currentStudent) {
-
-      showMessage(
-        "Your student profile could not be found. Please contact the academy."
-      );
-
-
-      if (userEmailEl) {
-
-        userEmailEl.textContent =
-          currentUserData.email ||
-          "";
-
-      }
-
-
-      return;
-
-    }
-
-
-    const name =
-
-      currentStudent.full_name ||
-
-      currentStudent.name ||
-
-      currentUserData
-        .user_metadata
-        ?.full_name ||
-
-      "Student";
-
-
-    if (userNameEl) {
-
-      userNameEl.textContent =
-        name;
-
     }
 
 
@@ -1884,13 +2748,50 @@ async function initDashboard() {
 
 
     // --------------------------------------------------------
-    // LOAD EVERYTHING
+    // STUDENT
+    // --------------------------------------------------------
+
+    currentStudent =
+      await getStudent(
+        currentUserData.id
+      );
+
+
+    if (!currentStudent) {
+
+      showMessage(
+        "Your student profile could not be found. Please contact the academy."
+      );
+
+      return;
+    }
+
+
+    const name =
+      currentStudent.full_name ||
+      currentStudent.name ||
+      currentUserData
+        .user_metadata
+        ?.full_name ||
+      "Student";
+
+
+    if (userNameEl) {
+
+      userNameEl.textContent =
+        name;
+
+    }
+
+
+    // --------------------------------------------------------
+    // LOAD DASHBOARD
     // --------------------------------------------------------
 
     await Promise.all([
 
-      loadPolicyAcceptance(
-        currentStudent
+      loadMyStudies(
+        currentStudent.id
       ),
 
       loadEnrolments(
@@ -1903,23 +2804,27 @@ async function initDashboard() {
 
       loadPayments(
         currentStudent.id
+      ),
+
+      loadPolicyAcceptance(
+        currentStudent
       )
 
     ]);
 
 
-  } catch (err) {
+  } catch (error) {
 
     console.error(
-      "Dashboard:",
-      err
+      "DASHBOARD ERROR:",
+      error
     );
 
 
     showMessage(
       "Unable to load your dashboard: " +
       (
-        err.message ||
+        error.message ||
         "Please refresh the page."
       )
     );
@@ -1971,4 +2876,4 @@ if (
 
   initDashboard();
 
-    }
+}
