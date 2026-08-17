@@ -13,31 +13,11 @@
 // Progress
 // Logout
 //
-// IMPORTANT DATABASE NOTES:
-//
-// enrollments:
-//   id
-//   student_id
-//   course_id
-//   enrollment_status
-//
-// course_modules:
-//   id
-//   course_id
-//   module_number
-//   module_name
-//   description
-//
-// lessons:
-//   id
-//   module_number
-//   module_name
-//   lesson_number
-//   title
-//
-// This version does NOT use enrollments.created_at.
+// IMPORTANT:
+// - DOES NOT use enrollments.created_at
+// - course_modules.description IS USED
+// - My Studies has a timeout and error reporting
 // ============================================================
-
 
 const { createClient } = supabase;
 
@@ -48,32 +28,20 @@ const db = createClient(
 
 
 // ============================================================
-// GLOBAL ELEMENTS
+// ELEMENTS
 // ============================================================
 
-const messageEl =
-  document.getElementById("message");
+const messageEl = document.getElementById("message");
+const userEmailEl = document.getElementById("user-email");
+const userNameEl = document.getElementById("user-name");
 
-const userEmailEl =
-  document.getElementById("user-email");
-
-const userNameEl =
-  document.getElementById("user-name");
-
-const studyListEl =
-  document.getElementById("study-list");
-
-const paymentListEl =
-  document.getElementById("payment-list");
-
-const enrolmentsEl =
-  document.getElementById("enrolments");
-
+const studyListEl = document.getElementById("study-list");
+const paymentListEl = document.getElementById("payment-list");
+const enrolmentsEl = document.getElementById("enrolments");
 const availableCoursesEl =
   document.getElementById("available-courses");
 
-const logoutBtn =
-  document.getElementById("logout");
+const logoutBtn = document.getElementById("logout");
 
 const policyCheckbox =
   document.getElementById("policy-checkbox");
@@ -90,9 +58,7 @@ const policyAcceptedEl =
 // ============================================================
 
 let currentUser = null;
-
 let currentStudent = null;
-
 let currentStudies = [];
 
 
@@ -118,42 +84,6 @@ function escapeHtml(value) {
 }
 
 
-// ------------------------------------------------------------
-// Safe timeout helper
-// ------------------------------------------------------------
-
-function withTimeout(
-  promise,
-  milliseconds = 15000,
-  label = "Database request"
-) {
-
-  return Promise.race([
-
-    promise,
-
-    new Promise((_, reject) => {
-
-      setTimeout(() => {
-
-        reject(
-          new Error(
-            `${label} timed out. Please check your internet connection or Supabase settings.`
-          )
-        );
-
-      }, milliseconds);
-
-    })
-
-  ]);
-}
-
-
-// ------------------------------------------------------------
-// Message
-// ------------------------------------------------------------
-
 function showMessage(
   text,
   type = "error"
@@ -163,8 +93,7 @@ function showMessage(
     return;
   }
 
-  messageEl.textContent =
-    text;
+  messageEl.textContent = text;
 
   messageEl.className =
     "message " +
@@ -185,14 +114,9 @@ function hideMessage() {
   messageEl.className =
     "message hidden";
 
-  messageEl.textContent =
-    "";
+  messageEl.textContent = "";
 }
 
-
-// ------------------------------------------------------------
-// Money
-// ------------------------------------------------------------
 
 function formatMoney(value) {
 
@@ -204,29 +128,22 @@ function formatMoney(value) {
     return "—";
   }
 
-  const number =
-    Number(value);
+  const number = Number(value);
 
   if (Number.isNaN(number)) {
     return escapeHtml(value);
   }
 
-  return (
-    "R" +
+  return "R" +
     number.toLocaleString(
       "en-ZA",
       {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }
-    )
-  );
+    );
 }
 
-
-// ------------------------------------------------------------
-// Date
-// ------------------------------------------------------------
 
 function formatDate(value) {
 
@@ -234,14 +151,9 @@ function formatDate(value) {
     return "—";
   }
 
-  const date =
-    new Date(value);
+  const date = new Date(value);
 
-  if (
-    Number.isNaN(
-      date.getTime()
-    )
-  ) {
+  if (Number.isNaN(date.getTime())) {
     return escapeHtml(value);
   }
 
@@ -257,10 +169,6 @@ function formatDate(value) {
   );
 }
 
-
-// ------------------------------------------------------------
-// Status class
-// ------------------------------------------------------------
 
 function statusClass(status) {
 
@@ -289,10 +197,6 @@ function statusClass(status) {
 }
 
 
-// ------------------------------------------------------------
-// Approved status
-// ------------------------------------------------------------
-
 function isApproved(status) {
 
   const value =
@@ -307,10 +211,6 @@ function isApproved(status) {
 }
 
 
-// ------------------------------------------------------------
-// Loading
-// ------------------------------------------------------------
-
 function setLoading(
   element,
   text
@@ -321,22 +221,14 @@ function setLoading(
   }
 
   element.innerHTML = `
-
     <div class="card">
-
       <p class="loading">
         ${escapeHtml(text)}
       </p>
-
     </div>
-
   `;
 }
 
-
-// ------------------------------------------------------------
-// Empty
-// ------------------------------------------------------------
 
 function setEmpty(
   element,
@@ -348,16 +240,45 @@ function setEmpty(
   }
 
   element.innerHTML = `
-
     <div class="empty-study">
-
       <p>
         ${escapeHtml(text)}
       </p>
-
     </div>
-
   `;
+}
+
+
+// ============================================================
+// TIMEOUT HELPER
+// ============================================================
+
+function withTimeout(
+  promise,
+  milliseconds,
+  message
+) {
+
+  return Promise.race([
+
+    promise,
+
+    new Promise(
+      (_, reject) => {
+
+        setTimeout(
+          () => {
+            reject(
+              new Error(message)
+            );
+          },
+          milliseconds
+        );
+
+      }
+    )
+
+  ]);
 }
 
 
@@ -367,17 +288,10 @@ function setEmpty(
 
 async function getCurrentUser() {
 
-  const result =
-    await withTimeout(
-      db.auth.getUser(),
-      15000,
-      "Authentication"
-    );
-
   const {
     data,
     error
-  } = result;
+  } = await db.auth.getUser();
 
   if (error) {
     throw error;
@@ -387,11 +301,9 @@ async function getCurrentUser() {
     !data ||
     !data.user
   ) {
-
     throw new Error(
       "You are not logged in. Please log in again."
     );
-
   }
 
   return data.user;
@@ -399,43 +311,30 @@ async function getCurrentUser() {
 
 
 // ============================================================
-// LOAD STUDENT
+// STUDENT
 // ============================================================
 
 async function loadStudent(
   userId
 ) {
 
-  const result =
-    await withTimeout(
-
-      db
-        .from("students")
-        .select("*")
-        .eq("user_id", userId)
-        .maybeSingle(),
-
-      15000,
-
-      "Student profile request"
-
-    );
-
   const {
     data,
     error
-  } = result;
+  } = await db
+    .from("students")
+    .select("*")
+    .eq("user_id", userId)
+    .maybeSingle();
 
   if (error) {
     throw error;
   }
 
   if (!data) {
-
     throw new Error(
       "Your student profile could not be found. Please contact Funda Online Academy."
     );
-
   }
 
   return data;
@@ -468,61 +367,41 @@ function displayUser() {
 
     userNameEl.textContent =
       name;
-
   }
 }
 
 
 // ============================================================
-// LOAD ENROLMENTS
+// ENROLMENTS
 // ============================================================
 //
 // IMPORTANT:
-// NO created_at is selected.
+// DO NOT ADD created_at.
 // ============================================================
 
 async function loadEnrolments() {
 
   if (!currentStudent?.id) {
-
     throw new Error(
-      "Student record is not available."
+      "Student ID is missing."
     );
-
   }
-
-  const result =
-    await withTimeout(
-
-      db
-        .from("enrollments")
-        .select(`
-          id,
-          student_id,
-          course_id,
-          enrollment_status
-        `)
-        .eq(
-          "student_id",
-          currentStudent.id
-        )
-        .order(
-          "id",
-          {
-            ascending: false
-          }
-        ),
-
-      15000,
-
-      "Enrolments request"
-
-    );
 
   const {
     data,
     error
-  } = result;
+  } = await db
+    .from("enrollments")
+    .select(`
+      id,
+      student_id,
+      course_id,
+      enrollment_status
+    `)
+    .eq(
+      "student_id",
+      currentStudent.id
+    );
 
   if (error) {
     throw error;
@@ -533,36 +412,21 @@ async function loadEnrolments() {
 
 
 // ============================================================
-// LOAD COURSE
+// COURSE
 // ============================================================
 
 async function loadCourse(
   courseId
 ) {
 
-  if (!courseId) {
-    return null;
-  }
-
-  const result =
-    await withTimeout(
-
-      db
-        .from("courses")
-        .select("*")
-        .eq("id", courseId)
-        .maybeSingle(),
-
-      15000,
-
-      "Course request"
-
-    );
-
   const {
     data,
     error
-  } = result;
+  } = await db
+    .from("courses")
+    .select("*")
+    .eq("id", courseId)
+    .maybeSingle();
 
   if (error) {
     throw error;
@@ -573,57 +437,45 @@ async function loadCourse(
 
 
 // ============================================================
-// LOAD MODULES
+// MODULES
 // ============================================================
 //
-// Your current database confirms:
+// Your actual table contains:
 //
-// course_modules
-//   id
-//   course_id
-//   module_number
-//   module_name
-//   description
-//
+// id
+// course_id
+// module_number
+// module_name
+// description
+// created_at
 // ============================================================
 
 async function loadModules(
   courseId
 ) {
 
-  const result =
-    await withTimeout(
-
-      db
-        .from("course_modules")
-        .select(`
-          id,
-          course_id,
-          module_number,
-          module_name,
-          description
-        `)
-        .eq(
-          "course_id",
-          courseId
-        )
-        .order(
-          "module_number",
-          {
-            ascending: true
-          }
-        ),
-
-      15000,
-
-      "Course modules request"
-
-    );
-
   const {
     data,
     error
-  } = result;
+  } = await db
+    .from("course_modules")
+    .select(`
+      id,
+      course_id,
+      module_number,
+      module_name,
+      description
+    `)
+    .eq(
+      "course_id",
+      courseId
+    )
+    .order(
+      "module_number",
+      {
+        ascending: true
+      }
+    );
 
   if (error) {
     throw error;
@@ -634,10 +486,10 @@ async function loadModules(
 
 
 // ============================================================
-// LOAD LESSONS
+// LESSONS
 // ============================================================
 //
-// Your supplied lesson records have:
+// Your lesson data has:
 //
 // id
 // module_number
@@ -645,405 +497,164 @@ async function loadModules(
 // lesson_number
 // title
 //
-// We therefore do NOT depend on a course_id column.
-//
+// We load the lessons once and then attach them to modules.
 // ============================================================
 
-async function loadLessons(
-  moduleNumber,
-  moduleName
-) {
+async function loadAllLessons() {
 
   // ----------------------------------------------------------
-  // Try lessons table
+  // First try "lessons"
   // ----------------------------------------------------------
 
-  try {
-
-    const result =
-      await withTimeout(
-
-        db
-          .from("lessons")
-          .select("*")
-          .eq(
-            "module_number",
-            moduleNumber
-          )
-          .eq(
-            "module_name",
-            moduleName
-          )
-          .order(
-            "lesson_number",
-            {
-              ascending: true
-            }
-          ),
-
-        10000,
-
-        "Lessons request"
-
+  const first =
+    await db
+      .from("lessons")
+      .select("*")
+      .order(
+        "module_number",
+        {
+          ascending: true
+        }
+      )
+      .order(
+        "lesson_number",
+        {
+          ascending: true
+        }
       );
 
-    if (!result.error) {
+  if (!first.error) {
 
-      return {
-        data: result.data || [],
-        source: "lessons",
-        error: null
-      };
-
-    }
-
-    console.warn(
-      "lessons table returned an error:",
-      result.error
-    );
-
-  } catch (error) {
-
-    console.warn(
-      "lessons table could not be loaded:",
-      error
-    );
+    return {
+      table: "lessons",
+      data: first.data || []
+    };
 
   }
 
 
+  console.warn(
+    "lessons table could not be loaded:",
+    first.error
+  );
+
+
   // ----------------------------------------------------------
-  // Try course_lessons table
+  // Try "course_lessons"
   // ----------------------------------------------------------
 
-  try {
-
-    const result =
-      await withTimeout(
-
-        db
-          .from("course_lessons")
-          .select("*")
-          .eq(
-            "module_number",
-            moduleNumber
-          )
-          .eq(
-            "module_name",
-            moduleName
-          )
-          .order(
-            "lesson_number",
-            {
-              ascending: true
-            }
-          ),
-
-        10000,
-
-        "Course lessons request"
-
+  const second =
+    await db
+      .from("course_lessons")
+      .select("*")
+      .order(
+        "module_number",
+        {
+          ascending: true
+        }
+      )
+      .order(
+        "lesson_number",
+        {
+          ascending: true
+        }
       );
 
-    if (!result.error) {
+  if (!second.error) {
 
-      return {
-        data: result.data || [],
-        source: "course_lessons",
-        error: null
-      };
-
-    }
-
-    console.warn(
-      "course_lessons table returned an error:",
-      result.error
-    );
-
-  } catch (error) {
-
-    console.warn(
-      "course_lessons table could not be loaded:",
-      error
-    );
+    return {
+      table: "course_lessons",
+      data: second.data || []
+    };
 
   }
 
 
-  // ----------------------------------------------------------
-  // Do not break the course.
-  // ----------------------------------------------------------
+  console.warn(
+    "course_lessons table could not be loaded:",
+    second.error
+  );
+
 
   return {
-    data: [],
-    source: null,
-    error: "Lessons could not be loaded."
+    table: null,
+    data: []
   };
 }
 
 
 // ============================================================
-// LOAD STUDIES
+// MATCH LESSONS TO MODULES
 // ============================================================
 
-async function loadStudies() {
+function attachLessonsToModules(
+  modules,
+  lessons
+) {
 
-  if (!studyListEl) {
-    return;
-  }
+  return modules.map(
+    module => {
 
-  setLoading(
-    studyListEl,
-    "Loading your studies…"
-  );
+      const moduleNumber =
+        Number(module.module_number);
 
-
-  try {
-
-    // --------------------------------------------------------
-    // 1. Get enrolments
-    // --------------------------------------------------------
-
-    const enrolments =
-      await loadEnrolments();
+      const moduleName =
+        String(
+          module.module_name || ""
+        )
+        .trim()
+        .toLowerCase();
 
 
-    console.log(
-      "FOA enrolments:",
-      enrolments
-    );
+      const moduleLessons =
+        lessons.filter(
+          lesson => {
 
-
-    // --------------------------------------------------------
-    // 2. Approved / active only
-    // --------------------------------------------------------
-
-    const approved =
-      enrolments.filter(
-        enrollment =>
-          isApproved(
-            enrollment.enrollment_status
-          )
-      );
-
-
-    console.log(
-      "FOA approved enrolments:",
-      approved
-    );
-
-
-    if (!approved.length) {
-
-      setEmpty(
-        studyListEl,
-        "You do not have any approved courses yet."
-      );
-
-      currentStudies = [];
-
-      return;
-    }
-
-
-    const studies = [];
-
-
-    // --------------------------------------------------------
-    // 3. Load each approved course
-    // --------------------------------------------------------
-
-    for (
-      const enrollment of approved
-    ) {
-
-      try {
-
-        console.log(
-          "FOA loading course:",
-          enrollment.course_id
-        );
-
-
-        const course =
-          await loadCourse(
-            enrollment.course_id
-          );
-
-
-        if (!course) {
-
-          console.warn(
-            "Course not found:",
-            enrollment.course_id
-          );
-
-          continue;
-        }
-
-
-        // ----------------------------------------------------
-        // 4. Load modules
-        // ----------------------------------------------------
-
-        const modules =
-          await loadModules(
-            enrollment.course_id
-          );
-
-
-        console.log(
-          "FOA modules:",
-          modules
-        );
-
-
-        const modulesWithLessons = [];
-
-
-        // ----------------------------------------------------
-        // 5. Load lessons for every module
-        //
-        // A lesson failure will NOT stop modules.
-        // ----------------------------------------------------
-
-        for (
-          const module of modules
-        ) {
-
-          let lessons = [];
-
-          try {
-
-            const lessonResult =
-              await loadLessons(
-                module.module_number,
-                module.module_name
+            const lessonModuleNumber =
+              Number(
+                lesson.module_number
               );
 
-            lessons =
-              lessonResult.data || [];
+            const lessonModuleName =
+              String(
+                lesson.module_name || ""
+              )
+              .trim()
+              .toLowerCase();
 
 
-          } catch (lessonError) {
-
-            console.warn(
-              "Lesson loading failed for module:",
-              module.module_name,
-              lessonError
+            return (
+              lessonModuleNumber ===
+                moduleNumber
+              &&
+              lessonModuleName ===
+                moduleName
             );
 
           }
-
-
-          modulesWithLessons.push({
-
-            ...module,
-
-            lessons
-
-          });
-
-        }
-
-
-        studies.push({
-
-          enrollment,
-
-          course,
-
-          modules:
-            modulesWithLessons
-
-        });
-
-
-      } catch (courseError) {
-
-        console.error(
-          "Could not load approved course:",
-          enrollment.course_id,
-          courseError
+        )
+        .sort(
+          (
+            a,
+            b
+          ) =>
+            Number(
+              a.lesson_number || 0
+            )
+            -
+            Number(
+              b.lesson_number || 0
+            )
         );
 
-      }
+
+      return {
+        ...module,
+        lessons: moduleLessons
+      };
 
     }
-
-
-    currentStudies =
-      studies;
-
-
-    // --------------------------------------------------------
-    // 6. Nothing loaded
-    // --------------------------------------------------------
-
-    if (!studies.length) {
-
-      setEmpty(
-        studyListEl,
-        "Your approved enrolment was found, but the course information could not be loaded."
-      );
-
-      return;
-    }
-
-
-    // --------------------------------------------------------
-    // 7. RENDER IMMEDIATELY
-    // --------------------------------------------------------
-
-    renderStudies(
-      studies
-    );
-
-
-  } catch (error) {
-
-    console.error(
-      "MY STUDIES ERROR:",
-      error
-    );
-
-
-    studyListEl.innerHTML = `
-
-      <div class="card">
-
-        <p style="
-          color:#a51d1d;
-          font-weight:700;
-        ">
-          Unable to load your studies.
-        </p>
-
-        <p style="
-          margin-top:10px;
-          line-height:1.6;
-        ">
-          ${escapeHtml(
-            error.message ||
-            "Unknown database error."
-          )}
-        </p>
-
-        <p style="
-          margin-top:10px;
-          color:#68766f;
-          font-size:13px;
-        ">
-          Please refresh the page. If the problem continues,
-          the error above will help us identify the Supabase
-          table or security setting causing it.
-        </p>
-
-      </div>
-
-    `;
-
-  }
+  );
 }
 
 
@@ -1073,7 +684,7 @@ function getCourseDescription(
 ) {
 
   if (!course) {
-    return "Your approved Funda Online Academy course.";
+    return "Your Funda Online Academy course.";
   }
 
   return (
@@ -1098,6 +709,282 @@ function getCoursePrice(
     course.amount ??
     null
   );
+}
+
+
+// ============================================================
+// LOAD STUDIES
+// ============================================================
+
+async function loadStudies() {
+
+  if (!studyListEl) {
+    return;
+  }
+
+  setLoading(
+    studyListEl,
+    "Loading your studies…"
+  );
+
+
+  try {
+
+    const enrolments =
+      await withTimeout(
+        loadEnrolments(),
+        15000,
+        "The enrolments request timed out."
+      );
+
+
+    console.log(
+      "FUNDA DEBUG - Enrolments:",
+      enrolments
+    );
+
+
+    const approved =
+      enrolments.filter(
+        enrollment =>
+          isApproved(
+            enrollment.enrollment_status
+          )
+      );
+
+
+    console.log(
+      "FUNDA DEBUG - Approved enrolments:",
+      approved
+    );
+
+
+    if (!approved.length) {
+
+      setEmpty(
+        studyListEl,
+        "You do not have any approved courses yet."
+      );
+
+      currentStudies = [];
+
+      return;
+    }
+
+
+    // --------------------------------------------------------
+    // Load all lessons once.
+    // A lesson-table problem must NOT stop the course
+    // and modules from displaying.
+    // --------------------------------------------------------
+
+    let allLessons = [];
+
+    try {
+
+      const lessonResult =
+        await withTimeout(
+          loadAllLessons(),
+          10000,
+          "Lesson loading timed out."
+        );
+
+      allLessons =
+        lessonResult.data || [];
+
+      console.log(
+        "FUNDA DEBUG - Lessons:",
+        allLessons
+      );
+
+    } catch (lessonError) {
+
+      console.warn(
+        "Lessons could not be loaded:",
+        lessonError
+      );
+
+      allLessons = [];
+
+    }
+
+
+    const studies = [];
+
+
+    // --------------------------------------------------------
+    // Load each approved course
+    // --------------------------------------------------------
+
+    for (
+      const enrollment
+      of approved
+    ) {
+
+      try {
+
+        console.log(
+          "FUNDA DEBUG - Loading course:",
+          enrollment.course_id
+        );
+
+
+        const course =
+          await withTimeout(
+            loadCourse(
+              enrollment.course_id
+            ),
+            10000,
+            "Course loading timed out."
+          );
+
+
+        if (!course) {
+
+          console.warn(
+            "Course not found:",
+            enrollment.course_id
+          );
+
+          continue;
+        }
+
+
+        console.log(
+          "FUNDA DEBUG - Course loaded:",
+          course
+        );
+
+
+        const modules =
+          await withTimeout(
+            loadModules(
+              enrollment.course_id
+            ),
+            10000,
+            "Course modules loading timed out."
+          );
+
+
+        console.log(
+          "FUNDA DEBUG - Modules:",
+          modules
+        );
+
+
+        const modulesWithLessons =
+          attachLessonsToModules(
+            modules,
+            allLessons
+          );
+
+
+        studies.push({
+
+          enrollment,
+
+          course,
+
+          modules:
+            modulesWithLessons
+
+        });
+
+      } catch (courseError) {
+
+        console.error(
+          "Could not load course:",
+          enrollment.course_id,
+          courseError
+        );
+
+      }
+
+    }
+
+
+    currentStudies =
+      studies;
+
+
+    if (!studies.length) {
+
+      throw new Error(
+        "Your approved enrolment was found, but the course could not be loaded. Please check the browser console for the database error."
+      );
+
+    }
+
+
+    renderStudies(
+      studies
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "FUNDA MY STUDIES ERROR:",
+      error
+    );
+
+
+    studyListEl.innerHTML = `
+
+      <div class="card">
+
+        <p style="
+          color:#a51d1d;
+          font-weight:700;
+          font-size:17px;
+        ">
+          Unable to load your studies.
+        </p>
+
+        <p style="
+          margin-top:10px;
+          line-height:1.6;
+          color:#53625b;
+        ">
+          ${escapeHtml(
+            error.message ||
+            "Unknown database error."
+          )}
+        </p>
+
+        <button
+          type="button"
+          id="retry-studies"
+          class="btn green"
+          style="margin-top:15px">
+
+          🔄 Try Again
+
+        </button>
+
+      </div>
+
+    `;
+
+
+    const retry =
+      document.getElementById(
+        "retry-studies"
+      );
+
+
+    if (retry) {
+
+      retry.addEventListener(
+        "click",
+        () => {
+          loadStudies();
+        }
+      );
+
+    }
+
+  }
 }
 
 
@@ -1149,35 +1036,29 @@ function renderStudies(
         );
 
 
+      const totalModules =
+        modules.length;
+
+
       const totalLessons =
         modules.reduce(
           (
             total,
             module
-          ) => {
-
-            return (
-              total +
-              (
-                module.lessons?.length ||
-                0
-              )
-            );
-
-          },
+          ) =>
+            total +
+            (
+              module.lessons?.length ||
+              0
+            ),
           0
         );
-
-
-      const totalModules =
-        modules.length;
 
 
       const card =
         document.createElement(
           "div"
         );
-
 
       card.className =
         "study-card";
@@ -1211,7 +1092,9 @@ function renderStudies(
                 price !== null
                   ? `
                     <span>
-                      💰 ${formatMoney(price)}
+                      💰 ${formatMoney(
+                        price
+                      )}
                     </span>
                   `
                   : ""
@@ -1245,8 +1128,7 @@ function renderStudies(
 
           <button
             type="button"
-            class="btn green study-button"
-            data-study-index="${studyIndex}">
+            class="btn green study-button">
 
             📚 Study Course
 
@@ -1255,9 +1137,7 @@ function renderStudies(
         </div>
 
 
-        <div
-          class="modules-container"
-          id="modules-${studyIndex}">
+        <div class="modules-container">
 
         </div>
 
@@ -1271,7 +1151,7 @@ function renderStudies(
 
       const modulesContainer =
         card.querySelector(
-          `#modules-${studyIndex}`
+          ".modules-container"
         );
 
 
@@ -1284,7 +1164,7 @@ function renderStudies(
 
       const studyButton =
         card.querySelector(
-          `[data-study-index="${studyIndex}"]`
+          ".study-button"
         );
 
 
@@ -1332,7 +1212,7 @@ function renderModules(
 
         <p>
           📖 Course modules are being prepared
-          by the academy.
+          by Funda Online Academy.
         </p>
 
       </div>
@@ -1347,7 +1227,6 @@ function renderModules(
     document.createElement(
       "h3"
     );
-
 
   heading.style.margin =
     "0 0 16px";
@@ -1373,14 +1252,12 @@ function renderModules(
           "div"
         );
 
-
       moduleCard.className =
         "module-card";
 
 
       const lessons =
-        module.lessons ||
-        [];
+        module.lessons || [];
 
 
       const moduleHeader =
@@ -1388,10 +1265,8 @@ function renderModules(
           "button"
         );
 
-
       moduleHeader.type =
         "button";
-
 
       moduleHeader.className =
         "module-header";
@@ -1425,13 +1300,12 @@ function renderModules(
           "div"
         );
 
-
       moduleContent.className =
         "module-content";
 
 
       // ------------------------------------------------------
-      // Module description
+      // MODULE DESCRIPTION
       // ------------------------------------------------------
 
       if (module.description) {
@@ -1441,18 +1315,14 @@ function renderModules(
             "p"
           );
 
-
         description.className =
           "lesson-description";
-
 
         description.style.marginBottom =
           "15px";
 
-
         description.textContent =
           module.description;
-
 
         moduleContent.appendChild(
           description
@@ -1462,7 +1332,7 @@ function renderModules(
 
 
       // ------------------------------------------------------
-      // Lessons
+      // LESSONS
       // ------------------------------------------------------
 
       if (!lessons.length) {
@@ -1472,14 +1342,11 @@ function renderModules(
             "div"
           );
 
-
         noLessons.className =
           "empty-study";
 
-
         noLessons.style.padding =
           "20px";
-
 
         noLessons.innerHTML = `
 
@@ -1490,11 +1357,9 @@ function renderModules(
 
         `;
 
-
         moduleContent.appendChild(
           noLessons
         );
-
 
       } else {
 
@@ -1518,20 +1383,14 @@ function renderModules(
         moduleHeader
       );
 
-
       moduleCard.appendChild(
         moduleContent
       );
-
 
       container.appendChild(
         moduleCard
       );
 
-
-      // ------------------------------------------------------
-      // Module open/close
-      // ------------------------------------------------------
 
       moduleHeader.addEventListener(
         "click",
@@ -1578,13 +1437,12 @@ function renderModules(
               "open"
             );
 
-
             moduleHeader
               .querySelector(
                 ".module-toggle"
               )
               .textContent =
-                "−";
+              "−";
 
           }
 
@@ -1611,7 +1469,6 @@ function renderLesson(
     document.createElement(
       "div"
     );
-
 
   lessonItem.className =
     "lesson-item";
@@ -1681,10 +1538,7 @@ function renderLesson(
 
       <button
         type="button"
-        class="lesson-complete"
-        data-lesson-id="${escapeHtml(
-          lesson.id || ""
-        )}">
+        class="lesson-complete">
 
         ✓ Mark Complete
 
@@ -1713,10 +1567,9 @@ function renderLesson(
 
   const storageKey =
     "foa_completed_lesson_" +
-    (
-      lesson.id ||
-      title
-    );
+    currentUser.id +
+    "_" +
+    (lesson.id || title);
 
 
   const alreadyCompleted =
@@ -1794,34 +1647,22 @@ async function loadPayments() {
 
   try {
 
-    const result =
-      await withTimeout(
-
-        db
-          .from("payments")
-          .select("*")
-          .eq(
-            "student_id",
-            currentStudent.id
-          )
-          .order(
-            "id",
-            {
-              ascending: false
-            }
-          ),
-
-        15000,
-
-        "Payments request"
-
-      );
-
-
     const {
       data,
       error
-    } = result;
+    } = await db
+      .from("payments")
+      .select("*")
+      .eq(
+        "student_id",
+        currentStudent.id
+      )
+      .order(
+        "id",
+        {
+          ascending: false
+        }
+      );
 
 
     if (error) {
@@ -1854,8 +1695,9 @@ async function loadPayments() {
 
 
           const amount =
-            payment.amount ||
-            payment.total_amount;
+            payment.amount ??
+            payment.total_amount ??
+            null;
 
 
           return `
@@ -1872,6 +1714,7 @@ async function loadPayments() {
 
               </span>
 
+
               <p class="funda-info">
 
                 <strong>
@@ -1883,6 +1726,7 @@ async function loadPayments() {
                 )}
 
               </p>
+
 
               ${
                 payment.payment_method
@@ -1901,6 +1745,7 @@ async function loadPayments() {
                   `
                   : ""
               }
+
 
               ${
                 payment.created_at
@@ -1926,7 +1771,6 @@ async function loadPayments() {
 
         }
       ).join("");
-
 
   } catch (error) {
 
@@ -1978,11 +1822,11 @@ async function renderEnrolments() {
 
 
     for (
-      const enrollment of enrolments
+      const enrollment
+      of enrolments
     ) {
 
-      let course =
-        null;
+      let course = null;
 
 
       try {
@@ -2007,7 +1851,6 @@ async function renderEnrolments() {
           "div"
         );
 
-
       card.className =
         "card";
 
@@ -2030,7 +1873,7 @@ async function renderEnrolments() {
 
           ${escapeHtml(
             getCourseName(
-              course || {}
+              course
             )
           )}
 
@@ -2054,7 +1897,6 @@ async function renderEnrolments() {
       );
 
     }
-
 
   } catch (error) {
 
@@ -2086,30 +1928,18 @@ async function loadAvailableCourses() {
 
   try {
 
-    const result =
-      await withTimeout(
-
-        db
-          .from("courses")
-          .select("*")
-          .order(
-            "id",
-            {
-              ascending: true
-            }
-          ),
-
-        15000,
-
-        "Available courses request"
-
-      );
-
-
     const {
       data,
       error
-    } = result;
+    } = await db
+      .from("courses")
+      .select("*")
+      .order(
+        "id",
+        {
+          ascending: true
+        }
+      );
 
 
     if (error) {
@@ -2163,11 +1993,13 @@ async function loadAvailableCourses() {
                 )}
               </h3>
 
+
               <p class="funda-info">
                 ${escapeHtml(
                   description
                 )}
               </p>
+
 
               ${
                 price !== null
@@ -2205,7 +2037,6 @@ async function loadAvailableCourses() {
         }
       ).join("");
 
-
   } catch (error) {
 
     console.warn(
@@ -2224,7 +2055,7 @@ async function loadAvailableCourses() {
 
 
 // ============================================================
-// POLICY ACCEPTANCE
+// POLICY
 // ============================================================
 
 function setupPolicy() {
@@ -2253,9 +2084,7 @@ function setupPolicy() {
 
 
     if (alreadyAccepted) {
-
       showPolicyAccepted();
-
     }
 
   }
@@ -2362,24 +2191,13 @@ if (logoutBtn) {
         "Logging out…";
 
 
-      try {
-
-        const {
-          error
-        } =
-          await db.auth.signOut();
+      const {
+        error
+      } =
+        await db.auth.signOut();
 
 
-        if (error) {
-          throw error;
-        }
-
-
-        window.location.href =
-          "login.html";
-
-
-      } catch (error) {
+      if (error) {
 
         console.error(
           "Logout error:",
@@ -2399,7 +2217,12 @@ if (logoutBtn) {
           "error"
         );
 
+        return;
       }
+
+
+      window.location.href =
+        "login.html";
 
     }
   );
@@ -2407,7 +2230,7 @@ if (logoutBtn) {
 
 
 // ============================================================
-// AUTH STATE LISTENER
+// AUTH STATE
 // ============================================================
 
 db.auth.onAuthStateChange(
@@ -2417,8 +2240,7 @@ db.auth.onAuthStateChange(
   ) => {
 
     if (
-      event ===
-      "SIGNED_OUT"
+      event === "SIGNED_OUT"
     ) {
 
       window.location.href =
@@ -2431,7 +2253,7 @@ db.auth.onAuthStateChange(
 
 
 // ============================================================
-// INITIALISE DASHBOARD
+// INITIALISE
 // ============================================================
 
 async function initDashboard() {
@@ -2441,31 +2263,12 @@ async function initDashboard() {
     hideMessage();
 
 
-    console.log(
-      "===================================="
-    );
-
-    console.log(
-      "FOA STUDENT DASHBOARD STARTING"
-    );
-
-    console.log(
-      "===================================="
-    );
-
-
     // --------------------------------------------------------
-    // 1. AUTHENTICATED USER
+    // 1. USER
     // --------------------------------------------------------
 
     currentUser =
       await getCurrentUser();
-
-
-    console.log(
-      "FOA current user:",
-      currentUser.id
-    );
 
 
     // --------------------------------------------------------
@@ -2478,14 +2281,8 @@ async function initDashboard() {
       );
 
 
-    console.log(
-      "FOA student:",
-      currentStudent
-    );
-
-
     // --------------------------------------------------------
-    // 3. DISPLAY USER
+    // 3. DISPLAY
     // --------------------------------------------------------
 
     displayUser();
@@ -2500,8 +2297,6 @@ async function initDashboard() {
 
     // --------------------------------------------------------
     // 5. LOAD DASHBOARD
-    //
-    // Each section is independent.
     // --------------------------------------------------------
 
     await Promise.allSettled([
@@ -2516,16 +2311,10 @@ async function initDashboard() {
 
     ]);
 
-
-    console.log(
-      "FOA dashboard loading completed."
-    );
-
-
   } catch (error) {
 
     console.error(
-      "DASHBOARD INITIALISATION ERROR:",
+      "Dashboard initialisation error:",
       error
     );
 
@@ -2547,17 +2336,22 @@ async function initDashboard() {
             color:#a51d1d;
             font-weight:700;
           ">
+
             Unable to load your studies.
+
           </p>
+
 
           <p style="
             margin-top:10px;
             line-height:1.6;
           ">
+
             ${escapeHtml(
               error.message ||
               "Please log in again."
             )}
+
           </p>
 
         </div>
@@ -2589,4 +2383,4 @@ if (
 
   initDashboard();
 
-}
+                                            }
