@@ -260,13 +260,6 @@ html,body{
   box-shadow:0 6px 25px rgba(16,37,28,.05);
 }
 
-.study-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:18px;
-}
-
 .study-title{
   margin:0 0 8px;
   color:#10251c;
@@ -287,20 +280,30 @@ html,body{
 .study-meta span{
   background:#f1faf5;
   border:1px solid #d8e9df;
-  padding:7px 11px;
+  padding:8px 12px;
   border-radius:999px;
   font-size:13px;
   font-weight:700;
 }
 
 .study-button{
-  flex-shrink:0;
+  width:100%;
+  margin-top:18px;
+}
+
+.study-button button{
+  width:100%;
 }
 
 .modules-container{
-  margin-top:20px;
+  margin-top:22px;
   border-top:1px solid #e4ebe7;
-  padding-top:18px;
+  padding-top:20px;
+}
+
+.modules-heading{
+  margin:0 0 16px;
+  font-size:20px;
 }
 
 .module-card{
@@ -331,17 +334,34 @@ html,body{
   background:#e8f4ed;
 }
 
+.module-left{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+}
+
 .module-number{
   display:inline-flex;
   width:32px;
   height:32px;
+  min-width:32px;
   border-radius:50%;
   align-items:center;
   justify-content:center;
   background:#0c8f55;
   color:#fff;
-  margin-right:10px;
   font-size:13px;
+}
+
+.module-name{
+  padding-top:6px;
+  line-height:1.4;
+}
+
+.module-icon{
+  font-size:22px;
+  min-width:25px;
+  text-align:center;
 }
 
 .module-content{
@@ -354,11 +374,22 @@ html,body{
   display:block;
 }
 
+.module-description{
+  color:#53625b;
+  line-height:1.6;
+  margin-bottom:16px;
+}
+
+.lesson-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
 .lesson-item{
   border:1px solid #e1e9e4;
   border-radius:13px;
-  padding:15px;
-  margin-bottom:10px;
+  padding:16px;
   background:#fff;
 }
 
@@ -369,9 +400,28 @@ html,body{
   gap:12px;
 }
 
+.lesson-number{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:30px;
+  height:30px;
+  min-width:30px;
+  border-radius:50%;
+  background:#e8f5ee;
+  color:#0c8f55;
+  font-weight:800;
+  font-size:13px;
+}
+
+.lesson-main{
+  flex:1;
+}
+
 .lesson-title{
   font-weight:700;
   margin-bottom:6px;
+  color:#10251c;
 }
 
 .lesson-description{
@@ -387,30 +437,20 @@ html,body{
   margin-top:12px;
 }
 
-.lesson-complete{
-  border:0;
-  border-radius:9px;
-  padding:9px 13px;
-  background:#0c8f55;
-  color:#fff;
-  cursor:pointer;
-  font-weight:700;
-}
-
-.lesson-complete.completed{
-  background:#dff4dc;
-  color:#197019;
-  cursor:default;
-}
-
-.lesson-link{
+.lesson-open{
   display:inline-block;
   border:1px solid #0c8f55;
   border-radius:9px;
-  padding:8px 12px;
+  padding:9px 13px;
   color:#0c8f55;
+  background:#fff;
   text-decoration:none;
   font-weight:700;
+  cursor:pointer;
+}
+
+.lesson-open:hover{
+  background:#f1faf5;
 }
 
 .progress-box{
@@ -443,6 +483,12 @@ html,body{
   transition:width .3s ease;
 }
 
+.lesson-count{
+  color:#68766f;
+  font-size:14px;
+  margin-bottom:14px;
+}
+
 .empty-study{
   text-align:center;
   padding:35px 20px;
@@ -451,12 +497,30 @@ html,body{
   border-radius:18px;
 }
 
+.error-study{
+  padding:20px;
+  background:#fff4f4;
+  border:1px solid #f0caca;
+  border-radius:16px;
+  color:#9b2525;
+  line-height:1.6;
+}
+
 .loading{
   color:#68766f;
 }
 
 .hidden{
   display:none !important;
+}
+
+.success-message{
+  background:#e5f8ed;
+  color:#11683d;
+  border:1px solid #bde8cf;
+  border-radius:12px;
+  padding:14px;
+  margin-bottom:18px;
 }
 
 
@@ -511,25 +575,15 @@ html,body{
     padding:18px;
   }
 
-  .study-header{
-    display:block;
-  }
-
-  .study-button{
-    margin-top:14px;
-    width:100%;
-  }
-
-  .study-button .btn{
-    width:100%;
-  }
-
   .lesson-top{
     display:block;
   }
 
-}
+  .lesson-number{
+    margin-bottom:8px;
+  }
 
+}
 </style>
 </head>
 
@@ -552,7 +606,6 @@ html,body{
       </span>
 
     </a>
-
 
     <div class="nav-actions">
 
@@ -639,8 +692,8 @@ html,body{
     <p style="margin-bottom:18px;line-height:1.6">
 
       Your approved courses and learning materials
-      will appear here. Open a course to view its
-      modules and lessons.
+      will appear here. Open a module to view its
+      lessons and learning content.
 
     </p>
 
@@ -1120,9 +1173,1263 @@ html,body{
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="supabase-config.js?v=20260817-1"></script>
+<script src="supabase-config.js?v=20260817-2"></script>
 
-<script src="dashboard.js?v=20260817-1"></script>
+
+<script>
+/* ============================================================
+   FUNDA ONLINE ACADEMY
+   STUDENT DASHBOARD
+   COMPLETE STUDIES / MODULES / LESSONS SYSTEM
+   ============================================================ */
+
+const db = window.supabaseClient ||
+           window.db ||
+           (
+             window.SUPABASE_URL &&
+             window.SUPABASE_ANON_KEY
+               ? supabase.createClient(
+                   window.SUPABASE_URL,
+                   window.SUPABASE_ANON_KEY
+                 )
+               : null
+           );
+
+
+const studyList = document.getElementById("study-list");
+const userName = document.getElementById("user-name");
+const userEmail = document.getElementById("user-email");
+const message = document.getElementById("message");
+const logoutButton = document.getElementById("logout");
+
+
+function escapeHtml(value){
+
+  if(value === null || value === undefined){
+    return "";
+  }
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+
+function showMessage(text){
+
+  if(!message){
+    return;
+  }
+
+  message.textContent = text;
+  message.classList.remove("hidden");
+}
+
+
+function hideMessage(){
+
+  if(!message){
+    return;
+  }
+
+  message.textContent = "";
+  message.classList.add("hidden");
+}
+
+
+function money(value){
+
+  if(value === null || value === undefined || value === ""){
+    return "—";
+  }
+
+  const number = Number(value);
+
+  if(Number.isNaN(number)){
+    return escapeHtml(value);
+  }
+
+  return "R " + number.toLocaleString("en-ZA",{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
+}
+
+
+function formatDate(value){
+
+  if(!value){
+    return "—";
+  }
+
+  const date = new Date(value);
+
+  if(Number.isNaN(date.getTime())){
+    return escapeHtml(value);
+  }
+
+  return date.toLocaleString("en-ZA",{
+    day:"2-digit",
+    month:"short",
+    year:"numeric",
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
+
+
+/* ============================================================
+   AUTHENTICATION
+   ============================================================ */
+
+async function getCurrentUser(){
+
+  if(!db){
+
+    throw new Error(
+      "Supabase is not configured. Please check supabase-config.js."
+    );
+
+  }
+
+  const {
+    data,
+    error
+  } = await db.auth.getUser();
+
+  if(error){
+    throw error;
+  }
+
+  if(!data || !data.user){
+
+    window.location.href = "login.html";
+    return null;
+
+  }
+
+  return data.user;
+}
+
+
+/* ============================================================
+   FIND STUDENT RECORD
+   ============================================================ */
+
+async function getStudent(userId){
+
+  const {
+    data,
+    error
+  } = await db
+    .from("students")
+    .select("*")
+    .eq("user_id",userId)
+    .maybeSingle();
+
+  if(error){
+    throw error;
+  }
+
+  return data;
+}
+
+
+/* ============================================================
+   LOAD APPROVED ENROLMENTS
+   ============================================================ */
+
+async function getApprovedEnrollments(studentId){
+
+  const {
+    data,
+    error
+  } = await db
+    .from("enrollments")
+    .select(`
+      id,
+      student_id,
+      course_id,
+      enrollment_status
+    `)
+    .eq("student_id",studentId)
+    .eq("enrollment_status","approved");
+
+  if(error){
+    throw error;
+  }
+
+  return data || [];
+}
+
+
+/* ============================================================
+   LOAD COURSE
+   ============================================================ */
+
+async function getCourse(courseId){
+
+  const {
+    data,
+    error
+  } = await db
+    .from("courses")
+    .select("*")
+    .eq("id",courseId)
+    .maybeSingle();
+
+  if(error){
+    throw error;
+  }
+
+  return data;
+}
+
+
+/* ============================================================
+   LOAD MODULES
+   ============================================================ */
+
+async function getModules(courseId){
+
+  const {
+    data,
+    error
+  } = await db
+    .from("course_modules")
+    .select(`
+      id,
+      course_id,
+      module_number,
+      module_name,
+      description
+    `)
+    .eq("course_id",courseId)
+    .order("module_number",{ascending:true});
+
+  if(error){
+    throw error;
+  }
+
+  return data || [];
+}
+
+
+/* ============================================================
+   LOAD LESSONS
+
+   IMPORTANT:
+   The lessons table uses:
+   id
+   module_number
+   module_name
+   lesson_number
+   title
+
+   We therefore DO NOT request lessons.created_at.
+   ============================================================ */
+
+async function getLessons(){
+
+  const {
+    data,
+    error
+  } = await db
+    .from("lessons")
+    .select(`
+      id,
+      module_number,
+      module_name,
+      lesson_number,
+      title
+    `)
+    .order("module_number",{ascending:true})
+    .order("lesson_number",{ascending:true});
+
+  if(error){
+    throw error;
+  }
+
+  return data || [];
+}
+
+
+/* ============================================================
+   BUILD ONE COURSE
+   ============================================================ */
+
+async function buildStudy(enrollment){
+
+  const course = await getCourse(enrollment.course_id);
+
+  if(!course){
+    return null;
+  }
+
+  const modules = await getModules(enrollment.course_id);
+
+  const allLessons = await getLessons();
+
+  const lessons = allLessons.filter(lesson => {
+
+    return modules.some(module => {
+
+      return Number(module.module_number) ===
+             Number(lesson.module_number);
+
+    });
+
+  });
+
+
+  return {
+    enrollment,
+    course,
+    modules,
+    lessons
+  };
+
+}
+
+
+/* ============================================================
+   FIND LESSONS FOR MODULE
+   ============================================================ */
+
+function lessonsForModule(module,lessons){
+
+  return lessons
+    .filter(lesson => {
+
+      return Number(lesson.module_number) ===
+             Number(module.module_number);
+
+    })
+    .sort((a,b) => {
+
+      return Number(a.lesson_number) -
+             Number(b.lesson_number);
+
+    });
+
+}
+
+
+/* ============================================================
+   RENDER STUDY
+   ============================================================ */
+
+function renderStudy(study){
+
+  const course = study.course;
+  const modules = study.modules;
+  const lessons = study.lessons;
+
+  const courseName =
+    course.name ||
+    course.course_name ||
+    course.title ||
+    "Course";
+
+  const courseDescription =
+    course.description ||
+    course.short_description ||
+    "Your approved Funda Online Academy course.";
+
+  const coursePrice =
+    course.price ||
+    course.amount ||
+    null;
+
+
+  let moduleHtml = "";
+
+
+  modules.forEach((module,index) => {
+
+    const moduleLessons =
+      lessonsForModule(module,lessons);
+
+    const moduleDescription =
+      module.description ||
+      "Learning material for this module.";
+
+
+    let lessonHtml = "";
+
+
+    if(moduleLessons.length === 0){
+
+      lessonHtml = `
+        <div class="empty-study">
+          <strong>📖 Lessons are being prepared</strong>
+          <p style="margin-top:8px">
+            Learning material for this module
+            will appear here.
+          </p>
+        </div>
+      `;
+
+    }else{
+
+      lessonHtml = `
+        <div class="lesson-list">
+          ${
+            moduleLessons.map((lesson,lessonIndex) => `
+
+              <div class="lesson-item">
+
+                <div class="lesson-top">
+
+                  <span class="lesson-number">
+                    ${escapeHtml(lesson.lesson_number)}
+                  </span>
+
+                  <div class="lesson-main">
+
+                    <div class="lesson-title">
+                      ${escapeHtml(lesson.title)}
+                    </div>
+
+                    <div class="lesson-description">
+                      Lesson ${escapeHtml(lesson.lesson_number)}
+                      in ${escapeHtml(module.module_name)}.
+                    </div>
+
+                    <div class="lesson-actions">
+
+                      <button
+                        type="button"
+                        class="lesson-open"
+                        data-lesson-id="${escapeHtml(lesson.id)}"
+                        data-lesson-title="${escapeHtml(lesson.title)}">
+
+                        📖 Open Lesson
+
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            `).join("")
+          }
+        </div>
+      `;
+
+    }
+
+
+    moduleHtml += `
+
+      <div class="module-card">
+
+        <button
+          type="button"
+          class="module-header"
+          data-module-index="${index}">
+
+          <span class="module-left">
+
+            <span class="module-number">
+              ${escapeHtml(module.module_number)}
+            </span>
+
+            <span class="module-name">
+              ${escapeHtml(module.module_name)}
+            </span>
+
+          </span>
+
+          <span class="module-icon">
+            +
+          </span>
+
+        </button>
+
+
+        <div
+          class="module-content"
+          data-module-content="${index}">
+
+          <p class="module-description">
+            ${escapeHtml(moduleDescription)}
+          </p>
+
+          <p class="lesson-count">
+            📖 ${moduleLessons.length}
+            ${moduleLessons.length === 1 ? "lesson" : "lessons"}
+          </p>
+
+          ${lessonHtml}
+
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+
+  if(modules.length === 0){
+
+    moduleHtml = `
+      <div class="empty-study">
+
+        <div style="font-size:42px">
+          📚
+        </div>
+
+        <h3 style="margin-top:10px">
+          Course modules are being prepared
+        </h3>
+
+        <p style="margin-top:8px">
+          Funda Online Academy will add the
+          learning modules for this course.
+        </p>
+
+      </div>
+    `;
+
+  }
+
+
+  const study = document.createElement("div");
+
+  study.className = "study-card";
+
+  study.innerHTML = `
+
+    <div>
+
+      <span class="funda-status approved">
+        Approved
+      </span>
+
+      <h3 class="study-title">
+        ${escapeHtml(courseName)}
+      </h3>
+
+      <p class="study-description">
+        ${escapeHtml(courseDescription)}
+      </p>
+
+      <div class="study-meta">
+
+        <span>
+          💰 ${money(coursePrice)}
+        </span>
+
+        <span>
+          📅 ${formatDate(study.enrollment.created_at)}
+        </span>
+
+        <span>
+          📚 ${modules.length}
+          ${modules.length === 1 ? "module" : "modules"}
+        </span>
+
+        <span>
+          📖 ${lessons.length}
+          ${lessons.length === 1 ? "lesson" : "lessons"}
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="study-button">
+
+      <button
+        type="button"
+        class="btn green study-course-button">
+
+        📚 Study Course
+
+      </button>
+
+    </div>
+
+
+    <div class="modules-container">
+
+      <h3 class="modules-heading">
+        📖 Course Modules
+      </h3>
+
+      ${moduleHtml}
+
+    </div>
+
+
+    <div class="progress-box">
+
+      <div class="progress-label">
+
+        <span>
+          Course Progress
+        </span>
+
+        <span>
+          0%
+        </span>
+
+      </div>
+
+      <div class="progress-track">
+
+        <div
+          class="progress-bar"
+          style="width:0%">
+        </div>
+
+      </div>
+
+      <p style="margin-top:8px;color:#68766f;font-size:13px">
+        Lesson progress tracking will be added
+        as the learning system is completed.
+      </p>
+
+    </div>
+
+  `;
+
+
+  studyList.appendChild(study);
+
+}
+
+
+/* ============================================================
+   MODULE ACCORDION
+   ============================================================ */
+
+function setupModuleButtons(){
+
+  document
+    .querySelectorAll("[data-module-index]")
+    .forEach(button => {
+
+      button.addEventListener("click",() => {
+
+        const index =
+          button.getAttribute("data-module-index");
+
+        const content =
+          document.querySelector(
+            `[data-module-content="${index}"]`
+          );
+
+        if(!content){
+          return;
+        }
+
+        const icon =
+          button.querySelector(".module-icon");
+
+
+        const isOpen =
+          content.classList.contains("open");
+
+
+        if(isOpen){
+
+          content.classList.remove("open");
+
+          if(icon){
+            icon.textContent = "+";
+          }
+
+        }else{
+
+          content.classList.add("open");
+
+          if(icon){
+            icon.textContent = "−";
+          }
+
+        }
+
+      });
+
+    });
+
+}
+
+
+/* ============================================================
+   LESSON BUTTONS
+   ============================================================ */
+
+function setupLessonButtons(){
+
+  document
+    .querySelectorAll(".lesson-open")
+    .forEach(button => {
+
+      button.addEventListener("click",() => {
+
+        const lessonId =
+          button.getAttribute("data-lesson-id");
+
+        const lessonTitle =
+          button.getAttribute("data-lesson-title");
+
+
+        /*
+         * We are deliberately not inventing a lesson
+         * page until the actual learning-content table
+         * and lesson page are connected.
+         *
+         * For now this confirms that the lesson exists.
+         */
+
+        alert(
+          "Lesson ready: " +
+          lessonTitle +
+          "\n\nLesson ID: " +
+          lessonId +
+          "\n\nThe full lesson viewer will be connected next."
+        );
+
+      });
+
+    });
+
+}
+
+
+/* ============================================================
+   LOAD MY STUDIES
+   ============================================================ */
+
+async function loadMyStudies(user){
+
+  studyList.innerHTML = `
+    <div class="card">
+      <p class="loading">
+        Loading your approved courses…
+      </p>
+    </div>
+  `;
+
+
+  const student =
+    await getStudent(user.id);
+
+
+  if(!student){
+
+    studyList.innerHTML = `
+
+      <div class="empty-study">
+
+        <h3>
+          Student profile not found
+        </h3>
+
+        <p style="margin-top:8px">
+          Your account is logged in, but your student
+          record could not be found.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  const enrollments =
+    await getApprovedEnrollments(student.id);
+
+
+  if(enrollments.length === 0){
+
+    studyList.innerHTML = `
+
+      <div class="empty-study">
+
+        <div style="font-size:48px">
+          📚
+        </div>
+
+        <h3 style="margin-top:10px">
+          No approved courses yet
+        </h3>
+
+        <p style="margin-top:8px;line-height:1.6">
+          Once Funda Online Academy approves your
+          enrolment, your course will appear in
+          My Studies.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  studyList.innerHTML = "";
+
+
+  for(const enrollment of enrollments){
+
+    try{
+
+      const study =
+        await buildStudy(enrollment);
+
+      if(study){
+        renderStudy(study);
+      }
+
+    }catch(courseError){
+
+      console.error(
+        "Course loading error:",
+        courseError
+      );
+
+      const errorCard =
+        document.createElement("div");
+
+      errorCard.className =
+        "error-study";
+
+      errorCard.innerHTML = `
+        <strong>
+          Unable to load one of your courses.
+        </strong>
+
+        <p style="margin-top:8px">
+          Course ID:
+          ${escapeHtml(enrollment.course_id)}
+        </p>
+
+        <p style="margin-top:8px;font-size:13px">
+          ${escapeHtml(courseError.message)}
+        </p>
+      `;
+
+      studyList.appendChild(errorCard);
+
+    }
+
+  }
+
+
+  setupModuleButtons();
+  setupLessonButtons();
+
+}
+
+
+/* ============================================================
+   LOAD STUDENT HEADER
+   ============================================================ */
+
+async function loadStudentHeader(user){
+
+  if(userEmail){
+    userEmail.textContent =
+      user.email || "";
+  }
+
+
+  const student =
+    await getStudent(user.id);
+
+
+  if(student && userName){
+
+    const name =
+      student.full_name ||
+      student.first_name ||
+      user.user_metadata?.full_name ||
+      "Student";
+
+    userName.textContent = name;
+
+  }else if(userName){
+
+    userName.textContent =
+      user.user_metadata?.full_name ||
+      "Student";
+
+  }
+
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+if(logoutButton){
+
+  logoutButton.addEventListener(
+    "click",
+    async () => {
+
+      try{
+
+        await db.auth.signOut();
+
+        window.location.href =
+          "login.html";
+
+      }catch(error){
+
+        console.error(error);
+
+        showMessage(
+          "Unable to log out. Please try again."
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   POLICY ACCEPTANCE
+   ============================================================ */
+
+const policyCheckbox =
+  document.getElementById("policy-checkbox");
+
+const acceptPolicyButton =
+  document.getElementById("accept-policy-btn");
+
+const policyAccepted =
+  document.getElementById("policy-accepted");
+
+
+if(acceptPolicyButton){
+
+  acceptPolicyButton.addEventListener(
+    "click",
+    async () => {
+
+      if(!policyCheckbox.checked){
+
+        alert(
+          "Please tick the declaration checkbox before continuing."
+        );
+
+        return;
+
+      }
+
+
+      const {
+        data: authData,
+        error: authError
+      } = await db.auth.getUser();
+
+
+      if(authError || !authData.user){
+
+        alert(
+          "Your session has expired. Please log in again."
+        );
+
+        window.location.href =
+          "login.html";
+
+        return;
+
+      }
+
+
+      /*
+       * Policy acceptance is currently stored locally
+       * for this browser.
+       *
+       * The permanent policy acceptance table can be
+       * connected later without changing the student
+       * studies system.
+       */
+
+      localStorage.setItem(
+        "foa_policy_accepted_" + authData.user.id,
+        "true"
+      );
+
+
+      if(policyAccepted){
+
+        policyAccepted.style.display =
+          "block";
+
+        policyAccepted.innerHTML = `
+
+          <strong>
+            ✅ Declaration accepted
+          </strong>
+
+          Thank you. Your acceptance has been
+          recorded on this device.
+
+        `;
+
+      }
+
+
+      policyCheckbox.disabled = true;
+      acceptPolicyButton.disabled = true;
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   CHECK SAVED POLICY ACCEPTANCE
+   ============================================================ */
+
+async function loadPolicyStatus(user){
+
+  const accepted =
+    localStorage.getItem(
+      "foa_policy_accepted_" + user.id
+    );
+
+
+  if(accepted === "true"){
+
+    if(policyCheckbox){
+      policyCheckbox.checked = true;
+      policyCheckbox.disabled = true;
+    }
+
+    if(acceptPolicyButton){
+      acceptPolicyButton.disabled = true;
+    }
+
+    if(policyAccepted){
+
+      policyAccepted.style.display =
+        "block";
+
+      policyAccepted.innerHTML = `
+
+        <strong>
+          ✅ Declaration accepted
+        </strong>
+
+        Your policy declaration has already
+        been accepted on this device.
+
+      `;
+
+    }
+
+  }
+
+}
+
+
+/* ============================================================
+   AVAILABLE COURSES
+   ============================================================ */
+
+async function loadAvailableCourses(){
+
+  const container =
+    document.getElementById("available-courses");
+
+  if(!container){
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } = await db
+    .from("courses")
+    .select("*")
+    .order("name",{ascending:true});
+
+
+  if(error){
+
+    console.error(
+      "Available courses error:",
+      error
+    );
+
+    container.innerHTML = `
+      <div class="card">
+        <p>
+          Courses could not be loaded right now.
+        </p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  if(!data || data.length === 0){
+
+    container.innerHTML = `
+      <div class="empty-study">
+        <p>
+          No courses are currently available.
+        </p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    data.map(course => {
+
+      const name =
+        course.name ||
+        course.course_name ||
+        course.title ||
+        "Course";
+
+      const description =
+        course.description ||
+        "Funda Online Academy course.";
+
+      const price =
+        course.price ||
+        course.amount ||
+        null;
+
+
+      return `
+
+        <div class="card">
+
+          <span class="funda-status">
+            Available
+          </span>
+
+          <h3>
+            ${escapeHtml(name)}
+          </h3>
+
+          <p style="margin-top:8px;line-height:1.5">
+            ${escapeHtml(description)}
+          </p>
+
+          <p style="margin-top:12px;font-weight:700">
+            💰 ${money(price)}
+          </p>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* ============================================================
+   MAIN STARTUP
+   ============================================================ */
+
+async function initDashboard(){
+
+  try{
+
+    hideMessage();
+
+
+    if(!db){
+
+      throw new Error(
+        "Supabase connection was not found. Please check supabase-config.js."
+      );
+
+    }
+
+
+    const user =
+      await getCurrentUser();
+
+
+    if(!user){
+      return;
+    }
+
+
+    await loadStudentHeader(user);
+
+    await loadPolicyStatus(user);
+
+    await loadMyStudies(user);
+
+    await loadAvailableCourses();
+
+
+  }catch(error){
+
+    console.error(
+      "Dashboard error:",
+      error
+    );
+
+
+    studyList.innerHTML = `
+
+      <div class="error-study">
+
+        <strong>
+          Unable to load your studies
+        </strong>
+
+        <p style="margin-top:10px">
+          ${escapeHtml(error.message)}
+        </p>
+
+        <p style="margin-top:10px;font-size:14px">
+          Please refresh the page and try again.
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+initDashboard();
+
+</script>
 
 </body>
   </html>
