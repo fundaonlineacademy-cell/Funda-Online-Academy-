@@ -188,12 +188,6 @@ if (signupTab) {
 
 // ============================================================
 // FIND POLICY ACCEPTANCE CHECKBOX
-//
-// IMPORTANT:
-// Our auth.html uses:
-// declaration-acceptance
-//
-// We also support older IDs so the system is safer.
 // ============================================================
 
 function getPolicyCheckbox() {
@@ -315,14 +309,9 @@ async function savePolicyAcceptance(
 
 
   if (!checkbox.checked) {
-
     return false;
   }
 
-
-  // ----------------------------------------------------------
-  // Get student record
-  // ----------------------------------------------------------
 
   const student =
     await getStudentRecord(user.id);
@@ -337,10 +326,6 @@ async function savePolicyAcceptance(
     return false;
   }
 
-
-  // ----------------------------------------------------------
-  // Check whether this policy version already exists
-  // ----------------------------------------------------------
 
   const {
     data: existing,
@@ -364,28 +349,15 @@ async function savePolicyAcceptance(
   }
 
 
-  // ----------------------------------------------------------
-  // Do not create duplicate acceptance records
-  // ----------------------------------------------------------
-
   if (existing) {
-
     return true;
   }
 
-
-  // ----------------------------------------------------------
-  // Actual acceptance time
-  // ----------------------------------------------------------
 
   const acceptanceTime =
     acceptedAt ||
     new Date().toISOString();
 
-
-  // ----------------------------------------------------------
-  // Create policy acceptance record
-  // ----------------------------------------------------------
 
   const {
     error
@@ -434,9 +406,6 @@ async function savePolicyAcceptance(
 
 // ============================================================
 // SAVE PENDING POLICY ACCEPTANCE
-//
-// Used when Supabase requires email confirmation and therefore
-// does not immediately provide a session.
 // ============================================================
 
 function savePendingPolicyAcceptance() {
@@ -670,10 +639,6 @@ async function syncStudentProfile(user) {
   }
 
 
-  // ----------------------------------------------------------
-  // Existing profile
-  // ----------------------------------------------------------
-
   if (existingProfile) {
 
     if (
@@ -727,10 +692,6 @@ async function syncStudentProfile(user) {
     return true;
   }
 
-
-  // ----------------------------------------------------------
-  // New profile
-  // ----------------------------------------------------------
 
   const {
     error
@@ -840,10 +801,6 @@ async function syncStudentRecord(user) {
   }
 
 
-  // ----------------------------------------------------------
-  // Existing student
-  // ----------------------------------------------------------
-
   if (existingStudent) {
 
     const {
@@ -888,10 +845,6 @@ async function syncStudentRecord(user) {
     return true;
   }
 
-
-  // ----------------------------------------------------------
-  // New student
-  // ----------------------------------------------------------
 
   const {
     error
@@ -1171,9 +1124,6 @@ if (loginForm) {
       );
 
 
-      // Complete acceptance if it was
-      // waiting for email confirmation.
-
       await completePendingPolicyAcceptance(
         data.user
       );
@@ -1258,10 +1208,6 @@ if (signupForm) {
       clearMessage();
 
 
-      // --------------------------------------------------------
-      // CHECK POLICY FIRST
-      // --------------------------------------------------------
-
       if (
         !validatePolicyAcceptance()
       ) {
@@ -1269,10 +1215,6 @@ if (signupForm) {
         return;
       }
 
-
-      // --------------------------------------------------------
-      // GET FORM VALUES
-      // --------------------------------------------------------
 
       const name =
         document
@@ -1336,10 +1278,6 @@ if (signupForm) {
           .value;
 
 
-      // --------------------------------------------------------
-      // VALIDATION
-      // --------------------------------------------------------
-
       if (
         !name ||
         !gender ||
@@ -1357,10 +1295,6 @@ if (signupForm) {
         return;
       }
 
-
-      // --------------------------------------------------------
-      // SUPPORT SOUTH AFRICAN ID OR PASSPORT
-      // --------------------------------------------------------
 
       if (
         idNumber.length < 6
@@ -1399,19 +1333,9 @@ if (signupForm) {
       }
 
 
-      // --------------------------------------------------------
-      // SAVE THE ACCEPTANCE TIME NOW
-      //
-      // This is the actual time the student accepted.
-      // --------------------------------------------------------
-
       const acceptedAt =
         new Date().toISOString();
 
-
-      // --------------------------------------------------------
-      // CREATE ACCOUNT
-      // --------------------------------------------------------
 
       showMessage(
         "Creating your student account...",
@@ -1483,10 +1407,6 @@ if (signupForm) {
       }
 
 
-      // --------------------------------------------------------
-      // ACCOUNT CREATED WITH SESSION
-      // --------------------------------------------------------
-
       if (data.session) {
 
         const synced =
@@ -1543,10 +1463,6 @@ if (signupForm) {
       }
 
 
-      // --------------------------------------------------------
-      // EMAIL CONFIRMATION REQUIRED
-      // --------------------------------------------------------
-
       savePendingPolicyAcceptance();
 
 
@@ -1589,12 +1505,14 @@ if (forgotLink) {
       clearMessage();
 
 
+      const emailInput =
+        document.getElementById(
+          "login-email"
+        );
+
+
       const email =
-        document
-          .getElementById(
-            "login-email"
-          )
-          .value
+        emailInput.value
           .trim()
           .toLowerCase();
 
@@ -1609,9 +1527,14 @@ if (forgotLink) {
       }
 
 
+      // ======================================================
+      // IMPORTANT:
+      // ALWAYS SEND PASSWORD RESET TO reset-password.html
+      // ======================================================
+
       const resetUrl =
         window.location.origin +
-        window.location.pathname;
+        "/Funda-Online-Academy-/reset-password.html";
 
 
       const {
@@ -1638,7 +1561,8 @@ if (forgotLink) {
 
 
         showMessage(
-          error.message
+          error.message ||
+          "Unable to send the password reset email."
         );
 
         return;
@@ -1646,11 +1570,11 @@ if (forgotLink) {
 
 
       showMessage(
-        "Password reset instructions have been sent to your email.",
+        "Password reset instructions have been sent to your email. Please check your inbox and open the reset link.",
         true
       );
 
     }
   );
 
-}
+    }
