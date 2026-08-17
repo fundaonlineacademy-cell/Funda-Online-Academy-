@@ -213,10 +213,6 @@ function coursePrice(course) {
 }
 
 
-// ============================================================
-// ENROLMENT STATUS
-// ============================================================
-
 function enrollmentStatus(row) {
 
   return String(
@@ -224,8 +220,8 @@ function enrollmentStatus(row) {
     row?.status ??
     "pending"
   )
-    .trim()
-    .toLowerCase();
+  .trim()
+  .toLowerCase();
 }
 
 
@@ -239,6 +235,25 @@ function isApproved(row) {
     status === "active" ||
     status === "enrolled" ||
     status === "completed"
+  );
+}
+
+
+// ============================================================
+// ENROLMENT DATE
+// IMPORTANT:
+// The enrollments table does NOT have created_at.
+// We therefore ONLY use enrolled_at.
+// ============================================================
+
+function enrollmentDate(row) {
+
+  if (!row) {
+    return "—";
+  }
+
+  return formatDate(
+    row.enrolled_at
   );
 }
 
@@ -334,7 +349,7 @@ async function getCoursesByIds(
 
 
 // ============================================================
-// AVAILABLE COURSES
+// ALL AVAILABLE COURSES
 // ============================================================
 
 async function getAvailableCourses() {
@@ -360,7 +375,7 @@ async function getAvailableCourses() {
   if (error) {
 
     console.warn(
-      "Active course query failed. Using compatibility query:",
+      "Active course query failed:",
       error
     );
 
@@ -387,21 +402,16 @@ async function getAvailableCourses() {
 
 
 // ============================================================
-// GET STUDENT ENROLMENTS
-//
+// GET ENROLMENTS
 // IMPORTANT:
-// We deliberately query by student_id.
-// RLS then verifies that this student belongs
-// to the currently authenticated user.
+// DO NOT ORDER BY created_at.
+// DO NOT REFER TO created_at.
+// The current enrollments table does not contain that column.
 // ============================================================
 
 async function getStudentEnrolments(
   studentId
 ) {
-
-  if (!studentId) {
-    return [];
-  }
 
   const {
     data,
@@ -409,25 +419,10 @@ async function getStudentEnrolments(
   } =
     await db
       .from("enrollments")
-      .select(`
-        id,
-        student_id,
-        course_id,
-        enrollment_status,
-        status,
-        enrolled_at,
-        created_at,
-        amount
-      `)
+      .select("*")
       .eq(
         "student_id",
         studentId
-      )
-      .order(
-        "enrolled_at",
-        {
-          ascending: false
-        }
       );
 
   if (error) {
@@ -465,6 +460,10 @@ async function loadMyStudies(
 
   try {
 
+    // --------------------------------------------------------
+    // GET ALL STUDENT ENROLMENTS
+    // --------------------------------------------------------
+
     const enrolments =
       await getStudentEnrolments(
         studentId
@@ -472,18 +471,13 @@ async function loadMyStudies(
 
 
     console.log(
-      "FUNDA - Student ID:",
-      studentId
-    );
-
-    console.log(
-      "FUNDA - Student enrolments:",
+      "Student enrolments:",
       enrolments
     );
 
 
     // --------------------------------------------------------
-    // APPROVED / ACTIVE ENROLMENTS
+    // ONLY APPROVED / ACTIVE COURSES
     // --------------------------------------------------------
 
     const approvedEnrolments =
@@ -494,7 +488,7 @@ async function loadMyStudies(
 
 
     console.log(
-      "FUNDA - Approved enrolments:",
+      "Approved enrolments:",
       approvedEnrolments
     );
 
@@ -538,7 +532,7 @@ async function loadMyStudies(
 
 
     // --------------------------------------------------------
-    // COURSE IDS
+    // GET COURSE IDS
     // --------------------------------------------------------
 
     const courseIds =
@@ -554,6 +548,12 @@ async function loadMyStudies(
       ];
 
 
+    console.log(
+      "Approved course IDs:",
+      courseIds
+    );
+
+
     if (!courseIds.length) {
 
       studyListEl.innerHTML = `
@@ -565,7 +565,7 @@ async function loadMyStudies(
           </h3>
 
           <p>
-            Your enrolment is approved, but
+            Your enrolment was approved, but
             the course ID is missing.
           </p>
 
@@ -578,7 +578,7 @@ async function loadMyStudies(
 
 
     // --------------------------------------------------------
-    // COURSES
+    // GET COURSES
     // --------------------------------------------------------
 
     const courses =
@@ -588,7 +588,7 @@ async function loadMyStudies(
 
 
     console.log(
-      "FUNDA - Courses returned:",
+      "Courses returned:",
       courses
     );
 
@@ -620,6 +620,10 @@ async function loadMyStudies(
                 )
               );
 
+
+            // ------------------------------------------------
+            // COURSE RECORD MISSING
+            // ------------------------------------------------
 
             if (!course) {
 
@@ -674,6 +678,7 @@ async function loadMyStudies(
 
                     </span>
 
+
                     <h3 class="study-title">
 
                       ${escapeHTML(
@@ -681,6 +686,7 @@ async function loadMyStudies(
                       )}
 
                     </h3>
+
 
                     <p class="study-description">
 
@@ -691,6 +697,7 @@ async function loadMyStudies(
 
                     </p>
 
+
                     <div class="study-meta">
 
                       <span>
@@ -700,14 +707,13 @@ async function loadMyStudies(
                         )}
                       </span>
 
+
                       <span>
                         📅 ${escapeHTML(
-                          formatDate(
-                            enrolment.enrolled_at ||
-                            enrolment.created_at
-                          )
+                          enrollmentDate(enrolment)
                         )}
                       </span>
+
 
                       <span>
                         📚 ${modules.length}
@@ -747,6 +753,7 @@ async function loadMyStudies(
 
                         </h4>
 
+
                         ${renderStudyModules(
                           modules,
                           course.id
@@ -767,6 +774,7 @@ async function loadMyStudies(
                             prepared by the academy.
                           </p>
 
+
                           <a
                             href="course-study.html?id=${encodeURIComponent(course.id)}"
                             class="btn green"
@@ -781,6 +789,7 @@ async function loadMyStudies(
                       </div>
 
                     `
+
                 }
 
               </article>
@@ -1032,6 +1041,7 @@ function renderStudyModules(
 
               </span>
 
+
               <span class="module-arrow">
                 +
               </span>
@@ -1065,6 +1075,7 @@ function renderStudyModules(
                   `
 
                   : ""
+
               }
 
 
@@ -1076,6 +1087,7 @@ function renderStudyModules(
                     <h4 style="margin-bottom:12px">
                       Lessons
                     </h4>
+
 
                     ${lessons
                       .map(
@@ -1140,6 +1152,7 @@ function renderStudyModules(
 
                                   </div>
 
+
                                   ${
                                     lessonDescription
 
@@ -1184,6 +1197,7 @@ function renderStudyModules(
                                     `
 
                                     : ""
+
                                 }
 
                               </div>
@@ -1199,6 +1213,7 @@ function renderStudyModules(
                   `
 
                   : ""
+
               }
 
 
@@ -1225,7 +1240,7 @@ function renderStudyModules(
 
 
 // ============================================================
-// MODULE EVENTS
+// MODULE BUTTONS
 // ============================================================
 
 function attachModuleEvents() {
@@ -1243,6 +1258,7 @@ function attachModuleEvents() {
 
             const index =
               button.dataset.moduleIndex;
+
 
             const content =
               document.querySelector(
@@ -1474,10 +1490,7 @@ async function loadEnrolments(
                   </strong>
 
                   ${escapeHTML(
-                    formatDate(
-                      row.enrolled_at ||
-                      row.created_at
-                    )
+                    enrollmentDate(row)
                   )}
 
                 </p>
@@ -1516,6 +1529,7 @@ async function loadEnrolments(
                       </p>
 
                     `
+
                 }
 
               </div>
@@ -1718,6 +1732,7 @@ async function loadAvailableCourses(
                       </button>
 
                     `
+
                 }
 
               </div>
@@ -1773,7 +1788,7 @@ async function loadAvailableCourses(
 
           ${escapeHTML(
             error.message ||
-            "Please try again."
+            "Please refresh and try again."
           )}
 
         </p>
@@ -1814,6 +1829,10 @@ async function enrolStudent(
 
 
   try {
+
+    // --------------------------------------------------------
+    // POLICY CHECK
+    // --------------------------------------------------------
 
     const {
       data: policy,
@@ -1868,6 +1887,10 @@ async function enrolStudent(
     }
 
 
+    // --------------------------------------------------------
+    // CHECK EXISTING ENROLMENT
+    // --------------------------------------------------------
+
     const {
       data: existing,
       error: checkError
@@ -1909,6 +1932,10 @@ async function enrolStudent(
     }
 
 
+    // --------------------------------------------------------
+    // GET COURSE
+    // --------------------------------------------------------
+
     const {
       data: course,
       error: courseError
@@ -1934,6 +1961,10 @@ async function enrolStudent(
       );
     }
 
+
+    // --------------------------------------------------------
+    // CREATE ENROLMENT
+    // --------------------------------------------------------
 
     const payload = {
 
@@ -2060,12 +2091,6 @@ async function loadPayments(
         .eq(
           "student_id",
           studentId
-        )
-        .order(
-          "created_at",
-          {
-            ascending: false
-          }
         );
 
 
@@ -2158,8 +2183,8 @@ async function loadPayments(
                     payment.status ??
                     "pending"
                   )
-                    .trim()
-                    .toLowerCase();
+                  .trim()
+                  .toLowerCase();
 
 
                 const method =
@@ -2218,22 +2243,6 @@ async function loadPayments(
                     <p class="funda-info">
 
                       <strong>
-                        Date:
-                      </strong>
-
-                      ${escapeHTML(
-                        formatDate(
-                          payment.created_at ||
-                          payment.paid_at
-                        )
-                      )}
-
-                    </p>
-
-
-                    <p class="funda-info">
-
-                      <strong>
                         Status:
                       </strong>
 
@@ -2271,6 +2280,7 @@ async function loadPayments(
                           `
 
                           : "Not available"
+
                       }
 
                     </p>
@@ -2702,7 +2712,7 @@ async function logout() {
 
 
 // ============================================================
-// INITIALISE DASHBOARD
+// INITIALISE
 // ============================================================
 
 async function initDashboard() {
@@ -2710,7 +2720,7 @@ async function initDashboard() {
   try {
 
     // --------------------------------------------------------
-    // AUTH USER
+    // USER
     // --------------------------------------------------------
 
     currentUserData =
