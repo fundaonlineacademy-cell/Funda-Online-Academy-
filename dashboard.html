@@ -1,13 +1,9 @@
 <!doctype html>
 <html lang="en">
-
 <head>
 
 <meta charset="utf-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Student Dashboard | Funda Online Academy</title>
 
@@ -94,8 +90,7 @@ body{
   display:none !important;
 }
 
-.error-study,
-.dashboard-start-error{
+.error-study{
   padding:20px;
   background:#fff4f4;
   border:1px solid #f0caca;
@@ -313,6 +308,22 @@ body{
   background:#f1faf5;
 }
 
+.review-lesson{
+  display:inline-block;
+  border:1px solid #d08a00;
+  border-radius:9px;
+  padding:9px 13px;
+  color:#9a6500;
+  background:#fff8e5;
+  text-decoration:none;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.review-lesson:hover{
+  background:#fff1c7;
+}
+
 .progress-box{
   margin-top:18px;
   background:#f5f8f6;
@@ -341,6 +352,13 @@ body{
   width:0%;
   background:#0c8f55;
   transition:width .3s ease;
+}
+
+.payment-card{
+  border:1px solid #e4ece3;
+  border-radius:16px;
+  padding:18px;
+  background:#fff;
 }
 
 .policy-card{
@@ -486,10 +504,57 @@ body{
   margin:6px 0;
 }
 
+/* AVAILABLE COURSE CARD */
 
-/* ============================================================
-   LESSON VIEWER
-   ============================================================ */
+.available-course-card{
+  position:relative;
+}
+
+.available-course-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
+.available-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:8px 13px;
+  border-radius:999px;
+  background:#e5f8ed;
+  border:1px solid #bde8cf;
+  color:#11683d;
+  font-size:13px;
+  font-weight:800;
+}
+
+.course-information{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:15px;
+}
+
+.course-information span{
+  background:#f1faf5;
+  border:1px solid #d8e9df;
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:700;
+}
+
+.available-course-button{
+  width:100%;
+  margin-top:18px;
+  text-align:center;
+}
+
+/* LESSON VIEWER */
 
 .lesson-viewer{
   display:none;
@@ -611,16 +676,22 @@ body{
   display:none;
 }
 
+.dashboard-start-error{
+  background:#fff4f4;
+  border:1px solid #efc7c7;
+  color:#8e2222;
+  padding:18px;
+  border-radius:15px;
+  line-height:1.6;
+}
+
 .system-status{
   margin-top:10px;
   font-size:13px;
   color:#68766f;
 }
 
-
-/* ============================================================
-   MOBILE
-   ============================================================ */
+/* MOBILE */
 
 @media(max-width:900px){
 
@@ -697,37 +768,26 @@ body{
 }
 
 </style>
-
 </head>
 
-
 <body>
-
 
 <header>
 
   <div class="wrap nav">
 
-    <a
-      class="logo"
-      href="index.html">
+    <a class="logo" href="index.html">
 
       <img
         src="logo.png"
         alt="Funda Online Academy logo">
 
       <span>
-
         Funda Online Academy Pty Ltd
-
-        <small>
-          Student Dashboard
-        </small>
-
+        <small>Student Dashboard</small>
       </span>
 
     </a>
-
 
     <div class="nav-actions">
 
@@ -736,14 +796,11 @@ body{
         class="user-email">
       </span>
 
-
       <button
         id="logout"
         class="btn ghost"
         type="button">
-
         Logout
-
       </button>
 
     </div>
@@ -753,15 +810,11 @@ body{
 </header>
 
 
-
 <main class="dashboard">
 
 <div class="wrap">
 
-
-  <!-- ======================================================
-       WELCOME
-       ====================================================== -->
+  <!-- WELCOME -->
 
   <div class="dash-head">
 
@@ -771,46 +824,33 @@ body{
         STUDENT AREA
       </span>
 
-
       <h1>
-
         Welcome,
         <span id="user-name">
           Student
         </span>
-
       </h1>
 
-
       <p>
-
         Manage your courses, studies, enrolments,
         payments and Funda Online Academy policies.
-
       </p>
-
 
       <div
         id="system-status"
         class="system-status">
-
-        Starting student learning system…
-
+        Connecting to student learning system…
       </div>
 
     </div>
 
-
     <a
       class="btn green"
       href="index.html#courses">
-
       Browse Courses
-
     </a>
 
   </div>
-
 
 
   <div
@@ -819,10 +859,7 @@ body{
   </div>
 
 
-
-  <!-- ======================================================
-       MY STUDIES
-       ====================================================== -->
+  <!-- MY STUDIES -->
 
   <section
     class="dashboard-section"
@@ -832,12 +869,7 @@ body{
       📚 My Studies
     </h2>
 
-
-    <p
-      style="
-        margin-bottom:18px;
-        line-height:1.6
-      ">
+    <p style="margin-bottom:18px;line-height:1.6">
 
       Your approved courses and learning materials
       will appear here. Open a module to view its
@@ -845,15 +877,12 @@ body{
 
     </p>
 
-
     <div id="study-list">
 
       <div class="card">
 
         <p class="loading">
-
           Starting student learning system…
-
         </p>
 
       </div>
@@ -863,10 +892,7 @@ body{
   </section>
 
 
-
-  <!-- ======================================================
-       POLICIES
-       ====================================================== -->
+  <!-- POLICIES -->
 
   <section
     class="dashboard-section"
@@ -876,17 +902,13 @@ body{
       📜 Policies, Payment Rules & Declaration
     </h2>
 
-
     <div class="policy-card">
-
 
       <div class="policy-intro">
 
         <strong>
-
           Please read this information carefully before
           enrolling in a course.
-
         </strong>
 
         <br><br>
@@ -899,55 +921,37 @@ body{
       </div>
 
 
-
       <div class="policy-group">
 
-        <h3>
-          💳 Payment Rules
-        </h3>
-
+        <h3>💳 Payment Rules</h3>
 
         <ul>
 
           <li>
-
             Courses below <strong>R2,000</strong>
             must be paid in full.
-
           </li>
 
-
           <li>
-
             Courses above <strong>R2,000</strong>
             require at least half of the course fee upfront.
-
           </li>
 
-
           <li>
-
             The remaining balance must be paid according
             to the agreed payment arrangement before
             completion/certification.
-
           </li>
 
-
           <li>
-
             Where applicable, students may request a
             payment plan. Approval is at the discretion
             of Funda Online Academy.
-
           </li>
 
-
           <li>
-
             Students remain responsible for agreed
             outstanding balances.
-
           </li>
 
         </ul>
@@ -955,105 +959,56 @@ body{
       </div>
 
 
-
       <div class="policy-group">
 
-        <h3>
-          🏦 How To Pay
-        </h3>
-
+        <h3>🏦 How To Pay</h3>
 
         <p>
-
           Please use the following official Funda Online
           Academy banking details when making a payment.
-
         </p>
-
 
         <div class="bank-grid">
 
-
           <div class="bank-card">
 
-            <h3>
-              TymeBank
-            </h3>
-
+            <h3>TymeBank</h3>
 
             <p class="bank-detail">
-
-              <strong>
-                Account name:
-              </strong>
-
+              <strong>Account name:</strong>
               Funda Online Academy
-
             </p>
 
-
             <p class="bank-detail">
-
-              <strong>
-                Account number:
-              </strong>
-
+              <strong>Account number:</strong>
               53001794582
-
             </p>
 
-
             <p class="bank-detail">
-
-              <strong>
-                Branch code:
-              </strong>
-
+              <strong>Branch code:</strong>
               678910
-
             </p>
 
           </div>
 
 
-
           <div class="bank-card">
 
-            <h3>
-              Capitec Bank
-            </h3>
-
+            <h3>Capitec Bank</h3>
 
             <p class="bank-detail">
-
-              <strong>
-                Account name:
-              </strong>
-
+              <strong>Account name:</strong>
               Funda Online Academy
-
             </p>
 
-
             <p class="bank-detail">
-
-              <strong>
-                Account number:
-              </strong>
-
+              <strong>Account number:</strong>
               2535397664
-
             </p>
 
-
             <p class="bank-detail">
-
-              <strong>
-                Branch code:
-              </strong>
-
+              <strong>Branch code:</strong>
               470010
-
             </p>
 
           </div>
@@ -1063,68 +1018,31 @@ body{
       </div>
 
 
-
       <div class="policy-group">
 
-        <h3>
-          📋 Required Student Information
-        </h3>
-
+        <h3>📋 Required Student Information</h3>
 
         <div class="required-list">
 
-          <div>
-            ✓ Name
-          </div>
-
-          <div>
-            ✓ Surname
-          </div>
-
-          <div>
-            ✓ ID / Passport
-          </div>
-
-          <div>
-            ✓ Course name
-          </div>
-
-          <div>
-            ✓ Phone number
-          </div>
-
-          <div>
-            ✓ Highest education level
-          </div>
-
-          <div>
-            ✓ Gender
-          </div>
-
-          <div>
-            ✓ Email address
-          </div>
-
-          <div>
-            ✓ Residential address
-          </div>
-
-          <div>
-            ✓ How you heard about us
-          </div>
+          <div>✓ Name</div>
+          <div>✓ Surname</div>
+          <div>✓ ID / Passport</div>
+          <div>✓ Course name</div>
+          <div>✓ Phone number</div>
+          <div>✓ Highest education level</div>
+          <div>✓ Gender</div>
+          <div>✓ Email address</div>
+          <div>✓ Residential address</div>
+          <div>✓ How you heard about us</div>
 
         </div>
 
       </div>
 
 
-
       <div class="policy-group">
 
-        <h3>
-          📚 Student Rules & Responsibilities
-        </h3>
-
+        <h3>📚 Student Rules & Responsibilities</h3>
 
         <ul>
 
@@ -1185,13 +1103,9 @@ body{
       </div>
 
 
-
       <div class="policy-group">
 
-        <h3>
-          🔐 Privacy & Protection of Information
-        </h3>
-
+        <h3>🔐 Privacy & Protection of Information</h3>
 
         <p style="line-height:1.6">
 
@@ -1206,13 +1120,9 @@ body{
       </div>
 
 
-
       <div class="policy-group">
 
-        <h3>
-          📝 Assessments & Academic Integrity
-        </h3>
-
+        <h3>📝 Assessments & Academic Integrity</h3>
 
         <ul>
 
@@ -1240,18 +1150,15 @@ body{
       </div>
 
 
-
       <div class="contact-box">
 
         <strong>
           Funda Online Academy
         </strong>
 
-
         <p>
           📧 fundaonlineacademy@gmail.com
         </p>
-
 
         <p>
           📱 069 960 8590
@@ -1260,13 +1167,11 @@ body{
       </div>
 
 
-
       <div class="declaration-box">
 
         <h3>
           ✍️ Student Declaration
         </h3>
-
 
         <p class="declaration-text">
 
@@ -1299,14 +1204,11 @@ body{
             type="checkbox"
             id="policy-checkbox">
 
-
           <label for="policy-checkbox">
 
             <strong>
-
               I accept the Funda Online Academy Terms,
               Payment Rules, Policies and Student Declaration.
-
             </strong>
 
           </label>
@@ -1325,19 +1227,14 @@ body{
 
 
         <p class="policy-version">
-
           Policy version: FOA Terms v1.0
-
         </p>
 
 
         <div
           id="policy-accepted"
           class="accepted-box"
-          style="
-            display:none;
-            margin-top:18px
-          ">
+          style="display:none;margin-top:18px">
         </div>
 
       </div>
@@ -1347,10 +1244,7 @@ body{
   </section>
 
 
-
-  <!-- ======================================================
-       PAYMENTS
-       ====================================================== -->
+  <!-- PAYMENTS -->
 
   <section
     class="dashboard-section"
@@ -1360,15 +1254,12 @@ body{
       💳 Payments
     </h2>
 
-
     <div id="payment-list">
 
       <div class="card">
 
         <p class="loading">
-
           Payment history will appear here.
-
         </p>
 
       </div>
@@ -1378,17 +1269,13 @@ body{
   </section>
 
 
-
-  <!-- ======================================================
-       ENROLMENTS
-       ====================================================== -->
+  <!-- ENROLMENTS -->
 
   <section>
 
     <h2>
       📝 My Enrolments
     </h2>
-
 
     <div
       id="enrolments"
@@ -1407,46 +1294,60 @@ body{
   </section>
 
 
-  <!-- ======================================================
-       IMPORTANT:
-       AVAILABLE COURSES SECTION REMOVED
-       ====================================================== -->
+  <!-- AVAILABLE COURSES -->
 
+  <section>
+
+    <h2>
+      📖 Available Courses
+    </h2>
+
+    <p style="margin-bottom:18px;line-height:1.6">
+
+      Browse the courses offered by Funda Online Academy.
+      The duration and current availability of each course
+      are shown below.
+
+    </p>
+
+    <div
+      id="available-courses"
+      class="dashboard-grid">
+
+      <div class="card">
+
+        <p class="loading">
+          Loading courses…
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
 
 </div>
 
 </main>
 
 
-
-<!-- ========================================================
-     LESSON VIEWER
-     KEPT INTACT FOR OPEN / COMPLETE / REVIEW LESSON
-     ======================================================== -->
+<!-- LESSON VIEWER -->
 
 <div
   id="lesson-viewer"
   class="lesson-viewer"
   aria-hidden="true">
 
-
   <div class="lesson-viewer-box">
 
-
     <div class="lesson-viewer-header">
-
 
       <div>
 
         <div
           id="lesson-viewer-module"
-          style="
-            font-size:13px;
-            opacity:.8;
-            margin-bottom:6px
-          ">
+          style="font-size:13px;opacity:.8;margin-bottom:6px">
         </div>
-
 
         <h2 id="lesson-viewer-title">
           Lesson
@@ -1468,9 +1369,7 @@ body{
     </div>
 
 
-
     <div class="lesson-viewer-body">
-
 
       <div
         id="lesson-viewer-content"
@@ -1483,9 +1382,7 @@ body{
       </div>
 
 
-
       <div class="lesson-footer">
-
 
         <button
           type="button"
@@ -1514,22 +1411,2865 @@ body{
 </div>
 
 
-
-<!-- ========================================================
-     SUPABASE
-     ======================================================== -->
+<!-- SUPABASE -->
 
 <script
   src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 </script>
 
+<script src="supabase-config.js?v=20260818-1"></script>
 
-<script src="supabase-config.js?v=20260818-3"></script>
+
+<script>
+
+(function(){
+
+"use strict";
 
 
-<script src="dashboard.js?v=20260818-3"></script>
+/* ============================================================
+   ELEMENTS
+   ============================================================ */
 
+const studyList =
+  document.getElementById("study-list");
+
+const userName =
+  document.getElementById("user-name");
+
+const userEmail =
+  document.getElementById("user-email");
+
+const logoutButton =
+  document.getElementById("logout");
+
+const systemStatus =
+  document.getElementById("system-status");
+
+const availableCourses =
+  document.getElementById("available-courses");
+
+const enrolmentsContainer =
+  document.getElementById("enrolments");
+
+const lessonViewer =
+  document.getElementById("lesson-viewer");
+
+const lessonViewerTitle =
+  document.getElementById("lesson-viewer-title");
+
+const lessonViewerModule =
+  document.getElementById("lesson-viewer-module");
+
+const lessonViewerContent =
+  document.getElementById("lesson-viewer-content");
+
+const lessonClose =
+  document.getElementById("lesson-close");
+
+const completeLessonButton =
+  document.getElementById("complete-lesson-btn");
+
+const lessonCompleteMessage =
+  document.getElementById("lesson-complete-message");
+
+
+/* ============================================================
+   DATABASE
+   ============================================================ */
+
+let db = null;
+let currentUser = null;
+let currentStudent = null;
+let currentLesson = null;
+
+
+/* ============================================================
+   HTML ESCAPE
+   ============================================================ */
+
+function escapeHtml(value){
+
+  if(
+    value === null ||
+    value === undefined
+  ){
+    return "";
+  }
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+/* ============================================================
+   LESSON CONTENT
+   ============================================================ */
+
+function safeLessonContent(value){
+
+  if(
+    value === null ||
+    value === undefined ||
+    String(value).trim() === ""
+  ){
+
+    return `
+
+      <div class="empty-study">
+
+        <div style="font-size:42px">
+          📖
+        </div>
+
+        <h3 style="margin-top:10px">
+          Learning content is being prepared
+        </h3>
+
+        <p style="margin-top:8px;line-height:1.6">
+
+          This lesson has been created, but the
+          learning content has not yet been added.
+
+          Funda Online Academy will add the lesson
+          material here.
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+  const text =
+    String(value);
+
+  if(
+    /<[a-z][\s\S]*>/i.test(text)
+  ){
+
+    return text;
+
+  }
+
+  return text
+    .split(/\n\s*\n/)
+    .map(
+      paragraph => {
+
+        return `
+          <p>
+            ${escapeHtml(paragraph)
+              .replace(/\n/g,"<br>")}
+          </p>
+        `;
+
+      }
+    )
+    .join("");
+
+}
+
+
+/* ============================================================
+   MONEY
+   ============================================================ */
+
+function money(value){
+
+  if(
+    value === null ||
+    value === undefined ||
+    value === ""
+  ){
+
+    return "—";
+
+  }
+
+  const number =
+    Number(value);
+
+  if(Number.isNaN(number)){
+
+    return escapeHtml(value);
+
+  }
+
+  return "R " +
+    number.toLocaleString(
+      "en-ZA",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
+
+}
+
+
+/* ============================================================
+   TIMEOUT
+   ============================================================ */
+
+function withTimeout(
+  promise,
+  seconds,
+  label
+){
+
+  return Promise.race([
+
+    promise,
+
+    new Promise(
+      (resolve,reject) => {
+
+        setTimeout(
+          () => {
+
+            reject(
+              new Error(
+                label +
+                " timed out after " +
+                seconds +
+                " seconds."
+              )
+            );
+
+          },
+          seconds * 1000
+        );
+
+      }
+    )
+
+  ]);
+
+}
+
+
+/* ============================================================
+   STATUS
+   ============================================================ */
+
+function setStatus(text){
+
+  if(systemStatus){
+
+    systemStatus.textContent =
+      text;
+
+  }
+
+}
+
+
+/* ============================================================
+   ERROR
+   ============================================================ */
+
+function showStudyError(error){
+
+  console.error(
+    "FUNDA DASHBOARD ERROR:",
+    error
+  );
+
+  if(!studyList){
+    return;
+  }
+
+  const message =
+    error?.message ||
+    String(error);
+
+  studyList.innerHTML = `
+
+    <div class="dashboard-start-error">
+
+      <strong>
+        ⚠️ Student learning system could not start
+      </strong>
+
+      <p style="margin-top:10px">
+        ${escapeHtml(message)}
+      </p>
+
+      <p style="margin-top:10px;font-size:14px">
+
+        Please make sure you are logged in and that
+        the Supabase connection is working.
+
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   CREATE SUPABASE CLIENT
+   ============================================================ */
+
+function createDatabase(){
+
+  if(
+    window.supabaseClient &&
+    typeof window.supabaseClient.from === "function"
+  ){
+
+    return window.supabaseClient;
+
+  }
+
+  if(
+    window.db &&
+    typeof window.db.from === "function"
+  ){
+
+    return window.db;
+
+  }
+
+  const url =
+    window.SUPABASE_URL;
+
+  const key =
+    window.SUPABASE_ANON_KEY;
+
+  if(
+    !url ||
+    !key
+  ){
+
+    return null;
+
+  }
+
+  if(
+    !window.supabase ||
+    typeof window.supabase.createClient !== "function"
+  ){
+
+    return null;
+
+  }
+
+  return window.supabase.createClient(
+    url,
+    key
+  );
+
+}
+
+
+/* ============================================================
+   CURRENT USER
+   ============================================================ */
+
+async function getCurrentUser(){
+
+  if(!db){
+
+    throw new Error(
+      "Supabase connection was not created. Check supabase-config.js."
+    );
+
+  }
+
+  const result =
+    await withTimeout(
+      db.auth.getUser(),
+      15,
+      "Checking student login"
+    );
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+  if(
+    !result.data ||
+    !result.data.user
+  ){
+
+    window.location.href =
+      "login.html";
+
+    return null;
+
+  }
+
+  return result.data.user;
+
+}
+
+
+/* ============================================================
+   STUDENT
+   ============================================================ */
+
+async function getStudent(userId){
+
+  const result =
+    await withTimeout(
+
+      db
+        .from("students")
+        .select("*")
+        .eq("user_id",userId)
+        .limit(1),
+
+      15,
+
+      "Loading student profile"
+
+    );
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+  if(
+    !result.data ||
+    result.data.length === 0
+  ){
+
+    return null;
+
+  }
+
+  return result.data[0];
+
+}
+
+
+/* ============================================================
+   ENROLLMENTS
+   ============================================================ */
+
+async function getApprovedEnrollments(
+  studentId
+){
+
+  let result =
+    await withTimeout(
+
+      db
+        .from("enrollments")
+        .select(`
+          id,
+          student_id,
+          course_id,
+          enrollment_status
+        `)
+        .eq(
+          "student_id",
+          studentId
+        )
+        .eq(
+          "enrollment_status",
+          "approved"
+        ),
+
+      15,
+
+      "Loading approved enrolments"
+
+    );
+
+
+  if(
+    result.error &&
+    (
+      result.error.code === "42P01" ||
+      String(
+        result.error.message || ""
+      )
+      .toLowerCase()
+      .includes("does not exist")
+    )
+  ){
+
+    result =
+      await withTimeout(
+
+        db
+          .from("enrolments")
+          .select(`
+            id,
+            student_id,
+            course_id,
+            enrollment_status
+          `)
+          .eq(
+            "student_id",
+            studentId
+          )
+          .eq(
+            "enrollment_status",
+            "approved"
+          ),
+
+        15,
+
+        "Loading approved enrolments"
+
+      );
+
+  }
+
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+  return result.data || [];
+
+}
+
+
+/* ============================================================
+   COURSE
+   ============================================================ */
+
+async function getCourse(courseId){
+
+  const result =
+    await withTimeout(
+
+      db
+        .from("courses")
+        .select("*")
+        .eq("id",courseId)
+        .limit(1),
+
+      15,
+
+      "Loading course"
+
+    );
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+  if(
+    !result.data ||
+    result.data.length === 0
+  ){
+
+    return null;
+
+  }
+
+  return result.data[0];
+
+}
+
+
+/* ============================================================
+   MODULES
+   ============================================================ */
+
+async function getModules(courseId){
+
+  const result =
+    await withTimeout(
+
+      db
+        .from("course_modules")
+        .select("*")
+        .eq(
+          "course_id",
+          courseId
+        )
+        .order(
+          "module_number",
+          {
+            ascending:true
+          }
+        ),
+
+      15,
+
+      "Loading course modules"
+
+    );
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+  return result.data || [];
+
+}
+
+
+/* ============================================================
+   LESSONS
+   ============================================================ */
+
+async function getLessons(){
+
+  const result =
+    await withTimeout(
+
+      db
+        .from("lessons")
+        .select("*")
+        .order(
+          "module_id",
+          {
+            ascending:true
+          }
+        )
+        .order(
+          "lesson_number",
+          {
+            ascending:true
+          }
+        ),
+
+      15,
+
+      "Loading lessons"
+
+    );
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+  return result.data || [];
+
+}
+
+
+/* ============================================================
+   LESSONS FOR MODULE
+   ============================================================ */
+
+function lessonsForModule(
+  module,
+  lessons
+){
+
+  return lessons
+    .filter(
+      lesson => {
+
+        const sameModuleId =
+          lesson.module_id &&
+          String(
+            lesson.module_id
+          ) ===
+          String(
+            module.id
+          );
+
+        const sameModuleNumber =
+          lesson.module_number !== undefined &&
+          Number(
+            lesson.module_number
+          ) ===
+          Number(
+            module.module_number
+          );
+
+        return (
+          sameModuleId ||
+          sameModuleNumber
+        );
+
+      }
+    )
+    .sort(
+      (a,b) => {
+
+        return Number(
+          a.lesson_number || 0
+        ) -
+        Number(
+          b.lesson_number || 0
+        );
+
+      }
+    );
+
+}
+
+
+/* ============================================================
+   LESSON CONTENT
+   ============================================================ */
+
+function getLessonContent(
+  lesson
+){
+
+  return (
+    lesson.content ??
+    lesson.lesson_content ??
+    lesson.body ??
+    lesson.lesson_body ??
+    lesson.description ??
+    ""
+  );
+
+}
+
+
+/* ============================================================
+   BUILD STUDY
+   ============================================================ */
+
+async function buildStudy(
+  enrollment,
+  allLessons
+){
+
+  const course =
+    await getCourse(
+      enrollment.course_id
+    );
+
+  if(!course){
+
+    return {
+      enrollment,
+      course:null,
+      modules:[],
+      lessons:[]
+    };
+
+  }
+
+  const modules =
+    await getModules(
+      enrollment.course_id
+    );
+
+  const lessons =
+    (allLessons || [])
+      .filter(
+        lesson => {
+
+          return modules.some(
+            module => {
+
+              return (
+                (
+                  lesson.module_id &&
+                  String(
+                    lesson.module_id
+                  ) ===
+                  String(
+                    module.id
+                  )
+                )
+                ||
+                (
+                  lesson.module_number !== undefined &&
+                  Number(
+                    module.module_number
+                  ) ===
+                  Number(
+                    lesson.module_number
+                  )
+                )
+              );
+
+            }
+          );
+
+        }
+      );
+
+  return {
+    enrollment,
+    course,
+    modules,
+    lessons
+  };
+
+}
+
+
+/* ============================================================
+   RENDER STUDY
+   ============================================================ */
+
+function renderStudy(
+  study
+){
+
+  const course =
+    study.course;
+
+  const modules =
+    study.modules;
+
+  const lessons =
+    study.lessons;
+
+  if(!course){
+    return;
+  }
+
+  const courseName =
+    course.title ||
+    course.name ||
+    course.course_name ||
+    "Course";
+
+  const courseDescription =
+    course.description ||
+    "Your approved Funda Online Academy course.";
+
+  const coursePrice =
+    course.price ??
+    course.amount ??
+    course.course_price ??
+    null;
+
+  const duration =
+    course.duration ||
+    course.course_duration ||
+    course.duration_text ||
+    course.length ||
+    "";
+
+
+  let moduleHtml = "";
+
+
+  modules.forEach(
+    (module,index) => {
+
+      const moduleLessons =
+        lessonsForModule(
+          module,
+          lessons
+        );
+
+      const moduleDescription =
+        module.description ||
+        module.module_description ||
+        "Learning material for this module.";
+
+      let lessonHtml = "";
+
+
+      if(
+        moduleLessons.length === 0
+      ){
+
+        lessonHtml = `
+
+          <div class="empty-study">
+
+            <strong>
+              📖 Lessons are being prepared
+            </strong>
+
+            <p style="margin-top:8px">
+
+              Learning material for this module
+              will appear here.
+
+            </p>
+
+          </div>
+
+        `;
+
+      }else{
+
+        lessonHtml = `
+
+          <div class="lesson-list">
+
+            ${
+              moduleLessons
+                .map(
+                  lesson => {
+
+                    const lessonTitle =
+                      lesson.title ||
+                      lesson.lesson_title ||
+                      "Lesson";
+
+                    return `
+
+                      <div
+                        class="lesson-item">
+
+                        <div class="lesson-top">
+
+                          <span
+                            class="lesson-number">
+
+                            ${escapeHtml(
+                              lesson.lesson_number ||
+                              ""
+                            )}
+
+                          </span>
+
+
+                          <div
+                            class="lesson-main">
+
+                            <div
+                              class="lesson-title">
+
+                              ${escapeHtml(
+                                lessonTitle
+                              )}
+
+                            </div>
+
+
+                            <div
+                              class="lesson-description">
+
+                              Lesson
+                              ${escapeHtml(
+                                lesson.lesson_number ||
+                                ""
+                              )}
+                              in
+                              ${escapeHtml(
+                                module.module_name ||
+                                "Module"
+                              )}.
+
+                            </div>
+
+
+                            <div
+                              class="lesson-actions">
+
+                              <button
+                                type="button"
+                                class="lesson-open"
+                                data-lesson-id="${escapeHtml(
+                                  lesson.id
+                                )}"
+                                data-module-name="${escapeHtml(
+                                  module.module_name ||
+                                  "Module"
+                                )}">
+
+                                📖 Open Lesson
+
+                              </button>
+
+                              <button
+                                type="button"
+                                class="review-lesson"
+                                data-lesson-id="${escapeHtml(
+                                  lesson.id
+                                )}"
+                                data-module-name="${escapeHtml(
+                                  module.module_name ||
+                                  "Module"
+                                )}">
+
+                                🔄 Review Lesson
+
+                              </button>
+
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    `;
+
+                  }
+                )
+                .join("")
+            }
+
+          </div>
+
+        `;
+
+      }
+
+
+      moduleHtml += `
+
+        <div class="module-card">
+
+          <button
+            type="button"
+            class="module-header"
+            data-module-index="${index}">
+
+            <span class="module-left">
+
+              <span class="module-number">
+
+                ${escapeHtml(
+                  module.module_number
+                )}
+
+              </span>
+
+              <span class="module-name">
+
+                ${escapeHtml(
+                  module.module_name ||
+                  module.name ||
+                  "Module"
+                )}
+
+              </span>
+
+            </span>
+
+
+            <span class="module-icon">
+              +
+            </span>
+
+          </button>
+
+
+          <div
+            class="module-content"
+            data-module-content="${index}">
+
+            <p class="module-description">
+
+              ${escapeHtml(
+                moduleDescription
+              )}
+
+            </p>
+
+
+            <p
+              style="
+                margin-bottom:14px;
+                font-size:14px;
+                color:#68766f;
+                font-weight:700;
+              ">
+
+              📖
+              ${moduleLessons.length}
+              ${
+                moduleLessons.length === 1
+                  ? "lesson"
+                  : "lessons"
+              }
+
+            </p>
+
+
+            ${lessonHtml}
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+  );
+
+
+  if(modules.length === 0){
+
+    moduleHtml = `
+
+      <div class="empty-study">
+
+        <div style="font-size:42px">
+          📚
+        </div>
+
+        <h3 style="margin-top:10px">
+          Course modules are being prepared
+        </h3>
+
+        <p style="margin-top:8px">
+
+          Funda Online Academy will add the
+          learning modules for this course.
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+
+  const study =
+    document.createElement("div");
+
+  study.className =
+    "study-card";
+
+
+  study.innerHTML = `
+
+    <span class="funda-status approved">
+      Approved
+    </span>
+
+
+    <h3 class="study-title">
+
+      ${escapeHtml(
+        courseName
+      )}
+
+    </h3>
+
+
+    <p class="study-description">
+
+      ${escapeHtml(
+        courseDescription
+      )}
+
+    </p>
+
+
+    <div class="study-meta">
+
+      <span>
+        💰 ${money(coursePrice)}
+      </span>
+
+      <span>
+        ⏱️ ${
+          duration
+            ? escapeHtml(duration)
+            : "Duration to be confirmed"
+        }
+      </span>
+
+      <span>
+        📚 ${modules.length}
+        ${
+          modules.length === 1
+            ? "module"
+            : "modules"
+        }
+      </span>
+
+      <span>
+        📖 ${lessons.length}
+        ${
+          lessons.length === 1
+            ? "lesson"
+            : "lessons"
+        }
+      </span>
+
+    </div>
+
+
+    <div class="study-button">
+
+      <button
+        type="button"
+        class="btn green study-course-button">
+
+        📚 Study Course
+
+      </button>
+
+    </div>
+
+
+    <div class="modules-container">
+
+      <h3 class="modules-heading">
+        📖 Course Modules
+      </h3>
+
+      ${moduleHtml}
+
+    </div>
+
+
+    <div class="progress-box">
+
+      <div class="progress-label">
+
+        <span>
+          Course Progress
+        </span>
+
+        <span>
+          0%
+        </span>
+
+      </div>
+
+
+      <div class="progress-track">
+
+        <div
+          class="progress-bar"
+          style="width:0%">
+        </div>
+
+      </div>
+
+
+      <p
+        style="
+          margin-top:8px;
+          color:#68766f;
+          font-size:13px
+        ">
+
+        Your lesson progress will appear here
+        as lessons are completed.
+
+      </p>
+
+    </div>
+
+  `;
+
+
+  studyList.appendChild(
+    study
+  );
+
+}
+
+
+/* ============================================================
+   MODULE BUTTONS
+   ============================================================ */
+
+function setupModuleButtons(){
+
+  document
+    .querySelectorAll(
+      "[data-module-index]"
+    )
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            const index =
+              button.getAttribute(
+                "data-module-index"
+              );
+
+            const content =
+              document.querySelector(
+                `[data-module-content="${index}"]`
+              );
+
+            if(!content){
+              return;
+            }
+
+            const icon =
+              button.querySelector(
+                ".module-icon"
+              );
+
+            const open =
+              content.classList.contains(
+                "open"
+              );
+
+            if(open){
+
+              content.classList.remove(
+                "open"
+              );
+
+              if(icon){
+                icon.textContent = "+";
+              }
+
+            }else{
+
+              content.classList.add(
+                "open"
+              );
+
+              if(icon){
+                icon.textContent = "−";
+              }
+
+            }
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+/* ============================================================
+   OPEN LESSON
+   ============================================================ */
+
+async function openLesson(
+  lessonId,
+  moduleName
+){
+
+  if(!lessonId){
+    return;
+  }
+
+  lessonViewer.classList.add(
+    "show"
+  );
+
+  lessonViewer.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+  document.body.style.overflow =
+    "hidden";
+
+  lessonViewerContent.innerHTML = `
+
+    <div class="card">
+
+      <p class="loading">
+        Loading lesson content…
+      </p>
+
+    </div>
+
+  `;
+
+  lessonCompleteMessage.style.display =
+    "none";
+
+  completeLessonButton.disabled =
+    true;
+
+  completeLessonButton.textContent =
+    "✅ Mark Lesson Complete";
+
+
+  try{
+
+    const result =
+      await withTimeout(
+
+        db
+          .from("lessons")
+          .select("*")
+          .eq("id",lessonId)
+          .limit(1),
+
+        15,
+
+        "Loading lesson content"
+
+      );
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    if(
+      !result.data ||
+      result.data.length === 0
+    ){
+
+      throw new Error(
+        "The lesson could not be found."
+      );
+
+    }
+
+
+    const lesson =
+      result.data[0];
+
+    currentLesson =
+      lesson;
+
+
+    const title =
+      lesson.title ||
+      lesson.lesson_title ||
+      "Lesson";
+
+
+    lessonViewerTitle.textContent =
+      title;
+
+
+    lessonViewerModule.textContent =
+      moduleName || "Course Lesson";
+
+
+    lessonViewerContent.innerHTML =
+      safeLessonContent(
+        getLessonContent(
+          lesson
+        )
+      );
+
+
+    completeLessonButton.disabled =
+      false;
+
+
+    await checkLessonCompletion(
+      lesson.id
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "Lesson loading error:",
+      error
+    );
+
+
+    lessonViewerContent.innerHTML = `
+
+      <div class="dashboard-start-error">
+
+        <strong>
+          ⚠️ Lesson could not be opened
+        </strong>
+
+        <p style="margin-top:8px">
+
+          ${escapeHtml(
+            error.message ||
+            String(error)
+          )}
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* ============================================================
+   CLOSE LESSON
+   ============================================================ */
+
+function closeLesson(){
+
+  lessonViewer.classList.remove(
+    "show"
+  );
+
+  lessonViewer.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+  document.body.style.overflow =
+    "";
+
+  currentLesson =
+    null;
+
+}
+
+
+/* ============================================================
+   LESSON BUTTONS
+   ============================================================ */
+
+function setupLessonButtons(){
+
+  document
+    .querySelectorAll(
+      ".lesson-open, .review-lesson"
+    )
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            openLesson(
+
+              button.getAttribute(
+                "data-lesson-id"
+              ),
+
+              button.getAttribute(
+                "data-module-name"
+              )
+
+            );
+
+          }
+        );
+
+      }
+    );
+
+}
+
+
+/* ============================================================
+   LESSON PROGRESS CHECK
+   ============================================================ */
+
+async function checkLessonCompletion(
+  lessonId
+){
+
+  if(
+    !currentUser ||
+    !lessonId
+  ){
+
+    return;
+
+  }
+
+
+  try{
+
+    const result =
+      await db
+        .from("lesson_progress")
+        .select("*")
+        .eq(
+          "student_id",
+          currentUser.id
+        )
+        .eq(
+          "lesson_id",
+          lessonId
+        )
+        .limit(1);
+
+
+    if(result.error){
+
+      console.warn(
+        "Lesson progress check:",
+        result.error
+      );
+
+      return;
+
+    }
+
+
+    if(
+      result.data &&
+      result.data.length > 0 &&
+      result.data[0].completed
+    ){
+
+      lessonCompleteMessage.style.display =
+        "block";
+
+
+      lessonCompleteMessage.innerHTML = `
+
+        <strong>
+          ✅ Lesson completed
+        </strong>
+
+        Your progress has already been saved.
+
+      `;
+
+
+      completeLessonButton.textContent =
+        "✅ Lesson Completed";
+
+    }else{
+
+      lessonCompleteMessage.style.display =
+        "none";
+
+      completeLessonButton.textContent =
+        "✅ Mark Lesson Complete";
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Could not check lesson progress:",
+      error
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   LESSON PROGRESS SAVE
+   ============================================================ */
+
+async function completeCurrentLesson(){
+
+  if(
+    !currentUser ||
+    !currentLesson
+  ){
+
+    alert(
+      "Your student login could not be confirmed. Please log in again."
+    );
+
+    return;
+
+  }
+
+
+  completeLessonButton.disabled =
+    true;
+
+  completeLessonButton.textContent =
+    "Saving…";
+
+
+  try{
+
+    const progressData = {
+
+      student_id:
+        currentUser.id,
+
+      lesson_id:
+        currentLesson.id,
+
+      completed:
+        true,
+
+      completed_at:
+        new Date().toISOString(),
+
+      updated_at:
+        new Date().toISOString()
+
+    };
+
+
+    const result =
+      await db
+        .from("lesson_progress")
+        .upsert(
+          progressData,
+          {
+            onConflict:
+              "student_id,lesson_id"
+          }
+        );
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    lessonCompleteMessage.style.display =
+      "block";
+
+
+    lessonCompleteMessage.innerHTML = `
+
+      <strong>
+        ✅ Lesson completed successfully.
+      </strong>
+
+      Your progress has been saved to your
+      Funda Online Academy student account.
+
+    `;
+
+
+    completeLessonButton.textContent =
+      "✅ Lesson Completed";
+
+
+    completeLessonButton.disabled =
+      true;
+
+
+  }catch(error){
+
+    console.error(
+      "Lesson completion error:",
+      error
+    );
+
+
+    completeLessonButton.disabled =
+      false;
+
+    completeLessonButton.textContent =
+      "✅ Mark Lesson Complete";
+
+
+    alert(
+
+      "The lesson was opened successfully, but progress could not be saved yet.\n\n" +
+
+      (
+        error.message ||
+        String(error)
+      )
+
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   LOAD MY STUDIES
+   ============================================================ */
+
+async function loadMyStudies(
+  user
+){
+
+  if(!studyList){
+    return;
+  }
+
+
+  setStatus(
+    "Loading your student profile…"
+  );
+
+
+  studyList.innerHTML = `
+
+    <div class="card">
+
+      <p class="loading">
+        Checking your student profile…
+      </p>
+
+    </div>
+
+  `;
+
+
+  const student =
+    await getStudent(
+      user.id
+    );
+
+
+  if(!student){
+
+    studyList.innerHTML = `
+
+      <div class="empty-study">
+
+        <div style="font-size:48px">
+          👤
+        </div>
+
+        <h3 style="margin-top:10px">
+          Student profile not found
+        </h3>
+
+        <p style="margin-top:8px;line-height:1.6">
+
+          Your login is working, but there is no
+          student record connected to this account.
+
+        </p>
+
+      </div>
+
+    `;
+
+
+    setStatus(
+      "Login connected, but student profile was not found."
+    );
+
+
+    return;
+
+  }
+
+
+  currentStudent =
+    student;
+
+
+  const enrollments =
+    await getApprovedEnrollments(
+      student.id
+    );
+
+
+  if(
+    enrollments.length === 0
+  ){
+
+    studyList.innerHTML = `
+
+      <div class="empty-study">
+
+        <div style="font-size:48px">
+          📚
+        </div>
+
+        <h3 style="margin-top:10px">
+          No approved courses yet
+        </h3>
+
+        <p style="margin-top:8px;line-height:1.6">
+
+          Your student account is working correctly.
+
+          Once Funda Online Academy approves your
+          enrolment, your course will appear here.
+
+        </p>
+
+      </div>
+
+    `;
+
+
+    setStatus(
+      "Student account connected successfully."
+    );
+
+
+    return;
+
+  }
+
+
+  studyList.innerHTML = "";
+
+
+  let allLessons = [];
+
+
+  try{
+
+    allLessons =
+      await getLessons();
+
+  }catch(error){
+
+    console.warn(
+      "Lessons could not be loaded:",
+      error
+    );
+
+    allLessons = [];
+
+  }
+
+
+  let displayedCourses =
+    0;
+
+
+  for(
+    const enrollment of enrollments
+  ){
+
+    try{
+
+      const study =
+        await buildStudy(
+          enrollment,
+          allLessons
+        );
+
+
+      if(
+        study &&
+        study.course
+      ){
+
+        renderStudy(
+          study
+        );
+
+        displayedCourses++;
+
+      }
+
+    }catch(error){
+
+      console.error(
+        "Course error:",
+        error
+      );
+
+
+      const errorCard =
+        document.createElement(
+          "div"
+        );
+
+
+      errorCard.className =
+        "error-study";
+
+
+      errorCard.innerHTML = `
+
+        <strong>
+          ⚠️ One course could not be loaded
+        </strong>
+
+        <p style="margin-top:8px">
+
+          Course ID:
+          ${escapeHtml(
+            enrollment.course_id
+          )}
+
+        </p>
+
+        <p style="margin-top:8px;font-size:13px">
+
+          ${escapeHtml(
+            error.message
+          )}
+
+        </p>
+
+      `;
+
+
+      studyList.appendChild(
+        errorCard
+      );
+
+    }
+
+  }
+
+
+  if(
+    displayedCourses === 0 &&
+    studyList.children.length === 0
+  ){
+
+    studyList.innerHTML = `
+
+      <div class="error-study">
+
+        <strong>
+          ⚠️ Approved enrolment found,
+          but the course could not be displayed.
+        </strong>
+
+        <p style="margin-top:8px">
+
+          The student account and enrolment are connected,
+          but the course information needs to be checked.
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+
+  setupModuleButtons();
+  setupLessonButtons();
+
+
+  setStatus(
+    "Student learning system connected."
+  );
+
+}
+
+
+/* ============================================================
+   STUDENT HEADER
+   ============================================================ */
+
+async function loadStudentHeader(
+  user
+){
+
+  if(userEmail){
+
+    userEmail.textContent =
+      user.email || "";
+
+  }
+
+
+  const student =
+    currentStudent ||
+    await getStudent(
+      user.id
+    );
+
+
+  if(
+    student &&
+    userName
+  ){
+
+    userName.textContent =
+      student.full_name ||
+      student.first_name ||
+      "Student";
+
+  }else if(userName){
+
+    userName.textContent =
+      user.user_metadata?.full_name ||
+      "Student";
+
+  }
+
+}
+
+
+/* ============================================================
+   AVAILABLE COURSES
+   ============================================================ */
+
+async function loadAvailableCourses(){
+
+  if(!availableCourses){
+    return;
+  }
+
+
+  availableCourses.innerHTML = `
+
+    <div class="card">
+
+      <p class="loading">
+        Loading available courses…
+      </p>
+
+    </div>
+
+  `;
+
+
+  try{
+
+    /*
+     * IMPORTANT:
+     * No active=true filter.
+     * This prevents courses disappearing because
+     * their active field is missing or false.
+     */
+
+    const result =
+      await withTimeout(
+
+        db
+          .from("courses")
+          .select("*")
+          .order(
+            "title",
+            {
+              ascending:true
+            }
+          ),
+
+        15,
+
+        "Loading available courses"
+
+      );
+
+
+    if(result.error){
+
+      throw result.error;
+
+    }
+
+
+    const data =
+      result.data || [];
+
+
+    if(data.length === 0){
+
+      availableCourses.innerHTML = `
+
+        <div class="empty-study">
+
+          <div style="font-size:45px">
+            📚
+          </div>
+
+          <h3 style="margin-top:10px">
+            No courses found
+          </h3>
+
+          <p style="margin-top:8px;line-height:1.6">
+
+            Courses added by Funda Online Academy
+            will appear here.
+
+          </p>
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    availableCourses.innerHTML =
+      data.map(
+        course => {
+
+          const name =
+            course.title ||
+            course.name ||
+            course.course_name ||
+            "Course";
+
+
+          const description =
+            course.description ||
+            course.course_description ||
+            "Funda Online Academy course.";
+
+
+          const price =
+            course.price ??
+            course.amount ??
+            course.course_price ??
+            null;
+
+
+          const duration =
+            course.duration ||
+            course.course_duration ||
+            course.duration_text ||
+            course.length ||
+            "";
+
+
+          return `
+
+            <div class="card available-course-card">
+
+              <div class="available-course-top">
+
+                <span class="available-badge">
+
+                  ✓ Available
+
+                </span>
+
+              </div>
+
+
+              <h3>
+
+                ${escapeHtml(name)}
+
+              </h3>
+
+
+              <p
+                style="
+                  margin-top:8px;
+                  line-height:1.6;
+                  color:#53625b;
+                "
+              >
+
+                ${escapeHtml(description)}
+
+              </p>
+
+
+              <div class="course-information">
+
+                <span>
+
+                  💰 ${money(price)}
+
+                </span>
+
+
+                <span>
+
+                  ⏱️ ${
+                    duration
+                      ? escapeHtml(duration)
+                      : "Duration to be confirmed"
+                  }
+
+                </span>
+
+              </div>
+
+
+              <button
+                type="button"
+                class="btn green available-course-button"
+                disabled
+              >
+
+                ✓ Available
+
+              </button>
+
+            </div>
+
+          `;
+
+        }
+      )
+      .join("");
+
+
+  }catch(error){
+
+    console.error(
+      "Available courses error:",
+      error
+    );
+
+
+    availableCourses.innerHTML = `
+
+      <div class="error-study">
+
+        <strong>
+          ⚠️ Courses could not be loaded
+        </strong>
+
+        <p style="margin-top:8px">
+
+          ${escapeHtml(
+            error.message ||
+            String(error)
+          )}
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+}
+
+
+/* ============================================================
+   ENROLMENTS
+   ============================================================ */
+
+async function loadEnrolments(){
+
+  if(
+    !enrolmentsContainer ||
+    !currentStudent
+  ){
+
+    return;
+
+  }
+
+
+  const enrollments =
+    await getApprovedEnrollments(
+      currentStudent.id
+    );
+
+
+  if(enrollments.length === 0){
+
+    enrolmentsContainer.innerHTML = `
+
+      <div class="empty-study">
+
+        <p>
+          You do not have approved enrolments yet.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  const cards = [];
+
+
+  for(
+    const enrollment of enrollments
+  ){
+
+    try{
+
+      const course =
+        await getCourse(
+          enrollment.course_id
+        );
+
+
+      const name =
+        course?.title ||
+        course?.name ||
+        course?.course_name ||
+        "Course";
+
+
+      const duration =
+        course?.duration ||
+        course?.course_duration ||
+        course?.duration_text ||
+        course?.length ||
+        "";
+
+
+      cards.push(`
+
+        <div class="card">
+
+          <span class="funda-status approved">
+            Approved
+          </span>
+
+          <h3>
+            ${escapeHtml(name)}
+          </h3>
+
+          <p style="margin-top:8px">
+
+            Your enrolment has been approved.
+
+          </p>
+
+          ${
+            duration
+              ? `
+                <p
+                  style="
+                    margin-top:12px;
+                    font-weight:700;
+                    color:#0c8f55;
+                  "
+                >
+
+                  ⏱️ Duration:
+                  ${escapeHtml(duration)}
+
+                </p>
+              `
+              : ""
+          }
+
+        </div>
+
+      `);
+
+    }catch(error){
+
+      console.warn(
+        "Enrolment course error:",
+        error
+      );
+
+    }
+
+  }
+
+
+  if(cards.length){
+
+    enrolmentsContainer.innerHTML =
+      cards.join("");
+
+  }
+
+}
+
+
+/* ============================================================
+   POLICY
+   ============================================================ */
+
+const policyCheckbox =
+  document.getElementById(
+    "policy-checkbox"
+  );
+
+
+const acceptPolicyButton =
+  document.getElementById(
+    "accept-policy-btn"
+  );
+
+
+const policyAccepted =
+  document.getElementById(
+    "policy-accepted"
+  );
+
+
+async function loadPolicyStatus(
+  user
+){
+
+  const key =
+    "foa_policy_accepted_" +
+    user.id;
+
+
+  if(
+    localStorage.getItem(key) === "true"
+  ){
+
+    if(policyCheckbox){
+
+      policyCheckbox.checked =
+        true;
+
+      policyCheckbox.disabled =
+        true;
+
+    }
+
+
+    if(acceptPolicyButton){
+
+      acceptPolicyButton.disabled =
+        true;
+
+    }
+
+
+    if(policyAccepted){
+
+      policyAccepted.style.display =
+        "block";
+
+
+      policyAccepted.innerHTML = `
+
+        <strong>
+          ✅ Declaration accepted
+        </strong>
+
+        Your policy declaration has already
+        been accepted on this device.
+
+      `;
+
+    }
+
+  }
+
+}
+
+
+if(acceptPolicyButton){
+
+  acceptPolicyButton.addEventListener(
+    "click",
+    async () => {
+
+      if(
+        !policyCheckbox ||
+        !policyCheckbox.checked
+      ){
+
+        alert(
+          "Please tick the declaration checkbox before continuing."
+        );
+
+        return;
+
+      }
+
+
+      const user =
+        await getCurrentUser();
+
+
+      if(!user){
+        return;
+      }
+
+
+      localStorage.setItem(
+        "foa_policy_accepted_" +
+        user.id,
+        "true"
+      );
+
+
+      if(policyAccepted){
+
+        policyAccepted.style.display =
+          "block";
+
+
+        policyAccepted.innerHTML = `
+
+          <strong>
+            ✅ Declaration accepted
+          </strong>
+
+          Thank you. Your acceptance has
+          been recorded on this device.
+
+        `;
+
+      }
+
+
+      policyCheckbox.disabled =
+        true;
+
+      acceptPolicyButton.disabled =
+        true;
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   LESSON VIEWER EVENTS
+   ============================================================ */
+
+if(lessonClose){
+
+  lessonClose.addEventListener(
+    "click",
+    closeLesson
+  );
+
+}
+
+
+if(lessonViewer){
+
+  lessonViewer.addEventListener(
+    "click",
+    event => {
+
+      if(
+        event.target === lessonViewer
+      ){
+
+        closeLesson();
+
+      }
+
+    }
+  );
+
+}
+
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key === "Escape" &&
+      lessonViewer.classList.contains(
+        "show"
+      )
+    ){
+
+      closeLesson();
+
+    }
+
+  }
+);
+
+
+if(completeLessonButton){
+
+  completeLessonButton.addEventListener(
+    "click",
+    completeCurrentLesson
+  );
+
+}
+
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+
+if(logoutButton){
+
+  logoutButton.addEventListener(
+    "click",
+    async () => {
+
+      try{
+
+        if(db){
+
+          await db.auth.signOut();
+
+        }
+
+        window.location.href =
+          "login.html";
+
+      }catch(error){
+
+        console.error(
+          error
+        );
+
+        alert(
+          "Unable to log out. Please try again."
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+/* ============================================================
+   START DASHBOARD
+   ============================================================ */
+
+async function initDashboard(){
+
+  try{
+
+    setStatus(
+      "Connecting to Funda Online Academy…"
+    );
+
+
+    db =
+      createDatabase();
+
+
+    if(!db){
+
+      throw new Error(
+        "Supabase could not be connected. Check supabase-config.js."
+      );
+
+    }
+
+
+    setStatus(
+      "Checking student login…"
+    );
+
+
+    currentUser =
+      await getCurrentUser();
+
+
+    if(!currentUser){
+      return;
+    }
+
+
+    console.log(
+      "Authenticated student user ID:",
+      currentUser.id
+    );
+
+
+    try{
+
+      currentStudent =
+        await getStudent(
+          currentUser.id
+        );
+
+    }catch(error){
+
+      console.warn(
+        "Student profile error:",
+        error
+      );
+
+    }
+
+
+    try{
+
+      await loadStudentHeader(
+        currentUser
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Student header error:",
+        error
+      );
+
+    }
+
+
+    try{
+
+      await loadPolicyStatus(
+        currentUser
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Policy error:",
+        error
+      );
+
+    }
+
+
+    await loadMyStudies(
+      currentUser
+    );
+
+
+    try{
+
+      await loadEnrolments();
+
+    }catch(error){
+
+      console.warn(
+        "Enrolments could not load:",
+        error
+      );
+
+    }
+
+
+    try{
+
+      await loadAvailableCourses();
+
+    }catch(error){
+
+      console.warn(
+        "Available courses error:",
+        error
+      );
+
+    }
+
+
+    setStatus(
+      "Student learning system ready."
+    );
+
+
+  }catch(error){
+
+    showStudyError(
+      error
+    );
+
+
+    setStatus(
+      "Student learning system could not start."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   START
+   ============================================================ */
+
+initDashboard();
+
+
+})();
+
+</script>
 
 </body>
-
-  </html>
+        </html>
