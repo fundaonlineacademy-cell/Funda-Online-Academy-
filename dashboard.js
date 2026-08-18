@@ -1,18 +1,31 @@
 // ============================================================
 // FUNDA ONLINE ACADEMY
 // STUDENT DASHBOARD
-// STUDENT LEARNING + LESSON PROGRESS SYSTEM
+// COMPLETE STUDENT LEARNING SYSTEM
 //
-// COMPLETE REPLACEMENT dashboard.js
+// REPLACE THE ENTIRE dashboard.js WITH THIS FILE
 //
 // IMPORTANT:
-// Replace the ENTIRE existing dashboard.js with this file.
-// Do NOT add this code underneath the old dashboard.js.
+// - This version has request timeouts.
+// - It will NOT remain stuck on "Loading" forever.
+// - It does NOT assume courses have an "active" column.
+// - It shows the exact database operation that fails.
+// - It supports:
+//     Student profile
+//     Enrolments
+//     Approved courses
+//     Course modules
+//     Lessons
+//     Lesson content
+//     Lesson progress
+//     Payments
+//     Available courses
 // ============================================================
 
 console.log("==========================================");
 console.log("FUNDA ONLINE ACADEMY");
-console.log("STUDENT DASHBOARD STARTING");
+console.log("STUDENT DASHBOARD");
+console.log("VERSION: TIMEOUT + DIAGNOSTIC");
 console.log("==========================================");
 
 
@@ -21,15 +34,16 @@ console.log("==========================================");
 // ============================================================
 
 let db = null;
+
 let currentUser = null;
+
 let currentStudent = null;
 
-window.fundaLessons = {};
-window.fundaLessonProgress = [];
+let currentProgress = [];
 
 
 // ============================================================
-// DASHBOARD REQUEST TIMEOUT
+// REQUEST TIMEOUT
 // ============================================================
 
 const REQUEST_TIMEOUT = 10000;
@@ -40,17 +54,21 @@ const REQUEST_TIMEOUT = 10000;
 // ============================================================
 
 let messageEl = null;
+
 let studyListEl = null;
+
 let paymentListEl = null;
+
 let enrolmentsEl = null;
+
 let availableCoursesEl = null;
 
 
 // ============================================================
-// GET ELEMENTS
+// INITIALISE ELEMENT REFERENCES
 // ============================================================
 
-function getDashboardElements() {
+function getElements() {
 
   messageEl =
     document.getElementById("message");
@@ -66,11 +84,12 @@ function getDashboardElements() {
 
   availableCoursesEl =
     document.getElementById("available-courses");
+
 }
 
 
 // ============================================================
-// ESCAPE HTML
+// HTML ESCAPE
 // ============================================================
 
 function escapeHtml(value) {
@@ -117,7 +136,7 @@ function setStatus(
 
 
 // ============================================================
-// LOADING MESSAGE
+// SET STUDY LOADING
 // ============================================================
 
 function setStudyLoading(text) {
@@ -141,7 +160,7 @@ function setStudyLoading(text) {
 
 
 // ============================================================
-// GLOBAL ERROR
+// SHOW ERROR
 // ============================================================
 
 function showGlobalError(error) {
@@ -151,53 +170,50 @@ function showGlobalError(error) {
       ? error.message
       : String(error);
 
+
   console.error(
-    "STUDENT SYSTEM ERROR:",
+    "FUNDA DASHBOARD ERROR:",
     error
   );
 
+
   setStatus(
-    "Student system error: " + text,
+    "Dashboard error: " + text,
     false
   );
+
 
   if (studyListEl) {
 
     studyListEl.innerHTML = `
       <div style="
-        padding:20px;
+        padding:22px;
         border:2px solid #d33;
-        border-radius:15px;
+        border-radius:16px;
         background:#fff4f4;
       ">
 
         <strong>
-          The student dashboard could not load.
+          Student dashboard could not finish loading.
         </strong>
 
         <p style="
-          margin-top:10px;
+          margin-top:12px;
           color:#555;
           line-height:1.6;
         ">
           ${escapeHtml(text)}
         </p>
 
-        <button
-          type="button"
-          onclick="location.reload()"
-          style="
-            margin-top:15px;
-            padding:12px 18px;
-            border:0;
-            border-radius:10px;
-            background:#222;
-            color:#fff;
-            cursor:pointer;
-          "
-        >
-          Reload Dashboard
-        </button>
+        <p style="
+          margin-top:12px;
+          color:#777;
+          font-size:14px;
+        ">
+          Please refresh the page. If this message
+          remains, send me the exact message shown
+          above.
+        </p>
 
       </div>
     `;
@@ -206,17 +222,17 @@ function showGlobalError(error) {
 
 
 // ============================================================
-// CONNECT SUPABASE
+// DATABASE CONNECTION
 // ============================================================
 
 function connectDatabase() {
 
+  console.log(
+    "STEP 1: Connecting to Supabase..."
+  );
+
+
   try {
-
-    console.log(
-      "Connecting to Supabase..."
-    );
-
 
     if (
       typeof supabase ===
@@ -257,7 +273,7 @@ function connectDatabase() {
 
 
     console.log(
-      "Supabase client created successfully."
+      "STEP 1 COMPLETE: Supabase client created."
     );
 
 
@@ -266,13 +282,11 @@ function connectDatabase() {
   } catch (error) {
 
     console.error(
-      "Supabase connection failed:",
+      "SUPABASE CONNECTION ERROR:",
       error
     );
 
-    showGlobalError(
-      error
-    );
+    showGlobalError(error);
 
     return false;
   }
@@ -280,40 +294,30 @@ function connectDatabase() {
 
 
 // ============================================================
-// REQUEST WITH TIMEOUT
-// ============================================================
-//
-// This prevents the dashboard from sitting on
-// "Loading..." forever.
-//
-// Supabase queries themselves cannot always be cancelled
-// by this wrapper, but the dashboard will stop waiting
-// after the timeout and display the problem.
+// RUN WITH TIMEOUT
 // ============================================================
 
 async function withTimeout(
   promise,
-  label = "Database request"
+  operation
 ) {
 
-  let timeoutId;
+  let timer = null;
 
 
   const timeoutPromise =
     new Promise(
       (_, reject) => {
 
-        timeoutId =
+        timer =
           setTimeout(
             function() {
 
               reject(
                 new Error(
-                  label +
+                  operation +
                   " timed out after " +
-                  (
-                    REQUEST_TIMEOUT / 1000
-                  ) +
+                  REQUEST_TIMEOUT +
                   " seconds."
                 )
               );
@@ -327,28 +331,30 @@ async function withTimeout(
 
   try {
 
-    return await Promise.race([
-      promise,
-      timeoutPromise
-    ]);
+    return await Promise.race(
+      [
+        promise,
+        timeoutPromise
+      ]
+    );
 
   } finally {
 
-    clearTimeout(
-      timeoutId
-    );
+    if (timer) {
+      clearTimeout(timer);
+    }
   }
 }
 
 
 // ============================================================
-// CURRENT AUTH USER
+// GET AUTH USER
 // ============================================================
 
 async function getCurrentUser() {
 
   console.log(
-    "Checking logged-in student..."
+    "STEP 2: Checking logged-in student..."
   );
 
 
@@ -360,7 +366,11 @@ async function getCurrentUser() {
 
 
   if (result.error) {
-    throw result.error;
+
+    throw new Error(
+      "Login check failed: " +
+      result.error.message
+    );
   }
 
 
@@ -380,14 +390,8 @@ async function getCurrentUser() {
 
 
   console.log(
-    "Logged-in user:",
+    "STEP 2 COMPLETE: Logged-in user:",
     currentUser.id
-  );
-
-
-  console.log(
-    "Student email:",
-    currentUser.email
   );
 
 
@@ -396,19 +400,18 @@ async function getCurrentUser() {
 
 
 // ============================================================
-// STUDENT PROFILE
+// GET STUDENT PROFILE
 // ============================================================
 
 async function getStudent(user) {
 
   console.log(
-    "Loading student profile..."
+    "STEP 3: Loading student profile..."
   );
 
 
   const result =
     await withTimeout(
-
       db
         .from("students")
         .select("*")
@@ -423,14 +426,18 @@ async function getStudent(user) {
 
 
   if (result.error) {
-    throw result.error;
+
+    throw new Error(
+      "Student profile query failed: " +
+      result.error.message
+    );
   }
 
 
   if (!result.data) {
 
     throw new Error(
-      "Your student profile could not be found."
+      "No student profile was found for this account."
     );
   }
 
@@ -440,7 +447,7 @@ async function getStudent(user) {
 
 
   console.log(
-    "Student profile loaded:",
+    "STEP 3 COMPLETE: Student:",
     currentStudent
   );
 
@@ -491,18 +498,15 @@ function displayStudent(
 // GET ENROLMENTS
 // ============================================================
 
-async function getEnrollments(
-  student
-) {
+async function getEnrollments(student) {
 
   console.log(
-    "Loading student enrolments..."
+    "STEP 4: Loading enrolments..."
   );
 
 
   const result =
     await withTimeout(
-
       db
         .from("enrollments")
         .select(`
@@ -528,7 +532,11 @@ async function getEnrollments(
 
 
   if (result.error) {
-    throw result.error;
+
+    throw new Error(
+      "Enrolments query failed: " +
+      result.error.message
+    );
   }
 
 
@@ -537,7 +545,7 @@ async function getEnrollments(
 
 
   console.log(
-    "Enrolments loaded:",
+    "STEP 4 COMPLETE: Enrolments:",
     rows
   );
 
@@ -559,46 +567,87 @@ async function getCourse(
   }
 
 
-  try {
+  const result =
+    await withTimeout(
+      db
+        .from("courses")
+        .select("*")
+        .eq(
+          "id",
+          courseId
+        )
+        .maybeSingle(),
 
-    const result =
-      await withTimeout(
-
-        db
-          .from("courses")
-          .select("*")
-          .eq(
-            "id",
-            courseId
-          )
-          .maybeSingle(),
-
-        "Loading course"
-      );
+      "Loading course"
+    );
 
 
-    if (result.error) {
-
-      console.error(
-        "Course error:",
-        result.error
-      );
-
-      return null;
-    }
-
-
-    return result.data || null;
-
-  } catch (error) {
+  if (result.error) {
 
     console.error(
-      "Course timeout/error:",
-      error
+      "COURSE ERROR:",
+      result.error
     );
 
     return null;
   }
+
+
+  return result.data;
+}
+
+
+// ============================================================
+// GET ALL COURSES
+// ============================================================
+
+async function getAllCourses() {
+
+  console.log(
+    "STEP 5: Loading courses..."
+  );
+
+
+  // IMPORTANT:
+  // We intentionally do NOT use:
+  //
+  // .eq("active", true)
+  //
+  // because we do not want the dashboard
+  // to fail if the courses table does not
+  // have an active column.
+
+
+  const result =
+    await withTimeout(
+      db
+        .from("courses")
+        .select("*"),
+
+      "Loading courses"
+    );
+
+
+  if (result.error) {
+
+    throw new Error(
+      "Courses query failed: " +
+      result.error.message
+    );
+  }
+
+
+  const courses =
+    result.data || [];
+
+
+  console.log(
+    "STEP 5 COMPLETE: Courses:",
+    courses
+  );
+
+
+  return courses;
 }
 
 
@@ -618,17 +667,9 @@ async function getModules(
 
   const result =
     await withTimeout(
-
       db
         .from("course_modules")
-        .select(`
-          id,
-          course_id,
-          module_number,
-          module_name,
-          description,
-          learning_outcomes
-        `)
+        .select("*")
         .eq(
           "course_id",
           courseId
@@ -645,7 +686,11 @@ async function getModules(
 
 
   if (result.error) {
-    throw result.error;
+
+    throw new Error(
+      "Course modules query failed: " +
+      result.error.message
+    );
   }
 
 
@@ -655,13 +700,6 @@ async function getModules(
 
 // ============================================================
 // GET LESSONS
-// ============================================================
-//
-// LESSONS ARE CONNECTED TO MODULES USING:
-//
-// lessons.module_id
-//
-// This is important.
 // ============================================================
 
 async function getLessons(
@@ -676,7 +714,6 @@ async function getLessons(
 
   const result =
     await withTimeout(
-
       db
         .from("lessons")
         .select(`
@@ -708,7 +745,11 @@ async function getLessons(
 
 
   if (result.error) {
-    throw result.error;
+
+    throw new Error(
+      "Lessons query failed: " +
+      result.error.message
+    );
   }
 
 
@@ -719,38 +760,24 @@ async function getLessons(
 // ============================================================
 // GET LESSON PROGRESS
 // ============================================================
-//
-// IMPORTANT:
-//
-// lesson_progress.student_id uses auth.uid().
-//
-// Therefore we use:
-//
-// currentUser.id
-//
-// NOT:
-//
-// currentStudent.id
-// ============================================================
 
 async function getLessonProgress() {
+
+  console.log(
+    "STEP 6: Loading lesson progress..."
+  );
+
 
   if (!currentUser) {
 
     throw new Error(
-      "Student authentication is missing."
+      "Cannot load lesson progress because the student is not logged in."
     );
   }
 
 
-  console.log(
-    "Loading lesson progress..."
-  );
-
-
   const result =
     await withTimeout(
-
       db
         .from("lesson_progress")
         .select(`
@@ -770,58 +797,57 @@ async function getLessonProgress() {
 
 
   if (result.error) {
-    throw result.error;
+
+    throw new Error(
+      "Lesson progress query failed: " +
+      result.error.message
+    );
   }
 
 
-  const rows =
+  currentProgress =
     result.data || [];
 
 
   console.log(
-    "Lesson progress loaded:",
-    rows
+    "STEP 6 COMPLETE: Lesson progress:",
+    currentProgress
   );
 
 
-  return rows;
+  return currentProgress;
 }
 
 
 // ============================================================
-// CHECK LESSON COMPLETION
+// CHECK COMPLETION
 // ============================================================
 
 function isLessonCompleted(
-  lessonId,
-  progress
+  lessonId
 ) {
 
-  return progress.some(
-    row =>
-      String(row.lesson_id) ===
-      String(lessonId) &&
-      row.completed === true
+  return currentProgress.some(
+    function(row) {
+
+      return (
+        row.lesson_id ===
+        lessonId &&
+        row.completed === true
+      );
+
+    }
   );
 }
 
 
 // ============================================================
-// SAVE LESSON PROGRESS
+// SAVE PROGRESS
 // ============================================================
 
 async function saveLessonProgress(
-  lessonId,
-  completed = true
+  lessonId
 ) {
-
-  if (!db) {
-
-    throw new Error(
-      "Database is not connected."
-    );
-  }
-
 
   if (!currentUser) {
 
@@ -831,16 +857,9 @@ async function saveLessonProgress(
   }
 
 
-  if (!lessonId) {
-
-    throw new Error(
-      "Lesson ID is missing."
-    );
-  }
-
-
   console.log(
-    "Saving lesson progress..."
+    "Saving progress for lesson:",
+    lessonId
   );
 
 
@@ -853,18 +872,16 @@ async function saveLessonProgress(
       lessonId,
 
     completed:
-      completed,
+      true,
 
     completed_at:
-      completed
-        ? new Date().toISOString()
-        : null
+      new Date().toISOString()
+
   };
 
 
   const result =
     await withTimeout(
-
       db
         .from("lesson_progress")
         .upsert(
@@ -883,17 +900,15 @@ async function saveLessonProgress(
 
   if (result.error) {
 
-    console.error(
-      "PROGRESS SAVE ERROR:",
-      result.error
+    throw new Error(
+      "Could not save lesson progress: " +
+      result.error.message
     );
-
-    throw result.error;
   }
 
 
   console.log(
-    "Lesson progress saved:",
+    "Progress saved:",
     result.data
   );
 
@@ -929,37 +944,12 @@ window.markFundaLessonComplete =
       );
 
 
-      const saved =
-        await saveLessonProgress(
-          lessonId,
-          true
-        );
+      await saveLessonProgress(
+        lessonId
+      );
 
 
-      // Update local progress.
-
-      const existingIndex =
-        window.fundaLessonProgress.findIndex(
-          row =>
-            String(row.lesson_id) ===
-            String(lessonId)
-        );
-
-
-      if (
-        existingIndex >= 0
-      ) {
-
-        window.fundaLessonProgress[
-          existingIndex
-        ] = saved;
-
-      } else {
-
-        window.fundaLessonProgress.push(
-          saved
-        );
-      }
+      await getLessonProgress();
 
 
       if (button) {
@@ -972,25 +962,6 @@ window.markFundaLessonComplete =
 
         button.style.color =
           "#fff";
-
-        button.disabled =
-          true;
-      }
-
-
-      const lessonElement =
-        document.querySelector(
-          `[data-lesson-id="${lessonId}"]`
-        );
-
-
-      if (lessonElement) {
-
-        lessonElement.style.border =
-          "2px solid #218838";
-
-        lessonElement.style.background =
-          "#f0fff3";
       }
 
 
@@ -1003,7 +974,7 @@ window.markFundaLessonComplete =
     } catch (error) {
 
       console.error(
-        "Lesson progress save failed:",
+        "LESSON PROGRESS ERROR:",
         error
       );
 
@@ -1019,11 +990,8 @@ window.markFundaLessonComplete =
 
 
       setStatus(
-        "Progress could not be saved: " +
-        (
-          error.message ||
-          error
-        ),
+        error.message ||
+        "Could not save progress.",
         false
       );
     }
@@ -1031,7 +999,7 @@ window.markFundaLessonComplete =
 
 
 // ============================================================
-// OPEN LESSON
+// LESSON MODAL
 // ============================================================
 
 window.openFundaLesson =
@@ -1039,17 +1007,14 @@ window.openFundaLesson =
 
     const lesson =
       window.fundaLessons
-        ? window.fundaLessons[
-            lessonId
-          ]
+        ? window.fundaLessons[lessonId]
         : null;
 
 
     if (!lesson) {
 
-      console.error(
-        "Lesson not found:",
-        lessonId
+      alert(
+        "Lesson information could not be found."
       );
 
       return;
@@ -1090,15 +1055,9 @@ window.openFundaLesson =
     }
 
 
-    const progress =
-      window.fundaLessonProgress ||
-      [];
-
-
     const completed =
       isLessonCompleted(
-        lesson.id,
-        progress
+        lesson.id
       );
 
 
@@ -1110,7 +1069,7 @@ window.openFundaLesson =
         background:#fff;
         border-radius:20px;
         overflow:hidden;
-        box-shadow:0 10px 40px rgba(0,0,0,0.25);
+        box-shadow:0 10px 40px rgba(0,0,0,.3);
       ">
 
         <div style="
@@ -1127,11 +1086,11 @@ window.openFundaLesson =
 
             <div style="
               font-size:13px;
-              font-weight:bold;
               color:#299b22;
-              text-transform:uppercase;
+              font-weight:bold;
             ">
-              Lesson ${escapeHtml(
+              LESSON
+              ${escapeHtml(
                 lesson.lesson_number
               )}
             </div>
@@ -1152,12 +1111,12 @@ window.openFundaLesson =
             type="button"
             onclick="closeFundaLesson()"
             style="
-              border:0;
-              background:#222;
-              color:#fff;
-              border-radius:50%;
               width:42px;
               height:42px;
+              border:0;
+              border-radius:50%;
+              background:#222;
+              color:#fff;
               font-size:20px;
               cursor:pointer;
             "
@@ -1172,13 +1131,14 @@ window.openFundaLesson =
           padding:25px;
         ">
 
+
           ${
             lesson.content
               ? `
                 <div style="
                   line-height:1.8;
-                  color:#333;
                   white-space:pre-wrap;
+                  color:#333;
                 ">
                   ${escapeHtml(
                     lesson.content
@@ -1393,9 +1353,7 @@ window.openFundaLesson =
 
             ${
               completed
-
                 ? `
-
                   <button
                     type="button"
                     disabled
@@ -1412,11 +1370,8 @@ window.openFundaLesson =
                   >
                     ✓ Lesson Completed
                   </button>
-
                 `
-
                 : `
-
                   <button
                     type="button"
                     onclick="
@@ -1441,7 +1396,6 @@ window.openFundaLesson =
                   >
                     Mark Lesson Complete
                   </button>
-
                 `
             }
 
@@ -1484,14 +1438,19 @@ window.closeFundaLesson =
 // ============================================================
 
 async function buildModuleHtml(
-  module,
-  progress
+  module
 ) {
 
   const lessons =
     await getLessons(
       module.id
     );
+
+
+  if (!window.fundaLessons) {
+
+    window.fundaLessons = {};
+  }
 
 
   let lessonsHtml = "";
@@ -1502,7 +1461,7 @@ async function buildModuleHtml(
     lessonsHtml =
       lessons
         .map(
-          lesson => {
+          function(lesson) {
 
             window.fundaLessons[
               lesson.id
@@ -1511,8 +1470,7 @@ async function buildModuleHtml(
 
             const completed =
               isLessonCompleted(
-                lesson.id,
-                progress
+                lesson.id
               );
 
 
@@ -1648,68 +1606,28 @@ async function buildModuleHtml(
       )
     ) {
 
-      if (
-        module.learning_outcomes.length
-      ) {
+      outcomesHtml =
+        module.learning_outcomes
+          .map(
+            function(item) {
 
-        outcomesHtml = `
-          <div style="
-            margin-top:10px;
-            padding:15px;
-            background:#f5f9f4;
-            border-radius:12px;
-          ">
-
-            <strong>
-              Learning Outcomes
-            </strong>
-
-            <ul style="
-              margin-top:10px;
-              padding-left:20px;
-              line-height:1.7;
-            ">
-
-              ${module.learning_outcomes
-                .map(
-                  item =>
-                    `<li>${escapeHtml(
-                      item
-                    )}</li>`
-                )
-                .join("")}
-
-            </ul>
-
-          </div>
-        `;
-      }
+              return `
+                <li>
+                  ${escapeHtml(item)}
+                </li>
+              `;
+            }
+          )
+          .join("");
 
     } else {
 
       outcomesHtml = `
-        <div style="
-          margin-top:10px;
-          padding:15px;
-          background:#f5f9f4;
-          border-radius:12px;
-          line-height:1.7;
-          white-space:pre-wrap;
-        ">
-
-          <strong>
-            Learning Outcomes
-          </strong>
-
-          <div style="
-            margin-top:8px;
-          ">
-            ${escapeHtml(
-              module.learning_outcomes
-            )}
-          </div>
-
-        </div>
+        <li>
+          ${escapeHtml(
+            module.learning_outcomes
+          )}
+        </li>
       `;
     }
   }
@@ -1730,7 +1648,6 @@ async function buildModuleHtml(
 
       <button
         type="button"
-        class="funda-module-button"
         style="
           width:100%;
           border:0;
@@ -1740,7 +1657,9 @@ async function buildModuleHtml(
           cursor:pointer;
           font-size:17px;
         "
-        onclick="toggleFundaModule(this)"
+        onclick="
+          toggleFundaModule(this)
+        "
       >
 
         <div style="
@@ -1771,7 +1690,6 @@ async function buildModuleHtml(
             </div>
 
           </div>
-
 
           <span class="funda-arrow">
             ▼
@@ -1807,7 +1725,32 @@ async function buildModuleHtml(
         }
 
 
-        ${outcomesHtml}
+        ${
+          outcomesHtml
+            ? `
+              <div style="
+                margin-top:10px;
+                padding:15px;
+                background:#f5f9f4;
+                border-radius:12px;
+              ">
+
+                <strong>
+                  Learning Outcomes
+                </strong>
+
+                <ul style="
+                  margin-top:10px;
+                  padding-left:20px;
+                  line-height:1.7;
+                ">
+                  ${outcomesHtml}
+                </ul>
+
+              </div>
+            `
+            : ""
+        }
 
 
         <div style="
@@ -1865,18 +1808,18 @@ window.toggleFundaModule =
     }
 
 
-    const isOpen =
+    const open =
       content.style.display ===
       "block";
 
 
-    if (isOpen) {
+    if (open) {
 
       content.style.display =
         "none";
 
-      if (arrow) {
 
+      if (arrow) {
         arrow.textContent =
           "▼";
       }
@@ -1886,8 +1829,8 @@ window.toggleFundaModule =
       content.style.display =
         "block";
 
-      if (arrow) {
 
+      if (arrow) {
         arrow.textContent =
           "▲";
       }
@@ -1901,8 +1844,7 @@ window.toggleFundaModule =
 
 async function buildCourseHtml(
   enrollment,
-  course,
-  progress
+  course
 ) {
 
   if (!course) {
@@ -1915,11 +1857,7 @@ async function buildCourseHtml(
         background:#fff4f4;
         margin-bottom:20px;
       ">
-
-        <strong>
-          Course information could not be found.
-        </strong>
-
+        Course information could not be found.
       </div>
     `;
   }
@@ -1940,41 +1878,14 @@ async function buildCourseHtml(
 
 
     for (
-      const module of
-      modules
+      const module of modules
     ) {
 
-      try {
-
-        parts.push(
-          await buildModuleHtml(
-            module,
-            progress
-          )
-        );
-
-      } catch (error) {
-
-        console.error(
-          "Module could not load:",
-          error
-        );
-
-
-        parts.push(`
-          <div style="
-            margin-top:15px;
-            padding:18px;
-            border:1px solid #ddd;
-            border-radius:15px;
-            background:#fff;
-          ">
-            Module ${escapeHtml(
-              module.module_number
-            )} could not be loaded.
-          </div>
-        `);
-      }
+      parts.push(
+        await buildModuleHtml(
+          module
+        )
+      );
     }
 
 
@@ -1991,7 +1902,7 @@ async function buildCourseHtml(
         border-radius:15px;
         color:#666;
       ">
-        Course modules will appear here.
+        No modules have been added to this course yet.
       </div>
     `;
   }
@@ -2004,7 +1915,7 @@ async function buildCourseHtml(
     "My Course";
 
 
-  const courseDescription =
+  const description =
     course.description ||
     course.course_description ||
     "";
@@ -2019,16 +1930,13 @@ async function buildCourseHtml(
 
     <div
       class="funda-course"
-      data-course-id="${escapeHtml(
-        course.id
-      )}"
       style="
         background:#fff;
         border:1px solid #ddd;
         border-radius:22px;
         padding:22px;
         margin-bottom:25px;
-        box-shadow:0 5px 20px rgba(0,0,0,0.05);
+        box-shadow:0 5px 20px rgba(0,0,0,.05);
       "
     >
 
@@ -2084,7 +1992,7 @@ async function buildCourseHtml(
 
 
       ${
-        courseDescription
+        description
           ? `
             <p style="
               margin-top:15px;
@@ -2092,7 +2000,7 @@ async function buildCourseHtml(
               line-height:1.6;
             ">
               ${escapeHtml(
-                courseDescription
+                description
               )}
             </p>
           `
@@ -2122,8 +2030,7 @@ async function buildCourseHtml(
 // ============================================================
 
 async function displayMyStudies(
-  enrollments,
-  progress
+  enrollments
 ) {
 
   if (!studyListEl) {
@@ -2133,17 +2040,22 @@ async function displayMyStudies(
 
   const approved =
     enrollments.filter(
-      enrollment =>
-        String(
-          enrollment.enrollment_status ||
-          ""
-        ).toLowerCase() ===
-        "approved"
+      function(enrollment) {
+
+        return (
+          String(
+            enrollment.enrollment_status ||
+            ""
+          ).toLowerCase() ===
+          "approved"
+        );
+
+      }
     );
 
 
   console.log(
-    "Approved courses:",
+    "APPROVED ENROLMENTS:",
     approved
   );
 
@@ -2167,9 +2079,8 @@ async function displayMyStudies(
           color:#666;
           line-height:1.6;
         ">
-          Once your enrolment has been approved,
-          your course, modules and lessons will
-          appear here.
+          Your approved course will appear here
+          once your enrolment has been approved.
         </p>
 
       </div>
@@ -2183,8 +2094,7 @@ async function displayMyStudies(
 
 
   for (
-    const enrollment of
-    approved
+    const enrollment of approved
   ) {
 
     try {
@@ -2198,8 +2108,7 @@ async function displayMyStudies(
       const html =
         await buildCourseHtml(
           enrollment,
-          course,
-          progress
+          course
         );
 
 
@@ -2212,7 +2121,7 @@ async function displayMyStudies(
     } catch (error) {
 
       console.error(
-        "Could not display approved course:",
+        "COURSE DISPLAY ERROR:",
         error
       );
 
@@ -2227,21 +2136,9 @@ async function displayMyStudies(
             background:#fff4f4;
             margin-bottom:15px;
           ">
-
-            <strong>
-              Course could not be loaded.
-            </strong>
-
-            <p style="
-              margin-top:8px;
-              color:#666;
-            ">
-              ${escapeHtml(
-                error.message ||
-                error
-              )}
-            </p>
-
+            ${escapeHtml(
+              error.message
+            )}
           </div>
         `
       );
@@ -2268,8 +2165,8 @@ async function displayEnrollments(
     enrolmentsEl.innerHTML = `
       <div style="
         padding:18px;
-        border-radius:15px;
         background:#fff;
+        border-radius:15px;
       ">
         No enrolments found.
       </div>
@@ -2283,8 +2180,7 @@ async function displayEnrollments(
 
 
   for (
-    const enrollment of
-    enrollments
+    const enrollment of enrollments
   ) {
 
     const course =
@@ -2310,16 +2206,15 @@ async function displayEnrollments(
 
 
     const statusLower =
-      String(
-        status
-      ).toLowerCase();
+      String(status)
+        .toLowerCase();
 
 
-    let statusBackground =
+    let background =
       "#fff4d6";
 
 
-    let statusColor =
+    let color =
       "#8a6500";
 
 
@@ -2328,10 +2223,10 @@ async function displayEnrollments(
       "approved"
     ) {
 
-      statusBackground =
+      background =
         "#e8f7ed";
 
-      statusColor =
+      color =
         "#218838";
 
     } else if (
@@ -2339,10 +2234,10 @@ async function displayEnrollments(
       "rejected"
     ) {
 
-      statusBackground =
+      background =
         "#fff0f0";
 
-      statusColor =
+      color =
         "#c62828";
     }
 
@@ -2362,14 +2257,13 @@ async function displayEnrollments(
           color:#299b22;
           font-weight:bold;
           text-transform:uppercase;
-          margin-bottom:6px;
         ">
           Course
         </div>
 
 
         <h3 style="
-          margin:0;
+          margin:6px 0 0;
           font-size:20px;
         ">
           ${escapeHtml(
@@ -2386,8 +2280,8 @@ async function displayEnrollments(
             display:inline-block;
             padding:7px 12px;
             border-radius:20px;
-            background:${statusBackground};
-            color:${statusColor};
+            background:${background};
+            color:${color};
             font-weight:bold;
             text-transform:capitalize;
           ">
@@ -2432,10 +2326,6 @@ async function displayEnrollments(
 // ============================================================
 // PAYMENTS
 // ============================================================
-//
-// PAYMENT HISTORY IS OPTIONAL.
-// A payment problem MUST NOT stop the dashboard.
-// ============================================================
 
 async function loadPayments(
   student
@@ -2446,22 +2336,15 @@ async function loadPayments(
   }
 
 
-  paymentListEl.innerHTML = `
-    <div style="
-      padding:18px;
-      background:#fff;
-      border-radius:15px;
-    ">
-      Loading payment history...
-    </div>
-  `;
+  console.log(
+    "Loading payments..."
+  );
 
 
   try {
 
     const result =
       await withTimeout(
-
         db
           .from("payments")
           .select("*")
@@ -2476,12 +2359,30 @@ async function loadPayments(
             }
           ),
 
-        "Loading payment history"
+        "Loading payments"
       );
 
 
     if (result.error) {
-      throw result.error;
+
+      console.warn(
+        "Payment query failed:",
+        result.error
+      );
+
+
+      paymentListEl.innerHTML = `
+        <div style="
+          padding:18px;
+          background:#fff;
+          border-radius:15px;
+        ">
+          Payment history is not available yet.
+        </div>
+      `;
+
+
+      return;
     }
 
 
@@ -2497,9 +2398,10 @@ async function loadPayments(
           background:#fff;
           border-radius:15px;
         ">
-          No payment records yet.
+          No payments recorded yet.
         </div>
       `;
+
 
       return;
     }
@@ -2508,7 +2410,7 @@ async function loadPayments(
     paymentListEl.innerHTML =
       payments
         .map(
-          payment => {
+          function(payment) {
 
             const amount =
               payment.amount ??
@@ -2568,7 +2470,7 @@ async function loadPayments(
   } catch (error) {
 
     console.warn(
-      "Payment section unavailable:",
+      "Payment loading error:",
       error
     );
 
@@ -2578,10 +2480,8 @@ async function loadPayments(
         padding:18px;
         background:#fff;
         border-radius:15px;
-        border:1px solid #ddd;
-        color:#666;
       ">
-        Payment history is currently unavailable.
+        Payment history is not available yet.
       </div>
     `;
   }
@@ -2591,16 +2491,17 @@ async function loadPayments(
 // ============================================================
 // AVAILABLE COURSES
 // ============================================================
-//
-// OPTIONAL SECTION.
-// It cannot block My Studies.
-// ============================================================
 
 async function loadAvailableCourses() {
 
   if (!availableCoursesEl) {
     return;
   }
+
+
+  console.log(
+    "Loading available courses..."
+  );
 
 
   availableCoursesEl.innerHTML = `
@@ -2610,31 +2511,15 @@ async function loadAvailableCourses() {
       border-radius:15px;
       border:1px solid #ddd;
     ">
-      Loading available courses...
+      Loading courses...
     </div>
   `;
 
 
   try {
 
-    const result =
-      await withTimeout(
-
-        db
-          .from("courses")
-          .select("*"),
-
-        "Loading available courses"
-      );
-
-
-    if (result.error) {
-      throw result.error;
-    }
-
-
     const courses =
-      result.data || [];
+      await getAllCourses();
 
 
     if (!courses.length) {
@@ -2649,12 +2534,13 @@ async function loadAvailableCourses() {
         </div>
       `;
 
+
       return;
     }
 
 
     courses.sort(
-      function(a, b) {
+      function(a,b) {
 
         const nameA =
           String(
@@ -2684,7 +2570,7 @@ async function loadAvailableCourses() {
     availableCoursesEl.innerHTML =
       courses
         .map(
-          course => {
+          function(course) {
 
             const name =
               course.title ||
@@ -2769,21 +2655,34 @@ async function loadAvailableCourses() {
 
   } catch (error) {
 
-    console.warn(
-      "Available courses unavailable:",
+    console.error(
+      "AVAILABLE COURSES ERROR:",
       error
     );
 
 
     availableCoursesEl.innerHTML = `
       <div style="
-        padding:18px;
-        background:#fff;
+        padding:20px;
+        border:2px solid #d33;
         border-radius:15px;
-        border:1px solid #ddd;
-        color:#666;
+        background:#fff4f4;
       ">
-        Available courses are currently unavailable.
+
+        <strong>
+          Courses could not be loaded.
+        </strong>
+
+        <p style="
+          margin-top:10px;
+          color:#555;
+          line-height:1.6;
+        ">
+          ${escapeHtml(
+            error.message
+          )}
+        </p>
+
       </div>
     `;
   }
@@ -2801,7 +2700,7 @@ async function initDashboard() {
   );
 
   console.log(
-    "INITIALISING STUDENT DASHBOARD"
+    "DASHBOARD INITIALISING"
   );
 
   console.log(
@@ -2809,11 +2708,8 @@ async function initDashboard() {
   );
 
 
-  getDashboardElements();
-
-
   setStudyLoading(
-    "Connecting to your student account..."
+    "Connecting to student account..."
   );
 
 
@@ -2821,13 +2717,7 @@ async function initDashboard() {
 
     // --------------------------------------------------------
     // STEP 1
-    // SUPABASE
     // --------------------------------------------------------
-
-    setStatus(
-      "Connecting to student system..."
-    );
-
 
     if (
       !connectDatabase()
@@ -2839,11 +2729,10 @@ async function initDashboard() {
 
     // --------------------------------------------------------
     // STEP 2
-    // AUTH
     // --------------------------------------------------------
 
-    setStatus(
-      "Checking student login..."
+    setStudyLoading(
+      "Checking your student account..."
     );
 
 
@@ -2853,11 +2742,10 @@ async function initDashboard() {
 
     // --------------------------------------------------------
     // STEP 3
-    // STUDENT PROFILE
     // --------------------------------------------------------
 
-    setStatus(
-      "Loading student profile..."
+    setStudyLoading(
+      "Loading your student profile..."
     );
 
 
@@ -2875,10 +2763,9 @@ async function initDashboard() {
 
     // --------------------------------------------------------
     // STEP 4
-    // ENROLMENTS
     // --------------------------------------------------------
 
-    setStatus(
+    setStudyLoading(
       "Loading your enrolments..."
     );
 
@@ -2891,47 +2778,33 @@ async function initDashboard() {
 
     // --------------------------------------------------------
     // STEP 5
-    // PROGRESS
-    // --------------------------------------------------------
-    //
-    // IMPORTANT:
-    //
-    // Progress is useful but must NOT prevent
-    // the dashboard from opening.
-    //
     // --------------------------------------------------------
 
-    let progress = [];
+    setStudyLoading(
+      "Loading your lesson progress..."
+    );
 
 
     try {
 
-      setStatus(
-        "Loading lesson progress..."
-      );
-
-
-      progress =
-        await getLessonProgress();
-
+      await getLessonProgress();
 
     } catch (progressError) {
 
       console.warn(
-        "Lesson progress unavailable:",
+        "Lesson progress could not load:",
         progressError
       );
 
+      // Do NOT stop the whole dashboard
+      // because progress is unavailable.
 
-      progress = [];
-
-
-      // Do NOT stop dashboard.
+      currentProgress = [];
     }
 
 
     window.fundaLessonProgress =
-      progress;
+      currentProgress;
 
 
     window.fundaLessons =
@@ -2940,27 +2813,45 @@ async function initDashboard() {
 
     // --------------------------------------------------------
     // STEP 6
-    // SHOW MAIN STUDIES
     // --------------------------------------------------------
 
-    setStatus(
+    setStudyLoading(
       "Loading your courses..."
     );
 
 
     await displayMyStudies(
-      enrollments,
-      progress
+      enrollments
     );
 
 
     // --------------------------------------------------------
-    // DASHBOARD IS NOW READY
+    // STEP 7
     // --------------------------------------------------------
-    //
-    // From this point the student does not need
-    // to wait for payments or available courses.
-    //
+
+    await displayEnrollments(
+      enrollments
+    );
+
+
+    // --------------------------------------------------------
+    // STEP 8
+    // --------------------------------------------------------
+
+    await loadPayments(
+      student
+    );
+
+
+    // --------------------------------------------------------
+    // STEP 9
+    // --------------------------------------------------------
+
+    await loadAvailableCourses();
+
+
+    // --------------------------------------------------------
+    // COMPLETE
     // --------------------------------------------------------
 
     setStatus(
@@ -2974,47 +2865,11 @@ async function initDashboard() {
     );
 
     console.log(
-      "MAIN STUDENT DASHBOARD READY"
+      "STUDENT DASHBOARD READY"
     );
 
     console.log(
       "=========================================="
-    );
-
-
-    // --------------------------------------------------------
-    // OPTIONAL SECTIONS
-    // LOAD AFTER MAIN DASHBOARD
-    // --------------------------------------------------------
-
-    displayEnrollments(
-      enrollments
-    ).catch(
-      error =>
-        console.warn(
-          "Enrolment display error:",
-          error
-        )
-    );
-
-
-    loadPayments(
-      student
-    ).catch(
-      error =>
-        console.warn(
-          "Payment display error:",
-          error
-        )
-    );
-
-
-    loadAvailableCourses().catch(
-      error =>
-        console.warn(
-          "Available course display error:",
-          error
-        )
     );
 
 
@@ -3025,7 +2880,7 @@ async function initDashboard() {
     );
 
     console.error(
-      "DASHBOARD ERROR"
+      "DASHBOARD FAILED"
     );
 
     console.error(
@@ -3040,52 +2895,12 @@ async function initDashboard() {
     showGlobalError(
       error
     );
-
-
-    setStatus(
-      "Student learning system could not load.",
-      false
-    );
   }
 }
 
 
 // ============================================================
-// START DASHBOARD
-// ============================================================
-
-function startDashboard() {
-
-  console.log(
-    "Starting dashboard..."
-  );
-
-
-  getDashboardElements();
-
-
-  initDashboard();
-}
-
-
-if (
-  document.readyState ===
-  "loading"
-) {
-
-  document.addEventListener(
-    "DOMContentLoaded",
-    startDashboard
-  );
-
-} else {
-
-  startDashboard();
-}
-
-
-// ============================================================
-// CLOSE MODAL WHEN CLICKING OUTSIDE
+// OUTSIDE MODAL CLICK
 // ============================================================
 
 document.addEventListener(
@@ -3111,13 +2926,34 @@ document.addEventListener(
 
 
 // ============================================================
-// END
+// START
 // ============================================================
 
-console.log(
-  "FUNDA STUDENT DASHBOARD SCRIPT LOADED."
-);
+function startDashboard() {
 
-console.log(
-  "=========================================="
-);
+  console.log(
+    "DOM READY - STARTING DASHBOARD"
+  );
+
+
+  getElements();
+
+
+  initDashboard();
+}
+
+
+if (
+  document.readyState ===
+  "loading"
+) {
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    startDashboard
+  );
+
+} else {
+
+  startDashboard();
+}
