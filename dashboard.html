@@ -239,15 +239,6 @@ body{
   margin-bottom:16px;
 }
 
-.outcome-list{
-  margin:0 0 18px 20px;
-}
-
-.outcome-list li{
-  margin-bottom:7px;
-  line-height:1.5;
-}
-
 .lesson-list{
   display:flex;
   flex-direction:column;
@@ -350,32 +341,11 @@ body{
   transition:width .3s ease;
 }
 
-.course-info{
-  margin-top:18px;
+.payment-card{
+  border:1px solid #e4ece3;
+  border-radius:16px;
   padding:18px;
-  border-radius:15px;
-  background:#f7faf8;
-  border:1px solid #dfe8e2;
-}
-
-.course-info h4{
-  margin-bottom:10px;
-  color:#10251c;
-}
-
-.course-info p{
-  line-height:1.6;
-  color:#53625b;
-}
-
-.course-outcomes{
-  margin-top:12px;
-  padding-left:22px;
-}
-
-.course-outcomes li{
-  margin-bottom:7px;
-  line-height:1.5;
+  background:#fff;
 }
 
 .policy-card{
@@ -488,6 +458,27 @@ body{
   line-height:1.6;
 }
 
+.accepted-box strong{
+  display:block;
+  margin-bottom:5px;
+}
+
+.policy-version{
+  color:#68766f;
+  font-size:13px;
+  margin-top:8px;
+}
+
+.required-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px 25px;
+}
+
+.required-list div{
+  padding:8px 0;
+}
+
 .contact-box{
   background:#10251c;
   color:#fff;
@@ -499,6 +490,11 @@ body{
 .contact-box p{
   margin:6px 0;
 }
+
+
+/* ============================================================
+   LESSON VIEWER
+   ============================================================ */
 
 .lesson-viewer{
   display:none;
@@ -620,11 +616,25 @@ body{
   display:none;
 }
 
+.dashboard-start-error{
+  background:#fff4f4;
+  border:1px solid #efc7c7;
+  color:#8e2222;
+  padding:18px;
+  border-radius:15px;
+  line-height:1.6;
+}
+
 .system-status{
   margin-top:10px;
   font-size:13px;
   color:#68766f;
 }
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
 
 @media(max-width:900px){
 
@@ -655,6 +665,14 @@ body{
 
   .dashboard .wrap{
     width:92%;
+  }
+
+  .required-list{
+    grid-template-columns:1fr;
+  }
+
+  .policy-card{
+    padding:18px;
   }
 
   .lesson-top{
@@ -725,9 +743,7 @@ body{
         id="logout"
         class="btn ghost"
         type="button">
-
         Logout
-
       </button>
 
     </div>
@@ -766,9 +782,7 @@ body{
       <div
         id="system-status"
         class="system-status">
-
         Connecting to student learning system…
-
       </div>
 
     </div>
@@ -776,9 +790,7 @@ body{
     <a
       class="btn green"
       href="index.html#courses">
-
       Browse Courses
-
     </a>
 
   </div>
@@ -797,14 +809,14 @@ body{
     id="my-studies">
 
     <h2>
-      📚 My Courses
+      📚 My Studies
     </h2>
 
     <p style="margin-bottom:18px;line-height:1.6">
 
-      Your approved courses appear below.
-      Select a course to open the course modules,
-      lessons and learning materials.
+      Your approved courses and learning materials
+      will appear here. Open a module to view its
+      lessons and learning content.
 
     </p>
 
@@ -813,7 +825,7 @@ body{
       <div class="card">
 
         <p class="loading">
-          Loading your courses…
+          Starting student learning system…
         </p>
 
       </div>
@@ -876,7 +888,13 @@ body{
 
           <li>
             Where applicable, students may request a
-            payment plan.
+            payment plan. Approval is at the discretion
+            of Funda Online Academy.
+          </li>
+
+          <li>
+            Students remain responsible for agreed
+            outstanding balances.
           </li>
 
         </ul>
@@ -889,8 +907,8 @@ body{
         <h3>🏦 How To Pay</h3>
 
         <p>
-          Please use the official Funda Online Academy
-          banking details when making a payment.
+          Please use the following official Funda Online
+          Academy banking details when making a payment.
         </p>
 
         <div class="bank-grid">
@@ -945,6 +963,28 @@ body{
 
       <div class="policy-group">
 
+        <h3>📋 Required Student Information</h3>
+
+        <div class="required-list">
+
+          <div>✓ Name</div>
+          <div>✓ Surname</div>
+          <div>✓ ID / Passport</div>
+          <div>✓ Course name</div>
+          <div>✓ Phone number</div>
+          <div>✓ Highest education level</div>
+          <div>✓ Gender</div>
+          <div>✓ Email address</div>
+          <div>✓ Residential address</div>
+          <div>✓ How you heard about us</div>
+
+        </div>
+
+      </div>
+
+
+      <div class="policy-group">
+
         <h3>📚 Student Rules & Responsibilities</h3>
 
         <ul>
@@ -960,8 +1000,32 @@ body{
           </li>
 
           <li>
+            Students must follow academy rules and instructions.
+          </li>
+
+          <li>
+            Course changes are generally not permitted
+            after the course has started.
+          </li>
+
+          <li>
+            No refunds will be provided for students who
+            voluntarily drop out after enrolment, subject
+            to applicable law.
+          </li>
+
+          <li>
+            Assessments must be submitted by required deadlines.
+          </li>
+
+          <li>
             Assessments must be completed through the
             approved academy learning system.
+          </li>
+
+          <li>
+            WhatsApp must not be used to submit official
+            assessments unless specifically authorised.
           </li>
 
           <li>
@@ -1015,6 +1079,11 @@ body{
           </li>
 
           <li>
+            The academy may review assessment submissions
+            where academic integrity concerns arise.
+          </li>
+
+          <li>
             Results may be withheld while an assessment
             concern is being reviewed.
           </li>
@@ -1061,6 +1130,14 @@ body{
           the academy's rules and completing my course
           requirements.
 
+          I understand the payment obligations associated
+          with my course and agree to comply with the
+          approved payment arrangement.
+
+          I understand that acceptance of these policies
+          does not automatically mean that my enrolment
+          has been approved.
+
         </p>
 
 
@@ -1092,15 +1169,8 @@ body{
         </button>
 
 
-        <p
-          style="
-            color:#68766f;
-            font-size:13px;
-            margin-top:8px;
-          ">
-
+        <p class="policy-version">
           Policy version: FOA Terms v1.0
-
         </p>
 
 
@@ -1220,6 +1290,7 @@ body{
 
       </div>
 
+
       <button
         type="button"
         id="lesson-close"
@@ -1292,19 +1363,6 @@ body{
 
 
 /* ============================================================
-   SUPABASE
-   ============================================================ */
-
-let db = null;
-
-let currentUser = null;
-
-let currentStudent = null;
-
-let currentLesson = null;
-
-
-/* ============================================================
    ELEMENTS
    ============================================================ */
 
@@ -1352,6 +1410,19 @@ const lessonCompleteMessage =
 
 
 /* ============================================================
+   DATABASE
+   ============================================================ */
+
+let db = null;
+
+let currentUser = null;
+
+let currentStudent = null;
+
+let currentLesson = null;
+
+
+/* ============================================================
    HTML ESCAPE
    ============================================================ */
 
@@ -1361,18 +1432,88 @@ function escapeHtml(value){
     value === null ||
     value === undefined
   ){
-
     return "";
-
   }
 
   return String(value)
-
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
+
+}
+
+
+/* ============================================================
+   LESSON CONTENT
+   ============================================================ */
+
+function safeLessonContent(value){
+
+  if(
+    value === null ||
+    value === undefined ||
+    String(value).trim() === ""
+  ){
+
+    return `
+
+      <div class="empty-study">
+
+        <div style="font-size:42px">
+          📖
+        </div>
+
+        <h3 style="margin-top:10px">
+          Learning content is being prepared
+        </h3>
+
+        <p style="margin-top:8px;line-height:1.6">
+
+          This lesson has been created, but the
+          learning content has not yet been added.
+
+          Funda Online Academy will add the lesson
+          material here.
+
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+
+  const text =
+    String(value);
+
+
+  if(
+    /<[a-z][\s\S]*>/i.test(text)
+  ){
+
+    return text;
+
+  }
+
+
+  return text
+    .split(/\n\s*\n/)
+    .map(
+      paragraph => {
+
+        return `
+          <p>
+            ${escapeHtml(paragraph)
+              .replace(/\n/g,"<br>")}
+          </p>
+        `;
+
+      }
+    )
+    .join("");
 
 }
 
@@ -1393,14 +1534,17 @@ function money(value){
 
   }
 
+
   const number =
     Number(value);
+
 
   if(Number.isNaN(number)){
 
     return escapeHtml(value);
 
   }
+
 
   return "R " +
     number.toLocaleString(
@@ -1437,7 +1581,9 @@ function withTimeout(
             reject(
               new Error(
                 label +
-                " timed out."
+                " timed out after " +
+                seconds +
+                " seconds."
               )
             );
 
@@ -1470,7 +1616,55 @@ function setStatus(text){
 
 
 /* ============================================================
-   SUPABASE CLIENT
+   ERROR
+   ============================================================ */
+
+function showStudyError(error){
+
+  console.error(
+    "FUNDA DASHBOARD ERROR:",
+    error
+  );
+
+
+  if(!studyList){
+    return;
+  }
+
+
+  const message =
+    error?.message ||
+    String(error);
+
+
+  studyList.innerHTML = `
+
+    <div class="dashboard-start-error">
+
+      <strong>
+        ⚠️ Student learning system could not start
+      </strong>
+
+      <p style="margin-top:10px">
+        ${escapeHtml(message)}
+      </p>
+
+      <p style="margin-top:10px;font-size:14px">
+
+        Please make sure you are logged in and that
+        the Supabase connection is working.
+
+      </p>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ============================================================
+   CREATE SUPABASE CLIENT
    ============================================================ */
 
 function createDatabase(){
@@ -1484,6 +1678,7 @@ function createDatabase(){
 
   }
 
+
   if(
     window.db &&
     typeof window.db.from === "function"
@@ -1492,6 +1687,24 @@ function createDatabase(){
     return window.db;
 
   }
+
+
+  const url =
+    window.SUPABASE_URL;
+
+  const key =
+    window.SUPABASE_ANON_KEY;
+
+
+  if(
+    !url ||
+    !key
+  ){
+
+    return null;
+
+  }
+
 
   if(
     !window.supabase ||
@@ -1502,18 +1715,10 @@ function createDatabase(){
 
   }
 
-  if(
-    !window.SUPABASE_URL ||
-    !window.SUPABASE_ANON_KEY
-  ){
-
-    return null;
-
-  }
 
   return window.supabase.createClient(
-    window.SUPABASE_URL,
-    window.SUPABASE_ANON_KEY
+    url,
+    key
   );
 
 }
@@ -1525,6 +1730,15 @@ function createDatabase(){
 
 async function getCurrentUser(){
 
+  if(!db){
+
+    throw new Error(
+      "Supabase connection was not created. Check supabase-config.js."
+    );
+
+  }
+
+
   const result =
     await withTimeout(
       db.auth.getUser(),
@@ -1532,11 +1746,13 @@ async function getCurrentUser(){
       "Checking student login"
     );
 
+
   if(result.error){
 
     throw result.error;
 
   }
+
 
   if(
     !result.data ||
@@ -1550,13 +1766,14 @@ async function getCurrentUser(){
 
   }
 
+
   return result.data.user;
 
 }
 
 
 /* ============================================================
-   STUDENT PROFILE
+   STUDENT
    ============================================================ */
 
 async function getStudent(userId){
@@ -1567,10 +1784,7 @@ async function getStudent(userId){
       db
         .from("students")
         .select("*")
-        .eq(
-          "user_id",
-          userId
-        )
+        .eq("user_id",userId)
         .limit(1),
 
       15,
@@ -1579,24 +1793,31 @@ async function getStudent(userId){
 
     );
 
+
   if(result.error){
 
     throw result.error;
 
   }
 
-  return (
-    result.data &&
-    result.data.length
-  )
-    ? result.data[0]
-    : null;
+
+  if(
+    !result.data ||
+    result.data.length === 0
+  ){
+
+    return null;
+
+  }
+
+
+  return result.data[0];
 
 }
 
 
 /* ============================================================
-   APPROVED ENROLMENTS
+   ENROLLMENTS
    ============================================================ */
 
 async function getApprovedEnrollments(
@@ -1630,18 +1851,16 @@ async function getApprovedEnrollments(
     );
 
 
-  /*
-   * If your table uses British spelling,
-   * try enrolments.
-   */
-
   if(
     result.error &&
-    String(
-      result.error.message || ""
+    (
+      result.error.code === "42P01" ||
+      String(
+        result.error.message || ""
+      )
+      .toLowerCase()
+      .includes("does not exist")
     )
-    .toLowerCase()
-    .includes("does not exist")
   ){
 
     result =
@@ -1687,8 +1906,6 @@ async function getApprovedEnrollments(
 
 /* ============================================================
    COURSE
-   IMPORTANT:
-   Your actual table uses title.
    ============================================================ */
 
 async function getCourse(courseId){
@@ -1698,24 +1915,8 @@ async function getCourse(courseId){
 
       db
         .from("courses")
-        .select(`
-          id,
-          title,
-          slug,
-          description,
-          duration,
-          price,
-          image_url,
-          modules,
-          active,
-          learning_outcomes,
-          assessment_info,
-          certificate_info
-        `)
-        .eq(
-          "id",
-          courseId
-        )
+        .select("*")
+        .eq("id",courseId)
         .limit(1),
 
       15,
@@ -1732,18 +1933,23 @@ async function getCourse(courseId){
   }
 
 
-  return (
-    result.data &&
-    result.data.length
-  )
-    ? result.data[0]
-    : null;
+  if(
+    !result.data ||
+    result.data.length === 0
+  ){
+
+    return null;
+
+  }
+
+
+  return result.data[0];
 
 }
 
 
 /* ============================================================
-   COURSE MODULES
+   MODULES
    ============================================================ */
 
 async function getModules(courseId){
@@ -1753,16 +1959,7 @@ async function getModules(courseId){
 
       db
         .from("course_modules")
-        .select(`
-          id,
-          course_id,
-          module_number,
-          module_name,
-          description,
-          learning_outcomes,
-          created_at,
-          updated_at
-        `)
+        .select("*")
         .eq(
           "course_id",
           courseId
@@ -1797,43 +1994,19 @@ async function getModules(courseId){
    LESSONS
    ============================================================ */
 
-async function getLessonsForModules(
-  moduleIds
-){
-
-  if(
-    !moduleIds ||
-    moduleIds.length === 0
-  ){
-
-    return [];
-
-  }
-
+async function getLessons(){
 
   const result =
     await withTimeout(
 
       db
         .from("lessons")
-        .select(`
-          id,
-          module_id,
-          lesson_number,
-          title,
-          content,
-          video_url,
-          document_url,
-          created_at,
-          updated_at,
-          learning_objectives,
-          key_terms,
-          practical_activity,
-          knowledge_check
-        `)
-        .in(
+        .select("*")
+        .order(
           "module_id",
-          moduleIds
+          {
+            ascending:true
+          }
         )
         .order(
           "lesson_number",
@@ -1844,7 +2017,7 @@ async function getLessonsForModules(
 
       15,
 
-      "Loading course lessons"
+      "Loading lessons"
 
     );
 
@@ -1862,95 +2035,57 @@ async function getLessonsForModules(
 
 
 /* ============================================================
-   COURSE OUTCOMES
+   LESSONS FOR MODULE
    ============================================================ */
 
-function renderCourseOutcomes(
-  outcomes
+function lessonsForModule(
+  module,
+  lessons
 ){
 
-  if(
-    !Array.isArray(outcomes) ||
-    outcomes.length === 0
-  ){
+  return lessons
+    .filter(
+      lesson => {
 
-    return "";
-
-  }
-
-
-  return `
-
-    <div class="course-info">
-
-      <h4>
-        🎯 Course Learning Outcomes
-      </h4>
-
-      <ul class="course-outcomes">
-
-        ${
-          outcomes
-            .map(
-              outcome => `
-                <li>
-                  ${escapeHtml(outcome)}
-                </li>
-              `
-            )
-            .join("")
-        }
-
-      </ul>
-
-    </div>
-
-  `;
-
-}
+        const sameModuleId =
+          lesson.module_id &&
+          String(
+            lesson.module_id
+          ) ===
+          String(
+            module.id
+          );
 
 
-/* ============================================================
-   MODULE OUTCOMES
-   ============================================================ */
-
-function renderModuleOutcomes(
-  outcomes
-){
-
-  if(
-    !Array.isArray(outcomes) ||
-    outcomes.length === 0
-  ){
-
-    return "";
-
-  }
+        const sameModuleNumber =
+          lesson.module_number !== undefined &&
+          Number(
+            lesson.module_number
+          ) ===
+          Number(
+            module.module_number
+          );
 
 
-  return `
+        return (
+          sameModuleId ||
+          sameModuleNumber
+        );
 
-    <h4 style="margin:16px 0 8px">
-      🎯 Learning Outcomes
-    </h4>
-
-    <ul class="outcome-list">
-
-      ${
-        outcomes
-          .map(
-            outcome => `
-              <li>
-                ${escapeHtml(outcome)}
-              </li>
-            `
-          )
-          .join("")
       }
+    )
+    .sort(
+      (a,b) => {
 
-    </ul>
+        return Number(
+          a.lesson_number || 0
+        ) -
+        Number(
+          b.lesson_number || 0
+        );
 
-  `;
+      }
+    );
 
 }
 
@@ -1959,265 +2094,29 @@ function renderModuleOutcomes(
    LESSON CONTENT
    ============================================================ */
 
-function safeLessonContent(
+function getLessonContent(
   lesson
 ){
 
-  const content =
-    lesson.content ||
-    "";
-
-
-  let html = "";
-
-
-  if(content){
-
-    if(
-      /<[a-z][\s\S]*>/i.test(
-        content
-      )
-    ){
-
-      html += content;
-
-    }else{
-
-      html +=
-        content
-          .split(/\n\s*\n/)
-          .map(
-            paragraph => `
-
-              <p>
-                ${
-                  escapeHtml(
-                    paragraph
-                  )
-                  .replace(
-                    /\n/g,
-                    "<br>"
-                  )
-                }
-              </p>
-
-            `
-          )
-          .join("");
-
-    }
-
-  }
-
-
-  if(
-    lesson.learning_objectives
-  ){
-
-    html += `
-
-      <h3>
-        🎯 Learning Objectives
-      </h3>
-
-      <p>
-        ${
-          escapeHtml(
-            lesson.learning_objectives
-          )
-          .replace(
-            /\n/g,
-            "<br>"
-          )
-        }
-      </p>
-
-    `;
-
-  }
-
-
-  if(
-    lesson.key_terms
-  ){
-
-    html += `
-
-      <h3>
-        🔑 Key Terms
-      </h3>
-
-      <p>
-        ${
-          escapeHtml(
-            lesson.key_terms
-          )
-          .replace(
-            /\n/g,
-            "<br>"
-          )
-        }
-      </p>
-
-    `;
-
-  }
-
-
-  if(
-    lesson.practical_activity
-  ){
-
-    html += `
-
-      <h3>
-        🛠️ Practical Activity
-      </h3>
-
-      <p>
-        ${
-          escapeHtml(
-            lesson.practical_activity
-          )
-          .replace(
-            /\n/g,
-            "<br>"
-          )
-        }
-      </p>
-
-    `;
-
-  }
-
-
-  if(
-    lesson.knowledge_check
-  ){
-
-    html += `
-
-      <h3>
-        ✅ Knowledge Check
-      </h3>
-
-      <p>
-        ${
-          escapeHtml(
-            lesson.knowledge_check
-          )
-          .replace(
-            /\n/g,
-            "<br>"
-          )
-        }
-      </p>
-
-    `;
-
-  }
-
-
-  if(
-    lesson.video_url
-  ){
-
-    html += `
-
-      <h3>
-        🎥 Video
-      </h3>
-
-      <p>
-
-        <a
-          href="${escapeHtml(
-            lesson.video_url
-          )}"
-          target="_blank"
-          rel="noopener">
-
-          ▶ Open lesson video
-
-        </a>
-
-      </p>
-
-    `;
-
-  }
-
-
-  if(
-    lesson.document_url
-  ){
-
-    html += `
-
-      <h3>
-        📄 Learning Document
-      </h3>
-
-      <p>
-
-        <a
-          href="${escapeHtml(
-            lesson.document_url
-          )}"
-          target="_blank"
-          rel="noopener">
-
-          📄 Open learning document
-
-        </a>
-
-      </p>
-
-    `;
-
-  }
-
-
-  if(!html){
-
-    html = `
-
-      <div class="empty-study">
-
-        <div style="font-size:42px">
-          📖
-        </div>
-
-        <h3>
-          Learning content is being prepared
-        </h3>
-
-        <p style="margin-top:8px">
-
-          The lesson has been created,
-          but its learning material has not
-          yet been added.
-
-        </p>
-
-      </div>
-
-    `;
-
-  }
-
-
-  return html;
+  return (
+    lesson.content ??
+    lesson.lesson_content ??
+    lesson.body ??
+    lesson.lesson_body ??
+    lesson.description ??
+    ""
+  );
 
 }
 
 
 /* ============================================================
-   RENDER STUDY
+   BUILD STUDY
    ============================================================ */
 
-async function renderStudy(
-  enrollment
+async function buildStudy(
+  enrollment,
+  allLessons
 ){
 
   const course =
@@ -2228,64 +2127,261 @@ async function renderStudy(
 
   if(!course){
 
-    return;
+    return {
+      enrollment,
+      course:null,
+      modules:[],
+      lessons:[]
+    };
 
   }
 
 
   const modules =
     await getModules(
-      course.id
-    );
-
-
-  const moduleIds =
-    modules.map(
-      module => module.id
+      enrollment.course_id
     );
 
 
   const lessons =
-    await getLessonsForModules(
-      moduleIds
-    );
+    (allLessons || [])
+      .filter(
+        lesson => {
+
+          return modules.some(
+            module => {
+
+              return (
+                (
+                  lesson.module_id &&
+                  String(
+                    lesson.module_id
+                  ) ===
+                  String(
+                    module.id
+                  )
+                )
+                ||
+                (
+                  lesson.module_number !== undefined &&
+                  Number(
+                    module.module_number
+                  ) ===
+                  Number(
+                    lesson.module_number
+                  )
+                )
+              );
+
+            }
+          );
+
+        }
+      );
 
 
-  const courseTitle =
+  return {
+    enrollment,
+    course,
+    modules,
+    lessons
+  };
+
+}
+
+
+/* ============================================================
+   RENDER STUDY
+   ============================================================ */
+
+function renderStudy(
+  study
+){
+
+  const course =
+    study.course;
+
+  const modules =
+    study.modules;
+
+  const lessons =
+    study.lessons;
+
+
+  if(!course){
+    return;
+  }
+
+
+  const courseName =
     course.title ||
-    "Funda Online Academy Course";
+    course.name ||
+    course.course_name ||
+    "Course";
 
 
-  const description =
+  const courseDescription =
     course.description ||
     "Your approved Funda Online Academy course.";
 
 
-  const duration =
-    course.duration ||
-    "—";
+  const coursePrice =
+    course.price ??
+    course.amount ??
+    null;
 
 
-  let modulesHtml = "";
+  let moduleHtml = "";
 
 
   modules.forEach(
     (module,index) => {
 
       const moduleLessons =
-        lessons
-          .filter(
-            lesson =>
-              String(
-                lesson.module_id
-              ) ===
-              String(
-                module.id
-              )
-          );
+        lessonsForModule(
+          module,
+          lessons
+        );
 
 
-      modulesHtml += `
+      const moduleDescription =
+        module.description ||
+        module.module_description ||
+        "Learning material for this module.";
+
+
+      let lessonHtml = "";
+
+
+      if(
+        moduleLessons.length === 0
+      ){
+
+        lessonHtml = `
+
+          <div class="empty-study">
+
+            <strong>
+              📖 Lessons are being prepared
+            </strong>
+
+            <p style="margin-top:8px">
+
+              Learning material for this module
+              will appear here.
+
+            </p>
+
+          </div>
+
+        `;
+
+      }else{
+
+        lessonHtml = `
+
+          <div class="lesson-list">
+
+            ${
+              moduleLessons
+                .map(
+                  lesson => {
+
+                    const lessonTitle =
+                      lesson.title ||
+                      lesson.lesson_title ||
+                      "Lesson";
+
+
+                    return `
+
+                      <div
+                        class="lesson-item">
+
+                        <div class="lesson-top">
+
+                          <span
+                            class="lesson-number">
+
+                            ${escapeHtml(
+                              lesson.lesson_number ||
+                              ""
+                            )}
+
+                          </span>
+
+
+                          <div
+                            class="lesson-main">
+
+                            <div
+                              class="lesson-title">
+
+                              ${escapeHtml(
+                                lessonTitle
+                              )}
+
+                            </div>
+
+
+                            <div
+                              class="lesson-description">
+
+                              Lesson
+                              ${escapeHtml(
+                                lesson.lesson_number ||
+                                ""
+                              )}
+                              in
+                              ${escapeHtml(
+                                module.module_name ||
+                                "Module"
+                              )}.
+
+                            </div>
+
+
+                            <div
+                              class="lesson-actions">
+
+                              <button
+                                type="button"
+                                class="lesson-open"
+                                data-lesson-id="${escapeHtml(
+                                  lesson.id
+                                )}"
+                                data-module-name="${escapeHtml(
+                                  module.module_name ||
+                                  "Module"
+                                )}">
+
+                                📖 Open Lesson
+
+                              </button>
+
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    `;
+
+                  }
+                )
+                .join("")
+            }
+
+          </div>
+
+        `;
+
+      }
+
+
+      moduleHtml += `
 
         <div class="module-card">
 
@@ -2307,12 +2403,15 @@ async function renderStudy(
               <span class="module-name">
 
                 ${escapeHtml(
-                  module.module_name
+                  module.module_name ||
+                  module.name ||
+                  "Module"
                 )}
 
               </span>
 
             </span>
+
 
             <span class="module-icon">
               +
@@ -2328,22 +2427,15 @@ async function renderStudy(
             <p class="module-description">
 
               ${escapeHtml(
-                module.description ||
-                "Learning material for this module."
+                moduleDescription
               )}
 
             </p>
 
-            ${
-              renderModuleOutcomes(
-                module.learning_outcomes
-              )
-            }
-
 
             <p
               style="
-                margin:14px 0;
+                margin-bottom:14px;
                 font-size:14px;
                 color:#68766f;
                 font-weight:700;
@@ -2360,106 +2452,7 @@ async function renderStudy(
             </p>
 
 
-            ${
-              moduleLessons.length === 0
-
-              ? `
-
-                <div class="empty-study">
-
-                  📖 Lessons are being prepared.
-
-                </div>
-
-              `
-
-              : `
-
-                <div class="lesson-list">
-
-                  ${
-                    moduleLessons
-                      .map(
-                        lesson => `
-
-                          <div
-                            class="lesson-item">
-
-                            <div
-                              class="lesson-top">
-
-                              <span
-                                class="lesson-number">
-
-                                ${escapeHtml(
-                                  lesson.lesson_number
-                                )}
-
-                              </span>
-
-
-                              <div
-                                class="lesson-main">
-
-                                <div
-                                  class="lesson-title">
-
-                                  ${escapeHtml(
-                                    lesson.title
-                                  )}
-
-                                </div>
-
-
-                                <div
-                                  class="lesson-description">
-
-                                  ${
-                                    lesson.learning_objectives
-                                      ? escapeHtml(
-                                          lesson.learning_objectives
-                                        )
-                                      : "Open this lesson to begin studying."
-                                  }
-
-                                </div>
-
-
-                                <div
-                                  class="lesson-actions">
-
-                                  <button
-                                    type="button"
-                                    class="lesson-open"
-                                    data-lesson-id="${escapeHtml(
-                                      lesson.id
-                                    )}"
-                                    data-module-name="${escapeHtml(
-                                      module.module_name
-                                    )}">
-
-                                    📖 Open Lesson
-
-                                  </button>
-
-                                </div>
-
-                              </div>
-
-                            </div>
-
-                          </div>
-
-                        `
-                      )
-                      .join("")
-                  }
-
-                </div>
-
-              `
-
-            }
+            ${lessonHtml}
 
           </div>
 
@@ -2471,11 +2464,9 @@ async function renderStudy(
   );
 
 
-  if(
-    modules.length === 0
-  ){
+  if(modules.length === 0){
 
-    modulesHtml = `
+    moduleHtml = `
 
       <div class="empty-study">
 
@@ -2483,15 +2474,14 @@ async function renderStudy(
           📚
         </div>
 
-        <h3>
+        <h3 style="margin-top:10px">
           Course modules are being prepared
         </h3>
 
         <p style="margin-top:8px">
 
-          Your course has been approved.
-          The learning modules will appear here
-          once they have been added.
+          Funda Online Academy will add the
+          learning modules for this course.
 
         </p>
 
@@ -2503,9 +2493,7 @@ async function renderStudy(
 
 
   const study =
-    document.createElement(
-      "div"
-    );
+    document.createElement("div");
 
 
   study.className =
@@ -2522,7 +2510,7 @@ async function renderStudy(
     <h3 class="study-title">
 
       ${escapeHtml(
-        courseTitle
+        courseName
       )}
 
     </h3>
@@ -2531,7 +2519,7 @@ async function renderStudy(
     <p class="study-description">
 
       ${escapeHtml(
-        description
+        courseDescription
       )}
 
     </p>
@@ -2540,11 +2528,7 @@ async function renderStudy(
     <div class="study-meta">
 
       <span>
-        💰 ${money(course.price)}
-      </span>
-
-      <span>
-        ⏱️ ${escapeHtml(duration)}
+        💰 ${money(coursePrice)}
       </span>
 
       <span>
@@ -2568,60 +2552,13 @@ async function renderStudy(
     </div>
 
 
-    ${
-      renderCourseOutcomes(
-        course.learning_outcomes
-      )
-    }
-
-
-    <div class="course-info">
-
-      <h4>
-        📝 Assessment
-      </h4>
-
-      <p>
-
-        ${
-          escapeHtml(
-            course.assessment_info ||
-            "Assessment information will be provided through the academy learning system."
-          )
-        }
-
-      </p>
-
-    </div>
-
-
-    <div class="course-info">
-
-      <h4>
-        🏆 Certificate
-      </h4>
-
-      <p>
-
-        ${
-          escapeHtml(
-            course.certificate_info ||
-            "Certificate information will be provided upon successful completion of the course requirements."
-          )
-        }
-
-      </p>
-
-    </div>
-
-
     <div class="study-button">
 
       <button
         type="button"
         class="btn green study-course-button">
 
-        📚 Open Course
+        📚 Study Course
 
       </button>
 
@@ -2634,7 +2571,7 @@ async function renderStudy(
         📖 Course Modules
       </h3>
 
-      ${modulesHtml}
+      ${moduleHtml}
 
     </div>
 
@@ -2647,11 +2584,8 @@ async function renderStudy(
           Course Progress
         </span>
 
-        <span
-          class="course-progress-percent">
-
+        <span>
           0%
-
         </span>
 
       </div>
@@ -2674,8 +2608,8 @@ async function renderStudy(
           font-size:13px
         ">
 
-        Your completed lessons will be used
-        to calculate your course progress.
+        Your lesson progress will appear here
+        as lessons are completed.
 
       </p>
 
@@ -2731,23 +2665,20 @@ function setupModuleButtons(){
               );
 
 
-            const isOpen =
+            const open =
               content.classList.contains(
                 "open"
               );
 
 
-            if(isOpen){
+            if(open){
 
               content.classList.remove(
                 "open"
               );
 
               if(icon){
-
-                icon.textContent =
-                  "+";
-
+                icon.textContent = "+";
               }
 
             }else{
@@ -2757,10 +2688,7 @@ function setupModuleButtons(){
               );
 
               if(icon){
-
-                icon.textContent =
-                  "−";
-
+                icon.textContent = "−";
               }
 
             }
@@ -2805,9 +2733,13 @@ async function openLesson(
 
   lessonViewerContent.innerHTML = `
 
-    <p class="loading">
-      Loading lesson…
-    </p>
+    <div class="card">
+
+      <p class="loading">
+        Loading lesson content…
+      </p>
+
+    </div>
 
   `;
 
@@ -2820,6 +2752,10 @@ async function openLesson(
     true;
 
 
+  completeLessonButton.textContent =
+    "✅ Mark Lesson Complete";
+
+
   try{
 
     const result =
@@ -2827,28 +2763,13 @@ async function openLesson(
 
         db
           .from("lessons")
-          .select(`
-            id,
-            module_id,
-            lesson_number,
-            title,
-            content,
-            video_url,
-            document_url,
-            learning_objectives,
-            key_terms,
-            practical_activity,
-            knowledge_check
-          `)
-          .eq(
-            "id",
-            lessonId
-          )
+          .select("*")
+          .eq("id",lessonId)
           .limit(1),
 
         15,
 
-        "Loading lesson"
+        "Loading lesson content"
 
       );
 
@@ -2866,29 +2787,39 @@ async function openLesson(
     ){
 
       throw new Error(
-        "This lesson could not be found."
+        "The lesson could not be found."
       );
 
     }
 
 
-    currentLesson =
+    const lesson =
       result.data[0];
 
 
-    lessonViewerTitle.textContent =
-      currentLesson.title ||
+    currentLesson =
+      lesson;
+
+
+    const title =
+      lesson.title ||
+      lesson.lesson_title ||
       "Lesson";
 
 
+    lessonViewerTitle.textContent =
+      title;
+
+
     lessonViewerModule.textContent =
-      moduleName ||
-      "Course Lesson";
+      moduleName || "Course Lesson";
 
 
     lessonViewerContent.innerHTML =
       safeLessonContent(
-        currentLesson
+        getLessonContent(
+          lesson
+        )
       );
 
 
@@ -2897,20 +2828,21 @@ async function openLesson(
 
 
     await checkLessonCompletion(
-      currentLesson.id
+      lesson.id
     );
 
 
   }catch(error){
 
     console.error(
+      "Lesson loading error:",
       error
     );
 
 
     lessonViewerContent.innerHTML = `
 
-      <div class="error-study">
+      <div class="dashboard-start-error">
 
         <strong>
           ⚠️ Lesson could not be opened
@@ -2997,7 +2929,7 @@ function setupLessonButtons(){
 
 
 /* ============================================================
-   LESSON PROGRESS
+   FIXED LESSON PROGRESS CHECK
    ============================================================ */
 
 async function checkLessonCompletion(
@@ -3005,7 +2937,7 @@ async function checkLessonCompletion(
 ){
 
   if(
-    !currentStudent ||
+    !currentUser ||
     !lessonId
   ){
 
@@ -3016,13 +2948,23 @@ async function checkLessonCompletion(
 
   try{
 
+    /*
+     * IMPORTANT:
+     *
+     * lesson_progress.student_id must contain
+     * auth.uid().
+     *
+     * Therefore we use currentUser.id,
+     * NOT currentStudent.id.
+     */
+
     const result =
       await db
         .from("lesson_progress")
         .select("*")
         .eq(
           "student_id",
-          currentStudent.id
+          currentUser.id
         )
         .eq(
           "lesson_id",
@@ -3034,7 +2976,7 @@ async function checkLessonCompletion(
     if(result.error){
 
       console.warn(
-        "lesson_progress not available yet:",
+        "Lesson progress check:",
         result.error
       );
 
@@ -3045,7 +2987,7 @@ async function checkLessonCompletion(
 
     if(
       result.data &&
-      result.data.length &&
+      result.data.length > 0 &&
       result.data[0].completed
     ){
 
@@ -3053,14 +2995,35 @@ async function checkLessonCompletion(
         "block";
 
 
+      lessonCompleteMessage.innerHTML = `
+
+        <strong>
+          ✅ Lesson completed
+        </strong>
+
+        Your progress has already been saved.
+
+      `;
+
+
       completeLessonButton.textContent =
         "✅ Lesson Completed";
+
+    }else{
+
+      lessonCompleteMessage.style.display =
+        "none";
+
+
+      completeLessonButton.textContent =
+        "✅ Mark Lesson Complete";
 
     }
 
   }catch(error){
 
     console.warn(
+      "Could not check lesson progress:",
       error
     );
 
@@ -3070,15 +3033,19 @@ async function checkLessonCompletion(
 
 
 /* ============================================================
-   COMPLETE LESSON
+   FIXED LESSON PROGRESS SAVE
    ============================================================ */
 
 async function completeCurrentLesson(){
 
   if(
-    !currentStudent ||
+    !currentUser ||
     !currentLesson
   ){
+
+    alert(
+      "Your student login could not be confirmed. Please log in again."
+    );
 
     return;
 
@@ -3095,24 +3062,48 @@ async function completeCurrentLesson(){
 
   try{
 
+    /*
+     * IMPORTANT:
+     *
+     * RLS requires:
+     *
+     * student_id = auth.uid()
+     *
+     * currentUser.id is the authenticated
+     * Supabase user's UUID.
+     */
+
+    const progressData = {
+
+      student_id:
+        currentUser.id,
+
+      lesson_id:
+        currentLesson.id,
+
+      completed:
+        true,
+
+      completed_at:
+        new Date().toISOString(),
+
+      updated_at:
+        new Date().toISOString()
+
+    };
+
+
+    console.log(
+      "Saving lesson progress:",
+      progressData
+    );
+
+
     const result =
       await db
         .from("lesson_progress")
         .upsert(
-          {
-            student_id:
-              currentStudent.id,
-
-            lesson_id:
-              currentLesson.id,
-
-            completed:
-              true,
-
-            completed_at:
-              new Date().toISOString()
-
-          },
+          progressData,
           {
             onConflict:
               "student_id,lesson_id"
@@ -3131,13 +3122,35 @@ async function completeCurrentLesson(){
       "block";
 
 
+    lessonCompleteMessage.innerHTML = `
+
+      <strong>
+        ✅ Lesson completed successfully.
+      </strong>
+
+      Your progress has been saved to your
+      Funda Online Academy student account.
+
+    `;
+
+
     completeLessonButton.textContent =
       "✅ Lesson Completed";
+
+
+    /*
+     * Keep the button disabled because this
+     * lesson is already complete.
+     */
+
+    completeLessonButton.disabled =
+      true;
 
 
   }catch(error){
 
     console.error(
+      "Lesson completion error:",
       error
     );
 
@@ -3151,11 +3164,14 @@ async function completeCurrentLesson(){
 
 
     alert(
-      "Lesson opened successfully, but progress could not be saved yet.\n\n" +
+
+      "The lesson was opened successfully, but progress could not be saved yet.\n\n" +
+
       (
         error.message ||
         String(error)
       )
+
     );
 
   }
@@ -3164,17 +3180,29 @@ async function completeCurrentLesson(){
 
 
 /* ============================================================
-   LOAD MY COURSES
+   LOAD MY STUDIES
    ============================================================ */
 
-async function loadMyStudies(){
+async function loadMyStudies(
+  user
+){
+
+  if(!studyList){
+    return;
+  }
+
+
+  setStatus(
+    "Loading your student profile…"
+  );
+
 
   studyList.innerHTML = `
 
     <div class="card">
 
       <p class="loading">
-        Loading your approved courses…
+        Checking your student profile…
       </p>
 
     </div>
@@ -3182,13 +3210,13 @@ async function loadMyStudies(){
   `;
 
 
-  currentStudent =
+  const student =
     await getStudent(
-      currentUser.id
+      user.id
     );
 
 
-  if(!currentStudent){
+  if(!student){
 
     studyList.innerHTML = `
 
@@ -3198,14 +3226,14 @@ async function loadMyStudies(){
           👤
         </div>
 
-        <h3>
+        <h3 style="margin-top:10px">
           Student profile not found
         </h3>
 
-        <p style="margin-top:8px">
+        <p style="margin-top:8px;line-height:1.6">
 
-          Your login is working, but your student
-          profile is not connected to this account.
+          Your login is working, but there is no
+          student record connected to this account.
 
         </p>
 
@@ -3213,14 +3241,24 @@ async function loadMyStudies(){
 
     `;
 
+
+    setStatus(
+      "Login connected, but student profile was not found."
+    );
+
+
     return;
 
   }
 
 
+  currentStudent =
+    student;
+
+
   const enrollments =
     await getApprovedEnrollments(
-      currentStudent.id
+      student.id
     );
 
 
@@ -3236,21 +3274,28 @@ async function loadMyStudies(){
           📚
         </div>
 
-        <h3>
+        <h3 style="margin-top:10px">
           No approved courses yet
         </h3>
 
         <p style="margin-top:8px;line-height:1.6">
 
-          Once your enrolment is approved by
-          Funda Online Academy, your course will
-          appear here.
+          Your student account is working correctly.
+
+          Once Funda Online Academy approves your
+          enrolment, your course will appear here.
 
         </p>
 
       </div>
 
     `;
+
+
+    setStatus(
+      "Student account connected successfully."
+    );
+
 
     return;
 
@@ -3260,45 +3305,93 @@ async function loadMyStudies(){
   studyList.innerHTML = "";
 
 
+  let allLessons = [];
+
+
+  try{
+
+    allLessons =
+      await getLessons();
+
+  }catch(error){
+
+    console.warn(
+      "Lessons could not be loaded:",
+      error
+    );
+
+    allLessons = [];
+
+  }
+
+
+  let displayedCourses =
+    0;
+
+
   for(
     const enrollment of enrollments
   ){
 
     try{
 
-      await renderStudy(
-        enrollment
-      );
+      const study =
+        await buildStudy(
+          enrollment,
+          allLessons
+        );
+
+
+      if(
+        study &&
+        study.course
+      ){
+
+        renderStudy(
+          study
+        );
+
+        displayedCourses++;
+
+      }
 
     }catch(error){
 
       console.error(
-        "Course loading error:",
+        "Course error:",
         error
       );
 
 
-      const errorBox =
+      const errorCard =
         document.createElement(
           "div"
         );
 
 
-      errorBox.className =
+      errorCard.className =
         "error-study";
 
 
-      errorBox.innerHTML = `
+      errorCard.innerHTML = `
 
         <strong>
-          ⚠️ This course could not be loaded
+          ⚠️ One course could not be loaded
         </strong>
 
         <p style="margin-top:8px">
 
+          Course ID:
           ${escapeHtml(
-            error.message ||
-            String(error)
+            enrollment.course_id
+          )}
+
+        </p>
+
+        <p style="margin-top:8px;font-size:13px">
+
+          ${escapeHtml(
+            error.message
           )}
 
         </p>
@@ -3307,10 +3400,38 @@ async function loadMyStudies(){
 
 
       studyList.appendChild(
-        errorBox
+        errorCard
       );
 
     }
+
+  }
+
+
+  if(
+    displayedCourses === 0 &&
+    studyList.children.length === 0
+  ){
+
+    studyList.innerHTML = `
+
+      <div class="error-study">
+
+        <strong>
+          ⚠️ Approved enrolment found,
+          but the course could not be displayed.
+        </strong>
+
+        <p style="margin-top:8px">
+
+          The student account and enrolment are connected,
+          but the course information needs to be checked.
+
+        </p>
+
+      </div>
+
+    `;
 
   }
 
@@ -3319,30 +3440,51 @@ async function loadMyStudies(){
 
   setupLessonButtons();
 
+
+  setStatus(
+    "Student learning system connected."
+  );
+
 }
 
 
 /* ============================================================
-   HEADER
+   STUDENT HEADER
    ============================================================ */
 
-async function loadHeader(){
+async function loadStudentHeader(
+  user
+){
 
   if(userEmail){
 
     userEmail.textContent =
-      currentUser.email || "";
+      user.email || "";
 
   }
 
 
+  const student =
+    currentStudent ||
+    await getStudent(
+      user.id
+    );
+
+
   if(
-    currentStudent &&
+    student &&
     userName
   ){
 
     userName.textContent =
-      currentStudent.full_name ||
+      student.full_name ||
+      student.first_name ||
+      "Student";
+
+  }else if(userName){
+
+    userName.textContent =
+      user.user_metadata?.full_name ||
       "Student";
 
   }
@@ -3356,23 +3498,18 @@ async function loadHeader(){
 
 async function loadAvailableCourses(){
 
+  if(!availableCourses){
+    return;
+  }
+
+
   const result =
     await withTimeout(
 
       db
         .from("courses")
-        .select(`
-          id,
-          title,
-          description,
-          duration,
-          price,
-          active
-        `)
-        .eq(
-          "active",
-          true
-        )
+        .select("*")
+        .eq("active",true)
         .order(
           "title",
           {
@@ -3394,19 +3531,19 @@ async function loadAvailableCourses(){
   }
 
 
-  const courses =
+  const data =
     result.data || [];
 
 
-  if(
-    courses.length === 0
-  ){
+  if(data.length === 0){
 
     availableCourses.innerHTML = `
 
       <div class="empty-study">
 
-        No courses are currently available.
+        <p>
+          No courses are currently available.
+        </p>
 
       </div>
 
@@ -3418,9 +3555,28 @@ async function loadAvailableCourses(){
 
 
   availableCourses.innerHTML =
-    courses
-      .map(
-        course => `
+    data.map(
+      course => {
+
+        const name =
+          course.title ||
+          course.name ||
+          course.course_name ||
+          "Course";
+
+
+        const description =
+          course.description ||
+          "Funda Online Academy course.";
+
+
+        const price =
+          course.price ??
+          course.amount ??
+          null;
+
+
+        return `
 
           <div class="card">
 
@@ -3429,11 +3585,7 @@ async function loadAvailableCourses(){
             </span>
 
             <h3>
-
-              ${escapeHtml(
-                course.title
-              )}
-
+              ${escapeHtml(name)}
             </h3>
 
             <p
@@ -3443,43 +3595,28 @@ async function loadAvailableCourses(){
               ">
 
               ${escapeHtml(
-                course.description ||
-                "Funda Online Academy course."
+                description
               )}
 
             </p>
 
             <p
               style="
-                margin-top:10px;
+                margin-top:12px;
                 font-weight:700
               ">
 
-              ⏱️
-              ${escapeHtml(
-                course.duration || "—"
-              )}
-
-            </p>
-
-            <p
-              style="
-                margin-top:6px;
-                font-weight:700
-              ">
-
-              💰
-              ${money(
-                course.price
-              )}
+              💰 ${money(price)}
 
             </p>
 
           </div>
 
-        `
-      )
-      .join("");
+        `;
+
+      }
+    )
+    .join("");
 
 }
 
@@ -3490,8 +3627,13 @@ async function loadAvailableCourses(){
 
 async function loadEnrolments(){
 
-  if(!currentStudent){
+  if(
+    !enrolmentsContainer ||
+    !currentStudent
+  ){
+
     return;
+
   }
 
 
@@ -3501,15 +3643,15 @@ async function loadEnrolments(){
     );
 
 
-  if(
-    enrollments.length === 0
-  ){
+  if(enrollments.length === 0){
 
     enrolmentsContainer.innerHTML = `
 
       <div class="empty-study">
 
-        You do not have approved enrolments yet.
+        <p>
+          You do not have approved enrolments yet.
+        </p>
 
       </div>
 
@@ -3527,44 +3669,61 @@ async function loadEnrolments(){
     const enrollment of enrollments
   ){
 
-    const course =
-      await getCourse(
-        enrollment.course_id
+    try{
+
+      const course =
+        await getCourse(
+          enrollment.course_id
+        );
+
+
+      const name =
+        course?.title ||
+        course?.name ||
+        course?.course_name ||
+        "Course";
+
+
+      cards.push(`
+
+        <div class="card">
+
+          <span class="funda-status approved">
+            Approved
+          </span>
+
+          <h3>
+            ${escapeHtml(name)}
+          </h3>
+
+          <p style="margin-top:8px">
+
+            Your enrolment has been approved.
+
+          </p>
+
+        </div>
+
+      `);
+
+    }catch(error){
+
+      console.warn(
+        "Enrolment course error:",
+        error
       );
 
-
-    cards.push(`
-
-      <div class="card">
-
-        <span class="funda-status approved">
-          Approved
-        </span>
-
-        <h3>
-
-          ${escapeHtml(
-            course?.title ||
-            "Course"
-          )}
-
-        </h3>
-
-        <p style="margin-top:8px">
-
-          Your enrolment has been approved.
-
-        </p>
-
-      </div>
-
-    `);
+    }
 
   }
 
 
-  enrolmentsContainer.innerHTML =
-    cards.join("");
+  if(cards.length){
+
+    enrolmentsContainer.innerHTML =
+      cards.join("");
+
+  }
 
 }
 
@@ -3578,10 +3737,12 @@ const policyCheckbox =
     "policy-checkbox"
   );
 
+
 const acceptPolicyButton =
   document.getElementById(
     "accept-policy-btn"
   );
+
 
 const policyAccepted =
   document.getElementById(
@@ -3589,119 +3750,162 @@ const policyAccepted =
   );
 
 
-async function loadPolicyStatus(){
+async function loadPolicyStatus(
+  user
+){
 
   const key =
     "foa_policy_accepted_" +
-    currentUser.id;
+    user.id;
 
 
   if(
     localStorage.getItem(key) === "true"
   ){
 
-    policyCheckbox.checked =
-      true;
+    if(policyCheckbox){
 
-    policyCheckbox.disabled =
-      true;
+      policyCheckbox.checked =
+        true;
 
-    acceptPolicyButton.disabled =
-      true;
+      policyCheckbox.disabled =
+        true;
 
-    policyAccepted.style.display =
-      "block";
+    }
 
-    policyAccepted.innerHTML = `
 
-      <strong>
-        ✅ Declaration accepted
-      </strong>
+    if(acceptPolicyButton){
 
-      Your policy declaration has already
-      been accepted on this device.
+      acceptPolicyButton.disabled =
+        true;
 
-    `;
+    }
+
+
+    if(policyAccepted){
+
+      policyAccepted.style.display =
+        "block";
+
+
+      policyAccepted.innerHTML = `
+
+        <strong>
+          ✅ Declaration accepted
+        </strong>
+
+        Your policy declaration has already
+        been accepted on this device.
+
+      `;
+
+    }
 
   }
 
 }
 
 
-acceptPolicyButton.addEventListener(
-  "click",
-  async () => {
+if(acceptPolicyButton){
 
-    if(
-      !policyCheckbox.checked
-    ){
+  acceptPolicyButton.addEventListener(
+    "click",
+    async () => {
 
-      alert(
-        "Please tick the declaration checkbox first."
+      if(
+        !policyCheckbox ||
+        !policyCheckbox.checked
+      ){
+
+        alert(
+          "Please tick the declaration checkbox before continuing."
+        );
+
+        return;
+
+      }
+
+
+      const user =
+        await getCurrentUser();
+
+
+      if(!user){
+        return;
+      }
+
+
+      localStorage.setItem(
+        "foa_policy_accepted_" +
+        user.id,
+        "true"
       );
 
-      return;
+
+      if(policyAccepted){
+
+        policyAccepted.style.display =
+          "block";
+
+
+        policyAccepted.innerHTML = `
+
+          <strong>
+            ✅ Declaration accepted
+          </strong>
+
+          Thank you. Your acceptance has
+          been recorded on this device.
+
+        `;
+
+      }
+
+
+      policyCheckbox.disabled =
+        true;
+
+      acceptPolicyButton.disabled =
+        true;
 
     }
+  );
 
-
-    localStorage.setItem(
-      "foa_policy_accepted_" +
-      currentUser.id,
-      "true"
-    );
-
-
-    policyAccepted.style.display =
-      "block";
-
-
-    policyAccepted.innerHTML = `
-
-      <strong>
-        ✅ Declaration accepted
-      </strong>
-
-      Thank you. Your acceptance has been
-      recorded on this device.
-
-    `;
-
-
-    policyCheckbox.disabled =
-      true;
-
-    acceptPolicyButton.disabled =
-      true;
-
-  }
-);
+}
 
 
 /* ============================================================
    LESSON VIEWER EVENTS
    ============================================================ */
 
-lessonClose.addEventListener(
-  "click",
-  closeLesson
-);
+if(lessonClose){
+
+  lessonClose.addEventListener(
+    "click",
+    closeLesson
+  );
+
+}
 
 
-lessonViewer.addEventListener(
-  "click",
-  event => {
+if(lessonViewer){
 
-    if(
-      event.target === lessonViewer
-    ){
+  lessonViewer.addEventListener(
+    "click",
+    event => {
 
-      closeLesson();
+      if(
+        event.target === lessonViewer
+      ){
+
+        closeLesson();
+
+      }
 
     }
+  );
 
-  }
-);
+}
 
 
 document.addEventListener(
@@ -3723,48 +3927,60 @@ document.addEventListener(
 );
 
 
-completeLessonButton.addEventListener(
-  "click",
-  completeCurrentLesson
-);
+if(completeLessonButton){
+
+  completeLessonButton.addEventListener(
+    "click",
+    completeCurrentLesson
+  );
+
+}
 
 
 /* ============================================================
    LOGOUT
    ============================================================ */
 
-logoutButton.addEventListener(
-  "click",
-  async () => {
+if(logoutButton){
 
-    try{
+  logoutButton.addEventListener(
+    "click",
+    async () => {
 
-      await db.auth.signOut();
+      try{
 
-      window.location.href =
-        "login.html";
+        if(db){
 
-    }catch(error){
+          await db.auth.signOut();
 
-      console.error(
-        error
-      );
+        }
 
-      alert(
-        "Unable to log out. Please try again."
-      );
+        window.location.href =
+          "login.html";
+
+      }catch(error){
+
+        console.error(
+          error
+        );
+
+        alert(
+          "Unable to log out. Please try again."
+        );
+
+      }
 
     }
+  );
 
-  }
-);
+}
 
 
 /* ============================================================
-   START
+   START DASHBOARD
    ============================================================ */
 
-async function init(){
+async function initDashboard(){
 
   try{
 
@@ -3780,7 +3996,7 @@ async function init(){
     if(!db){
 
       throw new Error(
-        "Supabase connection could not be created. Check supabase-config.js."
+        "Supabase could not be connected. Check supabase-config.js."
       );
 
     }
@@ -3800,29 +4016,73 @@ async function init(){
     }
 
 
-    setStatus(
-      "Loading your courses…"
+    /*
+     * This is the authenticated Supabase user.
+     *
+     * This ID is what lesson_progress.student_id
+     * must use because our RLS policy checks:
+     *
+     * student_id = auth.uid()
+     */
+
+    console.log(
+      "Authenticated student user ID:",
+      currentUser.id
     );
-
-
-    await loadMyStudies();
-
-
-    await loadHeader();
 
 
     try{
 
-      await loadPolicyStatus();
+      currentStudent =
+        await getStudent(
+          currentUser.id
+        );
 
     }catch(error){
 
       console.warn(
-        "Policy status error:",
+        "Student profile error:",
         error
       );
 
     }
+
+
+    try{
+
+      await loadStudentHeader(
+        currentUser
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Student header error:",
+        error
+      );
+
+    }
+
+
+    try{
+
+      await loadPolicyStatus(
+        currentUser
+      );
+
+    }catch(error){
+
+      console.warn(
+        "Policy error:",
+        error
+      );
+
+    }
+
+
+    await loadMyStudies(
+      currentUser
+    );
 
 
     try{
@@ -3832,7 +4092,7 @@ async function init(){
     }catch(error){
 
       console.warn(
-        "Enrolments error:",
+        "Enrolments could not load:",
         error
       );
 
@@ -3851,23 +4111,27 @@ async function init(){
       );
 
 
-      availableCourses.innerHTML = `
+      if(availableCourses){
 
-        <div class="error-study">
+        availableCourses.innerHTML = `
 
-          Courses could not be loaded.
+          <div class="error-study">
 
-          <p style="margin-top:8px">
+            Courses could not be loaded.
 
-            ${escapeHtml(
-              error.message
-            )}
+            <p style="margin-top:8px;font-size:13px">
 
-          </p>
+              ${escapeHtml(
+                error.message
+              )}
 
-        </div>
+            </p>
 
-      `;
+          </div>
+
+        `;
+
+      }
 
     }
 
@@ -3879,32 +4143,9 @@ async function init(){
 
   }catch(error){
 
-    console.error(
-      "FUNDA DASHBOARD:",
+    showStudyError(
       error
     );
-
-
-    studyList.innerHTML = `
-
-      <div class="error-study">
-
-        <strong>
-          ⚠️ Student learning system could not start
-        </strong>
-
-        <p style="margin-top:10px">
-
-          ${escapeHtml(
-            error.message ||
-            String(error)
-          )}
-
-        </p>
-
-      </div>
-
-    `;
 
 
     setStatus(
@@ -3916,11 +4157,16 @@ async function init(){
 }
 
 
-init();
+/* ============================================================
+   START
+   ============================================================ */
+
+initDashboard();
+
 
 })();
 
 </script>
 
 </body>
-  </html>
+    </html>
