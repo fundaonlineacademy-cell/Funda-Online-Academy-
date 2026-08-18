@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 
 <meta charset="utf-8">
@@ -342,13 +343,6 @@ body{
   transition:width .3s ease;
 }
 
-.payment-card{
-  border:1px solid #e4ece3;
-  border-radius:16px;
-  padding:18px;
-  background:#fff;
-}
-
 .policy-card{
   background:#fff;
   border:1px solid #dfe8e2;
@@ -492,6 +486,11 @@ body{
   margin:6px 0;
 }
 
+
+/* ============================================================
+   LESSON VIEWER
+   ============================================================ */
+
 .lesson-viewer{
   display:none;
   position:fixed;
@@ -618,6 +617,11 @@ body{
   color:#68766f;
 }
 
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
 @media(max-width:900px){
 
   .dashboard-grid{
@@ -696,24 +700,34 @@ body{
 
 </head>
 
+
 <body>
+
 
 <header>
 
   <div class="wrap nav">
 
-    <a class="logo" href="index.html">
+    <a
+      class="logo"
+      href="index.html">
 
       <img
         src="logo.png"
         alt="Funda Online Academy logo">
 
       <span>
+
         Funda Online Academy Pty Ltd
-        <small>Student Dashboard</small>
+
+        <small>
+          Student Dashboard
+        </small>
+
       </span>
 
     </a>
+
 
     <div class="nav-actions">
 
@@ -722,11 +736,14 @@ body{
         class="user-email">
       </span>
 
+
       <button
         id="logout"
         class="btn ghost"
         type="button">
+
         Logout
+
       </button>
 
     </div>
@@ -736,9 +753,15 @@ body{
 </header>
 
 
+
 <main class="dashboard">
 
 <div class="wrap">
+
+
+  <!-- ======================================================
+       WELCOME
+       ====================================================== -->
 
   <div class="dash-head">
 
@@ -748,31 +771,46 @@ body{
         STUDENT AREA
       </span>
 
+
       <h1>
+
         Welcome,
-        <span id="user-name">Student</span>
+        <span id="user-name">
+          Student
+        </span>
+
       </h1>
 
+
       <p>
+
         Manage your courses, studies, enrolments,
         payments and Funda Online Academy policies.
+
       </p>
+
 
       <div
         id="system-status"
         class="system-status">
+
         Starting student learning system…
+
       </div>
 
     </div>
 
+
     <a
       class="btn green"
       href="index.html#courses">
+
       Browse Courses
+
     </a>
 
   </div>
+
 
 
   <div
@@ -781,15 +819,25 @@ body{
   </div>
 
 
-  <!-- MY STUDIES -->
+
+  <!-- ======================================================
+       MY STUDIES
+       ====================================================== -->
 
   <section
     class="dashboard-section"
     id="my-studies">
 
-    <h2>📚 My Studies</h2>
+    <h2>
+      📚 My Studies
+    </h2>
 
-    <p style="margin-bottom:18px;line-height:1.6">
+
+    <p
+      style="
+        margin-bottom:18px;
+        line-height:1.6
+      ">
 
       Your approved courses and learning materials
       will appear here. Open a module to view its
@@ -797,12 +845,15 @@ body{
 
     </p>
 
+
     <div id="study-list">
 
       <div class="card">
 
         <p class="loading">
+
           Starting student learning system…
+
         </p>
 
       </div>
@@ -812,7 +863,10 @@ body{
   </section>
 
 
-  <!-- POLICIES -->
+
+  <!-- ======================================================
+       POLICIES
+       ====================================================== -->
 
   <section
     class="dashboard-section"
@@ -822,13 +876,17 @@ body{
       📜 Policies, Payment Rules & Declaration
     </h2>
 
+
     <div class="policy-card">
+
 
       <div class="policy-intro">
 
         <strong>
+
           Please read this information carefully before
           enrolling in a course.
+
         </strong>
 
         <br><br>
@@ -841,37 +899,55 @@ body{
       </div>
 
 
+
       <div class="policy-group">
 
-        <h3>💳 Payment Rules</h3>
+        <h3>
+          💳 Payment Rules
+        </h3>
+
 
         <ul>
 
           <li>
+
             Courses below <strong>R2,000</strong>
             must be paid in full.
+
           </li>
 
+
           <li>
+
             Courses above <strong>R2,000</strong>
             require at least half of the course fee upfront.
+
           </li>
 
+
           <li>
+
             The remaining balance must be paid according
             to the agreed payment arrangement before
             completion/certification.
+
           </li>
 
+
           <li>
+
             Where applicable, students may request a
             payment plan. Approval is at the discretion
             of Funda Online Academy.
+
           </li>
 
+
           <li>
+
             Students remain responsible for agreed
             outstanding balances.
+
           </li>
 
         </ul>
@@ -879,56 +955,105 @@ body{
       </div>
 
 
+
       <div class="policy-group">
 
-        <h3>🏦 How To Pay</h3>
+        <h3>
+          🏦 How To Pay
+        </h3>
+
 
         <p>
+
           Please use the following official Funda Online
           Academy banking details when making a payment.
+
         </p>
+
 
         <div class="bank-grid">
 
+
           <div class="bank-card">
 
-            <h3>TymeBank</h3>
+            <h3>
+              TymeBank
+            </h3>
+
 
             <p class="bank-detail">
-              <strong>Account name:</strong>
+
+              <strong>
+                Account name:
+              </strong>
+
               Funda Online Academy
+
             </p>
 
+
             <p class="bank-detail">
-              <strong>Account number:</strong>
+
+              <strong>
+                Account number:
+              </strong>
+
               53001794582
+
             </p>
 
+
             <p class="bank-detail">
-              <strong>Branch code:</strong>
+
+              <strong>
+                Branch code:
+              </strong>
+
               678910
+
             </p>
 
           </div>
 
 
+
           <div class="bank-card">
 
-            <h3>Capitec Bank</h3>
+            <h3>
+              Capitec Bank
+            </h3>
+
 
             <p class="bank-detail">
-              <strong>Account name:</strong>
+
+              <strong>
+                Account name:
+              </strong>
+
               Funda Online Academy
+
             </p>
 
+
             <p class="bank-detail">
-              <strong>Account number:</strong>
+
+              <strong>
+                Account number:
+              </strong>
+
               2535397664
+
             </p>
 
+
             <p class="bank-detail">
-              <strong>Branch code:</strong>
+
+              <strong>
+                Branch code:
+              </strong>
+
               470010
+
             </p>
 
           </div>
@@ -938,31 +1063,68 @@ body{
       </div>
 
 
+
       <div class="policy-group">
 
-        <h3>📋 Required Student Information</h3>
+        <h3>
+          📋 Required Student Information
+        </h3>
+
 
         <div class="required-list">
 
-          <div>✓ Name</div>
-          <div>✓ Surname</div>
-          <div>✓ ID / Passport</div>
-          <div>✓ Course name</div>
-          <div>✓ Phone number</div>
-          <div>✓ Highest education level</div>
-          <div>✓ Gender</div>
-          <div>✓ Email address</div>
-          <div>✓ Residential address</div>
-          <div>✓ How you heard about us</div>
+          <div>
+            ✓ Name
+          </div>
+
+          <div>
+            ✓ Surname
+          </div>
+
+          <div>
+            ✓ ID / Passport
+          </div>
+
+          <div>
+            ✓ Course name
+          </div>
+
+          <div>
+            ✓ Phone number
+          </div>
+
+          <div>
+            ✓ Highest education level
+          </div>
+
+          <div>
+            ✓ Gender
+          </div>
+
+          <div>
+            ✓ Email address
+          </div>
+
+          <div>
+            ✓ Residential address
+          </div>
+
+          <div>
+            ✓ How you heard about us
+          </div>
 
         </div>
 
       </div>
 
 
+
       <div class="policy-group">
 
-        <h3>📚 Student Rules & Responsibilities</h3>
+        <h3>
+          📚 Student Rules & Responsibilities
+        </h3>
+
 
         <ul>
 
@@ -1023,9 +1185,13 @@ body{
       </div>
 
 
+
       <div class="policy-group">
 
-        <h3>🔐 Privacy & Protection of Information</h3>
+        <h3>
+          🔐 Privacy & Protection of Information
+        </h3>
+
 
         <p style="line-height:1.6">
 
@@ -1040,9 +1206,13 @@ body{
       </div>
 
 
+
       <div class="policy-group">
 
-        <h3>📝 Assessments & Academic Integrity</h3>
+        <h3>
+          📝 Assessments & Academic Integrity
+        </h3>
+
 
         <ul>
 
@@ -1070,15 +1240,18 @@ body{
       </div>
 
 
+
       <div class="contact-box">
 
         <strong>
           Funda Online Academy
         </strong>
 
+
         <p>
           📧 fundaonlineacademy@gmail.com
         </p>
+
 
         <p>
           📱 069 960 8590
@@ -1087,11 +1260,13 @@ body{
       </div>
 
 
+
       <div class="declaration-box">
 
         <h3>
           ✍️ Student Declaration
         </h3>
+
 
         <p class="declaration-text">
 
@@ -1124,11 +1299,14 @@ body{
             type="checkbox"
             id="policy-checkbox">
 
+
           <label for="policy-checkbox">
 
             <strong>
+
               I accept the Funda Online Academy Terms,
               Payment Rules, Policies and Student Declaration.
+
             </strong>
 
           </label>
@@ -1147,14 +1325,19 @@ body{
 
 
         <p class="policy-version">
+
           Policy version: FOA Terms v1.0
+
         </p>
 
 
         <div
           id="policy-accepted"
           class="accepted-box"
-          style="display:none;margin-top:18px">
+          style="
+            display:none;
+            margin-top:18px
+          ">
         </div>
 
       </div>
@@ -1164,20 +1347,28 @@ body{
   </section>
 
 
-  <!-- PAYMENTS -->
+
+  <!-- ======================================================
+       PAYMENTS
+       ====================================================== -->
 
   <section
     class="dashboard-section"
     id="payments">
 
-    <h2>💳 Payments</h2>
+    <h2>
+      💳 Payments
+    </h2>
+
 
     <div id="payment-list">
 
       <div class="card">
 
         <p class="loading">
+
           Payment history will appear here.
+
         </p>
 
       </div>
@@ -1187,11 +1378,17 @@ body{
   </section>
 
 
-  <!-- ENROLMENTS -->
+
+  <!-- ======================================================
+       ENROLMENTS
+       ====================================================== -->
 
   <section>
 
-    <h2>📝 My Enrolments</h2>
+    <h2>
+      📝 My Enrolments
+    </h2>
+
 
     <div
       id="enrolments"
@@ -1210,50 +1407,46 @@ body{
   </section>
 
 
-  <!-- AVAILABLE COURSES -->
+  <!-- ======================================================
+       IMPORTANT:
+       AVAILABLE COURSES SECTION REMOVED
+       ====================================================== -->
 
-  <section>
-
-    <h2>📖 Available Courses</h2>
-
-    <div
-      id="available-courses"
-      class="dashboard-grid">
-
-      <div class="card">
-
-        <p class="loading">
-          Loading courses…
-        </p>
-
-      </div>
-
-    </div>
-
-  </section>
 
 </div>
 
 </main>
 
 
-<!-- LESSON VIEWER -->
+
+<!-- ========================================================
+     LESSON VIEWER
+     KEPT INTACT FOR OPEN / COMPLETE / REVIEW LESSON
+     ======================================================== -->
 
 <div
   id="lesson-viewer"
   class="lesson-viewer"
   aria-hidden="true">
 
+
   <div class="lesson-viewer-box">
 
+
     <div class="lesson-viewer-header">
+
 
       <div>
 
         <div
           id="lesson-viewer-module"
-          style="font-size:13px;opacity:.8;margin-bottom:6px">
+          style="
+            font-size:13px;
+            opacity:.8;
+            margin-bottom:6px
+          ">
         </div>
+
 
         <h2 id="lesson-viewer-title">
           Lesson
@@ -1275,7 +1468,9 @@ body{
     </div>
 
 
+
     <div class="lesson-viewer-body">
+
 
       <div
         id="lesson-viewer-content"
@@ -1288,7 +1483,9 @@ body{
       </div>
 
 
+
       <div class="lesson-footer">
+
 
         <button
           type="button"
@@ -1317,19 +1514,22 @@ body{
 </div>
 
 
-<!-- SUPABASE -->
+
+<!-- ========================================================
+     SUPABASE
+     ======================================================== -->
 
 <script
   src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
 </script>
 
-<!-- SUPABASE CONFIGURATION -->
 
-<script src="supabase-config.js?v=20260818-2"></script>
+<script src="supabase-config.js?v=20260818-3"></script>
 
-<!-- STUDENT DASHBOARD JAVASCRIPT -->
 
-<script src="dashboard.js?v=20260818-2"></script>
+<script src="dashboard.js?v=20260818-3"></script>
+
 
 </body>
-</html>
+
+  </html>
