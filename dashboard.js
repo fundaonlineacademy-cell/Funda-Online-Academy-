@@ -1,25 +1,32 @@
 // ============================================================
 // FUNDA ONLINE ACADEMY
 // STUDENT DASHBOARD
-// STUDENT LEARNING SYSTEM
+// STUDENT LEARNING + LESSON PROGRESS SYSTEM
 //
-// Replace the ENTIRE dashboard.js with this file.
-// DO NOT change dashboard.html yet.
+// REPLACE THE ENTIRE dashboard.js WITH THIS FILE
 // ============================================================
 
 console.log("==========================================");
-console.log("FUNDA ONLINE ACADEMY - STUDENT DASHBOARD");
-console.log("STUDENT SYSTEM STARTING");
+console.log("FUNDA ONLINE ACADEMY");
+console.log("STUDENT DASHBOARD STARTING");
 console.log("==========================================");
 
 
 // ============================================================
-// SUPABASE CONNECTION
+// SUPABASE
 // ============================================================
 
 let db = null;
+let currentUser = null;
+let currentStudent = null;
+
+
+// ============================================================
+// CONNECT SUPABASE
+// ============================================================
 
 function connectDatabase() {
+
   try {
 
     if (typeof supabase === "undefined") {
@@ -45,7 +52,9 @@ function connectDatabase() {
       window.SUPABASE_ANON_KEY
     );
 
-    console.log("Supabase connected successfully.");
+    console.log(
+      "Supabase connected successfully."
+    );
 
     return true;
 
@@ -84,7 +93,7 @@ const availableCoursesEl =
 
 
 // ============================================================
-// HTML ESCAPE
+// ESCAPE HTML
 // ============================================================
 
 function escapeHtml(value) {
@@ -106,6 +115,31 @@ function escapeHtml(value) {
 
 
 // ============================================================
+// STATUS
+// ============================================================
+
+function setStatus(
+  text,
+  success = false
+) {
+
+  if (!messageEl) {
+    return;
+  }
+
+  messageEl.textContent = text;
+
+  messageEl.className =
+    "message " +
+    (
+      success
+        ? "success"
+        : "error"
+    );
+}
+
+
+// ============================================================
 // GLOBAL ERROR
 // ============================================================
 
@@ -121,14 +155,10 @@ function showGlobalError(error) {
     text
   );
 
-  if (messageEl) {
-
-    messageEl.textContent =
-      "Student system error: " + text;
-
-    messageEl.className =
-      "message error";
-  }
+  setStatus(
+    "Student system error: " + text,
+    false
+  );
 
   if (studyListEl) {
 
@@ -141,7 +171,7 @@ function showGlobalError(error) {
       ">
 
         <strong>
-          Unable to load My Studies
+          Unable to load your studies.
         </strong>
 
         <p style="
@@ -181,32 +211,7 @@ function setStudyLoading(text) {
 
 
 // ============================================================
-// STATUS MESSAGE
-// ============================================================
-
-function setStatus(
-  text,
-  success = false
-) {
-
-  if (!messageEl) {
-    return;
-  }
-
-  messageEl.textContent = text;
-
-  messageEl.className =
-    "message " +
-    (
-      success
-        ? "success"
-        : "error"
-    );
-}
-
-
-// ============================================================
-// GET CURRENT USER
+// CURRENT SUPABASE USER
 // ============================================================
 
 async function getCurrentUser() {
@@ -232,32 +237,41 @@ async function getCurrentUser() {
     );
   }
 
+  currentUser =
+    result.data.user;
+
   console.log(
-    "Logged-in user:",
-    result.data.user.id,
-    result.data.user.email
+    "Logged-in Supabase user:",
+    currentUser.id
   );
 
-  return result.data.user;
+  console.log(
+    "Student email:",
+    currentUser.email
+  );
+
+  return currentUser;
 }
 
 
 // ============================================================
-// GET STUDENT RECORD
+// STUDENT PROFILE
 // ============================================================
 
 async function getStudent(user) {
 
   console.log(
-    "Loading student profile:",
-    user.id
+    "Loading student profile..."
   );
 
   const result =
     await db
       .from("students")
       .select("*")
-      .eq("user_id", user.id)
+      .eq(
+        "user_id",
+        user.id
+      )
       .maybeSingle();
 
   if (result.error) {
@@ -271,12 +285,15 @@ async function getStudent(user) {
     );
   }
 
+  currentStudent =
+    result.data;
+
   console.log(
-    "Student record loaded:",
-    result.data
+    "Student profile loaded:",
+    currentStudent
   );
 
-  return result.data;
+  return currentStudent;
 }
 
 
@@ -290,10 +307,14 @@ function displayStudent(
 ) {
 
   const userName =
-    document.getElementById("user-name");
+    document.getElementById(
+      "user-name"
+    );
 
   const userEmail =
-    document.getElementById("user-email");
+    document.getElementById(
+      "user-email"
+    );
 
 
   if (userName) {
@@ -313,14 +334,13 @@ function displayStudent(
 
 
 // ============================================================
-// GET ALL ENROLMENTS
+// ENROLMENTS
 // ============================================================
 
 async function getEnrollments(student) {
 
   console.log(
-    "Loading enrolments for:",
-    student.id
+    "Loading enrolments..."
   );
 
   const result =
@@ -348,15 +368,7 @@ async function getEnrollments(student) {
     throw result.error;
   }
 
-  const enrollments =
-    result.data || [];
-
-  console.log(
-    "All enrolments:",
-    enrollments
-  );
-
-  return enrollments;
+  return result.data || [];
 }
 
 
@@ -374,7 +386,10 @@ async function getCourse(courseId) {
     await db
       .from("courses")
       .select("*")
-      .eq("id", courseId)
+      .eq(
+        "id",
+        courseId
+      )
       .maybeSingle();
 
   if (result.error) {
@@ -398,7 +413,7 @@ async function getCourse(courseId) {
 async function getModules(courseId) {
 
   console.log(
-    "Loading modules for:",
+    "Loading course modules:",
     courseId
   );
 
@@ -410,7 +425,8 @@ async function getModules(courseId) {
         course_id,
         module_number,
         module_name,
-        description
+        description,
+        learning_outcomes
       `)
       .eq(
         "course_id",
@@ -424,9 +440,75 @@ async function getModules(courseId) {
       );
 
   if (result.error) {
+    throw result.error;
+  }
+
+  return result.data || [];
+}
+
+
+// ============================================================
+// GET LESSONS FOR MODULE
+// ============================================================
+//
+// IMPORTANT:
+//
+// Your database showed:
+//
+// lessons
+// - id
+// - module_id
+// - lesson_number
+// - title
+// - content
+// - video_url
+// - document_url
+// - learning_objectives
+// - key_terms
+// - practical_activity
+// - knowledge_check
+//
+// Therefore lessons are connected using module_id.
+// ============================================================
+
+async function getLessons(moduleId) {
+
+  console.log(
+    "Loading lessons for module:",
+    moduleId
+  );
+
+  const result =
+    await db
+      .from("lessons")
+      .select(`
+        id,
+        module_id,
+        lesson_number,
+        title,
+        content,
+        video_url,
+        document_url,
+        learning_objectives,
+        key_terms,
+        practical_activity,
+        knowledge_check
+      `)
+      .eq(
+        "module_id",
+        moduleId
+      )
+      .order(
+        "lesson_number",
+        {
+          ascending: true
+        }
+      );
+
+  if (result.error) {
 
     console.error(
-      "Module query failed:",
+      "Lesson query failed:",
       result.error
     );
 
@@ -438,85 +520,732 @@ async function getModules(courseId) {
 
 
 // ============================================================
-// GET LESSONS
+// GET LESSON PROGRESS
 // ============================================================
 //
-// Current confirmed lesson structure:
+// VERY IMPORTANT:
 //
-// id
-// module_number
-// module_name
-// lesson_number
-// title
+// lesson_progress.student_id must match auth.uid()
+// because your RLS policy says:
 //
-// Lessons are therefore matched by module number
-// and, when possible, module name.
+// student_id = auth.uid()
+//
+// Therefore we DO NOT use currentStudent.id here.
 // ============================================================
 
-async function getLessons(module) {
+async function getLessonProgress() {
+
+  if (!currentUser) {
+    return [];
+  }
+
+  console.log(
+    "Loading lesson progress for auth user:",
+    currentUser.id
+  );
 
   const result =
     await db
-      .from("lessons")
+      .from("lesson_progress")
       .select(`
         id,
-        module_number,
-        module_name,
-        lesson_number,
-        title
+        student_id,
+        lesson_id,
+        completed,
+        completed_at
       `)
       .eq(
-        "module_number",
-        module.module_number
-      )
-      .order(
-        "lesson_number",
-        {
-          ascending: true
-        }
+        "student_id",
+        currentUser.id
       );
 
   if (result.error) {
 
-    console.warn(
-      "Lessons could not be loaded:",
+    console.error(
+      "Lesson progress loading failed:",
       result.error
     );
 
-    return [];
+    throw result.error;
   }
 
-  let lessons =
-    result.data || [];
+  console.log(
+    "Lesson progress:",
+    result.data
+  );
+
+  return result.data || [];
+}
 
 
-  // Match module name when available.
+// ============================================================
+// IS LESSON COMPLETED?
+// ============================================================
 
-  if (
-    module.module_name &&
-    lessons.length
+function isLessonCompleted(
+  lessonId,
+  progress
+) {
+
+  return progress.some(
+    row =>
+      row.lesson_id === lessonId &&
+      row.completed === true
+  );
+}
+
+
+// ============================================================
+// SAVE LESSON PROGRESS
+// ============================================================
+//
+// Uses UPSERT.
+//
+// Your database has:
+//
+// UNIQUE(student_id, lesson_id)
+//
+// Therefore upsert prevents duplicate progress rows.
+// ============================================================
+
+async function saveLessonProgress(
+  lessonId,
+  completed = true
+) {
+
+  if (!db) {
+    throw new Error(
+      "Database is not connected."
+    );
+  }
+
+  if (!currentUser) {
+    throw new Error(
+      "You are not logged in."
+    );
+  }
+
+  if (!lessonId) {
+    throw new Error(
+      "Lesson ID is missing."
+    );
+  }
+
+
+  console.log(
+    "Saving lesson progress..."
+  );
+
+  console.log(
+    "auth.uid():",
+    currentUser.id
+  );
+
+  console.log(
+    "lesson_id:",
+    lessonId
+  );
+
+
+  const row = {
+
+    // IMPORTANT:
+    // This must be auth.uid()
+    // to satisfy your RLS policy.
+
+    student_id:
+      currentUser.id,
+
+    lesson_id:
+      lessonId,
+
+    completed:
+      completed,
+
+    completed_at:
+      completed
+        ? new Date().toISOString()
+        : null
+  };
+
+
+  const result =
+    await db
+      .from("lesson_progress")
+      .upsert(
+        row,
+        {
+          onConflict:
+            "student_id,lesson_id"
+        }
+      )
+      .select()
+      .single();
+
+
+  if (result.error) {
+
+    console.error(
+      "PROGRESS SAVE ERROR:",
+      result.error
+    );
+
+    throw result.error;
+  }
+
+
+  console.log(
+    "Lesson progress saved:",
+    result.data
+  );
+
+
+  return result.data;
+}
+
+
+// ============================================================
+// MARK LESSON COMPLETE
+// ============================================================
+
+window.markFundaLessonComplete =
+  async function(
+    lessonId,
+    button
   ) {
 
-    const matchingLessons =
-      lessons.filter(
-        lesson =>
-          !lesson.module_name ||
-          lesson.module_name ===
-            module.module_name
+    try {
+
+      if (button) {
+
+        button.disabled = true;
+
+        button.textContent =
+          "Saving...";
+      }
+
+
+      setStatus(
+        "Saving lesson progress..."
       );
 
-    if (
-      matchingLessons.length
-    ) {
 
-      lessons =
-        matchingLessons;
+      await saveLessonProgress(
+        lessonId,
+        true
+      );
+
+
+      if (button) {
+
+        button.textContent =
+          "✓ Lesson Completed";
+
+        button.style.background =
+          "#218838";
+
+        button.style.color =
+          "#fff";
+
+        button.disabled =
+          true;
+      }
+
+
+      const lessonElement =
+        document.querySelector(
+          `[data-lesson-id="${lessonId}"]`
+        );
+
+
+      if (lessonElement) {
+
+        lessonElement.style.border =
+          "2px solid #218838";
+      }
+
+
+      setStatus(
+        "Lesson completed successfully.",
+        true
+      );
+
+
+      // Recalculate progress.
+
+      await refreshCourseProgress();
+
+
+    } catch (error) {
+
+      console.error(
+        "Could not save lesson progress:",
+        error
+      );
+
+
+      if (button) {
+
+        button.disabled =
+          false;
+
+        button.textContent =
+          "Mark Lesson Complete";
+      }
+
+
+      setStatus(
+        "Progress could not be saved: " +
+        (
+          error.message ||
+          error
+        ),
+        false
+      );
     }
-  }
+  };
 
 
-  return lessons;
-}
+// ============================================================
+// OPEN LESSON
+// ============================================================
+
+window.openFundaLesson =
+  function(lessonId) {
+
+    const lesson =
+      window.fundaLessons
+        ? window.fundaLessons[lessonId]
+        : null;
+
+
+    if (!lesson) {
+
+      console.error(
+        "Lesson not found:",
+        lessonId
+      );
+
+      return;
+    }
+
+
+    let modal =
+      document.getElementById(
+        "funda-lesson-modal"
+      );
+
+
+    if (!modal) {
+
+      modal =
+        document.createElement(
+          "div"
+        );
+
+      modal.id =
+        "funda-lesson-modal";
+
+      modal.style.cssText = `
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.65);
+        z-index:99999;
+        overflow-y:auto;
+        padding:20px;
+      `;
+
+      document.body.appendChild(
+        modal
+      );
+    }
+
+
+    const progress =
+      window.fundaLessonProgress ||
+      [];
+
+
+    const completed =
+      isLessonCompleted(
+        lesson.id,
+        progress
+      );
+
+
+    modal.innerHTML = `
+
+      <div style="
+        max-width:900px;
+        margin:20px auto;
+        background:#fff;
+        border-radius:20px;
+        overflow:hidden;
+        box-shadow:0 10px 40px rgba(0,0,0,0.25);
+      ">
+
+        <div style="
+          padding:20px;
+          background:#f5f7f6;
+          border-bottom:1px solid #ddd;
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          gap:15px;
+        ">
+
+          <div>
+
+            <div style="
+              font-size:13px;
+              font-weight:bold;
+              color:#299b22;
+              text-transform:uppercase;
+            ">
+              Lesson ${escapeHtml(
+                lesson.lesson_number
+              )}
+            </div>
+
+            <h2 style="
+              margin:6px 0 0;
+            ">
+              ${escapeHtml(
+                lesson.title ||
+                "Lesson"
+              )}
+            </h2>
+
+          </div>
+
+          <button
+            type="button"
+            onclick="closeFundaLesson()"
+            style="
+              border:0;
+              background:#222;
+              color:#fff;
+              border-radius:50%;
+              width:42px;
+              height:42px;
+              font-size:20px;
+              cursor:pointer;
+            "
+          >
+            ×
+          </button>
+
+        </div>
+
+
+        <div style="
+          padding:25px;
+        ">
+
+          ${
+            lesson.content
+              ? `
+                <div style="
+                  line-height:1.8;
+                  color:#333;
+                  white-space:pre-wrap;
+                ">
+                  ${escapeHtml(
+                    lesson.content
+                  )}
+                </div>
+              `
+              : `
+                <div style="
+                  padding:20px;
+                  background:#f7f7f7;
+                  border-radius:15px;
+                  color:#666;
+                ">
+                  Lesson content will appear here.
+                </div>
+              `
+          }
+
+
+          ${
+            lesson.learning_objectives
+              ? `
+                <div style="
+                  margin-top:25px;
+                  padding:20px;
+                  background:#f5f9f4;
+                  border-radius:15px;
+                ">
+
+                  <h3>
+                    Learning Objectives
+                  </h3>
+
+                  <div style="
+                    margin-top:10px;
+                    line-height:1.7;
+                    white-space:pre-wrap;
+                  ">
+                    ${escapeHtml(
+                      lesson.learning_objectives
+                    )}
+                  </div>
+
+                </div>
+              `
+              : ""
+          }
+
+
+          ${
+            lesson.key_terms
+              ? `
+                <div style="
+                  margin-top:20px;
+                  padding:20px;
+                  background:#f7f7f7;
+                  border-radius:15px;
+                ">
+
+                  <h3>
+                    Key Terms
+                  </h3>
+
+                  <div style="
+                    margin-top:10px;
+                    line-height:1.7;
+                    white-space:pre-wrap;
+                  ">
+                    ${escapeHtml(
+                      lesson.key_terms
+                    )}
+                  </div>
+
+                </div>
+              `
+              : ""
+          }
+
+
+          ${
+            lesson.practical_activity
+              ? `
+                <div style="
+                  margin-top:20px;
+                  padding:20px;
+                  background:#fff8e8;
+                  border-radius:15px;
+                ">
+
+                  <h3>
+                    Practical Activity
+                  </h3>
+
+                  <div style="
+                    margin-top:10px;
+                    line-height:1.7;
+                    white-space:pre-wrap;
+                  ">
+                    ${escapeHtml(
+                      lesson.practical_activity
+                    )}
+                  </div>
+
+                </div>
+              `
+              : ""
+          }
+
+
+          ${
+            lesson.knowledge_check
+              ? `
+                <div style="
+                  margin-top:20px;
+                  padding:20px;
+                  background:#eef6ff;
+                  border-radius:15px;
+                ">
+
+                  <h3>
+                    Knowledge Check
+                  </h3>
+
+                  <div style="
+                    margin-top:10px;
+                    line-height:1.7;
+                    white-space:pre-wrap;
+                  ">
+                    ${escapeHtml(
+                      lesson.knowledge_check
+                    )}
+                  </div>
+
+                </div>
+              `
+              : ""
+          }
+
+
+          ${
+            lesson.video_url
+              ? `
+                <div style="
+                  margin-top:25px;
+                ">
+
+                  <h3>
+                    Lesson Video
+                  </h3>
+
+                  <a
+                    href="${escapeHtml(
+                      lesson.video_url
+                    )}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style="
+                      display:inline-block;
+                      margin-top:10px;
+                      padding:12px 18px;
+                      background:#299b22;
+                      color:#fff;
+                      text-decoration:none;
+                      border-radius:10px;
+                    "
+                  >
+                    ▶ Open Lesson Video
+                  </a>
+
+                </div>
+              `
+              : ""
+          }
+
+
+          ${
+            lesson.document_url
+              ? `
+                <div style="
+                  margin-top:15px;
+                ">
+
+                  <a
+                    href="${escapeHtml(
+                      lesson.document_url
+                    )}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style="
+                      display:inline-block;
+                      padding:12px 18px;
+                      background:#333;
+                      color:#fff;
+                      text-decoration:none;
+                      border-radius:10px;
+                    "
+                  >
+                    📄 Open Lesson Document
+                  </a>
+
+                </div>
+              `
+              : ""
+          }
+
+
+          <div style="
+            margin-top:30px;
+            padding-top:20px;
+            border-top:1px solid #ddd;
+          ">
+
+            ${
+              completed
+
+                ? `
+
+                  <button
+                    type="button"
+                    disabled
+                    style="
+                      width:100%;
+                      padding:15px;
+                      border:0;
+                      border-radius:12px;
+                      background:#218838;
+                      color:#fff;
+                      font-size:16px;
+                      font-weight:bold;
+                    "
+                  >
+                    ✓ Lesson Completed
+                  </button>
+
+                `
+
+                : `
+
+                  <button
+                    type="button"
+                    onclick="
+                      markFundaLessonComplete(
+                        '${escapeHtml(
+                          lesson.id
+                        )}',
+                        this
+                      )
+                    "
+                    style="
+                      width:100%;
+                      padding:15px;
+                      border:0;
+                      border-radius:12px;
+                      background:#299b22;
+                      color:#fff;
+                      font-size:16px;
+                      font-weight:bold;
+                      cursor:pointer;
+                    "
+                  >
+                    Mark Lesson Complete
+                  </button>
+
+                `
+            }
+
+          </div>
+
+        </div>
+
+      </div>
+    `;
+
+
+    modal.style.display =
+      "block";
+  };
+
+
+// ============================================================
+// CLOSE LESSON
+// ============================================================
+
+window.closeFundaLesson =
+  function() {
+
+    const modal =
+      document.getElementById(
+        "funda-lesson-modal"
+      );
+
+    if (modal) {
+
+      modal.style.display =
+        "none";
+    }
+  };
 
 
 // ============================================================
@@ -524,11 +1253,20 @@ async function getLessons(module) {
 // ============================================================
 
 async function buildModuleHtml(
-  module
+  module,
+  progress
 ) {
 
   const lessons =
-    await getLessons(module);
+    await getLessons(
+      module.id
+    );
+
+
+  if (!window.fundaLessons) {
+
+    window.fundaLessons = {};
+  }
 
 
   let lessonsHtml = "";
@@ -539,37 +1277,121 @@ async function buildModuleHtml(
     lessonsHtml =
       lessons
         .map(
-          (
-            lesson,
-            index
-          ) => {
+          lesson => {
+
+            window.fundaLessons[
+              lesson.id
+            ] = lesson;
+
+
+            const completed =
+              isLessonCompleted(
+                lesson.id,
+                progress
+              );
+
 
             return `
-              <div style="
-                padding:14px 0;
-                border-top:1px solid #e5e5e5;
-              ">
 
-                <strong>
-                  Lesson
-                  ${escapeHtml(
-                    lesson.lesson_number ||
-                    index + 1
-                  )}
-                </strong>
+              <div
+                data-lesson-id="${escapeHtml(
+                  lesson.id
+                )}"
+                style="
+                  padding:14px;
+                  margin-top:10px;
+                  border-radius:12px;
+                  border:2px solid ${
+                    completed
+                      ? "#218838"
+                      : "#e5e5e5"
+                  };
+                  background:${
+                    completed
+                      ? "#f0fff3"
+                      : "#fff"
+                  };
+                "
+              >
 
                 <div style="
-                  margin-top:5px;
-                  color:#555;
-                  line-height:1.5;
+                  display:flex;
+                  justify-content:space-between;
+                  align-items:center;
+                  gap:12px;
+                  flex-wrap:wrap;
                 ">
-                  ${escapeHtml(
-                    lesson.title ||
-                    "Lesson"
-                  )}
+
+                  <div>
+
+                    <strong>
+                      Lesson
+                      ${escapeHtml(
+                        lesson.lesson_number
+                      )}
+                    </strong>
+
+                    <div style="
+                      margin-top:5px;
+                      color:#555;
+                    ">
+                      ${escapeHtml(
+                        lesson.title ||
+                        "Lesson"
+                      )}
+                    </div>
+
+                  </div>
+
+
+                  ${
+                    completed
+                      ? `
+                        <span style="
+                          padding:6px 10px;
+                          border-radius:20px;
+                          background:#218838;
+                          color:#fff;
+                          font-size:13px;
+                          font-weight:bold;
+                        ">
+                          ✓ Completed
+                        </span>
+                      `
+                      : ""
+                  }
+
                 </div>
 
+
+                <button
+                  type="button"
+                  onclick="
+                    openFundaLesson(
+                      '${escapeHtml(
+                        lesson.id
+                      )}'
+                    )
+                  "
+                  style="
+                    margin-top:12px;
+                    padding:10px 15px;
+                    border:0;
+                    border-radius:9px;
+                    background:#333;
+                    color:#fff;
+                    cursor:pointer;
+                  "
+                >
+                  ${
+                    completed
+                      ? "Review Lesson"
+                      : "Open Lesson"
+                  }
+                </button>
+
               </div>
+
             `;
           }
         )
@@ -582,13 +1404,22 @@ async function buildModuleHtml(
         padding:14px 0;
         color:#777;
       ">
-        Learning lessons will appear here.
+        Lessons will appear here.
       </div>
     `;
   }
 
 
+  const outcomes =
+    Array.isArray(
+      module.learning_outcomes
+    )
+      ? module.learning_outcomes
+      : [];
+
+
   return `
+
     <div
       class="funda-module"
       style="
@@ -678,8 +1509,45 @@ async function buildModuleHtml(
         }
 
 
+        ${
+          outcomes.length
+            ? `
+              <div style="
+                margin-top:10px;
+                padding:15px;
+                background:#f5f9f4;
+                border-radius:12px;
+              ">
+
+                <strong>
+                  Learning Outcomes
+                </strong>
+
+                <ul style="
+                  margin-top:10px;
+                  padding-left:20px;
+                  line-height:1.7;
+                ">
+
+                  ${outcomes
+                    .map(
+                      item =>
+                        `<li>${escapeHtml(
+                          item
+                        )}</li>`
+                    )
+                    .join("")}
+
+                </ul>
+
+              </div>
+            `
+            : ""
+        }
+
+
         <div style="
-          margin-top:8px;
+          margin-top:18px;
         ">
 
           <strong>
@@ -693,12 +1561,13 @@ async function buildModuleHtml(
       </div>
 
     </div>
+
   `;
 }
 
 
 // ============================================================
-// MODULE OPEN / CLOSE
+// TOGGLE MODULE
 // ============================================================
 
 window.toggleFundaModule =
@@ -713,6 +1582,7 @@ window.toggleFundaModule =
       return;
     }
 
+
     const content =
       module.querySelector(
         ".funda-module-content"
@@ -722,6 +1592,7 @@ window.toggleFundaModule =
       module.querySelector(
         ".funda-arrow"
       );
+
 
     if (!content) {
       return;
@@ -762,7 +1633,8 @@ window.toggleFundaModule =
 
 async function buildCourseHtml(
   enrollment,
-  course
+  course,
+  progress
 ) {
 
   if (!course) {
@@ -775,11 +1647,7 @@ async function buildCourseHtml(
         background:#fff4f4;
         margin-bottom:20px;
       ">
-
-        <strong>
-          Course information could not be found.
-        </strong>
-
+        Course information could not be found.
       </div>
     `;
   }
@@ -798,16 +1666,19 @@ async function buildCourseHtml(
 
     const parts = [];
 
+
     for (
       const module of modules
     ) {
 
       parts.push(
         await buildModuleHtml(
-          module
+          module,
+          progress
         )
       );
     }
+
 
     modulesHtml =
       parts.join("");
@@ -829,15 +1700,12 @@ async function buildCourseHtml(
 
 
   const courseName =
-    course.course_name ||
-    course.name ||
     course.title ||
     "My Course";
 
 
   const courseDescription =
     course.description ||
-    course.course_description ||
     "";
 
 
@@ -847,8 +1715,12 @@ async function buildCourseHtml(
 
 
   return `
+
     <div
       class="funda-course"
+      data-course-id="${escapeHtml(
+        course.id
+      )}"
       style="
         background:#fff;
         border:1px solid #ddd;
@@ -871,7 +1743,7 @@ async function buildCourseHtml(
 
           <div style="
             font-size:13px;
-            color:#2e9d22;
+            color:#299b22;
             font-weight:bold;
             text-transform:uppercase;
             margin-bottom:8px;
@@ -938,31 +1810,24 @@ async function buildCourseHtml(
       ${modulesHtml}
 
     </div>
+
   `;
 }
 
 
 // ============================================================
-// MY STUDIES
-// ============================================================
-//
-// IMPORTANT:
-// ONLY APPROVED ENROLMENTS ARE SHOWN HERE.
-//
-// Pending applications remain under
-// "My Enrolments".
+// DISPLAY MY STUDIES
 // ============================================================
 
 async function displayMyStudies(
-  enrollments
+  enrollments,
+  progress
 ) {
 
   if (!studyListEl) {
     return;
   }
 
-
-  // Only approved courses.
 
   const approvedEnrollments =
     enrollments.filter(
@@ -975,15 +1840,7 @@ async function displayMyStudies(
     );
 
 
-  console.log(
-    "Approved enrolments:",
-    approvedEnrollments
-  );
-
-
-  if (
-    !approvedEnrollments.length
-  ) {
+  if (!approvedEnrollments.length) {
 
     studyListEl.innerHTML = `
       <div style="
@@ -1033,7 +1890,8 @@ async function displayMyStudies(
       const html =
         await buildCourseHtml(
           enrollment,
-          course
+          course,
+          progress
         );
 
 
@@ -1045,7 +1903,7 @@ async function displayMyStudies(
     } catch (error) {
 
       console.error(
-        "Could not display approved course:",
+        "Could not display course:",
         error
       );
 
@@ -1059,10 +1917,7 @@ async function displayMyStudies(
             background:#fff4f4;
             margin-bottom:15px;
           ">
-
-            Could not load one of
-            your approved courses.
-
+            Could not load one of your courses.
           </div>
         `
       );
@@ -1072,7 +1927,38 @@ async function displayMyStudies(
 
 
 // ============================================================
-// GET COURSE NAMES FOR ENROLMENTS
+// REFRESH COURSE PROGRESS
+// ============================================================
+
+async function refreshCourseProgress() {
+
+  try {
+
+    const progress =
+      await getLessonProgress();
+
+
+    window.fundaLessonProgress =
+      progress;
+
+
+    console.log(
+      "Progress refreshed:",
+      progress
+    );
+
+  } catch (error) {
+
+    console.warn(
+      "Could not refresh progress:",
+      error
+    );
+  }
+}
+
+
+// ============================================================
+// DISPLAY ENROLMENTS
 // ============================================================
 
 async function displayEnrollments(
@@ -1100,19 +1986,6 @@ async function displayEnrollments(
   }
 
 
-  enrolmentsEl.innerHTML = `
-    <div style="
-      padding:18px;
-      background:#fff;
-      border-radius:15px;
-      border:1px solid #ddd;
-      margin-bottom:15px;
-    ">
-      Loading your enrolment details...
-    </div>
-  `;
-
-
   const cards = [];
 
 
@@ -1129,12 +2002,7 @@ async function displayEnrollments(
 
     const courseName =
       course
-        ? (
-            course.course_name ||
-            course.name ||
-            course.title ||
-            "Course"
-          )
+        ? course.title
         : "Course information unavailable";
 
 
@@ -1180,6 +2048,7 @@ async function displayEnrollments(
 
 
     cards.push(`
+
       <div style="
         background:#fff;
         border:1px solid #ddd;
@@ -1190,7 +2059,7 @@ async function displayEnrollments(
 
         <div style="
           font-size:12px;
-          color:#2e9d22;
+          color:#299b22;
           font-weight:bold;
           text-transform:uppercase;
           margin-bottom:6px;
@@ -1250,6 +2119,7 @@ async function displayEnrollments(
         }
 
       </div>
+
     `);
   }
 
@@ -1260,7 +2130,7 @@ async function displayEnrollments(
 
 
 // ============================================================
-// LOAD PAYMENTS
+// PAYMENTS
 // ============================================================
 
 async function loadPayments(
@@ -1285,7 +2155,7 @@ async function loadPayments(
         .order(
           "created_at",
           {
-            ascending: false
+            ascending:false
           }
         );
 
@@ -1293,7 +2163,7 @@ async function loadPayments(
     if (result.error) {
 
       console.warn(
-        "Payments query:",
+        "Payment query:",
         result.error
       );
 
@@ -1348,6 +2218,7 @@ async function loadPayments(
 
 
             return `
+
               <div style="
                 background:#fff;
                 border:1px solid #ddd;
@@ -1360,7 +2231,6 @@ async function loadPayments(
                   💳 Payment
                 </strong>
 
-
                 <div style="
                   margin-top:10px;
                 ">
@@ -1372,7 +2242,6 @@ async function loadPayments(
                   </strong>
                 </div>
 
-
                 <div style="
                   margin-top:7px;
                 ">
@@ -1383,6 +2252,7 @@ async function loadPayments(
                 </div>
 
               </div>
+
             `;
           }
         )
@@ -1410,7 +2280,7 @@ async function loadPayments(
 
 
 // ============================================================
-// LOAD AVAILABLE COURSES
+// AVAILABLE COURSES
 // ============================================================
 
 async function loadAvailableCourses() {
@@ -1437,13 +2307,17 @@ async function loadAvailableCourses() {
     const result =
       await db
         .from("courses")
-        .select("*");
+        .select("*")
+        .eq(
+          "active",
+          true
+        );
 
 
     if (result.error) {
 
       console.error(
-        "Available courses query failed:",
+        "Available courses error:",
         result.error
       );
 
@@ -1455,9 +2329,7 @@ async function loadAvailableCourses() {
           border-radius:15px;
         ">
 
-          <strong>
-            Courses could not be loaded.
-          </strong>
+          Courses could not be loaded.
 
           <p style="
             margin-top:8px;
@@ -1479,12 +2351,6 @@ async function loadAvailableCourses() {
       result.data || [];
 
 
-    console.log(
-      "Available courses:",
-      courses
-    );
-
-
     if (!courses.length) {
 
       availableCoursesEl.innerHTML = `
@@ -1501,35 +2367,15 @@ async function loadAvailableCourses() {
     }
 
 
-    // Sort in JavaScript so that
-    // missing course_name does not
-    // break the database query.
-
     courses.sort(
-      (a, b) => {
-
-        const nameA =
+      (a,b) =>
+        String(
+          a.title || ""
+        ).localeCompare(
           String(
-            a.course_name ||
-            a.name ||
-            a.title ||
-            ""
-          ).toLowerCase();
-
-
-        const nameB =
-          String(
-            b.course_name ||
-            b.name ||
-            b.title ||
-            ""
-          ).toLowerCase();
-
-
-        return nameA.localeCompare(
-          nameB
-        );
-      }
+            b.title || ""
+          )
+        )
     );
 
 
@@ -1538,26 +2384,8 @@ async function loadAvailableCourses() {
         .map(
           course => {
 
-            const name =
-              course.course_name ||
-              course.name ||
-              course.title ||
-              "Course";
-
-
-            const price =
-              course.price ??
-              course.course_price ??
-              "";
-
-
-            const description =
-              course.description ||
-              course.course_description ||
-              "";
-
-
             return `
+
               <div style="
                 background:#fff;
                 border:1px solid #ddd;
@@ -1568,16 +2396,16 @@ async function loadAvailableCourses() {
 
                 <h3 style="
                   margin:0;
-                  line-height:1.3;
                 ">
                   ${escapeHtml(
-                    name
+                    course.title
                   )}
                 </h3>
 
 
                 ${
-                  price !== ""
+                  course.price !== null &&
+                  course.price !== undefined
                     ? `
                       <div style="
                         margin-top:10px;
@@ -1586,7 +2414,7 @@ async function loadAvailableCourses() {
                         font-size:18px;
                       ">
                         R${escapeHtml(
-                          price
+                          course.price
                         )}
                       </div>
                     `
@@ -1595,7 +2423,7 @@ async function loadAvailableCourses() {
 
 
                 ${
-                  description
+                  course.description
                     ? `
                       <p style="
                         margin-top:10px;
@@ -1603,7 +2431,7 @@ async function loadAvailableCourses() {
                         line-height:1.6;
                       ">
                         ${escapeHtml(
-                          description
+                          course.description
                         )}
                       </p>
                     `
@@ -1611,6 +2439,7 @@ async function loadAvailableCourses() {
                 }
 
               </div>
+
             `;
           }
         )
@@ -1631,21 +2460,7 @@ async function loadAvailableCourses() {
         border:2px solid #d33;
         border-radius:15px;
       ">
-
-        <strong>
-          Courses could not be loaded.
-        </strong>
-
-        <p style="
-          margin-top:8px;
-          color:#666;
-        ">
-          ${escapeHtml(
-            error.message ||
-            error
-          )}
-        </p>
-
+        Courses could not be loaded.
       </div>
     `;
   }
@@ -1671,7 +2486,7 @@ async function initDashboard() {
   try {
 
     // --------------------------------------------------------
-    // 1. DATABASE
+    // 1. CONNECT DATABASE
     // --------------------------------------------------------
 
     if (!connectDatabase()) {
@@ -1680,7 +2495,7 @@ async function initDashboard() {
 
 
     // --------------------------------------------------------
-    // 2. LOGGED-IN USER
+    // 2. GET AUTH USER
     // --------------------------------------------------------
 
     const user =
@@ -1688,7 +2503,7 @@ async function initDashboard() {
 
 
     // --------------------------------------------------------
-    // 3. STUDENT PROFILE
+    // 3. GET STUDENT
     // --------------------------------------------------------
 
     const student =
@@ -1704,7 +2519,7 @@ async function initDashboard() {
 
 
     // --------------------------------------------------------
-    // 4. ENROLMENTS
+    // 4. GET ENROLMENTS
     // --------------------------------------------------------
 
     const enrollments =
@@ -1714,20 +2529,33 @@ async function initDashboard() {
 
 
     // --------------------------------------------------------
-    // 5. MY STUDIES
-    //
-    // ONLY APPROVED ENROLMENTS
+    // 5. GET LESSON PROGRESS
+    // --------------------------------------------------------
+
+    const progress =
+      await getLessonProgress();
+
+
+    window.fundaLessonProgress =
+      progress;
+
+
+    window.fundaLessons =
+      {};
+
+
+    // --------------------------------------------------------
+    // 6. MY STUDIES
     // --------------------------------------------------------
 
     await displayMyStudies(
-      enrollments
+      enrollments,
+      progress
     );
 
 
     // --------------------------------------------------------
-    // 6. MY ENROLMENTS
-    //
-    // APPROVED + PENDING + OTHER STATUS
+    // 7. MY ENROLMENTS
     // --------------------------------------------------------
 
     await displayEnrollments(
@@ -1736,7 +2564,7 @@ async function initDashboard() {
 
 
     // --------------------------------------------------------
-    // 7. PAYMENTS
+    // 8. PAYMENTS
     // --------------------------------------------------------
 
     await loadPayments(
@@ -1745,7 +2573,7 @@ async function initDashboard() {
 
 
     // --------------------------------------------------------
-    // 8. AVAILABLE COURSES
+    // 9. AVAILABLE COURSES
     // --------------------------------------------------------
 
     await loadAvailableCourses();
@@ -1767,6 +2595,10 @@ async function initDashboard() {
 
     console.log(
       "STUDENT DASHBOARD READY"
+    );
+
+    console.log(
+      "LESSON PROGRESS SYSTEM READY"
     );
 
     console.log(
@@ -1794,18 +2626,54 @@ async function initDashboard() {
 
 
 // ============================================================
-// START
+// START DASHBOARD
+// ============================================================
+
+if (
+  document.readyState ===
+  "loading"
+) {
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+      console.log(
+        "DOM READY"
+      );
+
+      initDashboard();
+
+    }
+  );
+
+} else {
+
+  initDashboard();
+
+}
+
+
+// ============================================================
+// CLOSE MODAL WHEN CLICKING OUTSIDE
 // ============================================================
 
 document.addEventListener(
-  "DOMContentLoaded",
-  function() {
+  "click",
+  function(event) {
 
-    console.log(
-      "DOM READY"
-    );
+    const modal =
+      document.getElementById(
+        "funda-lesson-modal"
+      );
 
-    initDashboard();
+    if (
+      modal &&
+      event.target === modal
+    ) {
+
+      closeFundaLesson();
+    }
 
   }
 );
