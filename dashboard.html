@@ -10,14 +10,43 @@
 
 <style>
 html,body{overflow-x:hidden}
-.dashboard{min-height:calc(100vh - 78px);padding-bottom:60px}
-.dashboard .wrap{max-width:1140px;margin:auto}
-.dash-head{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:28px}
-.dashboard-section,.dashboard section{margin-bottom:30px}
-.dashboard section h2{margin-bottom:14px}
-.dashboard-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 
-.card,.study-card,.policy-card{
+.dashboard{
+  min-height:calc(100vh - 78px);
+  padding-bottom:60px
+}
+
+.dashboard .wrap{
+  max-width:1140px;
+  margin:auto
+}
+
+.dash-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:24px;
+  margin-bottom:28px
+}
+
+.dashboard-section,
+.dashboard section{
+  margin-bottom:30px
+}
+
+.dashboard section h2{
+  margin-bottom:14px
+}
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px
+}
+
+.card,
+.study-card,
+.policy-card{
   background:#fff;
   border:1px solid #dfe8e2;
   border-radius:18px;
@@ -25,9 +54,19 @@ html,body{overflow-x:hidden}
   box-shadow:0 6px 25px rgba(16,37,28,.05)
 }
 
-.study-card{margin-bottom:18px}
-.study-title{margin:0 0 8px;color:#10251c}
-.study-description{line-height:1.6;color:#53625b}
+.study-card{
+  margin-bottom:18px
+}
+
+.study-title{
+  margin:0 0 8px;
+  color:#10251c
+}
+
+.study-description{
+  line-height:1.6;
+  color:#53625b
+}
 
 .funda-status{
   display:inline-block;
@@ -39,20 +78,31 @@ html,body{overflow-x:hidden}
   background:#fff1c7;
   color:#8a6500
 }
-.funda-status.approved,.funda-status.active,.funda-status.paid{
-  background:#dff4dc;color:#197019
-}
-.funda-status.rejected,.funda-status.failed,.funda-status.cancelled{
-  background:#fde8e8;color:#a51d1d
+
+.funda-status.approved,
+.funda-status.active,
+.funda-status.paid{
+  background:#dff4dc;
+  color:#197019
 }
 
-.study-meta,.course-information{
+.funda-status.rejected,
+.funda-status.failed,
+.funda-status.cancelled{
+  background:#fde8e8;
+  color:#a51d1d
+}
+
+.study-meta,
+.course-information{
   display:flex;
   flex-wrap:wrap;
   gap:8px;
   margin-top:14px
 }
-.study-meta span,.course-information span{
+
+.study-meta span,
+.course-information span{
   background:#f1faf5;
   border:1px solid #d8e9df;
   padding:8px 12px;
@@ -61,15 +111,27 @@ html,body{overflow-x:hidden}
   font-weight:700
 }
 
-.study-button,.available-course-button{width:100%;margin-top:18px}
-.study-button button,.available-course-button{width:100%}
+.study-button,
+.available-course-button{
+  width:100%;
+  margin-top:18px
+}
+
+.study-button button,
+.available-course-button{
+  width:100%
+}
 
 .modules-container{
   margin-top:22px;
   border-top:1px solid #e4ebe7;
   padding-top:20px
 }
-.modules-heading{margin:0 0 16px;font-size:20px}
+
+.modules-heading{
+  margin:0 0 16px;
+  font-size:20px
+}
 
 .module-card{
   border:1px solid #dfe8e2;
@@ -78,6 +140,7 @@ html,body{overflow-x:hidden}
   overflow:hidden;
   background:#fafcfb
 }
+
 .module-header{
   width:100%;
   border:0;
@@ -93,8 +156,15 @@ html,body{overflow-x:hidden}
   font-weight:700;
   color:#10251c
 }
-.module-left{display:flex;align-items:flex-start;gap:10px}
-.module-number,.lesson-number{
+
+.module-left{
+  display:flex;
+  align-items:flex-start;
+  gap:10px
+}
+
+.module-number,
+.lesson-number{
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -103,43 +173,107 @@ html,body{overflow-x:hidden}
   color:#fff;
   font-weight:800
 }
-.module-number{width:32px;height:32px;min-width:32px;font-size:13px}
-.module-name{padding-top:6px;line-height:1.4}
-.module-icon{font-size:22px;min-width:25px;text-align:center}
 
-.module-content{display:none;padding:16px;background:#fff}
-.module-content.open{display:block}
-.module-description{color:#53625b;line-height:1.6;margin-bottom:16px}
+.module-number{
+  width:32px;
+  height:32px;
+  min-width:32px;
+  font-size:13px
+}
 
-.lesson-list{display:flex;flex-direction:column;gap:10px}
+.module-name{
+  padding-top:6px;
+  line-height:1.4
+}
+
+.module-icon{
+  font-size:22px;
+  min-width:25px;
+  text-align:center
+}
+
+.module-content{
+  display:none;
+  padding:16px;
+  background:#fff
+}
+
+.module-content.open{
+  display:block
+}
+
+.module-description{
+  color:#53625b;
+  line-height:1.6;
+  margin-bottom:16px
+}
+
+.lesson-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px
+}
+
 .lesson-item{
   border:1px solid #e1e9e4;
   border-radius:13px;
   padding:16px;
   background:#fff
 }
-.lesson-top{display:flex;align-items:flex-start;gap:12px}
-.lesson-number{
-  width:30px;height:30px;min-width:30px;
-  background:#e8f5ee;color:#0c8f55;font-size:13px
-}
-.lesson-main{flex:1}
-.lesson-title{font-weight:700;margin-bottom:6px;color:#10251c}
-.lesson-description{color:#68766f;line-height:1.5;font-size:14px}
-.lesson-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 
-.lesson-open,.review-lesson{
+.lesson-top{
+  display:flex;
+  align-items:flex-start;
+  gap:12px
+}
+
+.lesson-number{
+  width:30px;
+  height:30px;
+  min-width:30px;
+  background:#e8f5ee;
+  color:#0c8f55;
+  font-size:13px
+}
+
+.lesson-main{
+  flex:1
+}
+
+.lesson-title{
+  font-weight:700;
+  margin-bottom:6px;
+  color:#10251c
+}
+
+.lesson-description{
+  color:#68766f;
+  line-height:1.5;
+  font-size:14px
+}
+
+.lesson-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px
+}
+
+.lesson-open,
+.review-lesson{
   display:inline-block;
   border-radius:9px;
   padding:9px 13px;
   font-weight:700;
   cursor:pointer
 }
+
 .lesson-open{
   border:1px solid #0c8f55;
   color:#0c8f55;
   background:#fff
 }
+
 .review-lesson{
   border:1px solid #d08a00;
   color:#9a6500;
@@ -152,11 +286,34 @@ html,body{overflow-x:hidden}
   border-radius:13px;
   padding:15px
 }
-.progress-label{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;font-weight:700}
-.progress-track{width:100%;height:10px;border-radius:999px;background:#dfe8e2;overflow:hidden}
-.progress-bar{height:100%;width:0%;background:#0c8f55;transition:width .3s ease}
 
-.available-course-card{position:relative}
+.progress-label{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:8px;
+  font-size:14px;
+  font-weight:700
+}
+
+.progress-track{
+  width:100%;
+  height:10px;
+  border-radius:999px;
+  background:#dfe8e2;
+  overflow:hidden
+}
+
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:#0c8f55;
+  transition:width .3s ease
+}
+
+.available-course-card{
+  position:relative
+}
+
 .available-course-top{
   display:flex;
   justify-content:space-between;
@@ -165,6 +322,7 @@ html,body{overflow-x:hidden}
   flex-wrap:wrap;
   margin-bottom:12px
 }
+
 .available-badge{
   display:inline-flex;
   align-items:center;
@@ -184,10 +342,17 @@ html,body{overflow-x:hidden}
   border:1px dashed #cddbd3;
   border-radius:18px
 }
-.loading{color:#68766f}
-.hidden{display:none!important}
 
-.error-study,.dashboard-start-error{
+.loading{
+  color:#68766f
+}
+
+.hidden{
+  display:none!important
+}
+
+.error-study,
+.dashboard-start-error{
   padding:20px;
   background:#fff4f4;
   border:1px solid #f0caca;
@@ -196,7 +361,11 @@ html,body{overflow-x:hidden}
   line-height:1.6
 }
 
-.system-status{margin-top:10px;font-size:13px;color:#68766f}
+.system-status{
+  margin-top:10px;
+  font-size:13px;
+  color:#68766f
+}
 
 .bank-grid{
   display:grid;
@@ -204,14 +373,21 @@ html,body{overflow-x:hidden}
   gap:16px;
   margin-top:15px
 }
+
 .bank-card{
   background:#f7faf8;
   border:1px solid #dfe8e2;
   border-radius:15px;
   padding:18px
 }
-.bank-card h3{margin-bottom:10px}
-.bank-detail{margin:7px 0}
+
+.bank-card h3{
+  margin-bottom:10px
+}
+
+.bank-detail{
+  margin:7px 0
+}
 
 .policy-intro{
   background:#f1faf5;
@@ -221,17 +397,34 @@ html,body{overflow-x:hidden}
   margin-bottom:22px;
   line-height:1.6
 }
-.policy-group{margin-bottom:24px}
-.policy-group h3{margin-bottom:10px;color:#10251c}
-.policy-group ul{padding-left:22px}
-.policy-group li{margin-bottom:8px;line-height:1.5}
+
+.policy-group{
+  margin-bottom:24px
+}
+
+.policy-group h3{
+  margin-bottom:10px;
+  color:#10251c
+}
+
+.policy-group ul{
+  padding-left:22px
+}
+
+.policy-group li{
+  margin-bottom:8px;
+  line-height:1.5
+}
 
 .required-list{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
   gap:8px 25px
 }
-.required-list div{padding:8px 0}
+
+.required-list div{
+  padding:8px 0
+}
 
 .contact-box{
   background:#10251c;
@@ -240,7 +433,10 @@ html,body{overflow-x:hidden}
   padding:20px;
   margin-top:20px
 }
-.contact-box p{margin:6px 0}
+
+.contact-box p{
+  margin:6px 0
+}
 
 .declaration-box{
   background:#f8faf9;
@@ -249,7 +445,12 @@ html,body{overflow-x:hidden}
   padding:20px;
   margin-top:25px
 }
-.declaration-text{line-height:1.65;margin-bottom:18px}
+
+.declaration-text{
+  line-height:1.65;
+  margin-bottom:18px
+}
+
 .accept-row{
   display:flex;
   align-items:flex-start;
@@ -259,9 +460,24 @@ html,body{overflow-x:hidden}
   border:1px solid #dfe8e2;
   border-radius:12px
 }
-.accept-row input{width:20px;height:20px;margin-top:3px;flex-shrink:0;cursor:pointer}
-.accept-row label{line-height:1.5;cursor:pointer}
-.accept-button{margin-top:16px}
+
+.accept-row input{
+  width:20px;
+  height:20px;
+  margin-top:3px;
+  flex-shrink:0;
+  cursor:pointer
+}
+
+.accept-row label{
+  line-height:1.5;
+  cursor:pointer
+}
+
+.accept-button{
+  margin-top:16px
+}
+
 .accepted-box{
   background:#e5f8ed;
   color:#11683d;
@@ -280,7 +496,11 @@ html,body{overflow-x:hidden}
   overflow-y:auto;
   padding:20px
 }
-.lesson-viewer.show{display:block}
+
+.lesson-viewer.show{
+  display:block
+}
+
 .lesson-viewer-box{
   max-width:900px;
   margin:30px auto;
@@ -289,6 +509,7 @@ html,body{overflow-x:hidden}
   overflow:hidden;
   box-shadow:0 20px 60px rgba(0,0,0,.25)
 }
+
 .lesson-viewer-header{
   background:#10251c;
   color:#fff;
@@ -298,7 +519,12 @@ html,body{overflow-x:hidden}
   align-items:flex-start;
   gap:20px
 }
-.lesson-viewer-header h2{margin:0;line-height:1.35}
+
+.lesson-viewer-header h2{
+  margin:0;
+  line-height:1.35
+}
+
 .lesson-close{
   border:0;
   background:#fff;
@@ -310,19 +536,67 @@ html,body{overflow-x:hidden}
   cursor:pointer;
   flex-shrink:0
 }
-.lesson-viewer-body{padding:25px}
-.lesson-content{color:#26362e;line-height:1.8;font-size:16px}
-.lesson-content h1,.lesson-content h2,.lesson-content h3{
-  color:#10251c;margin-top:22px;margin-bottom:10px
+
+.lesson-viewer-body{
+  padding:25px
 }
-.lesson-content p{margin-bottom:15px}
-.lesson-content ul,.lesson-content ol{margin:0 0 18px 25px}
-.lesson-content li{margin-bottom:8px}
-.lesson-content img{max-width:100%;height:auto;border-radius:14px;margin:15px 0}
-.lesson-content iframe{width:100%;min-height:450px;border:0;border-radius:14px}
-.lesson-content a{color:#0c8f55;font-weight:700}
-.lesson-footer{margin-top:25px;padding-top:20px;border-top:1px solid #e1e9e4}
-.complete-lesson-btn{width:100%}
+
+.lesson-content{
+  color:#26362e;
+  line-height:1.8;
+  font-size:16px
+}
+
+.lesson-content h1,
+.lesson-content h2,
+.lesson-content h3{
+  color:#10251c;
+  margin-top:22px;
+  margin-bottom:10px
+}
+
+.lesson-content p{
+  margin-bottom:15px
+}
+
+.lesson-content ul,
+.lesson-content ol{
+  margin:0 0 18px 25px
+}
+
+.lesson-content li{
+  margin-bottom:8px
+}
+
+.lesson-content img{
+  max-width:100%;
+  height:auto;
+  border-radius:14px;
+  margin:15px 0
+}
+
+.lesson-content iframe{
+  width:100%;
+  min-height:450px;
+  border:0;
+  border-radius:14px
+}
+
+.lesson-content a{
+  color:#0c8f55;
+  font-weight:700
+}
+
+.lesson-footer{
+  margin-top:25px;
+  padding-top:20px;
+  border-top:1px solid #e1e9e4
+}
+
+.complete-lesson-btn{
+  width:100%
+}
+
 .lesson-complete-message{
   margin-top:12px;
   padding:14px;
@@ -334,23 +608,71 @@ html,body{overflow-x:hidden}
 }
 
 @media(max-width:900px){
-  .dashboard-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .bank-grid{grid-template-columns:1fr}
+
+  .dashboard-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))
+  }
+
+  .bank-grid{
+    grid-template-columns:1fr
+  }
 }
+
 @media(max-width:700px){
-  .dash-head{display:block}
-  .dash-head .btn{display:inline-block;margin-top:14px}
-  .dashboard-grid{grid-template-columns:1fr}
-  .dashboard .wrap{width:92%}
-  .required-list{grid-template-columns:1fr}
-  .lesson-top{display:block}
-  .lesson-number{margin-bottom:8px}
-  .lesson-viewer{padding:8px}
-  .lesson-viewer-box{margin:10px auto;border-radius:16px}
-  .lesson-viewer-header{padding:16px}
-  .lesson-viewer-body{padding:18px}
-  .lesson-content{font-size:15px}
-  .lesson-content iframe{min-height:250px}
+
+  .dash-head{
+    display:block
+  }
+
+  .dash-head .btn{
+    display:inline-block;
+    margin-top:14px
+  }
+
+  .dashboard-grid{
+    grid-template-columns:1fr
+  }
+
+  .dashboard .wrap{
+    width:92%
+  }
+
+  .required-list{
+    grid-template-columns:1fr
+  }
+
+  .lesson-top{
+    display:block
+  }
+
+  .lesson-number{
+    margin-bottom:8px
+  }
+
+  .lesson-viewer{
+    padding:8px
+  }
+
+  .lesson-viewer-box{
+    margin:10px auto;
+    border-radius:16px
+  }
+
+  .lesson-viewer-header{
+    padding:16px
+  }
+
+  .lesson-viewer-body{
+    padding:18px
+  }
+
+  .lesson-content{
+    font-size:15px
+  }
+
+  .lesson-content iframe{
+    min-height:250px
+  }
 }
 </style>
 </head>
@@ -358,131 +680,273 @@ html,body{overflow-x:hidden}
 <body>
 
 <header>
+
   <div class="wrap nav">
+
     <a class="logo" href="index.html">
-      <img src="logo.png" alt="Funda Online Academy logo">
+
+      <img
+        src="logo.png"
+        alt="Funda Online Academy logo">
+
       <span>
         Funda Online Academy Pty Ltd
         <small>Student Dashboard</small>
       </span>
+
     </a>
 
     <div class="nav-actions">
-      <span id="user-email" class="user-email"></span>
-      <button id="logout" class="btn ghost" type="button">Logout</button>
+
+      <span
+        id="user-email"
+        class="user-email">
+      </span>
+
+      <button
+        id="logout"
+        class="btn ghost"
+        type="button">
+        Logout
+      </button>
+
     </div>
+
   </div>
+
 </header>
 
+
 <main class="dashboard">
+
 <div class="wrap">
 
   <div class="dash-head">
+
     <div>
-      <span class="badge">STUDENT AREA</span>
+
+      <span class="badge">
+        STUDENT AREA
+      </span>
 
       <h1>
         Welcome,
-        <span id="user-name">Student</span>
+        <span id="user-name">
+          Student
+        </span>
       </h1>
 
       <p>
-        Manage your courses, studies, enrolments,
-        payments and Funda Online Academy policies.
+        Manage your courses, studies,
+        enrolments, payments and Funda
+        Online Academy policies.
       </p>
 
-      <div id="system-status" class="system-status">
+      <div
+        id="system-status"
+        class="system-status">
         Connecting to student learning system…
       </div>
+
     </div>
 
-    <a class="btn green" href="index.html#courses">
+    <a
+      class="btn green"
+      href="index.html#courses">
       Browse Courses
     </a>
+
   </div>
 
-  <div id="message" class="message hidden"></div>
 
-  <!-- MY STUDIES -->
-  <section class="dashboard-section" id="my-studies">
+  <div
+    id="message"
+    class="message hidden">
+  </div>
 
-    <h2>📚 My Studies</h2>
+
+  <!-- ======================================================
+       MY STUDIES
+       ====================================================== -->
+
+  <section
+    class="dashboard-section"
+    id="my-studies">
+
+    <h2>
+      📚 My Studies
+    </h2>
 
     <p style="margin-bottom:18px;line-height:1.6">
-      Your approved courses and learning materials
-      will appear here. Open a module to view its
-      lessons and learning content.
+
+      Your approved courses and learning
+      materials will appear here. Open a
+      module to view its lessons and
+      learning content.
+
     </p>
 
     <div id="study-list">
+
       <div class="card">
-        <p class="loading">Loading your courses…</p>
+
+        <p class="loading">
+          Loading your courses…
+        </p>
+
       </div>
+
     </div>
 
   </section>
 
-  <!-- POLICIES -->
-  <section class="dashboard-section" id="policies">
 
-    <h2>📜 Policies, Payment Rules & Declaration</h2>
+  <!-- ======================================================
+       POLICIES
+       ====================================================== -->
+
+  <section
+    class="dashboard-section"
+    id="policies">
+
+    <h2>
+      📜 Policies, Payment Rules & Declaration
+    </h2>
 
     <div class="policy-card">
 
       <div class="policy-intro">
+
         <strong>
-          Please read this information carefully before
-          enrolling in a course.
+          Please read this information carefully
+          before enrolling in a course.
         </strong>
+
         <br><br>
+
         These policies explain payment rules,
         student responsibilities, assessment
         requirements, conduct requirements and
         protection of student information.
+
       </div>
 
+
       <div class="policy-group">
-        <h3>💳 Payment Rules</h3>
+
+        <h3>
+          💳 Payment Rules
+        </h3>
+
         <ul>
-          <li>Courses below <strong>R2,000</strong> must be paid in full.</li>
-          <li>Courses above <strong>R2,000</strong> require at least half of the course fee upfront.</li>
-          <li>The remaining balance must be paid according to the agreed payment arrangement before completion/certification.</li>
-          <li>Where applicable, students may request a payment plan. Approval is at the discretion of Funda Online Academy.</li>
-          <li>Students remain responsible for agreed outstanding balances.</li>
+
+          <li>
+            Courses below <strong>R2,000</strong>
+            must be paid in full.
+          </li>
+
+          <li>
+            Courses above <strong>R2,000</strong>
+            require at least half of the course
+            fee upfront.
+          </li>
+
+          <li>
+            The remaining balance must be paid
+            according to the agreed payment
+            arrangement before completion/certification.
+          </li>
+
+          <li>
+            Where applicable, students may request
+            a payment plan. Approval is at the
+            discretion of Funda Online Academy.
+          </li>
+
+          <li>
+            Students remain responsible for agreed
+            outstanding balances.
+          </li>
+
         </ul>
+
       </div>
 
+
       <div class="policy-group">
-        <h3>🏦 How To Pay</h3>
+
+        <h3>
+          🏦 How To Pay
+        </h3>
 
         <p>
-          Please use the following official Funda Online
-          Academy banking details when making a payment.
+          Please use the following official
+          Funda Online Academy banking details
+          when making a payment.
         </p>
 
         <div class="bank-grid">
 
           <div class="bank-card">
-            <h3>TymeBank</h3>
-            <p class="bank-detail"><strong>Account name:</strong> Funda Online Academy</p>
-            <p class="bank-detail"><strong>Account number:</strong> 53001794582</p>
-            <p class="bank-detail"><strong>Branch code:</strong> 678910</p>
+
+            <h3>
+              TymeBank
+            </h3>
+
+            <p class="bank-detail">
+              <strong>Account name:</strong>
+              Funda Online Academy
+            </p>
+
+            <p class="bank-detail">
+              <strong>Account number:</strong>
+              53001794582
+            </p>
+
+            <p class="bank-detail">
+              <strong>Branch code:</strong>
+              678910
+            </p>
+
           </div>
 
+
           <div class="bank-card">
-            <h3>Capitec Bank</h3>
-            <p class="bank-detail"><strong>Account name:</strong> Funda Online Academy</p>
-            <p class="bank-detail"><strong>Account number:</strong> 2535397664</p>
-            <p class="bank-detail"><strong>Branch code:</strong> 470010</p>
+
+            <h3>
+              Capitec Bank
+            </h3>
+
+            <p class="bank-detail">
+              <strong>Account name:</strong>
+              Funda Online Academy
+            </p>
+
+            <p class="bank-detail">
+              <strong>Account number:</strong>
+              2535397664
+            </p>
+
+            <p class="bank-detail">
+              <strong>Branch code:</strong>
+              470010
+            </p>
+
           </div>
 
         </div>
+
       </div>
 
+
       <div class="policy-group">
-        <h3>📋 Required Student Information</h3>
+
+        <h3>
+          📋 Required Student Information
+        </h3>
 
         <div class="required-list">
+
           <div>✓ Name</div>
           <div>✓ Surname</div>
           <div>✓ ID / Passport</div>
@@ -493,101 +957,222 @@ html,body{overflow-x:hidden}
           <div>✓ Email address</div>
           <div>✓ Residential address</div>
           <div>✓ How you heard about us</div>
+
         </div>
+
       </div>
 
+
       <div class="policy-group">
-        <h3>📚 Student Rules & Responsibilities</h3>
+
+        <h3>
+          📚 Student Rules & Responsibilities
+        </h3>
 
         <ul>
-          <li>Students must remain committed to completing their chosen course.</li>
-          <li>Students must treat Funda Online Academy staff and other students with respect.</li>
-          <li>Students must follow academy rules and instructions.</li>
-          <li>Course changes are generally not permitted after the course has started.</li>
-          <li>No refunds will be provided for students who voluntarily drop out after enrolment, subject to applicable law.</li>
-          <li>Assessments must be submitted by required deadlines.</li>
-          <li>Assessments must be completed through the approved academy learning system.</li>
-          <li>WhatsApp must not be used to submit official assessments unless specifically authorised.</li>
-          <li>Students must provide accurate information.</li>
-          <li>Students must not share their account password.</li>
-          <li>Students must not attempt to access another student's account or information.</li>
+
+          <li>
+            Students must remain committed to
+            completing their chosen course.
+          </li>
+
+          <li>
+            Students must treat Funda Online Academy
+            staff and other students with respect.
+          </li>
+
+          <li>
+            Students must follow academy rules
+            and instructions.
+          </li>
+
+          <li>
+            Course changes are generally not permitted
+            after the course has started.
+          </li>
+
+          <li>
+            No refunds will be provided for students
+            who voluntarily drop out after enrolment,
+            subject to applicable law.
+          </li>
+
+          <li>
+            Assessments must be submitted by required
+            deadlines.
+          </li>
+
+          <li>
+            Assessments must be completed through the
+            approved academy learning system.
+          </li>
+
+          <li>
+            WhatsApp must not be used to submit official
+            assessments unless specifically authorised.
+          </li>
+
+          <li>
+            Students must provide accurate information.
+          </li>
+
+          <li>
+            Students must not share their account password.
+          </li>
+
+          <li>
+            Students must not attempt to access another
+            student's account or information.
+          </li>
+
         </ul>
+
       </div>
 
+
       <div class="policy-group">
-        <h3>🔐 Privacy & Protection of Information</h3>
+
+        <h3>
+          🔐 Privacy & Protection of Information
+        </h3>
+
         <p style="line-height:1.6">
-          Funda Online Academy will take reasonable steps
-          to protect student information and use it for
-          legitimate academy purposes such as administration,
-          enrolment, communication, assessments, records
-          and certification.
+
+          Funda Online Academy will take reasonable
+          steps to protect student information and
+          use it for legitimate academy purposes such
+          as administration, enrolment, communication,
+          assessments, records and certification.
+
         </p>
+
       </div>
 
+
       <div class="policy-group">
-        <h3>📝 Assessments & Academic Integrity</h3>
+
+        <h3>
+          📝 Assessments & Academic Integrity
+        </h3>
+
         <ul>
-          <li>Students must complete their own assessments.</li>
-          <li>Students must not submit work completed by another person as their own.</li>
-          <li>The academy may review assessment submissions where academic integrity concerns arise.</li>
-          <li>Results may be withheld while an assessment concern is being reviewed.</li>
+
+          <li>
+            Students must complete their own assessments.
+          </li>
+
+          <li>
+            Students must not submit work completed by
+            another person as their own.
+          </li>
+
+          <li>
+            The academy may review assessment submissions
+            where academic integrity concerns arise.
+          </li>
+
+          <li>
+            Results may be withheld while an assessment
+            concern is being reviewed.
+          </li>
+
         </ul>
+
       </div>
+
 
       <div class="contact-box">
-        <strong>Funda Online Academy</strong>
-        <p>📧 fundaonlineacademy@gmail.com</p>
-        <p>📱 069 960 8590</p>
+
+        <strong>
+          Funda Online Academy
+        </strong>
+
+        <p>
+          📧 fundaonlineacademy@gmail.com
+        </p>
+
+        <p>
+          📱 069 960 8590
+        </p>
+
       </div>
+
 
       <div class="declaration-box">
 
-        <h3>✍️ Student Declaration</h3>
+        <h3>
+          ✍️ Student Declaration
+        </h3>
 
         <p class="declaration-text">
-          I confirm that I have read and understood the
-          Funda Online Academy payment rules, student
-          requirements, policies, assessment requirements
-          and terms and conditions.
+
+          I confirm that I have read and understood
+          the Funda Online Academy payment rules,
+          student requirements, policies, assessment
+          requirements and terms and conditions.
+
+          <br><br>
 
           I confirm that the information I provide to
           Funda Online Academy is true and accurate.
 
-          I understand that I am responsible for following
-          the academy's rules and completing my course
-          requirements.
+          <br><br>
 
-          I understand the payment obligations associated
-          with my course and agree to comply with the
-          approved payment arrangement.
+          I understand that I am responsible for
+          following the academy's rules and completing
+          my course requirements.
+
+          <br><br>
+
+          I understand the payment obligations
+          associated with my course and agree to comply
+          with the approved payment arrangement.
+
+          <br><br>
 
           I understand that acceptance of these policies
           does not automatically mean that my enrolment
           has been approved.
+
         </p>
 
+
         <div class="accept-row">
-          <input type="checkbox" id="policy-checkbox">
+
+          <input
+            type="checkbox"
+            id="policy-checkbox">
 
           <label for="policy-checkbox">
+
             <strong>
               I accept the Funda Online Academy Terms,
               Payment Rules, Policies and Student Declaration.
             </strong>
+
           </label>
+
         </div>
+
 
         <button
           type="button"
           id="accept-policy-btn"
           class="btn green accept-button">
+
           ✅ Accept & Continue
+
         </button>
 
-        <p style="color:#68766f;font-size:13px;margin-top:8px">
-          Policy version: FOA Terms v1.0
+
+        <p
+          style="color:#68766f;font-size:13px;margin-top:8px">
+
+          Policy version:
+          FOA Terms v1.0
+
         </p>
+
 
         <div
           id="policy-accepted"
@@ -598,51 +1183,92 @@ html,body{overflow-x:hidden}
       </div>
 
     </div>
+
   </section>
 
-  <!-- PAYMENTS -->
-  <section class="dashboard-section" id="payments">
 
-    <h2>💳 Payments</h2>
+  <!-- ======================================================
+       PAYMENTS
+       ====================================================== -->
+
+  <section
+    class="dashboard-section"
+    id="payments">
+
+    <h2>
+      💳 Payments
+    </h2>
 
     <div id="payment-list">
+
       <div class="card">
+
         <p class="loading">
           Payment history will appear here.
         </p>
+
       </div>
+
     </div>
 
   </section>
 
-  <!-- ENROLMENTS -->
+
+  <!-- ======================================================
+       ENROLMENTS
+       ====================================================== -->
+
   <section>
 
-    <h2>📝 My Enrolments</h2>
+    <h2>
+      📝 My Enrolments
+    </h2>
 
-    <div id="enrolments" class="dashboard-grid">
+    <div
+      id="enrolments"
+      class="dashboard-grid">
+
       <div class="card">
-        <p class="loading">Loading enrolments…</p>
+
+        <p class="loading">
+          Loading enrolments…
+        </p>
+
       </div>
+
     </div>
 
   </section>
 
-  <!-- AVAILABLE COURSES -->
+
+  <!-- ======================================================
+       AVAILABLE COURSES
+       ====================================================== -->
+
   <section>
 
-    <h2>📖 Available Courses</h2>
+    <h2>
+      📖 Available Courses
+    </h2>
 
     <p style="margin-bottom:18px;line-height:1.6">
+
       Browse the courses offered by Funda Online Academy.
       The duration and current availability of each course
       are shown below.
+
     </p>
 
-    <div id="available-courses" class="dashboard-grid">
+    <div
+      id="available-courses"
+      class="dashboard-grid">
 
       <div class="card">
-        <p class="loading">Loading available courses…</p>
+
+        <p class="loading">
+          Loading available courses…
+        </p>
+
       </div>
 
     </div>
@@ -652,20 +1278,31 @@ html,body{overflow-x:hidden}
 </div>
 </main>
 
-<!-- LESSON VIEWER -->
-<div id="lesson-viewer" class="lesson-viewer" aria-hidden="true">
+
+<!-- ========================================================
+     LESSON VIEWER
+     ======================================================== -->
+
+<div
+  id="lesson-viewer"
+  class="lesson-viewer"
+  aria-hidden="true">
 
   <div class="lesson-viewer-box">
 
     <div class="lesson-viewer-header">
 
       <div>
+
         <div
           id="lesson-viewer-module"
           style="font-size:13px;opacity:.8;margin-bottom:6px">
         </div>
 
-        <h2 id="lesson-viewer-title">Lesson</h2>
+        <h2 id="lesson-viewer-title">
+          Lesson
+        </h2>
+
       </div>
 
       <button
@@ -673,16 +1310,26 @@ html,body{overflow-x:hidden}
         id="lesson-close"
         class="lesson-close"
         aria-label="Close lesson">
+
         ×
+
       </button>
 
     </div>
 
+
     <div class="lesson-viewer-body">
 
-      <div id="lesson-viewer-content" class="lesson-content">
-        <p class="loading">Loading lesson…</p>
+      <div
+        id="lesson-viewer-content"
+        class="lesson-content">
+
+        <p class="loading">
+          Loading lesson…
+        </p>
+
       </div>
+
 
       <div class="lesson-footer">
 
@@ -690,13 +1337,18 @@ html,body{overflow-x:hidden}
           type="button"
           id="complete-lesson-btn"
           class="btn green complete-lesson-btn">
+
           ✅ Mark Lesson Complete
+
         </button>
+
 
         <div
           id="lesson-complete-message"
           class="lesson-complete-message">
+
           ✅ Lesson completed successfully.
+
         </div>
 
       </div>
@@ -704,56 +1356,106 @@ html,body{overflow-x:hidden}
     </div>
 
   </div>
+
 </div>
 
+
+<!-- ========================================================
+     SUPABASE
+     ======================================================== -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js?v=20260818-2"></script>
+
+<script src="supabase-config.js?v=20260818-3"></script>
+
 
 <script>
+
 (function(){
 
 "use strict";
 
+
 /*
-============================================================
+==============================================================
 FUNDA ONLINE ACADEMY
 STUDENT DASHBOARD
-SAFE LOADING VERSION
+==============================================================
 
-IMPORTANT:
-- Does NOT wait for every section before showing dashboard.
-- Each section loads independently.
-- A slow/failing section cannot freeze the whole page.
-- Lessons and Review Lesson remain available.
-============================================================
+IMPORTANT FIX:
+
+The student profile is now loaded using:
+
+    db.rpc("get_my_student_profile")
+
+instead of:
+
+    db.from("students")
+
+This connects the dashboard to the database function
+that was just fixed in Supabase.
+==============================================================
 */
+
 
 let db = null;
 let currentUser = null;
 let currentStudent = null;
 let currentLesson = null;
 
+
 const $ = id => document.getElementById(id);
 
-const studyList = $("study-list");
-const userName = $("user-name");
-const userEmail = $("user-email");
-const logoutButton = $("logout");
-const systemStatus = $("system-status");
-const availableCourses = $("available-courses");
-const enrolmentsContainer = $("enrolments");
 
-const lessonViewer = $("lesson-viewer");
-const lessonViewerTitle = $("lesson-viewer-title");
-const lessonViewerModule = $("lesson-viewer-module");
-const lessonViewerContent = $("lesson-viewer-content");
-const lessonClose = $("lesson-close");
-const completeLessonButton = $("complete-lesson-btn");
-const lessonCompleteMessage = $("lesson-complete-message");
+const studyList =
+  $("study-list");
+
+const userName =
+  $("user-name");
+
+const userEmail =
+  $("user-email");
+
+const logoutButton =
+  $("logout");
+
+const systemStatus =
+  $("system-status");
+
+const availableCourses =
+  $("available-courses");
+
+const enrolmentsContainer =
+  $("enrolments");
+
+const lessonViewer =
+  $("lesson-viewer");
+
+const lessonViewerTitle =
+  $("lesson-viewer-title");
+
+const lessonViewerModule =
+  $("lesson-viewer-module");
+
+const lessonViewerContent =
+  $("lesson-viewer-content");
+
+const lessonClose =
+  $("lesson-close");
+
+const completeLessonButton =
+  $("complete-lesson-btn");
+
+const lessonCompleteMessage =
+  $("lesson-complete-message");
+
 
 function escapeHtml(value){
 
-  if(value === null || value === undefined){
+  if(
+    value === null ||
+    value === undefined
+  ){
     return "";
   }
 
@@ -765,49 +1467,92 @@ function escapeHtml(value){
     .replace(/'/g,"&#039;");
 }
 
+
 function money(value){
 
-  if(value === null || value === undefined || value === ""){
+  if(
+    value === null ||
+    value === undefined ||
+    value === ""
+  ){
     return "—";
   }
 
-  const number = Number(value);
+  const number =
+    Number(value);
 
   if(Number.isNaN(number)){
     return escapeHtml(value);
   }
 
-  return "R " + number.toLocaleString("en-ZA",{
-    minimumFractionDigits:2,
-    maximumFractionDigits:2
-  });
+  return "R " +
+    number.toLocaleString(
+      "en-ZA",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    );
 }
 
-function timeoutPromise(seconds,label){
 
-  return new Promise((resolve,reject)=>{
+function timeoutPromise(
+  seconds,
+  label
+){
 
-    setTimeout(()=>{
-      reject(new Error(label + " timed out."));
-    },seconds * 1000);
+  return new Promise(
+    (resolve,reject)=>{
 
-  });
+      setTimeout(()=>{
+
+        reject(
+          new Error(
+            label + " timed out."
+          )
+        );
+
+      },seconds * 1000);
+
+    }
+  );
 }
 
-async function safePromise(promise,seconds,label){
+
+async function safePromise(
+  promise,
+  seconds,
+  label
+){
 
   return Promise.race([
     promise,
-    timeoutPromise(seconds,label)
+    timeoutPromise(
+      seconds,
+      label
+    )
   ]);
+
 }
+
 
 function setStatus(text){
 
   if(systemStatus){
-    systemStatus.textContent = text;
+
+    systemStatus.textContent =
+      text;
+
   }
+
 }
+
+
+/*
+==============================================================
+CREATE DATABASE CONNECTION
+==============================================================
+*/
 
 function createDatabase(){
 
@@ -815,15 +1560,21 @@ function createDatabase(){
     window.supabaseClient &&
     typeof window.supabaseClient.from === "function"
   ){
+
     return window.supabaseClient;
+
   }
+
 
   if(
     window.db &&
     typeof window.db.from === "function"
   ){
+
     return window.db;
+
   }
+
 
   if(
     window.SUPABASE_URL &&
@@ -831,194 +1582,436 @@ function createDatabase(){
     window.supabase &&
     typeof window.supabase.createClient === "function"
   ){
+
     return window.supabase.createClient(
       window.SUPABASE_URL,
       window.SUPABASE_ANON_KEY
     );
+
   }
 
+
   return null;
+
 }
+
+
+/*
+==============================================================
+GET LOGGED-IN USER
+==============================================================
+*/
 
 async function getUser(){
 
   if(!db){
+
     throw new Error(
       "Supabase connection was not found. Please check supabase-config.js."
     );
+
   }
 
-  const result = await safePromise(
-    db.auth.getUser(),
-    8,
-    "Checking student login"
-  );
+
+  const result =
+    await safePromise(
+      db.auth.getUser(),
+      8,
+      "Checking student login"
+    );
+
 
   if(result.error){
+
     throw result.error;
+
   }
 
-  if(!result.data || !result.data.user){
 
-    window.location.href = "login.html";
+  if(
+    !result.data ||
+    !result.data.user
+  ){
+
+    window.location.href =
+      "login.html";
+
     return null;
+
   }
+
 
   return result.data.user;
+
 }
+
+
+/*
+==============================================================
+GET STUDENT PROFILE
+==============================================================
+
+THIS IS THE IMPORTANT FIX.
+
+We DO NOT query students directly.
+
+We call the Supabase function:
+
+    get_my_student_profile
+
+The function identifies the logged-in user securely.
+==============================================================
+*/
 
 async function getStudent(userId){
 
-  const result = await safePromise(
-    db
-      .from("students")
-      .select("*")
-      .eq("user_id",userId)
-      .limit(1),
-    8,
-    "Loading student profile"
+  console.log(
+    "Loading student profile using get_my_student_profile..."
   );
 
+
+  const result =
+    await safePromise(
+      db.rpc(
+        "get_my_student_profile"
+      ),
+      8,
+      "Loading student profile"
+    );
+
+
   if(result.error){
+
+    console.error(
+      "Student profile RPC error:",
+      result.error
+    );
+
     throw result.error;
+
   }
 
-  return result.data && result.data.length
-    ? result.data[0]
-    : null;
+
+  console.log(
+    "Student profile RPC result:",
+    result.data
+  );
+
+
+  if(
+    result.data === null ||
+    result.data === undefined
+  ){
+
+    return null;
+
+  }
+
+
+  /*
+    PostgreSQL functions returning a table
+    normally return an array.
+
+    If there is one student:
+        [ student ]
+
+    If there is no student:
+        []
+
+    This handles both possibilities.
+  */
+
+  if(Array.isArray(result.data)){
+
+    if(result.data.length === 0){
+
+      return null;
+
+    }
+
+    return result.data[0];
+
+  }
+
+
+  /*
+    Also support a function that returns
+    a single JSON/object.
+  */
+
+  return result.data;
+
 }
+
+
+/*
+==============================================================
+GET ENROLMENTS
+==============================================================
+*/
 
 async function getEnrollments(studentId){
 
   let result;
 
+
   try{
 
-    result = await safePromise(
-      db
-        .from("enrollments")
-        .select("*")
-        .eq("student_id",studentId),
-      8,
-      "Loading enrolments"
-    );
+    result =
+      await safePromise(
+
+        db
+          .from("enrollments")
+          .select("*")
+          .eq(
+            "student_id",
+            studentId
+          ),
+
+        8,
+
+        "Loading enrolments"
+
+      );
 
   }catch(error){
 
     try{
 
-      result = await safePromise(
-        db
-          .from("enrolments")
-          .select("*")
-          .eq("student_id",studentId),
-        8,
-        "Loading enrolments"
-      );
+      result =
+        await safePromise(
+
+          db
+            .from("enrolments")
+            .select("*")
+            .eq(
+              "student_id",
+              studentId
+            ),
+
+          8,
+
+          "Loading enrolments"
+
+        );
 
     }catch(secondError){
 
       throw secondError;
+
     }
+
   }
+
 
   if(result.error){
+
     throw result.error;
+
   }
 
+
   return result.data || [];
+
 }
+
+
+/*
+==============================================================
+APPROVED STATUS
+==============================================================
+*/
 
 function isApproved(row){
 
-  const status = String(
-    row.enrollment_status ||
-    row.enrolment_status ||
-    row.status ||
-    ""
-  ).toLowerCase();
+  const status =
+    String(
+      row.enrollment_status ||
+      row.enrolment_status ||
+      row.status ||
+      ""
+    ).toLowerCase();
+
 
   return (
     status === "approved" ||
     status === "active" ||
     status === "paid"
   );
+
 }
+
+
+/*
+==============================================================
+GET COURSE
+==============================================================
+*/
 
 async function getCourse(courseId){
 
-  const result = await safePromise(
-    db
-      .from("courses")
-      .select("*")
-      .eq("id",courseId)
-      .limit(1),
-    8,
-    "Loading course"
-  );
+  if(!courseId){
 
-  if(result.error){
-    throw result.error;
+    return null;
+
   }
 
-  return result.data && result.data.length
+
+  const result =
+    await safePromise(
+
+      db
+        .from("courses")
+        .select("*")
+        .eq(
+          "id",
+          courseId
+        )
+        .limit(1),
+
+      8,
+
+      "Loading course"
+
+    );
+
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+
+  return (
+    result.data &&
+    result.data.length
+  )
     ? result.data[0]
     : null;
+
 }
+
+
+/*
+==============================================================
+GET MODULES
+==============================================================
+*/
 
 async function getModules(courseId){
 
-  const result = await safePromise(
-    db
-      .from("course_modules")
-      .select("*")
-      .eq("course_id",courseId)
-      .order("module_number",{ascending:true}),
-    8,
-    "Loading modules"
-  );
+  if(!courseId){
 
-  if(result.error){
-    throw result.error;
+    return [];
+
   }
 
+
+  const result =
+    await safePromise(
+
+      db
+        .from("course_modules")
+        .select("*")
+        .eq(
+          "course_id",
+          courseId
+        )
+        .order(
+          "module_number",
+          {
+            ascending:true
+          }
+        ),
+
+      8,
+
+      "Loading modules"
+
+    );
+
+
+  if(result.error){
+
+    throw result.error;
+
+  }
+
+
   return result.data || [];
+
 }
+
+
+/*
+==============================================================
+GET LESSONS
+==============================================================
+*/
 
 async function getLessons(){
 
-  const result = await safePromise(
-    db
-      .from("lessons")
-      .select("*")
-      .order("lesson_number",{ascending:true}),
-    8,
-    "Loading lessons"
-  );
+  const result =
+    await safePromise(
+
+      db
+        .from("lessons")
+        .select("*")
+        .order(
+          "lesson_number",
+          {
+            ascending:true
+          }
+        ),
+
+      8,
+
+      "Loading lessons"
+
+    );
+
 
   if(result.error){
+
     throw result.error;
+
   }
 
+
   return result.data || [];
+
 }
+
+
+/*
+==============================================================
+COURSE HELPERS
+==============================================================
+*/
 
 function getCourseName(course){
 
-  return course &&
+  return (
+    course &&
     (
       course.title ||
       course.name ||
       course.course_name
-    ) ||
-    "Course";
+    )
+  ) || "Course";
+
 }
+
 
 function getDuration(course){
 
   if(!course){
+
     return "";
+
   }
+
 
   return (
     course.duration ||
@@ -1028,13 +2021,18 @@ function getDuration(course){
     course.length ||
     ""
   );
+
 }
+
 
 function getPrice(course){
 
   if(!course){
+
     return null;
+
   }
+
 
   return (
     course.price ??
@@ -1042,33 +2040,79 @@ function getPrice(course){
     course.course_price ??
     null
   );
+
 }
 
-function lessonsForModule(module,lessons){
+
+/*
+==============================================================
+LESSONS FOR MODULE
+==============================================================
+*/
+
+function lessonsForModule(
+  module,
+  lessons
+){
 
   return lessons
-    .filter(lesson=>{
 
-      if(
-        lesson.module_id &&
-        module.id &&
-        String(lesson.module_id) === String(module.id)
-      ){
-        return true;
+    .filter(
+      lesson=>{
+
+        if(
+          lesson.module_id &&
+          module.id &&
+          String(
+            lesson.module_id
+          ) === String(
+            module.id
+          )
+        ){
+
+          return true;
+
+        }
+
+
+        if(
+          lesson.module_number !== undefined &&
+          module.module_number !== undefined &&
+          Number(
+            lesson.module_number
+          ) === Number(
+            module.module_number
+          )
+        ){
+
+          return true;
+
+        }
+
+
+        return false;
+
       }
+    )
 
-      if(
-        lesson.module_number !== undefined &&
-        module.module_number !== undefined &&
-        Number(lesson.module_number) === Number(module.module_number)
-      ){
-        return true;
-      }
+    .sort(
+      (a,b)=>
+        Number(
+          a.lesson_number || 0
+        ) -
+        Number(
+          b.lesson_number || 0
+        )
+    );
 
-      return false;
-    })
-    .sort((a,b)=>Number(a.lesson_number || 0)-Number(b.lesson_number || 0));
 }
+
+
+/*
+==============================================================
+LESSON CONTENT
+==============================================================
+*/
 
 function getLessonContent(lesson){
 
@@ -1080,118 +2124,251 @@ function getLessonContent(lesson){
     lesson.description ??
     ""
   );
+
 }
+
+
+/*
+==============================================================
+SAFE LESSON CONTENT
+==============================================================
+*/
 
 function safeContent(value){
 
-  if(!value || !String(value).trim()){
+  if(
+    !value ||
+    !String(value).trim()
+  ){
 
     return `
+
       <div class="empty-study">
-        <div style="font-size:42px">📖</div>
+
+        <div style="font-size:42px">
+          📖
+        </div>
+
         <h3 style="margin-top:10px">
           Learning content is being prepared
         </h3>
+
         <p style="margin-top:8px;line-height:1.6">
-          This lesson has been created, but learning
-          content has not yet been added.
+
+          This lesson has been created,
+          but learning content has not
+          yet been added.
+
         </p>
+
       </div>
+
     `;
+
   }
 
-  const text = String(value);
 
-  if(/<[a-z][\s\S]*>/i.test(text)){
+  const text =
+    String(value);
+
+
+  /*
+    If the lesson already contains
+    HTML, display it.
+
+    Otherwise convert normal text
+    into paragraphs.
+  */
+
+  if(
+    /<[a-z][\s\S]*>/i.test(text)
+  ){
+
     return text;
+
   }
+
 
   return text
-    .split(/\n\s*\n/)
-    .map(p=>`<p>${escapeHtml(p).replace(/\n/g,"<br>")}</p>`)
+
+    .split(
+      /\n\s*\n/
+    )
+
+    .map(
+      p =>
+        `<p>${
+          escapeHtml(p)
+            .replace(
+              /\n/g,
+              "<br>"
+            )
+        }</p>`
+    )
+
     .join("");
+
 }
+
+
+/*
+==============================================================
+RENDER APPROVED COURSES
+==============================================================
+*/
 
 async function renderApprovedCourses(){
 
   studyList.innerHTML = `
+
     <div class="card">
-      <p class="loading">Loading your courses…</p>
+
+      <p class="loading">
+        Loading your courses…
+      </p>
+
     </div>
+
   `;
+
+
+  /*
+    If profile is missing,
+    show the proper message.
+  */
 
   if(!currentStudent){
 
     studyList.innerHTML = `
+
       <div class="empty-study">
-        <div style="font-size:45px">👤</div>
+
+        <div style="font-size:45px">
+          👤
+        </div>
+
         <h3 style="margin-top:10px">
           Student profile not found
         </h3>
+
         <p style="margin-top:8px;line-height:1.6">
-          Your login is working, but no student profile
-          is connected to this account.
+
+          Your login is working, but no
+          student profile is connected
+          to this account.
+
         </p>
+
       </div>
+
     `;
 
     return;
+
   }
 
+
   let enrollments;
+
 
   try{
 
     enrollments =
-      await getEnrollments(currentStudent.id);
+      await getEnrollments(
+        currentStudent.id
+      );
 
   }catch(error){
 
     console.error(error);
 
+
     studyList.innerHTML = `
+
       <div class="dashboard-start-error">
-        <strong>⚠️ Your courses could not be loaded.</strong>
+
+        <strong>
+          ⚠️ Your courses could not be loaded.
+        </strong>
+
         <p style="margin-top:8px">
-          ${escapeHtml(error.message)}
+
+          ${escapeHtml(
+            error.message
+          )}
+
         </p>
+
       </div>
+
     `;
 
     return;
+
   }
 
-  const approved = enrollments.filter(isApproved);
+
+  const approved =
+    enrollments.filter(
+      isApproved
+    );
+
 
   if(!approved.length){
 
     studyList.innerHTML = `
+
       <div class="empty-study">
-        <div style="font-size:48px">📚</div>
+
+        <div style="font-size:48px">
+          📚
+        </div>
+
         <h3 style="margin-top:10px">
           No approved courses yet
         </h3>
+
         <p style="margin-top:8px;line-height:1.6">
+
           Once your enrolment is approved,
-          your course and lessons will appear here.
+          your course and lessons will
+          appear here.
+
         </p>
+
       </div>
+
     `;
 
     return;
+
   }
+
 
   let lessons = [];
 
+
   try{
-    lessons = await getLessons();
+
+    lessons =
+      await getLessons();
+
   }catch(error){
-    console.warn("Lessons could not load:",error);
+
+    console.warn(
+      "Lessons could not load:",
+      error
+    );
+
   }
+
 
   studyList.innerHTML = "";
 
-  for(const enrollment of approved){
+
+  for(
+    const enrollment of approved
+  ){
 
     try{
 
@@ -1201,38 +2378,73 @@ async function renderApprovedCourses(){
           enrollment.courseId
         );
 
+
       if(!course){
+
         continue;
+
       }
+
 
       let modules = [];
 
+
       try{
-        modules = await getModules(course.id);
-      }catch(error){
-        console.warn("Modules could not load:",error);
-      }
 
-      const courseLessons = lessons.filter(lesson=>{
-
-        return modules.some(module=>{
-
-          return (
-            (
-              lesson.module_id &&
-              module.id &&
-              String(lesson.module_id) === String(module.id)
-            )
-            ||
-            (
-              lesson.module_number !== undefined &&
-              module.module_number !== undefined &&
-              Number(lesson.module_number) === Number(module.module_number)
-            )
+        modules =
+          await getModules(
+            course.id
           );
 
-        });
-      });
+      }catch(error){
+
+        console.warn(
+          "Modules could not load:",
+          error
+        );
+
+      }
+
+
+      const courseLessons =
+        lessons.filter(
+          lesson=>{
+
+            return modules.some(
+              module=>{
+
+                return (
+
+                  (
+                    lesson.module_id &&
+                    module.id &&
+                    String(
+                      lesson.module_id
+                    ) === String(
+                      module.id
+                    )
+                  )
+
+                  ||
+
+                  (
+                    lesson.module_number !== undefined &&
+                    module.module_number !== undefined &&
+                    Number(
+                      lesson.module_number
+                    ) === Number(
+                      module.module_number
+                    )
+                  )
+
+                );
+
+              }
+            );
+
+          }
+        );
+
 
       renderCourse(
         course,
@@ -1240,188 +2452,379 @@ async function renderApprovedCourses(){
         courseLessons
       );
 
+
     }catch(error){
 
-      console.error("Course load error:",error);
+      console.error(
+        "Course load error:",
+        error
+      );
 
-      const div = document.createElement("div");
 
-      div.className = "error-study";
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.className =
+        "error-study";
+
 
       div.innerHTML = `
-        <strong>⚠️ One course could not be displayed.</strong>
+
+        <strong>
+          ⚠️ One course could not be displayed.
+        </strong>
+
         <p style="margin-top:8px">
-          ${escapeHtml(error.message)}
+
+          ${escapeHtml(
+            error.message
+          )}
+
         </p>
+
       `;
 
-      studyList.appendChild(div);
+
+      studyList.appendChild(
+        div
+      );
+
     }
+
   }
+
 
   setupModuleButtons();
   setupLessonButtons();
+
 }
 
-function renderCourse(course,modules,lessons){
 
-  const card = document.createElement("div");
+/*
+==============================================================
+RENDER COURSE
+==============================================================
+*/
 
-  card.className = "study-card";
+function renderCourse(
+  course,
+  modules,
+  lessons
+){
 
-  const name = getCourseName(course);
-  const duration = getDuration(course);
-  const price = getPrice(course);
+  const card =
+    document.createElement(
+      "div"
+    );
+
+
+  card.className =
+    "study-card";
+
+
+  const name =
+    getCourseName(course);
+
+
+  const duration =
+    getDuration(course);
+
+
+  const price =
+    getPrice(course);
+
 
   let moduleHtml = "";
 
-  modules.forEach((module,index)=>{
 
-    const moduleLessons =
-      lessonsForModule(module,lessons);
+  modules.forEach(
+    (module,index)=>{
 
-    const moduleName =
-      module.module_name ||
-      module.name ||
-      module.title ||
-      "Module";
+      const moduleLessons =
+        lessonsForModule(
+          module,
+          lessons
+        );
 
-    const moduleDescription =
-      module.description ||
-      module.module_description ||
-      "Learning material for this module.";
 
-    const lessonHtml =
-      moduleLessons.length
-      ? `
-        <div class="lesson-list">
+      const moduleName =
+        module.module_name ||
+        module.name ||
+        module.title ||
+        "Module";
 
-          ${moduleLessons.map(lesson=>{
 
-            const lessonTitle =
-              lesson.title ||
-              lesson.lesson_title ||
-              "Lesson";
+      const moduleDescription =
+        module.description ||
+        module.module_description ||
+        "Learning material for this module.";
 
-            return `
-              <div class="lesson-item">
 
-                <div class="lesson-top">
+      const lessonHtml =
+        moduleLessons.length
 
-                  <span class="lesson-number">
-                    ${escapeHtml(lesson.lesson_number || "")}
-                  </span>
+        ?
 
-                  <div class="lesson-main">
+        `
 
-                    <div class="lesson-title">
-                      ${escapeHtml(lessonTitle)}
-                    </div>
+          <div class="lesson-list">
 
-                    <div class="lesson-description">
-                      Lesson ${escapeHtml(lesson.lesson_number || "")}
-                      in ${escapeHtml(moduleName)}.
-                    </div>
+            ${
+              moduleLessons
+                .map(
+                  lesson=>{
 
-                    <div class="lesson-actions">
+                    const lessonTitle =
+                      lesson.title ||
+                      lesson.lesson_title ||
+                      "Lesson";
 
-                      <button
-                        type="button"
-                        class="lesson-open"
-                        data-lesson-id="${escapeHtml(lesson.id)}"
-                        data-module-name="${escapeHtml(moduleName)}">
-                        📖 Open Lesson
-                      </button>
 
-                      <button
-                        type="button"
-                        class="review-lesson"
-                        data-lesson-id="${escapeHtml(lesson.id)}"
-                        data-module-name="${escapeHtml(moduleName)}">
-                        🔄 Review Lesson
-                      </button>
+                    return `
 
-                    </div>
+                      <div class="lesson-item">
 
-                  </div>
+                        <div class="lesson-top">
 
-                </div>
+                          <span class="lesson-number">
 
-              </div>
-            `;
-          }).join("")}
+                            ${
+                              escapeHtml(
+                                lesson.lesson_number || ""
+                              )
+                            }
+
+                          </span>
+
+
+                          <div class="lesson-main">
+
+                            <div class="lesson-title">
+
+                              ${
+                                escapeHtml(
+                                  lessonTitle
+                                )
+                              }
+
+                            </div>
+
+
+                            <div class="lesson-description">
+
+                              Lesson ${
+                                escapeHtml(
+                                  lesson.lesson_number || ""
+                                )
+                              }
+
+                              in ${
+                                escapeHtml(
+                                  moduleName
+                                )
+                              }.
+
+                            </div>
+
+
+                            <div class="lesson-actions">
+
+                              <button
+                                type="button"
+                                class="lesson-open"
+                                data-lesson-id="${
+                                  escapeHtml(
+                                    lesson.id
+                                  )
+                                }"
+                                data-module-name="${
+                                  escapeHtml(
+                                    moduleName
+                                  )
+                                }">
+
+                                📖 Open Lesson
+
+                              </button>
+
+
+                              <button
+                                type="button"
+                                class="review-lesson"
+                                data-lesson-id="${
+                                  escapeHtml(
+                                    lesson.id
+                                  )
+                                }"
+                                data-module-name="${
+                                  escapeHtml(
+                                    moduleName
+                                  )
+                                }">
+
+                                🔄 Review Lesson
+
+                              </button>
+
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    `;
+
+                  }
+                )
+                .join("")
+            }
+
+          </div>
+
+        `
+
+        :
+
+        `
+
+          <div class="empty-study">
+
+            <strong>
+              📖 Lessons are being prepared
+            </strong>
+
+            <p style="margin-top:8px">
+
+              Learning material for this
+              module will appear here.
+
+            </p>
+
+          </div>
+
+        `;
+
+
+      moduleHtml += `
+
+        <div class="module-card">
+
+          <button
+            type="button"
+            class="module-header"
+            data-module-index="${index}">
+
+            <span class="module-left">
+
+              <span class="module-number">
+
+                ${
+                  escapeHtml(
+                    module.module_number ||
+                    index + 1
+                  )
+                }
+
+              </span>
+
+
+              <span class="module-name">
+
+                ${
+                  escapeHtml(
+                    moduleName
+                  )
+                }
+
+              </span>
+
+            </span>
+
+
+            <span class="module-icon">
+              +
+            </span>
+
+          </button>
+
+
+          <div
+            class="module-content"
+            data-module-content="${index}">
+
+            <p class="module-description">
+
+              ${
+                escapeHtml(
+                  moduleDescription
+                )
+              }
+
+            </p>
+
+
+            <p
+              style="margin-bottom:14px;font-size:14px;color:#68766f;font-weight:700">
+
+              📖 ${
+                moduleLessons.length
+              }
+
+              ${
+                moduleLessons.length === 1
+                  ? "lesson"
+                  : "lessons"
+              }
+
+            </p>
+
+
+            ${lessonHtml}
+
+          </div>
 
         </div>
-      `
-      : `
-        <div class="empty-study">
-          <strong>📖 Lessons are being prepared</strong>
-          <p style="margin-top:8px">
-            Learning material for this module will appear here.
-          </p>
-        </div>
+
       `;
 
-    moduleHtml += `
-      <div class="module-card">
+    }
+  );
 
-        <button
-          type="button"
-          class="module-header"
-          data-module-index="${index}">
-
-          <span class="module-left">
-
-            <span class="module-number">
-              ${escapeHtml(module.module_number || index + 1)}
-            </span>
-
-            <span class="module-name">
-              ${escapeHtml(moduleName)}
-            </span>
-
-          </span>
-
-          <span class="module-icon">+</span>
-
-        </button>
-
-        <div
-          class="module-content"
-          data-module-content="${index}">
-
-          <p class="module-description">
-            ${escapeHtml(moduleDescription)}
-          </p>
-
-          <p style="margin-bottom:14px;font-size:14px;color:#68766f;font-weight:700">
-            📖 ${moduleLessons.length}
-            ${moduleLessons.length === 1 ? "lesson" : "lessons"}
-          </p>
-
-          ${lessonHtml}
-
-        </div>
-
-      </div>
-    `;
-  });
 
   if(!modules.length){
 
     moduleHtml = `
+
       <div class="empty-study">
-        <div style="font-size:42px">📚</div>
+
+        <div style="font-size:42px">
+          📚
+        </div>
+
         <h3 style="margin-top:10px">
+
           Course modules are being prepared
+
         </h3>
+
         <p style="margin-top:8px">
-          Funda Online Academy will add the learning
-          modules for this course.
+
+          Funda Online Academy will add
+          the learning modules for this course.
+
         </p>
+
       </div>
+
     `;
+
   }
+
 
   card.innerHTML = `
 
@@ -1429,52 +2832,100 @@ function renderCourse(course,modules,lessons){
       Approved
     </span>
 
+
     <h3 class="study-title">
-      ${escapeHtml(name)}
+
+      ${
+        escapeHtml(name)
+      }
+
     </h3>
 
+
     <p class="study-description">
-      ${escapeHtml(
-        course.description ||
-        course.course_description ||
-        "Your approved Funda Online Academy course."
-      )}
+
+      ${
+        escapeHtml(
+          course.description ||
+          course.course_description ||
+          "Your approved Funda Online Academy course."
+        )
+      }
+
     </p>
+
 
     <div class="study-meta">
 
       <span>
-        💰 ${money(price)}
+        💰 ${
+          money(price)
+        }
       </span>
 
+
       <span>
+
         ⏱️ ${
           duration
             ? escapeHtml(duration)
             : "Duration to be confirmed"
         }
+
       </span>
 
-      <span>
-        📚 ${modules.length}
-        ${modules.length === 1 ? "module" : "modules"}
-      </span>
 
       <span>
-        📖 ${lessons.length}
-        ${lessons.length === 1 ? "lesson" : "lessons"}
+
+        📚 ${
+          modules.length
+        }
+
+        ${
+          modules.length === 1
+            ? "module"
+            : "modules"
+        }
+
+      </span>
+
+
+      <span>
+
+        📖 ${
+          lessons.length
+        }
+
+        ${
+          lessons.length === 1
+            ? "lesson"
+            : "lessons"
+        }
+
       </span>
 
     </div>
 
+
     <div class="study-button">
+
       <button
         type="button"
         class="btn green"
-        onclick="this.closest('.study-card').querySelector('.modules-container').scrollIntoView({behavior:'smooth'})">
+        onclick="
+          this.closest('.study-card')
+          .querySelector('.modules-container')
+          .scrollIntoView({
+            behavior:'smooth'
+          })
+        ">
+
         📚 Study Course
+
       </button>
+
     </div>
+
 
     <div class="modules-container">
 
@@ -1486,182 +2937,401 @@ function renderCourse(course,modules,lessons){
 
     </div>
 
+
     <div class="progress-box">
 
       <div class="progress-label">
-        <span>Course Progress</span>
-        <span>0%</span>
+
+        <span>
+          Course Progress
+        </span>
+
+        <span>
+          0%
+        </span>
+
       </div>
+
 
       <div class="progress-track">
-        <div class="progress-bar" style="width:0%"></div>
+
+        <div
+          class="progress-bar"
+          style="width:0%">
+        </div>
+
       </div>
 
-      <p style="margin-top:8px;color:#68766f;font-size:13px">
-        Your lesson progress will appear here as lessons are completed.
+
+      <p
+        style="margin-top:8px;color:#68766f;font-size:13px">
+
+        Your lesson progress will appear here
+        as lessons are completed.
+
       </p>
 
     </div>
+
   `;
 
-  studyList.appendChild(card);
+
+  studyList.appendChild(
+    card
+  );
+
 }
+
+
+/*
+==============================================================
+MODULE BUTTONS
+==============================================================
+*/
 
 function setupModuleButtons(){
 
   document
-    .querySelectorAll("[data-module-index]")
-    .forEach(button=>{
+    .querySelectorAll(
+      "[data-module-index]"
+    )
+    .forEach(
+      button=>{
 
-      button.addEventListener("click",()=>{
+        button.addEventListener(
+          "click",
+          ()=>{
 
-        const index =
-          button.getAttribute("data-module-index");
+            const index =
+              button.getAttribute(
+                "data-module-index"
+              );
 
-        const content =
-          document.querySelector(
-            `[data-module-content="${index}"]`
-          );
 
-        if(!content){
-          return;
-        }
+            const content =
+              document.querySelector(
+                `[data-module-content="${index}"]`
+              );
 
-        const icon =
-          button.querySelector(".module-icon");
 
-        const open =
-          content.classList.contains("open");
+            if(!content){
 
-        content.classList.toggle("open");
+              return;
 
-        if(icon){
-          icon.textContent =
-            open ? "+" : "−";
-        }
-      });
+            }
 
-    });
+
+            const icon =
+              button.querySelector(
+                ".module-icon"
+              );
+
+
+            const open =
+              content.classList.contains(
+                "open"
+              );
+
+
+            content.classList.toggle(
+              "open"
+            );
+
+
+            if(icon){
+
+              icon.textContent =
+                open
+                  ? "+"
+                  : "−";
+
+            }
+
+          }
+        );
+
+      }
+    );
+
 }
+
+
+/*
+==============================================================
+LESSON BUTTONS
+==============================================================
+*/
 
 function setupLessonButtons(){
 
   document
-    .querySelectorAll(".lesson-open,.review-lesson")
-    .forEach(button=>{
+    .querySelectorAll(
+      ".lesson-open,.review-lesson"
+    )
+    .forEach(
+      button=>{
 
-      button.addEventListener("click",()=>{
+        button.addEventListener(
+          "click",
+          ()=>{
 
-        openLesson(
-          button.getAttribute("data-lesson-id"),
-          button.getAttribute("data-module-name")
+            openLesson(
+
+              button.getAttribute(
+                "data-lesson-id"
+              ),
+
+              button.getAttribute(
+                "data-module-name"
+              )
+
+            );
+
+          }
         );
 
-      });
+      }
+    );
 
-    });
 }
 
-async function openLesson(id,moduleName){
+
+/*
+==============================================================
+OPEN LESSON
+==============================================================
+*/
+
+async function openLesson(
+  id,
+  moduleName
+){
 
   if(!id){
+
     return;
+
   }
 
-  lessonViewer.classList.add("show");
-  lessonViewer.setAttribute("aria-hidden","false");
-  document.body.style.overflow = "hidden";
 
-  lessonViewerTitle.textContent = "Lesson";
-  lessonViewerModule.textContent = moduleName || "Course Lesson";
+  lessonViewer.classList.add(
+    "show"
+  );
+
+
+  lessonViewer.setAttribute(
+    "aria-hidden",
+    "false"
+  );
+
+
+  document.body.style.overflow =
+    "hidden";
+
+
+  lessonViewerTitle.textContent =
+    "Lesson";
+
+
+  lessonViewerModule.textContent =
+    moduleName ||
+    "Course Lesson";
+
 
   lessonViewerContent.innerHTML = `
-    <p class="loading">Loading lesson content…</p>
+
+    <p class="loading">
+      Loading lesson content…
+    </p>
+
   `;
 
-  lessonCompleteMessage.style.display = "none";
-  completeLessonButton.disabled = true;
-  completeLessonButton.textContent = "✅ Mark Lesson Complete";
+
+  lessonCompleteMessage.style.display =
+    "none";
+
+
+  completeLessonButton.disabled =
+    true;
+
+
+  completeLessonButton.textContent =
+    "✅ Mark Lesson Complete";
+
 
   try{
 
-    const result = await safePromise(
-      db
-        .from("lessons")
-        .select("*")
-        .eq("id",id)
-        .limit(1),
-      8,
-      "Loading lesson"
-    );
+    const result =
+      await safePromise(
+
+        db
+          .from("lessons")
+          .select("*")
+          .eq(
+            "id",
+            id
+          )
+          .limit(1),
+
+        8,
+
+        "Loading lesson"
+
+      );
+
 
     if(result.error){
+
       throw result.error;
+
     }
 
-    if(!result.data || !result.data.length){
-      throw new Error("Lesson could not be found.");
+
+    if(
+      !result.data ||
+      !result.data.length
+    ){
+
+      throw new Error(
+        "Lesson could not be found."
+      );
+
     }
 
-    currentLesson = result.data[0];
+
+    currentLesson =
+      result.data[0];
+
 
     lessonViewerTitle.textContent =
       currentLesson.title ||
       currentLesson.lesson_title ||
       "Lesson";
 
+
     lessonViewerContent.innerHTML =
       safeContent(
-        getLessonContent(currentLesson)
+        getLessonContent(
+          currentLesson
+        )
       );
 
-    completeLessonButton.disabled = false;
 
-    await checkCompletion(id);
+    completeLessonButton.disabled =
+      false;
+
+
+    await checkCompletion(
+      id
+    );
+
 
   }catch(error){
 
     lessonViewerContent.innerHTML = `
+
       <div class="dashboard-start-error">
-        <strong>⚠️ Lesson could not be opened</strong>
+
+        <strong>
+          ⚠️ Lesson could not be opened
+        </strong>
+
         <p style="margin-top:8px">
-          ${escapeHtml(error.message)}
+
+          ${
+            escapeHtml(
+              error.message
+            )
+          }
+
         </p>
+
       </div>
+
     `;
+
   }
+
 }
+
+
+/*
+==============================================================
+CLOSE LESSON
+==============================================================
+*/
 
 function closeLesson(){
 
-  lessonViewer.classList.remove("show");
-  lessonViewer.setAttribute("aria-hidden","true");
-  document.body.style.overflow = "";
-  currentLesson = null;
+  lessonViewer.classList.remove(
+    "show"
+  );
+
+
+  lessonViewer.setAttribute(
+    "aria-hidden",
+    "true"
+  );
+
+
+  document.body.style.overflow =
+    "";
+
+
+  currentLesson =
+    null;
+
 }
 
-async function checkCompletion(lessonId){
+
+/*
+==============================================================
+CHECK LESSON COMPLETION
+==============================================================
+*/
+
+async function checkCompletion(
+  lessonId
+){
 
   if(!currentUser){
+
     return;
+
   }
+
 
   try{
 
-    const result = await safePromise(
-      db
-        .from("lesson_progress")
-        .select("*")
-        .eq("student_id",currentUser.id)
-        .eq("lesson_id",lessonId)
-        .limit(1),
-      6,
-      "Checking lesson progress"
-    );
+    const result =
+      await safePromise(
+
+        db
+          .from("lesson_progress")
+          .select("*")
+          .eq(
+            "student_id",
+            currentUser.id
+          )
+          .eq(
+            "lesson_id",
+            lessonId
+          )
+          .limit(1),
+
+        6,
+
+        "Checking lesson progress"
+
+      );
+
 
     if(result.error){
+
       return;
+
     }
+
 
     if(
       result.data &&
@@ -1669,12 +3339,20 @@ async function checkCompletion(lessonId){
       result.data[0].completed
     ){
 
-      lessonCompleteMessage.style.display = "block";
+      lessonCompleteMessage.style.display =
+        "block";
+
 
       lessonCompleteMessage.innerHTML = `
-        <strong>✅ Lesson completed</strong>
+
+        <strong>
+          ✅ Lesson completed
+        </strong>
+
         Your progress has already been saved.
+
       `;
+
 
       completeLessonButton.textContent =
         "✅ Lesson Completed";
@@ -1686,220 +3364,407 @@ async function checkCompletion(lessonId){
     console.warn(error);
 
   }
+
 }
+
+
+/*
+==============================================================
+COMPLETE LESSON
+==============================================================
+*/
 
 async function completeCurrentLesson(){
 
-  if(!currentUser || !currentLesson){
-    alert("Please log in again.");
+  if(
+    !currentUser ||
+    !currentLesson
+  ){
+
+    alert(
+      "Please log in again."
+    );
+
     return;
+
   }
 
-  completeLessonButton.disabled = true;
-  completeLessonButton.textContent = "Saving…";
+
+  completeLessonButton.disabled =
+    true;
+
+
+  completeLessonButton.textContent =
+    "Saving…";
+
 
   try{
 
-    const result = await safePromise(
+    const result =
+      await safePromise(
 
-      db
-        .from("lesson_progress")
-        .upsert(
-          {
-            student_id:currentUser.id,
-            lesson_id:currentLesson.id,
-            completed:true,
-            completed_at:new Date().toISOString(),
-            updated_at:new Date().toISOString()
-          },
-          {
-            onConflict:"student_id,lesson_id"
-          }
-        ),
+        db
+          .from("lesson_progress")
+          .upsert(
 
-      8,
+            {
+              student_id:
+                currentUser.id,
 
-      "Saving lesson progress"
-    );
+              lesson_id:
+                currentLesson.id,
+
+              completed:
+                true,
+
+              completed_at:
+                new Date().toISOString(),
+
+              updated_at:
+                new Date().toISOString()
+            },
+
+            {
+              onConflict:
+                "student_id,lesson_id"
+            }
+
+          ),
+
+        8,
+
+        "Saving lesson progress"
+
+      );
+
 
     if(result.error){
+
       throw result.error;
+
     }
 
-    lessonCompleteMessage.style.display = "block";
+
+    lessonCompleteMessage.style.display =
+      "block";
+
 
     lessonCompleteMessage.innerHTML = `
-      <strong>✅ Lesson completed successfully.</strong>
-      Your progress has been saved to your student account.
+
+      <strong>
+        ✅ Lesson completed successfully.
+      </strong>
+
+      Your progress has been saved
+      to your student account.
+
     `;
+
 
     completeLessonButton.textContent =
       "✅ Lesson Completed";
 
+
   }catch(error){
 
-    completeLessonButton.disabled = false;
+    completeLessonButton.disabled =
+      false;
+
+
     completeLessonButton.textContent =
       "✅ Mark Lesson Complete";
 
+
     alert(
+
       "The lesson was opened, but progress could not be saved.\n\n" +
+
       error.message
+
     );
+
   }
+
 }
+
+
+/*
+==============================================================
+AVAILABLE COURSES
+==============================================================
+*/
 
 async function loadAvailableCourses(){
 
   availableCourses.innerHTML = `
+
     <div class="card">
-      <p class="loading">Loading available courses…</p>
+
+      <p class="loading">
+        Loading available courses…
+      </p>
+
     </div>
+
   `;
+
 
   try{
 
-    /*
-      IMPORTANT:
-      There is deliberately NO .eq("active",true)
-      here.
+    const result =
+      await safePromise(
 
-      This means courses will not disappear simply because
-      the database does not have an active field or because
-      that field is blank.
-    */
+        db
+          .from("courses")
+          .select("*")
+          .order(
+            "title",
+            {
+              ascending:true
+            }
+          ),
 
-    const result = await safePromise(
-      db
-        .from("courses")
-        .select("*")
-        .order("title",{ascending:true}),
-      8,
-      "Loading available courses"
-    );
+        8,
+
+        "Loading available courses"
+
+      );
+
 
     if(result.error){
+
       throw result.error;
+
     }
 
-    const courses = result.data || [];
+
+    const courses =
+      result.data || [];
+
 
     if(!courses.length){
 
       availableCourses.innerHTML = `
+
         <div class="empty-study">
-          <div style="font-size:45px">📚</div>
+
+          <div style="font-size:45px">
+            📚
+          </div>
+
           <h3 style="margin-top:10px">
             No courses found
           </h3>
+
           <p style="margin-top:8px">
+
             Courses added by Funda Online Academy
             will appear here.
+
           </p>
+
         </div>
+
       `;
 
       return;
+
     }
 
+
     availableCourses.innerHTML =
-      courses.map(course=>{
 
-        const name = getCourseName(course);
-        const duration = getDuration(course);
-        const price = getPrice(course);
+      courses
 
-        return `
-          <div class="card available-course-card">
+        .map(
+          course=>{
 
-            <div class="available-course-top">
+            const name =
+              getCourseName(
+                course
+              );
 
-              <span class="available-badge">
-                ✓ Available
-              </span>
 
-            </div>
+            const duration =
+              getDuration(
+                course
+              );
 
-            <h3>
-              ${escapeHtml(name)}
-            </h3>
 
-            <p style="margin-top:8px;line-height:1.6;color:#53625b">
-              ${escapeHtml(
-                course.description ||
-                course.course_description ||
-                "Funda Online Academy course."
-              )}
-            </p>
+            const price =
+              getPrice(
+                course
+              );
 
-            <div class="course-information">
 
-              <span>
-                💰 ${money(price)}
-              </span>
+            return `
 
-              <span>
-                ⏱️ ${
-                  duration
-                    ? escapeHtml(duration)
-                    : "Duration to be confirmed"
-                }
-              </span>
+              <div
+                class="card available-course-card">
 
-            </div>
+                <div class="available-course-top">
 
-            <button
-              type="button"
-              class="btn green available-course-button"
-              disabled>
-              ✓ Available
-            </button>
+                  <span
+                    class="available-badge">
 
-          </div>
-        `;
+                    ✓ Available
 
-      }).join("");
+                  </span>
+
+                </div>
+
+
+                <h3>
+
+                  ${
+                    escapeHtml(
+                      name
+                    )
+                  }
+
+                </h3>
+
+
+                <p
+                  style="margin-top:8px;line-height:1.6;color:#53625b">
+
+                  ${
+                    escapeHtml(
+                      course.description ||
+                      course.course_description ||
+                      "Funda Online Academy course."
+                    )
+                  }
+
+                </p>
+
+
+                <div class="course-information">
+
+                  <span>
+
+                    💰 ${
+                      money(price)
+                    }
+
+                  </span>
+
+
+                  <span>
+
+                    ⏱️ ${
+                      duration
+                        ? escapeHtml(duration)
+                        : "Duration to be confirmed"
+                    }
+
+                  </span>
+
+                </div>
+
+
+                <button
+                  type="button"
+                  class="btn green available-course-button"
+                  disabled>
+
+                  ✓ Available
+
+                </button>
+
+              </div>
+
+            `;
+
+          }
+        )
+
+        .join("");
+
 
   }catch(error){
 
-    console.error("Available courses:",error);
+    console.error(
+      "Available courses:",
+      error
+    );
+
 
     availableCourses.innerHTML = `
+
       <div class="error-study">
-        <strong>⚠️ Available courses could not load.</strong>
+
+        <strong>
+          ⚠️ Available courses could not load.
+        </strong>
+
         <p style="margin-top:8px">
-          ${escapeHtml(error.message)}
+
+          ${
+            escapeHtml(
+              error.message
+            )
+          }
+
         </p>
+
       </div>
+
     `;
+
   }
+
 }
+
+
+/*
+==============================================================
+LOAD ENROLMENTS
+==============================================================
+*/
 
 async function loadEnrolments(){
 
   if(!currentStudent){
+
     return;
+
   }
+
 
   try{
 
     const rows =
-      await getEnrollments(currentStudent.id);
+      await getEnrollments(
+        currentStudent.id
+      );
+
 
     if(!rows.length){
 
       enrolmentsContainer.innerHTML = `
+
         <div class="empty-study">
-          <p>You do not have enrolments yet.</p>
+
+          <p>
+            You do not have enrolments yet.
+          </p>
+
         </div>
+
       `;
 
       return;
+
     }
+
 
     const cards = [];
 
-    for(const row of rows){
+
+    for(
+      const row of rows
+    ){
 
       try{
 
@@ -1909,103 +3774,229 @@ async function loadEnrolments(){
             row.courseId
           );
 
+
         if(!course){
+
           continue;
+
         }
 
+
         cards.push(`
+
           <div class="card">
 
-            <span class="funda-status ${
-              isApproved(row) ? "approved" : ""
-            }">
-              ${escapeHtml(
-                row.enrollment_status ||
-                row.enrolment_status ||
-                row.status ||
-                "Pending"
-              )}
+            <span
+              class="funda-status ${
+                isApproved(row)
+                  ? "approved"
+                  : ""
+              }">
+
+              ${
+                escapeHtml(
+                  row.enrollment_status ||
+                  row.enrolment_status ||
+                  row.status ||
+                  "Pending"
+                )
+              }
+
             </span>
 
+
             <h3>
-              ${escapeHtml(getCourseName(course))}
+
+              ${
+                escapeHtml(
+                  getCourseName(
+                    course
+                  )
+                )
+              }
+
             </h3>
 
+
             <p style="margin-top:8px">
-              Your enrolment status is shown above.
+
+              Your enrolment status
+              is shown above.
+
             </p>
+
 
             ${
               getDuration(course)
-              ? `
-                <p style="margin-top:12px;font-weight:700;color:#0c8f55">
-                  ⏱️ Duration: ${escapeHtml(getDuration(course))}
-                </p>
+
+              ?
+
               `
-              : ""
+
+                <p
+                  style="margin-top:12px;font-weight:700;color:#0c8f55">
+
+                  ⏱️ Duration:
+                  ${
+                    escapeHtml(
+                      getDuration(course)
+                    )
+                  }
+
+                </p>
+
+              `
+
+              :
+
+              ""
             }
 
           </div>
+
         `);
 
+
       }catch(error){
-        console.warn(error);
+
+        console.warn(
+          error
+        );
+
       }
+
     }
 
+
     enrolmentsContainer.innerHTML =
+
       cards.length
-      ? cards.join("")
-      : `
+
+      ?
+
+      cards.join("")
+
+      :
+
+      `
+
         <div class="empty-study">
-          <p>No course information is available yet.</p>
+
+          <p>
+            No course information is available yet.
+          </p>
+
         </div>
+
       `;
+
 
   }catch(error){
 
     enrolmentsContainer.innerHTML = `
+
       <div class="error-study">
-        <strong>⚠️ Enrolments could not load.</strong>
+
+        <strong>
+          ⚠️ Enrolments could not load.
+        </strong>
+
         <p style="margin-top:8px">
-          ${escapeHtml(error.message)}
+
+          ${
+            escapeHtml(
+              error.message
+            )
+          }
+
         </p>
+
       </div>
+
     `;
+
   }
+
 }
+
+
+/*
+==============================================================
+LOAD HEADER
+==============================================================
+*/
 
 async function loadHeader(){
 
   if(userEmail){
+
     userEmail.textContent =
       currentUser.email || "";
+
   }
+
 
   try{
 
+    /*
+      IMPORTANT:
+      Use the fixed RPC function.
+    */
+
     if(!currentStudent){
+
       currentStudent =
-        await getStudent(currentUser.id);
+        await getStudent(
+          currentUser.id
+        );
+
     }
+
 
     if(userName){
 
       userName.textContent =
+
         currentStudent?.full_name ||
-        currentUser.user_metadata?.full_name ||
+
+        currentStudent?.name ||
+
+        currentStudent?.student_name ||
+
+        currentUser
+          .user_metadata
+          ?.full_name ||
+
         "Student";
+
     }
+
 
   }catch(error){
 
-    console.warn(error);
+    console.warn(
+      "Header student profile:",
+      error
+    );
+
 
     if(userName){
-      userName.textContent = "Student";
+
+      userName.textContent =
+        "Student";
+
     }
+
   }
+
 }
+
+
+/*
+==============================================================
+POLICY
+==============================================================
+*/
 
 function loadPolicy(){
 
@@ -2018,191 +4009,462 @@ function loadPolicy(){
   const accepted =
     $("policy-accepted");
 
+
+  if(
+    !checkbox ||
+    !button ||
+    !accepted ||
+    !currentUser
+  ){
+
+    return;
+
+  }
+
+
   const key =
     "foa_policy_accepted_" +
     currentUser.id;
 
-  if(localStorage.getItem(key) === "true"){
 
-    checkbox.checked = true;
-    checkbox.disabled = true;
-    button.disabled = true;
+  if(
+    localStorage.getItem(key) ===
+    "true"
+  ){
 
-    accepted.style.display = "block";
+    checkbox.checked =
+      true;
+
+    checkbox.disabled =
+      true;
+
+    button.disabled =
+      true;
+
+    accepted.style.display =
+      "block";
+
 
     accepted.innerHTML = `
-      <strong>✅ Declaration accepted</strong>
-      Your declaration has already been accepted on this device.
+
+      <strong>
+        ✅ Declaration accepted
+      </strong>
+
+      Your declaration has already
+      been accepted on this device.
+
     `;
+
   }
 
-  button.addEventListener("click",()=>{
 
-    if(!checkbox.checked){
+  button.addEventListener(
+    "click",
+    ()=>{
 
-      alert(
-        "Please tick the declaration checkbox before continuing."
+      if(!checkbox.checked){
+
+        alert(
+          "Please tick the declaration checkbox before continuing."
+        );
+
+        return;
+
+      }
+
+
+      localStorage.setItem(
+        key,
+        "true"
       );
 
-      return;
+
+      checkbox.disabled =
+        true;
+
+      button.disabled =
+        true;
+
+
+      accepted.style.display =
+        "block";
+
+
+      accepted.innerHTML = `
+
+        <strong>
+          ✅ Declaration accepted
+        </strong>
+
+        Thank you. Your acceptance
+        has been recorded on this device.
+
+      `;
+
     }
+  );
 
-    localStorage.setItem(key,"true");
-
-    checkbox.disabled = true;
-    button.disabled = true;
-
-    accepted.style.display = "block";
-
-    accepted.innerHTML = `
-      <strong>✅ Declaration accepted</strong>
-      Thank you. Your acceptance has been recorded on this device.
-    `;
-  });
 }
+
+
+/*
+==============================================================
+LESSON CLOSE
+==============================================================
+*/
 
 if(lessonClose){
-  lessonClose.addEventListener("click",closeLesson);
+
+  lessonClose.addEventListener(
+    "click",
+    closeLesson
+  );
+
 }
+
 
 if(lessonViewer){
 
-  lessonViewer.addEventListener("click",event=>{
+  lessonViewer.addEventListener(
+    "click",
+    event=>{
 
-    if(event.target === lessonViewer){
-      closeLesson();
+      if(
+        event.target ===
+        lessonViewer
+      ){
+
+        closeLesson();
+
+      }
+
     }
+  );
 
-  });
 }
 
-document.addEventListener("keydown",event=>{
 
-  if(
-    event.key === "Escape" &&
-    lessonViewer.classList.contains("show")
-  ){
-    closeLesson();
+document.addEventListener(
+  "keydown",
+  event=>{
+
+    if(
+      event.key === "Escape" &&
+      lessonViewer.classList.contains(
+        "show"
+      )
+    ){
+
+      closeLesson();
+
+    }
+
   }
+);
 
-});
+
+/*
+==============================================================
+COMPLETE LESSON BUTTON
+==============================================================
+*/
 
 if(completeLessonButton){
+
   completeLessonButton.addEventListener(
     "click",
     completeCurrentLesson
   );
+
 }
+
+
+/*
+==============================================================
+LOGOUT
+==============================================================
+*/
 
 if(logoutButton){
 
-  logoutButton.addEventListener("click",async()=>{
+  logoutButton.addEventListener(
+    "click",
+    async()=>{
 
-    try{
+      try{
 
-      if(db){
-        await db.auth.signOut();
+        if(db){
+
+          await db.auth.signOut();
+
+        }
+
+      }finally{
+
+        window.location.href =
+          "login.html";
+
       }
 
-    }finally{
-
-      window.location.href = "login.html";
-
     }
+  );
 
-  });
 }
+
+
+/*
+==============================================================
+START DASHBOARD
+==============================================================
+*/
 
 async function start(){
 
   /*
     FIRST:
-    create the database connection.
+    Create Supabase connection.
   */
 
-  db = createDatabase();
+  db =
+    createDatabase();
+
 
   if(!db){
 
-    setStatus("Supabase connection unavailable.");
+    setStatus(
+      "Supabase connection unavailable."
+    );
+
 
     studyList.innerHTML = `
+
       <div class="dashboard-start-error">
-        <strong>⚠️ Dashboard connection problem</strong>
+
+        <strong>
+          ⚠️ Dashboard connection problem
+        </strong>
+
         <p style="margin-top:8px">
+
           Supabase could not be connected.
           Please check supabase-config.js.
+
         </p>
+
       </div>
+
     `;
 
     return;
+
   }
+
 
   /*
     SECOND:
-    authenticate quickly.
+    Check authentication.
   */
 
   try{
 
-    currentUser = await getUser();
+    currentUser =
+      await getUser();
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      error
+    );
 
-    setStatus("Unable to check student login.");
+
+    setStatus(
+      "Unable to check student login."
+    );
+
 
     studyList.innerHTML = `
+
       <div class="dashboard-start-error">
-        <strong>⚠️ Login connection problem</strong>
+
+        <strong>
+          ⚠️ Login connection problem
+        </strong>
+
         <p style="margin-top:8px">
-          ${escapeHtml(error.message)}
+
+          ${
+            escapeHtml(
+              error.message
+            )
+          }
+
         </p>
+
       </div>
+
     `;
 
     return;
+
   }
+
 
   if(!currentUser){
+
     return;
+
   }
 
-  setStatus("Student account connected.");
+
+  setStatus(
+    "Student account connected."
+  );
+
 
   /*
-    IMPORTANT:
-    Do NOT wait for every dashboard section.
-    Start each section independently.
+    THIRD:
+    Load the student profile FIRST.
+
+    This is important because the other
+    sections need currentStudent.id.
   */
 
-  loadHeader();
+  try{
+
+    currentStudent =
+      await getStudent(
+        currentUser.id
+      );
+
+
+    if(currentStudent){
+
+      console.log(
+        "SUCCESS: Student profile connected:",
+        currentStudent
+      );
+
+
+      if(userName){
+
+        userName.textContent =
+
+          currentStudent.full_name ||
+
+          currentStudent.name ||
+
+          currentStudent.student_name ||
+
+          currentUser
+            .user_metadata
+            ?.full_name ||
+
+          "Student";
+
+      }
+
+
+      if(userEmail){
+
+        userEmail.textContent =
+          currentUser.email || "";
+
+      }
+
+
+      setStatus(
+        "Student profile connected."
+      );
+
+    }else{
+
+      console.warn(
+        "No student profile returned."
+      );
+
+
+      setStatus(
+        "Login connected, but student profile was not found."
+      );
+
+    }
+
+
+  }catch(error){
+
+    console.error(
+      "Student profile error:",
+      error
+    );
+
+
+    setStatus(
+      "Student profile could not be loaded."
+    );
+
+  }
+
+
+  /*
+    FOURTH:
+    Load dashboard sections.
+
+    They run independently so one slow
+    section does not freeze the dashboard.
+  */
 
   loadPolicy();
 
+
   renderApprovedCourses()
-    .catch(error=>{
-      console.error(error);
-    });
+    .catch(
+      error=>{
+        console.error(
+          "Studies:",
+          error
+        );
+      }
+    );
+
 
   loadEnrolments()
-    .catch(error=>{
-      console.error(error);
-    });
+    .catch(
+      error=>{
+        console.error(
+          "Enrolments:",
+          error
+        );
+      }
+    );
+
 
   loadAvailableCourses()
-    .catch(error=>{
-      console.error(error);
-    });
+    .catch(
+      error=>{
+        console.error(
+          "Available courses:",
+          error
+        );
+      }
+    );
 
-  setStatus("Student dashboard ready.");
+
+  /*
+    Final status.
+  */
+
+  setStatus(
+    "Student dashboard ready."
+  );
+
 }
+
 
 start();
 
 })();
+
 </script>
 
 </body>
