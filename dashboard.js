@@ -1,8 +1,7 @@
 // ============================================================
 // FUNDA ONLINE ACADEMY
 // STUDENT DASHBOARD
-// FIXED PROFILE + ENROLMENTS LOADING
-// Lessons • Completion • Review Lesson
+// PROFILE + ENROLMENTS + COURSES + LESSONS
 // ============================================================
 
 "use strict";
@@ -152,7 +151,11 @@ function withTimeout(
 }
 
 
-function showError(container, title, error) {
+function showError(
+  container,
+  title,
+  error
+) {
 
   if (!container) {
     return;
@@ -167,10 +170,12 @@ function showError(container, title, error) {
       </strong>
 
       <p style="margin-top:8px">
+
         ${escapeHtml(
           error?.message ||
           String(error)
         )}
+
       </p>
 
     </div>
@@ -210,32 +215,48 @@ async function getLoggedInUser() {
 
 // ============================================================
 // STUDENT PROFILE
-//
-// IMPORTANT FIX:
-// We use auth.uid() equivalent directly:
-// students.user_id = authenticated user's ID
+// FIXED
 // ============================================================
 
 async function loadStudentProfile(user) {
 
   if (!user || !user.id) {
+
     throw new Error(
       "The logged-in student ID could not be determined."
     );
+
   }
 
   console.log(
-    "Looking for student profile using user_id:",
+    "AUTH USER ID:",
     user.id
   );
+
+  console.log(
+    "AUTH EMAIL:",
+    user.email
+  );
+
+  // ----------------------------------------------------------
+  // PRIMARY PROFILE LOOKUP
+  // students.user_id = auth.users.id
+  // ----------------------------------------------------------
 
   const result = await withTimeout(
 
     db
       .from("students")
-      .select(
-        "id,user_id,full_name,email"
-      )
+      .select(`
+        id,
+        user_id,
+        full_name,
+        gender,
+        south_african_id,
+        email,
+        mobile_whatsapp,
+        address
+      `)
       .eq(
         "user_id",
         user.id
@@ -248,25 +269,80 @@ async function loadStudentProfile(user) {
     throw result.error;
   }
 
-  if (!result.data) {
+  if (result.data) {
 
-    throw new Error(
-      "Your login is working, but no student profile is connected to this account."
+    console.log(
+      "STUDENT PROFILE FOUND:",
+      result.data
     );
+
+    return result.data;
 
   }
 
-  console.log(
-    "Student profile found:",
-    result.data
-  );
+  // ----------------------------------------------------------
+  // SECONDARY LOOKUP BY EMAIL
+  //
+  // This is only a fallback.
+  // It helps recover an existing student profile if the
+  // user_id connection is missing.
+  // ----------------------------------------------------------
 
-  return result.data;
+  if (user.email) {
+
+    console.log(
+      "Trying student profile lookup by email..."
+    );
+
+    const emailResult =
+      await withTimeout(
+
+        db
+          .from("students")
+          .select(`
+            id,
+            user_id,
+            full_name,
+            gender,
+            south_african_id,
+            email,
+            mobile_whatsapp,
+            address
+          `)
+          .ilike(
+            "email",
+            user.email
+          )
+          .maybeSingle()
+
+      );
+
+    if (emailResult.error) {
+      throw emailResult.error;
+    }
+
+    if (emailResult.data) {
+
+      console.log(
+        "STUDENT PROFILE FOUND BY EMAIL:",
+        emailResult.data
+      );
+
+      return emailResult.data;
+
+    }
+
+  }
+
+  throw new Error(
+    "Your login is working, but no student profile is connected to this account. Please contact Funda Online Academy administration."
+  );
 }
 
 
 // ============================================================
 // APPROVED ENROLMENTS
+// FIXED
 // ============================================================
 
 async function loadStudentEnrolments(
@@ -282,7 +358,7 @@ async function loadStudentEnrolments(
   }
 
   console.log(
-    "Loading enrolments for student:",
+    "LOADING ENROLMENTS FOR STUDENT:",
     studentId
   );
 
@@ -290,16 +366,27 @@ async function loadStudentEnrolments(
 
     db
       .from("enrollments")
-      .select(
-        "id,student_id,course_id,enrollment_status"
-      )
+      .select(`
+        id,
+        student_id,
+        course_id,
+        enrollment_status,
+        status,
+        enrolled_at,
+        amount
+      `)
       .eq(
         "student_id",
         studentId
       )
-      .eq(
-        "enrollment_status",
-        "approved"
+      .or(
+        "enrollment_status.eq.approved,status.eq.approved"
+      )
+      .order(
+        "enrolled_at",
+        {
+          ascending: false
+        }
       )
 
   );
@@ -309,7 +396,7 @@ async function loadStudentEnrolments(
   }
 
   console.log(
-    "Approved enrolments:",
+    "STUDENT ENROLMENTS FOUND:",
     result.data
   );
 
@@ -322,6 +409,10 @@ async function loadStudentEnrolments(
 // ============================================================
 
 async function loadCourse(courseId) {
+
+  if (!courseId) {
+    return null;
+  }
 
   const result = await withTimeout(
 
@@ -464,7 +555,9 @@ function formatLessonContent(value) {
   if (
     /<[a-z][\s\S]*>/i.test(text)
   ) {
+
     return text;
+
   }
 
   return text
@@ -1116,7 +1209,10 @@ async function openLesson(
         db
           .from("lessons")
           .select("*")
-          .eq("id", lessonId)
+          .eq(
+            "id",
+            lessonId
+          )
           .maybeSingle()
 
       );
@@ -1200,6 +1296,10 @@ async function openLesson(
 
 function closeLesson() {
 
+  if (!lessonViewer) {
+    return;
+  }
+
   lessonViewer.classList.remove(
     "show"
   );
@@ -1254,6 +1354,7 @@ document.addEventListener(
 
     if (
       event.key === "Escape" &&
+      lessonViewer &&
       lessonViewer.classList.contains(
         "show"
       )
@@ -1322,7 +1423,8 @@ async function checkLessonCompletion(
           ✅ Lesson completed
         </strong>
 
-        Your progress has already been saved.
+        Your progress has already
+        been saved.
 
       `;
 
@@ -1468,6 +1570,10 @@ if (completeLessonButton) {
 // ============================================================
 
 async function loadMyStudies() {
+
+  if (!studyList) {
+    return;
+  }
 
   studyList.innerHTML = `
 
@@ -2129,7 +2235,7 @@ if (logoutButton) {
 
 
 // ============================================================
-// START
+// START DASHBOARD
 // ============================================================
 
 async function initDashboard() {
@@ -2139,6 +2245,10 @@ async function initDashboard() {
     setStatus(
       "Connecting to Funda Online Academy…"
     );
+
+    // --------------------------------------------------------
+    // 1. GET AUTH USER
+    // --------------------------------------------------------
 
     currentUser =
       await getLoggedInUser();
@@ -2153,6 +2263,10 @@ async function initDashboard() {
       currentUser.email
     );
 
+    // --------------------------------------------------------
+    // 2. FIND STUDENT PROFILE
+    // --------------------------------------------------------
+
     setStatus(
       "Finding your student profile…"
     );
@@ -2163,28 +2277,47 @@ async function initDashboard() {
       );
 
     console.log(
-      "STUDENT:",
+      "STUDENT PROFILE:",
       currentStudent
     );
 
+    // --------------------------------------------------------
+    // 3. LOAD HEADER
+    // --------------------------------------------------------
+
     loadHeader();
 
+    // --------------------------------------------------------
+    // 4. LOAD POLICY
+    // --------------------------------------------------------
+
     await loadPolicyStatus();
+
+    // --------------------------------------------------------
+    // 5. LOAD COURSES
+    // --------------------------------------------------------
 
     setStatus(
       "Loading your courses…"
     );
 
-    /*
-     * Load these independently.
-     * If one fails, the other sections still work.
-     */
-
     await loadMyStudies();
+
+    // --------------------------------------------------------
+    // 6. LOAD ENROLMENTS
+    // --------------------------------------------------------
 
     await loadMyEnrolments();
 
+    // --------------------------------------------------------
+    // 7. LOAD AVAILABLE COURSES
+    // --------------------------------------------------------
+
     await loadAvailableCourses();
+
+    // --------------------------------------------------------
+    // COMPLETE
+    // --------------------------------------------------------
 
     setStatus(
       "Student learning system ready."
@@ -2204,12 +2337,6 @@ async function initDashboard() {
     setStatus(
       "Student dashboard could not finish loading."
     );
-
-    /*
-     * IMPORTANT:
-     * Do not replace working course/lesson content
-     * with the old generic profile-not-found screen.
-     */
 
     if (studyList) {
 
