@@ -6,13 +6,11 @@
 
 <title>Funda Online Academy - Admin Dashboard</title>
 
-<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- EXISTING FUNDA SUPABASE CONFIG -->
 <script src="supabase-config.js?v=20260816"></script>
 
 <style>
+
 *{
   box-sizing:border-box;
   margin:0;
@@ -86,7 +84,7 @@ button:disabled{
 
 .logout-btn{
   background:#10251c;
-  color:white;
+  color:#fff;
   padding:12px 17px;
   border-radius:10px;
   font-weight:bold;
@@ -95,7 +93,7 @@ button:disabled{
 main{
   max-width:1200px;
   margin:auto;
-  padding:25px 16px 60px;
+  padding:20px 16px 60px;
 }
 
 .message{
@@ -128,6 +126,50 @@ main{
   border:1px solid #cbdff5;
 }
 
+
+/* =========================================================
+   ADMIN TABS
+   ========================================================= */
+
+.admin-tabs{
+  display:flex;
+  gap:8px;
+  background:#fff;
+  border:1px solid #e2e8e4;
+  border-radius:18px;
+  padding:10px;
+  margin-bottom:22px;
+  overflow-x:auto;
+  box-shadow:0 5px 20px rgba(16,37,28,.04);
+}
+
+.admin-tab{
+  background:#f1f5f3;
+  color:#34443c;
+  padding:11px 15px;
+  border-radius:10px;
+  font-weight:bold;
+  white-space:nowrap;
+}
+
+.admin-tab.active{
+  background:#0c8f55;
+  color:#fff;
+}
+
+.tab-content{
+  display:none;
+}
+
+.tab-content.active{
+  display:block;
+}
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
 .dashboard-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -136,7 +178,7 @@ main{
 }
 
 .stat{
-  background:white;
+  background:#fff;
   border:1px solid #e2e8e4;
   border-radius:18px;
   padding:20px;
@@ -159,8 +201,13 @@ main{
   margin-top:5px;
 }
 
+
+/* =========================================================
+   CARDS
+   ========================================================= */
+
 .card{
-  background:white;
+  background:#fff;
   border:1px solid #e2e8e4;
   border-radius:24px;
   padding:30px;
@@ -208,6 +255,11 @@ main{
   font-weight:bold;
 }
 
+
+/* =========================================================
+   TABLES
+   ========================================================= */
+
 .table-wrap{
   width:100%;
   overflow-x:auto;
@@ -242,22 +294,10 @@ tr:last-child td{
   border-bottom:0;
 }
 
-.student-name{
-  font-weight:bold;
-}
 
-.course-name{
-  font-weight:600;
-}
-
-.amount{
-  font-weight:bold;
-  white-space:nowrap;
-}
-
-.muted{
-  color:#7b8781;
-}
+/* =========================================================
+   STATUS
+   ========================================================= */
 
 .badge{
   display:inline-block;
@@ -294,8 +334,6 @@ tr:last-child td{
   color:#4d5a53;
 }
 
-/* POLICY BADGES */
-
 .policy-accepted{
   background:#e3f7eb;
   color:#11683d;
@@ -311,47 +349,10 @@ tr:last-child td{
   color:#0c8f55;
 }
 
-/* END POLICY BADGES */
 
-.action-btn{
-  padding:8px 11px;
-  border-radius:8px;
-  font-size:12px;
-  font-weight:bold;
-  margin:2px;
-}
-
-.approve-btn{
-  background:#0c8f55;
-  color:#fff;
-}
-
-.reject-btn{
-  background:#b72d2d;
-  color:#fff;
-}
-
-.empty{
-  text-align:center;
-  padding:30px 15px;
-  color:#6d7973;
-  font-size:15px;
-}
-
-.loading{
-  padding:20px 0;
-  color:#68766f;
-  font-size:17px;
-}
-
-.error-box{
-  background:#fff4f4;
-  color:#9c2626;
-  border:1px solid #efcaca;
-  border-radius:12px;
-  padding:15px;
-  line-height:1.5;
-}
+/* =========================================================
+   COURSE CARDS
+   ========================================================= */
 
 .course-grid{
   display:grid;
@@ -388,6 +389,134 @@ tr:last-child td{
   margin-top:10px;
 }
 
+
+/* =========================================================
+   DEPARTMENTS
+   ========================================================= */
+
+.department-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+
+.department-card{
+  border:1px solid #e1e8e4;
+  border-radius:18px;
+  padding:20px;
+  background:#fbfcfb;
+}
+
+.department-heading{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+}
+
+.department-icon{
+  font-size:32px;
+}
+
+.department-heading h3{
+  font-size:21px;
+}
+
+.department-card p{
+  color:#68766f;
+  line-height:1.55;
+  margin-bottom:12px;
+}
+
+.department-card ul{
+  padding-left:20px;
+  line-height:1.7;
+}
+
+.department-email{
+  margin-top:15px;
+  padding:10px;
+  background:#eef6f1;
+  border-radius:10px;
+  font-size:13px;
+  word-break:break-word;
+}
+
+.access-level{
+  display:inline-block;
+  margin-top:12px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#e8f1ff;
+  color:#245a91;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.routing-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.routing-card{
+  background:#f7f9f8;
+  border-radius:14px;
+  padding:15px;
+}
+
+.routing-card strong{
+  display:block;
+  margin-bottom:6px;
+}
+
+.routing-card span{
+  color:#68766f;
+  font-size:13px;
+}
+
+
+/* =========================================================
+   COMMUNICATION
+   ========================================================= */
+
+.communication-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:16px;
+}
+
+.communication-card{
+  border:1px solid #e1e8e4;
+  border-radius:18px;
+  padding:20px;
+  background:#fbfcfb;
+}
+
+.communication-card h3{
+  margin-bottom:8px;
+}
+
+.communication-card p{
+  color:#68766f;
+  line-height:1.55;
+}
+
+.notice{
+  background:#eef6ff;
+  border:1px solid #cbdff5;
+  color:#245a91;
+  border-radius:14px;
+  padding:15px;
+  line-height:1.55;
+  margin-bottom:18px;
+}
+
+
+/* =========================================================
+   SYSTEM
+   ========================================================= */
+
 .info-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -412,6 +541,72 @@ tr:last-child td{
   font-weight:600;
   word-break:break-word;
 }
+
+
+/* =========================================================
+   MESSAGES
+   ========================================================= */
+
+.empty{
+  text-align:center;
+  padding:30px 15px;
+  color:#6d7973;
+}
+
+.loading{
+  padding:20px 0;
+  color:#68766f;
+  font-size:17px;
+}
+
+.error-box{
+  background:#fff4f4;
+  color:#9c2626;
+  border:1px solid #efcaca;
+  border-radius:12px;
+  padding:15px;
+  line-height:1.5;
+}
+
+.student-name{
+  font-weight:bold;
+}
+
+.course-name{
+  font-weight:600;
+}
+
+.amount{
+  font-weight:bold;
+  white-space:nowrap;
+}
+
+.muted{
+  color:#7b8781;
+}
+
+.action-btn{
+  padding:8px 11px;
+  border-radius:8px;
+  font-size:12px;
+  font-weight:bold;
+  margin:2px;
+}
+
+.approve-btn{
+  background:#0c8f55;
+  color:#fff;
+}
+
+.reject-btn{
+  background:#b72d2d;
+  color:#fff;
+}
+
+
+/* =========================================================
+   LOADING
+   ========================================================= */
 
 .admin-loading{
   max-width:520px;
@@ -447,6 +642,11 @@ tr:last-child td{
   display:none!important;
 }
 
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
 @media(max-width:900px){
 
   .dashboard-grid{
@@ -456,6 +656,16 @@ tr:last-child td{
   .course-grid{
     grid-template-columns:repeat(2,1fr);
   }
+
+  .department-grid,
+  .communication-grid{
+    grid-template-columns:1fr;
+  }
+
+  .routing-grid{
+    grid-template-columns:1fr;
+  }
+
 }
 
 @media(max-width:600px){
@@ -484,7 +694,7 @@ tr:last-child td{
   }
 
   main{
-    padding:18px 10px 40px;
+    padding:14px 10px 40px;
   }
 
   .dashboard-grid{
@@ -503,7 +713,6 @@ tr:last-child td{
   .card{
     padding:20px 14px;
     border-radius:20px;
-    margin-bottom:18px;
   }
 
   .card-title h2{
@@ -525,14 +734,17 @@ tr:last-child td{
   .info-grid{
     grid-template-columns:1fr;
   }
+
 }
+
 </style>
 </head>
 
 <body>
 
+
 <!-- =========================================================
-     ADMIN LOADING
+     ADMIN ACCESS LOADING
      ========================================================= -->
 
 <div id="adminLoading" class="admin-loading">
@@ -567,8 +779,15 @@ tr:last-child td{
       </div>
 
       <div>
-        <h1>Funda Online Academy</h1>
-        <p>Administrator Dashboard</p>
+
+        <h1>
+          Funda Online Academy
+        </h1>
+
+        <p>
+          Administrator Dashboard
+        </p>
+
       </div>
 
     </div>
@@ -592,51 +811,825 @@ tr:last-child td{
 
 
 <!-- =========================================================
-     STATISTICS
+     TABS
      ========================================================= -->
+
+<nav class="admin-tabs">
+
+  <button
+    class="admin-tab active"
+    data-tab="overview"
+    type="button"
+  >
+    🏠 Overview
+  </button>
+
+  <button
+    class="admin-tab"
+    data-tab="departments"
+    type="button"
+  >
+    🏢 Departments
+  </button>
+
+  <button
+    class="admin-tab"
+    data-tab="courses"
+    type="button"
+  >
+    📚 Courses
+  </button>
+
+  <button
+    class="admin-tab"
+    data-tab="enrolments"
+    type="button"
+  >
+    📝 Enrolments
+  </button>
+
+  <button
+    class="admin-tab"
+    data-tab="finance"
+    type="button"
+  >
+    💰 Finance
+  </button>
+
+  <button
+    class="admin-tab"
+    data-tab="policies"
+    type="button"
+  >
+    📋 Policy Records
+  </button>
+
+  <button
+    class="admin-tab"
+    data-tab="communication"
+    type="button"
+  >
+    📣 Communication
+  </button>
+
+  <button
+    class="admin-tab"
+    data-tab="system"
+    type="button"
+  >
+    ⚙️ System
+  </button>
+
+</nav>
+
+
+<!-- =========================================================
+     OVERVIEW
+     ========================================================= -->
+
+<section
+  id="tab-overview"
+  class="tab-content active"
+>
 
 <div class="dashboard-grid">
 
   <div class="stat">
-    <div class="stat-icon">📚</div>
-    <div class="stat-label">Courses</div>
-    <div id="courseCount" class="stat-value">0</div>
+
+    <div class="stat-icon">
+      📚
+    </div>
+
+    <div class="stat-label">
+      Courses
+    </div>
+
+    <div
+      id="courseCount"
+      class="stat-value"
+    >
+      0
+    </div>
+
   </div>
 
-  <div class="stat">
-    <div class="stat-icon">👨🏽‍🎓</div>
-    <div class="stat-label">Students</div>
-    <div id="studentCount" class="stat-value">0</div>
-  </div>
 
   <div class="stat">
-    <div class="stat-icon">📝</div>
-    <div class="stat-label">Enrolments</div>
-    <div id="enrollmentCount" class="stat-value">0</div>
+
+    <div class="stat-icon">
+      👨🏽‍🎓
+    </div>
+
+    <div class="stat-label">
+      Students
+    </div>
+
+    <div
+      id="studentCount"
+      class="stat-value"
+    >
+      0
+    </div>
+
   </div>
 
+
   <div class="stat">
-    <div class="stat-icon">💳</div>
-    <div class="stat-label">Payments</div>
-    <div id="paymentCount" class="stat-value">0</div>
+
+    <div class="stat-icon">
+      📝
+    </div>
+
+    <div class="stat-label">
+      Enrolments
+    </div>
+
+    <div
+      id="enrollmentCount"
+      class="stat-value"
+    >
+      0
+    </div>
+
+  </div>
+
+
+  <div class="stat">
+
+    <div class="stat-icon">
+      💳
+    </div>
+
+    <div class="stat-label">
+      Payments
+    </div>
+
+    <div
+      id="paymentCount"
+      class="stat-value"
+    >
+      0
+    </div>
+
   </div>
 
 </div>
+
+
+<div class="card">
+
+  <div class="card-title">
+
+    <span>
+      🧭
+    </span>
+
+    <h2>
+      Administration Centre
+    </h2>
+
+  </div>
+
+  <p class="card-description">
+
+    This is the central administration area for
+    Funda Online Academy. The existing courses,
+    students, enrolments, payments and policy
+    records remain connected to the existing
+    system.
+
+  </p>
+
+
+  <div class="notice">
+
+    <strong>
+      Management is the overall oversight department.
+    </strong>
+
+    Management will eventually be able to audit
+    all departments, review escalated matters and
+    ensure that academy procedures are being followed.
+
+  </div>
+
+
+  <div class="info-grid">
+
+    <div class="info-item">
+
+      <div class="info-label">
+        Departments
+      </div>
+
+      <div class="info-value">
+        8 planned departments
+      </div>
+
+    </div>
+
+
+    <div class="info-item">
+
+      <div class="info-label">
+        Main oversight
+      </div>
+
+      <div class="info-value">
+        Management
+      </div>
+
+    </div>
+
+
+    <div class="info-item">
+
+      <div class="info-label">
+        Communication
+      </div>
+
+      <div class="info-value">
+        Academy-wide communication
+      </div>
+
+    </div>
+
+
+    <div class="info-item">
+
+      <div class="info-label">
+        Security
+      </div>
+
+      <div class="info-value">
+        Supabase authentication + RLS
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     DEPARTMENTS
+     ========================================================= -->
+
+<section
+  id="tab-departments"
+  class="tab-content"
+>
+
+<div class="card">
+
+  <div class="card-title">
+
+    <span>
+      🏢
+    </span>
+
+    <h2>
+      Funda Online Academy Departments
+    </h2>
+
+  </div>
+
+  <p class="card-description">
+
+    These departments define who is responsible for
+    different areas of the student journey. This makes
+    it easier for students to know where to send their
+    queries and allows staff access to be separated
+    properly later.
+
+  </p>
+
+
+  <div class="department-grid">
+
+
+    <!-- MANAGEMENT -->
+
+    <div class="department-card">
+
+      <div class="department-heading">
+
+        <div class="department-icon">
+          👑
+        </div>
+
+        <h3>
+          Management
+        </h3>
+
+      </div>
+
+      <p>
+        The main oversight department for the entire
+        academy.
+      </p>
+
+      <ul>
+
+        <li>
+          Audit all departments.
+        </li>
+
+        <li>
+          Review escalated matters.
+        </li>
+
+        <li>
+          Monitor academy operations.
+        </li>
+
+        <li>
+          Review important decisions.
+        </li>
+
+      </ul>
+
+      <span class="access-level">
+        Full oversight access
+      </span>
+
+      <div class="department-email">
+        management@yourdomain.co.za
+      </div>
+
+    </div>
+
+
+    <!-- ADMIN -->
+
+    <div class="department-card">
+
+      <div class="department-heading">
+
+        <div class="department-icon">
+          🛡️
+        </div>
+
+        <h3>
+          Admin
+        </h3>
+
+      </div>
+
+      <p>
+        Handles general administration and daily
+        academy administration.
+      </p>
+
+      <ul>
+
+        <li>
+          Student administration.
+        </li>
+
+        <li>
+          General records.
+        </li>
+
+        <li>
+          Account administration.
+        </li>
+
+        <li>
+          Internal coordination.
+        </li>
+
+      </ul>
+
+      <span class="access-level">
+        Administrative access
+      </span>
+
+      <div class="department-email">
+        admin@yourdomain.co.za
+      </div>
+
+    </div>
+
+
+    <!-- FINANCE -->
+
+    <div class="department-card">
+
+      <div class="department-heading">
+
+        <div class="department-icon">
+          💰
+        </div>
+
+        <h3>
+          Finance
+        </h3>
+
+      </div>
+
+      <p>
+        Handles student payment and financial matters.
+      </p>
+
+      <ul>
+
+        <li>
+          Payment enquiries.
+        </li>
+
+        <li>
+          Proof of payment.
+        </li>
+
+        <li>
+          Outstanding balances.
+        </li>
+
+        <li>
+          Refund-related matters.
+        </li>
+
+      </ul>
+
+      <span class="access-level">
+        Finance-only access
+      </span>
+
+      <div class="department-email">
+        finance@yourdomain.co.za
+      </div>
+
+    </div>
+
+
+    <!-- ASSESSMENT -->
+
+    <div class="department-card">
+
+      <div class="department-heading">
+
+        <div class="department-icon">
+          📝
+        </div>
+
+        <h3>
+          Assessment
+        </h3>
+
+      </div>
+
+      <p>
+        Responsible for assessments, marking and
+        assessment-related student matters.
+      </p>
+
+      <ul>
+
+        <li>
+          Assessment submissions.
+        </li>
+
+        <li>
+          Assessment status.
+        </li>
+
+        <li>
+          Results.
+        </li>
+
+        <li>
+          Assessment queries.
+        </li>
+
+      </ul>
+
+      <span class="access-level">
+        Assessment-only access
+      </span>
+
+      <div class="department-email">
+        assessment@yourdomain.co.za
+      </div>
+
+    </div>
+
+
+    <!-- STUDENT SUPPORT -->
+
+    <div class="department-card">
+
+      <div class="department-heading">
+
+        <div class="department-icon">
+          🤝
+        </div>
+
+        <h3>
+          Student Support
+        </h3>
+
+      </div>
+
+      <p>
+        Provides first-line support throughout the
+        student's learning journey.
+      </p>
+
+      <ul>
+
+        <li>
+          Login and account help.
+        </li>
+
+        <li>
+          General student support.
+        </li>
+
+        <li>
+          Learning journey assistance.
+        </li>
+
+        <li>
+          Escalation to other departments.
+        </li>
+
+      </ul>
+
+      <span class="access-level">
+        Student-support access
+      </span>
+
+      <div class="department-email">
+        studentsupport@yourdomain.co.za
+      </div>
+
+    </div>
+
+
+    <!-- COURSES -->
+
+    <div class="department-card">
+
+      <div class="department-heading">
+
+        <div class="department-icon">
+          📚
+        </div>
+
+        <h3>
+          Courses
+        </h3>
+
+      </div>
+
+      <p>
+        Responsible for course information and
+        learning content.
+      </p>
+
+      <ul>
+
+        <li>
+          Course information.
+        </li>
+
+        <li>
+          Modules.
+        </li>
+
+        <li>
+          Learning outcomes.
+        </li>
+
+        <li>
+          Course updates.
+        </li>
+
+      </ul>
+
+      <span class="access-level">
+        Course-management access
+      </span>
+
+      <div class="department-email">
+        courses@yourdomain.co.za
+      </div>
+
+    </div>
+
+
+    <!-- CERTIFICATES -->
+
+    <div class="department-card">
+
+      <div class="department-heading">
+
+        <div class="department-icon">
+          🎓
+        </div>
+
+        <h3>
+          Certificates
+        </h3>
+
+      </div>
+
+      <p>
+        Handles certificate processing and
+        certificate-related queries.
+      </p>
+
+      <ul>
+
+        <li>
+          Certificate eligibility.
+        </li>
+
+        <li>
+          Certificate preparation.
+        </li>
+
+        <li>
+          Corrections.
+        </li>
+
+        <li>
+          Certificate verification.
+        </li>
+
+      </ul>
+
+      <span class="access-level">
+        Certificate access
+      </span>
+
+      <div class="department-email">
+        certificates@yourdomain.co.za
+      </div>
+
+    </div>
+
+
+    <!-- COMMUNICATION -->
+
+    <div class="department-card">
+
+      <div class="department-heading">
+
+        <div class="department-icon">
+          📣
+        </div>
+
+        <h3>
+          Communication
+        </h3>
+
+      </div>
+
+      <p>
+        Handles general communication to students
+        and the wider Funda Online Academy community.
+      </p>
+
+      <ul>
+
+        <li>
+          General announcements.
+        </li>
+
+        <li>
+          Important notices.
+        </li>
+
+        <li>
+          Phishing and safety warnings.
+        </li>
+
+        <li>
+          Academy-wide information.
+        </li>
+
+      </ul>
+
+      <span class="access-level">
+        Communication access
+      </span>
+
+      <div class="department-email">
+        communication@yourdomain.co.za
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div class="card">
+
+  <div class="card-title">
+
+    <span>
+      🧭
+    </span>
+
+    <h2>
+      Student Query Routing
+    </h2>
+
+  </div>
+
+  <p class="card-description">
+
+    This routing guide can later be placed directly
+    on the student dashboard so students know exactly
+    which department to contact.
+
+  </p>
+
+
+  <div class="routing-grid">
+
+    <div class="routing-card">
+      <strong>💰 Payment / Proof of Payment</strong>
+      <span>Finance</span>
+    </div>
+
+    <div class="routing-card">
+      <strong>📝 Assessment / Results</strong>
+      <span>Assessment</span>
+    </div>
+
+    <div class="routing-card">
+      <strong>🎓 Certificate</strong>
+      <span>Certificates</span>
+    </div>
+
+    <div class="routing-card">
+      <strong>📚 Course Information</strong>
+      <span>Courses</span>
+    </div>
+
+    <div class="routing-card">
+      <strong>🤝 Student Help</strong>
+      <span>Student Support</span>
+    </div>
+
+    <div class="routing-card">
+      <strong>📣 General Announcement</strong>
+      <span>Communication</span>
+    </div>
+
+    <div class="routing-card">
+      <strong>🛡️ General Administration</strong>
+      <span>Admin</span>
+    </div>
+
+    <div class="routing-card">
+      <strong>👑 Serious / Escalated Matter</strong>
+      <span>Management</span>
+    </div>
+
+  </div>
+
+</div>
+
+</section>
 
 
 <!-- =========================================================
      COURSES
      ========================================================= -->
 
-<section class="card">
+<section
+  id="tab-courses"
+  class="tab-content"
+>
+
+<div class="card">
 
   <div class="card-title">
-    <span>📖</span>
-    <h2>Courses</h2>
+
+    <span>
+      📖
+    </span>
+
+    <h2>
+      Courses
+    </h2>
+
   </div>
 
   <p class="card-description">
-    View all courses available in the Funda Online Academy system.
+
+    View all courses available in the
+    Funda Online Academy system.
+
   </p>
 
   <div class="section-tools">
@@ -654,10 +1647,14 @@ tr:last-child td{
   </div>
 
   <div id="coursesContent">
+
     <div class="loading">
       Loading courses...
     </div>
+
   </div>
+
+</div>
 
 </section>
 
@@ -666,15 +1663,30 @@ tr:last-child td{
      ENROLMENTS
      ========================================================= -->
 
-<section class="card">
+<section
+  id="tab-enrolments"
+  class="tab-content"
+>
+
+<div class="card">
 
   <div class="card-title">
-    <span>📝</span>
-    <h2>Student Enrolments</h2>
+
+    <span>
+      📝
+    </span>
+
+    <h2>
+      Student Enrolments
+    </h2>
+
   </div>
 
   <p class="card-description">
-    Review student requests and manage enrolment status.
+
+    Review student requests and manage
+    enrolment status.
+
   </p>
 
   <div class="section-tools">
@@ -692,27 +1704,47 @@ tr:last-child td{
   </div>
 
   <div id="enrollmentsContent">
+
     <div class="loading">
       Loading enrolments...
     </div>
+
   </div>
+
+</div>
 
 </section>
 
 
 <!-- =========================================================
-     PAYMENTS
+     FINANCE
      ========================================================= -->
 
-<section class="card">
+<section
+  id="tab-finance"
+  class="tab-content"
+>
+
+<div class="card">
 
   <div class="card-title">
-    <span>💳</span>
-    <h2>Payments</h2>
+
+    <span>
+      💳
+    </span>
+
+    <h2>
+      Finance / Payments
+    </h2>
+
   </div>
 
   <p class="card-description">
+
     View and manage student course payments.
+    Later, authorised Finance users can be restricted
+    to this department.
+
   </p>
 
   <div class="section-tools">
@@ -730,30 +1762,46 @@ tr:last-child td{
   </div>
 
   <div id="paymentsContent">
+
     <div class="loading">
       Loading payments...
     </div>
+
   </div>
+
+</div>
 
 </section>
 
 
 <!-- =========================================================
-     POLICY ACCEPTANCE
-     THIS IS THE NEW ADMIN-SIDE SECTION
+     POLICY
      ========================================================= -->
 
-<section class="card">
+<section
+  id="tab-policies"
+  class="tab-content"
+>
+
+<div class="card">
 
   <div class="card-title">
-    <span>📋</span>
-    <h2>Policy Acceptance Records</h2>
+
+    <span>
+      📋
+    </span>
+
+    <h2>
+      Policy Acceptance Records
+    </h2>
+
   </div>
 
   <p class="card-description">
-    View student acceptance of the Funda Online Academy policies
-    and student declaration. Acceptance records are stored with
-    the policy version and date/time of acceptance.
+
+    View student acceptance of Funda Online Academy
+    policies and student declaration.
+
   </p>
 
   <div class="section-tools">
@@ -778,27 +1826,255 @@ tr:last-child td{
 
   </div>
 
+</div>
+
 </section>
 
 
 <!-- =========================================================
-     SYSTEM INFORMATION
+     COMMUNICATION
      ========================================================= -->
 
-<section class="card">
+<section
+  id="tab-communication"
+  class="tab-content"
+>
+
+<div class="card">
 
   <div class="card-title">
-    <span>⚙️</span>
-    <h2>System Information</h2>
+
+    <span>
+      📣
+    </span>
+
+    <h2>
+      Communication Department
+    </h2>
+
+  </div>
+
+  <p class="card-description">
+
+    Communication is separate from the operational
+    departments. Its purpose is to keep students
+    informed about important academy-wide information,
+    reminders, notices and online-safety matters.
+
+  </p>
+
+
+  <div class="communication-grid">
+
+    <div class="communication-card">
+
+      <h3>
+        📢 General Announcements
+      </h3>
+
+      <p>
+        Future communication tools can send
+        announcements to all students or selected
+        groups.
+
+      </p>
+
+    </div>
+
+
+    <div class="communication-card">
+
+      <h3>
+        🛡️ Phishing & Safety Alerts
+      </h3>
+
+      <p>
+        Send warnings about fake emails, fake payment
+        requests, suspicious links and other online
+        threats.
+
+      </p>
+
+    </div>
+
+
+    <div class="communication-card">
+
+      <h3>
+        📅 Important Reminders
+      </h3>
+
+      <p>
+        Communicate registration deadlines,
+        assessment reminders, maintenance and
+        other important dates.
+
+      </p>
+
+    </div>
+
+
+    <div class="communication-card">
+
+      <h3>
+        👥 Student Community
+      </h3>
+
+      <p>
+        Share information that applies broadly to
+        students without interfering with Finance,
+        Assessment or other departments.
+
+      </p>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<div class="card">
+
+  <div class="card-title">
+
+    <span>
+      ✉️
+    </span>
+
+    <h2>
+      Planned Department Mailboxes
+    </h2>
+
+  </div>
+
+  <p class="card-description">
+
+    After the Funda Online Academy domain is purchased,
+    these professional department addresses can be
+    created. The addresses below are only the planned
+    structure at this stage.
+
+  </p>
+
+
+  <div class="table-wrap">
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          <th>
+            Department
+          </th>
+
+          <th>
+            Planned Email
+          </th>
+
+          <th>
+            Purpose
+          </th>
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr>
+          <td><strong>Management</strong></td>
+          <td>management@yourdomain.co.za</td>
+          <td>Oversight and audit</td>
+        </tr>
+
+        <tr>
+          <td><strong>Admin</strong></td>
+          <td>admin@yourdomain.co.za</td>
+          <td>General administration</td>
+        </tr>
+
+        <tr>
+          <td><strong>Finance</strong></td>
+          <td>finance@yourdomain.co.za</td>
+          <td>Payments and finance</td>
+        </tr>
+
+        <tr>
+          <td><strong>Assessment</strong></td>
+          <td>assessment@yourdomain.co.za</td>
+          <td>Assessments and results</td>
+        </tr>
+
+        <tr>
+          <td><strong>Student Support</strong></td>
+          <td>studentsupport@yourdomain.co.za</td>
+          <td>Student assistance</td>
+        </tr>
+
+        <tr>
+          <td><strong>Courses</strong></td>
+          <td>courses@yourdomain.co.za</td>
+          <td>Courses and content</td>
+        </tr>
+
+        <tr>
+          <td><strong>Certificates</strong></td>
+          <td>certificates@yourdomain.co.za</td>
+          <td>Certificates</td>
+        </tr>
+
+        <tr>
+          <td><strong>Communication</strong></td>
+          <td>communication@yourdomain.co.za</td>
+          <td>General communication</td>
+        </tr>
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>
+
+</section>
+
+
+<!-- =========================================================
+     SYSTEM
+     ========================================================= -->
+
+<section
+  id="tab-system"
+  class="tab-content"
+>
+
+<div class="card">
+
+  <div class="card-title">
+
+    <span>
+      ⚙️
+    </span>
+
+    <h2>
+      System Information
+    </h2>
+
   </div>
 
   <p class="card-description">
     Funda Online Academy administration system.
   </p>
 
+
   <div class="info-grid">
 
     <div class="info-item">
+
       <div class="info-label">
         System
       </div>
@@ -806,9 +2082,12 @@ tr:last-child td{
       <div class="info-value">
         Funda Online Academy
       </div>
+
     </div>
 
+
     <div class="info-item">
+
       <div class="info-label">
         Access
       </div>
@@ -816,9 +2095,12 @@ tr:last-child td{
       <div class="info-value">
         Administrator
       </div>
+
     </div>
 
+
     <div class="info-item">
+
       <div class="info-label">
         Authentication
       </div>
@@ -826,9 +2108,12 @@ tr:last-child td{
       <div class="info-value">
         Supabase Authentication
       </div>
+
     </div>
 
+
     <div class="info-item">
+
       <div class="info-label">
         Database
       </div>
@@ -836,11 +2121,83 @@ tr:last-child td{
       <div class="info-value">
         Supabase Database
       </div>
+
     </div>
 
   </div>
 
+</div>
+
+
+<div class="card">
+
+  <div class="card-title">
+
+    <span>
+      🔐
+    </span>
+
+    <h2>
+      Future Department Security
+    </h2>
+
+  </div>
+
+  <p class="card-description">
+
+    The department tabs currently organise the dashboard.
+    They do not create staff permissions yet. When we
+    implement department staff accounts, the actual
+    permissions will be enforced through Supabase
+    authentication and Row Level Security.
+
+  </p>
+
+
+  <div class="notice">
+
+    <strong>
+      Planned hierarchy:
+    </strong>
+
+    <br><br>
+
+    Management → full oversight
+
+    <br>
+
+    Admin → administration
+
+    <br>
+
+    Finance → financial records
+
+    <br>
+
+    Assessment → assessments and results
+
+    <br>
+
+    Student Support → student support
+
+    <br>
+
+    Courses → course management
+
+    <br>
+
+    Certificates → certificate records
+
+    <br>
+
+    Communication → communication tools
+
+  </div>
+
+</div>
+
 </section>
+
 
 </main>
 
@@ -849,18 +2206,9 @@ tr:last-child td{
 
 <script>
 
-/* ============================================================
-   FUNDA ONLINE ACADEMY
-   ADMIN DASHBOARD
-   COMPLETE VERSION
-   EXISTING LAYOUT PRESERVED
-   POLICY ACCEPTANCE ADDED
-   ============================================================ */
-
-
-/* ============================================================
+/* =========================================================
    SUPABASE
-   ============================================================ */
+   ========================================================= */
 
 let db = null;
 
@@ -882,7 +2230,7 @@ function initialiseSupabase(){
   ){
 
     throw new Error(
-      "Supabase configuration was not loaded. Please make sure supabase-config.js exists in the repository."
+      "Supabase configuration was not loaded."
     );
 
   }
@@ -895,9 +2243,9 @@ function initialiseSupabase(){
 }
 
 
-/* ============================================================
+/* =========================================================
    ELEMENTS
-   ============================================================ */
+   ========================================================= */
 
 const adminLoading =
   document.getElementById("adminLoading");
@@ -958,9 +2306,9 @@ const refreshPolicyAcceptances =
   );
 
 
-/* ============================================================
+/* =========================================================
    DATA
-   ============================================================ */
+   ========================================================= */
 
 let courses = [];
 let students = [];
@@ -970,25 +2318,88 @@ let policyAcceptances = [];
 
 let currentUser = null;
 
-
-/* ============================================================
-   POLICY VERSION
-   ============================================================ */
-
 const CURRENT_POLICY_VERSION =
   "FOA-2026-01";
 
 
-/* ============================================================
+/* =========================================================
+   TABS
+   ========================================================= */
+
+document
+  .querySelectorAll(".admin-tab")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      () => {
+
+        const target =
+          button.dataset.tab;
+
+        document
+          .querySelectorAll(".admin-tab")
+          .forEach(tab => {
+
+            tab.classList.remove(
+              "active"
+            );
+
+          });
+
+
+        document
+          .querySelectorAll(".tab-content")
+          .forEach(section => {
+
+            section.classList.remove(
+              "active"
+            );
+
+          });
+
+
+        button.classList.add(
+          "active"
+        );
+
+
+        const section =
+          document.getElementById(
+            "tab-" + target
+          );
+
+
+        if(section){
+
+          section.classList.add(
+            "active"
+          );
+
+        }
+
+        window.scrollTo({
+          top:0,
+          behavior:"smooth"
+        });
+
+      }
+    );
+
+  });
+
+
+/* =========================================================
    MESSAGE
-   ============================================================ */
+   ========================================================= */
 
 function showMessage(
   text,
   type = "info"
 ){
 
-  message.textContent = text;
+  message.textContent =
+    text;
 
   message.className =
     "message show " + type;
@@ -1004,9 +2415,9 @@ function hideMessage(){
 }
 
 
-/* ============================================================
+/* =========================================================
    ESCAPE HTML
-   ============================================================ */
+   ========================================================= */
 
 function escapeHTML(value){
 
@@ -1029,9 +2440,9 @@ function escapeHTML(value){
 }
 
 
-/* ============================================================
+/* =========================================================
    MONEY
-   ============================================================ */
+   ========================================================= */
 
 function formatMoney(value){
 
@@ -1062,14 +2473,16 @@ function formatMoney(value){
 }
 
 
-/* ============================================================
+/* =========================================================
    DATE
-   ============================================================ */
+   ========================================================= */
 
 function formatDate(value){
 
   if(!value){
+
     return "—";
+
   }
 
   const date =
@@ -1097,14 +2510,16 @@ function formatDate(value){
 }
 
 
-/* ============================================================
+/* =========================================================
    DATE + TIME
-   ============================================================ */
+   ========================================================= */
 
 function formatDateTime(value){
 
   if(!value){
+
     return "—";
+
   }
 
   const date =
@@ -1134,9 +2549,9 @@ function formatDateTime(value){
 }
 
 
-/* ============================================================
+/* =========================================================
    STATUS
-   ============================================================ */
+   ========================================================= */
 
 function statusClass(value){
 
@@ -1145,11 +2560,15 @@ function statusClass(value){
       value || "other"
     ).toLowerCase();
 
+
   if(
     status === "pending"
   ){
+
     return "pending";
+
   }
+
 
   if(
     [
@@ -1160,8 +2579,11 @@ function statusClass(value){
       "success"
     ].includes(status)
   ){
+
     return "approved";
+
   }
+
 
   if(
     [
@@ -1170,8 +2592,11 @@ function statusClass(value){
       "cancelled"
     ].includes(status)
   ){
+
     return "rejected";
+
   }
+
 
   return "other";
 
@@ -1180,23 +2605,24 @@ function statusClass(value){
 
 function statusBadge(value){
 
-  const safe =
-    escapeHTML(
-      value || "Unknown"
-    );
-
   return `
+
     <span class="badge ${statusClass(value)}">
-      ${safe}
+
+      ${escapeHTML(
+        value || "Unknown"
+      )}
+
     </span>
+
   `;
 
 }
 
 
-/* ============================================================
+/* =========================================================
    POLICY BADGE
-   ============================================================ */
+   ========================================================= */
 
 function policyBadge(
   accepted
@@ -1205,25 +2631,29 @@ function policyBadge(
   if(accepted === true){
 
     return `
+
       <span class="badge policy-accepted">
         Accepted
       </span>
+
     `;
 
   }
 
   return `
+
     <span class="badge policy-not-accepted">
       Not Accepted
     </span>
+
   `;
 
 }
 
 
-/* ============================================================
-   GET CURRENT USER
-   ============================================================ */
+/* =========================================================
+   CURRENT USER
+   ========================================================= */
 
 async function getCurrentUser(){
 
@@ -1232,6 +2662,7 @@ async function getCurrentUser(){
     error
   } =
     await db.auth.getUser();
+
 
   if(error){
 
@@ -1244,26 +2675,26 @@ async function getCurrentUser(){
 
   }
 
+
   return data?.user || null;
 
 }
 
 
-/* ============================================================
+/* =========================================================
    ADMIN CHECK
-   ============================================================ */
+   ========================================================= */
 
-async function checkAdmin(user){
+async function checkAdmin(
+  user
+){
 
   if(!user){
+
     return false;
+
   }
 
-
-  /*
-    PRIMARY METHOD:
-    EXISTING is_admin() DATABASE FUNCTION
-  */
 
   try{
 
@@ -1274,6 +2705,7 @@ async function checkAdmin(user){
       await db.rpc(
         "is_admin"
       );
+
 
     if(
       !error &&
@@ -1294,11 +2726,6 @@ async function checkAdmin(user){
   }
 
 
-  /*
-    SECOND METHOD:
-    PROFILES ROLE
-  */
-
   try{
 
     const {
@@ -1313,6 +2740,7 @@ async function checkAdmin(user){
           user.id
         )
         .maybeSingle();
+
 
     if(
       !error &&
@@ -1341,9 +2769,9 @@ async function checkAdmin(user){
 }
 
 
-/* ============================================================
-   START DASHBOARD
-   ============================================================ */
+/* =========================================================
+   START
+   ========================================================= */
 
 async function startDashboard(){
 
@@ -1352,8 +2780,6 @@ async function startDashboard(){
     loadingTitle.textContent =
       "Connecting to Funda Online Academy...";
 
-    loadingText.textContent =
-      "Please wait.";
 
     initialiseSupabase();
 
@@ -1385,10 +2811,17 @@ async function startDashboard(){
     if(!allowed){
 
       adminLoading.innerHTML = `
-        <h2>Access denied</h2>
 
-        <p class="muted" style="margin-top:10px;">
-          This page is only available to authorised administrators.
+        <h2>
+          Access denied
+        </h2>
+
+        <p
+          class="muted"
+          style="margin-top:10px;"
+        >
+          This page is only available to
+          authorised administrators.
         </p>
 
         <br>
@@ -1400,6 +2833,7 @@ async function startDashboard(){
         >
           Return to website
         </button>
+
       `;
 
       return;
@@ -1410,6 +2844,7 @@ async function startDashboard(){
     adminLoading.classList.add(
       "hidden"
     );
+
 
     dashboard.classList.remove(
       "hidden"
@@ -1428,13 +2863,18 @@ async function startDashboard(){
 
 
     adminLoading.innerHTML = `
-      <h2>Admin dashboard could not load</h2>
+
+      <h2>
+        Admin dashboard could not load
+      </h2>
 
       <p
         class="muted"
         style="margin-top:12px;line-height:1.6;"
       >
-        ${escapeHTML(error.message)}
+        ${escapeHTML(
+          error.message
+        )}
       </p>
 
       <br>
@@ -1447,14 +2887,6 @@ async function startDashboard(){
         Try Again
       </button>
 
-      <button
-        class="refresh-btn"
-        type="button"
-        style="margin-left:8px;"
-        onclick="window.location.href='index.html'"
-      >
-        Return to Website
-      </button>
     `;
 
   }
@@ -1462,9 +2894,9 @@ async function startDashboard(){
 }
 
 
-/* ============================================================
+/* =========================================================
    LOAD EVERYTHING
-   ============================================================ */
+   ========================================================= */
 
 async function loadEverything(){
 
@@ -1493,16 +2925,18 @@ async function loadEverything(){
 }
 
 
-/* ============================================================
-   LOAD COURSES
-   ============================================================ */
+/* =========================================================
+   COURSES
+   ========================================================= */
 
 async function loadCourses(){
 
   coursesContent.innerHTML = `
+
     <div class="loading">
       Loading courses...
     </div>
+
   `;
 
 
@@ -1533,11 +2967,19 @@ async function loadCourses(){
       courses = [];
 
       coursesContent.innerHTML = `
+
         <div class="error-box">
+
           Unable to load courses.
+
           <br><br>
-          ${escapeHTML(error.message)}
+
+          ${escapeHTML(
+            error.message
+          )}
+
         </div>
+
       `;
 
       return;
@@ -1560,22 +3002,14 @@ async function loadCourses(){
 
     courses = [];
 
-    coursesContent.innerHTML = `
-      <div class="error-box">
-        Unable to load courses.
-        <br><br>
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-
   }
 
 }
 
 
-/* ============================================================
-   LOAD STUDENTS
-   ============================================================ */
+/* =========================================================
+   STUDENTS
+   ========================================================= */
 
 async function loadStudents(){
 
@@ -1630,16 +3064,18 @@ async function loadStudents(){
 }
 
 
-/* ============================================================
-   LOAD ENROLMENTS
-   ============================================================ */
+/* =========================================================
+   ENROLMENTS
+   ========================================================= */
 
 async function loadEnrollments(){
 
   enrollmentsContent.innerHTML = `
+
     <div class="loading">
       Loading enrolments...
     </div>
+
   `;
 
 
@@ -1670,11 +3106,19 @@ async function loadEnrollments(){
       enrollments = [];
 
       enrollmentsContent.innerHTML = `
+
         <div class="error-box">
+
           Unable to load enrolments.
+
           <br><br>
-          ${escapeHTML(error.message)}
+
+          ${escapeHTML(
+            error.message
+          )}
+
         </div>
+
       `;
 
       return;
@@ -1697,29 +3141,23 @@ async function loadEnrollments(){
 
     enrollments = [];
 
-    enrollmentsContent.innerHTML = `
-      <div class="error-box">
-        Unable to load enrolments.
-        <br><br>
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-
   }
 
 }
 
 
-/* ============================================================
-   LOAD PAYMENTS
-   ============================================================ */
+/* =========================================================
+   PAYMENTS
+   ========================================================= */
 
 async function loadPayments(){
 
   paymentsContent.innerHTML = `
+
     <div class="loading">
       Loading payments...
     </div>
+
   `;
 
 
@@ -1750,11 +3188,19 @@ async function loadPayments(){
       payments = [];
 
       paymentsContent.innerHTML = `
+
         <div class="error-box">
+
           Unable to load payments.
+
           <br><br>
-          ${escapeHTML(error.message)}
+
+          ${escapeHTML(
+            error.message
+          )}
+
         </div>
+
       `;
 
       return;
@@ -1777,29 +3223,23 @@ async function loadPayments(){
 
     payments = [];
 
-    paymentsContent.innerHTML = `
-      <div class="error-box">
-        Unable to load payments.
-        <br><br>
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-
   }
 
 }
 
 
-/* ============================================================
-   LOAD POLICY ACCEPTANCES
-   ============================================================ */
+/* =========================================================
+   POLICY ACCEPTANCE
+   ========================================================= */
 
 async function loadPolicyAcceptances(){
 
   policyAcceptancesContent.innerHTML = `
+
     <div class="loading">
       Loading policy acceptance records...
     </div>
+
   `;
 
 
@@ -1831,11 +3271,19 @@ async function loadPolicyAcceptances(){
       policyAcceptances = [];
 
       policyAcceptancesContent.innerHTML = `
+
         <div class="error-box">
+
           Unable to load policy acceptance records.
+
           <br><br>
-          ${escapeHTML(error.message)}
+
+          ${escapeHTML(
+            error.message
+          )}
+
         </div>
+
       `;
 
       return;
@@ -1858,27 +3306,23 @@ async function loadPolicyAcceptances(){
 
     policyAcceptances = [];
 
-    policyAcceptancesContent.innerHTML = `
-      <div class="error-box">
-        Unable to load policy acceptance records.
-        <br><br>
-        ${escapeHTML(error.message)}
-      </div>
-    `;
-
   }
 
 }
 
 
-/* ============================================================
-   FIND STUDENT
-   ============================================================ */
+/* =========================================================
+   FINDERS
+   ========================================================= */
 
-function findStudent(studentId){
+function findStudent(
+  studentId
+){
 
   if(!studentId){
+
     return null;
+
   }
 
   return students.find(
@@ -1890,14 +3334,14 @@ function findStudent(studentId){
 }
 
 
-/* ============================================================
-   FIND STUDENT BY USER ID
-   ============================================================ */
-
-function findStudentByUserId(userId){
+function findStudentByUserId(
+  userId
+){
 
   if(!userId){
+
     return null;
+
   }
 
   return students.find(
@@ -1909,14 +3353,14 @@ function findStudentByUserId(userId){
 }
 
 
-/* ============================================================
-   FIND COURSE
-   ============================================================ */
-
-function findCourse(courseId){
+function findCourse(
+  courseId
+){
 
   if(!courseId){
+
     return null;
+
   }
 
   return courses.find(
@@ -1928,25 +3372,30 @@ function findCourse(courseId){
 }
 
 
-/* ============================================================
-   GET STUDENT NAME
-   ============================================================ */
+/* =========================================================
+   NAMES
+   ========================================================= */
 
-function getStudentName(studentId){
+function getStudentName(
+  studentId
+){
 
   const student =
-    findStudent(studentId);
+    findStudent(
+      studentId
+    );
 
 
   if(!student){
+
     return "Unknown student";
+
   }
 
 
   return (
     student.full_name ||
     student.name ||
-    student.fullName ||
     student.email ||
     "Unnamed student"
   );
@@ -1954,64 +3403,20 @@ function getStudentName(studentId){
 }
 
 
-/* ============================================================
-   GET POLICY STUDENT
-   ============================================================ */
-
-function getPolicyStudent(record){
-
-  /*
-    POLICY RECORDS CAN LINK THROUGH:
-    student_id
-    OR
-    user_id
-  */
-
-  if(record.student_id){
-
-    const student =
-      findStudent(
-        record.student_id
-      );
-
-    if(student){
-      return student;
-    }
-
-  }
-
-
-  if(record.user_id){
-
-    const student =
-      findStudentByUserId(
-        record.user_id
-      );
-
-    if(student){
-      return student;
-    }
-
-  }
-
-
-  return null;
-
-}
-
-
-/* ============================================================
-   GET COURSE NAME
-   ============================================================ */
-
-function getCourseName(courseId){
+function getCourseName(
+  courseId
+){
 
   const course =
-    findCourse(courseId);
+    findCourse(
+      courseId
+    );
 
 
   if(!course){
+
     return "Unknown course";
+
   }
 
 
@@ -2026,29 +3431,9 @@ function getCourseName(courseId){
 }
 
 
-/* ============================================================
-   GET COURSE PRICE
-   ============================================================ */
-
-function getCoursePrice(course){
-
-  if(!course){
-    return null;
-  }
-
-  return (
-    course.price ??
-    course.amount ??
-    course.course_price ??
-    null
-  );
-
-}
-
-
-/* ============================================================
-   UPDATE STATISTICS
-   ============================================================ */
+/* =========================================================
+   STATISTICS
+   ========================================================= */
 
 function updateStatistics(){
 
@@ -2067,18 +3452,20 @@ function updateStatistics(){
 }
 
 
-/* ============================================================
-   RENDER COURSES
-   ============================================================ */
+/* =========================================================
+   COURSE RENDER
+   ========================================================= */
 
 function renderCourses(){
 
   if(!courses.length){
 
     coursesContent.innerHTML = `
+
       <div class="empty">
         No courses found.
       </div>
+
     `;
 
     return;
@@ -2099,19 +3486,26 @@ function renderCourses(){
           course.course_title ||
           "Unnamed course";
 
+
         const description =
           course.description ||
           course.details ||
           course.summary ||
           "";
 
+
         const price =
-          getCoursePrice(course);
+          course.price ??
+          course.amount ??
+          course.course_price ??
+          null;
+
 
         const active =
           course.active ??
           course.is_active ??
           course.status === "active";
+
 
         return `
 
@@ -2125,9 +3519,9 @@ function renderCourses(){
               description
               ?
               `
-              <div class="course-description">
-                ${escapeHTML(description)}
-              </div>
+                <div class="course-description">
+                  ${escapeHTML(description)}
+                </div>
               `
               :
               ""
@@ -2163,18 +3557,20 @@ function renderCourses(){
 }
 
 
-/* ============================================================
-   RENDER ENROLMENTS
-   ============================================================ */
+/* =========================================================
+   ENROLMENT RENDER
+   ========================================================= */
 
 function renderEnrollments(){
 
   if(!enrollments.length){
 
     enrollmentsContent.innerHTML = `
+
       <div class="empty">
         No student enrolments found.
       </div>
+
     `;
 
     return;
@@ -2192,15 +3588,25 @@ function renderEnrollments(){
 
           <tr>
 
-            <th>Student</th>
+            <th>
+              Student
+            </th>
 
-            <th>Course</th>
+            <th>
+              Course
+            </th>
 
-            <th>Status</th>
+            <th>
+              Status
+            </th>
 
-            <th>Date</th>
+            <th>
+              Date
+            </th>
 
-            <th>Action</th>
+            <th>
+              Action
+            </th>
 
           </tr>
 
@@ -2208,104 +3614,120 @@ function renderEnrollments(){
 
         <tbody>
 
-          ${enrollments.map(enrollment => {
+          ${enrollments.map(
+            enrollment => {
 
-            const studentId =
-              enrollment.student_id ||
-              enrollment.user_id;
-
-            const courseId =
-              enrollment.course_id;
-
-            const studentName =
-              getStudentName(
-                studentId
-              );
-
-            const courseName =
-              getCourseName(
-                courseId
-              );
-
-            const status =
-              enrollment.status ||
-              enrollment.enrollment_status ||
-              "pending";
-
-            const date =
-              enrollment.enrolled_at ||
-              enrollment.created_at;
+              const studentId =
+                enrollment.student_id ||
+                enrollment.user_id;
 
 
-            return `
+              const studentName =
+                getStudentName(
+                  studentId
+                );
 
-              <tr>
 
-                <td>
+              const courseName =
+                getCourseName(
+                  enrollment.course_id
+                );
 
-                  <div class="student-name">
-                    ${escapeHTML(studentName)}
-                  </div>
 
-                </td>
+              const status =
+                enrollment.status ||
+                enrollment.enrollment_status ||
+                "pending";
 
-                <td>
 
-                  <div class="course-name">
-                    ${escapeHTML(courseName)}
-                  </div>
+              const date =
+                enrollment.enrolled_at ||
+                enrollment.created_at;
 
-                </td>
 
-                <td>
-                  ${statusBadge(status)}
-                </td>
+              return `
 
-                <td>
-                  ${formatDate(date)}
-                </td>
+                <tr>
 
-                <td>
+                  <td>
 
-                  ${
-                    String(status).toLowerCase()
-                    === "pending"
+                    <div class="student-name">
+                      ${escapeHTML(
+                        studentName
+                      )}
+                    </div>
 
-                    ?
+                  </td>
 
-                    `
+                  <td>
 
-                    <button
-                      class="action-btn approve-btn"
-                      type="button"
-                      onclick="updateEnrollmentStatus('${escapeHTML(enrollment.id)}','approved')"
-                    >
-                      Approve
-                    </button>
+                    <div class="course-name">
+                      ${escapeHTML(
+                        courseName
+                      )}
+                    </div>
 
-                    <button
-                      class="action-btn reject-btn"
-                      type="button"
-                      onclick="updateEnrollmentStatus('${escapeHTML(enrollment.id)}','rejected')"
-                    >
-                      Reject
-                    </button>
+                  </td>
 
-                    `
+                  <td>
+                    ${statusBadge(status)}
+                  </td>
 
-                    :
+                  <td>
+                    ${formatDate(date)}
+                  </td>
 
-                    `<span class="muted">No action</span>`
+                  <td>
 
-                  }
+                    ${
+                      String(status)
+                        .toLowerCase()
+                      === "pending"
 
-                </td>
+                      ?
 
-              </tr>
+                      `
 
-            `;
+                        <button
+                          class="action-btn approve-btn"
+                          type="button"
+                          onclick="updateEnrollmentStatus(
+                            '${escapeHTML(enrollment.id)}',
+                            'approved'
+                          )"
+                        >
+                          Approve
+                        </button>
 
-          }).join("")}
+                        <button
+                          class="action-btn reject-btn"
+                          type="button"
+                          onclick="updateEnrollmentStatus(
+                            '${escapeHTML(enrollment.id)}',
+                            'rejected'
+                          )"
+                        >
+                          Reject
+                        </button>
+
+                      `
+
+                      :
+
+                      `<span class="muted">
+                        No action
+                      </span>`
+
+                    }
+
+                  </td>
+
+                </tr>
+
+              `;
+
+            }
+          ).join("")}
 
         </tbody>
 
@@ -2318,18 +3740,20 @@ function renderEnrollments(){
 }
 
 
-/* ============================================================
-   RENDER PAYMENTS
-   ============================================================ */
+/* =========================================================
+   PAYMENT RENDER
+   ========================================================= */
 
 function renderPayments(){
 
   if(!payments.length){
 
     paymentsContent.innerHTML = `
+
       <div class="empty">
         No payments found.
       </div>
+
     `;
 
     return;
@@ -2347,15 +3771,25 @@ function renderPayments(){
 
           <tr>
 
-            <th>Student</th>
+            <th>
+              Student
+            </th>
 
-            <th>Course</th>
+            <th>
+              Course
+            </th>
 
-            <th>Amount</th>
+            <th>
+              Amount
+            </th>
 
-            <th>Status</th>
+            <th>
+              Status
+            </th>
 
-            <th>Date</th>
+            <th>
+              Date
+            </th>
 
           </tr>
 
@@ -2363,81 +3797,89 @@ function renderPayments(){
 
         <tbody>
 
-          ${payments.map(payment => {
+          ${payments.map(
+            payment => {
 
-            const studentId =
-              payment.student_id ||
-              payment.user_id;
-
-            const courseId =
-              payment.course_id;
-
-            const studentName =
-              getStudentName(
-                studentId
-              );
-
-            const courseName =
-              getCourseName(
-                courseId
-              );
-
-            const amount =
-              payment.amount ||
-              payment.price ||
-              payment.total;
-
-            const status =
-              payment.status ||
-              payment.payment_status ||
-              "pending";
-
-            const date =
-              payment.created_at ||
-              payment.paid_at;
+              const studentId =
+                payment.student_id ||
+                payment.user_id;
 
 
-            return `
+              const studentName =
+                getStudentName(
+                  studentId
+                );
 
-              <tr>
 
-                <td>
+              const courseName =
+                getCourseName(
+                  payment.course_id
+                );
 
-                  <div class="student-name">
-                    ${escapeHTML(studentName)}
-                  </div>
 
-                </td>
+              const amount =
+                payment.amount ||
+                payment.price ||
+                payment.total;
 
-                <td>
 
-                  <div class="course-name">
-                    ${escapeHTML(courseName)}
-                  </div>
+              const status =
+                payment.status ||
+                payment.payment_status ||
+                "pending";
 
-                </td>
 
-                <td>
+              const date =
+                payment.created_at ||
+                payment.paid_at;
 
-                  <div class="amount">
-                    ${formatMoney(amount)}
-                  </div>
 
-                </td>
+              return `
 
-                <td>
-                  ${statusBadge(status)}
-                </td>
+                <tr>
 
-                <td>
-                  ${formatDate(date)}
-                </td>
+                  <td>
 
-              </tr>
+                    <div class="student-name">
+                      ${escapeHTML(
+                        studentName
+                      )}
+                    </div>
 
-            `;
+                  </td>
 
-          }).join("")}
+                  <td>
+
+                    <div class="course-name">
+                      ${escapeHTML(
+                        courseName
+                      )}
+                    </div>
+
+                  </td>
+
+                  <td>
+
+                    <div class="amount">
+                      ${formatMoney(amount)}
+                    </div>
+
+                  </td>
+
+                  <td>
+                    ${statusBadge(status)}
+                  </td>
+
+                  <td>
+                    ${formatDate(date)}
+                  </td>
+
+                </tr>
+
+              `;
+
+            }
+          ).join("")}
 
         </tbody>
 
@@ -2450,18 +3892,20 @@ function renderPayments(){
 }
 
 
-/* ============================================================
-   RENDER POLICY ACCEPTANCES
-   ============================================================ */
+/* =========================================================
+   POLICY RENDER
+   ========================================================= */
 
 function renderPolicyAcceptances(){
 
   if(!policyAcceptances.length){
 
     policyAcceptancesContent.innerHTML = `
+
       <div class="empty">
         No policy acceptance records found yet.
       </div>
+
     `;
 
     return;
@@ -2479,15 +3923,25 @@ function renderPolicyAcceptances(){
 
           <tr>
 
-            <th>Student</th>
+            <th>
+              Student
+            </th>
 
-            <th>Policy Version</th>
+            <th>
+              Policy Version
+            </th>
 
-            <th>Policies</th>
+            <th>
+              Policies
+            </th>
 
-            <th>Declaration</th>
+            <th>
+              Declaration
+            </th>
 
-            <th>Accepted</th>
+            <th>
+              Accepted
+            </th>
 
           </tr>
 
@@ -2495,105 +3949,131 @@ function renderPolicyAcceptances(){
 
         <tbody>
 
-          ${policyAcceptances.map(record => {
+          ${policyAcceptances.map(
+            record => {
 
-            const student =
-              getPolicyStudent(record);
+              let student = null;
 
-            const studentName =
-              student
-                ? (
+
+              if(record.student_id){
+
+                student =
+                  findStudent(
+                    record.student_id
+                  );
+
+              }
+
+
+              if(
+                !student &&
+                record.user_id
+              ){
+
+                student =
+                  findStudentByUserId(
+                    record.user_id
+                  );
+
+              }
+
+
+              const studentName =
+                student
+                  ?
+                  (
                     student.full_name ||
                     student.name ||
                     student.email ||
                     "Unnamed student"
                   )
-                : (
+                  :
+                  (
                     record.user_id
-                      ? "Registered student"
-                      : "Unknown student"
+                      ?
+                      "Registered student"
+                      :
+                      "Unknown student"
                   );
 
-            const version =
-              record.policy_version ||
-              CURRENT_POLICY_VERSION;
 
-            const policiesAccepted =
-              record.policies_accepted === true;
-
-            const declarationAccepted =
-              record.declaration_accepted === true;
-
-            const acceptedAt =
-              record.accepted_at ||
-              record.created_at ||
-              null;
+              const version =
+                record.policy_version ||
+                CURRENT_POLICY_VERSION;
 
 
-            return `
+              return `
 
-              <tr>
+                <tr>
 
-                <td>
+                  <td>
 
-                  <div class="student-name">
-                    ${escapeHTML(studentName)}
-                  </div>
-
-                  ${
-                    student?.email
-                    ?
-                    `
-                    <div
-                      class="muted"
-                      style="margin-top:5px;"
-                    >
-                      ${escapeHTML(student.email)}
+                    <div class="student-name">
+                      ${escapeHTML(
+                        studentName
+                      )}
                     </div>
-                    `
-                    :
-                    ""
-                  }
 
-                </td>
+                    ${
+                      student?.email
+                      ?
+                      `
+                        <div
+                          class="muted"
+                          style="margin-top:5px;"
+                        >
+                          ${escapeHTML(
+                            student.email
+                          )}
+                        </div>
+                      `
+                      :
+                      ""
+                    }
 
-                <td>
+                  </td>
 
-                  <span class="policy-version">
-                    ${escapeHTML(version)}
-                  </span>
+                  <td>
 
-                </td>
+                    <span class="policy-version">
+                      ${escapeHTML(
+                        version
+                      )}
+                    </span>
 
-                <td>
+                  </td>
 
-                  ${policyBadge(
-                    policiesAccepted
-                  )}
+                  <td>
 
-                </td>
+                    ${policyBadge(
+                      record.policies_accepted === true
+                    )}
 
-                <td>
+                  </td>
 
-                  ${policyBadge(
-                    declarationAccepted
-                  )}
+                  <td>
 
-                </td>
+                    ${policyBadge(
+                      record.declaration_accepted === true
+                    )}
 
-                <td>
+                  </td>
 
-                  ${formatDateTime(
-                    acceptedAt
-                  )}
+                  <td>
 
-                </td>
+                    ${formatDateTime(
+                      record.accepted_at ||
+                      record.created_at
+                    )}
 
-              </tr>
+                  </td>
 
-            `;
+                </tr>
 
-          }).join("")}
+              `;
+
+            }
+          ).join("")}
 
         </tbody>
 
@@ -2606,9 +4086,9 @@ function renderPolicyAcceptances(){
 }
 
 
-/* ============================================================
-   UPDATE ENROLMENT STATUS
-   ============================================================ */
+/* =========================================================
+   UPDATE ENROLMENT
+   ========================================================= */
 
 async function updateEnrollmentStatus(
   enrollmentId,
@@ -2616,7 +4096,9 @@ async function updateEnrollmentStatus(
 ){
 
   if(!enrollmentId){
+
     return;
+
   }
 
 
@@ -2669,6 +4151,7 @@ async function updateEnrollmentStatus(
       error
     );
 
+
     showMessage(
       "Unable to update enrolment: " +
       error.message,
@@ -2680,9 +4163,9 @@ async function updateEnrollmentStatus(
 }
 
 
-/* ============================================================
+/* =========================================================
    LOGOUT
-   ============================================================ */
+   ========================================================= */
 
 logoutBtn.addEventListener(
   "click",
@@ -2701,6 +4184,7 @@ logoutBtn.addEventListener(
 
     }
 
+
     window.location.href =
       "login.html";
 
@@ -2708,9 +4192,9 @@ logoutBtn.addEventListener(
 );
 
 
-/* ============================================================
+/* =========================================================
    REFRESH COURSES
-   ============================================================ */
+   ========================================================= */
 
 refreshCourses.addEventListener(
   "click",
@@ -2718,6 +4202,7 @@ refreshCourses.addEventListener(
 
     refreshCourses.disabled =
       true;
+
 
     try{
 
@@ -2743,9 +4228,9 @@ refreshCourses.addEventListener(
 );
 
 
-/* ============================================================
+/* =========================================================
    REFRESH ENROLMENTS
-   ============================================================ */
+   ========================================================= */
 
 refreshEnrollments.addEventListener(
   "click",
@@ -2753,6 +4238,7 @@ refreshEnrollments.addEventListener(
 
     refreshEnrollments.disabled =
       true;
+
 
     try{
 
@@ -2778,9 +4264,9 @@ refreshEnrollments.addEventListener(
 );
 
 
-/* ============================================================
+/* =========================================================
    REFRESH PAYMENTS
-   ============================================================ */
+   ========================================================= */
 
 refreshPayments.addEventListener(
   "click",
@@ -2788,6 +4274,7 @@ refreshPayments.addEventListener(
 
     refreshPayments.disabled =
       true;
+
 
     try{
 
@@ -2813,9 +4300,9 @@ refreshPayments.addEventListener(
 );
 
 
-/* ============================================================
-   REFRESH POLICY ACCEPTANCES
-   ============================================================ */
+/* =========================================================
+   REFRESH POLICY
+   ========================================================= */
 
 refreshPolicyAcceptances.addEventListener(
   "click",
@@ -2824,6 +4311,7 @@ refreshPolicyAcceptances.addEventListener(
     refreshPolicyAcceptances.disabled =
       true;
 
+
     try{
 
       await loadPolicyAcceptances();
@@ -2831,7 +4319,7 @@ refreshPolicyAcceptances.addEventListener(
       renderPolicyAcceptances();
 
       showMessage(
-        "Policy acceptance records refreshed.",
+        "Policy records refreshed.",
         "success"
       );
 
@@ -2846,13 +4334,13 @@ refreshPolicyAcceptances.addEventListener(
 );
 
 
-/* ============================================================
-   START
-   ============================================================ */
+/* =========================================================
+   START DASHBOARD
+   ========================================================= */
 
 startDashboard();
 
 </script>
 
 </body>
-</html>
+  </html>
