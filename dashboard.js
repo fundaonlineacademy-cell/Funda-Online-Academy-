@@ -4,18 +4,20 @@
 //
 // COMPLETE DATABASE-MATCHED VERSION
 //
-// IMPORTANT:
-// This version DOES NOT use get_my_course_progress().
-// Course progress is calculated directly from:
-//   courses
-//   course_modules
-//   lessons
-//   lesson_progress
+// FIXES IN THIS VERSION:
+// 1. Module buttons now target the CORRECT module.
+// 2. Modules from different courses no longer conflict.
+// 3. Each module has a unique target ID.
+// 4. Course loading is faster.
+// 5. Lessons remain connected to the correct module.
+// 6. Lesson progress remains connected to the student.
+// 7. Existing database structure is preserved.
 //
-// Student connection:
-//   auth.users.id -> students.user_id
-//   students.id   -> enrollments.student_id
-//   students.id   -> lesson_progress.student_id
+// DATABASE CONNECTION:
+//
+// auth.users.id -> students.user_id
+// students.id   -> enrollments.student_id
+// students.id   -> lesson_progress.student_id
 //
 // ============================================================
 
@@ -221,6 +223,40 @@ function withTimeout(
     })
 
   ]);
+
+}
+
+// ============================================================
+// CREATE UNIQUE MODULE KEY
+// ============================================================
+//
+// IMPORTANT FIX:
+//
+// Previously every course used:
+//
+// module-index = 0
+// module-index = 1
+// module-index = 2
+//
+// This caused buttons from different courses to interfere.
+//
+// Now every module gets a unique key based on:
+// COURSE ID + MODULE ID
+//
+// ============================================================
+
+function createModuleKey(
+  courseId,
+  moduleId
+) {
+
+  return (
+    "module-" +
+    String(courseId) +
+    "-" +
+    String(moduleId)
+  );
+
 }
 
 // ============================================================
@@ -247,6 +283,7 @@ async function getLoggedInUser() {
       "login.html";
 
     return null;
+
   }
 
   console.log(
@@ -256,6 +293,7 @@ async function getLoggedInUser() {
   );
 
   return user;
+
 }
 
 // ============================================================
@@ -312,7 +350,7 @@ async function loadStudentProfile(user) {
   }
 
   // ----------------------------------------------------------
-  // METHOD 2 — user_id
+  // METHOD 2 — USER ID
   // ----------------------------------------------------------
 
   try {
@@ -352,7 +390,7 @@ async function loadStudentProfile(user) {
   }
 
   // ----------------------------------------------------------
-  // METHOD 3 — email
+  // METHOD 3 — EMAIL
   // ----------------------------------------------------------
 
   if (user.email) {
@@ -400,6 +438,7 @@ async function loadStudentProfile(user) {
     "Your login is working, but your student profile could not be connected to this account."
 
   );
+
 }
 
 // ============================================================
@@ -478,10 +517,11 @@ async function loadStudentEnrolments(
     all,
     approved
   };
+
 }
 
 // ============================================================
-// COURSES
+// COURSE
 // ============================================================
 
 async function loadCourse(
@@ -511,6 +551,7 @@ async function loadCourse(
   }
 
   return result.data;
+
 }
 
 // ============================================================
@@ -545,6 +586,7 @@ async function loadModules(
   }
 
   return result.data || [];
+
 }
 
 // ============================================================
@@ -589,8 +631,12 @@ async function loadLessons() {
       ) {
 
         return (
-          Number(a.lesson_number || 0) -
-          Number(b.lesson_number || 0)
+          Number(
+            a.lesson_number || 0
+          ) -
+          Number(
+            b.lesson_number || 0
+          )
         );
 
       }
@@ -611,6 +657,7 @@ async function loadLessons() {
   );
 
   return lessons;
+
 }
 
 // ============================================================
@@ -661,6 +708,7 @@ async function loadStudentProgress() {
   );
 
   return studentProgressCache;
+
 }
 
 // ============================================================
@@ -700,6 +748,7 @@ function getCourseLessons(
           b.lesson_number || 0
         )
     );
+
 }
 
 // ============================================================
@@ -732,6 +781,7 @@ function getModuleLessons(
           b.lesson_number || 0
         )
     );
+
 }
 
 // ============================================================
@@ -809,6 +859,7 @@ function calculateCourseProgress(
     completed,
     percentage
   };
+
 }
 
 // ============================================================
@@ -866,12 +917,23 @@ function renderCourse(
   card.className =
     "study-card";
 
+  // IMPORTANT:
+  // Store the course ID on the card.
+  // This helps keep every course completely independent.
+
+  card.setAttribute(
+    "data-course-id",
+    String(
+      enrollment.course_id
+    )
+  );
+
   let modulesHtml =
     "";
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // MODULES
-  // ----------------------------------------------------------
+  // ==========================================================
 
   if (modules.length === 0) {
 
@@ -897,7 +959,17 @@ function renderCourse(
       modules
 
         .map(
-          (module, moduleIndex) => {
+          module => {
+
+            // ------------------------------------------------
+            // UNIQUE MODULE KEY
+            // ------------------------------------------------
+
+            const moduleKey =
+              createModuleKey(
+                enrollment.course_id,
+                module.id
+              );
 
             const moduleLessons =
               getModuleLessons(
@@ -1018,7 +1090,9 @@ function renderCourse(
                                             font-weight:700;
                                           "
                                         >
+
                                           ✓ Completed
+
                                         </span>
                                       `
                                       : ""
@@ -1045,6 +1119,10 @@ function renderCourse(
 
             }
 
+            // =================================================
+            // MODULE CARD
+            // =================================================
+
             return `
 
               <div class="module-card">
@@ -1052,7 +1130,9 @@ function renderCourse(
                 <button
                   type="button"
                   class="module-header"
-                  data-module-index="${moduleIndex}"
+                  data-module-target="${escapeHtml(
+                    moduleKey
+                  )}"
                 >
 
                   <span class="module-left">
@@ -1083,19 +1163,28 @@ function renderCourse(
 
                 <div
                   class="module-content"
-                  data-module-content="${moduleIndex}"
+                  id="${escapeHtml(
+                    moduleKey
+                  )}"
+                  data-module-content
                 >
 
                   ${
                     module.description
                       ? `
-                        <p class="module-description">
+                        <div
+                          class="module-description"
+                          style="
+                            margin-bottom:16px;
+                            line-height:1.7;
+                          "
+                        >
 
                           ${escapeHtml(
                             module.description
                           )}
 
-                        </p>
+                        </div>
                       `
                       : ""
                   }
@@ -1136,9 +1225,9 @@ function renderCourse(
 
   }
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // COURSE CARD
-  // ----------------------------------------------------------
+  // ==========================================================
 
   card.innerHTML = `
 
@@ -1226,7 +1315,9 @@ function renderCourse(
     <div class="modules-container">
 
       <h3 class="modules-heading">
+
         📖 Course Modules
+
       </h3>
 
       ${modulesHtml}
@@ -1346,6 +1437,7 @@ function renderCourse(
   studyList.appendChild(
     card
   );
+
 }
 
 // ============================================================
@@ -1393,7 +1485,9 @@ async function loadMyStudies() {
           </div>
 
           <h3 style="margin-top:10px">
+
             No approved courses yet
+
           </h3>
 
           <p style="margin-top:8px;line-height:1.6">
@@ -1412,18 +1506,23 @@ async function loadMyStudies() {
       `;
 
       return;
+
     }
 
-    // --------------------------------------------------------
-    // LOAD ALL LESSONS ONCE
-    // --------------------------------------------------------
+    // ========================================================
+    // LOAD LESSONS ONCE
+    // ========================================================
+
+    setStatus(
+      "Loading lessons…"
+    );
 
     const allLessons =
       await loadLessons();
 
-    // --------------------------------------------------------
+    // ========================================================
     // LOAD PROGRESS ONCE
-    // --------------------------------------------------------
+    // ========================================================
 
     const progress =
       await loadStudentProgress();
@@ -1431,83 +1530,134 @@ async function loadMyStudies() {
     studyList.innerHTML =
       "";
 
-    // --------------------------------------------------------
-    // RENDER EACH APPROVED COURSE
-    // --------------------------------------------------------
+    // ========================================================
+    // LOAD COURSES IN PARALLEL
+    //
+    // This is faster than waiting for one course before
+    // loading the next course.
+    // ========================================================
 
-    for (
-      const enrollment of enrolments
-    ) {
+    setStatus(
+      "Loading your courses…"
+    );
 
-      try {
+    const courseResults =
+      await Promise.all(
 
-        const course =
-          await loadCourse(
-            enrollment.course_id
+        enrolments.map(
+          async enrollment => {
+
+            try {
+
+              const [
+                course,
+                modules
+              ] =
+                await Promise.all([
+
+                  loadCourse(
+                    enrollment.course_id
+                  ),
+
+                  loadModules(
+                    enrollment.course_id
+                  )
+
+                ]);
+
+              return {
+                enrollment,
+                course,
+                modules,
+                error: null
+              };
+
+            } catch (error) {
+
+              return {
+                enrollment,
+                course: null,
+                modules: [],
+                error
+              };
+
+            }
+
+          }
+        )
+
+      );
+
+    // ========================================================
+    // RENDER COURSES
+    // ========================================================
+
+    courseResults.forEach(
+      result => {
+
+        if (
+          result.error ||
+          !result.course
+        ) {
+
+          const errorCard =
+            document.createElement(
+              "div"
+            );
+
+          errorCard.className =
+            "error-study";
+
+          errorCard.innerHTML = `
+
+            <strong>
+
+              ⚠️ Course could not be loaded
+
+            </strong>
+
+            <p style="margin-top:8px">
+
+              ${escapeHtml(
+                result.error?.message ||
+                "Course information could not be found."
+              )}
+
+            </p>
+
+          `;
+
+          studyList.appendChild(
+            errorCard
           );
 
-        if (!course) {
-
-          throw new Error(
-            "Course information could not be found."
-          );
+          return;
 
         }
 
-        const modules =
-          await loadModules(
-            enrollment.course_id
-          );
-
         renderCourse(
-          enrollment,
-          course,
-          modules,
+
+          result.enrollment,
+
+          result.course,
+
+          result.modules,
+
           allLessons,
+
           progress
-        );
 
-      } catch (error) {
-
-        console.error(
-          "COURSE ERROR:",
-          error
-        );
-
-        const errorCard =
-          document.createElement(
-            "div"
-          );
-
-        errorCard.className =
-          "error-study";
-
-        errorCard.innerHTML = `
-
-          <strong>
-            ⚠️ Course could not be loaded
-          </strong>
-
-          <p style="margin-top:8px">
-
-            ${escapeHtml(
-              error.message ||
-              String(error)
-            )}
-
-          </p>
-
-        `;
-
-        studyList.appendChild(
-          errorCard
         );
 
       }
+    );
 
-    }
+    // ========================================================
+    // SET UP BUTTONS
+    // ========================================================
 
     setupModuleButtons();
+
     setupLessonButtons();
 
   } catch (error) {
@@ -1524,6 +1674,7 @@ async function loadMyStudies() {
     );
 
   }
+
 }
 
 // ============================================================
@@ -1585,135 +1736,157 @@ async function loadMyEnrolments() {
       `;
 
       return;
+
     }
 
-    const cards = [];
+    // ========================================================
+    // LOAD COURSE INFORMATION IN PARALLEL
+    // ========================================================
 
-    for (
-      const enrollment of enrolments
-    ) {
+    const cards =
+      await Promise.all(
 
-      const course =
-        await loadCourse(
-          enrollment.course_id
-        );
+        enrolments.map(
+          async enrollment => {
 
-      const name =
-        course?.title ||
-        "Course";
+            let course = null;
 
-      const enrollmentStatus =
-        enrollment.enrollment_status ||
-        enrollment.status ||
-        "pending";
+            try {
 
-      const approved =
-        String(
-          enrollmentStatus
+              course =
+                await loadCourse(
+                  enrollment.course_id
+                );
+
+            } catch (error) {
+
+              console.warn(
+                "Enrollment course lookup failed:",
+                error
+              );
+
+            }
+
+            const name =
+              course?.title ||
+              "Course";
+
+            const enrollmentStatus =
+              enrollment.enrollment_status ||
+              enrollment.status ||
+              "pending";
+
+            const approved =
+              String(
+                enrollmentStatus
+              )
+                .toLowerCase() ===
+              "approved";
+
+            return `
+
+              <div class="card">
+
+                <span
+                  class="
+                    funda-status
+                    ${
+                      approved
+                        ? "approved"
+                        : ""
+                    }
+                  "
+                >
+
+                  ${
+                    approved
+                      ? "✓ Approved"
+                      : escapeHtml(
+                          enrollmentStatus
+                        )
+                  }
+
+                </span>
+
+                <h3 style="margin-top:10px">
+
+                  ${escapeHtml(
+                    name
+                  )}
+
+                </h3>
+
+                <p style="margin-top:8px">
+
+                  ${
+                    approved
+                      ? "Your enrolment has been approved."
+                      : "Your enrolment is being processed."
+                  }
+
+                </p>
+
+                ${
+                  enrollment.enrolled_at
+
+                    ? `
+
+                      <p
+                        style="
+                          margin-top:8px;
+                          color:#68766f;
+                        "
+                      >
+
+                        📅 Enrolled:
+
+                        ${new Date(
+                          enrollment.enrolled_at
+                        ).toLocaleDateString(
+                          "en-ZA"
+                        )}
+
+                      </p>
+
+                    `
+
+                    : ""
+                }
+
+                ${
+                  enrollment.amount !== null &&
+                  enrollment.amount !== undefined
+
+                    ? `
+
+                      <p
+                        style="
+                          margin-top:8px;
+                          font-weight:700;
+                        "
+                      >
+
+                        💰 Amount:
+
+                        ${money(
+                          enrollment.amount
+                        )}
+
+                      </p>
+
+                    `
+
+                    : ""
+                }
+
+              </div>
+
+            `;
+
+          }
         )
-          .toLowerCase() ===
-        "approved";
 
-      cards.push(`
-
-        <div class="card">
-
-          <span
-            class="
-              funda-status
-              ${
-                approved
-                  ? "approved"
-                  : ""
-              }
-            "
-          >
-
-            ${
-              approved
-                ? "✓ Approved"
-                : escapeHtml(
-                    enrollmentStatus
-                  )
-            }
-
-          </span>
-
-          <h3 style="margin-top:10px">
-
-            ${escapeHtml(
-              name
-            )}
-
-          </h3>
-
-          <p style="margin-top:8px">
-
-            ${
-              approved
-                ? "Your enrolment has been approved."
-                : "Your enrolment is being processed."
-            }
-
-          </p>
-
-          ${
-            enrollment.enrolled_at
-
-              ? `
-
-                <p
-                  style="
-                    margin-top:8px;
-                    color:#68766f;
-                  "
-                >
-
-                  📅 Enrolled:
-
-                  ${new Date(
-                    enrollment.enrolled_at
-                  ).toLocaleDateString(
-                    "en-ZA"
-                  )}
-
-                </p>
-
-              `
-
-              : ""
-          }
-
-          ${
-            enrollment.amount !== null &&
-            enrollment.amount !== undefined
-
-              ? `
-
-                <p
-                  style="
-                    margin-top:8px;
-                    font-weight:700;
-                  "
-                >
-
-                  💰 Amount:
-                  ${money(
-                    enrollment.amount
-                  )}
-
-                </p>
-
-              `
-
-              : ""
-          }
-
-        </div>
-
-      `);
-
-    }
+      );
 
     enrolmentsContainer.innerHTML =
       cards.join("");
@@ -1732,6 +1905,7 @@ async function loadMyEnrolments() {
     );
 
   }
+
 }
 
 // ============================================================
@@ -1803,6 +1977,7 @@ async function loadPayments() {
       `;
 
       return;
+
     }
 
     paymentsContainer.innerHTML =
@@ -1885,37 +2060,93 @@ async function loadPayments() {
     );
 
   }
+
 }
 
 // ============================================================
 // MODULE BUTTONS
+// ============================================================
+//
+// IMPORTANT FIX:
+//
+// OLD METHOD:
+//
+// document.querySelector(
+//   `[data-module-content="${index}"]`
+// )
+//
+// That always found the FIRST matching module on the page.
+//
+// NEW METHOD:
+//
+// Each button contains the EXACT ID of its own module.
+//
+// Example:
+//
+// data-module-target="module-courseID-moduleID"
+//
+// Therefore every course/module opens independently.
+//
 // ============================================================
 
 function setupModuleButtons() {
 
   document
     .querySelectorAll(
-      "[data-module-index]"
+      ".module-header[data-module-target]"
     )
     .forEach(
       button => {
 
+        // Prevent duplicate listeners if this function
+        // is ever called again.
+
+        if (
+          button.dataset.moduleReady ===
+          "true"
+        ) {
+
+          return;
+
+        }
+
+        button.dataset.moduleReady =
+          "true";
+
         button.addEventListener(
           "click",
-          () => {
+          event => {
 
-            const index =
+            event.preventDefault();
+            event.stopPropagation();
+
+            const targetId =
               button.getAttribute(
-                "data-module-index"
+                "data-module-target"
               );
 
+            if (!targetId) {
+              return;
+            }
+
+            // =================================================
+            // FIND THE EXACT MODULE
+            // =================================================
+
             const content =
-              document.querySelector(
-                `[data-module-content="${index}"]`
+              document.getElementById(
+                targetId
               );
 
             if (!content) {
+
+              console.error(
+                "MODULE CONTENT NOT FOUND:",
+                targetId
+              );
+
               return;
+
             }
 
             const icon =
@@ -1934,9 +2165,16 @@ function setupModuleButtons() {
                 "open"
               );
 
+              button.setAttribute(
+                "aria-expanded",
+                "false"
+              );
+
               if (icon) {
+
                 icon.textContent =
                   "+";
+
               }
 
             } else {
@@ -1945,9 +2183,16 @@ function setupModuleButtons() {
                 "open"
               );
 
+              button.setAttribute(
+                "aria-expanded",
+                "true"
+              );
+
               if (icon) {
+
                 icon.textContent =
                   "−";
+
               }
 
             }
@@ -1957,6 +2202,7 @@ function setupModuleButtons() {
 
       }
     );
+
 }
 
 // ============================================================
@@ -1971,6 +2217,18 @@ function setupLessonButtons() {
     )
     .forEach(
       button => {
+
+        if (
+          button.dataset.lessonReady ===
+          "true"
+        ) {
+
+          return;
+
+        }
+
+        button.dataset.lessonReady =
+          "true";
 
         button.addEventListener(
           "click",
@@ -1993,6 +2251,7 @@ function setupLessonButtons() {
 
       }
     );
+
 }
 
 // ============================================================
@@ -2059,6 +2318,7 @@ function formatLessonContent(
     )
 
     .join("");
+
 }
 
 // ============================================================
@@ -2081,6 +2341,7 @@ async function openLesson(
     );
 
     return;
+
   }
 
   lessonViewer.classList.add(
@@ -2184,9 +2445,9 @@ async function openLesson(
           currentLesson.content
         );
 
-      // ------------------------------------------------------
+      // ======================================================
       // OBJECTIVES
-      // ------------------------------------------------------
+      // ======================================================
 
       if (
         currentLesson.learning_objectives
@@ -2196,8 +2457,8 @@ async function openLesson(
 
           <div
             style="
-              margin-top:20px;
-              padding:15px;
+              margin-top:24px;
+              padding:18px;
               border-radius:12px;
               background:#f2f8f4;
             "
@@ -2209,8 +2470,8 @@ async function openLesson(
 
             <p
               style="
-                margin-top:8px;
-                line-height:1.6;
+                margin-top:12px;
+                line-height:1.7;
               "
             >
 
@@ -2226,9 +2487,9 @@ async function openLesson(
 
       }
 
-      // ------------------------------------------------------
+      // ======================================================
       // KEY TERMS
-      // ------------------------------------------------------
+      // ======================================================
 
       if (
         currentLesson.key_terms
@@ -2238,8 +2499,8 @@ async function openLesson(
 
           <div
             style="
-              margin-top:15px;
-              padding:15px;
+              margin-top:20px;
+              padding:18px;
               border-radius:12px;
               background:#f7f7f7;
             "
@@ -2251,8 +2512,8 @@ async function openLesson(
 
             <p
               style="
-                margin-top:8px;
-                line-height:1.6;
+                margin-top:12px;
+                line-height:1.7;
               "
             >
 
@@ -2268,9 +2529,9 @@ async function openLesson(
 
       }
 
-      // ------------------------------------------------------
+      // ======================================================
       // PRACTICAL ACTIVITY
-      // ------------------------------------------------------
+      // ======================================================
 
       if (
         currentLesson.practical_activity
@@ -2280,8 +2541,8 @@ async function openLesson(
 
           <div
             style="
-              margin-top:15px;
-              padding:15px;
+              margin-top:20px;
+              padding:18px;
               border-radius:12px;
               background:#fff8e8;
             "
@@ -2293,8 +2554,8 @@ async function openLesson(
 
             <p
               style="
-                margin-top:8px;
-                line-height:1.6;
+                margin-top:12px;
+                line-height:1.7;
               "
             >
 
@@ -2310,9 +2571,9 @@ async function openLesson(
 
       }
 
-      // ------------------------------------------------------
+      // ======================================================
       // KNOWLEDGE CHECK
-      // ------------------------------------------------------
+      // ======================================================
 
       if (
         currentLesson.knowledge_check
@@ -2322,8 +2583,8 @@ async function openLesson(
 
           <div
             style="
-              margin-top:15px;
-              padding:15px;
+              margin-top:20px;
+              padding:18px;
               border-radius:12px;
               background:#eef5ff;
             "
@@ -2335,8 +2596,8 @@ async function openLesson(
 
             <p
               style="
-                margin-top:8px;
-                line-height:1.6;
+                margin-top:12px;
+                line-height:1.7;
               "
             >
 
@@ -2352,9 +2613,9 @@ async function openLesson(
 
       }
 
-      // ------------------------------------------------------
+      // ======================================================
       // VIDEO
-      // ------------------------------------------------------
+      // ======================================================
 
       if (
         currentLesson.video_url
@@ -2383,9 +2644,9 @@ async function openLesson(
 
       }
 
-      // ------------------------------------------------------
+      // ======================================================
       // DOCUMENT
-      // ------------------------------------------------------
+      // ======================================================
 
       if (
         currentLesson.document_url
@@ -2456,6 +2717,7 @@ async function openLesson(
     }
 
   }
+
 }
 
 // ============================================================
@@ -2482,6 +2744,7 @@ function closeLesson() {
 
   currentLesson =
     null;
+
 }
 
 if (lessonClose) {
@@ -2644,6 +2907,7 @@ async function checkLessonCompletion(
     );
 
   }
+
 }
 
 // ============================================================
@@ -2714,9 +2978,9 @@ async function completeCurrentLesson() {
       throw result.error;
     }
 
-    // --------------------------------------------------------
+    // ========================================================
     // UPDATE LOCAL PROGRESS
-    // --------------------------------------------------------
+    // ========================================================
 
     const existing =
       studentProgressCache.find(
@@ -2788,9 +3052,9 @@ async function completeCurrentLesson() {
     completeLessonButton.disabled =
       true;
 
-    // --------------------------------------------------------
+    // ========================================================
     // REFRESH DASHBOARD
-    // --------------------------------------------------------
+    // ========================================================
 
     await loadMyStudies();
 
@@ -2819,6 +3083,7 @@ async function completeCurrentLesson() {
     );
 
   }
+
 }
 
 if (completeLessonButton) {
@@ -2903,6 +3168,7 @@ async function loadAvailableCourses() {
       `;
 
       return;
+
     }
 
     availableCourses.innerHTML =
@@ -2995,6 +3261,7 @@ async function loadAvailableCourses() {
     );
 
   }
+
 }
 
 // ============================================================
@@ -3198,9 +3465,9 @@ async function initDashboard() {
       "Connecting to Funda Online Academy…"
     );
 
-    // --------------------------------------------------------
+    // ========================================================
     // AUTH
-    // --------------------------------------------------------
+    // ========================================================
 
     currentUser =
       await getLoggedInUser();
@@ -3209,9 +3476,9 @@ async function initDashboard() {
       return;
     }
 
-    // --------------------------------------------------------
+    // ========================================================
     // STUDENT
-    // --------------------------------------------------------
+    // ========================================================
 
     setStatus(
       "Finding your student profile…"
@@ -3235,21 +3502,21 @@ async function initDashboard() {
       currentStudent
     );
 
-    // --------------------------------------------------------
+    // ========================================================
     // HEADER
-    // --------------------------------------------------------
+    // ========================================================
 
     loadHeader();
 
-    // --------------------------------------------------------
+    // ========================================================
     // POLICY
-    // --------------------------------------------------------
+    // ========================================================
 
     await loadPolicyStatus();
 
-    // --------------------------------------------------------
+    // ========================================================
     // STUDIES
-    // --------------------------------------------------------
+    // ========================================================
 
     setStatus(
       "Loading your courses and lessons…"
@@ -3257,9 +3524,9 @@ async function initDashboard() {
 
     await loadMyStudies();
 
-    // --------------------------------------------------------
+    // ========================================================
     // ENROLMENTS
-    // --------------------------------------------------------
+    // ========================================================
 
     setStatus(
       "Loading your enrolments…"
@@ -3267,9 +3534,9 @@ async function initDashboard() {
 
     await loadMyEnrolments();
 
-    // --------------------------------------------------------
+    // ========================================================
     // PAYMENTS
-    // --------------------------------------------------------
+    // ========================================================
 
     setStatus(
       "Loading payment history…"
@@ -3277,15 +3544,15 @@ async function initDashboard() {
 
     await loadPayments();
 
-    // --------------------------------------------------------
+    // ========================================================
     // AVAILABLE COURSES
-    // --------------------------------------------------------
+    // ========================================================
 
     await loadAvailableCourses();
 
-    // --------------------------------------------------------
+    // ========================================================
     // READY
-    // --------------------------------------------------------
+    // ========================================================
 
     setStatus(
       "Student dashboard ready."
@@ -3439,7 +3706,7 @@ async function initDashboard() {
 }
 
 // ============================================================
-// RUN
+// RUN DASHBOARD
 // ============================================================
 
 initDashboard();
