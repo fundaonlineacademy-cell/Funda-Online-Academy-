@@ -4,20 +4,61 @@
 //
 // COMPLETE DATABASE-MATCHED VERSION
 //
-// FIXES IN THIS VERSION:
-// 1. Module buttons now target the CORRECT module.
-// 2. Modules from different courses no longer conflict.
-// 3. Each module has a unique target ID.
-// 4. Course loading is faster.
-// 5. Lessons remain connected to the correct module.
-// 6. Lesson progress remains connected to the student.
-// 7. Existing database structure is preserved.
+// THIS VERSION INCLUDES:
+//
+// ✓ Student authentication
+// ✓ Student profile
+// ✓ Approved enrolments
+// ✓ Course information
+// ✓ Study Plan
+// ✓ Practical Projects
+// ✓ Materials / Resources
+// ✓ Career Application
+// ✓ Learning Outcomes
+// ✓ Assessment Information
+// ✓ Certificate Information
+// ✓ Course Modules
+// ✓ Module Learning Outcomes
+// ✓ Lessons
+// ✓ Lesson content
+// ✓ Lesson learning objectives
+// ✓ Key terms
+// ✓ Practical activities
+// ✓ Knowledge checks
+// ✓ Lesson videos
+// ✓ Lesson documents
+// ✓ Lesson illustrations
+// ✓ Course progress
+// ✓ Completed lessons
+// ✓ Correct lesson_progress authentication ID
+// ✓ Payment history
+// ✓ Available courses
+// ✓ Policy acceptance
+// ✓ Logout
 //
 // DATABASE CONNECTION:
 //
-// auth.users.id -> students.user_id
-// students.id   -> enrollments.student_id
-// students.id   -> lesson_progress.student_id
+// auth.users.id
+//      ↓
+// students.user_id
+//
+// students.id
+//      ↓
+// enrollments.student_id
+//      ↓
+// payments.student_id
+//
+// auth.users.id
+//      ↓
+// lesson_progress.student_id
+//
+// courses.id
+//      ↓
+// course_modules.course_id
+//
+// course_modules.id
+//      ↓
+// lessons.module_id
 //
 // ============================================================
 
@@ -44,6 +85,9 @@ let currentLesson = null;
 
 let allLessonsCache = [];
 let studentProgressCache = [];
+
+let courseAssessmentCache = {};
+let studentResultsCache = [];
 
 // ============================================================
 // ELEMENTS
@@ -136,7 +180,8 @@ function money(value) {
     return "—";
   }
 
-  const number = Number(value);
+  const number =
+    Number(value);
 
   if (Number.isNaN(number)) {
     return escapeHtml(value);
@@ -159,8 +204,10 @@ function money(value) {
 function setStatus(text) {
 
   if (systemStatus) {
-    systemStatus.textContent = text;
+    systemStatus.textContent =
+      text;
   }
+
 }
 
 // ------------------------------------------------------------
@@ -195,6 +242,7 @@ function showError(
     </div>
 
   `;
+
 }
 
 // ------------------------------------------------------------
@@ -208,41 +256,260 @@ function withTimeout(
 
     promise,
 
-    new Promise((resolve, reject) => {
+    new Promise(
+      (resolve, reject) => {
 
-      setTimeout(() => {
+        setTimeout(
+          () => {
 
-        reject(
-          new Error(
-            "The database request took too long. Please refresh the page."
-          )
+            reject(
+              new Error(
+                "The database request took too long. Please refresh the page."
+              )
+            );
+
+          },
+          milliseconds
         );
 
-      }, milliseconds);
-
-    })
+      }
+    )
 
   ]);
 
 }
 
 // ============================================================
-// CREATE UNIQUE MODULE KEY
+// TEXT / ARRAY DISPLAY
 // ============================================================
-//
-// IMPORTANT FIX:
-//
-// Previously every course used:
-//
-// module-index = 0
-// module-index = 1
-// module-index = 2
-//
-// This caused buttons from different courses to interfere.
-//
-// Now every module gets a unique key based on:
-// COURSE ID + MODULE ID
-//
+
+function renderTextBlock(
+  value,
+  emptyText = ""
+) {
+
+  if (
+    value === null ||
+    value === undefined ||
+    String(value).trim() === ""
+  ) {
+
+    return emptyText
+      ? `
+        <p
+          style="
+            color:#7b8781;
+            line-height:1.6;
+          "
+        >
+          ${escapeHtml(emptyText)}
+        </p>
+      `
+      : "";
+
+  }
+
+  return String(value)
+    .split(/\n\s*\n/)
+    .map(
+      paragraph => `
+
+        <p
+          style="
+            margin:0 0 10px;
+            line-height:1.7;
+          "
+        >
+
+          ${escapeHtml(
+            paragraph
+          ).replace(
+            /\n/g,
+            "<br>"
+          )}
+
+        </p>
+
+      `
+    )
+    .join("");
+
+}
+
+// ------------------------------------------------------------
+
+function renderListOrText(
+  value,
+  emptyText = ""
+) {
+
+  if (
+    value === null ||
+    value === undefined
+  ) {
+
+    return emptyText
+      ? `
+        <p
+          style="
+            color:#7b8781;
+            line-height:1.6;
+          "
+        >
+          ${escapeHtml(emptyText)}
+        </p>
+      `
+      : "";
+
+  }
+
+  if (
+    Array.isArray(value)
+  ) {
+
+    const items =
+      value
+        .filter(
+          item =>
+            item !== null &&
+            item !== undefined &&
+            String(item).trim() !== ""
+        );
+
+    if (items.length === 0) {
+
+      return emptyText
+        ? `
+          <p
+            style="
+              color:#7b8781;
+              line-height:1.6;
+            "
+          >
+            ${escapeHtml(emptyText)}
+          </p>
+        `
+        : "";
+
+    }
+
+    return `
+
+      <ul
+        style="
+          margin:0;
+          padding-left:22px;
+          line-height:1.8;
+        "
+      >
+
+        ${items
+          .map(
+            item => `
+              <li>
+                ${escapeHtml(item)}
+              </li>
+            `
+          )
+          .join("")}
+
+      </ul>
+
+    `;
+
+  }
+
+  const text =
+    String(value).trim();
+
+  if (!text) {
+
+    return emptyText
+      ? `
+        <p
+          style="
+            color:#7b8781;
+            line-height:1.6;
+          "
+        >
+          ${escapeHtml(emptyText)}
+        </p>
+      `
+      : "";
+
+  }
+
+  const lines =
+    text
+      .split("\n")
+      .map(
+        line =>
+          line.trim()
+      )
+      .filter(Boolean);
+
+  const looksLikeList =
+    lines.length > 1 &&
+    lines.every(
+      line =>
+        /^[-•*]\s+/.test(line) ||
+        /^\d+[.)]\s+/.test(line)
+    );
+
+  if (looksLikeList) {
+
+    return `
+
+      <ul
+        style="
+          margin:0;
+          padding-left:22px;
+          line-height:1.8;
+        "
+      >
+
+        ${lines
+          .map(
+            line => {
+
+              const cleaned =
+                line
+                  .replace(
+                    /^[-•*]\s+/,
+                    ""
+                  )
+                  .replace(
+                    /^\d+[.)]\s+/,
+                    ""
+                  );
+
+              return `
+
+                <li>
+                  ${escapeHtml(cleaned)}
+                </li>
+
+              `;
+
+            }
+          )
+          .join("")}
+
+      </ul>
+
+    `;
+
+  }
+
+  return renderTextBlock(
+    text,
+    emptyText
+  );
+
+}
+
+// ============================================================
+// UNIQUE MODULE KEY
 // ============================================================
 
 function createModuleKey(
@@ -300,7 +567,9 @@ async function getLoggedInUser() {
 // STUDENT PROFILE
 // ============================================================
 
-async function loadStudentProfile(user) {
+async function loadStudentProfile(
+  user
+) {
 
   if (!user?.id) {
 
@@ -318,16 +587,16 @@ async function loadStudentProfile(user) {
 
     const rpcResult =
       await withTimeout(
-
         db.rpc(
           "get_my_student_profile"
         )
-
       );
 
     if (
       !rpcResult.error &&
-      Array.isArray(rpcResult.data) &&
+      Array.isArray(
+        rpcResult.data
+      ) &&
       rpcResult.data.length > 0
     ) {
 
@@ -434,9 +703,7 @@ async function loadStudentProfile(user) {
   }
 
   throw new Error(
-
     "Your login is working, but your student profile could not be connected to this account."
-
   );
 
 }
@@ -537,7 +804,26 @@ async function loadCourse(
 
       db
         .from("courses")
-        .select("*")
+        .select(`
+          id,
+          title,
+          slug,
+          description,
+          duration,
+          price,
+          image_url,
+          modules,
+          active,
+          created_at,
+          updated_at,
+          learning_outcomes,
+          assessment_info,
+          certificate_info,
+          study_plan,
+          practical_projects,
+          materials_required,
+          career_application
+        `)
         .eq(
           "id",
           courseId
@@ -567,7 +853,16 @@ async function loadModules(
 
       db
         .from("course_modules")
-        .select("*")
+        .select(`
+          id,
+          course_id,
+          module_number,
+          module_name,
+          description,
+          learning_outcomes,
+          created_at,
+          updated_at
+        `)
         .eq(
           "course_id",
           courseId
@@ -592,57 +887,131 @@ async function loadModules(
 // ============================================================
 // LESSONS
 // ============================================================
+//
+// IMPORTANT:
+//
+// There are more than 1,000 lessons in the database.
+//
+// Supabase/PostgREST can limit a response.
+//
+// Therefore this function loads lessons in pages instead of
+// requesting all lessons in one response.
+//
+// ============================================================
 
-async function loadLessons() {
+async function loadLessonsForModules(
+  moduleIds
+) {
 
-  const result =
-    await withTimeout(
+  if (
+    !Array.isArray(moduleIds) ||
+    moduleIds.length === 0
+  ) {
 
-      db
-        .from("lessons")
-        .select(
-          "id,module_id,lesson_number,title,content,video_url,document_url,created_at,updated_at,learning_objectives,key_terms,practical_activity,knowledge_check"
-        )
+    allLessonsCache = [];
 
-    );
+    return [];
 
-  if (result.error) {
-    throw result.error;
   }
 
-  const lessons =
-    result.data || [];
+  const lessons = [];
+
+  const pageSize = 500;
+
+  for (
+    let from = 0;
+    ;
+    from += pageSize
+  ) {
+
+    const to =
+      from +
+      pageSize -
+      1;
+
+    const result =
+      await withTimeout(
+
+        db
+          .from("lessons")
+          .select(`
+            id,
+            module_id,
+            lesson_number,
+            title,
+            content,
+            video_url,
+            document_url,
+            created_at,
+            updated_at,
+            learning_objectives,
+            key_terms,
+            practical_activity,
+            knowledge_check,
+            illustration_url,
+            illustration_caption,
+            illustration_source
+          `)
+          .in(
+            "module_id",
+            moduleIds
+          )
+          .range(
+            from,
+            to
+          )
+
+      );
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    const page =
+      result.data || [];
+
+    lessons.push(
+      ...page
+    );
+
+    if (
+      page.length <
+      pageSize
+    ) {
+
+      break;
+
+    }
+
+  }
 
   lessons.sort(
     (a, b) => {
 
-      const moduleA =
+      const moduleCompare =
         String(
           a.module_id
-        );
-
-      const moduleB =
-        String(
-          b.module_id
-        );
-
-      if (
-        moduleA === moduleB
-      ) {
-
-        return (
-          Number(
-            a.lesson_number || 0
-          ) -
-          Number(
-            b.lesson_number || 0
+        ).localeCompare(
+          String(
+            b.module_id
           )
         );
 
+      if (
+        moduleCompare !== 0
+      ) {
+
+        return moduleCompare;
+
       }
 
-      return moduleA.localeCompare(
-        moduleB
+      return (
+        Number(
+          a.lesson_number || 0
+        ) -
+        Number(
+          b.lesson_number || 0
+        )
       );
 
     }
@@ -652,7 +1021,7 @@ async function loadLessons() {
     lessons;
 
   console.log(
-    "TOTAL LESSONS LOADED:",
+    "TOTAL ENROLLED-COURSE LESSONS LOADED:",
     lessons.length
   );
 
@@ -663,10 +1032,24 @@ async function loadLessons() {
 // ============================================================
 // STUDENT PROGRESS
 // ============================================================
+//
+// IMPORTANT DATABASE FIX:
+//
+// lesson_progress.student_id references auth.users.id.
+//
+// Therefore this function MUST use:
+//
+// currentUser.id
+//
+// NOT:
+//
+// currentStudent.id
+//
+// ============================================================
 
 async function loadStudentProgress() {
 
-  if (!currentStudent?.id) {
+  if (!currentUser?.id) {
     return [];
   }
 
@@ -680,7 +1063,7 @@ async function loadStudentProgress() {
         )
         .eq(
           "student_id",
-          currentStudent.id
+          currentUser.id
         )
 
     );
@@ -712,6 +1095,154 @@ async function loadStudentProgress() {
 }
 
 // ============================================================
+// ASSESSMENTS
+// ============================================================
+
+async function loadAssessmentsForCourses(
+  courseIds
+) {
+
+  courseAssessmentCache = {};
+
+  if (
+    !Array.isArray(courseIds) ||
+    courseIds.length === 0
+  ) {
+
+    return;
+
+  }
+
+  const result =
+    await withTimeout(
+
+      db
+        .from("assessments")
+        .select(`
+          id,
+          course_id,
+          title,
+          description,
+          total_marks,
+          pass_mark,
+          created_at,
+          instructions,
+          active,
+          status,
+          updated_at
+        `)
+        .in(
+          "course_id",
+          courseIds
+        )
+        .order(
+          "created_at",
+          {
+            ascending: true
+          }
+        )
+
+    );
+
+  if (result.error) {
+
+    console.warn(
+      "Assessments could not be loaded:",
+      result.error
+    );
+
+    return;
+
+  }
+
+  (
+    result.data || []
+  ).forEach(
+    assessment => {
+
+      const key =
+        String(
+          assessment.course_id
+        );
+
+      if (
+        !courseAssessmentCache[key]
+      ) {
+
+        courseAssessmentCache[key] =
+          [];
+
+      }
+
+      courseAssessmentCache[key]
+        .push(
+          assessment
+        );
+
+    }
+  );
+
+}
+
+// ============================================================
+// STUDENT RESULTS
+// ============================================================
+
+async function loadStudentResults() {
+
+  if (!currentStudent?.id) {
+
+    studentResultsCache =
+      [];
+
+    return [];
+
+  }
+
+  const result =
+    await withTimeout(
+
+      db
+        .from("results")
+        .select(`
+          id,
+          student_id,
+          assessment_id,
+          marks_obtained,
+          percentage,
+          result_status,
+          submitted_at,
+          created_at
+        `)
+        .eq(
+          "student_id",
+          currentStudent.id
+        )
+
+    );
+
+  if (result.error) {
+
+    console.warn(
+      "Student results could not be loaded:",
+      result.error
+    );
+
+    studentResultsCache =
+      [];
+
+    return [];
+
+  }
+
+  studentResultsCache =
+    result.data || [];
+
+  return studentResultsCache;
+
+}
+
+// ============================================================
 // GET COURSE LESSONS
 // ============================================================
 
@@ -724,12 +1255,13 @@ function getCourseLessons(
     new Set(
       modules.map(
         module =>
-          String(module.id)
+          String(
+            module.id
+          )
       )
     );
 
   return allLessons
-
     .filter(
       lesson =>
         moduleIds.has(
@@ -738,7 +1270,6 @@ function getCourseLessons(
           )
         )
     )
-
     .sort(
       (a, b) =>
         Number(
@@ -761,7 +1292,6 @@ function getModuleLessons(
 ) {
 
   return allLessons
-
     .filter(
       lesson =>
         String(
@@ -771,7 +1301,6 @@ function getModuleLessons(
           module.id
         )
     )
-
     .sort(
       (a, b) =>
         Number(
@@ -785,7 +1314,7 @@ function getModuleLessons(
 }
 
 // ============================================================
-// CALCULATE COURSE PROGRESS
+// COURSE PROGRESS
 // ============================================================
 
 function calculateCourseProgress(
@@ -810,12 +1339,10 @@ function calculateCourseProgress(
     new Set(
 
       progress
-
         .filter(
           item =>
             item.completed === true
         )
-
         .map(
           item =>
             String(
@@ -863,6 +1390,487 @@ function calculateCourseProgress(
 }
 
 // ============================================================
+// COURSE INFORMATION BOX
+// ============================================================
+
+function renderCourseInformation(
+  course,
+  assessments
+) {
+
+  const learningOutcomes =
+    course.learning_outcomes;
+
+  const hasLearningOutcomes =
+    Array.isArray(
+      learningOutcomes
+    )
+      ? learningOutcomes.length > 0
+      : Boolean(
+          learningOutcomes &&
+          String(
+            learningOutcomes
+          ).trim()
+        );
+
+  const hasStudyPlan =
+    Boolean(
+      course.study_plan &&
+      String(
+        course.study_plan
+      ).trim()
+    );
+
+  const hasPractical =
+    Boolean(
+      course.practical_projects &&
+      String(
+        course.practical_projects
+      ).trim()
+    );
+
+  const hasMaterials =
+    Boolean(
+      course.materials_required &&
+      String(
+        course.materials_required
+      ).trim()
+    );
+
+  const hasCareer =
+    Boolean(
+      course.career_application &&
+      String(
+        course.career_application
+      ).trim()
+    );
+
+  const hasAssessmentInfo =
+    Boolean(
+      course.assessment_info &&
+      String(
+        course.assessment_info
+      ).trim()
+    );
+
+  const hasCertificateInfo =
+    Boolean(
+      course.certificate_info &&
+      String(
+        course.certificate_info
+      ).trim()
+    );
+
+  const hasAssessments =
+    Array.isArray(
+      assessments
+    ) &&
+    assessments.length > 0;
+
+  return `
+
+    <div
+      class="course-information-section"
+      style="
+        margin-top:22px;
+      "
+    >
+
+      <h3
+        style="
+          margin-bottom:14px;
+        "
+      >
+        📋 Your Course Information
+      </h3>
+
+      <div
+        style="
+          display:grid;
+          grid-template-columns:
+            repeat(auto-fit,minmax(240px,1fr));
+          gap:14px;
+        "
+      >
+
+        ${
+          hasStudyPlan
+            ? `
+              <div
+                style="
+                  padding:16px;
+                  border-radius:14px;
+                  background:#f4f8f5;
+                  border:1px solid #dce8df;
+                "
+              >
+
+                <h4>
+                  📅 Study Plan
+                </h4>
+
+                <div
+                  style="
+                    margin-top:9px;
+                  "
+                >
+
+                  ${renderListOrText(
+                    course.study_plan
+                  )}
+
+                </div>
+
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          hasPractical
+            ? `
+              <div
+                style="
+                  padding:16px;
+                  border-radius:14px;
+                  background:#fff8ed;
+                  border:1px solid #f1dfb9;
+                "
+              >
+
+                <h4>
+                  🛠️ Practical Project
+                </h4>
+
+                <div
+                  style="
+                    margin-top:9px;
+                  "
+                >
+
+                  ${renderListOrText(
+                    course.practical_projects
+                  )}
+
+                </div>
+
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          hasMaterials
+            ? `
+              <div
+                style="
+                  padding:16px;
+                  border-radius:14px;
+                  background:#f5f6fa;
+                  border:1px solid #e0e3ea;
+                "
+              >
+
+                <h4>
+                  📚 Materials / Resources
+                </h4>
+
+                <div
+                  style="
+                    margin-top:9px;
+                  "
+                >
+
+                  ${renderListOrText(
+                    course.materials_required
+                  )}
+
+                </div>
+
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          hasCareer
+            ? `
+              <div
+                style="
+                  padding:16px;
+                  border-radius:14px;
+                  background:#f4f1fb;
+                  border:1px solid #e2d9f2;
+                "
+              >
+
+                <h4>
+                  💼 Career Application
+                </h4>
+
+                <div
+                  style="
+                    margin-top:9px;
+                  "
+                >
+
+                  ${renderListOrText(
+                    course.career_application
+                  )}
+
+                </div>
+
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          hasLearningOutcomes
+            ? `
+              <div
+                style="
+                  padding:16px;
+                  border-radius:14px;
+                  background:#eef7ff;
+                  border:1px solid #d5e8f7;
+                "
+              >
+
+                <h4>
+                  🎯 Learning Outcomes
+                </h4>
+
+                <div
+                  style="
+                    margin-top:9px;
+                  "
+                >
+
+                  ${renderListOrText(
+                    learningOutcomes
+                  )}
+
+                </div>
+
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          hasAssessmentInfo ||
+          hasAssessments
+            ? `
+              <div
+                style="
+                  padding:16px;
+                  border-radius:14px;
+                  background:#fff3f3;
+                  border:1px solid #efdada;
+                "
+              >
+
+                <h4>
+                  📝 Assessment Information
+                </h4>
+
+                ${
+                  hasAssessmentInfo
+                    ? `
+                      <div
+                        style="
+                          margin-top:9px;
+                        "
+                      >
+
+                        ${renderListOrText(
+                          course.assessment_info
+                        )}
+
+                      </div>
+                    `
+                    : ""
+                }
+
+                ${
+                  hasAssessments
+                    ? `
+                      <div
+                        style="
+                          margin-top:12px;
+                        "
+                      >
+
+                        <strong>
+                          Assessments:
+                        </strong>
+
+                        <ul
+                          style="
+                            margin-top:7px;
+                            padding-left:22px;
+                            line-height:1.7;
+                          "
+                        >
+
+                          ${assessments
+                            .map(
+                              assessment => `
+
+                                <li>
+
+                                  ${escapeHtml(
+                                    assessment.title ||
+                                    "Assessment"
+                                  )}
+
+                                  ${
+                                    assessment.total_marks !==
+                                    null &&
+                                    assessment.total_marks !==
+                                    undefined
+                                      ? `
+                                        —
+                                        ${escapeHtml(
+                                          assessment.total_marks
+                                        )}
+                                        marks
+                                      `
+                                      : ""
+                                  }
+
+                                  ${
+                                    assessment.pass_mark !==
+                                    null &&
+                                    assessment.pass_mark !==
+                                    undefined
+                                      ? `
+                                        |
+                                        Pass:
+                                        ${escapeHtml(
+                                          assessment.pass_mark
+                                        )}
+                                      `
+                                      : ""
+                                  }
+
+                                </li>
+
+                              `
+                            )
+                            .join("")}
+
+                        </ul>
+
+                      </div>
+                    `
+                    : ""
+                }
+
+              </div>
+            `
+            : ""
+        }
+
+        ${
+          hasCertificateInfo
+            ? `
+              <div
+                style="
+                  padding:16px;
+                  border-radius:14px;
+                  background:#fffbea;
+                  border:1px solid #eee2a9;
+                "
+              >
+
+                <h4>
+                  🏆 Certificate Information
+                </h4>
+
+                <div
+                  style="
+                    margin-top:9px;
+                  "
+                >
+
+                  ${renderListOrText(
+                    course.certificate_info
+                  )}
+
+                </div>
+
+              </div>
+            `
+            : ""
+        }
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+// ============================================================
+// RENDER MODULE LEARNING OUTCOMES
+// ============================================================
+
+function renderModuleLearningOutcomes(
+  module
+) {
+
+  if (
+    !module.learning_outcomes ||
+    (
+      Array.isArray(
+        module.learning_outcomes
+      ) &&
+      module.learning_outcomes.length === 0
+    )
+  ) {
+
+    return "";
+
+  }
+
+  return `
+
+    <div
+      style="
+        margin-bottom:16px;
+        padding:14px;
+        border-radius:12px;
+        background:#eef7ff;
+        border:1px solid #d9eaf8;
+      "
+    >
+
+      <strong>
+        🎯 Module Learning Outcomes
+      </strong>
+
+      <div
+        style="
+          margin-top:8px;
+        "
+      >
+
+        ${renderListOrText(
+          module.learning_outcomes
+        )}
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+// ============================================================
 // RENDER COURSE
 // ============================================================
 
@@ -894,12 +1902,10 @@ function renderCourse(
     new Set(
 
       progress
-
         .filter(
           item =>
             item.completed === true
         )
-
         .map(
           item =>
             String(
@@ -909,6 +1915,13 @@ function renderCourse(
 
     );
 
+  const assessments =
+    courseAssessmentCache[
+      String(
+        enrollment.course_id
+      )
+    ] || [];
+
   const card =
     document.createElement(
       "div"
@@ -917,10 +1930,6 @@ function renderCourse(
   card.className =
     "study-card";
 
-  // IMPORTANT:
-  // Store the course ID on the card.
-  // This helps keep every course completely independent.
-
   card.setAttribute(
     "data-course-id",
     String(
@@ -928,12 +1937,12 @@ function renderCourse(
     )
   );
 
-  let modulesHtml =
-    "";
-
   // ==========================================================
   // MODULES
   // ==========================================================
+
+  let modulesHtml =
+    "";
 
   if (modules.length === 0) {
 
@@ -957,13 +1966,8 @@ function renderCourse(
 
     modulesHtml =
       modules
-
         .map(
           module => {
-
-            // ------------------------------------------------
-            // UNIQUE MODULE KEY
-            // ------------------------------------------------
 
             const moduleKey =
               createModuleKey(
@@ -1001,7 +2005,6 @@ function renderCourse(
                 <div class="lesson-list">
 
                   ${moduleLessons
-
                     .map(
                       lesson => {
 
@@ -1025,9 +2028,13 @@ function renderCourse(
                             "
                           >
 
-                            <div class="lesson-top">
+                            <div
+                              class="lesson-top"
+                            >
 
-                              <span class="lesson-number">
+                              <span
+                                class="lesson-number"
+                              >
 
                                 ${escapeHtml(
                                   lesson.lesson_number
@@ -1035,9 +2042,13 @@ function renderCourse(
 
                               </span>
 
-                              <div class="lesson-main">
+                              <div
+                                class="lesson-main"
+                              >
 
-                                <div class="lesson-title">
+                                <div
+                                  class="lesson-title"
+                                >
 
                                   ${
                                     completed
@@ -1052,7 +2063,9 @@ function renderCourse(
 
                                 </div>
 
-                                <div class="lesson-description">
+                                <div
+                                  class="lesson-description"
+                                >
 
                                   Lesson
                                   ${escapeHtml(
@@ -1061,7 +2074,9 @@ function renderCourse(
 
                                 </div>
 
-                                <div class="lesson-actions">
+                                <div
+                                  class="lesson-actions"
+                                >
 
                                   <button
                                     type="button"
@@ -1110,7 +2125,6 @@ function renderCourse(
 
                       }
                     )
-
                     .join("")}
 
                 </div>
@@ -1119,13 +2133,11 @@ function renderCourse(
 
             }
 
-            // =================================================
-            // MODULE CARD
-            // =================================================
-
             return `
 
-              <div class="module-card">
+              <div
+                class="module-card"
+              >
 
                 <button
                   type="button"
@@ -1133,11 +2145,16 @@ function renderCourse(
                   data-module-target="${escapeHtml(
                     moduleKey
                   )}"
+                  aria-expanded="false"
                 >
 
-                  <span class="module-left">
+                  <span
+                    class="module-left"
+                  >
 
-                    <span class="module-number">
+                    <span
+                      class="module-number"
+                    >
 
                       ${escapeHtml(
                         module.module_number
@@ -1145,7 +2162,9 @@ function renderCourse(
 
                     </span>
 
-                    <span class="module-name">
+                    <span
+                      class="module-name"
+                    >
 
                       ${escapeHtml(
                         module.module_name
@@ -1155,7 +2174,9 @@ function renderCourse(
 
                   </span>
 
-                  <span class="module-icon">
+                  <span
+                    class="module-icon"
+                  >
                     +
                   </span>
 
@@ -1189,6 +2210,10 @@ function renderCourse(
                       : ""
                   }
 
+                  ${renderModuleLearningOutcomes(
+                    module
+                  )}
+
                   <p
                     style="
                       margin-bottom:14px;
@@ -1220,7 +2245,6 @@ function renderCourse(
 
           }
         )
-
         .join("");
 
   }
@@ -1231,11 +2255,49 @@ function renderCourse(
 
   card.innerHTML = `
 
-    <span class="funda-status approved">
+    <span
+      class="funda-status approved"
+    >
       ✓ Approved
     </span>
 
-    <h3 class="study-title">
+    ${
+      course?.image_url
+        ? `
+          <div
+            style="
+              margin-top:14px;
+              border-radius:14px;
+              overflow:hidden;
+            "
+          >
+
+            <img
+              src="${escapeHtml(
+                course.image_url
+              )}"
+              alt="${escapeHtml(
+                course.title ||
+                "Course"
+              )}"
+              style="
+                width:100%;
+                max-height:260px;
+                object-fit:cover;
+                display:block;
+              "
+              loading="lazy"
+            >
+
+          </div>
+        `
+        : ""
+    }
+
+    <h3
+      class="study-title"
+      style="margin-top:14px"
+    >
 
       ${escapeHtml(
         course?.title ||
@@ -1244,7 +2306,9 @@ function renderCourse(
 
     </h3>
 
-    <p class="study-description">
+    <p
+      class="study-description"
+    >
 
       ${escapeHtml(
         course?.description ||
@@ -1256,7 +2320,9 @@ function renderCourse(
     <div class="study-meta">
 
       <span>
-        💰 ${money(course?.price)}
+        💰 ${money(
+          course?.price
+        )}
       </span>
 
       <span>
@@ -1299,7 +2365,9 @@ function renderCourse(
 
     </div>
 
-    <div class="study-button">
+    <div
+      class="study-button"
+    >
 
       <button
         type="button"
@@ -1312,11 +2380,31 @@ function renderCourse(
 
     </div>
 
-    <div class="modules-container">
+    <!-- =====================================================
+         COURSE INFORMATION
+         ===================================================== -->
 
-      <h3 class="modules-heading">
+    ${renderCourseInformation(
+      course,
+      assessments
+    )}
 
-        📖 Course Modules
+    <!-- =====================================================
+         MODULES
+         ===================================================== -->
+
+    <div
+      class="modules-container"
+      style="
+        margin-top:24px;
+      "
+    >
+
+      <h3
+        class="modules-heading"
+      >
+
+        📖 Modules & Lessons
 
       </h3>
 
@@ -1324,12 +2412,23 @@ function renderCourse(
 
     </div>
 
-    <div class="progress-box">
+    <!-- =====================================================
+         PROGRESS
+         ===================================================== -->
 
-      <div class="progress-label">
+    <div
+      class="progress-box"
+      style="
+        margin-top:24px;
+      "
+    >
+
+      <div
+        class="progress-label"
+      >
 
         <span>
-          Course Progress
+          📊 Course Progress
         </span>
 
         <span>
@@ -1338,7 +2437,9 @@ function renderCourse(
 
       </div>
 
-      <div class="progress-track">
+      <div
+        class="progress-track"
+      >
 
         <div
           class="progress-bar"
@@ -1480,17 +2581,26 @@ async function loadMyStudies() {
 
         <div class="empty-study">
 
-          <div style="font-size:48px">
+          <div
+            style="font-size:48px"
+          >
             📚
           </div>
 
-          <h3 style="margin-top:10px">
+          <h3
+            style="margin-top:10px"
+          >
 
             No approved courses yet
 
           </h3>
 
-          <p style="margin-top:8px;line-height:1.6">
+          <p
+            style="
+              margin-top:8px;
+              line-height:1.6;
+            "
+          >
 
             Your student profile is connected.
 
@@ -1510,35 +2620,11 @@ async function loadMyStudies() {
     }
 
     // ========================================================
-    // LOAD LESSONS ONCE
+    // LOAD MODULES FIRST
     // ========================================================
 
     setStatus(
-      "Loading lessons…"
-    );
-
-    const allLessons =
-      await loadLessons();
-
-    // ========================================================
-    // LOAD PROGRESS ONCE
-    // ========================================================
-
-    const progress =
-      await loadStudentProgress();
-
-    studyList.innerHTML =
-      "";
-
-    // ========================================================
-    // LOAD COURSES IN PARALLEL
-    //
-    // This is faster than waiting for one course before
-    // loading the next course.
-    // ========================================================
-
-    setStatus(
-      "Loading your courses…"
+      "Loading course modules…"
     );
 
     const courseResults =
@@ -1588,9 +2674,90 @@ async function loadMyStudies() {
 
       );
 
+    const validCourseResults =
+      courseResults.filter(
+        result =>
+          !result.error &&
+          result.course
+      );
+
     // ========================================================
-    // RENDER COURSES
+    // COLLECT MODULE IDS
     // ========================================================
+
+    const allModuleIds =
+      [];
+
+    validCourseResults.forEach(
+      result => {
+
+        result.modules.forEach(
+          module => {
+
+            allModuleIds.push(
+              module.id
+            );
+
+          }
+        );
+
+      }
+    );
+
+    // ========================================================
+    // LOAD LESSONS ONLY FOR ENROLLED COURSES
+    // ========================================================
+
+    setStatus(
+      "Loading your lessons…"
+    );
+
+    const allLessons =
+      await loadLessonsForModules(
+        allModuleIds
+      );
+
+    // ========================================================
+    // LOAD PROGRESS
+    // ========================================================
+
+    setStatus(
+      "Loading your progress…"
+    );
+
+    const progress =
+      await loadStudentProgress();
+
+    // ========================================================
+    // LOAD ASSESSMENTS
+    // ========================================================
+
+    const courseIds =
+      validCourseResults.map(
+        result =>
+          result.course.id
+      );
+
+    setStatus(
+      "Loading assessment information…"
+    );
+
+    await loadAssessmentsForCourses(
+      courseIds
+    );
+
+    // ========================================================
+    // LOAD RESULTS
+    // ========================================================
+
+    await loadStudentResults();
+
+    // ========================================================
+    // RENDER
+    // ========================================================
+
+    studyList.innerHTML =
+      "";
 
     courseResults.forEach(
       result => {
@@ -1611,12 +2778,12 @@ async function loadMyStudies() {
           errorCard.innerHTML = `
 
             <strong>
-
               ⚠️ Course could not be loaded
-
             </strong>
 
-            <p style="margin-top:8px">
+            <p
+              style="margin-top:8px"
+            >
 
               ${escapeHtml(
                 result.error?.message ||
@@ -1653,7 +2820,7 @@ async function loadMyStudies() {
     );
 
     // ========================================================
-    // SET UP BUTTONS
+    // BUTTONS
     // ========================================================
 
     setupModuleButtons();
@@ -1725,7 +2892,9 @@ async function loadMyEnrolments() {
             No enrolments found
           </h3>
 
-          <p style="margin-top:8px">
+          <p
+            style="margin-top:8px"
+          >
 
             Your student profile is connected.
 
@@ -1738,10 +2907,6 @@ async function loadMyEnrolments() {
       return;
 
     }
-
-    // ========================================================
-    // LOAD COURSE INFORMATION IN PARALLEL
-    // ========================================================
 
     const cards =
       await Promise.all(
@@ -1785,7 +2950,9 @@ async function loadMyEnrolments() {
 
             return `
 
-              <div class="card">
+              <div
+                class="card"
+              >
 
                 <span
                   class="
@@ -1808,7 +2975,9 @@ async function loadMyEnrolments() {
 
                 </span>
 
-                <h3 style="margin-top:10px">
+                <h3
+                  style="margin-top:10px"
+                >
 
                   ${escapeHtml(
                     name
@@ -1816,7 +2985,9 @@ async function loadMyEnrolments() {
 
                 </h3>
 
-                <p style="margin-top:8px">
+                <p
+                  style="margin-top:8px"
+                >
 
                   ${
                     approved
@@ -1828,9 +2999,7 @@ async function loadMyEnrolments() {
 
                 ${
                   enrollment.enrolled_at
-
                     ? `
-
                       <p
                         style="
                           margin-top:8px;
@@ -1847,9 +3016,7 @@ async function loadMyEnrolments() {
                         )}
 
                       </p>
-
                     `
-
                     : ""
                 }
 
@@ -1858,7 +3025,6 @@ async function loadMyEnrolments() {
                   enrollment.amount !== undefined
 
                     ? `
-
                       <p
                         style="
                           margin-top:8px;
@@ -1873,7 +3039,6 @@ async function loadMyEnrolments() {
                         )}
 
                       </p>
-
                     `
 
                     : ""
@@ -1985,7 +3150,9 @@ async function loadPayments() {
         .map(
           payment => `
 
-            <div class="card">
+            <div
+              class="card"
+            >
 
               <h3>
 
@@ -1995,7 +3162,9 @@ async function loadPayments() {
 
               </h3>
 
-              <p style="margin-top:8px">
+              <p
+                style="margin-top:8px"
+              >
 
                 💳
 
@@ -2006,7 +3175,9 @@ async function loadPayments() {
 
               </p>
 
-              <p style="margin-top:8px">
+              <p
+                style="margin-top:8px"
+              >
 
                 Status:
 
@@ -2020,6 +3191,52 @@ async function loadPayments() {
                 </strong>
 
               </p>
+
+              ${
+                payment.notes
+                  ? `
+                    <p
+                      style="
+                        margin-top:8px;
+                        line-height:1.6;
+                      "
+                    >
+
+                      📝
+
+                      ${escapeHtml(
+                        payment.notes
+                      )}
+
+                    </p>
+                  `
+                  : ""
+              }
+
+              ${
+                payment.proof_url
+                  ? `
+                    <p
+                      style="margin-top:10px"
+                    >
+
+                      <a
+                        href="${escapeHtml(
+                          payment.proof_url
+                        )}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn green"
+                      >
+
+                        📄 View Payment Proof
+
+                      </a>
+
+                    </p>
+                  `
+                  : ""
+              }
 
               <p
                 style="
@@ -2066,28 +3283,6 @@ async function loadPayments() {
 // ============================================================
 // MODULE BUTTONS
 // ============================================================
-//
-// IMPORTANT FIX:
-//
-// OLD METHOD:
-//
-// document.querySelector(
-//   `[data-module-content="${index}"]`
-// )
-//
-// That always found the FIRST matching module on the page.
-//
-// NEW METHOD:
-//
-// Each button contains the EXACT ID of its own module.
-//
-// Example:
-//
-// data-module-target="module-courseID-moduleID"
-//
-// Therefore every course/module opens independently.
-//
-// ============================================================
 
 function setupModuleButtons() {
 
@@ -2097,9 +3292,6 @@ function setupModuleButtons() {
     )
     .forEach(
       button => {
-
-        // Prevent duplicate listeners if this function
-        // is ever called again.
 
         if (
           button.dataset.moduleReady ===
@@ -2128,10 +3320,6 @@ function setupModuleButtons() {
             if (!targetId) {
               return;
             }
-
-            // =================================================
-            // FIND THE EXACT MODULE
-            // =================================================
 
             const content =
               document.getElementById(
@@ -2171,10 +3359,8 @@ function setupModuleButtons() {
               );
 
               if (icon) {
-
                 icon.textContent =
                   "+";
-
               }
 
             } else {
@@ -2189,10 +3375,8 @@ function setupModuleButtons() {
               );
 
               if (icon) {
-
                 icon.textContent =
                   "−";
-
               }
 
             }
@@ -2269,9 +3453,13 @@ function formatLessonContent(
 
     return `
 
-      <div class="empty-study">
+      <div
+        class="empty-study"
+      >
 
-        <div style="font-size:45px">
+        <div
+          style="font-size:45px"
+        >
           📖
         </div>
 
@@ -2289,7 +3477,9 @@ function formatLessonContent(
     String(value);
 
   if (
-    /<[a-z][\s\S]*>/i.test(text)
+    /<[a-z][\s\S]*>/i.test(
+      text
+    )
   ) {
 
     return text;
@@ -2297,9 +3487,7 @@ function formatLessonContent(
   }
 
   return text
-
     .split(/\n\s*\n/)
-
     .map(
       paragraph => `
 
@@ -2316,7 +3504,6 @@ function formatLessonContent(
 
       `
     )
-
     .join("");
 
 }
@@ -2396,9 +3583,24 @@ async function openLesson(
 
         db
           .from("lessons")
-          .select(
-            "id,module_id,lesson_number,title,content,video_url,document_url,created_at,updated_at,learning_objectives,key_terms,practical_activity,knowledge_check"
-          )
+          .select(`
+            id,
+            module_id,
+            lesson_number,
+            title,
+            content,
+            video_url,
+            document_url,
+            created_at,
+            updated_at,
+            learning_objectives,
+            key_terms,
+            practical_activity,
+            knowledge_check,
+            illustration_url,
+            illustration_caption,
+            illustration_source
+          `)
           .eq(
             "id",
             lessonId
@@ -2446,7 +3648,90 @@ async function openLesson(
         );
 
       // ======================================================
-      // OBJECTIVES
+      // ILLUSTRATION
+      // ======================================================
+
+      if (
+        currentLesson.illustration_url
+      ) {
+
+        html += `
+
+          <div
+            style="
+              margin-top:22px;
+              text-align:center;
+            "
+          >
+
+            <img
+              src="${escapeHtml(
+                currentLesson.illustration_url
+              )}"
+              alt="${escapeHtml(
+                currentLesson.illustration_caption ||
+                currentLesson.title ||
+                "Lesson illustration"
+              )}"
+              style="
+                width:100%;
+                max-width:850px;
+                border-radius:14px;
+                display:block;
+                margin:0 auto;
+              "
+              loading="lazy"
+            >
+
+            ${
+              currentLesson.illustration_caption
+                ? `
+                  <p
+                    style="
+                      margin-top:8px;
+                      color:#68766f;
+                      font-size:13px;
+                    "
+                  >
+
+                    ${escapeHtml(
+                      currentLesson.illustration_caption
+                    )}
+
+                  </p>
+                `
+                : ""
+            }
+
+            ${
+              currentLesson.illustration_source
+                ? `
+                  <p
+                    style="
+                      margin-top:4px;
+                      color:#8a948e;
+                      font-size:12px;
+                    "
+                  >
+
+                    Source:
+                    ${escapeHtml(
+                      currentLesson.illustration_source
+                    )}
+
+                  </p>
+                `
+                : ""
+            }
+
+          </div>
+
+        `;
+
+      }
+
+      // ======================================================
+      // LEARNING OBJECTIVES
       // ======================================================
 
       if (
@@ -2468,18 +3753,18 @@ async function openLesson(
               🎯 Learning Objectives
             </h3>
 
-            <p
+            <div
               style="
                 margin-top:12px;
                 line-height:1.7;
               "
             >
 
-              ${escapeHtml(
+              ${renderListOrText(
                 currentLesson.learning_objectives
               )}
 
-            </p>
+            </div>
 
           </div>
 
@@ -2510,18 +3795,18 @@ async function openLesson(
               🔑 Key Terms
             </h3>
 
-            <p
+            <div
               style="
                 margin-top:12px;
                 line-height:1.7;
               "
             >
 
-              ${escapeHtml(
+              ${renderListOrText(
                 currentLesson.key_terms
               )}
 
-            </p>
+            </div>
 
           </div>
 
@@ -2552,18 +3837,18 @@ async function openLesson(
               🛠️ Practical Activity
             </h3>
 
-            <p
+            <div
               style="
                 margin-top:12px;
                 line-height:1.7;
               "
             >
 
-              ${escapeHtml(
+              ${renderListOrText(
                 currentLesson.practical_activity
               )}
 
-            </p>
+            </div>
 
           </div>
 
@@ -2594,18 +3879,18 @@ async function openLesson(
               📝 Knowledge Check
             </h3>
 
-            <p
+            <div
               style="
                 margin-top:12px;
                 line-height:1.7;
               "
             >
 
-              ${escapeHtml(
+              ${renderListOrText(
                 currentLesson.knowledge_check
               )}
 
-            </p>
+            </div>
 
           </div>
 
@@ -2623,7 +3908,9 @@ async function openLesson(
 
         html += `
 
-          <div style="margin-top:20px">
+          <div
+            style="margin-top:20px"
+          >
 
             <a
               href="${escapeHtml(
@@ -2654,7 +3941,9 @@ async function openLesson(
 
         html += `
 
-          <div style="margin-top:12px">
+          <div
+            style="margin-top:12px"
+          >
 
             <a
               href="${escapeHtml(
@@ -2695,13 +3984,17 @@ async function openLesson(
 
       lessonViewerContent.innerHTML = `
 
-        <div class="error-study">
+        <div
+          class="error-study"
+        >
 
           <strong>
             ⚠️ Lesson could not be opened
           </strong>
 
-          <p style="margin-top:8px">
+          <p
+            style="margin-top:8px"
+          >
 
             ${escapeHtml(
               error.message ||
@@ -2803,8 +4096,11 @@ async function checkLessonCompletion(
   lessonId
 ) {
 
+  // IMPORTANT:
+  // lesson_progress.student_id = auth.users.id
+
   if (
-    !currentStudent?.id ||
+    !currentUser?.id ||
     !lessonId
   ) {
 
@@ -2824,7 +4120,7 @@ async function checkLessonCompletion(
           )
           .eq(
             "student_id",
-            currentStudent.id
+            currentUser.id
           )
           .eq(
             "lesson_id",
@@ -2916,13 +4212,16 @@ async function checkLessonCompletion(
 
 async function completeCurrentLesson() {
 
+  // IMPORTANT:
+  // lesson_progress.student_id must be auth.users.id
+
   if (
-    !currentStudent?.id ||
+    !currentUser?.id ||
     !currentLesson?.id
   ) {
 
     alert(
-      "Your student profile could not be confirmed. Please log in again."
+      "Your student login could not be confirmed. Please log in again."
     );
 
     return;
@@ -2951,7 +4250,7 @@ async function completeCurrentLesson() {
 
           {
             student_id:
-              currentStudent.id,
+              currentUser.id,
 
             lesson_id:
               currentLesson.id,
@@ -2995,6 +4294,9 @@ async function completeCurrentLesson() {
 
     if (existing) {
 
+      existing.student_id =
+        currentUser.id;
+
       existing.completed =
         true;
 
@@ -3009,7 +4311,7 @@ async function completeCurrentLesson() {
       studentProgressCache.push({
 
         student_id:
-          currentStudent.id,
+          currentUser.id,
 
         lesson_id:
           currentLesson.id,
@@ -3053,7 +4355,7 @@ async function completeCurrentLesson() {
       true;
 
     // ========================================================
-    // REFRESH DASHBOARD
+    // REFRESH COURSE PROGRESS
     // ========================================================
 
     await loadMyStudies();
@@ -3124,9 +4426,23 @@ async function loadAvailableCourses() {
 
         db
           .from("courses")
-          .select(
-            "id,title,slug,description,duration,price,image_url,active,learning_outcomes,assessment_info,certificate_info"
-          )
+          .select(`
+            id,
+            title,
+            slug,
+            description,
+            duration,
+            price,
+            image_url,
+            active,
+            learning_outcomes,
+            assessment_info,
+            certificate_info,
+            study_plan,
+            practical_projects,
+            materials_required,
+            career_application
+          `)
           .eq(
             "active",
             true
@@ -3155,7 +4471,9 @@ async function loadAvailableCourses() {
 
         <div class="empty-study">
 
-          <div style="font-size:45px">
+          <div
+            style="font-size:45px"
+          >
             📚
           </div>
 
@@ -3173,17 +4491,48 @@ async function loadAvailableCourses() {
 
     availableCourses.innerHTML =
       courses
-
         .map(
           course => `
 
-            <div class="card available-course-card">
+            <div
+              class="
+                card
+                available-course-card
+              "
+            >
 
-              <span class="available-badge">
+              <span
+                class="available-badge"
+              >
                 ✓ Available
               </span>
 
-              <h3 style="margin-top:10px">
+              ${
+                course.image_url
+                  ? `
+                    <img
+                      src="${escapeHtml(
+                        course.image_url
+                      )}"
+                      alt="${escapeHtml(
+                        course.title
+                      )}"
+                      style="
+                        width:100%;
+                        max-height:220px;
+                        object-fit:cover;
+                        border-radius:12px;
+                        margin-top:12px;
+                      "
+                      loading="lazy"
+                    >
+                  `
+                  : ""
+              }
+
+              <h3
+                style="margin-top:10px"
+              >
 
                 ${escapeHtml(
                   course.title
@@ -3206,7 +4555,9 @@ async function loadAvailableCourses() {
 
               </p>
 
-              <div class="course-information">
+              <div
+                class="course-information"
+              >
 
                 <span>
                   💰 ${money(
@@ -3230,10 +4581,112 @@ async function loadAvailableCourses() {
 
               </div>
 
+              ${
+                course.learning_outcomes
+                  ? `
+                    <div
+                      style="
+                        margin-top:14px;
+                        padding:14px;
+                        background:#eef7ff;
+                        border-radius:12px;
+                      "
+                    >
+
+                      <strong>
+                        🎯 Learning Outcomes
+                      </strong>
+
+                      <div
+                        style="
+                          margin-top:8px;
+                        "
+                      >
+
+                        ${renderListOrText(
+                          course.learning_outcomes
+                        )}
+
+                      </div>
+
+                    </div>
+                  `
+                  : ""
+              }
+
+              ${
+                course.assessment_info
+                  ? `
+                    <div
+                      style="
+                        margin-top:12px;
+                        padding:14px;
+                        background:#fff3f3;
+                        border-radius:12px;
+                      "
+                    >
+
+                      <strong>
+                        📝 Assessment
+                      </strong>
+
+                      <div
+                        style="
+                          margin-top:8px;
+                        "
+                      >
+
+                        ${renderListOrText(
+                          course.assessment_info
+                        )}
+
+                      </div>
+
+                    </div>
+                  `
+                  : ""
+              }
+
+              ${
+                course.certificate_info
+                  ? `
+                    <div
+                      style="
+                        margin-top:12px;
+                        padding:14px;
+                        background:#fffbea;
+                        border-radius:12px;
+                      "
+                    >
+
+                      <strong>
+                        🏆 Certificate
+                      </strong>
+
+                      <div
+                        style="
+                          margin-top:8px;
+                        "
+                      >
+
+                        ${renderListOrText(
+                          course.certificate_info
+                        )}
+
+                      </div>
+
+                    </div>
+                  `
+                  : ""
+              }
+
               <button
                 type="button"
                 class="btn green"
                 disabled
+                style="
+                  margin-top:16px;
+                "
               >
 
                 ✓ Available
@@ -3244,7 +4697,6 @@ async function loadAvailableCourses() {
 
           `
         )
-
         .join("");
 
   } catch (error) {
@@ -3306,7 +4758,9 @@ async function loadPolicyStatus() {
     currentUser.id;
 
   if (
-    localStorage.getItem(key) ===
+    localStorage.getItem(
+      key
+    ) ===
     "true"
   ) {
 
@@ -3548,6 +5002,10 @@ async function initDashboard() {
     // AVAILABLE COURSES
     // ========================================================
 
+    setStatus(
+      "Loading available courses…"
+    );
+
     await loadAvailableCourses();
 
     // ========================================================
@@ -3604,7 +5062,9 @@ async function initDashboard() {
 
       studyList.innerHTML = `
 
-        <div class="error-study">
+        <div
+          class="error-study"
+        >
 
           <div
             style="
@@ -3665,13 +5125,17 @@ async function initDashboard() {
 
       enrolmentsContainer.innerHTML = `
 
-        <div class="error-study">
+        <div
+          class="error-study"
+        >
 
           <strong>
             ⚠️ Enrolments could not be loaded
           </strong>
 
-          <p style="margin-top:10px">
+          <p
+            style="margin-top:10px"
+          >
 
             ${escapeHtml(
               message
@@ -3689,7 +5153,9 @@ async function initDashboard() {
 
       paymentsContainer.innerHTML = `
 
-        <div class="error-study">
+        <div
+          class="error-study"
+        >
 
           <strong>
             ⚠️ Payment history could not be loaded
