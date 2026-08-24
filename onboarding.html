@@ -1,0 +1,18 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Complete Enrollment - Funda</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/@supabase/supabase-js@2"></script></head>
+<body class="bg-[#EEF3FF] min-h-screen"><div class="max-w-4xl mx-auto p-6"><div class="bg-white rounded-[20px] shadow-xl p-8 mt-6">
+<h1 class="text-3xl font-extrabold text-[#0A2A7A]">Complete Enrollment</h1>
+<div id="step1" class="mt-8"><h3 class="font-bold">📚 Choose Course</h3><select id="course_id" class="w-full border rounded-xl p-4 mt-3"></select><button onclick="showStep(2)" class="bg-[#2563EB] text-white px-8 py-3 rounded-xl font-bold mt-4">Continue →</button></div>
+<div id="step2" class="hidden mt-8"><h3 class="font-bold">🏦 Banking Details</h3><div class="bg-[#F0F6FF] border-2 border-[#2563EB] rounded-xl p-6 mt-3"><p><b>Bank:</b> FNB / Capitec</p><p><b>Account Name:</b> Funda Online Academy</p><p><b>Account No:</b> 628 456 789 01</p><p><b>Branch:</b> 250655</p><p><b>Ref:</b> Your Email</p></div><label class="flex gap-2 mt-4"><input type="checkbox" id="bank_confirm"> I have noted banking</label><button onclick="showStep(3)" class="bg-[#2563EB] text-white px-8 py-3 rounded-xl mt-4">I Have Paid →</button></div>
+<div id="step3" class="hidden mt-8"><h3 class="font-bold">📄 Terms</h3><div class="h-32 border rounded-xl p-4 text-sm mt-3">Fees non-refundable after 7 days. Certificates after 80% completion. Do not share login.</div><label class="flex gap-2 mt-4"><input type="checkbox" id="terms"> I Accept Terms</label><button onclick="showStep(4)" class="bg-[#2563EB] text-white px-8 py-3 rounded-xl mt-4">Accept →</button></div>
+<div id="step4" class="hidden mt-8"><h3 class="font-bold">📤 Upload Proof</h3><input type="file" id="proof" class="w-full border rounded-xl p-4 mt-3"><button onclick="submitEnrollment()" id="submitBtn" class="bg-[#0A2A7A] text-white px-8 py-4 rounded-xl font-bold mt-4 w-full">Submit for Verification</button></div>
+</div></div>
+<script>
+const supabaseClient=supabase.createClient("https://nzwfowwoazmpnwfrednh.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU");
+function showStep(n){[1,2,3,4].forEach(i=>document.getElementById('step'+i).classList.add('hidden'));document.getElementById('step'+n).classList.remove('hidden');}
+async function loadCourses(){const {data}=await supabaseClient.from('courses').select('id,title,price');const sel=document.getElementById('course_id');data.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.title} - R${c.price}`;sel.appendChild(o);});}
+async function submitEnrollment(){const file=document.getElementById('proof').files[0];const course_id=document.getElementById('course_id').value;const {data:{user}}=await supabaseClient.auth.getUser();
+const path=`${user.id}/${Date.now()}_${file.name}`;await supabaseClient.storage.from('payment-proofs').upload(path,file);
+const {data:pub}=supabaseClient.storage.from('payment-proofs').getPublicUrl(path);
+await supabaseClient.from('enrollments').insert({user_id:user.id,course_id,proof_url:pub.publicUrl,status:'pending',terms_accepted:true});
+alert('Submitted! Admin will verify');location.href='student-home.html';}loadCourses();
+</script></body></html>
