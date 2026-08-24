@@ -1,42 +1,1787 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Funda Online Academy</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<style>.card{transition:.2s}.card:hover{transform:translateY(-4px);box-shadow:0 10px 20px rgba(10,42,122,.15)} </style>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Courses | Funda Online Academy</title>
+
+  <meta
+    name="description"
+    content="Explore practical, career-focused courses at Funda Online Academy and build skills that can help you get hired."
+  >
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #0A1E4A;
+      background: #ffffff;
+    }
+
+    .course-card {
+      transition: all 0.25s ease;
+    }
+
+    .course-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 40px rgba(10, 42, 122, 0.14);
+    }
+
+    .soft-shadow {
+      box-shadow: 0 10px 30px rgba(10, 42, 122, 0.08);
+    }
+
+    .hero-grid {
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(37, 99, 235, 0.10) 0, transparent 30%),
+        radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.10) 0, transparent 30%);
+    }
+
+    .image-placeholder {
+      background:
+        linear-gradient(135deg, rgba(10,42,122,.95), rgba(37,99,235,.85)),
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,.2), transparent 25%);
+    }
+
+    .faq-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+
+    .faq-item.open .faq-content {
+      max-height: 300px;
+    }
+
+    .faq-item.open .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .faq-icon {
+      transition: transform 0.25s ease;
+    }
+  </style>
 </head>
-<body class="bg-white">
-<!-- NAV - Your Design -->
-<nav class="flex justify-between items-center p-4 px-8 border-b">
-  <div class="flex items-center gap-2 font-black text-[#0A2A7A]"><span class="bg-[#0A2A7A] text-white p-1 rounded">🎓</span> FUNDA <span class="text-xs font-normal block">ONLINE ACADEMY</span></div>
-  <div class="hidden md:flex gap-6 text-sm"><a href="courses-public.html">Courses</a><a href="#">Pricing</a><a href="#">About</a></div>
-  <div class="flex gap-2"><a href="login.html" class="px-4 py-2 text-sm">Login</a><a href="register.html" class="bg-[#0A2A7A] text-white px-4 py-2 rounded-full text-sm">Sign Up</a></div>
-</nav>
 
-<!-- HERO + POPULAR COURSES - Your Design -->
-<section class="bg-[#F1F7FF] p-8">
-  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-8">
-    <div><h1 class="text-4xl font-black text-[#0A2A7A] leading-tight">Master Skills That Get You Hired - From Cape Town to the World</h1><p class="text-sm text-gray-600 mt-3">Join 10,000+ learners building in-demand skills with practical, mentor-supported courses.</p><div class="flex gap-3 mt-5"><a href="#courses" class="bg-[#0A2A7A] text-white px-6 py-3 rounded-full text-sm font-bold">Browse Courses →</a><span class="bg-white border px-4 py-2 rounded-full text-xs">Get 20% Off</span></div></div>
-    <div class="bg-white rounded-2xl p-4 shadow">
-      <h2 class="font-black text-center text-[#0A2A7A]">Popular Courses</h2><p class="text-[10px] text-center text-gray-400">Our most popular industry-ready courses to boost your career</p>
-      <div id="courses" class="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">Loading your 30 courses...</div>
-      <div class="text-center mt-4"><a href="courses-public.html" class="text-xs border px-4 py-2 rounded-full">View All 30+ Courses →</a></div>
+<body>
+
+  <!-- =========================================================
+       NAVIGATION
+  ========================================================== -->
+
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
+
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="h-20 flex items-center justify-between">
+
+        <!-- BRAND -->
+        <a
+          href="courses-public.html"
+          class="flex items-center gap-3"
+        >
+
+          <div
+            class="w-11 h-11 rounded-xl bg-[#0A2A7A] text-white flex items-center justify-center text-xl shadow"
+          >
+            🎓
+          </div>
+
+          <div>
+            <div class="font-black text-[#0A2A7A] leading-none">
+              FUNDA ONLINE
+            </div>
+
+            <div class="text-xs font-bold tracking-widest text-gray-500 mt-1">
+              ACADEMY
+            </div>
+          </div>
+
+        </a>
+
+
+        <!-- DESKTOP NAV -->
+        <div class="hidden lg:flex items-center gap-8 text-sm font-semibold">
+
+          <a
+            href="#courses"
+            class="text-[#0A2A7A] hover:text-blue-600"
+          >
+            Courses
+          </a>
+
+          <a
+            href="#why-us"
+            class="text-gray-600 hover:text-[#0A2A7A]"
+          >
+            Why Choose Us
+          </a>
+
+          <a
+            href="#how-it-works"
+            class="text-gray-600 hover:text-[#0A2A7A]"
+          >
+            How It Works
+          </a>
+
+          <a
+            href="#faq"
+            class="text-gray-600 hover:text-[#0A2A7A]"
+          >
+            FAQs
+          </a>
+
+          <a
+            href="#contact"
+            class="text-gray-600 hover:text-[#0A2A7A]"
+          >
+            Contact
+          </a>
+
+        </div>
+
+
+        <!-- DESKTOP ACTIONS -->
+        <div class="hidden sm:flex items-center gap-3">
+
+          <a
+            href="login.html"
+            class="px-5 py-2.5 rounded-full border-2 border-[#0A2A7A] text-[#0A2A7A] font-bold text-sm hover:bg-[#0A2A7A] hover:text-white transition"
+          >
+            Login
+          </a>
+
+          <a
+            href="register.html"
+            class="px-5 py-2.5 rounded-full bg-[#0A2A7A] text-white font-bold text-sm hover:bg-blue-700 transition"
+          >
+            Sign Up
+          </a>
+
+        </div>
+
+
+        <!-- MOBILE MENU BUTTON -->
+        <button
+          id="mobileMenuButton"
+          class="lg:hidden w-11 h-11 rounded-xl bg-gray-100 flex items-center justify-center text-xl"
+          aria-label="Open menu"
+        >
+          ☰
+        </button>
+
+      </div>
+
+
+      <!-- MOBILE MENU -->
+      <div
+        id="mobileMenu"
+        class="hidden lg:hidden pb-5"
+      >
+
+        <div class="bg-gray-50 rounded-2xl p-4 space-y-2">
+
+          <a
+            href="#courses"
+            class="block px-4 py-3 rounded-xl hover:bg-white font-semibold"
+          >
+            Courses
+          </a>
+
+          <a
+            href="#why-us"
+            class="block px-4 py-3 rounded-xl hover:bg-white font-semibold"
+          >
+            Why Choose Us
+          </a>
+
+          <a
+            href="#how-it-works"
+            class="block px-4 py-3 rounded-xl hover:bg-white font-semibold"
+          >
+            How It Works
+          </a>
+
+          <a
+            href="#faq"
+            class="block px-4 py-3 rounded-xl hover:bg-white font-semibold"
+          >
+            FAQs
+          </a>
+
+          <a
+            href="#contact"
+            class="block px-4 py-3 rounded-xl hover:bg-white font-semibold"
+          >
+            Contact
+          </a>
+
+          <div class="grid grid-cols-2 gap-2 pt-2">
+
+            <a
+              href="login.html"
+              class="text-center px-4 py-3 rounded-xl border-2 border-[#0A2A7A] text-[#0A2A7A] font-bold"
+            >
+              Login
+            </a>
+
+            <a
+              href="register.html"
+              class="text-center px-4 py-3 rounded-xl bg-[#0A2A7A] text-white font-bold"
+            >
+              Sign Up
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </nav>
+
+  </header>
+
+
+  <!-- =========================================================
+       HERO
+  ========================================================== -->
+
+  <main>
+
+    <section class="hero-grid bg-[#F1F7FF]">
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+          <!-- HERO TEXT -->
+          <div>
+
+            <div
+              class="inline-flex items-center gap-2 bg-white border border-blue-100 rounded-full px-4 py-2 text-xs font-bold text-[#0A2A7A] shadow-sm"
+            >
+              🎓 PRACTICAL • CAREER-FOCUSED • FLEXIBLE
+            </div>
+
+            <h1
+              class="mt-6 text-4xl sm:text-5xl lg:text-6xl font-black leading-tight text-[#0A2A7A]"
+            >
+              Master Skills That
+              <span class="text-blue-600">
+                Get You Hired
+              </span>
+            </h1>
+
+            <p class="mt-6 text-gray-600 text-base sm:text-lg leading-relaxed max-w-xl">
+              Build practical, useful skills through structured online learning designed to help you grow personally, professionally and in the workplace.
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-3 mt-8">
+
+              <a
+                href="#courses"
+                class="inline-flex justify-center items-center px-7 py-4 rounded-full bg-[#0A2A7A] text-white font-extrabold hover:bg-blue-700 transition shadow-lg"
+              >
+                Browse Courses →
+              </a>
+
+              <a
+                href="#why-us"
+                class="inline-flex justify-center items-center px-7 py-4 rounded-full bg-white border-2 border-gray-200 text-[#0A2A7A] font-bold hover:border-blue-300 transition"
+              >
+                Why Choose Funda?
+              </a>
+
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 mt-10 max-w-lg">
+
+              <div>
+                <div class="text-2xl font-black text-[#0A2A7A]">
+                  30+
+                </div>
+                <div class="text-xs text-gray-500 mt-1">
+                  Skills Courses
+                </div>
+              </div>
+
+              <div>
+                <div class="text-2xl font-black text-[#0A2A7A]">
+                  100%
+                </div>
+                <div class="text-xs text-gray-500 mt-1">
+                  Online Access
+                </div>
+              </div>
+
+              <div>
+                <div class="text-2xl font-black text-[#0A2A7A]">
+                  24/7
+                </div>
+                <div class="text-xs text-gray-500 mt-1">
+                  Learning Access
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- HERO VISUAL -->
+          <div class="relative">
+
+            <div
+              class="absolute -top-6 -right-4 w-24 h-24 rounded-full bg-blue-200/50 blur-2xl"
+            ></div>
+
+            <div
+              class="absolute -bottom-6 -left-4 w-28 h-28 rounded-full bg-cyan-200/50 blur-2xl"
+            ></div>
+
+            <div
+              class="relative bg-white rounded-[32px] p-4 shadow-2xl"
+            >
+
+              <div
+                class="rounded-[24px] overflow-hidden image-placeholder min-h-[360px] sm:min-h-[430px] flex items-center justify-center relative"
+              >
+
+                <img
+                  src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1000&q=85"
+                  alt="Students learning together"
+                  class="absolute inset-0 w-full h-full object-cover"
+                  onerror="this.style.display='none'"
+                >
+
+                <div class="absolute inset-0 bg-[#0A2A7A]/45"></div>
+
+                <div class="relative z-10 text-center text-white px-8">
+
+                  <div class="text-6xl mb-5">
+                    🎓
+                  </div>
+
+                  <div class="text-2xl sm:text-3xl font-black">
+                    Learn.
+                  </div>
+
+                  <div class="text-2xl sm:text-3xl font-black">
+                    Build.
+                  </div>
+
+                  <div class="text-2xl sm:text-3xl font-black">
+                    Get Skilled.
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         WHY CHOOSE US
+    ========================================================== -->
+
+    <section
+      id="why-us"
+      class="py-16 lg:py-20 bg-white"
+    >
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="text-center max-w-3xl mx-auto">
+
+          <span class="text-xs font-black tracking-[0.25em] text-blue-600">
+            WHY CHOOSE FUNDA
+          </span>
+
+          <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#0A2A7A]">
+            Why Choose Funda Online Academy?
+          </h2>
+
+          <p class="mt-4 text-gray-600 leading-relaxed">
+            We focus on clear, practical and structured learning so students can understand what they are learning and how it can be applied.
+          </p>
+
+        </div>
+
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
+
+          <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+            <div class="text-4xl">🎯</div>
+            <h3 class="font-black text-lg mt-5">
+              Practical Skills
+            </h3>
+            <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+              Learn useful skills that can be applied in real working and everyday environments.
+            </p>
+          </div>
+
+          <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+            <div class="text-4xl">💼</div>
+            <h3 class="font-black text-lg mt-5">
+              Career-Focused Training
+            </h3>
+            <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+              Courses are structured around practical knowledge and skills that support career development.
+            </p>
+          </div>
+
+          <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+            <div class="text-4xl">📱</div>
+            <h3 class="font-black text-lg mt-5">
+              Learn Anywhere
+            </h3>
+            <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+              Access your learning experience from a phone, tablet or computer.
+            </p>
+          </div>
+
+          <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+            <div class="text-4xl">📚</div>
+            <h3 class="font-black text-lg mt-5">
+              Structured Learning
+            </h3>
+            <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+              Courses are organised into modules and lessons to make learning easier to follow.
+            </p>
+          </div>
+
+          <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+            <div class="text-4xl">🏆</div>
+            <h3 class="font-black text-lg mt-5">
+              Certificates
+            </h3>
+            <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+              Complete your course requirements and work towards earning your course certificate.
+            </p>
+          </div>
+
+          <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+            <div class="text-4xl">🔐</div>
+            <h3 class="font-black text-lg mt-5">
+              Secure Student Platform
+            </h3>
+            <p class="text-sm text-gray-600 mt-3 leading-relaxed">
+              Your student account, course access and learning progress are managed through a secure platform.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         COURSE CATALOGUE
+    ========================================================== -->
+
+    <section
+      id="courses"
+      class="py-16 lg:py-20 bg-[#F7FAFF]"
+    >
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+
+          <div>
+
+            <span class="text-xs font-black tracking-[0.25em] text-blue-600">
+              EXPLORE OUR COURSES
+            </span>
+
+            <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#0A2A7A]">
+              Find a Course That Fits Your Goals
+            </h2>
+
+            <p class="mt-4 text-gray-600 max-w-2xl">
+              Explore our growing collection of practical skills courses and choose an area that matches your interests and career goals.
+            </p>
+
+          </div>
+
+          <div class="text-sm font-bold text-[#0A2A7A]">
+            <span id="courseCount">Loading courses...</span>
+          </div>
+
+        </div>
+
+
+        <!-- COURSE GRID -->
+        <div
+          id="courses"
+          class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-10"
+        >
+
+          <!-- LOADING -->
+          <div class="sm:col-span-2 lg:col-span-3 xl:col-span-4 text-center py-16">
+
+            <div class="text-4xl animate-pulse">
+              📚
+            </div>
+
+            <p class="mt-3 text-gray-500 font-semibold">
+              Loading courses...
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- COURSE FALLBACK -->
+        <div
+          id="courseError"
+          class="hidden text-center py-12"
+        >
+
+          <div class="text-4xl">
+            📚
+          </div>
+
+          <h3 class="font-black text-xl mt-4">
+            Courses are temporarily unavailable
+          </h3>
+
+          <p class="text-gray-500 mt-2">
+            Please refresh the page or try again later.
+          </p>
+
+          <button
+            onclick="loadCourses()"
+            class="mt-5 px-6 py-3 rounded-full bg-[#0A2A7A] text-white font-bold"
+          >
+            Try Again
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         HOW IT WORKS
+    ========================================================== -->
+
+    <section
+      id="how-it-works"
+      class="py-16 lg:py-20 bg-white"
+    >
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="text-center max-w-3xl mx-auto">
+
+          <span class="text-xs font-black tracking-[0.25em] text-blue-600">
+            HOW IT WORKS
+          </span>
+
+          <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#0A2A7A]">
+            Start Learning in Four Simple Steps
+          </h2>
+
+        </div>
+
+
+        <div class="grid md:grid-cols-4 gap-6 mt-12">
+
+          <div class="text-center">
+
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-[#EAF1FF] text-[#0A2A7A] flex items-center justify-center text-2xl font-black">
+              1
+            </div>
+
+            <h3 class="font-black mt-5">
+              Choose a Course
+            </h3>
+
+            <p class="text-sm text-gray-600 mt-2 leading-relaxed">
+              Explore the available courses and select the one that matches your goals.
+            </p>
+
+          </div>
+
+
+          <div class="text-center">
+
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-[#EAF1FF] text-[#0A2A7A] flex items-center justify-center text-2xl font-black">
+              2
+            </div>
+
+            <h3 class="font-black mt-5">
+              Create Your Account
+            </h3>
+
+            <p class="text-sm text-gray-600 mt-2 leading-relaxed">
+              Register as a student and complete the required enrollment information.
+            </p>
+
+          </div>
+
+
+          <div class="text-center">
+
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-[#EAF1FF] text-[#0A2A7A] flex items-center justify-center text-2xl font-black">
+              3
+            </div>
+
+            <h3 class="font-black mt-5">
+              Learn &amp; Practise
+            </h3>
+
+            <p class="text-sm text-gray-600 mt-2 leading-relaxed">
+              Work through structured modules, lessons, learning outcomes and practical content.
+            </p>
+
+          </div>
+
+
+          <div class="text-center">
+
+            <div class="w-16 h-16 mx-auto rounded-2xl bg-[#EAF1FF] text-[#0A2A7A] flex items-center justify-center text-2xl font-black">
+              4
+            </div>
+
+            <h3 class="font-black mt-5">
+              Complete &amp; Certify
+            </h3>
+
+            <p class="text-sm text-gray-600 mt-2 leading-relaxed">
+              Complete your course requirements and progress towards your certificate.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         LEARNING EXPERIENCE
+    ========================================================== -->
+
+    <section class="py-16 lg:py-20 bg-[#F1F7FF]">
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+
+          <div>
+
+            <span class="text-xs font-black tracking-[0.25em] text-blue-600">
+              YOUR LEARNING EXPERIENCE
+            </span>
+
+            <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#0A2A7A]">
+              Learning Designed to Be Clear and Practical
+            </h2>
+
+            <p class="mt-5 text-gray-600 leading-relaxed">
+              We are building every course around a professional lesson structure so students can understand not only the definition of a topic, but the key concepts, learning outcomes and practical application.
+            </p>
+
+
+            <div class="mt-8 space-y-4">
+
+              <div class="flex gap-4">
+
+                <div class="w-10 h-10 rounded-xl bg-white flex-shrink-0 flex items-center justify-center">
+                  ✓
+                </div>
+
+                <div>
+                  <h3 class="font-black">
+                    Clear Learning Outcomes
+                  </h3>
+
+                  <p class="text-sm text-gray-600 mt-1">
+                    Understand what you should know or be able to do after each lesson.
+                  </p>
+                </div>
+
+              </div>
+
+
+              <div class="flex gap-4">
+
+                <div class="w-10 h-10 rounded-xl bg-white flex-shrink-0 flex items-center justify-center">
+                  ✓
+                </div>
+
+                <div>
+                  <h3 class="font-black">
+                    Key Concepts
+                  </h3>
+
+                  <p class="text-sm text-gray-600 mt-1">
+                    Important ideas are presented clearly instead of relying on simple definitions.
+                  </p>
+                </div>
+
+              </div>
+
+
+              <div class="flex gap-4">
+
+                <div class="w-10 h-10 rounded-xl bg-white flex-shrink-0 flex items-center justify-center">
+                  ✓
+                </div>
+
+                <div>
+                  <h3 class="font-black">
+                    Practical Content
+                  </h3>
+
+                  <p class="text-sm text-gray-600 mt-1">
+                    Practical courses can include relevant images and visual learning resources.
+                  </p>
+                </div>
+
+              </div>
+
+
+              <div class="flex gap-4">
+
+                <div class="w-10 h-10 rounded-xl bg-white flex-shrink-0 flex items-center justify-center">
+                  ✓
+                </div>
+
+                <div>
+                  <h3 class="font-black">
+                    Structured Modules &amp; Lessons
+                  </h3>
+
+                  <p class="text-sm text-gray-600 mt-1">
+                    Course content is organised so students can progress logically from one topic to the next.
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="grid grid-cols-2 gap-4">
+
+            <div class="bg-white rounded-3xl p-7 soft-shadow">
+
+              <div class="text-4xl">
+                📖
+              </div>
+
+              <h3 class="font-black mt-5">
+                Lessons
+              </h3>
+
+              <p class="text-sm text-gray-500 mt-2">
+                Structured content for easier learning.
+              </p>
+
+            </div>
+
+
+            <div class="bg-white rounded-3xl p-7 soft-shadow mt-8">
+
+              <div class="text-4xl">
+                🎯
+              </div>
+
+              <h3 class="font-black mt-5">
+                Outcomes
+              </h3>
+
+              <p class="text-sm text-gray-500 mt-2">
+                Know what each lesson is teaching you.
+              </p>
+
+            </div>
+
+
+            <div class="bg-white rounded-3xl p-7 soft-shadow">
+
+              <div class="text-4xl">
+                🖼️
+              </div>
+
+              <h3 class="font-black mt-5">
+                Visuals
+              </h3>
+
+              <p class="text-sm text-gray-500 mt-2">
+                Relevant pictures where they improve understanding.
+              </p>
+
+            </div>
+
+
+            <div class="bg-white rounded-3xl p-7 soft-shadow mt-8">
+
+              <div class="text-4xl">
+                🏆
+              </div>
+
+              <h3 class="font-black mt-5">
+                Progress
+              </h3>
+
+              <p class="text-sm text-gray-500 mt-2">
+                Work towards completing your course.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         FAQ
+    ========================================================== -->
+
+    <section
+      id="faq"
+      class="py-16 lg:py-20 bg-white"
+    >
+
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="text-center">
+
+          <span class="text-xs font-black tracking-[0.25em] text-blue-600">
+            FREQUENTLY ASKED QUESTIONS
+          </span>
+
+          <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#0A2A7A]">
+            Frequently Asked Questions
+          </h2>
+
+          <p class="mt-4 text-gray-600">
+            Find answers to common questions before contacting support.
+          </p>
+
+        </div>
+
+
+        <div class="mt-10 space-y-3">
+
+          <div class="faq-item border border-gray-200 rounded-2xl overflow-hidden">
+
+            <button
+              class="faq-question w-full flex items-center justify-between gap-4 text-left p-5 font-bold"
+            >
+
+              <span>
+                Do I need an account to view courses?
+              </span>
+
+              <span class="faq-icon text-2xl">
+                +
+              </span>
+
+            </button>
+
+            <div class="faq-content px-5">
+
+              <p class="pb-5 text-sm text-gray-600 leading-relaxed">
+                No. You can browse the public course catalogue and view course information before creating a student account.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="faq-item border border-gray-200 rounded-2xl overflow-hidden">
+
+            <button
+              class="faq-question w-full flex items-center justify-between gap-4 text-left p-5 font-bold"
+            >
+
+              <span>
+                How do I become a student?
+              </span>
+
+              <span class="faq-icon text-2xl">
+                +
+              </span>
+
+            </button>
+
+            <div class="faq-content px-5">
+
+              <p class="pb-5 text-sm text-gray-600 leading-relaxed">
+                Select a course, create your student account and follow the enrollment process provided by Funda Online Academy.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="faq-item border border-gray-200 rounded-2xl overflow-hidden">
+
+            <button
+              class="faq-question w-full flex items-center justify-between gap-4 text-left p-5 font-bold"
+            >
+
+              <span>
+                Can I learn using my phone?
+              </span>
+
+              <span class="faq-icon text-2xl">
+                +
+              </span>
+
+            </button>
+
+            <div class="faq-content px-5">
+
+              <p class="pb-5 text-sm text-gray-600 leading-relaxed">
+                Yes. The platform is designed to work across modern phones, tablets and computers.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="faq-item border border-gray-200 rounded-2xl overflow-hidden">
+
+            <button
+              class="faq-question w-full flex items-center justify-between gap-4 text-left p-5 font-bold"
+            >
+
+              <span>
+                How do I contact Funda Online Academy?
+              </span>
+
+              <span class="faq-icon text-2xl">
+                +
+              </span>
+
+            </button>
+
+            <div class="faq-content px-5">
+
+              <p class="pb-5 text-sm text-gray-600 leading-relaxed">
+                Students can use the appropriate department contact channel provided by the academy for admissions, student support, finance or technical assistance.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="faq-item border border-gray-200 rounded-2xl overflow-hidden">
+
+            <button
+              class="faq-question w-full flex items-center justify-between gap-4 text-left p-5 font-bold"
+            >
+
+              <span>
+                Will I receive a certificate?
+              </span>
+
+              <span class="faq-icon text-2xl">
+                +
+              </span>
+
+            </button>
+
+            <div class="faq-content px-5">
+
+              <p class="pb-5 text-sm text-gray-600 leading-relaxed">
+                Certificate eligibility depends on completing the requirements of the relevant course. Check the individual course information for details.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         CTA
+    ========================================================== -->
+
+    <section class="bg-[#0A2A7A]">
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+
+        <div class="text-center text-white max-w-3xl mx-auto">
+
+          <div class="text-5xl">
+            🎓
+          </div>
+
+          <h2 class="mt-5 text-3xl sm:text-4xl font-black">
+            Ready to Build Your Skills?
+          </h2>
+
+          <p class="mt-4 text-blue-100 leading-relaxed">
+            Explore our courses and take the next step towards developing practical skills for your future.
+          </p>
+
+          <div class="flex flex-col sm:flex-row justify-center gap-3 mt-8">
+
+            <a
+              href="#courses"
+              class="px-7 py-4 rounded-full bg-white text-[#0A2A7A] font-black hover:bg-gray-100 transition"
+            >
+              Explore Courses
+            </a>
+
+            <a
+              href="register.html"
+              class="px-7 py-4 rounded-full border-2 border-white text-white font-black hover:bg-white hover:text-[#0A2A7A] transition"
+            >
+              Register as a Student
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================================
+         CONTACT / DEPARTMENTS
+    ========================================================== -->
+
+    <section
+      id="contact"
+      class="py-16 bg-[#F7FAFF]"
+    >
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="text-center max-w-3xl mx-auto">
+
+          <span class="text-xs font-black tracking-[0.25em] text-blue-600">
+            SUPPORT
+          </span>
+
+          <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#0A2A7A]">
+            We're Here to Help
+          </h2>
+
+          <p class="mt-4 text-gray-600">
+            Contact the department that best matches your question so you can get the right assistance.
+          </p>
+
+        </div>
+
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-10">
+
+          <div class="bg-white rounded-3xl p-7 border border-gray-100 soft-shadow">
+
+            <div class="text-3xl">
+              🎓
+            </div>
+
+            <h3 class="font-black mt-4">
+              Admissions
+            </h3>
+
+            <p class="text-sm text-gray-500 mt-2">
+              Course registration, enrollment and new student enquiries.
+            </p>
+
+          </div>
+
+
+          <div class="bg-white rounded-3xl p-7 border border-gray-100 soft-shadow">
+
+            <div class="text-3xl">
+              👩🏽‍🎓
+            </div>
+
+            <h3 class="font-black mt-4">
+              Student Support
+            </h3>
+
+            <p class="text-sm text-gray-500 mt-2">
+              Help with your student account, learning and course access.
+            </p>
+
+          </div>
+
+
+          <div class="bg-white rounded-3xl p-7 border border-gray-100 soft-shadow">
+
+            <div class="text-3xl">
+              💳
+            </div>
+
+            <h3 class="font-black mt-4">
+              Finance
+            </h3>
+
+            <p class="text-sm text-gray-500 mt-2">
+              Questions about payments, fees and financial matters.
+            </p>
+
+          </div>
+
+
+          <div class="bg-white rounded-3xl p-7 border border-gray-100 soft-shadow">
+
+            <div class="text-3xl">
+              💻
+            </div>
+
+            <h3 class="font-black mt-4">
+              Technical Support
+            </h3>
+
+            <p class="text-sm text-gray-500 mt-2">
+              Assistance with login, platform access and technical problems.
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================================================
+       FOOTER
+  ========================================================== -->
+
+  <footer class="bg-[#071B50] text-white">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+
+        <!-- BRAND -->
+        <div>
+
+          <div class="flex items-center gap-3">
+
+            <div class="w-11 h-11 rounded-xl bg-white text-[#0A2A7A] flex items-center justify-center text-xl">
+              🎓
+            </div>
+
+            <div>
+              <div class="font-black">
+                FUNDA ONLINE
+              </div>
+
+              <div class="text-xs tracking-widest text-blue-200">
+                ACADEMY
+              </div>
+            </div>
+
+          </div>
+
+          <p class="text-sm text-blue-100 leading-relaxed mt-5">
+            Practical online skills training designed to help students build knowledge, confidence and career-ready skills.
+          </p>
+
+        </div>
+
+
+        <!-- QUICK LINKS -->
+        <div>
+
+          <h3 class="font-black">
+            Quick Links
+          </h3>
+
+          <div class="mt-5 space-y-3 text-sm text-blue-100">
+
+            <a
+              href="#courses"
+              class="block hover:text-white"
+            >
+              Courses
+            </a>
+
+            <a
+              href="#why-us"
+              class="block hover:text-white"
+            >
+              Why Choose Us
+            </a>
+
+            <a
+              href="#how-it-works"
+              class="block hover:text-white"
+            >
+              How It Works
+            </a>
+
+            <a
+              href="#faq"
+              class="block hover:text-white"
+            >
+              FAQs
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <!-- STUDENTS -->
+        <div>
+
+          <h3 class="font-black">
+            Students
+          </h3>
+
+          <div class="mt-5 space-y-3 text-sm text-blue-100">
+
+            <a
+              href="login.html"
+              class="block hover:text-white"
+            >
+              Student Login
+            </a>
+
+            <a
+              href="register.html"
+              class="block hover:text-white"
+            >
+              Create Account
+            </a>
+
+            <a
+              href="#courses"
+              class="block hover:text-white"
+            >
+              Browse Courses
+            </a>
+
+            <a
+              href="#contact"
+              class="block hover:text-white"
+            >
+              Student Support
+            </a>
+
+          </div>
+
+        </div>
+
+
+        <!-- SUPPORT -->
+        <div>
+
+          <h3 class="font-black">
+            Departments
+          </h3>
+
+          <div class="mt-5 space-y-3 text-sm text-blue-100">
+
+            <div>
+              Admissions
+            </div>
+
+            <div>
+              Student Support
+            </div>
+
+            <div>
+              Finance
+            </div>
+
+            <div>
+              Technical Support
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="border-t border-white/10 mt-12 pt-6 flex flex-col sm:flex-row justify-between gap-4 text-xs text-blue-200">
+
+        <p>
+          © <span id="year"></span> Funda Online Academy. All rights reserved.
+        </p>
+
+        <div class="flex flex-wrap gap-5">
+
+          <a href="#" class="hover:text-white">
+            Privacy Policy
+          </a>
+
+          <a href="#" class="hover:text-white">
+            Terms &amp; Conditions
+          </a>
+
+          <a href="#contact" class="hover:text-white">
+            Contact
+          </a>
+
+        </div>
+
+      </div>
+
     </div>
-  </div>
-</section>
 
-<script>
-const supa=supabase.createClient("https://nzwfowwoazmpnwfrednh.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU");
-async function load(){
-  const {data}=await supa.from('courses').select('*').eq('active',true).order('created_at',{ascending:false});
-  document.getElementById('courses').innerHTML=data.map(c=>`
-    <div class="card border rounded-xl p-3 bg-white">
-      <div class="h-12 bg-[#0A2A7A] rounded-lg flex items-center justify-center text-[8px] text-white text-center p-1 font-bold">${c.title.substring(0,40)}</div>
-      <h3 class="text-[10px] font-bold mt-2 h-8 leading-tight">${c.title}</h3>
-      <div class="flex justify-between items-center mt-2"><span class="text-[9px] text-gray-500">${c.duration}</span><span class="text-xs font-black text-green-600">R${c.price}</span></div>
-      <a href="course-view.html?id=${c.id}" class="block text-center bg-[#0A2A7A] text-white text-[10px] py-2 rounded-lg mt-2 font-bold">Enroll - R${c.price}</a>
-    </div>`).join('');
-}
-load();
-</script>
-</body></html>
+  </footer>
+
+
+  <!-- =========================================================
+       JAVASCRIPT
+  ========================================================== -->
+
+  <script>
+
+    /* =========================================================
+       SUPABASE
+    ========================================================== */
+
+    const supa = supabase.createClient(
+      "https://nzwfowwoazmpnwfrednh.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmxlIiwicmVmIjoibnp3Zm93d29henptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU"
+    );
+
+
+    /* =========================================================
+       MOBILE MENU
+    ========================================================== */
+
+    const mobileMenuButton =
+      document.getElementById('mobileMenuButton');
+
+    const mobileMenu =
+      document.getElementById('mobileMenu');
+
+
+    mobileMenuButton.addEventListener('click', () => {
+
+      mobileMenu.classList.toggle('hidden');
+
+    });
+
+
+    document.querySelectorAll('#mobileMenu a').forEach(link => {
+
+      link.addEventListener('click', () => {
+
+        mobileMenu.classList.add('hidden');
+
+      });
+
+    });
+
+
+    /* =========================================================
+       COURSE IMAGE MAPPING
+    ========================================================== */
+
+    function getCourseImage(title) {
+
+      const name = String(title || '').toLowerCase();
+
+
+      if (
+        name.includes('nail') ||
+        name.includes('beauty') ||
+        name.includes('make up') ||
+        name.includes('makeup')
+      ) {
+        return 'https://images.unsplash.com/photo-1610992015732-2449b76344bc?auto=format&fit=crop&w=900&q=80';
+      }
+
+
+      if (
+        name.includes('fashion') ||
+        name.includes('garment')
+      ) {
+        return 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=900&q=80';
+      }
+
+
+      if (
+        name.includes('food') ||
+        name.includes('beverage') ||
+        name.includes('safety')
+      ) {
+        return 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=900&q=80';
+      }
+
+
+      if (
+        name.includes('carpenter') ||
+        name.includes('carpentry') ||
+        name.includes('construction')
+      ) {
+        return 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80';
+      }
+
+
+      if (
+        name.includes('computer') ||
+        name.includes('cyber') ||
+        name.includes('office') ||
+        name.includes('administration')
+      ) {
+        return 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80';
+      }
+
+
+      if (
+        name.includes('agriculture') ||
+        name.includes('farming') ||
+        name.includes('urban farming')
+      ) {
+        return 'https://images.unsplash.com/photo-1492496913980-501348b61469?auto=format&fit=crop&w=900&q=80';
+      }
+
+
+      if (
+        name.includes('housekeeping')
+      ) {
+        return 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=900&q=80';
+      }
+
+
+      if (
+        name.includes('swimming')
+      ) {
+        return 'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=900&q=80';
+      }
+
+
+      return 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=80';
+
+    }
+
+
+    /* =========================================================
+       ESCAPE HTML
+    ========================================================== */
+
+    function escapeHtml(value) {
+
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+    }
+
+
+    /* =========================================================
+       LOAD COURSES
+    ========================================================== */
+
+    async function loadCourses() {
+
+      const coursesContainer =
+        document.getElementById('courses');
+
+      const courseCount =
+        document.getElementById('courseCount');
+
+      const courseError =
+        document.getElementById('courseError');
+
+
+      courseError.classList.add('hidden');
+
+
+      coursesContainer.innerHTML = `
+        <div class="sm:col-span-2 lg:col-span-3 xl:col-span-4 text-center py-16">
+          <div class="text-4xl animate-pulse">📚</div>
+          <p class="mt-3 text-gray-500 font-semibold">
+            Loading courses...
+          </p>
+        </div>
+      `;
+
+
+      try {
+
+        const {
+          data,
+          error
+        } = await supa
+          .from('courses')
+          .select('*')
+          .eq('active', true)
+          .order('created_at', {
+            ascending: false
+          });
+
+
+        if (error) {
+
+          console.error(
+            'Course loading error:',
+            error
+          );
+
+          throw error;
+
+        }
+
+
+        const courses = Array.isArray(data)
+          ? data
+          : [];
+
+
+        courseCount.textContent =
+          `${courses.length} course${courses.length === 1 ? '' : 's'} available`;
+
+
+        if (courses.length === 0) {
+
+          coursesContainer.innerHTML = `
+            <div class="sm:col-span-2 lg:col-span-3 xl:col-span-4 text-center py-16">
+              <div class="text-5xl">📚</div>
+              <h3 class="font-black text-xl mt-4">
+                No courses are currently available
+              </h3>
+              <p class="text-gray-500 mt-2">
+                Please check again soon.
+              </p>
+            </div>
+          `;
+
+          return;
+
+        }
+
+
+        coursesContainer.innerHTML =
+          courses.map(course => {
+
+            const title =
+              escapeHtml(course.title || 'Course');
+
+            const duration =
+              escapeHtml(course.duration || 'Flexible');
+
+            const price =
+              course.price !== null &&
+              course.price !== undefined
+                ? `R${course.price}`
+                : 'Contact us';
+
+
+            const image =
+              getCourseImage(course.title);
+
+
+            return `
+              <article
+                class="course-card bg-white rounded-3xl overflow-hidden border border-gray-100 soft-shadow"
+              >
+
+                <!-- COURSE IMAGE -->
+                <div class="relative h-48 overflow-hidden bg-[#0A2A7A]">
+
+                  <img
+                    src="${image}"
+                    alt="${title}"
+                    class="w-full h-full object-cover"
+                    loading="lazy"
+                    onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=80';"
+                  >
+
+                  <div class="absolute inset-0 bg-gradient-to-t from-[#071B50]/70 via-transparent to-transparent"></div>
+
+                  <div class="absolute bottom-4 left-4 right-4">
+
+                    <span class="inline-block bg-white/95 text-[#0A2A7A] text-[10px] font-black px-3 py-1.5 rounded-full">
+                      SKILLS COURSE
+                    </span>
+
+                  </div>
+
+                </div>
+
+
+                <!-- COURSE DETAILS -->
+                <div class="p-5">
+
+                  <h3 class="font-black text-lg leading-tight min-h-[50px]">
+                    ${title}
+                  </h3>
+
+
+                  <div class="flex items-center gap-4 mt-4 text-xs text-gray-500">
+
+                    <span>
+                      🕒 ${duration}
+                    </span>
+
+                    <span>
+                      📚 Structured learning
+                    </span>
+
+                  </div>
+
+
+                  <div class="flex items-center justify-between mt-5 pt-4 border-t border-gray-100">
+
+                    <div>
+
+                      <div class="text-xs text-gray-400">
+                        Course Fee
+                      </div>
+
+                      <div class="text-xl font-black text-[#0A2A7A]">
+                        ${price}
+                      </div>
+
+                    </div>
+
+
+                    <a
+                      href="course-view.html?id=${encodeURIComponent(course.id)}"
+                      class="px-4 py-2.5 rounded-xl bg-[#0A2A7A] text-white text-xs font-black hover:bg-blue-700 transition"
+                    >
+                      View Course
+                    </a>
+
+                  </div>
+
+                </div>
+
+              </article>
+            `;
+
+          }).join('');
+
+
+      } catch (error) {
+
+        console.error(error);
+
+
+        courseCount.textContent =
+          'Courses unavailable';
+
+
+        coursesContainer.innerHTML = '';
+
+
+        courseError.classList.remove('hidden');
+
+      }
+
+    }
+
+
+    /* =========================================================
+       FAQ ACCORDION
+    ========================================================== */
+
+    document
+      .querySelectorAll('.faq-question')
+      .forEach(button => {
+
+        button.addEventListener('click', () => {
+
+          const item =
+            button.closest('.faq-item');
+
+
+          document
+            .querySelectorAll('.faq-item')
+            .forEach(other => {
+
+              if (other !== item) {
+
+                other.classList.remove('open');
+
+              }
+
+            });
+
+
+          item.classList.toggle('open');
+
+        });
+
+      });
+
+
+    /* =========================================================
+       FOOTER YEAR
+    ========================================================== */
+
+    document.getElementById('year').textContent =
+      new Date().getFullYear();
+
+
+    /* =========================================================
+       START
+    ========================================================== */
+
+    loadCourses();
+
+  </script>
+
+</body>
+              </html> 
