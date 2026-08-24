@@ -1,64 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Command Center - Funda</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-</head>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin - Funda</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/@supabase/supabase-js@2"></script></head>
 <body class="bg-[#F1F5FF] min-h-screen">
-<nav class="bg-[#0A2A7A] text-white p-4 flex justify-between items-center">
-<div class="font-extrabold">ADMIN COMMAND CENTER - Funda Online Academy</div>
-<div class="flex gap-2">
-<button onclick="loadData()" class="bg-white/20 px-4 py-2 rounded-xl text-sm">🔄 Refresh</button>
-<a href="login.html" class="bg-white text-[#0A2A7A] px-4 py-2 rounded-xl text-sm font-bold">Logout</a>
-</div>
-</nav>
-
-<div class="max-w-7xl mx-auto p-6">
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-<div class="bg-white p-5 rounded-2xl shadow"><p class="text-sm text-gray-500">Pending Approval</p><p id="pendingCount" class="text-2xl font-extrabold text-orange-600">0</p></div>
-<div class="bg-white p-5 rounded-2xl shadow"><p class="text-sm text-gray-500">Total Students</p><p id="totalStudents" class="text-2xl font-extrabold">0</p></div>
-</div>
-
-<div class="bg-white rounded-2xl shadow p-6 mt-6">
-<h3 class="font-extrabold text-lg">📋 Enrollments - Approve Payment Proof</h3>
-<div class="mt-4 overflow-x-auto">
-<table class="w-full text-sm">
-<thead><tr class="text-gray-400 text-xs border-b"><th class="text-left p-3">STUDENT</th><th class="text-left p-3">COURSE</th><th class="text-left p-3">PROOF</th><th class="text-left p-3">STATUS</th><th class="text-left p-3">ACTION</th></tr></thead>
-<tbody id="enrollList"><tr><td colspan="5" class="p-8 text-center text-gray-400">Loading enrollments...</td></tr></tbody>
-</table>
-</div>
-</div>
-</div>
-
+<nav class="bg-[#0A2A7A] text-white p-4 flex justify-between"><b>ADMIN COMMAND CENTER</b><button onclick="loadData()" class="bg-white/20 px-3 py-1 rounded">Refresh</button></nav>
+<div class="max-w-6xl mx-auto p-6">
+<div class="grid grid-cols-2 gap-4"><div class="bg-white p-4 rounded-xl shadow"><p class="text-sm">Pending</p><p id="pendingCount" class="text-2xl font-bold text-orange-600">0</p></div><div class="bg-white p-4 rounded-xl shadow"><p class="text-sm">Total</p><p id="totalStudents" class="text-2xl font-bold">0</p></div></div>
+<div class="bg-white rounded-xl shadow p-6 mt-6">
+<h3 class="font-bold">Enrollments - Approve Payment Proof</h3>
+<div id="enrollList" class="mt-4 space-y-3"><p class="text-gray-400">Loading...</p></div>
+</div></div>
 <script>
-const SUPABASE_URL = "https://nzwfowwoazmpnwfrednh.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
+const SUPABASE_URL="https://nzwfowwoazmpnwfrednh.supabase.co";const SUPABASE_ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU";const client=supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
 async function loadData(){
- const {data:enrolls, error} = await supabaseClient.from('enrollments').select('*, profiles(email,full_name), courses(title)').order('created_at',{ascending:false}).limit(50);
- if(error){document.getElementById('enrollList').innerHTML=`<tr><td colspan=5 class="p-4 text-red-500">${error.message}</td></tr>`;return;}
- document.getElementById('pendingCount').innerText = enrolls.filter(e=>e.status==='pending').length;
- document.getElementById('totalStudents').innerText = enrolls.length;
- document.getElementById('enrollList').innerHTML = enrolls.map(e=>`
-   <tr class="border-b hover:bg-gray-50">
-    <td class="p-3"><div class="font-bold">${e.profiles?.full_name||'No name'}</div><div class="text-xs text-gray-500">${e.profiles?.email}</div></td>
-    <td class="p-3">${e.courses?.title||e.course_id}</td>
-    <td class="p-3">${e.proof_url?`<a href="${e.proof_url}" target="_blank" class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs">View Proof</a>`:`<span class="text-gray-400">No proof</span>`}</td>
-    <td class="p-3"><span class="px-2 py-1 rounded-full text-xs font-bold ${e.status==='pending'?'bg-orange-100 text-orange-700':'bg-green-100 text-green-700'}">${e.status}</span></td>
-    <td class="p-3">${e.status==='pending'?`<button onclick="approve('${e.id}')" class="bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold">✅ Approve</button>`:`Done`}</td>
-   </tr>
- `).join('');
+ const {data:enrolls,error}=await client.from('enrollments').select('*').order('enrolled_at',{ascending:false}).limit(50);
+ if(error){document.getElementById('enrollList').innerHTML=`<p class=text-red-500>${error.message}</p>`;return;}
+ document.getElementById('pendingCount').innerText=enrolls.filter(e=> (e.status==='pending' || e.enrollment_status==='pending')).length;
+ document.getElementById('totalStudents').innerText=enrolls.length;
+ if(enrolls.length===0){document.getElementById('enrollList').innerHTML='<p class=text-center py-8 text-gray-400>✅ Ready - No enrollments yet. When student enrolls, they will appear here.</p>';return;}
+ const studentIds=[...new Set(enrolls.map(e=>e.student_id))];
+ const {data:profiles}=await client.from('profiles').select('id,email,full_name').in('id',studentIds);
+ const profileMap={}; if(profiles) profiles.forEach(p=>profileMap[p.id]=p);
+ document.getElementById('enrollList').innerHTML=enrolls.map(e=>{
+  const p=profileMap[e.student_id]||{email:e.student_id,full_name:'Unknown'};
+  const isPending = (e.status==='pending' || e.enrollment_status==='pending');
+  return `<div class="border p-3 rounded-xl flex justify-between items-center">
+  <div><div class=font-bold>${p.full_name}</div><div class=text-xs text-gray-500>${p.email}</div><div class=text-xs>Course: ${e.course_id}<br>Amount: R${e.amount||0}</div>${e.proof_url?`<a href="${e.proof_url}" target="_blank" class="text-blue-600 text-xs underline font-bold">📄 View Payment Proof</a>`:'<span class=text-xs text-orange-500>No proof uploaded yet</span>'}</div>
+  <div class=text-right><span class="text-xs px-2 py-1 rounded ${isPending?'bg-orange-100 text-orange-700':'bg-green-100 text-green-700'}">${e.status||e.enrollment_status}</span><br>${isPending?`<button onclick="approve('${e.id}')" class="mt-2 bg-green-600 text-white px-4 py-2 rounded text-xs font-bold">✅ Approve</button><button onclick="reject('${e.id}')" class="mt-1 bg-red-600 text-white px-3 py-1 rounded text-xs block w-full">Reject</button>`:''}</div></div>`
+ }).join('');
 }
-async function approve(id){
- if(!confirm('Approve this student?')) return;
- await supabaseClient.from('enrollments').update({status:'approved'}).eq('id',id);
- alert('✅ Student Approved!'); loadData();
-}
+async function approve(id){await client.from('enrollments').update({status:'approved', enrollment_status:'approved'}).eq('id',id);alert('✅ Approved!');loadData();}
+async function reject(id){await client.from('enrollments').update({status:'rejected', enrollment_status:'rejected'}).eq('id',id);loadData();}
 loadData();
-</script>
-</body>
-  </html>
+</script></body></html> 
