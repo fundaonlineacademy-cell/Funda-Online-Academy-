@@ -5,10 +5,10 @@
 <script>
 const URL="https://nzwfowwoazmpnwfrednh.supabase.co";const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU";const client=supabase.createClient(URL,KEY);
 async function load(){
- const {data,error}=await client.from('courses').select('*').eq('is_published',true);
- if(error){document.getElementById('courses').innerHTML=`<p class=text-red-500>${error.message}</p>`;return;}
- if(!data||data.length===0){document.getElementById('courses').innerHTML='<p class=text-gray-400>No courses yet. Ask admin to publish courses.</p>';return;}
- document.getElementById('courses').innerHTML=data.map(c=>`<div class="bg-white rounded-2xl shadow-lg overflow-hidden"><img src="${c.image_url||'https://via.placeholder.com/400x200?text=Funda+Course'}" class="w-full h-40 object-cover"><div class="p-5"><h3 class="font-bold text-[#0A2A7A]">${c.title}</h3><p class="text-sm text-gray-500 mt-2 line-clamp-2">${c.description||''}</p><div class="flex justify-between items-center mt-4"><span class="font-black text-xl text-green-600">R${c.price||0}</span><a href="course-view.html?id=${c.id}" class="bg-[#0A2A7A] text-white px-4 py-2 rounded-full text-sm font-bold">View Course</a></div></div></div>`).join('');
+ const {data,error}=await client.from('courses').select('*').eq('active',true);
+ if(error){document.getElementById('courses').innerHTML=`<p class='text-red-500 bg-red-50 p-4 rounded'>Error: ${error.message}</p>`;return;}
+ if(!data||data.length===0){document.getElementById('courses').innerHTML='<p>No active courses found</p>';return;}
+ document.getElementById('courses').innerHTML=data.map(c=>`<div class="bg-white rounded-2xl shadow-lg overflow-hidden border"><div class="h-40 bg-[#0A2A7A] flex items-center justify-center text-white font-bold text-center p-4">${c.title}</div><div class="p-5"><h3 class="font-bold text-[#0A2A7A] text-sm leading-tight">${c.title}</h3><p class="text-xs text-gray-500 mt-2 line-clamp-3">${c.description||''}</p><div class="flex justify-between items-center mt-4"><span class="text-xs bg-blue-50 text-[#0A2A7A] px-2 py-1 rounded-full">${c.duration||''}</span><span class="font-black text-lg text-green-600">R${c.price||0}</span></div><a href="course-view.html?id=${c.id}" class="block text-center mt-4 bg-[#0A2A7A] text-white py-3 rounded-xl font-bold">View Course - R${c.price}</a></div></div>`).join('');
 }
 load();
-</script></body></html> 
+</script></body></html>
