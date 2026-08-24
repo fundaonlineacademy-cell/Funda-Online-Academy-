@@ -1,34 +1,582 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Funda Online Academy - Login</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><style>body{font-family:'Inter',sans-serif}</style></head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Funda Online Academy - Login</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+  </style>
+</head>
+
 <body class="min-h-screen bg-[#E6F0FF] flex flex-col lg:flex-row">
-<div class="lg:w-[48%] bg-[#C2D9FF] p-8 lg:p-12 flex flex-col justify-between"><div>
-<div class="flex items-center gap-3"><div class="w-12 h-12 bg-[#0A2A7A] rounded-full flex items-center justify-center">🎓</div><h1 class="text-[#0A2A7A] font-extrabold text-2xl leading-none">FUNDA ONLINE<br>ACADEMY</h1></div>
-<h2 class="mt-10 text-[#0A2A7A] font-extrabold text-4xl leading-tight">Master Skills That Get<br>You Hired</h2>
-<p class="mt-4 text-[#0A2A7A]/70 tracking-[0.2em] text-xs font-bold">TRUSTED BY THOUSANDS OF STUDENTS</p>
-<p class="mt-3 text-[#0A2A7A] text-sm">Trusted by <b>2,450+</b> students · <b>4.8 stars</b> ⭐⭐⭐⭐⭐</p></div></div>
-<div class="lg:w-[52%] flex items-center justify-center p-6 bg-[#EEF3FF]"><div class="bg-white rounded-[24px] shadow-xl w-full max-w-[520px] p-8">
-<h2 class="text-3xl font-extrabold text-[#0A1E4A] text-center">Welcome Back</h2><p class="text-center text-gray-500 mt-2">Choose how you want to log in</p>
-<div class="grid grid-cols-2 gap-3 mt-8">
-<button id="btn-student" onclick="setRole('student')" class="border-2 border-[#2563EB] bg-[#2563EB] text-white rounded-xl py-3 font-bold">🎓 Student Login</button>
-<button id="btn-admin" onclick="setRole('admin')" class="border-2 border-gray-200 text-gray-600 rounded-xl py-3 font-semibold">💼 Admin Staff</button></div>
-<div id="admin-extra" class="hidden mt-4"><label class="text-sm font-semibold">Staff Access Code</label><input id="staff_code" type="text" placeholder="ADM-042" class="w-full mt-1 border rounded-xl px-4 py-3"></div>
-<div class="mt-6"><label class="text-sm font-semibold">Email</label><input id="email" type="email" placeholder="you@email.com" class="w-full border rounded-xl px-4 py-3 mt-1"></div>
-<div class="mt-4"><label class="text-sm font-semibold">Password</label><input id="password" type="password" placeholder="••••••••" class="w-full border rounded-xl px-4 py-3 mt-1"></div>
-<button onclick="handleLogin()" id="loginBtn" class="w-full bg-[#2563EB] text-white font-bold rounded-xl py-4 mt-6">Login</button>
-<p class="text-center mt-3"><a href="#" onclick="resetPassword()" class="text-[#2563EB] underline text-sm">Forgot password?</a></p>
-<div class="flex items-center gap-3 my-6"><div class="h-px bg-gray-200 flex-1"></div><span class="text-sm text-gray-500">OR</span><div class="h-px bg-gray-200 flex-1"></div></div>
-<a href="register.html" class="w-full border-2 border-[#2563EB] text-[#2563EB] font-bold rounded-xl py-3 block text-center">👤 New to Funda? Register as Student</a>
-<a href="courses-public.html" class="w-full mt-3 bg-gray-100 text-gray-700 font-semibold rounded-xl py-3 block text-center">📖 Browse Courses · No Login Needed 👁️</a>
-</div></div>
-<script>
-const supabaseClient=supabase.createClient("https://nzwfowwoazmpnwfrednh.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU");
-let currentRole='student';function setRole(r){currentRole=r;document.getElementById('admin-extra').classList.toggle('hidden',r!=='admin');}
-async function handleLogin(){const email=document.getElementById('email').value;const password=document.getElementById('password').value;const staffCode=document.getElementById('staff_code').value;
-if(!email||!password)return alert('Enter email & password');
-const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)return alert(error.message);
-const {data:profile}=await supabaseClient.from('profiles').select('role,staff_code').eq('id',data.user.id).single();
-if(currentRole==='admin'){if(!profile||!['admin','manager','staff','finance','support'].includes(profile.role))return alert('Not admin');if(profile.staff_code&&profile.staff_code!==staffCode)return alert('Invalid Staff Code');location.href='admin-v2.html';}
-else{const {data:enroll}=await supabaseClient.from('enrollments').select('id').eq('user_id',data.user.id).eq('status','approved').limit(1);if(enroll&&enroll.length>0)location.href='student-home.html';else location.href='onboarding.html';}}
-async function resetPassword(){const email=document.getElementById('email').value;if(!email)return alert('Enter email');const {error}=await supabaseClient.auth.resetPasswordForEmail(email);if(error)alert(error.message);else alert('Reset email sent');}
-</script></body></html>
+
+  <!-- LEFT SIDE -->
+  <div class="lg:w-[48%] bg-[#C2D9FF] p-8 lg:p-12 flex flex-col justify-between">
+
+    <div>
+
+      <!-- LOGO -->
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-[#0A2A7A] rounded-full flex items-center justify-center">
+          🎓
+        </div>
+
+        <h1 class="text-[#0A2A7A] font-extrabold text-2xl leading-none">
+          FUNDA ONLINE<br>
+          ACADEMY
+        </h1>
+      </div>
+
+      <!-- HEADLINE -->
+      <h2 class="mt-10 text-[#0A2A7A] font-extrabold text-4xl leading-tight">
+        Master Skills That Get<br>
+        You Hired
+      </h2>
+
+      <p class="mt-4 text-[#0A2A7A]/70 tracking-[0.2em] text-xs font-bold">
+        TRUSTED BY THOUSANDS OF STUDENTS
+      </p>
+
+      <p class="mt-3 text-[#0A2A7A] text-sm">
+        Trusted by <b>2,450+</b> students · <b>4.8 stars</b> ⭐⭐⭐⭐⭐
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- RIGHT SIDE -->
+  <div class="lg:w-[52%] flex items-center justify-center p-6 bg-[#EEF3FF]">
+
+    <div class="bg-white rounded-[24px] shadow-xl w-full max-w-[520px] p-8">
+
+      <!-- TITLE -->
+      <h2 class="text-3xl font-extrabold text-[#0A1E4A] text-center">
+        Welcome Back
+      </h2>
+
+      <p class="text-center text-gray-500 mt-2">
+        Choose how you want to log in
+      </p>
+
+
+      <!-- LOGIN TYPE -->
+      <div class="grid grid-cols-2 gap-3 mt-8">
+
+        <button
+          id="btn-student"
+          onclick="setRole('student')"
+          class="border-2 border-[#2563EB] bg-[#2563EB] text-white rounded-xl py-3 font-bold"
+        >
+          🎓 Student Login
+        </button>
+
+        <button
+          id="btn-admin"
+          onclick="setRole('admin')"
+          class="border-2 border-gray-200 text-gray-600 rounded-xl py-3 font-semibold"
+        >
+          💼 Admin Staff
+        </button>
+
+      </div>
+
+
+      <!-- ADMIN STAFF CODE -->
+      <div id="admin-extra" class="hidden mt-4">
+
+        <label class="text-sm font-semibold">
+          Staff Access Code
+        </label>
+
+        <input
+          id="staff_code"
+          type="text"
+          placeholder="ADM-042"
+          class="w-full mt-1 border rounded-xl px-4 py-3"
+        >
+
+      </div>
+
+
+      <!-- EMAIL -->
+      <div class="mt-6">
+
+        <label class="text-sm font-semibold">
+          Email
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          placeholder="you@email.com"
+          class="w-full border rounded-xl px-4 py-3 mt-1"
+        >
+
+      </div>
+
+
+      <!-- PASSWORD -->
+      <div class="mt-4">
+
+        <label class="text-sm font-semibold">
+          Password
+        </label>
+
+        <input
+          id="password"
+          type="password"
+          placeholder="••••••••"
+          class="w-full border rounded-xl px-4 py-3 mt-1"
+        >
+
+      </div>
+
+
+      <!-- LOGIN BUTTON -->
+      <button
+        onclick="handleLogin()"
+        id="loginBtn"
+        class="w-full bg-[#2563EB] text-white font-bold rounded-xl py-4 mt-6"
+      >
+        Login
+      </button>
+
+
+      <!-- FORGOT PASSWORD -->
+      <p class="text-center mt-3">
+
+        <a
+          href="#"
+          onclick="resetPassword(); return false;"
+          class="text-[#2563EB] underline text-sm"
+        >
+          Forgot password?
+        </a>
+
+      </p>
+
+
+      <!-- DIVIDER -->
+      <div class="flex items-center gap-3 my-6">
+
+        <div class="h-px bg-gray-200 flex-1"></div>
+
+        <span class="text-sm text-gray-500">
+          OR
+        </span>
+
+        <div class="h-px bg-gray-200 flex-1"></div>
+
+      </div>
+
+
+      <!-- REGISTER -->
+      <a
+        href="register.html"
+        class="w-full border-2 border-[#2563EB] text-[#2563EB] font-bold rounded-xl py-3 block text-center"
+      >
+        👤 New to Funda? Register as Student
+      </a>
+
+
+      <!-- BROWSE COURSES -->
+      <a
+        href="courses-public.html"
+        class="w-full mt-3 bg-gray-100 text-gray-700 font-semibold rounded-xl py-3 block text-center"
+      >
+        📖 Browse Courses · No Login Needed
+      </a>
+
+
+      <!-- SECURITY -->
+      <p class="text-center text-xs text-gray-400 mt-5">
+        🔒 Secure Login · Your information is protected
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- SUPABASE + LOGIN LOGIC -->
+  <script>
+
+    const supabaseClient = supabase.createClient(
+      "https://nzwfowwoazmpnwfrednh.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU"
+    );
+
+    let currentRole = 'student';
+
+
+    /* ============================
+       SELECT LOGIN TYPE
+    ============================ */
+
+    function setRole(role) {
+
+      currentRole = role;
+
+      const adminExtra = document.getElementById('admin-extra');
+      const studentButton = document.getElementById('btn-student');
+      const adminButton = document.getElementById('btn-admin');
+
+      if (role === 'admin') {
+
+        adminExtra.classList.remove('hidden');
+
+        adminButton.classList.remove(
+          'border-gray-200',
+          'text-gray-600'
+        );
+
+        adminButton.classList.add(
+          'border-[#2563EB]',
+          'bg-[#2563EB]',
+          'text-white'
+        );
+
+        studentButton.classList.remove(
+          'border-[#2563EB]',
+          'bg-[#2563EB]',
+          'text-white'
+        );
+
+        studentButton.classList.add(
+          'border-gray-200',
+          'text-gray-600'
+        );
+
+      } else {
+
+        adminExtra.classList.add('hidden');
+
+        studentButton.classList.remove(
+          'border-gray-200',
+          'text-gray-600'
+        );
+
+        studentButton.classList.add(
+          'border-[#2563EB]',
+          'bg-[#2563EB]',
+          'text-white'
+        );
+
+        adminButton.classList.remove(
+          'border-[#2563EB]',
+          'bg-[#2563EB]',
+          'text-white'
+        );
+
+        adminButton.classList.add(
+          'border-gray-200',
+          'text-gray-600'
+        );
+
+      }
+
+    }
+
+
+    /* ============================
+       LOGIN
+    ============================ */
+
+    async function handleLogin() {
+
+      const email =
+        document.getElementById('email').value.trim();
+
+      const password =
+        document.getElementById('password').value;
+
+      const staffCode =
+        document.getElementById('staff_code').value.trim();
+
+      const loginButton =
+        document.getElementById('loginBtn');
+
+
+      if (!email || !password) {
+
+        alert('Please enter your email and password.');
+
+        return;
+      }
+
+
+      loginButton.disabled = true;
+      loginButton.textContent = 'Logging in...';
+
+
+      try {
+
+        /* ============================
+           SUPABASE AUTHENTICATION
+        ============================ */
+
+        const {
+          data,
+          error
+        } = await supabaseClient.auth.signInWithPassword({
+          email,
+          password
+        });
+
+
+        if (error) {
+
+          alert(error.message);
+
+          return;
+        }
+
+
+        if (!data || !data.user) {
+
+          alert('Login was unsuccessful. Please try again.');
+
+          return;
+        }
+
+
+        /* ============================
+           GET USER PROFILE
+        ============================ */
+
+        const {
+          data: profile,
+          error: profileError
+        } = await supabaseClient
+          .from('profiles')
+          .select('role, staff_code')
+          .eq('id', data.user.id)
+          .single();
+
+
+        if (profileError || !profile) {
+
+          console.error(
+            'Profile lookup error:',
+            profileError
+          );
+
+          alert(
+            'Your profile could not be found. Please contact Funda Online Academy support.'
+          );
+
+          return;
+        }
+
+
+        /* ============================
+           ADMIN / STAFF LOGIN
+        ============================ */
+
+        if (currentRole === 'admin') {
+
+          const allowedRoles = [
+            'admin',
+            'manager',
+            'staff',
+            'finance',
+            'support'
+          ];
+
+
+          if (!allowedRoles.includes(profile.role)) {
+
+            alert(
+              'This account does not have staff or admin access.'
+            );
+
+            return;
+          }
+
+
+          if (
+            profile.staff_code &&
+            profile.staff_code !== staffCode
+          ) {
+
+            alert(
+              'Invalid Staff Access Code.'
+            );
+
+            return;
+          }
+
+
+          window.location.href = 'admin-v2.html';
+
+          return;
+        }
+
+
+        /* ============================
+           STUDENT LOGIN
+        ============================
+
+        IMPORTANT:
+        The Supabase enrollments table
+        uses student_id.
+
+        We therefore check:
+
+        enrollments.student_id
+        =
+        authenticated user's ID
+
+        and accept either:
+
+        status = approved
+
+        OR
+
+        enrollment_status = approved
+        */
+
+        const {
+          data: enrollments,
+          error: enrollmentError
+        } = await supabaseClient
+          .from('enrollments')
+          .select(
+            'id, status, enrollment_status'
+          )
+          .eq(
+            'student_id',
+            data.user.id
+          )
+          .or(
+            'status.eq.approved,enrollment_status.eq.approved'
+          )
+          .limit(1);
+
+
+        /* ============================
+           ENROLLMENT ERROR
+        ============================ */
+
+        if (enrollmentError) {
+
+          console.error(
+            'Enrollment verification error:',
+            enrollmentError
+          );
+
+          alert(
+            'We could not verify your enrollment. Please try again.'
+          );
+
+          return;
+        }
+
+
+        /* ============================
+           APPROVED STUDENT
+        ============================ */
+
+        if (
+          enrollments &&
+          enrollments.length > 0
+        ) {
+
+          window.location.href =
+            'dashboard.html';
+
+          return;
+        }
+
+
+        /* ============================
+           NO APPROVED ENROLLMENT
+        ============================ */
+
+        window.location.href =
+          'onboarding.html';
+
+      }
+
+      catch (error) {
+
+        console.error(
+          'Unexpected login error:',
+          error
+        );
+
+        alert(
+          'Something went wrong while logging in. Please try again.'
+        );
+
+      }
+
+      finally {
+
+        loginButton.disabled = false;
+        loginButton.textContent = 'Login';
+
+      }
+
+    }
+
+
+    /* ============================
+       PASSWORD RESET
+    ============================ */
+
+    async function resetPassword() {
+
+      const email =
+        document.getElementById('email').value.trim();
+
+
+      if (!email) {
+
+        alert(
+          'Please enter your email address first.'
+        );
+
+        return;
+      }
+
+
+      const {
+        error
+      } = await supabaseClient.auth.resetPasswordForEmail(
+        email
+      );
+
+
+      if (error) {
+
+        alert(error.message);
+
+        return;
+      }
+
+
+      alert(
+        'Password reset instructions have been sent to your email.'
+      );
+
+    }
+
+  </script>
+
+</body>
+</html>
