@@ -1,109 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Command Center - Funda</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Command Center | Funda Online Academy</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=swap" rel="stylesheet">
-<style>body{font-family:'Inter',sans-serif}</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@800;900&display=swap" rel="stylesheet">
+<style>body{font-family:Inter,sans-serif}</style>
 </head>
 <body class="bg-[#F1F5FF] min-h-screen">
-
-<nav class="bg-[#0A2A7A] text-white p-4 flex justify-between items-center">
-<div class="flex items-center gap-3">
-<div class="w-10 h-10 bg-white text-[#0A2A7A] rounded-full flex items-center justify-center font-extrabold">A</div>
-<div><p class="font-extrabold leading-none">ADMIN COMMAND CENTER</p><p class="text-xs opacity-70">Funda Online Academy</p></div>
+<header class="bg-[#0A1931] text-white p-4 flex justify-between items-center">
+<h1 class="font-black">ADMIN COMMAND CENTER</h1>
+<div class="flex gap-2">
+<a href="index.html" class="bg-white text-[#0A1931] px-4 py-2 rounded-full text-xs font-bold">View Site</a>
+<button onclick="logout()" class="bg-red-600 px-4 py-2 rounded-full text-xs font-bold">Logout</button>
 </div>
-<div class="flex gap-3">
-<button onclick="loadData()" class="bg-white/20 px-4 py-2 rounded-xl text-sm">🔄 Refresh</button>
-<a href="login.html" class="bg-white text-[#0A2A7A] px-4 py-2 rounded-xl text-sm font-bold">Logout</a>
-</div>
-</nav>
+</header>
 
-<div class="max-w-7xl mx-auto p-6">
-<!-- STATS -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-<div class="bg-white p-5 rounded-2xl shadow"><p class="text-sm text-gray-500">Total Income</p><p class="text-2xl font-extrabold">R 124,500</p><p class="text-xs text-green-600">↑ 12% this month</p></div>
-<div class="bg-white p-5 rounded-2xl shadow"><p class="text-sm text-gray-500">Pending Approval</p><p class="text-2xl font-extrabold text-orange-600" id="pendingCount">0</p><p class="text-xs text-gray-400">Need your action</p></div>
-<div class="bg-white p-5 rounded-2xl shadow"><p class="text-sm text-gray-500">Total Students</p><p class="text-2xl font-extrabold" id="totalStudents">0</p><p class="text-xs text-gray-400">All time</p></div>
-<div class="bg-white p-5 rounded-2xl shadow"><p class="text-sm text-gray-500">Active Courses</p><p class="text-2xl font-extrabold">4</p><p class="text-xs text-gray-400">Live now</p></div>
+<div class="max-w-7xl mx-auto p-4 grid md:grid-cols-3 gap-4 mt-4">
+<div class="bg-white rounded-2xl p-5 shadow"><p class="text-xs text-gray-500">Pending Payment Approval</p><p id="pendingCount" class="text-2xl font-black text-red-600">0</p></div>
+<div class="bg-white rounded-2xl p-5 shadow"><p class="text-xs text-gray-500">Total Enrollments</p><p id="totalCount" class="text-2xl font-black">0</p></div>
+<div class="bg-white rounded-2xl p-5 shadow"><p class="text-xs text-gray-500">Total Revenue (Approved)</p><p id="revenue" class="text-2xl font-black text-green-600">R0</p></div>
 </div>
 
-<!-- ENROLLMENTS -->
-<div class="bg-white rounded-2xl shadow p-6 mt-6">
-<div class="flex justify-between items-center"><h3 class="font-extrabold text-lg">📋 Recent Enrollments - Approve Payment Proof</h3><span class="bg-orange-100 text-orange-700 text-xs px-3 py-1 rounded-full font-bold">LIVE DATA</span></div>
-<div class="mt-4 overflow-x-auto">
-<table class="w-full text-sm">
-<thead><tr class="text-gray-400 text-xs border-b"><th class="text-left p-3">STUDENT</th><th class="text-left p-3">COURSE</th><th class="text-left p-3">PROOF</th><th class="text-left p-3">STATUS</th><th class="text-left p-3">ACTION</th></tr></thead>
-<tbody id="enrollList"><tr><td colspan="5" class="p-8 text-center text-gray-400">Loading enrollments...</td></tr></tbody>
-</table>
-</div>
+<div class="max-w-7xl mx-auto p-4">
+<div class="bg-white rounded-2xl p-6 shadow">
+<h2 class="font-black text-[#0A2A7A]">Enrollments - Approve Payment Proof</h2>
+<div id="loading" class="text-center py-10 text-sm text-gray-500">Loading enrollments...</div>
+<div id="enrollmentList" class="mt-6 space-y-4"></div>
+<div id="emptyState" class="hidden text-center py-10"><p class="text-sm text-[#0A2A7A] bg-blue-50 p-4 rounded-xl">✅ Ready - No enrollments yet. When student enrolls, they will appear here.</p></div>
 </div>
 
-<!-- USERS -->
-<div class="bg-white rounded-2xl shadow p-6 mt-6">
-<h3 class="font-extrabold">👥 All Users</h3>
-<div id="usersList" class="mt-4 text-sm">Loading...</div>
+<div class="bg-white rounded-2xl p-6 shadow mt-6">
+<h2 class="font-black text-[#0A2A7A]">Course Management - 30 Courses</h2>
+<div id="courseList" class="mt-4 grid md:grid-cols-2 gap-3"></div>
 </div>
 </div>
 
 <script>
-const SUPABASE_URL = "https://nzwfowwoazmpnwfrednh.supabase.co";
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU";
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+const SUPABASE_URL="https://nzwfowwoazmpnwfrednh.supabase.co";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU";
+const supa=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
 async function checkAdmin(){
- const {data:{user}} = await supabaseClient.auth.getUser();
- if(!user){ location.href='login.html'; return; }
- const {data:profile} = await supabaseClient.from('profiles').select('role').eq('id', user.id).single();
- if(!profile || !['admin','manager','staff','finance','support'].includes(profile.role)){
-   alert('Not authorized as Admin. Please login with admin@funda.co.za');
-   location.href='login.html';
- }
+ const {data:{user}} = await supa.auth.getUser();
+ if(!user){location.href='login.html';return;}
+ const {data:profile}=await supa.from('profiles').select('role').eq('id',user.id).single();
+ if(!profile || profile.role!=='admin'){alert('Not admin');location.href='index.html';}
 }
+checkAdmin();
 
-async function loadData(){
- // Load pending enrollments
- const {data:enrolls, error} = await supabaseClient.from('enrollments').select('*, profiles(email, full_name), courses(title)').order('created_at', {ascending:false}).limit(20);
- if(error){ document.getElementById('enrollList').innerHTML = `<tr><td colspan=5 class="p-4 text-red-500">${error.message}<br>Run SQL for enrollments table</td></tr>`; return; }
+async function loadEnrollments(){
+ const {data,error} = await supa.from('enrollments').select(`*, profiles(email, full_name), courses(title, price)`).order('created_at',{ascending:false});
+ document.getElementById('loading').classList.add('hidden');
+ if(error){document.getElementById('loading').textContent='Error: '+error.message; return;}
+ if(!data || data.length===0){document.getElementById('emptyState').classList.remove('hidden'); document.getElementById('pendingCount').textContent='0'; document.getElementById('totalCount').textContent='0'; return;}
  
- const pending = enrolls.filter(e=>e.status==='pending');
- document.getElementById('pendingCount').innerText = pending.length;
- document.getElementById('totalStudents').innerText = enrolls.length;
+ let pending=0, total=data.length, revenue=0;
+ data.forEach(e=>{if(e.status==='pending') pending++; if(e.status==='approved') revenue+=Number(e.courses?.price||0);});
+ document.getElementById('pendingCount').textContent=pending;
+ document.getElementById('totalCount').textContent=total;
+ document.getElementById('revenue').textContent='R'+revenue.toLocaleString();
 
- if(enrolls.length===0){
-  document.getElementById('enrollList').innerHTML = `<tr><td colspan=5 class="p-8 text-center">No enrollments yet. Ask a student to register and upload proof.</td></tr>`;
- } else {
-  document.getElementById('enrollList').innerHTML = enrolls.map(e=>`
-   <tr class="border-b hover:bg-gray-50">
-    <td class="p-3"><div class="font-bold">${e.profiles?.full_name||'No name'}</div><div class="text-xs text-gray-500">${e.profiles?.email||e.user_id}</div></td>
-    <td class="p-3">${e.courses?.title||e.course_id}</td>
-    <td class="p-3">${e.proof_url?`<a href="${e.proof_url}" target="_blank" class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs">👁️ View Proof</a>`:`<span class="text-gray-400">No proof</span>`}</td>
-    <td class="p-3"><span class="px-2 py-1 rounded-full text-xs font-bold ${e.status==='pending'?'bg-orange-100 text-orange-700':e.status==='approved'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${e.status}</span></td>
-    <td class="p-3 flex gap-2">${e.status==='pending'?`<button onclick="approve('${e.id}')" class="bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold">✅ Approve</button><button onclick="reject('${e.id}')" class="bg-red-600 text-white px-3 py-2 rounded-xl text-xs">❌ Reject</button>`:`<span class="text-xs text-gray-400">Done</span>`}</td>
-   </tr>
-  `).join('');
- }
-
- // Load users
- const {data:users} = await supabaseClient.from('profiles').select('email, role, full_name').limit(20);
- if(users) document.getElementById('usersList').innerHTML = users.map(u=>`<div class="flex justify-between border-b py-2"><span>${u.full_name||''} - ${u.email}</span><span class="bg-gray-100 px-2 rounded text-xs">${u.role}</span></div>`).join('');
+ document.getElementById('enrollmentList').innerHTML=data.map(en=>`
+  <div class="border rounded-xl p-4 ${en.status==='pending'?'bg-yellow-50 border-yellow-200':'bg-green-50 border-green-200'}">
+   <div class="flex justify-between">
+    <div><p class="font-bold text-sm">${en.profiles?.full_name||en.profiles?.email||'Student'}</p><p class="text-xs text-gray-600">${en.profiles?.email}</p><p class="text-xs mt-1"><b>Course:</b> ${en.courses?.title}</p><p class="text-xs"><b>Fee:</b> R${en.courses?.price} | <b>Status:</b> <span class="font-black uppercase ${en.status==='pending'?'text-orange-600':'text-green-600'}">${en.status}</span></p><p class="text-[10px] text-gray-400">${new Date(en.created_at).toLocaleString()}</p></div>
+    <div class="text-right">${en.payment_proof_url?`<a href="${en.payment_proof_url}" target="_blank" class="text-xs bg-blue-600 text-white px-3 py-2 rounded-full">View Proof</a>`:`<span class="text-xs text-gray-400">No proof uploaded</span>`}</div>
+   </div>
+   ${en.status==='pending'?`<div class="flex gap-2 mt-3"><button onclick="approve('${en.id}')" class="bg-green-600 text-white px-4 py-2 rounded-full text-xs font-bold">✅ Approve Payment</button><button onclick="reject('${en.id}')" class="bg-red-600 text-white px-4 py-2 rounded-full text-xs font-bold">❌ Reject</button></div>`:''}
+  </div>
+ `).join('');
 }
 
-async function approve(id){
- if(!confirm('Approve this student? They will get access to courses.')) return;
- const {error} = await supabaseClient.from('enrollments').update({status:'approved'}).eq('id', id);
- if(error) alert(error.message); else { alert('✅ Student Approved!'); loadData(); }
-}
-async function reject(id){
- if(!confirm('Reject this enrollment?')) return;
- await supabaseClient.from('enrollments').update({status:'rejected'}).eq('id', id);
- loadData();
+async function loadCourses(){
+ const {data} = await supa.from('courses').select('*').order('title');
+ if(!data) return;
+ document.getElementById('courseList').innerHTML=data.map(c=>`<div class="border rounded-xl p-3 flex justify-between items-center"><div><p class="font-bold text-xs">${c.title}</p><p class="text-[10px] text-gray-500">R${c.price} - ${c.duration||'Flexible'}</p></div><span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded-full">${c.active!==false?'Active':'Inactive'}</span></div>`).join('');
 }
 
-checkAdmin(); loadData();
+async function approve(id){ if(!confirm('Approve this enrollment? Student will get access.')) return; const {error}=await supa.from('enrollments').update({status:'approved'}).eq('id',id); if(error) alert(error.message); else loadEnrollments(); }
+async function reject(id){ if(!confirm('Reject this enrollment?')) return; const {error}=await supa.from('enrollments').update({status:'rejected'}).eq('id',id); if(error) alert(error.message); else loadEnrollments(); }
+async function logout(){ await supa.auth.signOut(); location.href='login.html'; }
+
+loadEnrollments(); loadCourses();
 </script>
 </body>
-         </html>
+</html> 
