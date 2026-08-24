@@ -1,1 +1,42 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Courses - Funda</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/@supabase/supabase-js@2"></script></head><body class="bg-slate-50"><nav class="bg-[#0A2A7A] text-white p-4 flex justify-between"><a href="index.html" class="font-black">Funda Online Academy</a><a href="dashboard.html" class="bg-white text-[#0A2A7A] px-4 py-1 rounded-full text-sm font-bold">Dashboard</a></nav><div class="max-w-7xl mx-auto p-6"><h1 class="text-3xl font-black text-[#0A2A7A]">All Courses (30)</h1><div id="courses" class="grid md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">Loading 30 courses...</div></div><script>const supabaseClient=supabase.createClient("https://nzwfowwoazmpnwfrednh.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU");async function load(){const {data}=await supabaseClient.from('courses').select('*').eq('active',true).order('price',{ascending:true});document.getElementById('courses').innerHTML=data.map(c=>`<div class="bg-white rounded-2xl shadow border p-5 flex flex-col"><div class="text-xs text-blue-600 font-bold">${c.duration}</div><h3 class="font-bold text-[#0A2A7A] text-sm mt-2 h-12">${c.title}</h3><div class="mt-auto pt-4 flex justify-between items-center"><span class="font-black text-green-600 text-lg">R${c.price}</span><a href="course-view.html?id=${c.id}" class="bg-[#0A2A7A] text-white px-3 py-2 rounded-lg text-xs font-bold">View</a></div></div>`).join('');}load();</script></body></html>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Funda Online Academy</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<style>.card{transition:.2s}.card:hover{transform:translateY(-4px);box-shadow:0 10px 20px rgba(10,42,122,.15)} </style>
+</head>
+<body class="bg-white">
+<!-- NAV - Your Design -->
+<nav class="flex justify-between items-center p-4 px-8 border-b">
+  <div class="flex items-center gap-2 font-black text-[#0A2A7A]"><span class="bg-[#0A2A7A] text-white p-1 rounded">🎓</span> FUNDA <span class="text-xs font-normal block">ONLINE ACADEMY</span></div>
+  <div class="hidden md:flex gap-6 text-sm"><a href="courses-public.html">Courses</a><a href="#">Pricing</a><a href="#">About</a></div>
+  <div class="flex gap-2"><a href="login.html" class="px-4 py-2 text-sm">Login</a><a href="register.html" class="bg-[#0A2A7A] text-white px-4 py-2 rounded-full text-sm">Sign Up</a></div>
+</nav>
+
+<!-- HERO + POPULAR COURSES - Your Design -->
+<section class="bg-[#F1F7FF] p-8">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-8">
+    <div><h1 class="text-4xl font-black text-[#0A2A7A] leading-tight">Master Skills That Get You Hired - From Cape Town to the World</h1><p class="text-sm text-gray-600 mt-3">Join 10,000+ learners building in-demand skills with practical, mentor-supported courses.</p><div class="flex gap-3 mt-5"><a href="#courses" class="bg-[#0A2A7A] text-white px-6 py-3 rounded-full text-sm font-bold">Browse Courses →</a><span class="bg-white border px-4 py-2 rounded-full text-xs">Get 20% Off</span></div></div>
+    <div class="bg-white rounded-2xl p-4 shadow">
+      <h2 class="font-black text-center text-[#0A2A7A]">Popular Courses</h2><p class="text-[10px] text-center text-gray-400">Our most popular industry-ready courses to boost your career</p>
+      <div id="courses" class="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">Loading your 30 courses...</div>
+      <div class="text-center mt-4"><a href="courses-public.html" class="text-xs border px-4 py-2 rounded-full">View All 30+ Courses →</a></div>
+    </div>
+  </div>
+</section>
+
+<script>
+const supa=supabase.createClient("https://nzwfowwoazmpnwfrednh.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU");
+async function load(){
+  const {data}=await supa.from('courses').select('*').eq('active',true).order('created_at',{ascending:false});
+  document.getElementById('courses').innerHTML=data.map(c=>`
+    <div class="card border rounded-xl p-3 bg-white">
+      <div class="h-12 bg-[#0A2A7A] rounded-lg flex items-center justify-center text-[8px] text-white text-center p-1 font-bold">${c.title.substring(0,40)}</div>
+      <h3 class="text-[10px] font-bold mt-2 h-8 leading-tight">${c.title}</h3>
+      <div class="flex justify-between items-center mt-2"><span class="text-[9px] text-gray-500">${c.duration}</span><span class="text-xs font-black text-green-600">R${c.price}</span></div>
+      <a href="course-view.html?id=${c.id}" class="block text-center bg-[#0A2A7A] text-white text-[10px] py-2 rounded-lg mt-2 font-bold">Enroll - R${c.price}</a>
+    </div>`).join('');
+}
+load();
+</script>
+</body></html>
