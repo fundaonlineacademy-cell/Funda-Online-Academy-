@@ -1,47 +1,54 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Funda Online Academy - Master Skills</title>
+<title>Funda Online Academy - Master Skills That Get You Hired</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
-<style>body{font-family:Inter,sans-serif}</style>
-</head><body class="bg-white">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>body{font-family:Inter,sans-serif}.glass{backdrop-filter:blur(10px)}</style>
+</head><body class="bg-white text-gray-900">
 
-<!-- NAV EXACT -->
-<nav class="flex justify-between items-center px-4 md:px-10 py-3 bg-white border-b">
-  <div class="flex items-center gap-2"><div class="bg-[#0A2A7A] w-8 h-8 rounded flex items-center justify-center">🎓</div><div><p class="font-black text-[#0A2A7A] text-[18px] leading-none">FUNDA</p><p class="text-[9px] text-[#0A2A7A] tracking-widest">ONLINE ACADEMY</p></div></div>
-  <div class="hidden md:flex gap-6 text-[12px] font-medium"><a href="courses-public.html">Courses</a><a href="#">Pricing</a><a href="#">About</a><a href="#">For Business</a></div>
-  <div class="flex gap-2"><a href="login.html" class="px-4 py-1.5 text-xs">Login</a><a href="register.html" class="bg-[#0A2A7A] text-white px-5 py-2 rounded-full text-xs font-bold">Sign Up</a></div>
+<!-- NAV -->
+<nav class="sticky top-0 z-50 bg-white/90 glass border-b">
+<div class="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+<div class="flex items-center gap-2"><div class="bg-[#0A2A7A] text-white w-8 h-8 rounded-full flex items-center justify-center font-black">F</div><span class="font-black text-[#0A2A7A]">FUNDA</span><span class="text-[10px] ml-1 text-gray-500">ONLINE ACADEMY</span></div>
+<div class="hidden md:flex gap-6 text-sm"><a href="courses-public.html" class="hover:text-blue-700">Courses</a><a href="#pricing">Pricing</a><a href="#why">Why Us</a></div>
+<div class="flex gap-2"><a href="login.html" class="px-4 py-2 text-sm">Login</a><a href="register.html" class="bg-[#0A2A7A] text-white px-5 py-2 rounded-full text-sm font-bold">Sign Up Free</a></div>
+</div>
 </nav>
 
-<!-- HERO SECTION - EXACT LIKE SCREENSHOT -->
-<section class="bg-[#EAF3FF] px-4 md:px-10 py-8">
-<div class="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-  <!-- LEFT 4 COLS -->
-  <div class="lg:col-span-4 pt-4">
-    <h1 class="text-[28px] md:text-[32px] font-black text-[#0A2A7A] leading-[1.1]">Master Skills That Get You Hired - From Cape Town to the World</h1>
-    <p class="text-[11px] text-gray-600 mt-4 leading-relaxed">Join 10,000+ learners building in-demand skills with practical, mentor-supported courses. Learn online, earn recognized certificates, and advance your career globally.</p>
-    <div class="flex gap-3 mt-6"><a href="courses-public.html" class="bg-[#0A2A7A] text-white px-6 py-3 rounded-full text-xs font-bold">Browse Courses →</a><span class="bg-white px-4 py-2 rounded-full text-[10px] border flex items-center">Get 20% Off 🎁</span></div>
-    <div class="mt-10"><p class="text-[8px] font-bold tracking-widest text-gray-500">TRUSTED BY LEADING PARTNERS:</p><div class="flex gap-2 mt-2"><span class="bg-white border text-[10px] px-3 py-1 rounded">PayFast</span><span class="bg-white border text-[10px] px-3 py-1 rounded">Microsoft</span><span class="bg-white border text-[10px] px-3 py-1 rounded">G Google Partners</span></div></div>
+<!-- HERO + POPULAR COURSES - THE SALES ENGINE -->
+<section class="bg-[#EDF4FF] px-6 py-10">
+<div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 items-start">
+  <div class="lg:col-span-5">
+    <div class="inline-flex bg-white px-3 py-1 rounded-full text-[10px] font-bold shadow-sm">🔥 50,000+ Learners Trust Funda</div>
+    <h1 class="text-[34px] md:text-[42px] font-black text-[#0A2A7A] leading-[0.95] mt-4">Master Skills That Get You Hired - From Cape Town to the World</h1>
+    <p class="text-[13px] text-gray-600 mt-4">Join 10,000+ learners building in-demand skills with practical, mentor-supported courses. Learn online, earn recognized certificates, advance your career globally.</p>
+    <div class="flex gap-3 mt-6"><a href="courses-public.html" class="bg-[#0A2A7A] text-white px-6 py-3 rounded-full text-sm font-bold">Browse Courses →</a><a href="register.html" class="bg-white border px-6 py-3 rounded-full text-sm font-bold">Get 20% Off 🎁</a></div>
+    <div class="mt-10"><p class="text-[9px] font-black tracking-widest text-gray-400">TRUSTED BY LEADING PARTNERS:</p><div class="flex gap-2 mt-2"><span class="bg-white px-3 py-1.5 rounded-full text-[11px] font-bold shadow-sm">PayFast</span><span class="bg-white px-3 py-1.5 rounded-full text-[11px] font-bold shadow-sm">Microsoft</span><span class="bg-white px-3 py-1.5 rounded-full text-[11px] font-bold shadow-sm">Google Partners</span></div></div>
   </div>
-  <!-- RIGHT 8 COLS - POPULAR COURSES + IMAGE -->
-  <div class="lg:col-span-8 bg-white rounded-[20px] p-4 md:p-6 shadow-sm border">
-    <div class="flex justify-between">
-      <div class="text-center w-full md:w-[65%]"><h2 class="font-black text-[#0A2A7A] text-[18px]">Popular Courses</h2><p class="text-[10px] text-gray-500">Our most popular industry-ready courses to boost your career</p></div>
-      <div class="hidden md:block w-[35%]"><img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400" class="rounded-xl h-[80px] w-full object-cover"/></div>
+  <div class="lg:col-span-7">
+    <div class="bg-white rounded-[24px] p-5 md:p-7 shadow-[0_20px_60px_rgba(10,42,122,0.1)] border">
+      <div class="flex justify-between items-start">
+        <div class="flex-1 text-center"><h2 class="font-black text-[#0A2A7A] text-xl">Popular Courses</h2><p class="text-[11px] text-gray-500">Our most popular industry-ready courses to boost your career</p></div>
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600" class="hidden md:block w-[260px] h-[90px] object-cover rounded-xl ml-4"/>
+      </div>
+      <div id="popular" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mt-6">Loading 30 courses...</div>
+      <div class="text-center mt-6"><a href="courses-public.html" class="inline-block border-2 px-8 py-2.5 rounded-full text-xs font-bold hover:bg-[#0A2A7A] hover:text-white transition">View All 30+ Courses →</a></div>
     </div>
-    <!-- COURSE GRID - 10 CARDS - LIVE FROM SUPABASE -->
-    <div id="popular" class="grid grid-cols-2 md:grid-cols-5 gap-3 mt-5">Loading your 30 courses...</div>
-    <div class="text-center mt-5"><a href="courses-public.html" class="border border-gray-300 px-6 py-2 rounded-full text-[11px]">View All 30+ Courses →</a></div>
   </div>
 </div>
 </section>
 
-<!-- WHY CHOOSE SECTION - EXACT -->
-<section class="px-4 md:px-10 py-10 max-w-[1400px] mx-auto">
-<h2 class="text-center font-black text-[#0A2A7A] text-[18px]">Why Choose Funda Online Academy</h2><p class="text-center text-[10px] text-gray-500">We go beyond theory to get you job-ready</p>
-<div class="grid md:grid-cols-5 gap-4 mt-8">
-  <div class="border-l-4 border-blue-600 pl-3 text-[10px]"><p class="font-bold">How do I pay for the course?</p><p class="text-gray-500 mt-1">We accept all payment methods via PayFast - credit cards, EFT, Mobicred, etc. 67% upfront.</p><div class="mt-4"><p class="font-bold">Will I receive a recognized certificate?</p><p class="text-gray-500">Yes, verified with QR code.</p></div></div>
-  <div class="border rounded-xl p-4 text-center"><div class="w-10 h-10 bg-[#EAF3FF] rounded-full mx-auto flex items-center justify-center">💼</div><p class="font-bold text-[11px] mt-2">Practical Portfolio Projects</p><p class="text-[9px] text-gray-500 mt-1">Build real-world projects to showcase to employers & clients in your professional portfolio.</p><p class="text-[9px] mt-2 text-blue-600">Naledi K., Now Data Analyst at Takealot ★</p></div>
-  <div class="border rounded-xl p-4 text-center"><div class="w-10 h-10 bg-orange-100 rounded-full mx-auto flex items-center justify-center">💬</div><p class="font-bold text-[11px] mt-2">Whatsapp Mentorship</p><p class="text-[9px] text-gray-500 mt-1">"The Cyber Security course was hands-on and practical. I got a job offer right after completing it."</p><p class="text-[9px] mt-2 text-blue-600">Thabo M., Johannesburg Now 
+<!-- WHY CHOOSE + FAQ + PRICING -->
+<section id="why" class="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-12 gap-6">
+  <div class="md:col-span-3 text-[12px]"><h3 class="font-black text-[#0A2A7A]">How do I pay for the course?</h3><p class="text-gray-600 mt-2">We accept all payment methods via PayFast - credit/debit cards, EFT, Mobicred, plus direct bank EFT to our FNB account. 67% upfront, rest before certificate.</p><h3 class="font-black text-[#0A2A7A] mt-6">Will I receive a recognized certificate?</h3><p class="text-gray-600 mt-2">Yes! Verified certificate with QR code - employers can scan to verify. Shareable on LinkedIn.</p><h3 class="font-black text-[#0A2A7A] mt-6">How long do I have access?</h3><p class="text-gray-600 mt-2">Lifetime access to materials + 14 weeks WhatsApp mentorship.</p></div>
+
+  <div class="md:col-span-6 grid grid-cols-3 gap-3">
+    <div class="border rounded-2xl p-4"><div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">💼</div><h4 class="font-bold text-[12px] mt-3">Practical Portfolio Projects</h4><p class="text-[10px] text-gray-500 mt-1">Build real-world projects to showcase to employers.</p><p class="text-[9px] mt-3 font-bold text-[#0A2A7A]">Naledi K. Now Data Analyst at Takealot ⭐⭐⭐⭐⭐</p></div>
+    <div class="border rounded-2xl p-4"><div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">💬</div><h4 class="font-bold text-[12px] mt-3">WhatsApp Mentorship</h4><p class="text-[10px] text-gray-500 mt-1">The Cyber Security course was hands-on. I got a job offer right after.</p><p class="text-[9px] mt-3 font-bold text-[#0A2A7A]">Thabo M. JHB - Now Security Analyst</p></div>
+    <div class="border rounded-2xl p-4"><div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">📜</div><h4 class="font-bold text-[12px] mt-3">Verified Certificates with QR Code</h4><p class="text-[10px] text-gray-500 mt-1">Earn shareable, verified certificates that employers verify in seconds.</p><p class="text-[9px] mt-3 font-bold text-[#0A2A7A]">Ayanda P. Durban - Founder at UrbanCraft</p></div>
+  </div>
+
+  <div id="pricing" class="md:col-span-3">
+    <div class="bg- 
