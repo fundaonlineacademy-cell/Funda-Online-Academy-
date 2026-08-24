@@ -1,22 +1,32 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Course - Funda</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/@supabase/supabase-js@2"></script></head>
-<body class="bg-[#F1F5FF]">
-<nav class="bg-[#0A2A7A] text-white p-4"><a href="courses-public.html" class="font-bold">← Back to Courses</a></nav>
-<div class="max-w-4xl mx-auto p-6"><div id="courseBox" class="bg-white rounded-2xl shadow p-6">Loading...</div></div>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Course</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/@supabase/supabase-js@2"></script></head>
+<body class="bg-slate-50"><nav class="bg-[#0A2A7A] text-white p-4"><a href="courses-public.html">← Back to Courses</a></nav>
+<div class="max-w-3xl mx-auto p-6"><div id="course">Loading course...</div></div>
 <script>
-const URL="https://nzwfowwoazmpnwfrednh.supabase.co";const KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU";const client=supabase.createClient(URL,KEY);
+const client=supabase.createClient("https://nzwfowwoazmpnwfrednh.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU");
+const id=new URLSearchParams(window.location.search).get('id');
 async function load(){
- const id=new URLSearchParams(location.search).get('id');
- if(!id){document.getElementById('courseBox').innerHTML='No course ID';return;}
- const {data:c,error}=await client.from('courses').select('*').eq('id',id).single();
- if(error){document.getElementById('courseBox').innerHTML=error.message;return;}
- document.getElementById('courseBox').innerHTML=`<img src="${c.image_url||'https://via.placeholder.com/800x400'}" class="w-full h-64 object-cover rounded-xl"><h1 class="text-3xl font-black text-[#0A2A7A] mt-6">${c.title}</h1><p class="text-gray-600 mt-4">${c.description||''}</p><div class="mt-6 p-4 bg-green-50 rounded-xl flex justify-between items-center"><span class="text-2xl font-black text-green-600">R${c.price||0}</span><span class="text-sm text-gray-500">${c.duration||''}</span></div><button onclick="enroll('${c.id}')" class="w-full mt-6 bg-[#0A2A7A] text-white py-4 rounded-xl font-bold text-lg">Enroll Now - Pay & Upload Proof</button><p class="text-xs text-center text-gray-400 mt-3">You will be redirected to onboarding to upload payment proof</p>`;
-}
-async function enroll(courseId){
- const {data:{user}}=await client.auth.getUser();
- if(!user){location.href='login.html';return;}
- const {data:enroll,error}=await client.from('enrollments').insert({student_id:user.id,course_id:courseId,status:'pending',enrollment_status:'pending',amount:0}).select().single();
- if(error){alert('Already enrolled! Go to onboarding');location.href='onboarding.html';return;}
- location.href='onboarding.html?enrollment_id='+enroll.id;
+ const {data}=await client.from('courses').select('*').eq('id',id).single();
+ document.getElementById('course').innerHTML=`
+  <div class="bg-white rounded-2xl shadow-xl p-8 border">
+    <h1 class="text-2xl font-black text-[#0A2A7A]">${data.title}</h1>
+    <p class="text-sm text-blue-600 mt-2 font-bold">${data.duration} • ${data.modules?data.modules.length:''} Modules</p>
+    <p class="text-gray-600 mt-4">${data.description}</p>
+    <div class="bg-green-50 border border-green-200 p-4 rounded-xl mt-6 flex justify-between items-center">
+      <span class="text-gray-500 text-sm">Course Price</span><span class="text-3xl font-black text-green-600">R${data.price}</span>
+    </div>
+    <button id="enrollBtn" class="w-full bg-[#0A2A7A] text-white py-4 rounded-xl font-black mt-6 text-lg">Enroll Now - R${data.price}</button>
+    <p class="text-xs text-gray-400 text-center mt-3">You will be asked to login or register first</p>
+  </div>`;
+ document.getElementById('enrollBtn').onclick=async()=>{
+   const {data:{session}}=await client.auth.getSession();
+   if(!session){
+     localStorage.setItem('enroll_after_login', id);
+     window.location.href=`login.html?next=course-view.html?id=${id}`;
+   } else {
+     localStorage.setItem('enroll_after_login', id);
+     window.location.href=`enrollment.html?id=${id}`;
+   }
+ };
 }
 load();
 </script></body></html>
