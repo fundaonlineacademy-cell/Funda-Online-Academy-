@@ -1,32 +1,35 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Course</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/@supabase/supabase-js@2"></script></head>
-<body class="bg-slate-50"><nav class="bg-[#0A2A7A] text-white p-4"><a href="courses-public.html">← Back to Courses</a></nav>
-<div class="max-w-3xl mx-auto p-6"><div id="course">Loading course...</div></div>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Course - Funda</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/@supabase/supabase-js@2"></script></head>
+<body class="bg-[#EAF3FF]">
+<nav class="bg-white flex justify-between items-center px-6 py-3"><div class="font-black">FUNDA <span class="text-xs">ONLINE ACADEMY</span></div><div class="flex gap-4 text-xs"><a href="courses-public.html">Courses</a><a href="login.html" class="bg-[#0A2A7A] text-white px-4 py-2 rounded-full">Login</a></div></nav>
+<div id="app" class="max-w-6xl mx-auto p-4 md:p-8">Loading...</div>
 <script>
-const client=supabase.createClient("https://nzwfowwoazmpnwfrednh.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU");
-const id=new URLSearchParams(window.location.search).get('id');
+const supa=supabase.createClient("https://nzwfowwoazmpnwfrednh.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU");
+const id=new URLSearchParams(location.search).get('id');
 async function load(){
- const {data}=await client.from('courses').select('*').eq('id',id).single();
- document.getElementById('course').innerHTML=`
-  <div class="bg-white rounded-2xl shadow-xl p-8 border">
-    <h1 class="text-2xl font-black text-[#0A2A7A]">${data.title}</h1>
-    <p class="text-sm text-blue-600 mt-2 font-bold">${data.duration} • ${data.modules?data.modules.length:''} Modules</p>
-    <p class="text-gray-600 mt-4">${data.description}</p>
-    <div class="bg-green-50 border border-green-200 p-4 rounded-xl mt-6 flex justify-between items-center">
-      <span class="text-gray-500 text-sm">Course Price</span><span class="text-3xl font-black text-green-600">R${data.price}</span>
+  const {data:c}=await supa.from('courses').select('*').eq('id',id).single();
+  document.getElementById('app').innerHTML=`
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="md:col-span-2 bg-white rounded-2xl p-6">
+      <span class="bg-blue-100 text-[#0A2A7A] text-[10px] px-3 py-1 rounded-full font-bold">${c.duration} • Certificate</span>
+      <h1 class="text-2xl font-black text-[#0A2A7A] mt-4">${c.title}</h1>
+      <p class="text-sm text-gray-600 mt-4">${c.description||''}</p>
+      <h3 class="font-bold mt-6">What you will learn</h3>
+      <ul class="text-sm mt-2 space-y-2">${(c.learning_outcomes||['Job-ready skills','Certificate','Portfolio']).map(x=>`<li>✅ ${x}</li>`).join('')}</ul>
+      <h3 class="font-bold mt-6">Modules (${c.modules?.length||0})</h3>
+      <div class="mt-2 divide-y border rounded-xl">${(c.modules||[]).map((m,i)=>`<div class="p-3 text-sm">${i+1}. ${m}</div>`).join('')}</div>
     </div>
-    <button id="enrollBtn" class="w-full bg-[#0A2A7A] text-white py-4 rounded-xl font-black mt-6 text-lg">Enroll Now - R${data.price}</button>
-    <p class="text-xs text-gray-400 text-center mt-3">You will be asked to login or register first</p>
+    <div class="bg-white rounded-2xl p-6 h-fit shadow">
+      <p class="text-4xl font-black text-[#0A2A7A]">R${c.price}</p><p class="text-xs text-gray-500">Once-off • Lifetime access</p>
+      <div class="bg-[#F5F8FF] rounded-xl p-4 mt-4 text-xs space-y-2"><p>📜 Accredited Certificate</p><p>💬 WhatsApp Mentorship</p><p>📂 Templates & Resources</p><p>♾️ Lifetime Access</p></div>
+      <button id="enrollBtn" class="w-full bg-[#0A2A7A] text-white py-3 rounded-xl font-bold mt-5">Enroll Now - R${c.price}</button>
+      <p class="text-[10px] text-center mt-2 text-gray-400">You will login/register first (No PayPal - Our bank account)</p>
+    </div>
   </div>`;
- document.getElementById('enrollBtn').onclick=async()=>{
-   const {data:{session}}=await client.auth.getSession();
-   if(!session){
-     localStorage.setItem('enroll_after_login', id);
-     window.location.href=`login.html?next=course-view.html?id=${id}`;
-   } else {
-     localStorage.setItem('enroll_after_login', id);
-     window.location.href=`enrollment.html?id=${id}`;
-   }
- };
+  document.getElementById('enrollBtn').onclick=async()=>{
+    const {data:{session}}=await supa.auth.getSession();
+    if(!session){localStorage.setItem('enroll_after_login',id);location.href='login.html?next=course-view.html?id='+id;return;}
+    location.href='enrollment.html?id='+id;
+  };
 }
 load();
 </script></body></html>
