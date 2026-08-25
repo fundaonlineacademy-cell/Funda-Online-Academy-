@@ -1,43 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Complete Enrollment - Funda Online Academy</title>
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Complete Enrollment | Funda Online Academy</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- IMPORTANT: shared configuration -->
+  <script src="supabase-config.js?v=20260826"></script>
+
 
   <style>
+
     body {
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
     }
 
     .course-card {
-      transition: all 0.2s ease;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
     }
 
     .course-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
     }
 
     .course-card.selected {
       border-color: #2563eb;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
-      transform: translateY(-2px);
+      box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.12);
+      transform: translateY(-3px);
     }
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 4px solid #dbeafe;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+
+      to {
+        transform: rotate(360deg);
+      }
+
+    }
+
   </style>
+
 </head>
+
 
 <body class="min-h-screen bg-[#07152f]">
 
-  <!-- HEADER -->
-  <header class="bg-[#03133d] text-white px-5 py-4 sm:px-8">
 
-    <div class="max-w-6xl mx-auto flex items-center justify-between">
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
 
-      <a href="login.html" class="flex items-center gap-3">
+  <header
+    class="bg-[#03133d] text-white px-5 py-4 sm:px-8 shadow-lg"
+  >
+
+    <div
+      class="max-w-7xl mx-auto flex items-center justify-between gap-4"
+    >
+
+      <a
+        href="index.html"
+        class="flex items-center gap-3"
+      >
 
         <img
           src="logo.png"
@@ -46,6 +100,7 @@
         >
 
         <div>
+
           <div class="font-black text-lg leading-none">
             FUNDA ONLINE
           </div>
@@ -55,12 +110,15 @@
           >
             ACADEMY
           </div>
+
         </div>
 
       </a>
 
+
       <button
-        onclick="logout()"
+        id="logoutButton"
+        type="button"
         class="text-sm font-bold text-blue-100 hover:text-white"
       >
         Log out
@@ -71,203 +129,361 @@
   </header>
 
 
-  <!-- MAIN -->
-  <main class="max-w-6xl mx-auto px-5 py-8 sm:py-12">
+  <!-- =========================================================
+       MAIN
+  ========================================================== -->
 
-    <!-- INTRO -->
-    <div class="max-w-3xl">
+  <main
+    class="max-w-7xl mx-auto px-5 py-8 sm:py-12"
+  >
+
+
+    <!-- =======================================================
+         INTRO
+    ======================================================== -->
+
+    <section class="max-w-4xl">
 
       <p
-        class="
-          text-[#f6c453]
-          font-black
-          text-sm
-          tracking-widest
-        "
+        class="text-[#f6c453] font-black text-sm tracking-widest"
       >
         COMPLETE YOUR ENROLLMENT
       </p>
 
+
       <h1
-        class="
-          text-3xl
-          sm:text-5xl
-          font-black
-          text-white
-          mt-2
-        "
+        class="text-3xl sm:text-5xl font-black text-white mt-2"
       >
         Choose Your Course
       </h1>
 
+
       <p
         id="welcome"
-        class="
-          text-blue-100
-          mt-4
-          text-base
-          sm:text-lg
-          leading-7
-        "
+        class="text-blue-100 mt-4 text-base sm:text-lg leading-7"
       >
         Choose the course you would like to study.
       </p>
 
-    </div>
+    </section>
 
 
-    <!-- MESSAGE -->
+    <!-- =======================================================
+         MESSAGE
+    ======================================================== -->
+
     <div
       id="message"
-      class="
-        hidden
-        mt-6
-        rounded-2xl
-        p-4
-        font-semibold
-      "
+      class="hidden mt-6 rounded-2xl p-4 font-semibold"
+      role="alert"
     ></div>
 
 
-    <!-- LOADING -->
-    <section class="mt-8">
+    <!-- =======================================================
+         LOADING
+    ======================================================== -->
 
-      <div
-        id="loading"
-        class="
-          rounded-2xl
-          bg-white/10
-          border
-          border-white/10
-          p-8
-          text-center
-          text-white
-        "
-      >
-        Loading courses...
-      </div>
+    <section
+      id="loading"
+      class="mt-8 bg-white/10 border border-white/10 rounded-2xl p-10 text-center"
+    >
 
+      <div class="spinner mx-auto"></div>
 
-      <!-- COURSES -->
-      <div
-        id="courses"
-        class="
-          hidden
-          grid
-          md:grid-cols-2
-          xl:grid-cols-3
-          gap-5
-        "
-      ></div>
+      <p class="text-white font-bold mt-5">
+        Loading available courses...
+      </p>
+
+      <p class="text-blue-200 text-sm mt-2">
+        Please wait.
+      </p>
 
     </section>
 
 
-    <!-- CONTINUE BAR -->
-    <div
-      id="continueBar"
-      class="
-        hidden
-        sticky
-        bottom-4
-        mt-8
-      "
+    <!-- =======================================================
+         COURSES
+    ======================================================== -->
+
+    <section
+      id="coursesSection"
+      class="hidden mt-8"
     >
 
       <div
-        class="
-          bg-white
-          rounded-2xl
-          shadow-2xl
-          p-4
-          flex
-          flex-col
-          sm:flex-row
-          sm:items-center
-          sm:justify-between
-          gap-4
-        "
+        id="courses"
+        class="grid md:grid-cols-2 xl:grid-cols-3 gap-5"
+      ></div>
+
+
+      <div
+        id="noCourses"
+        class="hidden bg-white rounded-3xl p-10 text-center"
+      >
+
+        <div class="text-5xl">
+          🎓
+        </div>
+
+        <h2
+          class="text-2xl font-black text-[#03133d] mt-4"
+        >
+          No courses available
+        </h2>
+
+        <p class="text-gray-500 mt-2">
+          There are currently no active courses available for enrollment.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- =======================================================
+         CONTINUE BAR
+    ======================================================== -->
+
+    <section
+      id="continueBar"
+      class="hidden sticky bottom-4 mt-8 z-20"
+    >
+
+      <div
+        class="bg-white rounded-2xl shadow-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
       >
 
         <div>
 
           <p
-            class="
-              text-xs
-              font-bold
-              text-gray-500
-              uppercase
-            "
+            class="text-xs font-bold text-gray-500 uppercase tracking-wide"
           >
             Selected Course
           </p>
 
           <p
             id="selectedName"
-            class="
-              font-black
-              text-[#03133d]
-            "
+            class="font-black text-[#03133d] text-lg mt-1"
           ></p>
 
           <p
             id="selectedPrice"
-            class="
-              text-sm
-              text-gray-500
-            "
+            class="text-sm text-gray-500 mt-1"
           ></p>
 
         </div>
 
 
         <button
-          id="continueBtn"
-          onclick="submitEnrollment()"
-          class="
-            bg-[#2563eb]
-            hover:bg-[#1d4ed8]
-            text-white
-            px-7
-            py-3.5
-            rounded-xl
-            font-extrabold
-          "
+          id="continueButton"
+          type="button"
+          class="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-7 py-3.5 rounded-xl font-extrabold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Continue →
         </button>
 
       </div>
 
-    </div>
+    </section>
+
 
   </main>
 
 
+  <!-- =========================================================
+       FOOTER
+  ========================================================== -->
+
+  <footer class="text-center px-5 pb-10">
+
+    <p class="text-xs text-blue-200">
+      © <span id="year"></span> Funda Online Academy.
+      All rights reserved.
+    </p>
+
+  </footer>
+
+
+
+  <!-- =========================================================
+       JAVASCRIPT
+  ========================================================== -->
+
   <script>
 
-    /* =========================================================
-       SUPABASE
-    ========================================================== */
 
-    const supabaseClient = supabase.createClient(
-      "https://nzwfowwoazmpnwfrednh.supabase.co",
-      "YOUR_EXISTING_SUPABASE_ANON_KEY"
-    );
+    // ==========================================================
+    // SUPABASE INITIALISATION
+    // ==========================================================
 
+    let supabaseClient = null;
 
-    let user = null;
-    let selected = null;
+    let currentUser = null;
+
+    let currentProfile = null;
+
+    let currentStudent = null;
+
     let courses = [];
 
+    let selectedCourse = null;
 
-    /* =========================================================
-       FORMAT PRICE
-    ========================================================== */
 
-    function money(value) {
+    // ==========================================================
+    // ELEMENTS
+    // ==========================================================
 
-      return Number(value || 0).toLocaleString(
+    const loading =
+      document.getElementById("loading");
+
+    const coursesSection =
+      document.getElementById("coursesSection");
+
+    const coursesContainer =
+      document.getElementById("courses");
+
+    const noCourses =
+      document.getElementById("noCourses");
+
+    const message =
+      document.getElementById("message");
+
+    const continueBar =
+      document.getElementById("continueBar");
+
+    const continueButton =
+      document.getElementById("continueButton");
+
+
+    // ==========================================================
+    // INITIALISE SUPABASE
+    // ==========================================================
+
+    function initialiseSupabase() {
+
+      if (
+        typeof window.SUPABASE_URL ===
+        "undefined"
+      ) {
+
+        throw new Error(
+          "supabase-config.js was not loaded."
+        );
+
+      }
+
+
+      if (
+        typeof window.SUPABASE_ANON_KEY ===
+        "undefined"
+      ) {
+
+        throw new Error(
+          "SUPABASE_ANON_KEY was not found in supabase-config.js."
+        );
+
+      }
+
+
+      if (
+        !window.SUPABASE_URL
+      ) {
+
+        throw new Error(
+          "SUPABASE_URL is empty."
+        );
+
+      }
+
+
+      if (
+        !window.SUPABASE_ANON_KEY
+      ) {
+
+        throw new Error(
+          "SUPABASE_ANON_KEY is empty."
+        );
+
+      }
+
+
+      if (
+        window.SUPABASE_ANON_KEY ===
+        "YOUR_LEGACY_ANON_KEY_GOES_HERE"
+      ) {
+
+        throw new Error(
+          "The public Supabase key has not been configured in supabase-config.js."
+        );
+
+      }
+
+
+      if (
+        typeof window.supabase ===
+        "undefined"
+      ) {
+
+        throw new Error(
+          "Supabase JavaScript library did not load."
+        );
+
+      }
+
+
+      supabaseClient =
+        window.supabase.createClient(
+          window.SUPABASE_URL,
+          window.SUPABASE_ANON_KEY
+        );
+
+    }
+
+
+    // ==========================================================
+    // ESCAPE HTML
+    // ==========================================================
+
+    function escapeHtml(value) {
+
+      return String(
+        value ?? ""
+      )
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+
+    // ==========================================================
+    // FORMAT PRICE
+    // ==========================================================
+
+    function formatMoney(value) {
+
+      const amount =
+        Number(value || 0);
+
+
+      return amount.toLocaleString(
         "en-ZA",
         {
           style: "currency",
@@ -278,245 +494,50 @@
     }
 
 
-    /* =========================================================
-       ESCAPE HTML
-    ========================================================== */
+    // ==========================================================
+    // SHOW MESSAGE
+    // ==========================================================
 
-    function escapeHtml(value) {
+    function showMessage(
+      text,
+      success = false
+    ) {
 
-      return String(value ?? "").replace(
-        /[&<>"']/g,
-        function (character) {
+      message.textContent =
+        text;
 
-          return {
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#039;"
-          }[character];
 
-        }
+      message.className =
+        success
+          ? "mt-6 rounded-2xl p-4 font-semibold bg-green-100 text-green-800"
+          : "mt-6 rounded-2xl p-4 font-semibold bg-red-100 text-red-800";
+
+
+      message.classList.remove(
+        "hidden"
       );
 
     }
 
 
-    /* =========================================================
-       MESSAGE
-    ========================================================== */
+    // ==========================================================
+    // HIDE MESSAGE
+    // ==========================================================
 
-    function showMessage(text, success = false) {
+    function hideMessage() {
 
-      const element =
-        document.getElementById("message");
-
-      element.textContent = text;
-
-      element.className =
-        "mt-6 rounded-2xl p-4 font-semibold " +
-        (
-          success
-            ? "bg-green-100 text-green-800"
-            : "bg-red-100 text-red-800"
-        );
-
-      element.classList.remove("hidden");
+      message.classList.add(
+        "hidden"
+      );
 
     }
 
 
-    /* =========================================================
-       DISPLAY COURSES
-    ========================================================== */
+    // ==========================================================
+    // GET CURRENT USER
+    // ==========================================================
 
-    function renderCourses() {
-
-      const container =
-        document.getElementById("courses");
-
-
-      container.innerHTML =
-        courses.map(function (course) {
-
-          const isSelected =
-            selected &&
-            selected.id === course.id;
-
-
-          return `
-
-            <button
-              type="button"
-              onclick="selectCourse('${course.id}')"
-              class="
-                course-card
-                text-left
-                bg-white
-                rounded-2xl
-                overflow-hidden
-                border-2
-                border-transparent
-                w-full
-                ${isSelected ? "selected" : ""}
-              "
-            >
-
-              <div
-                class="
-                  h-40
-                  bg-slate-100
-                "
-              >
-
-                ${
-                  course.image_url
-
-                    ? `
-                      <img
-                        src="${escapeHtml(course.image_url)}"
-                        class="
-                          w-full
-                          h-full
-                          object-cover
-                        "
-                        alt=""
-                      >
-                    `
-
-                    : `
-                      <div
-                        class="
-                          w-full
-                          h-full
-                          flex
-                          items-center
-                          justify-center
-                          text-5xl
-                        "
-                      >
-                        🎓
-                      </div>
-                    `
-                }
-
-              </div>
-
-
-              <div class="p-5">
-
-                <h2
-                  class="
-                    font-black
-                    text-xl
-                    text-[#03133d]
-                  "
-                >
-                  ${escapeHtml(course.title)}
-                </h2>
-
-
-                <p
-                  class="
-                    text-sm
-                    text-gray-500
-                    mt-2
-                    line-clamp-3
-                  "
-                >
-                  ${
-                    escapeHtml(
-                      course.description ||
-                      "Practical, career-focused online learning."
-                    )
-                  }
-                </p>
-
-
-                <div
-                  class="
-                    flex
-                    justify-between
-                    gap-3
-                    mt-5
-                    text-sm
-                    font-bold
-                  "
-                >
-
-                  <span>
-                    ⏱
-                    ${escapeHtml(course.duration || "Flexible")}
-                  </span>
-
-                  <span class="text-blue-600">
-                    ${money(course.price)}
-                  </span>
-
-                </div>
-
-              </div>
-
-            </button>
-
-          `;
-
-        }).join("");
-
-
-      container.classList.remove("hidden");
-
-      document
-        .getElementById("loading")
-        .classList.add("hidden");
-
-    }
-
-
-    /* =========================================================
-       SELECT COURSE
-    ========================================================== */
-
-    function selectCourse(courseId) {
-
-      selected =
-        courses.find(
-          course => course.id === courseId
-        );
-
-
-      if (!selected) {
-        return;
-      }
-
-
-      renderCourses();
-
-
-      document
-        .getElementById("continueBar")
-        .classList.remove("hidden");
-
-
-      document
-        .getElementById("selectedName")
-        .textContent =
-        selected.title;
-
-
-      document
-        .getElementById("selectedPrice")
-        .textContent =
-        money(selected.price);
-
-    }
-
-
-    /* =========================================================
-       LOAD USER + COURSES
-    ========================================================== */
-
-    async function loadPage() {
+    async function getCurrentUser() {
 
       const {
         data,
@@ -525,37 +546,315 @@
         await supabaseClient.auth.getUser();
 
 
+      if (error) {
+
+        throw new Error(
+          error.message ||
+          "Unable to verify your login."
+        );
+
+      }
+
+
       if (
-        error ||
         !data ||
         !data.user
       ) {
 
         window.location.href =
-          "login.html";
+          "login.html?next=onboarding.html";
 
-        return;
+        return null;
+
       }
 
 
-      user = data.user;
+      return data.user;
+
+    }
 
 
-      const fullName =
-        user.user_metadata?.full_name ||
-        user.email ||
-        "Student";
+    // ==========================================================
+    // LOAD PROFILE
+    //
+    // IMPORTANT:
+    // profiles.id = auth.users.id
+    // enrollments.student_id = profiles.id
+    // ==========================================================
+
+    async function loadProfile() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(
+            `
+              id,
+              full_name,
+              phone,
+              email,
+              gender,
+              role
+            `
+          )
+          .eq(
+            "id",
+            currentUser.id
+          )
+          .maybeSingle();
 
 
-      document
-        .getElementById("welcome")
-        .textContent =
-        `Welcome, ${fullName}. Choose the course you would like to study.`;
+      if (error) {
+
+        console.error(
+          "Profile loading error:",
+          error
+        );
+
+        throw new Error(
+          "Unable to load your student profile. " +
+          error.message
+        );
+
+      }
+
+
+      currentProfile =
+        data || null;
 
 
       /*
-       * First try the public course catalogue RPC.
-       * This is already part of your Supabase architecture.
+       * If the profile does not exist yet,
+       * create it using the authenticated
+       * user's ID.
+       */
+
+      if (
+        !currentProfile
+      ) {
+
+        const metadata =
+          currentUser.user_metadata ||
+          {};
+
+
+        const fullName =
+          metadata.full_name ||
+          metadata.name ||
+          [
+            metadata.first_name,
+            metadata.last_name
+          ]
+            .filter(Boolean)
+            .join(" ") ||
+          currentUser.email?.split("@")[0] ||
+          "Student";
+
+
+        const {
+          data: createdProfile,
+          error: createError
+        } =
+          await supabaseClient
+            .from("profiles")
+            .insert({
+              id:
+                currentUser.id,
+
+              full_name:
+                fullName,
+
+              email:
+                currentUser.email || null,
+
+              phone:
+                metadata.phone ||
+                metadata.mobile ||
+                null,
+
+              gender:
+                metadata.gender ||
+                null,
+
+              role:
+                "student"
+
+            })
+            .select(
+              `
+                id,
+                full_name,
+                phone,
+                email,
+                gender,
+                role
+              `
+            )
+            .single();
+
+
+        if (createError) {
+
+          console.error(
+            "Profile creation error:",
+            createError
+          );
+
+          throw new Error(
+            "Your student profile could not be created. " +
+            createError.message
+          );
+
+        }
+
+
+        currentProfile =
+          createdProfile;
+
+      }
+
+
+      /*
+       * Also load the separate students record.
+       *
+       * This table is used by policy_acceptances,
+       * payments, certificates, and other student
+       * records.
+       */
+
+      const {
+        data: studentData,
+        error: studentError
+      } =
+        await supabaseClient
+          .from("students")
+          .select(
+            `
+              id,
+              user_id,
+              full_name,
+              gender,
+              south_african_id,
+              email,
+              mobile_whatsapp,
+              address
+            `
+          )
+          .eq(
+            "user_id",
+            currentUser.id
+          )
+          .maybeSingle();
+
+
+      if (studentError) {
+
+        console.warn(
+          "Student record lookup:",
+          studentError
+        );
+
+      }
+
+
+      currentStudent =
+        studentData || null;
+
+
+      /*
+       * If a student record doesn't exist,
+       * create one when permissions allow it.
+       */
+
+      if (
+        !currentStudent
+      ) {
+
+        const {
+          data: newStudent,
+          error: newStudentError
+        } =
+          await supabaseClient
+            .from("students")
+            .insert({
+              user_id:
+                currentUser.id,
+
+              full_name:
+                currentProfile.full_name ||
+                currentUser.email ||
+                "Student",
+
+              gender:
+                currentProfile.gender ||
+                null,
+
+              email:
+                currentProfile.email ||
+                currentUser.email ||
+                "",
+
+              mobile_whatsapp:
+                currentProfile.phone ||
+                null
+
+            })
+            .select(
+              `
+                id,
+                user_id,
+                full_name,
+                gender,
+                south_african_id,
+                email,
+                mobile_whatsapp,
+                address
+              `
+            )
+            .single();
+
+
+        if (
+          !newStudentError
+        ) {
+
+          currentStudent =
+            newStudent;
+
+        } else {
+
+          /*
+           * Do not stop enrollment just because
+           * the separate students table cannot
+           * be created from the browser.
+           *
+           * This is useful where RLS intentionally
+           * restricts student-table inserts.
+           */
+
+          console.warn(
+            "Student record was not created:",
+            newStudentError
+          );
+
+        }
+
+      }
+
+    }
+
+
+    // ==========================================================
+    // LOAD COURSES
+    // ==========================================================
+
+    async function loadCourses() {
+
+      /*
+       * Try the public catalogue function first.
        */
 
       let result =
@@ -565,12 +864,13 @@
 
 
       /*
-       * Fallback to the courses table.
+       * If the RPC isn't available or fails,
+       * use the courses table directly.
        */
 
       if (
         result.error ||
-        !result.data
+        !Array.isArray(result.data)
       ) {
 
         result =
@@ -588,8 +888,16 @@
                 active
               `
             )
-            .eq("active", true)
-            .order("title");
+            .eq(
+              "active",
+              true
+            )
+            .order(
+              "title",
+              {
+                ascending: true
+              }
+            );
 
       }
 
@@ -601,13 +909,11 @@
           result.error
         );
 
+        throw new Error(
+          "Unable to load courses. " +
+          result.error.message
+        );
 
-        document
-          .getElementById("loading")
-          .textContent =
-          "We could not load the courses. Please refresh and try again.";
-
-        return;
       }
 
 
@@ -615,19 +921,38 @@
         (result.data || [])
           .filter(
             course =>
+              course &&
+              course.id &&
               course.active !== false
           );
 
 
-      if (!courses.length) {
+      loading.classList.add(
+        "hidden"
+      );
 
-        document
-          .getElementById("loading")
-          .textContent =
-          "No courses are currently available for enrollment.";
+
+      coursesSection.classList.remove(
+        "hidden"
+      );
+
+
+      if (
+        courses.length === 0
+      ) {
+
+        noCourses.classList.remove(
+          "hidden"
+        );
 
         return;
+
       }
+
+
+      noCourses.classList.add(
+        "hidden"
+      );
 
 
       renderCourses();
@@ -635,104 +960,260 @@
     }
 
 
-    /* =========================================================
-       SUBMIT ENROLLMENT
-    ========================================================== */
+    // ==========================================================
+    // RENDER COURSES
+    // ==========================================================
 
-    async function submitEnrollment() {
+    function renderCourses() {
 
-      if (!selected) {
+      coursesContainer.innerHTML =
+        courses
+          .map(
+            course => {
 
-        showMessage(
-          "Please select a course first."
+              const selected =
+                selectedCourse &&
+                selectedCourse.id ===
+                course.id;
+
+
+              return `
+
+                <button
+                  type="button"
+                  class="
+                    course-card
+                    text-left
+                    bg-white
+                    rounded-2xl
+                    overflow-hidden
+                    border-2
+                    ${
+                      selected
+                        ? "border-blue-600 selected"
+                        : "border-transparent"
+                    }
+                    w-full
+                  "
+                  onclick="selectCourse('${escapeHtml(course.id)}')"
+                >
+
+                  <div
+                    class="h-40 bg-slate-100"
+                  >
+
+                    ${
+                      course.image_url
+
+                        ? `
+
+                          <img
+                            src="${escapeHtml(course.image_url)}"
+                            alt="${escapeHtml(course.title)}"
+                            class="w-full h-full object-cover"
+                          >
+
+                        `
+
+                        : `
+
+                          <div
+                            class="
+                              w-full
+                              h-full
+                              flex
+                              items-center
+                              justify-center
+                              text-5xl
+                              bg-gradient-to-br
+                              from-blue-50
+                              to-slate-100
+                            "
+                          >
+                            🎓
+                          </div>
+
+                        `
+                    }
+
+                  </div>
+
+
+                  <div class="p-5">
+
+                    <h2
+                      class="
+                        font-black
+                        text-xl
+                        text-[#03133d]
+                      "
+                    >
+                      ${escapeHtml(course.title)}
+                    </h2>
+
+
+                    <p
+                      class="
+                        text-sm
+                        text-gray-500
+                        mt-2
+                        leading-6
+                      "
+                    >
+                      ${
+                        escapeHtml(
+                          course.description ||
+                          "Practical, career-focused online learning."
+                        )
+                      }
+                    </p>
+
+
+                    <div
+                      class="
+                        flex
+                        items-center
+                        justify-between
+                        gap-3
+                        mt-5
+                      "
+                    >
+
+                      <span
+                        class="
+                          text-xs
+                          font-bold
+                          text-gray-500
+                        "
+                      >
+                        ⏱
+                        ${
+                          escapeHtml(
+                            course.duration ||
+                            "Flexible"
+                          )
+                        }
+                      </span>
+
+
+                      <span
+                        class="
+                          text-sm
+                          font-black
+                          text-blue-600
+                        "
+                      >
+                        ${formatMoney(course.price)}
+                      </span>
+
+                    </div>
+
+
+                    <div
+                      class="
+                        mt-4
+                        text-sm
+                        font-bold
+                        ${
+                          selected
+                            ? "text-blue-600"
+                            : "text-gray-400"
+                        }
+                      "
+                    >
+
+                      ${
+                        selected
+                          ? "✓ Selected"
+                          : "Select this course"
+                      }
+
+                    </div>
+
+                  </div>
+
+                </button>
+
+              `;
+
+            }
+          )
+          .join("");
+
+    }
+
+
+    // ==========================================================
+    // SELECT COURSE
+    // ==========================================================
+
+    function selectCourse(courseId) {
+
+      selectedCourse =
+        courses.find(
+          course =>
+            String(course.id) ===
+            String(courseId)
         );
+
+
+      if (
+        !selectedCourse
+      ) {
 
         return;
-      }
-
-
-      if (!user) {
-
-        window.location.href =
-          "login.html";
-
-        return;
-      }
-
-
-      const button =
-        document.getElementById(
-          "continueBtn"
-        );
-
-
-      button.disabled = true;
-
-      button.textContent =
-        "Submitting...";
-
-
-      /*
-       * Check whether this student already
-       * has an enrollment for this course.
-       */
-
-      const existing =
-        await supabaseClient
-          .from("enrollments")
-          .select(
-            "id,enrollment_status,status"
-          )
-          .eq(
-            "student_id",
-            user.id
-          )
-          .eq(
-            "course_id",
-            selected.id
-          )
-          .maybeSingle();
-
-
-      if (existing.error) {
-
-        console.error(
-          existing.error
-        );
 
       }
 
 
-      if (existing.data) {
+      document
+        .getElementById(
+          "selectedName"
+        )
+        .textContent =
+        selectedCourse.title;
 
-        showMessage(
-          "You already have an enrollment for this course. Your application is being processed.",
-          true
+
+      document
+        .getElementById(
+          "selectedPrice"
+        )
+        .textContent =
+        formatMoney(
+          selectedCourse.price
         );
 
 
-        setTimeout(
-          function () {
-
-            window.location.href =
-              "login.html";
-
-          },
-          1500
-        );
+      continueBar.classList.remove(
+        "hidden"
+      );
 
 
-        return;
+      renderCourses();
+
+
+      continueBar.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+
+    }
+
+
+    // ==========================================================
+    // CHECK EXISTING ENROLLMENT
+    // ==========================================================
+
+    async function findExistingEnrollment() {
+
+      if (
+        !currentProfile
+      ) {
+
+        return null;
+
       }
 
-
-      /*
-       * Create the enrollment.
-       *
-       * IMPORTANT:
-       * The correct column is student_id,
-       * not user_id.
-       */
 
       const {
         data,
@@ -740,91 +1221,306 @@
       } =
         await supabaseClient
           .from("enrollments")
-          .insert({
+          .select(
+            `
+              id,
+              student_id,
+              course_id,
+              enrollment_status,
+              enrolled_at,
+              amount,
+              status,
+              courses (
+                id,
+                title
+              )
+            `
+          )
+          .eq(
+            "student_id",
+            currentProfile.id
+          )
+          .eq(
+            "course_id",
+            selectedCourse.id
+          )
+          .maybeSingle();
 
-            student_id:
-              user.id,
 
-            course_id:
-              selected.id,
+      if (
+        error
+      ) {
 
-            enrollment_status:
-              "pending",
+        /*
+         * A permission error here should not
+         * destroy the whole page. The actual
+         * insert will report the authoritative
+         * error.
+         */
 
-            status:
-              "pending",
-
-            amount:
-              selected.price
-
-          })
-          .select("id")
-          .single();
+        console.warn(
+          "Existing enrollment check:",
+          error
+        );
 
 
-      if (error) {
+        return null;
+
+      }
+
+
+      return data || null;
+
+    }
+
+
+    // ==========================================================
+    // CREATE ENROLLMENT
+    // ==========================================================
+
+    async function submitEnrollment() {
+
+      hideMessage();
+
+
+      if (
+        !selectedCourse
+      ) {
+
+        showMessage(
+          "Please select a course first."
+        );
+
+        return;
+
+      }
+
+
+      if (
+        !currentUser
+      ) {
+
+        window.location.href =
+          "login.html?next=onboarding.html";
+
+        return;
+
+      }
+
+
+      if (
+        !currentProfile
+      ) {
+
+        showMessage(
+          "Your student profile could not be loaded. Please log out and log in again."
+        );
+
+        return;
+
+      }
+
+
+      continueButton.disabled =
+        true;
+
+
+      continueButton.textContent =
+        "Checking...";
+
+
+      try {
+
+        /*
+         * Check for an existing enrollment
+         * using profiles.id.
+         */
+
+        const existing =
+          await findExistingEnrollment();
+
+
+        if (
+          existing
+        ) {
+
+          showMessage(
+            `You already have an enrollment for "${selectedCourse.title}". Your application status is ${existing.enrollment_status || existing.status || "pending"}.`,
+            true
+          );
+
+
+          continueButton.disabled =
+            false;
+
+
+          continueButton.textContent =
+            "Continue →";
+
+
+          return;
+
+        }
+
+
+        continueButton.textContent =
+          "Submitting...";
+
+
+        /*
+         * IMPORTANT:
+         *
+         * enrollment.student_id MUST be
+         * profiles.id.
+         *
+         * profiles.id = auth.users.id.
+         */
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("enrollments")
+            .insert({
+              student_id:
+                currentProfile.id,
+
+              course_id:
+                selectedCourse.id,
+
+              enrollment_status:
+                "pending",
+
+              status:
+                "pending",
+
+              amount:
+                Number(
+                  selectedCourse.price || 0
+                )
+
+            })
+            .select(
+              `
+                id,
+                student_id,
+                course_id,
+                enrollment_status,
+                enrolled_at,
+                amount,
+                status
+              `
+            )
+            .single();
+
+
+        if (
+          error
+        ) {
+
+          console.error(
+            "Enrollment creation error:",
+            error
+          );
+
+
+          throw new Error(
+            error.message ||
+            "The enrollment could not be created."
+          );
+
+        }
+
+
+        console.log(
+          "Enrollment successfully created:",
+          data
+        );
+
+
+        showMessage(
+          `Your enrollment for "${selectedCourse.title}" has been submitted successfully. Your application is now pending approval.`,
+          true
+        );
+
+
+        continueButton.textContent =
+          "Enrollment Submitted ✓";
+
+
+        /*
+         * Give the user time to see the
+         * confirmation before going to
+         * the student dashboard.
+         */
+
+        setTimeout(
+          function () {
+
+            window.location.href =
+              "dashboard.html";
+
+          },
+          1800
+        );
+
+
+      } catch (
+        error
+      ) {
 
         console.error(
-          "Enrollment insert error:",
+          "Enrollment submission failed:",
           error
         );
 
 
         showMessage(
-          "We could not complete your enrollment. " +
-          error.message
+          error.message ||
+          "We could not complete your enrollment. Please try again."
         );
 
 
-        button.disabled = false;
+        continueButton.disabled =
+          false;
 
-        button.textContent =
+
+        continueButton.textContent =
           "Continue →";
 
-        return;
       }
-
-
-      console.log(
-        "Enrollment created:",
-        data
-      );
-
-
-      showMessage(
-        "Enrollment submitted successfully. Your course application is now pending approval.",
-        true
-      );
-
-
-      /*
-       * Return to login.
-       *
-       * Once admin approves the enrollment,
-       * the student can log in and access the
-       * student dashboard.
-       */
-
-      setTimeout(
-        function () {
-
-          window.location.href =
-            "login.html";
-
-        },
-        1800
-      );
 
     }
 
 
-    /* =========================================================
-       LOGOUT
-    ========================================================== */
+    // ==========================================================
+    // LOGOUT
+    // ==========================================================
 
     async function logout() {
 
-      await supabaseClient.auth.signOut();
+      try {
+
+        if (
+          supabaseClient
+        ) {
+
+          await supabaseClient.auth.signOut();
+
+        }
+
+      } catch (
+        error
+      ) {
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+      }
+
 
       window.location.href =
         "login.html";
@@ -832,13 +1528,167 @@
     }
 
 
-    /* =========================================================
-       START
-    ========================================================== */
+    // ==========================================================
+    // UPDATE WELCOME MESSAGE
+    // ==========================================================
 
-    loadPage();
+    function updateWelcome() {
+
+      const metadata =
+        currentUser.user_metadata ||
+        {};
+
+
+      const name =
+        currentProfile?.full_name ||
+        metadata.full_name ||
+        metadata.name ||
+        currentUser.email?.split("@")[0] ||
+        "Student";
+
+
+      document
+        .getElementById(
+          "welcome"
+        )
+        .textContent =
+        `Welcome, ${name}. Choose the course you would like to study.`;
+
+    }
+
+
+    // ==========================================================
+    // INITIAL PAGE LOAD
+    // ==========================================================
+
+    async function initialisePage() {
+
+      try {
+
+        initialiseSupabase();
+
+
+        currentUser =
+          await getCurrentUser();
+
+
+        if (
+          !currentUser
+        ) {
+
+          return;
+
+        }
+
+
+        await loadProfile();
+
+
+        updateWelcome();
+
+
+        await loadCourses();
+
+      } catch (
+        error
+      ) {
+
+        console.error(
+          "Onboarding error:",
+          error
+        );
+
+
+        loading.classList.remove(
+          "hidden"
+        );
+
+
+        loading.innerHTML = `
+
+          <div class="text-4xl">
+            ⚠️
+          </div>
+
+          <p
+            class="text-white font-black mt-4"
+          >
+            Unable to load enrollment
+          </p>
+
+          <p
+            class="text-blue-200 text-sm mt-2 max-w-xl mx-auto"
+          >
+            ${escapeHtml(
+              error.message ||
+              "Something went wrong."
+            )}
+          </p>
+
+          <button
+            type="button"
+            onclick="window.location.reload()"
+            class="
+              mt-5
+              bg-white
+              text-[#03133d]
+              px-5
+              py-3
+              rounded-xl
+              font-bold
+            "
+          >
+            Refresh Page
+          </button>
+
+        `;
+
+      }
+
+    }
+
+
+    // ==========================================================
+    // BUTTONS
+    // ==========================================================
+
+    document
+      .getElementById(
+        "logoutButton"
+      )
+      .addEventListener(
+        "click",
+        logout
+      );
+
+
+    continueButton
+      .addEventListener(
+        "click",
+        submitEnrollment
+      );
+
+
+    // ==========================================================
+    // YEAR
+    // ==========================================================
+
+    document
+      .getElementById(
+        "year"
+      )
+      .textContent =
+      new Date().getFullYear();
+
+
+    // ==========================================================
+    // START
+    // ==========================================================
+
+    initialisePage();
 
   </script>
 
 </body>
-        </html>
+
+      </html>
