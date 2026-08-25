@@ -1,7 +1,1682 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student Dashboard</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/@supabase/supabase-js@2"></script></head>
-<body class="bg-[#F8FAFF] min-h-screen"><div class="bg-[#0A2A7A] text-white p-6 flex justify-between"><div><h1 class="text-2xl font-bold">Welcome Back! 👋</h1><p class="opacity-70 text-sm">Continue learning</p></div><a href="digital-library.html" class="bg-white text-[#0A2A7A] px-4 py-2 rounded-xl font-bold">📚 Library</a></div>
-<div class="p-6 max-w-7xl mx-auto grid lg:grid-cols-3 gap-6"><div class="lg:col-span-2"><div class="bg-white rounded-2xl p-6 shadow"><h3 class="font-bold">My Courses</h3><div id="myCourses" class="mt-4"></div></div></div><div><div class="bg-white rounded-2xl p-6 shadow"><p class="text-5xl font-extrabold text-[#2563EB]">68%</p><a href="lesson-viewer.html" class="block bg-[#2563EB] text-white text-center py-4 rounded-xl font-bold mt-4">▶️ Continue Learning</a></div></div></div>
-<script>
-const supabaseClient=supabase.createClient("https://nzwfowwoazmpnwfrednh.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU");
-async function load(){const {data:{user}}=await supabaseClient.auth.getUser();const {data}=await supabaseClient.from('enrollments').select('*,courses(title)').eq('user_id',user.id).eq('status','approved');document.getElementById('myCourses').innerHTML=data.map(e=>`<div class="border rounded-xl p-4 flex justify-between"><span>${e.courses?.title}</span><span class="text-blue-600 font-bold">Active</span></div>`).join('');}load();
-</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Student Dashboard | Funda Online Academy</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Supabase JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- SHARED SUPABASE CONFIGURATION -->
+  <script src="supabase-config.js?v=20260826"></script>
+
+  <style>
+
+    body {
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+    }
+
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 4px solid #dbeafe;
+      border-top-color: #0a2a7a;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+  </style>
+
+</head>
+
+
+<body class="bg-[#F5F8FC] min-h-screen">
+
+
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
+
+  <header class="bg-[#0A2A7A] text-white shadow-lg">
+
+    <div
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5"
+    >
+
+      <div class="flex items-center justify-between gap-4">
+
+        <div>
+
+          <a
+            href="index.html"
+            class="font-black text-xl tracking-tight"
+          >
+            FUNDA
+            <span class="font-semibold">
+              ONLINE
+            </span>
+          </a>
+
+          <p class="text-[10px] tracking-[0.25em] text-blue-200 mt-1">
+            ACADEMY
+          </p>
+
+        </div>
+
+
+        <div class="flex items-center gap-2">
+
+          <a
+            href="digital-library.html"
+            class="hidden sm:inline-flex bg-white text-[#0A2A7A] px-4 py-2.5 rounded-xl font-bold text-sm"
+          >
+            📚 Library
+          </a>
+
+
+          <button
+            id="logoutButton"
+            type="button"
+            class="bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2.5 rounded-xl font-bold text-sm"
+          >
+            Logout
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================================================
+       MAIN
+  ========================================================== -->
+
+  <main
+    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+  >
+
+
+    <!-- LOADING -->
+
+    <section
+      id="loadingState"
+      class="bg-white rounded-3xl shadow-sm p-12 text-center"
+    >
+
+      <div class="spinner mx-auto"></div>
+
+      <h2 class="mt-5 text-xl font-black text-[#0A2A7A]">
+        Loading your dashboard...
+      </h2>
+
+      <p class="mt-2 text-sm text-gray-500">
+        Please wait while we retrieve your student information.
+      </p>
+
+    </section>
+
+
+    <!-- ERROR -->
+
+    <section
+      id="errorState"
+      class="hidden bg-white rounded-3xl shadow-sm p-10 text-center"
+    >
+
+      <div class="text-5xl">
+        ⚠️
+      </div>
+
+      <h2 class="mt-5 text-2xl font-black text-red-600">
+        Unable to load dashboard
+      </h2>
+
+      <p
+        id="errorMessage"
+        class="mt-3 text-sm text-gray-600 max-w-xl mx-auto"
+      >
+        Something went wrong.
+      </p>
+
+      <button
+        id="retryButton"
+        type="button"
+        class="mt-6 bg-[#0A2A7A] text-white px-6 py-3 rounded-xl font-bold"
+      >
+        Try Again
+      </button>
+
+    </section>
+
+
+    <!-- DASHBOARD -->
+
+    <section
+      id="dashboardContent"
+      class="hidden"
+    >
+
+
+      <!-- =====================================================
+           WELCOME
+      ====================================================== -->
+
+      <div
+        class="bg-white rounded-3xl shadow-sm p-6 sm:p-8 mb-6"
+      >
+
+        <div
+          class="flex flex-col md:flex-row md:items-center md:justify-between gap-5"
+        >
+
+          <div>
+
+            <p class="text-sm text-gray-500">
+              Student Dashboard
+            </p>
+
+            <h1
+              id="welcomeName"
+              class="text-3xl sm:text-4xl font-black text-[#0A2A7A] mt-1"
+            >
+              Welcome Back! 👋
+            </h1>
+
+            <p class="text-gray-600 mt-2">
+              Continue your learning journey with Funda Online Academy.
+            </p>
+
+          </div>
+
+
+          <a
+            href="courses-public.html"
+            class="inline-flex justify-center bg-[#0A2A7A] text-white px-6 py-3 rounded-xl font-bold"
+          >
+            Browse Courses
+          </a>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           STATISTICS
+      ====================================================== -->
+
+      <div
+        class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
+      >
+
+
+        <div class="bg-white rounded-2xl shadow-sm p-5">
+
+          <p class="text-xs text-gray-500 font-semibold">
+            Enrolled Courses
+          </p>
+
+          <p
+            id="enrolledCount"
+            class="text-3xl font-black text-[#0A2A7A] mt-2"
+          >
+            0
+          </p>
+
+        </div>
+
+
+        <div class="bg-white rounded-2xl shadow-sm p-5">
+
+          <p class="text-xs text-gray-500 font-semibold">
+            Active Courses
+          </p>
+
+          <p
+            id="activeCount"
+            class="text-3xl font-black text-[#2563EB] mt-2"
+          >
+            0
+          </p>
+
+        </div>
+
+
+        <div class="bg-white rounded-2xl shadow-sm p-5">
+
+          <p class="text-xs text-gray-500 font-semibold">
+            Completed
+          </p>
+
+          <p
+            id="completedCount"
+            class="text-3xl font-black text-green-600 mt-2"
+          >
+            0
+          </p>
+
+        </div>
+
+
+        <div class="bg-white rounded-2xl shadow-sm p-5">
+
+          <p class="text-xs text-gray-500 font-semibold">
+            Overall Progress
+          </p>
+
+          <p
+            id="overallProgress"
+            class="text-3xl font-black text-[#D4A72C] mt-2"
+          >
+            0%
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <!-- =====================================================
+           CONTENT GRID
+      ====================================================== -->
+
+      <div class="grid lg:grid-cols-3 gap-6">
+
+
+        <!-- ===================================================
+             MY COURSES
+        ==================================================== -->
+
+        <section
+          class="lg:col-span-2 bg-white rounded-3xl shadow-sm p-6"
+        >
+
+          <div
+            class="flex items-center justify-between gap-3"
+          >
+
+            <div>
+
+              <h2 class="text-xl font-black text-[#0A2A7A]">
+                My Courses
+              </h2>
+
+              <p class="text-sm text-gray-500 mt-1">
+                Courses associated with your student account.
+              </p>
+
+            </div>
+
+            <a
+              href="courses-public.html"
+              class="text-sm font-bold text-[#2563EB]"
+            >
+              Browse →
+            </a>
+
+          </div>
+
+
+          <div
+            id="myCourses"
+            class="mt-6 space-y-4"
+          >
+          </div>
+
+
+          <!-- EMPTY -->
+
+          <div
+            id="noCourses"
+            class="hidden text-center py-12"
+          >
+
+            <div class="text-5xl">
+              📚
+            </div>
+
+            <h3 class="mt-4 text-lg font-black text-[#0A2A7A]">
+              No courses yet
+            </h3>
+
+            <p class="text-sm text-gray-500 mt-2">
+              You have not enrolled in a course yet.
+            </p>
+
+            <a
+              href="courses-public.html"
+              class="inline-block mt-5 bg-[#0A2A7A] text-white px-5 py-3 rounded-xl font-bold"
+            >
+              Explore Courses
+            </a>
+
+          </div>
+
+        </section>
+
+
+        <!-- ===================================================
+             QUICK ACTIONS
+        ==================================================== -->
+
+        <aside
+          class="bg-white rounded-3xl shadow-sm p-6"
+        >
+
+          <h2 class="text-xl font-black text-[#0A2A7A]">
+            Quick Access
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Student resources
+          </p>
+
+
+          <div class="space-y-3 mt-6">
+
+
+            <a
+              href="digital-library.html"
+              class="flex items-center gap-4 p-4 rounded-2xl bg-[#F5F8FC] hover:bg-blue-50 transition"
+            >
+
+              <span class="text-2xl">
+                📚
+              </span>
+
+              <div>
+
+                <p class="font-black text-[#0A2A7A]">
+                  Student Library
+                </p>
+
+                <p class="text-xs text-gray-500">
+                  Access learning resources
+                </p>
+
+              </div>
+
+            </a>
+
+
+            <a
+              href="courses-public.html"
+              class="flex items-center gap-4 p-4 rounded-2xl bg-[#F5F8FC] hover:bg-blue-50 transition"
+            >
+
+              <span class="text-2xl">
+                🎓
+              </span>
+
+              <div>
+
+                <p class="font-black text-[#0A2A7A]">
+                  Browse Courses
+                </p>
+
+                <p class="text-xs text-gray-500">
+                  Find another course
+                </p>
+
+              </div>
+
+            </a>
+
+
+            <a
+              href="profile.html"
+              class="flex items-center gap-4 p-4 rounded-2xl bg-[#F5F8FC] hover:bg-blue-50 transition"
+            >
+
+              <span class="text-2xl">
+                👤
+              </span>
+
+              <div>
+
+                <p class="font-black text-[#0A2A7A]">
+                  My Profile
+                </p>
+
+                <p class="text-xs text-gray-500">
+                  View your account
+                </p>
+
+              </div>
+
+            </a>
+
+
+          </div>
+
+
+          <!-- PROGRESS -->
+
+          <div class="mt-7 border-t pt-6">
+
+            <div class="flex items-center justify-between">
+
+              <p class="font-black text-[#0A2A7A]">
+                Learning Progress
+              </p>
+
+              <p
+                id="progressLabel"
+                class="text-sm font-black text-[#2563EB]"
+              >
+                0%
+              </p>
+
+            </div>
+
+
+            <div
+              class="w-full h-3 bg-gray-100 rounded-full overflow-hidden mt-3"
+            >
+
+              <div
+                id="progressBar"
+                class="h-full bg-[#2563EB] rounded-full transition-all duration-500"
+                style="width: 0%;"
+              ></div>
+
+            </div>
+
+
+            <a
+              id="continueLearningButton"
+              href="courses-public.html"
+              class="block text-center bg-[#2563EB] text-white py-3 rounded-xl font-bold mt-5"
+            >
+              ▶️ Continue Learning
+            </a>
+
+          </div>
+
+        </aside>
+
+      </div>
+
+
+      <!-- =====================================================
+           ACCOUNT INFORMATION
+      ====================================================== -->
+
+      <section
+        class="bg-white rounded-3xl shadow-sm p-6 mt-6"
+      >
+
+        <h2 class="text-xl font-black text-[#0A2A7A]">
+          Account Information
+        </h2>
+
+        <div
+          class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-5"
+        >
+
+          <div>
+
+            <p class="text-xs text-gray-500">
+              Name
+            </p>
+
+            <p
+              id="studentName"
+              class="font-bold text-gray-800 mt-1"
+            >
+              —
+            </p>
+
+          </div>
+
+
+          <div>
+
+            <p class="text-xs text-gray-500">
+              Email
+            </p>
+
+            <p
+              id="studentEmail"
+              class="font-bold text-gray-800 mt-1 break-all"
+            >
+              —
+            </p>
+
+          </div>
+
+
+          <div>
+
+            <p class="text-xs text-gray-500">
+              Account Status
+            </p>
+
+            <p class="font-bold text-green-600 mt-1">
+              Active
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================================================
+       FOOTER
+  ========================================================== -->
+
+  <footer class="max-w-7xl mx-auto px-4 py-8 text-center">
+
+    <p class="text-xs text-gray-400">
+      © <span id="year"></span> Funda Online Academy.
+      All rights reserved.
+    </p>
+
+  </footer>
+
+
+  <!-- =========================================================
+       JAVASCRIPT
+  ========================================================== -->
+
+  <script>
+
+    // ==========================================================
+    // FUNDA ONLINE ACADEMY
+    // STUDENT DASHBOARD
+    // ==========================================================
+
+
+    let supabaseClient = null;
+
+    let currentUser = null;
+
+    let enrollments = [];
+
+
+    // ----------------------------------------------------------
+    // ELEMENTS
+    // ----------------------------------------------------------
+
+    const loadingState =
+      document.getElementById("loadingState");
+
+    const errorState =
+      document.getElementById("errorState");
+
+    const dashboardContent =
+      document.getElementById("dashboardContent");
+
+    const errorMessage =
+      document.getElementById("errorMessage");
+
+    const myCourses =
+      document.getElementById("myCourses");
+
+    const noCourses =
+      document.getElementById("noCourses");
+
+
+    // ----------------------------------------------------------
+    // INITIALISE SUPABASE
+    // ----------------------------------------------------------
+
+    function initialiseSupabase() {
+
+      if (
+        typeof window.SUPABASE_URL ===
+        "undefined"
+      ) {
+
+        throw new Error(
+          "supabase-config.js was not loaded."
+        );
+
+      }
+
+
+      if (
+        typeof window.SUPABASE_ANON_KEY ===
+        "undefined"
+      ) {
+
+        throw new Error(
+          "SUPABASE_ANON_KEY was not found in supabase-config.js."
+        );
+
+      }
+
+
+      if (
+        !window.SUPABASE_URL
+      ) {
+
+        throw new Error(
+          "SUPABASE_URL is empty in supabase-config.js."
+        );
+
+      }
+
+
+      if (
+        !window.SUPABASE_ANON_KEY
+      ) {
+
+        throw new Error(
+          "SUPABASE_ANON_KEY is empty in supabase-config.js."
+        );
+
+      }
+
+
+      if (
+        window.SUPABASE_ANON_KEY ===
+        "YOUR_LEGACY_ANON_KEY_GOES_HERE"
+      ) {
+
+        throw new Error(
+          "The Supabase public key has not been configured."
+        );
+
+      }
+
+
+      if (
+        typeof window.supabase ===
+        "undefined"
+      ) {
+
+        throw new Error(
+          "The Supabase JavaScript library failed to load."
+        );
+
+      }
+
+
+      supabaseClient =
+        window.supabase.createClient(
+          window.SUPABASE_URL,
+          window.SUPABASE_ANON_KEY
+        );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // SHOW ERROR
+    // ----------------------------------------------------------
+
+    function showError(message) {
+
+      loadingState.classList.add(
+        "hidden"
+      );
+
+      dashboardContent.classList.add(
+        "hidden"
+      );
+
+      errorState.classList.remove(
+        "hidden"
+      );
+
+      errorMessage.textContent =
+        message ||
+        "Unable to load your dashboard.";
+
+    }
+
+
+    // ----------------------------------------------------------
+    // SHOW DASHBOARD
+    // ----------------------------------------------------------
+
+    function showDashboard() {
+
+      loadingState.classList.add(
+        "hidden"
+      );
+
+      errorState.classList.add(
+        "hidden"
+      );
+
+      dashboardContent.classList.remove(
+        "hidden"
+      );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // ESCAPE HTML
+    // ----------------------------------------------------------
+
+    function escapeHTML(value) {
+
+      if (
+        value === null ||
+        value === undefined
+      ) {
+
+        return "";
+
+      }
+
+
+      return String(value)
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // GET DISPLAY NAME
+    // ----------------------------------------------------------
+
+    function getDisplayName(user) {
+
+      const metadata =
+        user?.user_metadata ||
+        {};
+
+
+      return (
+        metadata.full_name ||
+        metadata.name ||
+        metadata.first_name ||
+        user?.email?.split("@")[0] ||
+        "Student"
+      );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // LOAD CURRENT USER
+    // ----------------------------------------------------------
+
+    async function getCurrentUser() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.auth.getUser();
+
+
+      if (error) {
+
+        throw new Error(
+          error.message ||
+          "Unable to verify your account."
+        );
+
+      }
+
+
+      if (!data?.user) {
+
+        window.location.href =
+          "login.html?next=dashboard.html";
+
+        return null;
+
+      }
+
+
+      return data.user;
+
+    }
+
+
+    // ----------------------------------------------------------
+    // LOAD ENROLLMENTS
+    // ----------------------------------------------------------
+
+    async function loadEnrollments() {
+
+      /*
+        We use the existing enrollments table.
+
+        The course relationship is requested through
+        the courses table.
+
+        If the relationship exists in Supabase,
+        course information will be returned normally.
+      */
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("enrollments")
+          .select(
+            "*, courses(*)"
+          )
+          .eq(
+            "user_id",
+            currentUser.id
+          );
+
+
+      if (error) {
+
+        console.error(
+          "Enrollment loading error:",
+          error
+        );
+
+        throw new Error(
+          error.message ||
+          "Unable to load your courses."
+        );
+
+      }
+
+
+      enrollments =
+        Array.isArray(data)
+          ? data
+          : [];
+
+    }
+
+
+    // ----------------------------------------------------------
+    // COURSE TITLE
+    // ----------------------------------------------------------
+
+    function getCourseTitle(enrollment) {
+
+      const course =
+        enrollment?.courses;
+
+
+      if (
+        course &&
+        !Array.isArray(course)
+      ) {
+
+        return (
+          course.title ||
+          course.name ||
+          course.course_name ||
+          "Course"
+        );
+
+      }
+
+
+      return (
+        enrollment?.course_title ||
+        "Course"
+      );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // COURSE ID
+    // ----------------------------------------------------------
+
+    function getCourseId(enrollment) {
+
+      const course =
+        enrollment?.courses;
+
+
+      if (
+        course &&
+        !Array.isArray(course)
+      ) {
+
+        return course.id ||
+          enrollment.course_id ||
+          null;
+
+      }
+
+
+      return (
+        enrollment?.course_id ||
+        null
+      );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // ENROLLMENT STATUS
+    // ----------------------------------------------------------
+
+    function getEnrollmentStatus(
+      enrollment
+    ) {
+
+      return String(
+        enrollment?.status ||
+        "pending"
+      ).toLowerCase();
+
+    }
+
+
+    // ----------------------------------------------------------
+    // PROGRESS
+    // ----------------------------------------------------------
+
+    function getProgress(
+      enrollment
+    ) {
+
+      const possibleValues = [
+
+        enrollment?.progress,
+
+        enrollment?.progress_percentage,
+
+        enrollment?.completion_percentage,
+
+        enrollment?.completion,
+
+        enrollment?.percentage
+
+      ];
+
+
+      for (
+        const value of possibleValues
+      ) {
+
+        if (
+          value !== null &&
+          value !== undefined &&
+          value !== "" &&
+          !Number.isNaN(
+            Number(value)
+          )
+        ) {
+
+          let progress =
+            Number(value);
+
+
+          if (
+            progress < 0
+          ) {
+
+            progress = 0;
+
+          }
+
+
+          if (
+            progress > 100
+          ) {
+
+            progress = 100;
+
+          }
+
+
+          return Math.round(
+            progress
+          );
+
+        }
+
+      }
+
+
+      return 0;
+
+    }
+
+
+    // ----------------------------------------------------------
+    // CALCULATE OVERALL PROGRESS
+    // ----------------------------------------------------------
+
+    function calculateOverallProgress() {
+
+      if (
+        enrollments.length === 0
+      ) {
+
+        return 0;
+
+      }
+
+
+      const total =
+        enrollments.reduce(
+          (
+            sum,
+            enrollment
+          ) => {
+
+            return (
+              sum +
+              getProgress(
+                enrollment
+              )
+            );
+
+          },
+          0
+        );
+
+
+      return Math.round(
+        total /
+        enrollments.length
+      );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // UPDATE STATISTICS
+    // ----------------------------------------------------------
+
+    function updateStatistics() {
+
+      const enrolled =
+        enrollments.length;
+
+
+      const active =
+        enrollments.filter(
+          enrollment => {
+
+            const status =
+              getEnrollmentStatus(
+                enrollment
+              );
+
+            return (
+              status === "approved" ||
+              status === "active" ||
+              status === "enrolled" ||
+              status === "completed"
+            );
+
+          }
+        ).length;
+
+
+      const completed =
+        enrollments.filter(
+          enrollment => {
+
+            const status =
+              getEnrollmentStatus(
+                enrollment
+              );
+
+            return (
+              status === "completed" ||
+              getProgress(
+                enrollment
+              ) >= 100
+            );
+
+          }
+        ).length;
+
+
+      const progress =
+        calculateOverallProgress();
+
+
+      document
+        .getElementById(
+          "enrolledCount"
+        )
+        .textContent =
+          enrolled;
+
+
+      document
+        .getElementById(
+          "activeCount"
+        )
+        .textContent =
+          active;
+
+
+      document
+        .getElementById(
+          "completedCount"
+        )
+        .textContent =
+          completed;
+
+
+      document
+        .getElementById(
+          "overallProgress"
+        )
+        .textContent =
+          progress + "%";
+
+
+      document
+        .getElementById(
+          "progressLabel"
+        )
+        .textContent =
+          progress + "%";
+
+
+      document
+        .getElementById(
+          "progressBar"
+        )
+        .style.width =
+          progress + "%";
+
+    }
+
+
+    // ----------------------------------------------------------
+    // RENDER COURSES
+    // ----------------------------------------------------------
+
+    function renderCourses() {
+
+      myCourses.innerHTML = "";
+
+
+      if (
+        enrollments.length === 0
+      ) {
+
+        noCourses.classList.remove(
+          "hidden"
+        );
+
+        return;
+
+      }
+
+
+      noCourses.classList.add(
+        "hidden"
+      );
+
+
+      enrollments.forEach(
+        enrollment => {
+
+          const title =
+            getCourseTitle(
+              enrollment
+            );
+
+
+          const courseId =
+            getCourseId(
+              enrollment
+            );
+
+
+          const status =
+            getEnrollmentStatus(
+              enrollment
+            );
+
+
+          const progress =
+            getProgress(
+              enrollment
+            );
+
+
+          const isCompleted =
+            status === "completed" ||
+            progress >= 100;
+
+
+          let statusText =
+            "Pending";
+
+          let statusClass =
+            "bg-yellow-100 text-yellow-700";
+
+
+          if (
+            status === "approved" ||
+            status === "active" ||
+            status === "enrolled"
+          ) {
+
+            statusText =
+              "Active";
+
+            statusClass =
+              "bg-green-100 text-green-700";
+
+          }
+
+
+          if (
+            isCompleted
+          ) {
+
+            statusText =
+              "Completed";
+
+            statusClass =
+              "bg-blue-100 text-blue-700";
+
+          }
+
+
+          const wrapper =
+            document.createElement(
+              "div"
+            );
+
+
+          wrapper.className =
+            "border border-gray-100 rounded-2xl p-5";
+
+
+          wrapper.innerHTML = `
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+              <div class="min-w-0">
+
+                <div class="flex items-center gap-2 flex-wrap">
+
+                  <h3 class="font-black text-[#0A2A7A] text-lg">
+                    ${escapeHTML(title)}
+                  </h3>
+
+                  <span class="px-2.5 py-1 rounded-full text-xs font-bold ${statusClass}">
+                    ${escapeHTML(statusText)}
+                  </span>
+
+                </div>
+
+                <p class="text-xs text-gray-500 mt-2">
+                  ${progress}% complete
+                </p>
+
+              </div>
+
+
+              ${
+                courseId
+                  ? `
+                    <a
+                      href="course-study.html?id=${encodeURIComponent(courseId)}"
+                      class="shrink-0 text-center bg-[#0A2A7A] text-white px-5 py-3 rounded-xl text-sm font-bold"
+                    >
+                      ${
+                        isCompleted
+                          ? "View Course"
+                          : "Continue"
+                      }
+                    </a>
+                  `
+                  : `
+                    <span class="text-xs text-gray-400">
+                      Course unavailable
+                    </span>
+                  `
+              }
+
+            </div>
+
+
+            <div class="mt-4">
+
+              <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+
+                <div
+                  class="h-full bg-[#2563EB] rounded-full"
+                  style="width:${progress}%"
+                ></div>
+
+              </div>
+
+            </div>
+
+          `;
+
+
+          myCourses.appendChild(
+            wrapper
+          );
+
+        }
+      );
+
+
+      // Set Continue Learning button
+      // to the first active course.
+
+      const firstActive =
+        enrollments.find(
+          enrollment => {
+
+            const status =
+              getEnrollmentStatus(
+                enrollment
+              );
+
+            return (
+              status === "approved" ||
+              status === "active" ||
+              status === "enrolled"
+            );
+
+          }
+        );
+
+
+      if (
+        firstActive
+      ) {
+
+        const id =
+          getCourseId(
+            firstActive
+          );
+
+
+        if (
+          id
+        ) {
+
+          document
+            .getElementById(
+              "continueLearningButton"
+            )
+            .href =
+              "course-study.html?id=" +
+              encodeURIComponent(id);
+
+        }
+
+      }
+
+    }
+
+
+    // ----------------------------------------------------------
+    // LOAD PROFILE INFORMATION
+    // ----------------------------------------------------------
+
+    function renderProfile() {
+
+      const metadata =
+        currentUser.user_metadata ||
+        {};
+
+
+      const name =
+        getDisplayName(
+          currentUser
+        );
+
+
+      document
+        .getElementById(
+          "welcomeName"
+        )
+        .textContent =
+          "Welcome Back, " +
+          name +
+          "! 👋";
+
+
+      document
+        .getElementById(
+          "studentName"
+        )
+        .textContent =
+          metadata.full_name ||
+          metadata.name ||
+          name;
+
+
+      document
+        .getElementById(
+          "studentEmail"
+        )
+        .textContent =
+          currentUser.email ||
+          "—";
+
+    }
+
+
+    // ----------------------------------------------------------
+    // LOAD DASHBOARD
+    // ----------------------------------------------------------
+
+    async function loadDashboard() {
+
+      loadingState.classList.remove(
+        "hidden"
+      );
+
+      errorState.classList.add(
+        "hidden"
+      );
+
+      dashboardContent.classList.add(
+        "hidden"
+      );
+
+
+      try {
+
+        initialiseSupabase();
+
+
+        currentUser =
+          await getCurrentUser();
+
+
+        if (
+          !currentUser
+        ) {
+
+          return;
+
+        }
+
+
+        renderProfile();
+
+
+        await loadEnrollments();
+
+
+        updateStatistics();
+
+
+        renderCourses();
+
+
+        showDashboard();
+
+      } catch (
+        error
+      ) {
+
+        console.error(
+          "Dashboard error:",
+          error
+        );
+
+
+        showError(
+          error.message ||
+          "Unable to load your student dashboard."
+        );
+
+      }
+
+    }
+
+
+    // ----------------------------------------------------------
+    // LOGOUT
+    // ----------------------------------------------------------
+
+    async function logout() {
+
+      try {
+
+        initialiseSupabase();
+
+
+        const {
+          error
+        } =
+          await supabaseClient.auth.signOut();
+
+
+        if (
+          error
+        ) {
+
+          throw error;
+
+        }
+
+
+        window.location.href =
+          "login.html";
+
+      } catch (
+        error
+      ) {
+
+        console.error(
+          "Logout error:",
+          error
+        );
+
+
+        alert(
+          error.message ||
+          "Unable to log out."
+        );
+
+      }
+
+    }
+
+
+    // ----------------------------------------------------------
+    // EVENTS
+    // ----------------------------------------------------------
+
+    document
+      .getElementById(
+        "logoutButton"
+      )
+      .addEventListener(
+        "click",
+        logout
+      );
+
+
+    document
+      .getElementById(
+        "retryButton"
+      )
+      .addEventListener(
+        "click",
+        loadDashboard
+      );
+
+
+    // ----------------------------------------------------------
+    // YEAR
+    // ----------------------------------------------------------
+
+    document
+      .getElementById(
+        "year"
+      )
+      .textContent =
+        new Date().getFullYear();
+
+
+    // ----------------------------------------------------------
+    // START
+    // ----------------------------------------------------------
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        loadDashboard();
+
+      }
+    );
+
+  </script>
+
+</body>
+
+          </html>
