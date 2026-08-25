@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>Course Overview | Funda Online Academy</title>
 
@@ -21,9 +26,14 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
 
+  <!-- Supabase library -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <!-- IMPORTANT: shared Academy configuration -->
+  <script src="supabase-config.js?v=20260825"></script>
+
   <style>
+
     :root {
       --navy: #092a66;
       --deep-navy: #071b50;
@@ -33,20 +43,24 @@
       --text: #172b4d;
     }
 
+
     * {
       box-sizing: border-box;
     }
+
 
     html {
       scroll-behavior: smooth;
     }
 
+
     body {
       margin: 0;
-      background: #fff;
+      background: #ffffff;
       color: var(--text);
       font-family: "Poppins", sans-serif;
     }
+
 
     h1,
     h2,
@@ -56,6 +70,7 @@
     .brand {
       font-family: "Montserrat", sans-serif;
     }
+
 
     .hero-bg {
       background:
@@ -72,23 +87,25 @@
         #f5f8fc;
     }
 
+
     .nav-link {
       position: relative;
       color: #092a66;
       font-family: "Montserrat", sans-serif;
       font-size: 15px;
       font-weight: 800;
-      letter-spacing: .01em;
       padding: 10px 2px;
       transition:
         color .2s ease,
         transform .2s ease;
     }
 
+
     .nav-link:hover {
       color: #1456c0;
       transform: translateY(-1px);
     }
+
 
     .nav-link::after {
       content: "";
@@ -100,18 +117,15 @@
       border-radius: 999px;
       background: #d4a72c;
       transform: scaleX(0);
-      transform-origin: center;
       transition: transform .2s ease;
     }
+
 
     .nav-link:hover::after,
     .nav-link.active::after {
       transform: scaleX(1);
     }
 
-    .nav-link.active {
-      color: #092a66;
-    }
 
     .course-card {
       transition:
@@ -119,18 +133,22 @@
         box-shadow .25s ease;
     }
 
+
     .course-card:hover {
       transform: translateY(-6px);
       box-shadow: 0 20px 45px rgba(9, 42, 102, .15);
     }
 
+
     .course-image {
       transition: transform .4s ease;
     }
 
+
     .course-card:hover .course-image {
       transform: scale(1.05);
     }
+
 
     .spinner {
       width: 46px;
@@ -142,11 +160,13 @@
       margin: auto;
     }
 
+
     @keyframes spin {
       to {
         transform: rotate(360deg);
       }
     }
+
 
     .faq-content {
       max-height: 0;
@@ -154,59 +174,145 @@
       transition: max-height .3s ease;
     }
 
+
     .faq-item.open .faq-content {
       max-height: 400px;
     }
+
 
     .faq-icon {
       transition: transform .25s ease;
     }
 
+
     .faq-item.open .faq-icon {
       transform: rotate(45deg);
     }
 
+
     .logo-image {
       object-fit: contain;
     }
+
+
+    .connection-error {
+      display: none;
+    }
+
+
+    .connection-error.show {
+      display: block;
+    }
+
   </style>
+
 </head>
+
 
 <body>
 
-<!-- ========================================================= -->
-<!-- HEADER -->
-<!-- ========================================================= -->
 
-<header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
+<!-- =========================================================
+     HEADER
+========================================================== -->
 
-  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<header
+  class="
+    sticky
+    top-0
+    z-50
+    bg-white/95
+    backdrop-blur
+    border-b
+    border-gray-100
+  "
+>
 
-    <div class="h-20 flex items-center justify-between">
+  <nav
+    class="
+      max-w-7xl
+      mx-auto
+      px-4
+      sm:px-6
+      lg:px-8
+    "
+  >
+
+    <div
+      class="
+        h-20
+        flex
+        items-center
+        justify-between
+      "
+    >
+
 
       <!-- BRAND -->
 
       <a
         href="courses-public.html"
-        class="flex items-center gap-3 shrink-0"
+        class="
+          flex
+          items-center
+          gap-3
+          shrink-0
+        "
       >
 
-        <div class="w-12 h-12 flex items-center justify-center overflow-hidden">
+        <div
+          class="
+            w-12
+            h-12
+            flex
+            items-center
+            justify-center
+            overflow-hidden
+          "
+        >
+
           <img
             src="logo.png"
             alt="Funda Online Academy Logo"
-            class="logo-image w-full h-full"
+            class="
+              logo-image
+              w-full
+              h-full
+            "
             onerror="this.style.display='none';"
           >
+
         </div>
+
 
         <div class="brand leading-none">
 
-          <div class="text-[16px] sm:text-[18px] font-black tracking-tight text-[#092A66]">
-            FUNDA <span class="font-bold">ONLINE</span>
+          <div
+            class="
+              text-[16px]
+              sm:text-[18px]
+              font-black
+              tracking-tight
+              text-[#092A66]
+            "
+          >
+            FUNDA
+            <span class="font-bold">
+              ONLINE
+            </span>
           </div>
 
-          <div class="mt-1 text-[10px] sm:text-[11px] font-bold tracking-[0.30em] text-[#D4A72C]">
+
+          <div
+            class="
+              mt-1
+              text-[10px]
+              sm:text-[11px]
+              font-bold
+              tracking-[0.30em]
+              text-[#D4A72C]
+            "
+          >
             ACADEMY
           </div>
 
@@ -215,9 +321,17 @@
       </a>
 
 
-      <!-- DESKTOP NAVIGATION -->
+      <!-- DESKTOP NAV -->
 
-      <div class="hidden lg:flex items-center gap-7 xl:gap-9">
+      <div
+        class="
+          hidden
+          lg:flex
+          items-center
+          gap-7
+          xl:gap-9
+        "
+      >
 
         <a
           href="#courses"
@@ -259,18 +373,48 @@
 
       <!-- ACCOUNT BUTTONS -->
 
-      <div class="hidden md:flex items-center gap-3">
+      <div
+        class="
+          hidden
+          md:flex
+          items-center
+          gap-3
+        "
+      >
 
         <a
           href="login.html"
-          class="px-5 py-2.5 rounded-full border-2 border-[#092A66] text-[#092A66] font-bold text-sm hover:bg-[#092A66] hover:text-white transition"
+          class="
+            px-5
+            py-2.5
+            rounded-full
+            border-2
+            border-[#092A66]
+            text-[#092A66]
+            font-bold
+            text-sm
+            hover:bg-[#092A66]
+            hover:text-white
+            transition
+          "
         >
           Login
         </a>
 
+
         <a
           href="register.html"
-          class="px-5 py-2.5 rounded-full bg-[#092A66] text-white font-bold text-sm hover:bg-[#1456C0] transition"
+          class="
+            px-5
+            py-2.5
+            rounded-full
+            bg-[#092A66]
+            text-white
+            font-bold
+            text-sm
+            hover:bg-[#1456C0]
+            transition
+          "
         >
           Create Account
         </a>
@@ -283,7 +427,16 @@
       <button
         id="mobileMenuButton"
         type="button"
-        class="lg:hidden w-11 h-11 rounded-xl bg-[#F1F5FA] text-[#092A66] text-xl font-black"
+        class="
+          lg:hidden
+          w-11
+          h-11
+          rounded-xl
+          bg-[#F1F5FA]
+          text-[#092A66]
+          text-xl
+          font-black
+        "
         aria-label="Open navigation"
       >
         ☰
@@ -296,58 +449,139 @@
 
     <div
       id="mobileMenu"
-      class="hidden lg:hidden pb-5"
+      class="
+        hidden
+        lg:hidden
+        pb-5
+      "
     >
 
-      <div class="bg-[#F5F8FC] rounded-2xl p-4 space-y-1">
+      <div
+        class="
+          bg-[#F5F8FC]
+          rounded-2xl
+          p-4
+          space-y-1
+        "
+      >
 
         <a
           href="#courses"
-          class="mobile-link block px-4 py-3 rounded-xl font-extrabold text-[#092A66]"
+          class="
+            mobile-link
+            block
+            px-4
+            py-3
+            rounded-xl
+            font-extrabold
+            text-[#092A66]
+          "
         >
           Courses
         </a>
 
+
         <a
           href="#workshops"
-          class="mobile-link block px-4 py-3 rounded-xl font-extrabold text-[#092A66]"
+          class="
+            mobile-link
+            block
+            px-4
+            py-3
+            rounded-xl
+            font-extrabold
+            text-[#092A66]
+          "
         >
           Workshops
         </a>
 
+
         <a
           href="#how-it-works"
-          class="mobile-link block px-4 py-3 rounded-xl font-extrabold text-[#092A66]"
+          class="
+            mobile-link
+            block
+            px-4
+            py-3
+            rounded-xl
+            font-extrabold
+            text-[#092A66]
+          "
         >
           How It Works
         </a>
 
+
         <a
           href="#faq"
-          class="mobile-link block px-4 py-3 rounded-xl font-extrabold text-[#092A66]"
+          class="
+            mobile-link
+            block
+            px-4
+            py-3
+            rounded-xl
+            font-extrabold
+            text-[#092A66]
+          "
         >
           FAQs
         </a>
 
+
         <a
           href="#contact"
-          class="mobile-link block px-4 py-3 rounded-xl font-extrabold text-[#092A66]"
+          class="
+            mobile-link
+            block
+            px-4
+            py-3
+            rounded-xl
+            font-extrabold
+            text-[#092A66]
+          "
         >
           Contact
         </a>
 
-        <div class="grid grid-cols-2 gap-2 pt-3">
+
+        <div
+          class="
+            grid
+            grid-cols-2
+            gap-2
+            pt-3
+          "
+        >
 
           <a
             href="login.html"
-            class="text-center px-4 py-3 rounded-xl border-2 border-[#092A66] text-[#092A66] font-extrabold"
+            class="
+              text-center
+              px-4
+              py-3
+              rounded-xl
+              border-2
+              border-[#092A66]
+              text-[#092A66]
+              font-extrabold
+            "
           >
             Login
           </a>
 
+
           <a
             href="register.html"
-            class="text-center px-4 py-3 rounded-xl bg-[#092A66] text-white font-extrabold"
+            class="
+              text-center
+              px-4
+              py-3
+              rounded-xl
+              bg-[#092A66]
+              text-white
+              font-extrabold
+            "
           >
             Create Account
           </a>
@@ -365,19 +599,53 @@
 
 <main>
 
-<!-- ========================================================= -->
-<!-- HERO -->
-<!-- ========================================================= -->
+
+<!-- =========================================================
+     HERO
+========================================================== -->
 
 <section class="hero-bg">
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 lg:py-20">
+  <div
+    class="
+      max-w-7xl
+      mx-auto
+      px-4
+      sm:px-6
+      lg:px-8
+      py-14
+      lg:py-20
+    "
+  >
 
-    <div class="grid lg:grid-cols-2 gap-12 items-center">
+    <div
+      class="
+        grid
+        lg:grid-cols-2
+        gap-12
+        items-center
+      "
+    >
+
 
       <div>
 
-        <div class="inline-flex items-center gap-2 bg-white border border-blue-100 rounded-full px-4 py-2 text-xs font-extrabold text-[#092A66]">
+        <div
+          class="
+            inline-flex
+            items-center
+            gap-2
+            bg-white
+            border
+            border-blue-100
+            rounded-full
+            px-4
+            py-2
+            text-xs
+            font-extrabold
+            text-[#092A66]
+          "
+        >
 
           <span>🎓</span>
 
@@ -388,7 +656,17 @@
         </div>
 
 
-        <h1 class="mt-6 text-4xl sm:text-5xl lg:text-6xl font-black leading-tight text-[#092A66]">
+        <h1
+          class="
+            mt-6
+            text-4xl
+            sm:text-5xl
+            lg:text-6xl
+            font-black
+            leading-tight
+            text-[#092A66]
+          "
+        >
 
           Learn Skills That
 
@@ -399,27 +677,68 @@
         </h1>
 
 
-        <p class="mt-6 text-gray-600 text-base sm:text-lg leading-relaxed max-w-xl">
-
-          Explore practical, career-focused courses designed to help
-          you develop useful skills, increase your knowledge and prepare
-          for opportunities in the workplace.
-
+        <p
+          class="
+            mt-6
+            text-gray-600
+            text-base
+            sm:text-lg
+            leading-relaxed
+            max-w-xl
+          "
+        >
+          Explore practical, career-focused courses designed
+          to help you develop useful skills, increase your
+          knowledge and prepare for opportunities in the workplace.
         </p>
 
 
-        <div class="flex flex-col sm:flex-row gap-3 mt-8">
+        <div
+          class="
+            flex
+            flex-col
+            sm:flex-row
+            gap-3
+            mt-8
+          "
+        >
 
           <a
             href="#courses"
-            class="inline-flex justify-center px-7 py-4 rounded-full bg-[#092A66] text-white font-extrabold shadow-lg hover:bg-[#1456C0] transition"
+            class="
+              inline-flex
+              justify-center
+              px-7
+              py-4
+              rounded-full
+              bg-[#092A66]
+              text-white
+              font-extrabold
+              shadow-lg
+              hover:bg-[#1456C0]
+              transition
+            "
           >
             Browse Courses →
           </a>
 
+
           <a
             href="#why-us"
-            class="inline-flex justify-center px-7 py-4 rounded-full bg-white border-2 border-gray-200 text-[#092A66] font-extrabold hover:border-[#092A66] transition"
+            class="
+              inline-flex
+              justify-center
+              px-7
+              py-4
+              rounded-full
+              bg-white
+              border-2
+              border-gray-200
+              text-[#092A66]
+              font-extrabold
+              hover:border-[#092A66]
+              transition
+            "
           >
             Why Choose Funda?
           </a>
@@ -427,18 +746,36 @@
         </div>
 
 
-        <div class="grid grid-cols-3 gap-4 mt-10 max-w-lg">
+        <div
+          class="
+            grid
+            grid-cols-3
+            gap-4
+            mt-10
+            max-w-lg
+          "
+        >
 
           <div>
 
             <div
               id="heroCourseCount"
-              class="text-2xl font-black text-[#092A66]"
+              class="
+                text-2xl
+                font-black
+                text-[#092A66]
+              "
             >
               —
             </div>
 
-            <div class="text-xs text-gray-500 font-medium">
+            <div
+              class="
+                text-xs
+                text-gray-500
+                font-medium
+              "
+            >
               Courses
             </div>
 
@@ -447,11 +784,23 @@
 
           <div>
 
-            <div class="text-2xl font-black text-[#092A66]">
+            <div
+              class="
+                text-2xl
+                font-black
+                text-[#092A66]
+              "
+            >
               100%
             </div>
 
-            <div class="text-xs text-gray-500 font-medium">
+            <div
+              class="
+                text-xs
+                text-gray-500
+                font-medium
+              "
+            >
               Online Access
             </div>
 
@@ -460,11 +809,23 @@
 
           <div>
 
-            <div class="text-2xl font-black text-[#092A66]">
+            <div
+              class="
+                text-2xl
+                font-black
+                text-[#092A66]
+              "
+            >
               24/7
             </div>
 
-            <div class="text-xs text-gray-500 font-medium">
+            <div
+              class="
+                text-xs
+                text-gray-500
+                font-medium
+              "
+            >
               Learning Access
             </div>
 
@@ -477,33 +838,94 @@
 
       <div>
 
-        <div class="bg-white rounded-[32px] p-4 shadow-2xl">
+        <div
+          class="
+            bg-white
+            rounded-[32px]
+            p-4
+            shadow-2xl
+          "
+        >
 
-          <div class="rounded-[24px] overflow-hidden min-h-[350px] sm:min-h-[430px] relative">
+          <div
+            class="
+              rounded-[24px]
+              overflow-hidden
+              min-h-[350px]
+              sm:min-h-[430px]
+              relative
+            "
+          >
 
             <img
               src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85"
               alt="Students learning online"
-              class="absolute inset-0 w-full h-full object-cover"
+              class="
+                absolute
+                inset-0
+                w-full
+                h-full
+                object-cover
+              "
             >
 
-            <div class="absolute inset-0 bg-[#092A66]/60"></div>
 
-            <div class="relative z-10 text-center text-white px-8 flex flex-col items-center justify-center min-h-[350px] sm:min-h-[430px]">
+            <div
+              class="
+                absolute
+                inset-0
+                bg-[#092A66]/60
+              "
+            ></div>
+
+
+            <div
+              class="
+                relative
+                z-10
+                text-center
+                text-white
+                px-8
+                flex
+                flex-col
+                items-center
+                justify-center
+                min-h-[350px]
+                sm:min-h-[430px]
+              "
+            >
 
               <div class="text-6xl mb-5">
                 🎓
               </div>
 
-              <div class="text-3xl sm:text-4xl font-black">
+              <div
+                class="
+                  text-3xl
+                  sm:text-4xl
+                  font-black
+                "
+              >
                 Learn.
               </div>
 
-              <div class="text-3xl sm:text-4xl font-black">
+              <div
+                class="
+                  text-3xl
+                  sm:text-4xl
+                  font-black
+                "
+              >
                 Build.
               </div>
 
-              <div class="text-3xl sm:text-4xl font-black">
+              <div
+                class="
+                  text-3xl
+                  sm:text-4xl
+                  font-black
+              "
+              >
                 Grow.
               </div>
 
@@ -522,38 +944,157 @@
 </section>
 
 
-<!-- ========================================================= -->
-<!-- WHY CHOOSE US -->
-<!-- ========================================================= -->
+<!-- =========================================================
+     CONNECTION ERROR
+========================================================== -->
+
+<section
+  id="connectionError"
+  class="
+    connection-error
+    max-w-7xl
+    mx-auto
+    px-4
+    sm:px-6
+    lg:px-8
+    pt-8
+  "
+>
+
+  <div
+    class="
+      rounded-2xl
+      bg-red-50
+      border
+      border-red-200
+      p-5
+      text-red-700
+    "
+  >
+
+    <div class="font-black">
+      Academy connection problem
+    </div>
+
+    <p
+      id="connectionErrorMessage"
+      class="text-sm mt-2"
+    >
+      The Academy connection could not be started.
+    </p>
+
+    <button
+      id="connectionRetry"
+      type="button"
+      class="
+        mt-4
+        px-5
+        py-2.5
+        rounded-full
+        bg-red-600
+        text-white
+        font-bold
+        text-sm
+      "
+    >
+      Refresh Connection
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- =========================================================
+     WHY CHOOSE US
+========================================================== -->
 
 <section
   id="why-us"
-  class="py-16 lg:py-20 bg-white"
+  class="
+    py-16
+    lg:py-20
+    bg-white
+  "
 >
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div
+    class="
+      max-w-7xl
+      mx-auto
+      px-4
+      sm:px-6
+      lg:px-8
+    "
+  >
 
-    <div class="text-center max-w-3xl mx-auto">
+    <div
+      class="
+        text-center
+        max-w-3xl
+        mx-auto
+      "
+    >
 
-      <span class="text-xs font-black tracking-[0.25em] text-[#1456C0]">
+      <span
+        class="
+          text-xs
+          font-black
+          tracking-[0.25em]
+          text-[#1456C0]
+        "
+      >
         WHY CHOOSE FUNDA
       </span>
 
-      <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#092A66]">
+
+      <h2
+        class="
+          mt-3
+          text-3xl
+          sm:text-4xl
+          font-black
+          text-[#092A66]
+        "
+      >
         Why Choose Funda Online Academy?
       </h2>
 
-      <p class="mt-4 text-gray-600 leading-relaxed">
-        We focus on clear, practical and structured learning so students
-        can understand what they are learning and how it can be applied.
+
+      <p
+        class="
+          mt-4
+          text-gray-600
+          leading-relaxed
+        "
+      >
+        We focus on clear, practical and structured learning
+        so students can understand what they are learning
+        and how it can be applied.
       </p>
 
     </div>
 
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
+    <div
+      class="
+        grid
+        sm:grid-cols-2
+        lg:grid-cols-3
+        gap-5
+        mt-12
+      "
+    >
 
-      <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+      <div
+        class="
+          bg-[#F7FAFF]
+          rounded-3xl
+          p-7
+          border
+          border-blue-50
+        "
+      >
 
         <div class="text-4xl">
           🎯
@@ -564,14 +1105,22 @@
         </h3>
 
         <p class="text-sm text-gray-600 mt-3">
-          Learn useful skills that can be applied in real working
-          and everyday environments.
+          Learn useful skills that can be applied in real
+          working and everyday environments.
         </p>
 
       </div>
 
 
-      <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+      <div
+        class="
+          bg-[#F7FAFF]
+          rounded-3xl
+          p-7
+          border
+          border-blue-50
+        "
+      >
 
         <div class="text-4xl">
           💼
@@ -582,14 +1131,22 @@
         </h3>
 
         <p class="text-sm text-gray-600 mt-3">
-          Courses are structured around practical knowledge and
-          skills that support career development.
+          Courses are structured around practical knowledge
+          and skills that support career development.
         </p>
 
       </div>
 
 
-      <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+      <div
+        class="
+          bg-[#F7FAFF]
+          rounded-3xl
+          p-7
+          border
+          border-blue-50
+        "
+      >
 
         <div class="text-4xl">
           📱
@@ -607,7 +1164,15 @@
       </div>
 
 
-      <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+      <div
+        class="
+          bg-[#F7FAFF]
+          rounded-3xl
+          p-7
+          border
+          border-blue-50
+        "
+      >
 
         <div class="text-4xl">
           📚
@@ -618,14 +1183,22 @@
         </h3>
 
         <p class="text-sm text-gray-600 mt-3">
-          Courses are organised into modules and lessons to make
-          learning easier to follow.
+          Courses are organised into modules and lessons
+          to make learning easier to follow.
         </p>
 
       </div>
 
 
-      <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+      <div
+        class="
+          bg-[#F7FAFF]
+          rounded-3xl
+          p-7
+          border
+          border-blue-50
+        "
+      >
 
         <div class="text-4xl">
           🏆
@@ -643,7 +1216,15 @@
       </div>
 
 
-      <div class="bg-[#F7FAFF] rounded-3xl p-7 border border-blue-50">
+      <div
+        class="
+          bg-[#F7FAFF]
+          rounded-3xl
+          p-7
+          border
+          border-blue-50
+        "
+      >
 
         <div class="text-4xl">
           🔐
@@ -654,8 +1235,8 @@
         </h3>
 
         <p class="text-sm text-gray-600 mt-3">
-          Your student account, course access and learning progress
-          are managed through a secure platform.
+          Your student account, course access and learning
+          progress are managed through a secure platform.
         </p>
 
       </div>
@@ -667,32 +1248,77 @@
 </section>
 
 
-<!-- ========================================================= -->
-<!-- COURSES -->
-<!-- ========================================================= -->
+<!-- =========================================================
+     COURSES
+========================================================== -->
 
 <section
   id="courses"
-  class="py-16 lg:py-20 bg-[#F7FAFF]"
+  class="
+    py-16
+    lg:py-20
+    bg-[#F7FAFF]
+  "
 >
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div
+    class="
+      max-w-7xl
+      mx-auto
+      px-4
+      sm:px-6
+      lg:px-8
+    "
+  >
 
-    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+    <div
+      class="
+        flex
+        flex-col
+        lg:flex-row
+        lg:items-end
+        lg:justify-between
+        gap-6
+      "
+    >
 
       <div>
 
-        <span class="text-xs font-black tracking-[0.25em] text-[#1456C0]">
+        <span
+          class="
+            text-xs
+            font-black
+            tracking-[0.25em]
+            text-[#1456C0]
+          "
+        >
           EXPLORE OUR COURSES
         </span>
 
-        <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#092A66]">
+
+        <h2
+          class="
+            mt-3
+            text-3xl
+            sm:text-4xl
+            font-black
+            text-[#092A66]
+          "
+        >
           Find a Course That Fits Your Goals
         </h2>
 
-        <p class="mt-4 text-gray-600 max-w-2xl">
-          Explore our practical skills courses and choose an area
-          that matches your interests, goals and career plans.
+
+        <p
+          class="
+            mt-4
+            text-gray-600
+            max-w-2xl
+          "
+        >
+          Explore our practical skills courses and choose
+          an area that matches your interests, goals and
+          career plans.
         </p>
 
       </div>
@@ -700,7 +1326,11 @@
 
       <div
         id="courseCount"
-        class="text-sm font-extrabold text-[#092A66]"
+        class="
+          text-sm
+          font-extrabold
+          text-[#092A66]
+        "
       >
         Loading courses...
       </div>
@@ -710,29 +1340,74 @@
 
     <!-- SEARCH -->
 
-    <div class="mt-8 bg-white rounded-2xl p-3 border border-gray-100 shadow-sm">
+    <div
+      class="
+        mt-8
+        bg-white
+        rounded-2xl
+        p-3
+        border
+        border-gray-100
+        shadow-sm
+      "
+    >
 
-      <div class="flex flex-col sm:flex-row gap-3">
+      <div
+        class="
+          flex
+          flex-col
+          sm:flex-row
+          gap-3
+        "
+      >
 
         <div class="flex-1 relative">
 
-          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+          <span
+            class="
+              absolute
+              left-4
+              top-1/2
+              -translate-y-1/2
+              text-gray-400
+            "
+          >
             🔍
           </span>
+
 
           <input
             id="courseSearch"
             type="search"
             placeholder="Search courses..."
-            class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 outline-none focus:border-[#1456C0]"
+            class="
+              w-full
+              pl-11
+              pr-4
+              py-3
+              rounded-xl
+              border
+              border-gray-200
+              outline-none
+              focus:border-[#1456C0]
+            "
           >
 
         </div>
 
+
         <button
           id="clearSearch"
           type="button"
-          class="px-6 py-3 rounded-xl bg-gray-100 text-[#092A66] font-extrabold hover:bg-gray-200"
+          class="
+            px-6
+            py-3
+            rounded-xl
+            bg-gray-100
+            text-[#092A66]
+            font-extrabold
+            hover:bg-gray-200
+          "
         >
           Clear
         </button>
@@ -746,14 +1421,35 @@
 
     <div
       id="courseGrid"
-      class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8"
+      class="
+        grid
+        sm:grid-cols-2
+        lg:grid-cols-3
+        xl:grid-cols-4
+        gap-6
+        mt-8
+      "
     >
 
-      <div class="sm:col-span-2 lg:col-span-3 xl:col-span-4 py-16 text-center">
+      <div
+        class="
+          sm:col-span-2
+          lg:col-span-3
+          xl:col-span-4
+          py-16
+          text-center
+        "
+      >
 
         <div class="spinner"></div>
 
-        <p class="mt-5 text-gray-500 font-semibold">
+        <p
+          class="
+            mt-5
+            text-gray-500
+            font-semibold
+          "
+        >
           Loading courses...
         </p>
 
@@ -762,54 +1458,100 @@
     </div>
 
 
-    <!-- NO COURSES -->
+    <!-- EMPTY -->
 
     <div
       id="noCourses"
-      class="hidden text-center py-16"
+      class="
+        hidden
+        text-center
+        py-16
+      "
     >
 
       <div class="text-5xl">
         🔎
       </div>
 
-      <h3 class="font-black text-xl mt-4 text-[#092A66]">
+
+      <h3
+        class="
+          font-black
+          text-xl
+          mt-4
+          text-[#092A66]
+        "
+      >
         No courses found
       </h3>
 
-      <p class="text-gray-500 mt-2">
+
+      <p
+        class="
+          text-gray-500
+          mt-2
+        "
+      >
         Try another search term.
       </p>
 
     </div>
 
 
-    <!-- ERROR -->
+    <!-- DATABASE ERROR -->
 
     <div
       id="courseError"
-      class="hidden text-center py-16"
+      class="
+        hidden
+        text-center
+        py-16
+      "
     >
 
       <div class="text-5xl">
         ⚠️
       </div>
 
-      <h3 class="font-black text-xl mt-4 text-[#092A66]">
+
+      <h3
+        class="
+          font-black
+          text-xl
+          mt-4
+          text-[#092A66]
+        "
+      >
         We couldn't load the courses
       </h3>
 
+
       <p
         id="courseErrorMessage"
-        class="text-gray-500 mt-2 max-w-xl mx-auto"
+        class="
+          text-gray-500
+          mt-2
+          max-w-xl
+          mx-auto
+        "
       >
         Please try again.
       </p>
 
+
       <button
         id="retryButton"
         type="button"
-        class="mt-5 px-6 py-3 rounded-full bg-[#092A66] text-white font-extrabold hover:bg-[#1456C0]"
+        class="
+          mt-5
+          px-6
+          py-3
+          rounded-full
+          bg-[#092A66]
+          text-white
+          font-extrabold
+          hover:bg-[#1456C0]
+        "
       >
         Try Again
       </button>
@@ -821,28 +1563,69 @@
 </section>
 
 
-<!-- ========================================================= -->
-<!-- WORKSHOPS -->
-<!-- ========================================================= -->
+<!-- =========================================================
+     WORKSHOPS
+========================================================== -->
 
 <section
   id="workshops"
-  class="py-16 lg:py-20 bg-white"
+  class="
+    py-16
+    lg:py-20
+    bg-white
+  "
 >
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div
+    class="
+      max-w-7xl
+      mx-auto
+      px-4
+      sm:px-6
+      lg:px-8
+    "
+  >
 
-    <div class="text-center max-w-3xl mx-auto">
+    <div
+      class="
+        text-center
+        max-w-3xl
+        mx-auto
+      "
+    >
 
-      <span class="text-xs font-black tracking-[0.25em] text-[#1456C0]">
+      <span
+        class="
+          text-xs
+          font-black
+          tracking-[0.25em]
+          text-[#1456C0]
+        "
+      >
         WORKSHOPS
       </span>
 
-      <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#092A66]">
+
+      <h2
+        class="
+          mt-3
+          text-3xl
+          sm:text-4xl
+          font-black
+          text-[#092A66]
+        "
+      >
         Practical Learning Workshops
       </h2>
 
-      <p class="mt-4 text-gray-600 leading-relaxed">
+
+      <p
+        class="
+          mt-4
+          text-gray-600
+          leading-relaxed
+        "
+      >
         Keep an eye on this section for practical workshops,
         skills sessions and special learning opportunities.
       </p>
@@ -850,20 +1633,50 @@
     </div>
 
 
-    <div class="mt-10 max-w-3xl mx-auto">
+    <div
+      class="
+        mt-10
+        max-w-3xl
+        mx-auto
+      "
+    >
 
-      <div class="rounded-3xl bg-[#F7FAFF] border border-blue-50 p-8 text-center">
+      <div
+        class="
+          rounded-3xl
+          bg-[#F7FAFF]
+          border
+          border-blue-50
+          p-8
+          text-center
+        "
+      >
 
         <div class="text-5xl">
           🛠️
         </div>
 
-        <h3 class="mt-5 text-xl font-black text-[#092A66]">
+
+        <h3
+          class="
+            mt-5
+            text-xl
+            font-black
+            text-[#092A66]
+          "
+        >
           Workshops Coming Soon
         </h3>
 
-        <p class="mt-3 text-gray-600">
-          New workshops will be displayed here when they become available.
+
+        <p
+          class="
+            mt-3
+            text-gray-600
+          "
+        >
+          New workshops will be displayed here when
+          they become available.
         </p>
 
       </div>
@@ -875,45 +1688,102 @@
 </section>
 
 
-<!-- ========================================================= -->
-<!-- HOW IT WORKS -->
-<!-- ========================================================= -->
+<!-- =========================================================
+     HOW IT WORKS
+========================================================== -->
 
 <section
   id="how-it-works"
-  class="py-16 lg:py-20 bg-white"
+  class="
+    py-16
+    lg:py-20
+    bg-white
+  "
 >
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div
+    class="
+      max-w-7xl
+      mx-auto
+      px-4
+      sm:px-6
+      lg:px-8
+    "
+  >
 
-    <div class="text-center max-w-3xl mx-auto">
+    <div
+      class="
+        text-center
+        max-w-3xl
+        mx-auto
+      "
+    >
 
-      <span class="text-xs font-black tracking-[0.25em] text-[#1456C0]">
+      <span
+        class="
+          text-xs
+          font-black
+          tracking-[0.25em]
+          text-[#1456C0]
+        "
+      >
         HOW IT WORKS
       </span>
 
-      <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#092A66]">
+
+      <h2
+        class="
+          mt-3
+          text-3xl
+          sm:text-4xl
+          font-black
+          text-[#092A66]
+        "
+      >
         Start Learning in Four Simple Steps
       </h2>
 
     </div>
 
 
-    <div class="grid md:grid-cols-4 gap-6 mt-12">
+    <div
+      class="
+        grid
+        md:grid-cols-4
+        gap-6
+        mt-12
+      "
+    >
 
       <div class="text-center">
 
-        <div class="w-16 h-16 mx-auto rounded-2xl bg-[#EAF1FF] text-[#092A66] flex items-center justify-center text-2xl font-black">
+        <div
+          class="
+            w-16
+            h-16
+            mx-auto
+            rounded-2xl
+            bg-[#EAF1FF]
+            text-[#092A66]
+            flex
+            items-center
+            justify-center
+            text-2xl
+            font-black
+          "
+        >
           1
         </div>
+
 
         <h3 class="font-black mt-5">
           Choose a Course
         </h3>
 
+
         <p class="text-sm text-gray-600 mt-2">
-          Explore the available courses and select the one
-          that matches your goals.
+          Explore the available courses and select the
+          one that matches your goals.
         </p>
 
       </div>
@@ -921,13 +1791,29 @@
 
       <div class="text-center">
 
-        <div class="w-16 h-16 mx-auto rounded-2xl bg-[#EAF1FF] text-[#092A66] flex items-center justify-center text-2xl font-black">
+        <div
+          class="
+            w-16
+            h-16
+            mx-auto
+            rounded-2xl
+            bg-[#EAF1FF]
+            text-[#092A66]
+            flex
+            items-center
+            justify-center
+            text-2xl
+            font-black
+          "
+        >
           2
         </div>
+
 
         <h3 class="font-black mt-5">
           Create Your Account
         </h3>
+
 
         <p class="text-sm text-gray-600 mt-2">
           Register as a student and complete the required
@@ -939,13 +1825,29 @@
 
       <div class="text-center">
 
-        <div class="w-16 h-16 mx-auto rounded-2xl bg-[#EAF1FF] text-[#092A66] flex items-center justify-center text-2xl font-black">
+        <div
+          class="
+            w-16
+            h-16
+            mx-auto
+            rounded-2xl
+            bg-[#EAF1FF]
+            text-[#092A66]
+            flex
+            items-center
+            justify-center
+            text-2xl
+            font-black
+          "
+        >
           3
         </div>
+
 
         <h3 class="font-black mt-5">
           Learn &amp; Practise
         </h3>
+
 
         <p class="text-sm text-gray-600 mt-2">
           Work through structured modules, lessons and
@@ -957,13 +1859,29 @@
 
       <div class="text-center">
 
-        <div class="w-16 h-16 mx-auto rounded-2xl bg-[#EAF1FF] text-[#092A66] flex items-center justify-center text-2xl font-black">
+        <div
+          class="
+            w-16
+            h-16
+            mx-auto
+            rounded-2xl
+            bg-[#EAF1FF]
+            text-[#092A66]
+            flex
+            items-center
+            justify-center
+            text-2xl
+            font-black
+          "
+        >
           4
         </div>
+
 
         <h3 class="font-black mt-5">
           Complete &amp; Certify
         </h3>
+
 
         <p class="text-sm text-gray-600 mt-2">
           Complete your course requirements and progress
@@ -979,38 +1897,89 @@
 </section>
 
 
-<!-- ========================================================= -->
-<!-- FAQ -->
-<!-- ========================================================= -->
+<!-- =========================================================
+     FAQ
+========================================================== -->
 
 <section
   id="faq"
-  class="py-16 lg:py-20 bg-[#F7FAFF]"
+  class="
+    py-16
+    lg:py-20
+    bg-[#F7FAFF]
+  "
 >
 
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div
+    class="
+      max-w-4xl
+      mx-auto
+      px-4
+      sm:px-6
+      lg:px-8
+    "
+  >
 
     <div class="text-center">
 
-      <span class="text-xs font-black tracking-[0.25em] text-[#1456C0]">
+      <span
+        class="
+          text-xs
+          font-black
+          tracking-[0.25em]
+          text-[#1456C0]
+        "
+      >
         FREQUENTLY ASKED QUESTIONS
       </span>
 
-      <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#092A66]">
+
+      <h2
+        class="
+          mt-3
+          text-3xl
+          sm:text-4xl
+          font-black
+          text-[#092A66]
+        "
+      >
         Frequently Asked Questions
       </h2>
 
     </div>
 
 
-    <div class="mt-10 space-y-3">
+    <div
+      class="
+        mt-10
+        space-y-3
+      "
+    >
 
 
-      <div class="faq-item border border-gray-200 rounded-2xl overflow-hidden bg-white">
+      <div
+        class="
+          faq-item
+          border
+          border-gray-200
+          rounded-2xl
+          overflow-hidden
+          bg-white
+        "
+      >
 
         <button
           type="button"
-          class="faq-question w-full flex justify-between items-center text-left p-5 font-extrabold"
+          class="
+            faq-question
+            w-full
+            flex
+            justify-between
+            items-center
+            text-left
+            p-5
+            font-extrabold
+          "
         >
 
           <span>
@@ -1022,6 +1991,7 @@
           </span>
 
         </button>
+
 
         <div class="faq-content px-5">
 
@@ -1035,11 +2005,29 @@
       </div>
 
 
-      <div class="faq-item border border-gray-200 rounded-2xl overflow-hidden bg-white">
+      <div
+        class="
+          faq-item
+          border
+          border-gray-200
+          rounded-2xl
+          overflow-hidden
+          bg-white
+        "
+      >
 
         <button
           type="button"
-          class="faq-question w-full flex justify-between items-center text-left p-5 font-extrabold"
+          class="
+            faq-question
+            w-full
+            flex
+            justify-between
+            items-center
+            text-left
+            p-5
+            font-extrabold
+          "
         >
 
           <span>
@@ -1052,11 +2040,12 @@
 
         </button>
 
+
         <div class="faq-content px-5">
 
           <p class="pb-5 text-sm text-gray-600">
-            Select a course, create your student account and
-            follow the enrollment process.
+            Select a course, create your student account
+            and follow the enrollment process.
           </p>
 
         </div>
@@ -1064,11 +2053,29 @@
       </div>
 
 
-      <div class="faq-item border border-gray-200 rounded-2xl overflow-hidden bg-white">
+      <div
+        class="
+          faq-item
+          border
+          border-gray-200
+          rounded-2xl
+          overflow-hidden
+          bg-white
+        "
+      >
 
         <button
           type="button"
-          class="faq-question w-full flex justify-between items-center text-left p-5 font-extrabold"
+          class="
+            faq-question
+            w-full
+            flex
+            justify-between
+            items-center
+            text-left
+            p-5
+            font-extrabold
+          "
         >
 
           <span>
@@ -1080,6 +2087,7 @@
           </span>
 
         </button>
+
 
         <div class="faq-content px-5">
 
@@ -1093,11 +2101,29 @@
       </div>
 
 
-      <div class="faq-item border border-gray-200 rounded-2xl overflow-hidden bg-white">
+      <div
+        class="
+          faq-item
+          border
+          border-gray-200
+          rounded-2xl
+          overflow-hidden
+          bg-white
+        "
+      >
 
         <button
           type="button"
-          class="faq-question w-full flex justify-between items-center text-left p-5 font-extrabold"
+          class="
+            faq-question
+            w-full
+            flex
+            justify-between
+            items-center
+            text-left
+            p-5
+            font-extrabold
+          "
         >
 
           <span>
@@ -1109,6 +2135,7 @@
           </span>
 
         </button>
+
 
         <div class="faq-content px-5">
 
@@ -1128,39 +2155,92 @@
 </section>
 
 
-<!-- ========================================================= -->
-<!-- CTA -->
-<!-- ========================================================= -->
+<!-- =========================================================
+     CTA
+========================================================== -->
 
 <section class="bg-[#092A66]">
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center text-white">
+  <div
+    class="
+      max-w-7xl
+      mx-auto
+      px-4
+      sm:px-6
+      lg:px-8
+      py-16
+      text-center
+      text-white
+    "
+  >
 
     <div class="text-5xl">
       🎓
     </div>
 
-    <h2 class="mt-5 text-3xl sm:text-4xl font-black">
+
+    <h2
+      class="
+        mt-5
+        text-3xl
+        sm:text-4xl
+        font-black
+      "
+    >
       Ready to Build Your Skills?
     </h2>
 
-    <p class="mt-4 text-blue-100 max-w-2xl mx-auto">
+
+    <p
+      class="
+        mt-4
+        text-blue-100
+        max-w-2xl
+        mx-auto
+      "
+    >
       Explore our courses and take the next step towards
       developing practical skills for your future.
     </p>
 
-    <div class="flex flex-col sm:flex-row justify-center gap-3 mt-8">
+
+    <div
+      class="
+        flex
+        flex-col
+        sm:flex-row
+        justify-center
+        gap-3
+        mt-8
+      "
+    >
 
       <a
         href="#courses"
-        class="px-7 py-4 rounded-full bg-white text-[#092A66] font-black"
+        class="
+          px-7
+          py-4
+          rounded-full
+          bg-white
+          text-[#092A66]
+          font-black
+        "
       >
         Explore Courses
       </a>
 
+
       <a
         href="register.html"
-        class="px-7 py-4 rounded-full border-2 border-white text-white font-black"
+        class="
+          px-7
+          py-4
+          rounded-full
+          border-2
+          border-white
+          text-white
+          font-black
+        "
       >
         Register as a Student
       </a>
@@ -1172,33 +2252,83 @@
 </section>
 
 
-<!-- ========================================================= -->
-<!-- CONTACT -->
-<!-- ========================================================= -->
+<!-- =========================================================
+     CONTACT
+========================================================== -->
 
 <section
   id="contact"
-  class="py-16 bg-[#F7FAFF]"
+  class="
+    py-16
+    bg-[#F7FAFF]
+  "
 >
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div
+    class="
+      max-w-7xl
+      mx-auto
+      px-4
+      sm:px-6
+      lg:px-8
+    "
+  >
 
-    <div class="text-center max-w-3xl mx-auto">
+    <div
+      class="
+        text-center
+        max-w-3xl
+        mx-auto
+      "
+    >
 
-      <span class="text-xs font-black tracking-[0.25em] text-[#1456C0]">
+      <span
+        class="
+          text-xs
+          font-black
+          tracking-[0.25em]
+          text-[#1456C0]
+        "
+      >
         SUPPORT
       </span>
 
-      <h2 class="mt-3 text-3xl sm:text-4xl font-black text-[#092A66]">
+
+      <h2
+        class="
+          mt-3
+          text-3xl
+          sm:text-4xl
+          font-black
+          text-[#092A66]
+        "
+      >
         We're Here to Help
       </h2>
 
     </div>
 
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-10">
+    <div
+      class="
+        grid
+        sm:grid-cols-2
+        lg:grid-cols-4
+        gap-5
+        mt-10
+      "
+    >
 
-      <div class="bg-white rounded-3xl p-7 border border-gray-100 shadow-lg">
+      <div
+        class="
+          bg-white
+          rounded-3xl
+          p-7
+          border
+          border-gray-100
+          shadow-lg
+        "
+      >
 
         <div class="text-3xl">
           🎓
@@ -1215,7 +2345,16 @@
       </div>
 
 
-      <div class="bg-white rounded-3xl p-7 border border-gray-100 shadow-lg">
+      <div
+        class="
+          bg-white
+          rounded-3xl
+          p-7
+          border
+          border-gray-100
+          shadow-lg
+        "
+      >
 
         <div class="text-3xl">
           👩🏽‍🎓
@@ -1232,7 +2371,16 @@
       </div>
 
 
-      <div class="bg-white rounded-3xl p-7 border border-gray-100 shadow-lg">
+      <div
+        class="
+          bg-white
+          rounded-3xl
+          p-7
+          border
+          border-gray-100
+          shadow-lg
+        "
+      >
 
         <div class="text-3xl">
           💳
@@ -1249,7 +2397,16 @@
       </div>
 
 
-      <div class="bg-white rounded-3xl p-7 border border-gray-100 shadow-lg">
+      <div
+        class="
+          bg-white
+          rounded-3xl
+          p-7
+          border
+          border-gray-100
+          shadow-lg
+        "
+      >
 
         <div class="text-3xl">
           💻
@@ -1271,42 +2428,94 @@
 
 </section>
 
+
 </main>
 
 
-<!-- ========================================================= -->
-<!-- FOOTER -->
-<!-- ========================================================= -->
+<!-- =========================================================
+     FOOTER
+========================================================== -->
 
-<footer class="bg-[#071B50] text-white">
+<footer
+  class="
+    bg-[#071B50]
+    text-white
+  "
+>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+  <div
+    class="
+      max-w-7xl
+      mx-auto
+      px-4
+      sm:px-6
+      lg:px-8
+      py-14
+    "
+  >
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+    <div
+      class="
+        grid
+        md:grid-cols-2
+        lg:grid-cols-4
+        gap-10
+      "
+    >
 
 
       <div>
 
-        <div class="flex items-center gap-3">
+        <div
+          class="
+            flex
+            items-center
+            gap-3
+          "
+        >
 
-          <div class="w-12 h-12 flex items-center justify-center overflow-hidden">
+          <div
+            class="
+              w-12
+              h-12
+              flex
+              items-center
+              justify-center
+              overflow-hidden
+            "
+          >
 
             <img
               src="logo.png"
               alt="Funda Online Academy Logo"
-              class="logo-image w-full h-full"
+              class="
+                logo-image
+                w-full
+                h-full
+              "
               onerror="this.style.display='none';"
             >
 
           </div>
 
+
           <div class="brand">
 
             <div class="font-black">
-              FUNDA <span class="font-bold">ONLINE</span>
+              FUNDA
+              <span class="font-bold">
+                ONLINE
+              </span>
             </div>
 
-            <div class="text-xs tracking-[0.30em] text-[#D4A72C]">
+
+            <div
+              class="
+                text-xs
+                tracking-[0.30em]
+                text-[#D4A72C]
+              "
+            >
               ACADEMY
             </div>
 
@@ -1315,7 +2524,14 @@
         </div>
 
 
-        <p class="text-sm text-blue-100 leading-relaxed mt-5">
+        <p
+          class="
+            text-sm
+            text-blue-100
+            leading-relaxed
+            mt-5
+          "
+        >
           Practical online skills training designed to help
           students build knowledge, confidence and career-ready skills.
         </p>
@@ -1329,21 +2545,44 @@
           Quick Links
         </h3>
 
-        <div class="mt-5 space-y-3 text-sm text-blue-100">
 
-          <a href="#courses" class="block hover:text-white">
+        <div
+          class="
+            mt-5
+            space-y-3
+            text-sm
+            text-blue-100
+          "
+        >
+
+          <a
+            href="#courses"
+            class="block hover:text-white"
+          >
             Courses
           </a>
 
-          <a href="#workshops" class="block hover:text-white">
+
+          <a
+            href="#workshops"
+            class="block hover:text-white"
+          >
             Workshops
           </a>
 
-          <a href="#how-it-works" class="block hover:text-white">
+
+          <a
+            href="#how-it-works"
+            class="block hover:text-white"
+          >
             How It Works
           </a>
 
-          <a href="#faq" class="block hover:text-white">
+
+          <a
+            href="#faq"
+            class="block hover:text-white"
+          >
             FAQs
           </a>
 
@@ -1358,21 +2597,44 @@
           Students
         </h3>
 
-        <div class="mt-5 space-y-3 text-sm text-blue-100">
 
-          <a href="login.html" class="block hover:text-white">
+        <div
+          class="
+            mt-5
+            space-y-3
+            text-sm
+            text-blue-100
+          "
+        >
+
+          <a
+            href="login.html"
+            class="block hover:text-white"
+          >
             Student Login
           </a>
 
-          <a href="register.html" class="block hover:text-white">
+
+          <a
+            href="register.html"
+            class="block hover:text-white"
+          >
             Create Account
           </a>
 
-          <a href="#courses" class="block hover:text-white">
+
+          <a
+            href="#courses"
+            class="block hover:text-white"
+          >
             Browse Courses
           </a>
 
-          <a href="#contact" class="block hover:text-white">
+
+          <a
+            href="#contact"
+            class="block hover:text-white"
+          >
             Student Support
           </a>
 
@@ -1387,7 +2649,15 @@
           Departments
         </h3>
 
-        <div class="mt-5 space-y-3 text-sm text-blue-100">
+
+        <div
+          class="
+            mt-5
+            space-y-3
+            text-sm
+            text-blue-100
+          "
+        >
 
           <div>
             Admissions
@@ -1412,24 +2682,57 @@
     </div>
 
 
-    <div class="border-t border-white/10 mt-12 pt-6 flex flex-col sm:flex-row justify-between gap-4 text-xs text-blue-200">
+    <div
+      class="
+        border-t
+        border-white/10
+        mt-12
+        pt-6
+        flex
+        flex-col
+        sm:flex-row
+        justify-between
+        gap-4
+        text-xs
+        text-blue-200
+      "
+    >
 
       <p>
-        © <span id="year"></span>
-        Funda Online Academy. All rights reserved.
+        ©
+        <span id="year"></span>
+        Funda Online Academy.
+        All rights reserved.
       </p>
 
-      <div class="flex gap-5">
 
-        <a href="#" class="hover:text-white">
+      <div
+        class="
+          flex
+          gap-5
+        "
+      >
+
+        <a
+          href="#"
+          class="hover:text-white"
+        >
           Privacy Policy
         </a>
 
-        <a href="#" class="hover:text-white">
+
+        <a
+          href="#"
+          class="hover:text-white"
+        >
           Terms &amp; Conditions
         </a>
 
-        <a href="#contact" class="hover:text-white">
+
+        <a
+          href="#contact"
+          class="hover:text-white"
+        >
           Contact
         </a>
 
@@ -1442,24 +2745,34 @@
 </footer>
 
 
-<!-- ========================================================= -->
-<!-- JAVASCRIPT -->
-<!-- ========================================================= -->
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
 
 <script>
 
 "use strict";
 
 
-/* ============================================================
-   SUPABASE
-   ============================================================ */
+/*
+==============================================================
+FUNDA ONLINE ACADEMY
+COURSE OVERVIEW
 
-const SUPABASE_URL =
-  "https://nzwfowwoazmpnwfrednh.supabase.co";
+IMPORTANT:
 
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6MTc4NjU3NzAzMiwiZXhwIjoyMTAyMTUzMDMyfQ.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rA";
+There is NO Supabase URL or API key in this file.
+
+The connection comes ONLY from:
+
+    supabase-config.js
+
+which must provide:
+
+    window.SUPABASE_URL
+    window.SUPABASE_ANON_KEY
+==============================================================
+*/
 
 
 let db = null;
@@ -1467,31 +2780,113 @@ let db = null;
 let allCourses = [];
 
 
-/* ============================================================
+/* =========================================================
    SUPABASE INITIALISATION
-   ============================================================ */
+========================================================= */
 
 function initialiseSupabase() {
+
+  const errorBox =
+    document.getElementById(
+      "connectionError"
+    );
+
+  const errorMessage =
+    document.getElementById(
+      "connectionErrorMessage"
+    );
+
 
   if (
     !window.supabase ||
     typeof window.supabase.createClient !== "function"
   ) {
 
-    console.error(
-      "Supabase JavaScript library is not available."
+    errorMessage.textContent =
+      "The Supabase JavaScript library could not be loaded.";
+
+    errorBox.classList.add(
+      "show"
     );
 
     return false;
 
   }
 
+
+  if (
+    !window.SUPABASE_URL ||
+    !String(
+      window.SUPABASE_URL
+    ).trim()
+  ) {
+
+    errorMessage.textContent =
+      "SUPABASE_URL is missing from supabase-config.js.";
+
+    errorBox.classList.add(
+      "show"
+    );
+
+    return false;
+
+  }
+
+
+  if (
+    !window.SUPABASE_ANON_KEY ||
+    !String(
+      window.SUPABASE_ANON_KEY
+    ).trim()
+  ) {
+
+    errorMessage.textContent =
+      "SUPABASE_ANON_KEY is missing from supabase-config.js.";
+
+    errorBox.classList.add(
+      "show"
+    );
+
+    return false;
+
+  }
+
+
+  if (
+    window.SUPABASE_ANON_KEY ===
+    "YOUR_LEGACY_ANON_KEY_GOES_HERE"
+  ) {
+
+    errorMessage.textContent =
+      "The shared Supabase configuration still contains the placeholder API key.";
+
+    errorBox.classList.add(
+      "show"
+    );
+
+    return false;
+
+  }
+
+
   try {
 
-    db = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
+    db =
+      window.supabase.createClient(
+        window.SUPABASE_URL,
+        window.SUPABASE_ANON_KEY
+      );
+
+
+    errorBox.classList.remove(
+      "show"
     );
+
+
+    console.log(
+      "Funda Online Academy Supabase connection ready."
+    );
+
 
     return true;
 
@@ -1502,6 +2897,15 @@ function initialiseSupabase() {
       error
     );
 
+
+    errorMessage.textContent =
+      "The Academy Supabase connection could not be initialised.";
+
+    errorBox.classList.add(
+      "show"
+    );
+
+
     return false;
 
   }
@@ -1509,35 +2913,62 @@ function initialiseSupabase() {
 }
 
 
-/* ============================================================
+/* =========================================================
    HTML ESCAPE
-   ============================================================ */
+========================================================= */
 
-function escapeHTML(value) {
+function escapeHTML(
+  value
+) {
 
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return String(
+    value ?? ""
+  )
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+    .replace(
+      /</g,
+      "&lt;"
+    )
+    .replace(
+      />/g,
+      "&gt;"
+    )
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+    .replace(
+      /'/g,
+      "&#039;"
+    );
 
 }
 
 
-/* ============================================================
-   FIND VALUE
-   ============================================================ */
+/* =========================================================
+   FIRST VALUE
+========================================================= */
 
-function firstValue(object, keys, fallback = "") {
+function firstValue(
+  object,
+  keys,
+  fallback = ""
+) {
 
-  for (const key of keys) {
+  for (
+    const key of keys
+  ) {
 
     if (
       object &&
       object[key] !== null &&
       object[key] !== undefined &&
-      String(object[key]).trim() !== ""
+      String(
+        object[key]
+      ).trim() !== ""
     ) {
 
       return object[key];
@@ -1546,16 +2977,19 @@ function firstValue(object, keys, fallback = "") {
 
   }
 
+
   return fallback;
 
 }
 
 
-/* ============================================================
+/* =========================================================
    COURSE TITLE
-   ============================================================ */
+========================================================= */
 
-function courseTitle(course) {
+function courseTitle(
+  course
+) {
 
   return firstValue(
     course,
@@ -1571,23 +3005,48 @@ function courseTitle(course) {
 }
 
 
-/* ============================================================
-   COURSE PRICE
-   ============================================================ */
+/* =========================================================
+   COURSE DESCRIPTION
+========================================================= */
 
-function coursePrice(course) {
+function courseDescription(
+  course
+) {
 
-  const value = firstValue(
+  return firstValue(
     course,
     [
-      "price",
-      "amount",
-      "course_fee",
-      "fee",
-      "cost"
+      "description",
+      "course_description",
+      "summary",
+      "details"
     ],
-    null
+    ""
   );
+
+}
+
+
+/* =========================================================
+   COURSE PRICE
+========================================================= */
+
+function coursePrice(
+  course
+) {
+
+  const value =
+    firstValue(
+      course,
+      [
+        "price",
+        "amount",
+        "course_fee",
+        "fee",
+        "cost"
+      ],
+      null
+    );
 
 
   if (
@@ -1603,37 +3062,55 @@ function coursePrice(course) {
 
   const numeric =
     Number(
-      String(value)
-        .replace(/R/g, "")
-        .replace(/,/g, "")
+      String(
+        value
+      )
+        .replace(
+          /R/g,
+          ""
+        )
+        .replace(
+          /,/g,
+          ""
+        )
         .trim()
     );
 
 
-  if (!Number.isNaN(numeric)) {
+  if (
+    !Number.isNaN(
+      numeric
+    )
+  ) {
 
-    return "R" +
+    return (
+      "R" +
       numeric.toLocaleString(
         "en-ZA",
         {
           minimumFractionDigits: 0,
           maximumFractionDigits: 2
         }
-      );
+      )
+    );
 
   }
 
 
-  return String(value);
+  return String(
+    value
+  );
 
 }
 
 
-/* ============================================================
+/* =========================================================
    COURSE DURATION
-   ============================================================ */
+========================================================= */
 
-function courseDuration(course) {
+function courseDuration(
+  course
+) {
 
   return firstValue(
     course,
@@ -1649,11 +3126,13 @@ function courseDuration(course) {
 }
 
 
-/* ============================================================
+/* =========================================================
    COURSE IMAGE
-   ============================================================ */
+========================================================= */
 
-function courseImage(course) {
+function courseImage(
+  course
+) {
 
   const storedImage =
     firstValue(
@@ -1669,7 +3148,9 @@ function courseImage(course) {
     );
 
 
-  if (storedImage) {
+  if (
+    storedImage
+  ) {
 
     return storedImage;
 
@@ -1678,7 +3159,9 @@ function courseImage(course) {
 
   const title =
     String(
-      courseTitle(course)
+      courseTitle(
+        course
+      )
     ).toLowerCase();
 
 
@@ -1785,16 +3268,20 @@ function courseImage(course) {
 }
 
 
-/* ============================================================
+/* =========================================================
    COURSE LINK
-   ============================================================ */
+========================================================= */
 
-function courseLink(course) {
+function courseLink(
+  course
+) {
 
   const slug =
     firstValue(
       course,
-      ["slug"],
+      [
+        "slug"
+      ],
       ""
     );
 
@@ -1802,26 +3289,37 @@ function courseLink(course) {
   const id =
     firstValue(
       course,
-      ["id", "course_id"],
+      [
+        "id",
+        "course_id"
+      ],
       ""
     );
 
 
-  if (slug) {
+  if (
+    slug
+  ) {
 
     return (
       "course-view.html?slug=" +
-      encodeURIComponent(slug)
+      encodeURIComponent(
+        slug
+      )
     );
 
   }
 
 
-  if (id) {
+  if (
+    id
+  ) {
 
     return (
       "course-view.html?id=" +
-      encodeURIComponent(id)
+      encodeURIComponent(
+        id
+      )
     );
 
   }
@@ -1832,48 +3330,94 @@ function courseLink(course) {
 }
 
 
-/* ============================================================
-   CARD
-   ============================================================ */
+/* =========================================================
+   COURSE CARD
+========================================================= */
 
-function courseCard(course) {
+function courseCard(
+  course
+) {
 
   const title =
     escapeHTML(
-      courseTitle(course)
+      courseTitle(
+        course
+      )
     );
+
+
+  const description =
+    escapeHTML(
+      courseDescription(
+        course
+      )
+    );
+
 
   const price =
     escapeHTML(
-      coursePrice(course)
+      coursePrice(
+        course
+      )
     );
+
 
   const duration =
     escapeHTML(
-      courseDuration(course)
+      courseDuration(
+        course
+      )
     );
+
 
   const image =
     escapeHTML(
-      courseImage(course)
+      courseImage(
+        course
+      )
     );
+
 
   const link =
     escapeHTML(
-      courseLink(course)
+      courseLink(
+        course
+      )
     );
 
 
   return `
 
-    <article class="course-card bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-lg">
+    <article
+      class="
+        course-card
+        bg-white
+        rounded-3xl
+        overflow-hidden
+        border
+        border-gray-100
+        shadow-lg
+      "
+    >
 
-      <div class="relative h-48 overflow-hidden bg-[#092A66]">
+      <div
+        class="
+          relative
+          h-48
+          overflow-hidden
+          bg-[#092A66]
+        "
+      >
 
         <img
           src="${image}"
           alt="${title}"
-          class="course-image w-full h-full object-cover"
+          class="
+            course-image
+            w-full
+            h-full
+            object-cover
+          "
           loading="lazy"
           onerror="
             this.onerror=null;
@@ -1881,11 +3425,38 @@ function courseCard(course) {
           "
         >
 
-        <div class="absolute inset-0 bg-gradient-to-t from-[#071B50]/80 via-transparent to-transparent"></div>
 
-        <div class="absolute bottom-4 left-4">
+        <div
+          class="
+            absolute
+            inset-0
+            bg-gradient-to-t
+            from-[#071B50]/80
+            via-transparent
+            to-transparent
+          "
+        ></div>
 
-          <span class="bg-white text-[#092A66] text-[10px] font-black px-3 py-1.5 rounded-full">
+
+        <div
+          class="
+            absolute
+            bottom-4
+            left-4
+          "
+        >
+
+          <span
+            class="
+              bg-white
+              text-[#092A66]
+              text-[10px]
+              font-black
+              px-3
+              py-1.5
+              rounded-full
+            "
+          >
             COURSE
           </span>
 
@@ -1896,16 +3467,52 @@ function courseCard(course) {
 
       <div class="p-5">
 
-        <h3 class="font-black text-lg leading-tight min-h-[56px] text-[#172B4D]">
+        <h3
+          class="
+            font-black
+            text-lg
+            leading-tight
+            min-h-[56px]
+            text-[#172B4D]
+          "
+        >
           ${title}
         </h3>
 
 
-        <div class="flex flex-wrap gap-3 mt-4 text-xs text-gray-500">
+        ${
+          description
+            ? `
+              <p
+                class="
+                  text-xs
+                  text-gray-500
+                  mt-3
+                  line-clamp-2
+                "
+              >
+                ${description}
+              </p>
+            `
+            : ""
+        }
+
+
+        <div
+          class="
+            flex
+            flex-wrap
+            gap-3
+            mt-4
+            text-xs
+            text-gray-500
+          "
+        >
 
           <span>
             🕒 ${duration}
           </span>
+
 
           <span>
             📚 Online
@@ -1914,15 +3521,38 @@ function courseCard(course) {
         </div>
 
 
-        <div class="flex items-end justify-between gap-3 mt-5 pt-4 border-t border-gray-100">
+        <div
+          class="
+            flex
+            items-end
+            justify-between
+            gap-3
+            mt-5
+            pt-4
+            border-t
+            border-gray-100
+          "
+        >
 
           <div>
 
-            <div class="text-xs text-gray-400">
+            <div
+              class="
+                text-xs
+                text-gray-400
+              "
+            >
               Course Fee
             </div>
 
-            <div class="text-xl font-black text-[#092A66]">
+
+            <div
+              class="
+                text-xl
+                font-black
+                text-[#092A66]
+              "
+            >
               ${price}
             </div>
 
@@ -1931,7 +3561,17 @@ function courseCard(course) {
 
           <a
             href="${link}"
-            class="px-4 py-2.5 rounded-xl bg-[#092A66] text-white text-xs font-black hover:bg-[#1456C0] transition"
+            class="
+              px-4
+              py-2.5
+              rounded-xl
+              bg-[#092A66]
+              text-white
+              text-xs
+              font-black
+              hover:bg-[#1456C0]
+              transition
+            "
           >
             View Course
           </a>
@@ -1947,33 +3587,52 @@ function courseCard(course) {
 }
 
 
-/* ============================================================
-   RENDER
-   ============================================================ */
+/* =========================================================
+   RENDER COURSES
+========================================================= */
 
-function renderCourses(courses) {
+function renderCourses(
+  courses
+) {
 
   const grid =
-    document.getElementById("courseGrid");
+    document.getElementById(
+      "courseGrid"
+    );
+
 
   const empty =
-    document.getElementById("noCourses");
+    document.getElementById(
+      "noCourses"
+    );
+
 
   const count =
-    document.getElementById("courseCount");
+    document.getElementById(
+      "courseCount"
+    );
+
 
   const heroCount =
-    document.getElementById("heroCourseCount");
+    document.getElementById(
+      "heroCourseCount"
+    );
 
 
   count.textContent =
     courses.length +
     " course" +
-    (courses.length === 1 ? "" : "s") +
+    (
+      courses.length === 1
+        ? ""
+        : "s"
+    ) +
     " available";
 
 
-  if (heroCount) {
+  if (
+    heroCount
+  ) {
 
     heroCount.textContent =
       allCourses.length;
@@ -1981,80 +3640,135 @@ function renderCourses(courses) {
   }
 
 
-  if (!courses.length) {
+  if (
+    !courses.length
+  ) {
 
-    grid.innerHTML = "";
+    grid.innerHTML =
+      "";
 
-    empty.classList.remove("hidden");
+
+    empty.classList.remove(
+      "hidden"
+    );
+
 
     return;
 
   }
 
 
-  empty.classList.add("hidden");
+  empty.classList.add(
+    "hidden"
+  );
+
 
   grid.innerHTML =
     courses
-      .map(courseCard)
+      .map(
+        courseCard
+      )
       .join("");
 
 }
 
 
-/* ============================================================
-   ERROR
-   ============================================================ */
+/* =========================================================
+   SHOW DATABASE ERROR
+========================================================= */
 
-function showError(message) {
+function showCourseError(
+  message
+) {
 
   const grid =
-    document.getElementById("courseGrid");
+    document.getElementById(
+      "courseGrid"
+    );
+
 
   const error =
-    document.getElementById("courseError");
+    document.getElementById(
+      "courseError"
+    );
+
 
   const errorMessage =
-    document.getElementById("courseErrorMessage");
+    document.getElementById(
+      "courseErrorMessage"
+    );
 
 
-  grid.innerHTML = "";
+  grid.innerHTML =
+    "";
+
 
   errorMessage.textContent =
     message;
 
-  error.classList.remove("hidden");
+
+  error.classList.remove(
+    "hidden"
+  );
 
 }
 
 
-/* ============================================================
+/* =========================================================
    LOAD COURSES
-   ============================================================ */
+========================================================= */
 
 async function loadCourses() {
 
   const grid =
-    document.getElementById("courseGrid");
+    document.getElementById(
+      "courseGrid"
+    );
+
 
   const error =
-    document.getElementById("courseError");
+    document.getElementById(
+      "courseError"
+    );
+
 
   const empty =
-    document.getElementById("noCourses");
+    document.getElementById(
+      "noCourses"
+    );
 
 
-  error.classList.add("hidden");
-  empty.classList.add("hidden");
+  error.classList.add(
+    "hidden"
+  );
+
+
+  empty.classList.add(
+    "hidden"
+  );
 
 
   grid.innerHTML = `
 
-    <div class="sm:col-span-2 lg:col-span-3 xl:col-span-4 py-16 text-center">
+    <div
+      class="
+        sm:col-span-2
+        lg:col-span-3
+        xl:col-span-4
+        py-16
+        text-center
+      "
+    >
 
       <div class="spinner"></div>
 
-      <p class="mt-5 text-gray-500 font-semibold">
+      <p
+        class="
+          mt-5
+          text-gray-500
+          font-semibold
+        "
+      >
         Loading courses...
       </p>
 
@@ -2063,13 +3777,22 @@ async function loadCourses() {
   `;
 
 
-  if (!db) {
+  if (
+    !db
+  ) {
 
-    if (!initialiseSupabase()) {
+    const connected =
+      initialiseSupabase();
 
-      showError(
-        "The course database connection could not be started. Please refresh the page."
+
+    if (
+      !connected
+    ) {
+
+      showCourseError(
+        "The Academy database connection could not be started."
       );
+
 
       return;
 
@@ -2081,127 +3804,137 @@ async function loadCourses() {
   try {
 
     /*
-     * IMPORTANT:
-     *
-     * We deliberately start with SELECT *.
-     *
-     * This prevents the page from failing because one optional
-     * column has a different name in the database.
-     */
+      IMPORTANT:
 
-    let response =
+      We use SELECT * instead of requesting a fixed
+      list of columns.
+
+      That prevents this page from breaking when
+      optional course columns differ.
+    */
+
+    const {
+      data,
+      error: queryError
+    } =
       await db
-        .from("courses")
-        .select("*");
+        .from(
+          "courses"
+        )
+        .select(
+          "*"
+        );
 
 
-    if (response.error) {
+    if (
+      queryError
+    ) {
 
       console.error(
-        "Courses SELECT error:",
-        response.error
+        "Courses database error:",
+        queryError
       );
 
-      throw response.error;
+
+      throw queryError;
 
     }
 
 
     let courses =
-      Array.isArray(response.data)
-        ? response.data
+      Array.isArray(
+        data
+      )
+        ? data
         : [];
 
 
     /*
-     * If the table contains an active/status column,
-     * filter it in JavaScript instead of putting the column
-     * name into the Supabase query.
-     *
-     * This makes the page tolerant of different database
-     * column structures.
-     */
+      If the database has an active/status field,
+      honour it.
+
+      If no such field exists, display the course.
+    */
 
     courses =
-      courses.filter(course => {
+      courses.filter(
+        function(course) {
 
-        if (
-          Object.prototype.hasOwnProperty.call(
-            course,
-            "active"
-          )
-        ) {
+          if (
+            Object.prototype.hasOwnProperty.call(
+              course,
+              "active"
+            )
+          ) {
 
-          return (
-            course.active === true ||
-            course.active === 1 ||
-            course.active === "true"
-          );
+            return (
+              course.active === true ||
+              course.active === 1 ||
+              course.active === "true"
+            );
+
+          }
+
+
+          if (
+            Object.prototype.hasOwnProperty.call(
+              course,
+              "is_active"
+            )
+          ) {
+
+            return (
+              course.is_active === true ||
+              course.is_active === 1 ||
+              course.is_active === "true"
+            );
+
+          }
+
+
+          if (
+            Object.prototype.hasOwnProperty.call(
+              course,
+              "status"
+            )
+          ) {
+
+            const status =
+              String(
+                course.status ||
+                ""
+              ).toLowerCase();
+
+
+            return (
+              status === "active" ||
+              status === "approved" ||
+              status === "published"
+            );
+
+          }
+
+
+          return true;
 
         }
+      );
 
 
-        if (
-          Object.prototype.hasOwnProperty.call(
-            course,
-            "is_active"
-          )
-        ) {
-
-          return (
-            course.is_active === true ||
-            course.is_active === 1 ||
-            course.is_active === "true"
-          );
-
-        }
-
-
-        if (
-          Object.prototype.hasOwnProperty.call(
-            course,
-            "status"
-          )
-        ) {
-
-          const status =
-            String(
-              course.status || ""
-            ).toLowerCase();
-
-
-          return (
-            status === "active" ||
-            status === "approved" ||
-            status === "published"
-          );
-
-        }
-
-
-        /*
-         * If no active/status column exists,
-         * display the record.
-         */
-
-        return true;
-
-      });
-
-
-    allCourses = courses;
+    allCourses =
+      courses;
 
 
     console.log(
       "Funda Online Academy:",
-      courses.length,
+      allCourses.length,
       "courses loaded."
     );
 
 
     console.log(
       "Course records:",
-      courses
+      allCourses
     );
 
 
@@ -2210,7 +3943,9 @@ async function loadCourses() {
     );
 
 
-  } catch (error) {
+  } catch (
+    error
+  ) {
 
     console.error(
       "Course loading failed:",
@@ -2218,13 +3953,8 @@ async function loadCourses() {
     );
 
 
-    /*
-     * Give a useful message rather than pretending
-     * that there are no courses.
-     */
-
     let message =
-      "The website could not connect to the course database.";
+      "The website could not load the courses from Supabase.";
 
 
     if (
@@ -2238,7 +3968,7 @@ async function loadCourses() {
     }
 
 
-    showError(
+    showCourseError(
       message
     );
 
@@ -2247,28 +3977,35 @@ async function loadCourses() {
 }
 
 
-/* ============================================================
+/* =========================================================
    SEARCH
-   ============================================================ */
+========================================================= */
 
 function searchCourses() {
 
   const input =
-    document.getElementById("courseSearch");
+    document.getElementById(
+      "courseSearch"
+    );
+
 
   const query =
     String(
-      input.value || ""
+      input.value ||
+      ""
     )
       .trim()
       .toLowerCase();
 
 
-  if (!query) {
+  if (
+    !query
+  ) {
 
     renderCourses(
       allCourses
     );
+
 
     return;
 
@@ -2276,50 +4013,47 @@ function searchCourses() {
 
 
   const filtered =
-    allCourses.filter(course => {
+    allCourses.filter(
+      function(course) {
 
-      const title =
-        String(
-          firstValue(
-            course,
-            [
-              "title",
-              "course_name",
-              "name",
-              "course_title"
-            ],
-            ""
+        const title =
+          String(
+            courseTitle(
+              course
+            )
+          ).toLowerCase();
+
+
+        const description =
+          String(
+            courseDescription(
+              course
+            )
+          ).toLowerCase();
+
+
+        const duration =
+          String(
+            courseDuration(
+              course
+            )
+          ).toLowerCase();
+
+
+        return (
+          title.includes(
+            query
+          ) ||
+          description.includes(
+            query
+          ) ||
+          duration.includes(
+            query
           )
-        ).toLowerCase();
+        );
 
-
-      const description =
-        String(
-          firstValue(
-            course,
-            [
-              "description",
-              "course_description",
-              "summary"
-            ],
-            ""
-          )
-        ).toLowerCase();
-
-
-      const duration =
-        String(
-          courseDuration(course)
-        ).toLowerCase();
-
-
-      return (
-        title.includes(query) ||
-        description.includes(query) ||
-        duration.includes(query)
-      );
-
-    });
+      }
+    );
 
 
   renderCourses(
@@ -2329,48 +4063,64 @@ function searchCourses() {
 }
 
 
-/* ============================================================
+/* =========================================================
    MOBILE MENU
-   ============================================================ */
+========================================================= */
 
 document
-  .getElementById("mobileMenuButton")
+  .getElementById(
+    "mobileMenuButton"
+  )
   .addEventListener(
     "click",
     function() {
 
       document
-        .getElementById("mobileMenu")
-        .classList.toggle("hidden");
+        .getElementById(
+          "mobileMenu"
+        )
+        .classList.toggle(
+          "hidden"
+        );
 
     }
   );
 
 
 document
-  .querySelectorAll(".mobile-link")
-  .forEach(link => {
+  .querySelectorAll(
+    ".mobile-link"
+  )
+  .forEach(
+    function(link) {
 
-    link.addEventListener(
-      "click",
-      function() {
+      link.addEventListener(
+        "click",
+        function() {
 
-        document
-          .getElementById("mobileMenu")
-          .classList.add("hidden");
+          document
+            .getElementById(
+              "mobileMenu"
+            )
+            .classList.add(
+              "hidden"
+            );
 
-      }
-    );
+        }
+      );
 
-  });
+    }
+  );
 
 
-/* ============================================================
-   SEARCH
-   ============================================================ */
+/* =========================================================
+   SEARCH EVENTS
+========================================================= */
 
 document
-  .getElementById("courseSearch")
+  .getElementById(
+    "courseSearch"
+  )
   .addEventListener(
     "input",
     searchCourses
@@ -2378,14 +4128,20 @@ document
 
 
 document
-  .getElementById("clearSearch")
+  .getElementById(
+    "clearSearch"
+  )
   .addEventListener(
     "click",
     function() {
 
       document
-        .getElementById("courseSearch")
-        .value = "";
+        .getElementById(
+          "courseSearch"
+        )
+        .value =
+        "";
+
 
       renderCourses(
         allCourses
@@ -2395,89 +4151,140 @@ document
   );
 
 
-/* ============================================================
+/* =========================================================
    RETRY
-   ============================================================ */
+========================================================= */
 
 document
-  .getElementById("retryButton")
+  .getElementById(
+    "retryButton"
+  )
   .addEventListener(
     "click",
-    loadCourses
-  );
-
-
-/* ============================================================
-   FAQ
-   ============================================================ */
-
-document
-  .querySelectorAll(".faq-question")
-  .forEach(button => {
-
-    button.addEventListener(
-      "click",
-      function() {
-
-        const current =
-          button.closest(".faq-item");
-
-
-        document
-          .querySelectorAll(".faq-item")
-          .forEach(item => {
-
-            if (item !== current) {
-
-              item.classList.remove("open");
-
-            }
-
-          });
-
-
-        current.classList.toggle("open");
-
-      }
-    );
-
-  });
-
-
-/* ============================================================
-   YEAR
-   ============================================================ */
-
-document
-  .getElementById("year")
-  .textContent =
-  new Date().getFullYear();
-
-
-/* ============================================================
-   START
-   ============================================================ */
-
-if (
-  document.readyState === "loading"
-) {
-
-  document.addEventListener(
-    "DOMContentLoaded",
     function() {
-
-      initialiseSupabase();
 
       loadCourses();
 
     }
   );
 
+
+document
+  .getElementById(
+    "connectionRetry"
+  )
+  .addEventListener(
+    "click",
+    function() {
+
+      window.location.reload();
+
+    }
+  );
+
+
+/* =========================================================
+   FAQ
+========================================================= */
+
+document
+  .querySelectorAll(
+    ".faq-question"
+  )
+  .forEach(
+    function(button) {
+
+      button.addEventListener(
+        "click",
+        function() {
+
+          const current =
+            button.closest(
+              ".faq-item"
+            );
+
+
+          document
+            .querySelectorAll(
+              ".faq-item"
+            )
+            .forEach(
+              function(item) {
+
+                if (
+                  item !== current
+                ) {
+
+                  item.classList.remove(
+                    "open"
+                  );
+
+                }
+
+              }
+            );
+
+
+          current.classList.toggle(
+            "open"
+          );
+
+        }
+      );
+
+    }
+  );
+
+
+/* =========================================================
+   YEAR
+========================================================= */
+
+document
+  .getElementById(
+    "year"
+  )
+  .textContent =
+  new Date().getFullYear();
+
+
+/* =========================================================
+   START APPLICATION
+========================================================= */
+
+async function startCoursesPage() {
+
+  const connected =
+    initialiseSupabase();
+
+
+  if (
+    !connected
+  ) {
+
+    return;
+
+  }
+
+
+  await loadCourses();
+
+}
+
+
+if (
+  document.readyState ===
+  "loading"
+) {
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    startCoursesPage
+  );
+
 } else {
 
-  initialiseSupabase();
-
-  loadCourses();
+  startCoursesPage();
 
 }
 
