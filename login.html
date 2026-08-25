@@ -1,20 +1,36 @@
+Complete "login.html"
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
 
   <title>Funda Online Academy - Login</title>
 
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Supabase -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
+  <!-- SHARED FUNDA SUPABASE CONFIG -->
+  <script src="supabase-config.js?v=20260825"></script>
+
+  <!-- Font -->
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet"
   >
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -30,10 +46,6 @@
       font-family: "Inter", sans-serif;
       background: #07152f;
     }
-
-    /* =========================================================
-       BRAND / LEFT SIDE
-    ========================================================= */
 
     .brand-gradient {
       background:
@@ -57,18 +69,16 @@
           rgba(255,255,255,.018) 0 2px,
           transparent 3px
         );
-      background-size: 70px 70px, 90px 90px;
+
+      background-size:
+        70px 70px,
+        90px 90px;
     }
 
     .soft-shadow {
       box-shadow:
         0 22px 65px rgba(0,0,0,.30);
     }
-
-    /* =========================================================
-       RIGHT SIDE
-       DARKER THAN BEFORE FOR STRONG CONTRAST
-    ========================================================= */
 
     .login-area {
       background:
@@ -93,6 +103,7 @@
 
     .student-photo:hover {
       transform: translateY(-4px);
+
       box-shadow:
         0 18px 40px rgba(0,0,0,.28);
     }
@@ -103,17 +114,15 @@
 
     .input-focus:focus {
       outline: none;
+
       border-color: #2563eb;
+
       box-shadow:
         0 0 0 4px rgba(37,99,235,.12);
     }
 
     .gold-text {
       color: #f6c453;
-    }
-
-    .gold-border {
-      border-color: #f6c453;
     }
 
     .login-input {
@@ -130,25 +139,84 @@
       background: #ffffff;
     }
 
-    /* =========================================================
-       RESPONSIVE
-    ========================================================= */
+    .message {
+      display: none;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    .message.success {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #166534;
+    }
+
+    .loading-spinner {
+      width: 20px;
+      height: 20px;
+
+      border:
+        3px solid rgba(255,255,255,.35);
+
+      border-top-color:
+        #ffffff;
+
+      border-radius: 50%;
+
+      animation:
+        spin .8s linear infinite;
+
+      display: inline-block;
+
+      vertical-align: middle;
+
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+
+      to {
+        transform: rotate(360deg);
+      }
+
+    }
 
     @media (max-width: 1023px) {
+
       .login-area {
         min-height: auto;
       }
+
     }
+
   </style>
+
 </head>
+
 
 <body>
 
-  <main class="min-h-screen flex flex-col lg:flex-row">
+  <main
+    class="
+      min-h-screen
+      flex
+      flex-col
+      lg:flex-row
+    "
+  >
 
-    <!-- =======================================================
-         LEFT / BRAND SECTION
-    ======================================================== -->
+
+    <!-- ======================================================
+         LEFT SIDE
+    ======================================================= -->
 
     <section
       class="
@@ -171,8 +239,6 @@
       "
     >
 
-      <!-- Decorative circles -->
-
       <div
         class="
           absolute
@@ -185,6 +251,7 @@
           pointer-events-none
         "
       ></div>
+
 
       <div
         class="
@@ -200,9 +267,7 @@
       ></div>
 
 
-      <!-- =====================================================
-           EXISTING FUNDA ONLINE ACADEMY LOGO
-      ====================================================== -->
+      <!-- LOGO -->
 
       <div class="relative z-10">
 
@@ -267,9 +332,7 @@
       </div>
 
 
-      <!-- =====================================================
-           HERO MESSAGE
-      ====================================================== -->
+      <!-- HERO -->
 
       <div
         class="
@@ -299,8 +362,13 @@
             mb-6
           "
         >
-          <span class="gold-text">✦</span>
+
+          <span class="gold-text">
+            ✦
+          </span>
+
           PRACTICAL • FLEXIBLE • CAREER FOCUSED
+
         </div>
 
 
@@ -315,12 +383,15 @@
             text-white
           "
         >
+
           Master Skills
+
           <br>
 
           <span class="gold-text">
             That Get You Hired.
           </span>
+
         </h1>
 
 
@@ -334,13 +405,12 @@
             max-w-xl
           "
         >
-          Learn practical, career-focused skills with Funda Online Academy.
-          Study at your own pace and build knowledge that can help you move
+          Learn practical, career-focused skills with
+          Funda Online Academy. Study at your own pace
+          and build knowledge that can help you move
           confidently toward your career goals.
         </p>
 
-
-        <!-- Trust points -->
 
         <div
           class="
@@ -353,7 +423,13 @@
           "
         >
 
-          <div class="flex items-center gap-2">
+          <div
+            class="
+              flex
+              items-center
+              gap-2
+            "
+          >
 
             <span class="gold-text text-lg">
               ★
@@ -366,7 +442,13 @@
           </div>
 
 
-          <div class="flex items-center gap-2">
+          <div
+            class="
+              flex
+              items-center
+              gap-2
+            "
+          >
 
             <span class="gold-text text-lg">
               ✓
@@ -383,9 +465,7 @@
       </div>
 
 
-      <!-- =====================================================
-           STUDENTS / TESTIMONIALS
-      ====================================================== -->
+      <!-- STUDENT IMAGES -->
 
       <div
         class="
@@ -406,8 +486,6 @@
           "
         >
 
-          <!-- Student image 1 -->
-
           <div
             class="
               student-photo
@@ -425,11 +503,7 @@
             <img
               src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=700&q=85"
               alt="Students learning together"
-              class="
-                w-full
-                h-full
-                object-cover
-              "
+              class="w-full h-full object-cover"
             >
 
             <div
@@ -452,7 +526,14 @@
               "
             >
 
-              <p class="text-xs sm:text-sm font-bold text-white">
+              <p
+                class="
+                  text-xs
+                  sm:text-sm
+                  font-bold
+                  text-white
+                "
+              >
                 Learn Together
               </p>
 
@@ -460,8 +541,6 @@
 
           </div>
 
-
-          <!-- Student image 2 -->
 
           <div
             class="
@@ -480,11 +559,7 @@
             <img
               src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=700&q=85"
               alt="Students studying"
-              class="
-                w-full
-                h-full
-                object-cover
-              "
+              class="w-full h-full object-cover"
             >
 
             <div
@@ -507,7 +582,14 @@
               "
             >
 
-              <p class="text-xs sm:text-sm font-bold text-white">
+              <p
+                class="
+                  text-xs
+                  sm:text-sm
+                  font-bold
+                  text-white
+                "
+              >
                 Build Your Future
               </p>
 
@@ -515,8 +597,6 @@
 
           </div>
 
-
-          <!-- Demo testimonial -->
 
           <div
             class="
@@ -530,7 +610,12 @@
             "
           >
 
-            <div class="text-[#e5a928] tracking-wide">
+            <div
+              class="
+                text-[#e5a928]
+                tracking-wide
+              "
+            >
               ★ ★ ★ ★ ★
             </div>
 
@@ -542,8 +627,8 @@
                 font-semibold
               "
             >
-              “The lessons are easy to follow and the practical approach
-              makes learning much easier.”
+              “The lessons are easy to follow and the
+              practical approach makes learning much easier.”
             </p>
 
             <div class="mt-3">
@@ -569,8 +654,6 @@
 
         </div>
 
-
-        <!-- Additional feedback -->
 
         <div
           class="
@@ -607,7 +690,14 @@
 
           <div>
 
-            <p class="text-sm font-semibold leading-6 text-white">
+            <p
+              class="
+                text-sm
+                font-semibold
+                leading-6
+                text-white
+              "
+            >
               “I love being able to learn at my own pace from my phone.”
             </p>
 
@@ -643,9 +733,9 @@
     </section>
 
 
-    <!-- =======================================================
-         RIGHT / LOGIN SECTION
-    ======================================================== -->
+    <!-- ======================================================
+         RIGHT SIDE LOGIN
+    ======================================================= -->
 
     <section
       class="
@@ -678,13 +768,24 @@
         "
       >
 
-        <!-- ===================================================
-             MOBILE LOGO
-        ==================================================== -->
+        <!-- MOBILE LOGO -->
 
-        <div class="lg:hidden flex justify-center mb-7">
+        <div
+          class="
+            lg:hidden
+            flex
+            justify-center
+            mb-7
+          "
+        >
 
-          <div class="flex items-center gap-3">
+          <div
+            class="
+              flex
+              items-center
+              gap-3
+            "
+          >
 
             <img
               src="logo.png"
@@ -728,9 +829,7 @@
         </div>
 
 
-        <!-- ===================================================
-             LOGIN HEADER
-        ==================================================== -->
+        <!-- HEADER -->
 
         <div class="text-center">
 
@@ -768,11 +867,32 @@
         </div>
 
 
-        <!-- ===================================================
-             LOGIN TYPE
-        ==================================================== -->
+        <!-- MESSAGE -->
 
-        <div class="grid grid-cols-2 gap-3 mt-8">
+        <div
+          id="message"
+          class="
+            message
+            rounded-xl
+            px-4
+            py-3
+            text-sm
+            font-semibold
+            mt-6
+          "
+        ></div>
+
+
+        <!-- LOGIN TYPE -->
+
+        <div
+          class="
+            grid
+            grid-cols-2
+            gap-3
+            mt-8
+          "
+        >
 
           <button
             id="btn-student"
@@ -819,9 +939,7 @@
         </div>
 
 
-        <!-- ===================================================
-             STAFF CODE
-        ==================================================== -->
+        <!-- STAFF CODE -->
 
         <div
           id="admin-extra"
@@ -830,7 +948,12 @@
 
           <label
             for="staff_code"
-            class="block text-sm font-bold text-[#03133d]"
+            class="
+              block
+              text-sm
+              font-bold
+              text-[#03133d]
+            "
           >
             Staff Access Code
           </label>
@@ -838,6 +961,7 @@
           <input
             id="staff_code"
             type="text"
+            autocomplete="off"
             placeholder="Enter staff access code"
             class="
               login-input
@@ -854,9 +978,7 @@
         </div>
 
 
-        <!-- ===================================================
-             EMAIL
-        ==================================================== -->
+        <!-- EMAIL -->
 
         <div class="mt-6">
 
@@ -892,13 +1014,17 @@
         </div>
 
 
-        <!-- ===================================================
-             PASSWORD
-        ==================================================== -->
+        <!-- PASSWORD -->
 
         <div class="mt-5">
 
-          <div class="flex items-center justify-between">
+          <div
+            class="
+              flex
+              items-center
+              justify-between
+            "
+          >
 
             <label
               for="password"
@@ -947,9 +1073,7 @@
         </div>
 
 
-        <!-- ===================================================
-             LOGIN BUTTON
-        ==================================================== -->
+        <!-- LOGIN BUTTON -->
 
         <button
           onclick="handleLogin()"
@@ -974,13 +1098,24 @@
         </button>
 
 
-        <!-- ===================================================
-             DIVIDER
-        ==================================================== -->
+        <!-- DIVIDER -->
 
-        <div class="flex items-center gap-3 my-7">
+        <div
+          class="
+            flex
+            items-center
+            gap-3
+            my-7
+          "
+        >
 
-          <div class="h-px bg-gray-200 flex-1"></div>
+          <div
+            class="
+              h-px
+              bg-gray-200
+              flex-1
+            "
+          ></div>
 
           <span
             class="
@@ -993,14 +1128,18 @@
             OR
           </span>
 
-          <div class="h-px bg-gray-200 flex-1"></div>
+          <div
+            class="
+              h-px
+              bg-gray-200
+              flex-1
+            "
+          ></div>
 
         </div>
 
 
-        <!-- ===================================================
-             CREATE ACCOUNT
-        ==================================================== -->
+        <!-- CREATE ACCOUNT -->
 
         <a
           href="auth.html"
@@ -1022,9 +1161,7 @@
         </a>
 
 
-        <!-- ===================================================
-             BROWSE COURSES
-        ==================================================== -->
+        <!-- BROWSE -->
 
         <a
           href="courses-public.html"
@@ -1047,9 +1184,7 @@
         </a>
 
 
-        <!-- ===================================================
-             SECURITY
-        ==================================================== -->
+        <!-- SECURITY -->
 
         <div
           class="
@@ -1091,47 +1226,219 @@
   </main>
 
 
-  <!-- =========================================================
-       SUPABASE
-  ========================================================== -->
+  <!-- ======================================================
+       LOGIN JAVASCRIPT
+  ======================================================= -->
 
   <script>
 
-    const supabaseClient = supabase.createClient(
-      "https://nzwfowwoazmpnwfrednh.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJud3pmb3d3b2F6bXBud2ZyZWRuaCIsImlhdCI6MTc4NjU3NzAzMiwiZXhwIjoyMTAyMTUzMDMyfQ.REDACTED"
-    );
+    /*
+      =========================================================
+      FUNDA ONLINE ACADEMY LOGIN
+      =========================================================
+
+      IMPORTANT:
+
+      This file does NOT contain a Supabase API key.
+
+      It uses:
+
+        supabase-config.js
+
+      which provides:
+
+        window.SUPABASE_URL
+        window.SUPABASE_ANON_KEY
+    */
+
+
+    let supabaseClient = null;
 
     let currentRole = "student";
 
 
     /* =========================================================
-       ROLE SELECTION
-    ========================================================== */
+       INITIALISE SUPABASE
+    ========================================================= */
+
+    function initialiseSupabase() {
+
+      if (!window.supabase) {
+
+        showMessage(
+          "The Supabase library could not be loaded.",
+          false
+        );
+
+        return false;
+      }
+
+
+      if (!window.SUPABASE_URL) {
+
+        showMessage(
+          "The Academy Supabase URL is missing.",
+          false
+        );
+
+        return false;
+      }
+
+
+      if (!window.SUPABASE_ANON_KEY) {
+
+        showMessage(
+          "The Academy Supabase publishable key is missing.",
+          false
+        );
+
+        return false;
+      }
+
+
+      if (
+        window.SUPABASE_ANON_KEY ===
+        "YOUR_LEGACY_ANON_KEY_GOES_HERE"
+      ) {
+
+        showMessage(
+          "The Academy Supabase configuration has not been completed.",
+          false
+        );
+
+        return false;
+      }
+
+
+      try {
+
+        supabaseClient =
+          window.supabase.createClient(
+            window.SUPABASE_URL,
+            window.SUPABASE_ANON_KEY
+          );
+
+        return true;
+
+      } catch (error) {
+
+        console.error(
+          "Supabase initialisation error:",
+          error
+        );
+
+        showMessage(
+          "Unable to initialise the Academy connection.",
+          false
+        );
+
+        return false;
+      }
+
+    }
+
+
+    /* =========================================================
+       MESSAGE
+    ========================================================= */
+
+    function showMessage(
+      text,
+      success = false
+    ) {
+
+      const box =
+        document.getElementById("message");
+
+
+      if (!box) {
+        return;
+      }
+
+
+      box.textContent = text;
+
+
+      box.classList.remove(
+        "error",
+        "success"
+      );
+
+
+      box.classList.add(
+        success
+          ? "success"
+          : "error"
+      );
+
+
+      box.classList.add("show");
+
+    }
+
+
+    function clearMessage() {
+
+      const box =
+        document.getElementById("message");
+
+
+      if (!box) {
+        return;
+      }
+
+
+      box.textContent = "";
+
+      box.classList.remove(
+        "show",
+        "error",
+        "success"
+      );
+
+    }
+
+
+    /* =========================================================
+       ROLE
+    ========================================================= */
 
     function setRole(role) {
 
       currentRole = role;
 
+
       const adminExtra =
-        document.getElementById("admin-extra");
+        document.getElementById(
+          "admin-extra"
+        );
+
 
       const studentButton =
-        document.getElementById("btn-student");
+        document.getElementById(
+          "btn-student"
+        );
+
 
       const adminButton =
-        document.getElementById("btn-admin");
+        document.getElementById(
+          "btn-admin"
+        );
 
 
       if (role === "admin") {
 
-        adminExtra.classList.remove("hidden");
+        adminExtra.classList.remove(
+          "hidden"
+        );
+
 
         adminButton.classList.remove(
           "border-gray-200",
           "bg-white",
           "text-gray-600"
         );
+
 
         adminButton.classList.add(
           "border-[#2563EB]",
@@ -1139,21 +1446,27 @@
           "text-white"
         );
 
+
         studentButton.classList.remove(
           "border-[#2563EB]",
           "bg-[#2563EB]",
           "text-white"
         );
 
+
         studentButton.classList.add(
           "border-gray-200",
           "bg-white",
           "text-gray-600"
         );
+
 
       } else {
 
-        adminExtra.classList.add("hidden");
+        adminExtra.classList.add(
+          "hidden"
+        );
+
 
         studentButton.classList.remove(
           "border-gray-200",
@@ -1161,17 +1474,20 @@
           "text-gray-600"
         );
 
+
         studentButton.classList.add(
           "border-[#2563EB]",
           "bg-[#2563EB]",
           "text-white"
         );
+
 
         adminButton.classList.remove(
           "border-[#2563EB]",
           "bg-[#2563EB]",
           "text-white"
         );
+
 
         adminButton.classList.add(
           "border-gray-200",
@@ -1185,28 +1501,105 @@
 
 
     /* =========================================================
+       GET STUDENT RECORD
+    ========================================================= */
+
+    async function getStudentRecord(
+      userId
+    ) {
+
+      const {
+        data,
+        error
+      } = await supabaseClient
+        .from("students")
+        .select("id")
+        .eq(
+          "user_id",
+          userId
+        )
+        .maybeSingle();
+
+
+      if (error) {
+
+        console.error(
+          "Student lookup error:",
+          error
+        );
+
+        return null;
+      }
+
+
+      return data;
+
+    }
+
+
+    /* =========================================================
        LOGIN
-    ========================================================== */
+    ========================================================= */
 
     async function handleLogin() {
 
+      clearMessage();
+
+
       const email =
-        document.getElementById("email").value.trim();
+        document
+          .getElementById("email")
+          .value
+          .trim()
+          .toLowerCase();
+
 
       const password =
-        document.getElementById("password").value;
+        document
+          .getElementById("password")
+          .value;
+
 
       const staffCode =
-        document.getElementById("staff_code").value.trim();
+        document
+          .getElementById("staff_code")
+          .value
+          .trim();
+
 
       const loginButton =
-        document.getElementById("loginBtn");
+        document.getElementById(
+          "loginBtn"
+        );
 
 
-      if (!email || !password) {
+      if (!email) {
 
-        alert(
-          "Please enter your email and password."
+        showMessage(
+          "Please enter your email address.",
+          false
+        );
+
+        return;
+      }
+
+
+      if (!password) {
+
+        showMessage(
+          "Please enter your password.",
+          false
+        );
+
+        return;
+      }
+
+
+      if (!email.includes("@")) {
+
+        showMessage(
+          "Please enter a valid email address.",
+          false
         );
 
         return;
@@ -1214,36 +1607,61 @@
 
 
       loginButton.disabled = true;
-      loginButton.textContent = "Logging in...";
+
+
+      loginButton.innerHTML =
+        '<span class="loading-spinner"></span>Logging in...';
 
 
       try {
 
+        /* =====================================================
+           AUTHENTICATE
+        ====================================================== */
+
         const {
           data,
           error
-        } = await supabaseClient.auth.signInWithPassword({
-          email: email,
-          password: password
-        });
+        } =
+          await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+          });
 
 
         if (error) {
 
-          alert(error.message);
+          console.error(
+            "Supabase login error:",
+            error
+          );
 
-          return;
-        }
-
-
-        if (!data || !data.user) {
-
-          alert(
-            "Login was unsuccessful. Please try again."
+          showMessage(
+            error.message ||
+            "Unable to log in.",
+            false
           );
 
           return;
         }
+
+
+        if (
+          !data ||
+          !data.user
+        ) {
+
+          showMessage(
+            "Login was unsuccessful. Please try again.",
+            false
+          );
+
+          return;
+        }
+
+
+        const user =
+          data.user;
 
 
         /* =====================================================
@@ -1253,22 +1671,29 @@
         const {
           data: profile,
           error: profileError
-        } = await supabaseClient
-          .from("profiles")
-          .select("role, staff_code")
-          .eq("id", data.user.id)
-          .single();
+        } =
+          await supabaseClient
+            .from("profiles")
+            .select(
+              "role, staff_code"
+            )
+            .eq(
+              "id",
+              user.id
+            )
+            .maybeSingle();
 
 
-        if (profileError || !profile) {
+        if (profileError) {
 
           console.error(
             "Profile lookup error:",
             profileError
           );
 
-          alert(
-            "Your profile could not be found. Please contact Funda Online Academy support."
+          showMessage(
+            "Your account was authenticated, but your profile could not be loaded.",
+            false
           );
 
           return;
@@ -1279,7 +1704,9 @@
            ADMIN / STAFF
         ====================================================== */
 
-        if (currentRole === "admin") {
+        if (
+          currentRole === "admin"
+        ) {
 
           const allowedRoles = [
             "admin",
@@ -1290,11 +1717,19 @@
           ];
 
 
-          if (!allowedRoles.includes(profile.role)) {
+          if (
+            !profile ||
+            !allowedRoles.includes(
+              profile.role
+            )
+          ) {
 
-            alert(
-              "This account does not have staff or admin access."
+            showMessage(
+              "This account does not have staff or administrator access.",
+              false
             );
+
+            await supabaseClient.auth.signOut();
 
             return;
           }
@@ -1305,69 +1740,171 @@
             profile.staff_code !== staffCode
           ) {
 
-            alert(
-              "Invalid Staff Access Code."
+            showMessage(
+              "Invalid Staff Access Code.",
+              false
             );
+
+            await supabaseClient.auth.signOut();
 
             return;
           }
 
 
-          window.location.href =
-            "admin-v2.html";
+          showMessage(
+            "Login successful. Opening Admin Dashboard...",
+            true
+          );
+
+
+          setTimeout(
+            function() {
+
+              window.location.href =
+                "admin-v2.html";
+
+            },
+            500
+          );
+
 
           return;
         }
 
 
         /* =====================================================
-           STUDENT ENROLLMENT CHECK
+           STUDENT RECORD
+        ====================================================== */
+
+        const student =
+          await getStudentRecord(
+            user.id
+          );
+
+
+        /*
+          If the user has authenticated but has no
+          student record yet, send them to onboarding.
+        */
+
+        if (!student) {
+
+          showMessage(
+            "Your account is active. Let's finish your student profile.",
+            true
+          );
+
+
+          setTimeout(
+            function() {
+
+              window.location.href =
+                "onboarding.html";
+
+            },
+            600
+          );
+
+
+          return;
+        }
+
+
+        /* =====================================================
+           ENROLLMENT
         ====================================================== */
 
         const {
           data: enrollments,
           error: enrollmentError
-        } = await supabaseClient
-          .from("enrollments")
-          .select(
-            "id, status, enrollment_status"
-          )
-          .eq(
-            "student_id",
-            data.user.id
-          )
-          .or(
-            "status.eq.approved,enrollment_status.eq.approved"
-          )
-          .limit(1);
+        } =
+          await supabaseClient
+            .from("enrollments")
+            .select(
+              "id, status, enrollment_status"
+            )
+            .eq(
+              "student_id",
+              student.id
+            )
+            .limit(50);
 
 
         if (enrollmentError) {
 
           console.error(
-            "Enrollment verification error:",
+            "Enrollment lookup error:",
             enrollmentError
           );
 
-          alert(
-            "We could not verify your enrollment. Please try again."
+          /*
+            We don't destroy the login session merely
+            because the enrollment query failed.
+
+            The student can continue to onboarding/dashboard
+            where the enrollment state can be handled properly.
+          */
+
+          showMessage(
+            "Login successful. Opening your student area...",
+            true
           );
+
+
+          setTimeout(
+            function() {
+
+              window.location.href =
+                "dashboard.html";
+
+            },
+            600
+          );
+
 
           return;
         }
 
 
         /* =====================================================
-           APPROVED STUDENT
+           CHECK APPROVED ENROLLMENT
         ====================================================== */
 
-        if (
-          enrollments &&
-          enrollments.length > 0
-        ) {
+        const approved =
+          Array.isArray(enrollments) &&
+          enrollments.some(
+            function(enrollment) {
 
-          window.location.href =
-            "dashboard.html";
+              return (
+                enrollment.status ===
+                  "approved" ||
+
+                enrollment.enrollment_status ===
+                  "approved"
+              );
+
+            }
+          );
+
+
+        if (approved) {
+
+          showMessage(
+            "Login successful. Opening your Student Dashboard...",
+            true
+          );
+
+
+          setTimeout(
+            function() {
+
+              window.location.href =
+                "dashboard.html";
+
+            },
+            600
+          );
+
 
           return;
         }
@@ -1377,30 +1914,43 @@
            NO APPROVED ENROLLMENT
         ====================================================== */
 
-        window.location.href =
-          "onboarding.html";
+        showMessage(
+          "Login successful. Let's continue with your student setup.",
+          true
+        );
 
-      }
+
+        setTimeout(
+          function() {
+
+            window.location.href =
+              "onboarding.html";
+
+          },
+          600
+        );
 
 
-      catch (error) {
+      } catch (error) {
 
         console.error(
           "Unexpected login error:",
           error
         );
 
-        alert(
-          "Something went wrong while logging in. Please try again."
+
+        showMessage(
+          error.message ||
+          "Something went wrong while logging in. Please try again.",
+          false
         );
 
-      }
-
-
-      finally {
+      } finally {
 
         loginButton.disabled = false;
-        loginButton.textContent = "Login";
+
+        loginButton.textContent =
+          "Login";
 
       }
 
@@ -1409,66 +1959,188 @@
 
     /* =========================================================
        PASSWORD RESET
-    ========================================================== */
+    ========================================================= */
 
     async function resetPassword() {
 
+      clearMessage();
+
+
       const email =
-        document.getElementById("email").value.trim();
+        document
+          .getElementById("email")
+          .value
+          .trim()
+          .toLowerCase();
 
 
       if (!email) {
 
-        alert(
-          "Please enter your email address first."
+        showMessage(
+          "Please enter your email address first.",
+          false
         );
 
         return;
       }
 
 
-      const {
-        error
-      } = await supabaseClient.auth.resetPasswordForEmail(
-        email
-      );
+      if (!email.includes("@")) {
 
-
-      if (error) {
-
-        alert(error.message);
+        showMessage(
+          "Please enter a valid email address.",
+          false
+        );
 
         return;
       }
 
 
-      alert(
-        "Password reset instructions have been sent to your email."
-      );
+      try {
+
+        const {
+          error
+        } =
+          await supabaseClient.auth
+            .resetPasswordForEmail(
+              email,
+              {
+                redirectTo:
+                  window.location.origin +
+                  "/reset-password.html"
+              }
+            );
+
+
+        if (error) {
+
+          console.error(
+            "Password reset error:",
+            error
+          );
+
+          showMessage(
+            error.message ||
+            "Unable to send password reset instructions.",
+            false
+          );
+
+          return;
+        }
+
+
+        showMessage(
+          "Password reset instructions have been sent to your email.",
+          true
+        );
+
+
+      } catch (error) {
+
+        console.error(
+          "Password reset exception:",
+          error
+        );
+
+        showMessage(
+          "Unable to send password reset instructions.",
+          false
+        );
+
+      }
 
     }
 
 
     /* =========================================================
-       ENTER KEY LOGIN
-    ========================================================== */
+       ENTER KEY SUPPORT
+    ========================================================= */
 
-    document
-      .getElementById("password")
-      .addEventListener(
-        "keydown",
-        function(event) {
+    document.addEventListener(
+      "DOMContentLoaded",
+      function() {
 
-          if (event.key === "Enter") {
+        const emailInput =
+          document.getElementById(
+            "email"
+          );
 
-            handleLogin();
 
-          }
+        const passwordInput =
+          document.getElementById(
+            "password"
+          );
+
+
+        if (emailInput) {
+
+          emailInput.addEventListener(
+            "keydown",
+            function(event) {
+
+              if (
+                event.key ===
+                "Enter"
+              ) {
+
+                event.preventDefault();
+
+                handleLogin();
+
+              }
+
+            }
+          );
 
         }
-      );
+
+
+        if (passwordInput) {
+
+          passwordInput.addEventListener(
+            "keydown",
+            function(event) {
+
+              if (
+                event.key ===
+                "Enter"
+              ) {
+
+                event.preventDefault();
+
+                handleLogin();
+
+              }
+
+            }
+          );
+
+        }
+
+
+        /* =====================================================
+           INITIALISE CONNECTION
+        ====================================================== */
+
+        const connected =
+          initialiseSupabase();
+
+
+        if (!connected) {
+
+          return;
+        }
+
+
+        console.log(
+          "Funda Online Academy Supabase connection initialised."
+        );
+
+      }
+    );
 
   </script>
 
 </body>
-  </html>
+
+</html>
