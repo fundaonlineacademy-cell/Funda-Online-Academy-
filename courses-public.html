@@ -1,15 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>Course Overview | Funda Online Academy</title>
+  <title>Courses | Funda Online Academy</title>
 
   <meta
     name="description"
@@ -33,26 +28,21 @@
   <script src="supabase-config.js?v=20260825"></script>
 
   <style>
-
     :root {
       --navy: #092a66;
-      --deep-navy: #071b50;
       --blue: #1456c0;
       --gold: #d4a72c;
-      --light-blue: #f5f8fc;
+      --light: #f5f8fc;
       --text: #172b4d;
     }
-
 
     * {
       box-sizing: border-box;
     }
 
-
     html {
       scroll-behavior: smooth;
     }
-
 
     body {
       margin: 0;
@@ -60,7 +50,6 @@
       color: var(--text);
       font-family: "Poppins", sans-serif;
     }
-
 
     h1,
     h2,
@@ -71,95 +60,49 @@
       font-family: "Montserrat", sans-serif;
     }
 
-
-    .hero-bg {
+    .hero {
       background:
         radial-gradient(
           circle at 10% 20%,
-          rgba(20, 86, 192, .10),
+          rgba(20, 86, 192, 0.10),
           transparent 30%
         ),
         radial-gradient(
           circle at 90% 80%,
-          rgba(212, 167, 44, .09),
+          rgba(212, 167, 44, 0.09),
           transparent 30%
         ),
         #f5f8fc;
     }
 
-
-    .nav-link {
-      position: relative;
-      color: #092a66;
-      font-family: "Montserrat", sans-serif;
-      font-size: 15px;
-      font-weight: 800;
-      padding: 10px 2px;
-      transition:
-        color .2s ease,
-        transform .2s ease;
-    }
-
-
-    .nav-link:hover {
-      color: #1456c0;
-      transform: translateY(-1px);
-    }
-
-
-    .nav-link::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 2px;
-      height: 3px;
-      border-radius: 999px;
-      background: #d4a72c;
-      transform: scaleX(0);
-      transition: transform .2s ease;
-    }
-
-
-    .nav-link:hover::after,
-    .nav-link.active::after {
-      transform: scaleX(1);
-    }
-
-
     .course-card {
       transition:
-        transform .25s ease,
-        box-shadow .25s ease;
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
     }
-
 
     .course-card:hover {
       transform: translateY(-6px);
-      box-shadow: 0 20px 45px rgba(9, 42, 102, .15);
+      box-shadow: 0 20px 45px rgba(9, 42, 102, 0.15);
     }
-
 
     .course-image {
-      transition: transform .4s ease;
+      transition: transform 0.4s ease;
     }
-
 
     .course-card:hover .course-image {
-      transform: scale(1.05);
+      transform: scale(1.04);
     }
-
 
     .spinner {
-      width: 46px;
-      height: 46px;
+      width: 48px;
+      height: 48px;
       border: 4px solid #dbeafe;
-      border-top-color: #092a66;
+      border-top-color: var(--navy);
       border-radius: 50%;
-      animation: spin .8s linear infinite;
+      animation: spin 0.8s linear infinite;
       margin: auto;
     }
-
 
     @keyframes spin {
       to {
@@ -167,506 +110,210 @@
       }
     }
 
-
-    .faq-content {
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height .3s ease;
+    .mobile-link:hover {
+      background: #e7eef9;
     }
-
-
-    .faq-item.open .faq-content {
-      max-height: 400px;
-    }
-
-
-    .faq-icon {
-      transition: transform .25s ease;
-    }
-
-
-    .faq-item.open .faq-icon {
-      transform: rotate(45deg);
-    }
-
-
-    .logo-image {
-      object-fit: contain;
-    }
-
-
-    .connection-error {
-      display: none;
-    }
-
-
-    .connection-error.show {
-      display: block;
-    }
-
   </style>
-
 </head>
-
 
 <body>
 
+  <!-- =========================================================
+       HEADER
+  ========================================================== -->
 
-<!-- =========================================================
-     HEADER
-========================================================== -->
+  <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
 
-<header
-  class="
-    sticky
-    top-0
-    z-50
-    bg-white/95
-    backdrop-blur
-    border-b
-    border-gray-100
-  "
->
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-  <nav
-    class="
-      max-w-7xl
-      mx-auto
-      px-4
-      sm:px-6
-      lg:px-8
-    "
-  >
+      <div class="h-20 flex items-center justify-between">
 
-    <div
-      class="
-        h-20
-        flex
-        items-center
-        justify-between
-      "
-    >
+        <!-- BRAND -->
 
-
-      <!-- BRAND -->
-
-      <a
-        href="courses-public.html"
-        class="
-          flex
-          items-center
-          gap-3
-          shrink-0
-        "
-      >
-
-        <div
-          class="
-            w-12
-            h-12
-            flex
-            items-center
-            justify-center
-            overflow-hidden
-          "
+        <a
+          href="index.html"
+          class="flex items-center gap-3 shrink-0"
         >
 
-          <img
-            src="logo.png"
-            alt="Funda Online Academy Logo"
-            class="
-              logo-image
-              w-full
-              h-full
-            "
-            onerror="this.style.display='none';"
+          <div class="w-12 h-12 flex items-center justify-center overflow-hidden">
+
+            <img
+              src="logo.png"
+              alt="Funda Online Academy Logo"
+              class="w-full h-full object-contain"
+              onerror="this.style.display='none';"
+            >
+
+          </div>
+
+          <div class="brand leading-none">
+
+            <div class="text-[17px] sm:text-[19px] font-black tracking-tight text-[#092A66]">
+              FUNDA
+              <span class="font-bold">
+                ONLINE
+              </span>
+            </div>
+
+            <div class="mt-1 text-[10px] sm:text-[11px] font-bold tracking-[0.30em] text-[#D4A72C]">
+              ACADEMY
+            </div>
+
+          </div>
+
+        </a>
+
+
+        <!-- DESKTOP NAV -->
+
+        <div class="hidden lg:flex items-center gap-7">
+
+          <a
+            href="#courses"
+            class="font-extrabold text-[#092A66] hover:text-[#1456C0]"
           >
+            Courses
+          </a>
+
+          <a
+            href="#how-it-works"
+            class="font-extrabold text-[#092A66] hover:text-[#1456C0]"
+          >
+            How It Works
+          </a>
+
+          <a
+            href="#faq"
+            class="font-extrabold text-[#092A66] hover:text-[#1456C0]"
+          >
+            FAQs
+          </a>
+
+          <a
+            href="#contact"
+            class="font-extrabold text-[#092A66] hover:text-[#1456C0]"
+          >
+            Contact
+          </a>
 
         </div>
 
 
-        <div class="brand leading-none">
+        <!-- ACCOUNT -->
 
-          <div
-            class="
-              text-[16px]
-              sm:text-[18px]
-              font-black
-              tracking-tight
-              text-[#092A66]
-            "
-          >
-            FUNDA
-            <span class="font-bold">
-              ONLINE
-            </span>
-          </div>
-
-
-          <div
-            class="
-              mt-1
-              text-[10px]
-              sm:text-[11px]
-              font-bold
-              tracking-[0.30em]
-              text-[#D4A72C]
-            "
-          >
-            ACADEMY
-          </div>
-
-        </div>
-
-      </a>
-
-
-      <!-- DESKTOP NAV -->
-
-      <div
-        class="
-          hidden
-          lg:flex
-          items-center
-          gap-7
-          xl:gap-9
-        "
-      >
-
-        <a
-          href="#courses"
-          class="nav-link active"
-        >
-          Courses
-        </a>
-
-        <a
-          href="#workshops"
-          class="nav-link"
-        >
-          Workshops
-        </a>
-
-        <a
-          href="#how-it-works"
-          class="nav-link"
-        >
-          How It Works
-        </a>
-
-        <a
-          href="#faq"
-          class="nav-link"
-        >
-          FAQs
-        </a>
-
-        <a
-          href="#contact"
-          class="nav-link"
-        >
-          Contact
-        </a>
-
-      </div>
-
-
-      <!-- ACCOUNT BUTTONS -->
-
-      <div
-        class="
-          hidden
-          md:flex
-          items-center
-          gap-3
-        "
-      >
-
-        <a
-          href="login.html"
-          class="
-            px-5
-            py-2.5
-            rounded-full
-            border-2
-            border-[#092A66]
-            text-[#092A66]
-            font-bold
-            text-sm
-            hover:bg-[#092A66]
-            hover:text-white
-            transition
-          "
-        >
-          Login
-        </a>
-
-
-        <a
-          href="register.html"
-          class="
-            px-5
-            py-2.5
-            rounded-full
-            bg-[#092A66]
-            text-white
-            font-bold
-            text-sm
-            hover:bg-[#1456C0]
-            transition
-          "
-        >
-          Create Account
-        </a>
-
-      </div>
-
-
-      <!-- MOBILE BUTTON -->
-
-      <button
-        id="mobileMenuButton"
-        type="button"
-        class="
-          lg:hidden
-          w-11
-          h-11
-          rounded-xl
-          bg-[#F1F5FA]
-          text-[#092A66]
-          text-xl
-          font-black
-        "
-        aria-label="Open navigation"
-      >
-        ☰
-      </button>
-
-    </div>
-
-
-    <!-- MOBILE MENU -->
-
-    <div
-      id="mobileMenu"
-      class="
-        hidden
-        lg:hidden
-        pb-5
-      "
-    >
-
-      <div
-        class="
-          bg-[#F5F8FC]
-          rounded-2xl
-          p-4
-          space-y-1
-        "
-      >
-
-        <a
-          href="#courses"
-          class="
-            mobile-link
-            block
-            px-4
-            py-3
-            rounded-xl
-            font-extrabold
-            text-[#092A66]
-          "
-        >
-          Courses
-        </a>
-
-
-        <a
-          href="#workshops"
-          class="
-            mobile-link
-            block
-            px-4
-            py-3
-            rounded-xl
-            font-extrabold
-            text-[#092A66]
-          "
-        >
-          Workshops
-        </a>
-
-
-        <a
-          href="#how-it-works"
-          class="
-            mobile-link
-            block
-            px-4
-            py-3
-            rounded-xl
-            font-extrabold
-            text-[#092A66]
-          "
-        >
-          How It Works
-        </a>
-
-
-        <a
-          href="#faq"
-          class="
-            mobile-link
-            block
-            px-4
-            py-3
-            rounded-xl
-            font-extrabold
-            text-[#092A66]
-          "
-        >
-          FAQs
-        </a>
-
-
-        <a
-          href="#contact"
-          class="
-            mobile-link
-            block
-            px-4
-            py-3
-            rounded-xl
-            font-extrabold
-            text-[#092A66]
-          "
-        >
-          Contact
-        </a>
-
-
-        <div
-          class="
-            grid
-            grid-cols-2
-            gap-2
-            pt-3
-          "
-        >
+        <div class="hidden md:flex items-center gap-3">
 
           <a
             href="login.html"
-            class="
-              text-center
-              px-4
-              py-3
-              rounded-xl
-              border-2
-              border-[#092A66]
-              text-[#092A66]
-              font-extrabold
-            "
+            class="px-5 py-2.5 rounded-full border-2 border-[#092A66] text-[#092A66] font-bold text-sm hover:bg-[#092A66] hover:text-white transition"
           >
             Login
           </a>
 
-
           <a
             href="register.html"
-            class="
-              text-center
-              px-4
-              py-3
-              rounded-xl
-              bg-[#092A66]
-              text-white
-              font-extrabold
-            "
+            class="px-5 py-2.5 rounded-full bg-[#092A66] text-white font-bold text-sm hover:bg-[#1456C0] transition"
           >
             Create Account
           </a>
 
         </div>
 
+
+        <!-- MOBILE BUTTON -->
+
+        <button
+          id="mobileMenuButton"
+          type="button"
+          class="lg:hidden w-11 h-11 rounded-xl bg-[#F1F5FA] text-[#092A66] text-xl font-black"
+          aria-label="Open navigation"
+        >
+          ☰
+        </button>
+
       </div>
 
-    </div>
 
-  </nav>
+      <!-- MOBILE MENU -->
 
-</header>
+      <div
+        id="mobileMenu"
+        class="hidden lg:hidden pb-5"
+      >
 
+        <div class="bg-[#F5F8FC] rounded-2xl p-4 space-y-1">
 
-<main>
+          <a
+            href="#courses"
+            class="mobile-link block px-4 py-3 rounded-xl font-extrabold text-[#092A66]"
+          >
+            Courses
+          </a>
 
+          <a
+            href="#how-it-works"
+            class="mobile-link block px-4 py-3 rounded-xl font-extrabold text-[#092A66]"
+          >
+            How It Works
+          </a>
 
-<!-- =========================================================
-     HERO
-========================================================== -->
+          <a
+            href="#faq"
+            class="mobile-link block px-4 py-3 rounded-xl font-extrabold text-[#092A66]"
+          >
+            FAQs
+          </a>
 
-<section class="hero-bg">
+          <a
+            href="#contact"
+            class="mobile-link block px-4 py-3 rounded-xl font-extrabold text-[#092A66]"
+          >
+            Contact
+          </a>
 
-  <div
-    class="
-      max-w-7xl
-      mx-auto
-      px-4
-      sm:px-6
-      lg:px-8
-      py-14
-      lg:py-20
-    "
-  >
+          <div class="grid grid-cols-2 gap-2 pt-3">
 
-    <div
-      class="
-        grid
-        lg:grid-cols-2
-        gap-12
-        items-center
-      "
-    >
+            <a
+              href="login.html"
+              class="text-center px-4 py-3 rounded-xl border-2 border-[#092A66] text-[#092A66] font-extrabold"
+            >
+              Login
+            </a>
 
+            <a
+              href="register.html"
+              class="text-center px-4 py-3 rounded-xl bg-[#092A66] text-white font-extrabold"
+            >
+              Create Account
+            </a>
 
-      <div>
-
-        <div
-          class="
-            inline-flex
-            items-center
-            gap-2
-            bg-white
-            border
-            border-blue-100
-            rounded-full
-            px-4
-            py-2
-            text-xs
-            font-extrabold
-            text-[#092A66]
-          "
-        >
-
-          <span>🎓</span>
-
-          <span>
-            PRACTICAL • CAREER-FOCUSED • FLEXIBLE
-          </span>
+          </div>
 
         </div>
 
+      </div>
 
-        <h1
-          class="
-            mt-6
-            text-4xl
-            sm:text-5xl
-            lg:text-6xl
-            font-black
-            leading-tight
-            text-[#092A66]
-          "
-        >
+    </nav>
+
+  </header>
+
+
+  <!-- =========================================================
+       HERO
+  ========================================================== -->
+
+  <section class="hero">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+
+      <div class="max-w-3xl">
+
+        <div class="inline-flex items-center gap-2 bg-white border border-blue-100 rounded-full px-4 py-2 text-xs font-extrabold text-[#092A66]">
+          <span>🎓</span>
+          <span>PRACTICAL • CAREER-FOCUSED • FLEXIBLE</span>
+        </div>
+
+        <h1 class="mt-6 text-4xl sm:text-5xl lg:text-6xl font-black leading-tight text-[#092A66]">
 
           Learn Skills That
 
@@ -676,261 +323,65 @@
 
         </h1>
 
+        <p class="mt-6 text-gray-600 text-base sm:text-lg leading-relaxed max-w-2xl">
 
-        <p
-          class="
-            mt-6
-            text-gray-600
-            text-base
-            sm:text-lg
-            leading-relaxed
-            max-w-xl
-          "
-        >
           Explore practical, career-focused courses designed
           to help you develop useful skills, increase your
           knowledge and prepare for opportunities in the workplace.
+
         </p>
 
-
-        <div
-          class="
-            flex
-            flex-col
-            sm:flex-row
-            gap-3
-            mt-8
-          "
-        >
+        <div class="flex flex-col sm:flex-row gap-3 mt-8">
 
           <a
             href="#courses"
-            class="
-              inline-flex
-              justify-center
-              px-7
-              py-4
-              rounded-full
-              bg-[#092A66]
-              text-white
-              font-extrabold
-              shadow-lg
-              hover:bg-[#1456C0]
-              transition
-            "
+            class="inline-flex justify-center px-7 py-4 rounded-full bg-[#092A66] text-white font-extrabold shadow-lg hover:bg-[#1456C0] transition"
           >
             Browse Courses →
           </a>
 
-
           <a
-            href="#why-us"
-            class="
-              inline-flex
-              justify-center
-              px-7
-              py-4
-              rounded-full
-              bg-white
-              border-2
-              border-gray-200
-              text-[#092A66]
-              font-extrabold
-              hover:border-[#092A66]
-              transition
-            "
+            href="#how-it-works"
+            class="inline-flex justify-center px-7 py-4 rounded-full bg-white border-2 border-gray-200 text-[#092A66] font-extrabold hover:border-[#092A66] transition"
           >
-            Why Choose Funda?
+            How It Works
           </a>
 
         </div>
 
-
-        <div
-          class="
-            grid
-            grid-cols-3
-            gap-4
-            mt-10
-            max-w-lg
-          "
-        >
+        <div class="grid grid-cols-3 gap-5 mt-10 max-w-lg">
 
           <div>
-
             <div
               id="heroCourseCount"
-              class="
-                text-2xl
-                font-black
-                text-[#092A66]
-              "
+              class="text-2xl font-black text-[#092A66]"
             >
               —
             </div>
 
-            <div
-              class="
-                text-xs
-                text-gray-500
-                font-medium
-              "
-            >
+            <div class="text-xs text-gray-500">
               Courses
             </div>
-
           </div>
 
-
           <div>
-
-            <div
-              class="
-                text-2xl
-                font-black
-                text-[#092A66]
-              "
-            >
+            <div class="text-2xl font-black text-[#092A66]">
               100%
             </div>
 
-            <div
-              class="
-                text-xs
-                text-gray-500
-                font-medium
-              "
-            >
-              Online Access
+            <div class="text-xs text-gray-500">
+              Online
             </div>
-
           </div>
 
-
           <div>
-
-            <div
-              class="
-                text-2xl
-                font-black
-                text-[#092A66]
-              "
-            >
+            <div class="text-2xl font-black text-[#092A66]">
               24/7
             </div>
 
-            <div
-              class="
-                text-xs
-                text-gray-500
-                font-medium
-              "
-            >
-              Learning Access
+            <div class="text-xs text-gray-500">
+              Access
             </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div>
-
-        <div
-          class="
-            bg-white
-            rounded-[32px]
-            p-4
-            shadow-2xl
-          "
-        >
-
-          <div
-            class="
-              rounded-[24px]
-              overflow-hidden
-              min-h-[350px]
-              sm:min-h-[430px]
-              relative
-            "
-          >
-
-            <img
-              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=85"
-              alt="Students learning online"
-              class="
-                absolute
-                inset-0
-                w-full
-                h-full
-                object-cover
-              "
-            >
-
-
-            <div
-              class="
-                absolute
-                inset-0
-                bg-[#092A66]/60
-              "
-            ></div>
-
-
-            <div
-              class="
-                relative
-                z-10
-                text-center
-                text-white
-                px-8
-                flex
-                flex-col
-                items-center
-                justify-center
-                min-h-[350px]
-                sm:min-h-[430px]
-              "
-            >
-
-              <div class="text-6xl mb-5">
-                🎓
-              </div>
-
-              <div
-                class="
-                  text-3xl
-                  sm:text-4xl
-                  font-black
-                "
-              >
-                Learn.
-              </div>
-
-              <div
-                class="
-                  text-3xl
-                  sm:text-4xl
-                  font-black
-                "
-              >
-                Build.
-              </div>
-
-              <div
-                class="
-                  text-3xl
-                  sm:text-4xl
-                  font-black
-              "
-              >
-                Grow.
-              </div>
-
-            </div>
-
           </div>
 
         </div>
@@ -939,1741 +390,421 @@
 
     </div>
 
-  </div>
-
-</section>
+  </section>
 
 
-<!-- =========================================================
-     CONNECTION ERROR
-========================================================== -->
+  <!-- =========================================================
+       COURSES
+  ========================================================== -->
 
-<section
-  id="connectionError"
-  class="
-    connection-error
-    max-w-7xl
-    mx-auto
-    px-4
-    sm:px-6
-    lg:px-8
-    pt-8
-  "
->
-
-  <div
-    class="
-      rounded-2xl
-      bg-red-50
-      border
-      border-red-200
-      p-5
-      text-red-700
-    "
+  <section
+    id="courses"
+    class="py-16 bg-white"
   >
 
-    <div class="font-black">
-      Academy connection problem
-    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <p
-      id="connectionErrorMessage"
-      class="text-sm mt-2"
-    >
-      The Academy connection could not be started.
-    </p>
+      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5">
 
-    <button
-      id="connectionRetry"
-      type="button"
-      class="
-        mt-4
-        px-5
-        py-2.5
-        rounded-full
-        bg-red-600
-        text-white
-        font-bold
-        text-sm
-      "
-    >
-      Refresh Connection
-    </button>
+        <div>
 
-  </div>
+          <p class="text-sm font-black uppercase tracking-widest text-[#D4A72C]">
+            Our Courses
+          </p>
 
-</section>
+          <h2 class="mt-2 text-3xl sm:text-4xl font-black text-[#092A66]">
+            Choose Your Course
+          </h2>
 
+          <p class="mt-3 text-gray-600 max-w-2xl">
+            Browse the courses currently available at Funda Online Academy.
+          </p>
 
-<!-- =========================================================
-     WHY CHOOSE US
-========================================================== -->
-
-<section
-  id="why-us"
-  class="
-    py-16
-    lg:py-20
-    bg-white
-  "
->
-
-  <div
-    class="
-      max-w-7xl
-      mx-auto
-      px-4
-      sm:px-6
-      lg:px-8
-    "
-  >
-
-    <div
-      class="
-        text-center
-        max-w-3xl
-        mx-auto
-      "
-    >
-
-      <span
-        class="
-          text-xs
-          font-black
-          tracking-[0.25em]
-          text-[#1456C0]
-        "
-      >
-        WHY CHOOSE FUNDA
-      </span>
-
-
-      <h2
-        class="
-          mt-3
-          text-3xl
-          sm:text-4xl
-          font-black
-          text-[#092A66]
-        "
-      >
-        Why Choose Funda Online Academy?
-      </h2>
-
-
-      <p
-        class="
-          mt-4
-          text-gray-600
-          leading-relaxed
-        "
-      >
-        We focus on clear, practical and structured learning
-        so students can understand what they are learning
-        and how it can be applied.
-      </p>
-
-    </div>
-
-
-    <div
-      class="
-        grid
-        sm:grid-cols-2
-        lg:grid-cols-3
-        gap-5
-        mt-12
-      "
-    >
-
-      <div
-        class="
-          bg-[#F7FAFF]
-          rounded-3xl
-          p-7
-          border
-          border-blue-50
-        "
-      >
-
-        <div class="text-4xl">
-          🎯
         </div>
 
-        <h3 class="font-black text-lg mt-5">
-          Practical Skills
-        </h3>
 
-        <p class="text-sm text-gray-600 mt-3">
-          Learn useful skills that can be applied in real
-          working and everyday environments.
-        </p>
+        <!-- SEARCH -->
 
-      </div>
+        <div class="w-full md:w-80">
 
-
-      <div
-        class="
-          bg-[#F7FAFF]
-          rounded-3xl
-          p-7
-          border
-          border-blue-50
-        "
-      >
-
-        <div class="text-4xl">
-          💼
-        </div>
-
-        <h3 class="font-black text-lg mt-5">
-          Career-Focused Training
-        </h3>
-
-        <p class="text-sm text-gray-600 mt-3">
-          Courses are structured around practical knowledge
-          and skills that support career development.
-        </p>
-
-      </div>
-
-
-      <div
-        class="
-          bg-[#F7FAFF]
-          rounded-3xl
-          p-7
-          border
-          border-blue-50
-        "
-      >
-
-        <div class="text-4xl">
-          📱
-        </div>
-
-        <h3 class="font-black text-lg mt-5">
-          Learn Anywhere
-        </h3>
-
-        <p class="text-sm text-gray-600 mt-3">
-          Access your learning experience from a phone,
-          tablet or computer.
-        </p>
-
-      </div>
-
-
-      <div
-        class="
-          bg-[#F7FAFF]
-          rounded-3xl
-          p-7
-          border
-          border-blue-50
-        "
-      >
-
-        <div class="text-4xl">
-          📚
-        </div>
-
-        <h3 class="font-black text-lg mt-5">
-          Structured Learning
-        </h3>
-
-        <p class="text-sm text-gray-600 mt-3">
-          Courses are organised into modules and lessons
-          to make learning easier to follow.
-        </p>
-
-      </div>
-
-
-      <div
-        class="
-          bg-[#F7FAFF]
-          rounded-3xl
-          p-7
-          border
-          border-blue-50
-        "
-      >
-
-        <div class="text-4xl">
-          🏆
-        </div>
-
-        <h3 class="font-black text-lg mt-5">
-          Certificates
-        </h3>
-
-        <p class="text-sm text-gray-600 mt-3">
-          Complete your course requirements and work towards
-          earning your course certificate.
-        </p>
-
-      </div>
-
-
-      <div
-        class="
-          bg-[#F7FAFF]
-          rounded-3xl
-          p-7
-          border
-          border-blue-50
-        "
-      >
-
-        <div class="text-4xl">
-          🔐
-        </div>
-
-        <h3 class="font-black text-lg mt-5">
-          Secure Student Platform
-        </h3>
-
-        <p class="text-sm text-gray-600 mt-3">
-          Your student account, course access and learning
-          progress are managed through a secure platform.
-        </p>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =========================================================
-     COURSES
-========================================================== -->
-
-<section
-  id="courses"
-  class="
-    py-16
-    lg:py-20
-    bg-[#F7FAFF]
-  "
->
-
-  <div
-    class="
-      max-w-7xl
-      mx-auto
-      px-4
-      sm:px-6
-      lg:px-8
-    "
-  >
-
-    <div
-      class="
-        flex
-        flex-col
-        lg:flex-row
-        lg:items-end
-        lg:justify-between
-        gap-6
-      "
-    >
-
-      <div>
-
-        <span
-          class="
-            text-xs
-            font-black
-            tracking-[0.25em]
-            text-[#1456C0]
-          "
-        >
-          EXPLORE OUR COURSES
-        </span>
-
-
-        <h2
-          class="
-            mt-3
-            text-3xl
-            sm:text-4xl
-            font-black
-            text-[#092A66]
-          "
-        >
-          Find a Course That Fits Your Goals
-        </h2>
-
-
-        <p
-          class="
-            mt-4
-            text-gray-600
-            max-w-2xl
-          "
-        >
-          Explore our practical skills courses and choose
-          an area that matches your interests, goals and
-          career plans.
-        </p>
-
-      </div>
-
-
-      <div
-        id="courseCount"
-        class="
-          text-sm
-          font-extrabold
-          text-[#092A66]
-        "
-      >
-        Loading courses...
-      </div>
-
-    </div>
-
-
-    <!-- SEARCH -->
-
-    <div
-      class="
-        mt-8
-        bg-white
-        rounded-2xl
-        p-3
-        border
-        border-gray-100
-        shadow-sm
-      "
-    >
-
-      <div
-        class="
-          flex
-          flex-col
-          sm:flex-row
-          gap-3
-        "
-      >
-
-        <div class="flex-1 relative">
-
-          <span
-            class="
-              absolute
-              left-4
-              top-1/2
-              -translate-y-1/2
-              text-gray-400
-            "
+          <label
+            for="courseSearch"
+            class="sr-only"
           >
-            🔍
-          </span>
-
+            Search courses
+          </label>
 
           <input
             id="courseSearch"
             type="search"
             placeholder="Search courses..."
-            class="
-              w-full
-              pl-11
-              pr-4
-              py-3
-              rounded-xl
-              border
-              border-gray-200
-              outline-none
-              focus:border-[#1456C0]
-            "
+            class="w-full px-5 py-3.5 rounded-2xl border border-gray-200 outline-none focus:border-[#1456C0] focus:ring-2 focus:ring-blue-100"
           >
 
         </div>
 
+      </div>
 
-        <button
-          id="clearSearch"
-          type="button"
-          class="
-            px-6
-            py-3
-            rounded-xl
-            bg-gray-100
-            text-[#092A66]
-            font-extrabold
-            hover:bg-gray-200
-          "
-        >
-          Clear
-        </button>
+
+      <!-- CONNECTION ERROR -->
+
+      <div
+        id="connectionError"
+        class="hidden mt-8 bg-red-50 border border-red-200 rounded-2xl p-5"
+      >
+
+        <div class="flex gap-3">
+
+          <div class="text-2xl">
+            ⚠️
+          </div>
+
+          <div>
+
+            <h3 class="font-black text-red-700">
+              Academy connection problem
+            </h3>
+
+            <p
+              id="connectionErrorMessage"
+              class="text-sm text-red-600 mt-1"
+            >
+              Unable to connect to the Academy database.
+            </p>
+
+            <button
+              id="retryButton"
+              type="button"
+              class="mt-4 px-5 py-2.5 rounded-xl bg-red-600 text-white font-bold text-sm"
+            >
+              Try Again
+            </button>
+
+          </div>
+
+        </div>
 
       </div>
 
-    </div>
 
-
-    <!-- COURSE GRID -->
-
-    <div
-      id="courseGrid"
-      class="
-        grid
-        sm:grid-cols-2
-        lg:grid-cols-3
-        xl:grid-cols-4
-        gap-6
-        mt-8
-      "
-    >
+      <!-- LOADING -->
 
       <div
-        class="
-          sm:col-span-2
-          lg:col-span-3
-          xl:col-span-4
-          py-16
-          text-center
-        "
+        id="loadingState"
+        class="py-20 text-center"
       >
 
         <div class="spinner"></div>
 
-        <p
-          class="
-            mt-5
-            text-gray-500
-            font-semibold
-          "
-        >
+        <p class="mt-5 text-[#092A66] font-bold">
           Loading courses...
         </p>
 
-      </div>
+        <p class="mt-1 text-sm text-gray-500">
+          Please wait.
+        </p>
 
-    </div>
-
-
-    <!-- EMPTY -->
-
-    <div
-      id="noCourses"
-      class="
-        hidden
-        text-center
-        py-16
-      "
-    >
-
-      <div class="text-5xl">
-        🔎
       </div>
 
 
-      <h3
-        class="
-          font-black
-          text-xl
-          mt-4
-          text-[#092A66]
-        "
-      >
-        No courses found
-      </h3>
-
-
-      <p
-        class="
-          text-gray-500
-          mt-2
-        "
-      >
-        Try another search term.
-      </p>
-
-    </div>
-
-
-    <!-- DATABASE ERROR -->
-
-    <div
-      id="courseError"
-      class="
-        hidden
-        text-center
-        py-16
-      "
-    >
-
-      <div class="text-5xl">
-        ⚠️
-      </div>
-
-
-      <h3
-        class="
-          font-black
-          text-xl
-          mt-4
-          text-[#092A66]
-        "
-      >
-        We couldn't load the courses
-      </h3>
-
-
-      <p
-        id="courseErrorMessage"
-        class="
-          text-gray-500
-          mt-2
-          max-w-xl
-          mx-auto
-        "
-      >
-        Please try again.
-      </p>
-
-
-      <button
-        id="retryButton"
-        type="button"
-        class="
-          mt-5
-          px-6
-          py-3
-          rounded-full
-          bg-[#092A66]
-          text-white
-          font-extrabold
-          hover:bg-[#1456C0]
-        "
-      >
-        Try Again
-      </button>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =========================================================
-     WORKSHOPS
-========================================================== -->
-
-<section
-  id="workshops"
-  class="
-    py-16
-    lg:py-20
-    bg-white
-  "
->
-
-  <div
-    class="
-      max-w-7xl
-      mx-auto
-      px-4
-      sm:px-6
-      lg:px-8
-    "
-  >
-
-    <div
-      class="
-        text-center
-        max-w-3xl
-        mx-auto
-      "
-    >
-
-      <span
-        class="
-          text-xs
-          font-black
-          tracking-[0.25em]
-          text-[#1456C0]
-        "
-      >
-        WORKSHOPS
-      </span>
-
-
-      <h2
-        class="
-          mt-3
-          text-3xl
-          sm:text-4xl
-          font-black
-          text-[#092A66]
-        "
-      >
-        Practical Learning Workshops
-      </h2>
-
-
-      <p
-        class="
-          mt-4
-          text-gray-600
-          leading-relaxed
-        "
-      >
-        Keep an eye on this section for practical workshops,
-        skills sessions and special learning opportunities.
-      </p>
-
-    </div>
-
-
-    <div
-      class="
-        mt-10
-        max-w-3xl
-        mx-auto
-      "
-    >
+      <!-- EMPTY -->
 
       <div
-        class="
-          rounded-3xl
-          bg-[#F7FAFF]
-          border
-          border-blue-50
-          p-8
-          text-center
-        "
+        id="emptyState"
+        class="hidden py-20 text-center"
       >
 
         <div class="text-5xl">
-          🛠️
+          📚
         </div>
 
-
-        <h3
-          class="
-            mt-5
-            text-xl
-            font-black
-            text-[#092A66]
-          "
-        >
-          Workshops Coming Soon
+        <h3 class="mt-5 text-xl font-black text-[#092A66]">
+          No courses found
         </h3>
 
-
-        <p
-          class="
-            mt-3
-            text-gray-600
-          "
-        >
-          New workshops will be displayed here when
-          they become available.
+        <p class="mt-2 text-gray-500">
+          There are currently no published courses available.
         </p>
 
       </div>
 
+
+      <!-- NO SEARCH RESULTS -->
+
+      <div
+        id="noSearchResults"
+        class="hidden py-20 text-center"
+      >
+
+        <div class="text-5xl">
+          🔎
+        </div>
+
+        <h3 class="mt-5 text-xl font-black text-[#092A66]">
+          No matching courses
+        </h3>
+
+        <p class="mt-2 text-gray-500">
+          Try another search term.
+        </p>
+
+      </div>
+
+
+      <!-- COURSE GRID -->
+
+      <div
+        id="courseGrid"
+        class="hidden grid sm:grid-cols-2 lg:grid-cols-3 gap-7 mt-10"
+      >
+      </div>
+
     </div>
 
-  </div>
-
-</section>
+  </section>
 
 
-<!-- =========================================================
-     HOW IT WORKS
-========================================================== -->
+  <!-- =========================================================
+       HOW IT WORKS
+  ========================================================== -->
 
-<section
-  id="how-it-works"
-  class="
-    py-16
-    lg:py-20
-    bg-white
-  "
->
-
-  <div
-    class="
-      max-w-7xl
-      mx-auto
-      px-4
-      sm:px-6
-      lg:px-8
-    "
+  <section
+    id="how-it-works"
+    class="py-16 bg-[#F5F8FC]"
   >
 
-    <div
-      class="
-        text-center
-        max-w-3xl
-        mx-auto
-      "
-    >
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-      <span
-        class="
-          text-xs
-          font-black
-          tracking-[0.25em]
-          text-[#1456C0]
-        "
-      >
-        HOW IT WORKS
-      </span>
+      <div class="text-center max-w-2xl mx-auto">
 
+        <p class="text-sm font-black uppercase tracking-widest text-[#D4A72C]">
+          Simple Process
+        </p>
 
-      <h2
-        class="
-          mt-3
-          text-3xl
-          sm:text-4xl
-          font-black
-          text-[#092A66]
-        "
-      >
-        Start Learning in Four Simple Steps
-      </h2>
+        <h2 class="mt-2 text-3xl sm:text-4xl font-black text-[#092A66]">
+          How It Works
+        </h2>
 
-    </div>
-
-
-    <div
-      class="
-        grid
-        md:grid-cols-4
-        gap-6
-        mt-12
-      "
-    >
-
-      <div class="text-center">
-
-        <div
-          class="
-            w-16
-            h-16
-            mx-auto
-            rounded-2xl
-            bg-[#EAF1FF]
-            text-[#092A66]
-            flex
-            items-center
-            justify-center
-            text-2xl
-            font-black
-          "
-        >
-          1
-        </div>
-
-
-        <h3 class="font-black mt-5">
-          Choose a Course
-        </h3>
-
-
-        <p class="text-sm text-gray-600 mt-2">
-          Explore the available courses and select the
-          one that matches your goals.
+        <p class="mt-3 text-gray-600">
+          Start your learning journey in a few simple steps.
         </p>
 
       </div>
 
 
-      <div class="text-center">
+      <div class="grid md:grid-cols-3 gap-6 mt-10">
 
-        <div
-          class="
-            w-16
-            h-16
-            mx-auto
-            rounded-2xl
-            bg-[#EAF1FF]
-            text-[#092A66]
-            flex
-            items-center
-            justify-center
-            text-2xl
-            font-black
-          "
-        >
-          2
+        <div class="bg-white rounded-3xl p-7">
+
+          <div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-xl">
+            1
+          </div>
+
+          <h3 class="mt-5 text-xl font-black text-[#092A66]">
+            Choose a Course
+          </h3>
+
+          <p class="mt-3 text-sm text-gray-600 leading-6">
+            Browse our available courses and select the programme that matches your goals.
+          </p>
+
         </div>
 
 
-        <h3 class="font-black mt-5">
-          Create Your Account
-        </h3>
+        <div class="bg-white rounded-3xl p-7">
 
+          <div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-xl">
+            2
+          </div>
 
-        <p class="text-sm text-gray-600 mt-2">
-          Register as a student and complete the required
-          enrollment information.
-        </p>
+          <h3 class="mt-5 text-xl font-black text-[#092A66]">
+            Create Your Account
+          </h3>
 
-      </div>
+          <p class="mt-3 text-sm text-gray-600 leading-6">
+            Create your student profile and complete the registration process.
+          </p>
 
-
-      <div class="text-center">
-
-        <div
-          class="
-            w-16
-            h-16
-            mx-auto
-            rounded-2xl
-            bg-[#EAF1FF]
-            text-[#092A66]
-            flex
-            items-center
-            justify-center
-            text-2xl
-            font-black
-          "
-        >
-          3
         </div>
 
 
-        <h3 class="font-black mt-5">
-          Learn &amp; Practise
-        </h3>
+        <div class="bg-white rounded-3xl p-7">
 
+          <div class="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-xl">
+            3
+          </div>
 
-        <p class="text-sm text-gray-600 mt-2">
-          Work through structured modules, lessons and
-          practical learning content.
-        </p>
+          <h3 class="mt-5 text-xl font-black text-[#092A66]">
+            Start Learning
+          </h3>
 
-      </div>
+          <p class="mt-3 text-sm text-gray-600 leading-6">
+            Access your student dashboard and continue your learning journey.
+          </p>
 
-
-      <div class="text-center">
-
-        <div
-          class="
-            w-16
-            h-16
-            mx-auto
-            rounded-2xl
-            bg-[#EAF1FF]
-            text-[#092A66]
-            flex
-            items-center
-            justify-center
-            text-2xl
-            font-black
-          "
-        >
-          4
         </div>
-
-
-        <h3 class="font-black mt-5">
-          Complete &amp; Certify
-        </h3>
-
-
-        <p class="text-sm text-gray-600 mt-2">
-          Complete your course requirements and progress
-          towards your certificate.
-        </p>
 
       </div>
 
     </div>
 
-  </div>
-
-</section>
+  </section>
 
 
-<!-- =========================================================
-     FAQ
-========================================================== -->
+  <!-- =========================================================
+       FAQ
+  ========================================================== -->
 
-<section
-  id="faq"
-  class="
-    py-16
-    lg:py-20
-    bg-[#F7FAFF]
-  "
->
-
-  <div
-    class="
-      max-w-4xl
-      mx-auto
-      px-4
-      sm:px-6
-      lg:px-8
-    "
+  <section
+    id="faq"
+    class="py-16 bg-white"
   >
 
-    <div class="text-center">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-      <span
-        class="
-          text-xs
-          font-black
-          tracking-[0.25em]
-          text-[#1456C0]
-        "
-      >
-        FREQUENTLY ASKED QUESTIONS
-      </span>
+      <div class="text-center">
 
+        <p class="text-sm font-black uppercase tracking-widest text-[#D4A72C]">
+          FAQs
+        </p>
 
-      <h2
-        class="
-          mt-3
-          text-3xl
-          sm:text-4xl
-          font-black
-          text-[#092A66]
-        "
-      >
-        Frequently Asked Questions
-      </h2>
-
-    </div>
-
-
-    <div
-      class="
-        mt-10
-        space-y-3
-      "
-    >
-
-
-      <div
-        class="
-          faq-item
-          border
-          border-gray-200
-          rounded-2xl
-          overflow-hidden
-          bg-white
-        "
-      >
-
-        <button
-          type="button"
-          class="
-            faq-question
-            w-full
-            flex
-            justify-between
-            items-center
-            text-left
-            p-5
-            font-extrabold
-          "
-        >
-
-          <span>
-            Do I need an account to view courses?
-          </span>
-
-          <span class="faq-icon text-2xl">
-            +
-          </span>
-
-        </button>
-
-
-        <div class="faq-content px-5">
-
-          <p class="pb-5 text-sm text-gray-600">
-            No. You can browse the public course catalogue
-            before creating a student account.
-          </p>
-
-        </div>
+        <h2 class="mt-2 text-3xl sm:text-4xl font-black text-[#092A66]">
+          Frequently Asked Questions
+        </h2>
 
       </div>
 
 
-      <div
-        class="
-          faq-item
-          border
-          border-gray-200
-          rounded-2xl
-          overflow-hidden
-          bg-white
-        "
-      >
+      <div class="mt-10 space-y-4">
 
-        <button
-          type="button"
-          class="
-            faq-question
-            w-full
-            flex
-            justify-between
-            items-center
-            text-left
-            p-5
-            font-extrabold
-          "
-        >
+        <details class="border border-gray-200 rounded-2xl p-5">
 
-          <span>
-            How do I become a student?
-          </span>
+          <summary class="cursor-pointer font-black text-[#092A66]">
+            How do I enrol for a course?
+          </summary>
 
-          <span class="faq-icon text-2xl">
-            +
-          </span>
-
-        </button>
-
-
-        <div class="faq-content px-5">
-
-          <p class="pb-5 text-sm text-gray-600">
-            Select a course, create your student account
-            and follow the enrollment process.
+          <p class="mt-3 text-sm text-gray-600 leading-6">
+            Select a course, create or log into your student account and follow the enrollment instructions.
           </p>
 
-        </div>
-
-      </div>
+        </details>
 
 
-      <div
-        class="
-          faq-item
-          border
-          border-gray-200
-          rounded-2xl
-          overflow-hidden
-          bg-white
-        "
-      >
+        <details class="border border-gray-200 rounded-2xl p-5">
 
-        <button
-          type="button"
-          class="
-            faq-question
-            w-full
-            flex
-            justify-between
-            items-center
-            text-left
-            p-5
-            font-extrabold
-          "
-        >
+          <summary class="cursor-pointer font-black text-[#092A66]">
+            Can I learn online?
+          </summary>
 
-          <span>
-            Can I learn using my phone?
-          </span>
-
-          <span class="faq-icon text-2xl">
-            +
-          </span>
-
-        </button>
-
-
-        <div class="faq-content px-5">
-
-          <p class="pb-5 text-sm text-gray-600">
-            Yes. The platform is designed for modern phones,
-            tablets and computers.
+          <p class="mt-3 text-sm text-gray-600 leading-6">
+            Yes. Funda Online Academy is designed to provide online learning access to students.
           </p>
 
-        </div>
-
-      </div>
+        </details>
 
 
-      <div
-        class="
-          faq-item
-          border
-          border-gray-200
-          rounded-2xl
-          overflow-hidden
-          bg-white
-        "
-      >
+        <details class="border border-gray-200 rounded-2xl p-5">
 
-        <button
-          type="button"
-          class="
-            faq-question
-            w-full
-            flex
-            justify-between
-            items-center
-            text-left
-            p-5
-            font-extrabold
-          "
-        >
-
-          <span>
+          <summary class="cursor-pointer font-black text-[#092A66]">
             Will I receive a certificate?
-          </span>
+          </summary>
 
-          <span class="faq-icon text-2xl">
-            +
-          </span>
-
-        </button>
-
-
-        <div class="faq-content px-5">
-
-          <p class="pb-5 text-sm text-gray-600">
-            Certificate eligibility depends on completing
-            the requirements of the relevant course.
+          <p class="mt-3 text-sm text-gray-600 leading-6">
+            Certificate availability depends on the specific course and its completion requirements.
           </p>
 
-        </div>
+        </details>
 
       </div>
 
     </div>
 
-  </div>
-
-</section>
+  </section>
 
 
-<!-- =========================================================
-     CTA
-========================================================== -->
+  <!-- =========================================================
+       CONTACT
+  ========================================================== -->
 
-<section class="bg-[#092A66]">
-
-  <div
-    class="
-      max-w-7xl
-      mx-auto
-      px-4
-      sm:px-6
-      lg:px-8
-      py-16
-      text-center
-      text-white
-    "
+  <section
+    id="contact"
+    class="py-16 bg-[#092A66]"
   >
 
-    <div class="text-5xl">
-      🎓
-    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
+      <p class="text-sm font-black uppercase tracking-widest text-[#D4A72C]">
+        Funda Online Academy
+      </p>
 
-    <h2
-      class="
-        mt-5
-        text-3xl
-        sm:text-4xl
-        font-black
-      "
-    >
-      Ready to Build Your Skills?
-    </h2>
-
-
-    <p
-      class="
-        mt-4
-        text-blue-100
-        max-w-2xl
-        mx-auto
-      "
-    >
-      Explore our courses and take the next step towards
-      developing practical skills for your future.
-    </p>
-
-
-    <div
-      class="
-        flex
-        flex-col
-        sm:flex-row
-        justify-center
-        gap-3
-        mt-8
-      "
-    >
-
-      <a
-        href="#courses"
-        class="
-          px-7
-          py-4
-          rounded-full
-          bg-white
-          text-[#092A66]
-          font-black
-        "
-      >
-        Explore Courses
-      </a>
-
-
-      <a
-        href="register.html"
-        class="
-          px-7
-          py-4
-          rounded-full
-          border-2
-          border-white
-          text-white
-          font-black
-        "
-      >
-        Register as a Student
-      </a>
-
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- =========================================================
-     CONTACT
-========================================================== -->
-
-<section
-  id="contact"
-  class="
-    py-16
-    bg-[#F7FAFF]
-  "
->
-
-  <div
-    class="
-      max-w-7xl
-      mx-auto
-      px-4
-      sm:px-6
-      lg:px-8
-    "
-  >
-
-    <div
-      class="
-        text-center
-        max-w-3xl
-        mx-auto
-      "
-    >
-
-      <span
-        class="
-          text-xs
-          font-black
-          tracking-[0.25em]
-          text-[#1456C0]
-        "
-      >
-        SUPPORT
-      </span>
-
-
-      <h2
-        class="
-          mt-3
-          text-3xl
-          sm:text-4xl
-          font-black
-          text-[#092A66]
-        "
-      >
-        We're Here to Help
+      <h2 class="mt-3 text-3xl sm:text-4xl font-black text-white">
+        Ready to Start Learning?
       </h2>
 
-    </div>
+      <p class="mt-4 text-blue-100 max-w-2xl mx-auto">
+        Create your student account and begin your learning journey with Funda Online Academy.
+      </p>
 
+      <div class="flex flex-col sm:flex-row justify-center gap-3 mt-8">
 
-    <div
-      class="
-        grid
-        sm:grid-cols-2
-        lg:grid-cols-4
-        gap-5
-        mt-10
-      "
-    >
+        <a
+          href="register.html"
+          class="px-7 py-4 rounded-full bg-white text-[#092A66] font-black hover:bg-gray-100"
+        >
+          Create Account
+        </a>
 
-      <div
-        class="
-          bg-white
-          rounded-3xl
-          p-7
-          border
-          border-gray-100
-          shadow-lg
-        "
-      >
-
-        <div class="text-3xl">
-          🎓
-        </div>
-
-        <h3 class="font-black mt-4">
-          Admissions
-        </h3>
-
-        <p class="text-sm text-gray-500 mt-2">
-          Course registration, enrollment and new student enquiries.
-        </p>
-
-      </div>
-
-
-      <div
-        class="
-          bg-white
-          rounded-3xl
-          p-7
-          border
-          border-gray-100
-          shadow-lg
-        "
-      >
-
-        <div class="text-3xl">
-          👩🏽‍🎓
-        </div>
-
-        <h3 class="font-black mt-4">
-          Student Support
-        </h3>
-
-        <p class="text-sm text-gray-500 mt-2">
-          Help with your student account, learning and course access.
-        </p>
-
-      </div>
-
-
-      <div
-        class="
-          bg-white
-          rounded-3xl
-          p-7
-          border
-          border-gray-100
-          shadow-lg
-        "
-      >
-
-        <div class="text-3xl">
-          💳
-        </div>
-
-        <h3 class="font-black mt-4">
-          Finance
-        </h3>
-
-        <p class="text-sm text-gray-500 mt-2">
-          Questions about payments, fees and financial matters.
-        </p>
-
-      </div>
-
-
-      <div
-        class="
-          bg-white
-          rounded-3xl
-          p-7
-          border
-          border-gray-100
-          shadow-lg
-        "
-      >
-
-        <div class="text-3xl">
-          💻
-        </div>
-
-        <h3 class="font-black mt-4">
-          Technical Support
-        </h3>
-
-        <p class="text-sm text-gray-500 mt-2">
-          Assistance with login, platform access and technical problems.
-        </p>
+        <a
+          href="login.html"
+          class="px-7 py-4 rounded-full border-2 border-white text-white font-black hover:bg-white hover:text-[#092A66]"
+        >
+          Student Login
+        </a>
 
       </div>
 
     </div>
 
-  </div>
-
-</section>
+  </section>
 
 
-</main>
+  <!-- =========================================================
+       FOOTER
+  ========================================================== -->
 
+  <footer class="bg-[#071B50] text-white">
 
-<!-- =========================================================
-     FOOTER
-========================================================== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-<footer
-  class="
-    bg-[#071B50]
-    text-white
-  "
->
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
 
-  <div
-    class="
-      max-w-7xl
-      mx-auto
-      px-4
-      sm:px-6
-      lg:px-8
-      py-14
-    "
-  >
-
-    <div
-      class="
-        grid
-        md:grid-cols-2
-        lg:grid-cols-4
-        gap-10
-      "
-    >
-
-
-      <div>
-
-        <div
-          class="
-            flex
-            items-center
-            gap-3
-          "
-        >
-
-          <div
-            class="
-              w-12
-              h-12
-              flex
-              items-center
-              justify-center
-              overflow-hidden
-            "
-          >
-
-            <img
-              src="logo.png"
-              alt="Funda Online Academy Logo"
-              class="
-                logo-image
-                w-full
-                h-full
-              "
-              onerror="this.style.display='none';"
-            >
-
-          </div>
-
-
-          <div class="brand">
-
-            <div class="font-black">
-              FUNDA
-              <span class="font-bold">
-                ONLINE
-              </span>
-            </div>
-
-
-            <div
-              class="
-                text-xs
-                tracking-[0.30em]
-                text-[#D4A72C]
-              "
-            >
-              ACADEMY
-            </div>
-
-          </div>
-
+        <div class="text-sm">
+          © <span id="year"></span> Funda Online Academy.
+          All rights reserved.
         </div>
 
-
-        <p
-          class="
-            text-sm
-            text-blue-100
-            leading-relaxed
-            mt-5
-          "
-        >
-          Practical online skills training designed to help
-          students build knowledge, confidence and career-ready skills.
-        </p>
-
-      </div>
-
-
-      <div>
-
-        <h3 class="font-black">
-          Quick Links
-        </h3>
-
-
-        <div
-          class="
-            mt-5
-            space-y-3
-            text-sm
-            text-blue-100
-          "
-        >
+        <div class="flex gap-5 text-sm">
 
           <a
-            href="#courses"
-            class="block hover:text-white"
+            href="index.html"
+            class="text-blue-100 hover:text-white"
           >
-            Courses
+            Home
           </a>
-
-
-          <a
-            href="#workshops"
-            class="block hover:text-white"
-          >
-            Workshops
-          </a>
-
-
-          <a
-            href="#how-it-works"
-            class="block hover:text-white"
-          >
-            How It Works
-          </a>
-
-
-          <a
-            href="#faq"
-            class="block hover:text-white"
-          >
-            FAQs
-          </a>
-
-        </div>
-
-      </div>
-
-
-      <div>
-
-        <h3 class="font-black">
-          Students
-        </h3>
-
-
-        <div
-          class="
-            mt-5
-            space-y-3
-            text-sm
-            text-blue-100
-          "
-        >
 
           <a
             href="login.html"
-            class="block hover:text-white"
+            class="text-blue-100 hover:text-white"
           >
-            Student Login
+            Login
           </a>
-
 
           <a
             href="register.html"
-            class="block hover:text-white"
+            class="text-blue-100 hover:text-white"
           >
-            Create Account
+            Register
           </a>
-
-
-          <a
-            href="#courses"
-            class="block hover:text-white"
-          >
-            Browse Courses
-          </a>
-
-
-          <a
-            href="#contact"
-            class="block hover:text-white"
-          >
-            Student Support
-          </a>
-
-        </div>
-
-      </div>
-
-
-      <div>
-
-        <h3 class="font-black">
-          Departments
-        </h3>
-
-
-        <div
-          class="
-            mt-5
-            space-y-3
-            text-sm
-            text-blue-100
-          "
-        >
-
-          <div>
-            Admissions
-          </div>
-
-          <div>
-            Student Support
-          </div>
-
-          <div>
-            Finance
-          </div>
-
-          <div>
-            Technical Support
-          </div>
 
         </div>
 
@@ -2681,1614 +812,806 @@
 
     </div>
 
+  </footer>
 
-    <div
-      class="
-        border-t
-        border-white/10
-        mt-12
-        pt-6
-        flex
-        flex-col
-        sm:flex-row
-        justify-between
-        gap-4
-        text-xs
-        text-blue-200
-      "
-    >
 
-      <p>
-        ©
-        <span id="year"></span>
-        Funda Online Academy.
-        All rights reserved.
-      </p>
+  <!-- =========================================================
+       JAVASCRIPT
+  ========================================================== -->
 
+  <script>
 
-      <div
-        class="
-          flex
-          gap-5
-        "
-      >
+    // ==========================================================
+    // FUNDA ONLINE ACADEMY
+    // PUBLIC COURSES
+    // SHARED SUPABASE CONFIGURATION
+    // ==========================================================
 
-        <a
-          href="#"
-          class="hover:text-white"
-        >
-          Privacy Policy
-        </a>
 
+    let supabaseClient = null;
 
-        <a
-          href="#"
-          class="hover:text-white"
-        >
-          Terms &amp; Conditions
-        </a>
+    let allCourses = [];
 
 
-        <a
-          href="#contact"
-          class="hover:text-white"
-        >
-          Contact
-        </a>
+    // ----------------------------------------------------------
+    // ELEMENTS
+    // ----------------------------------------------------------
 
-      </div>
+    const loadingState =
+      document.getElementById("loadingState");
 
-    </div>
+    const emptyState =
+      document.getElementById("emptyState");
 
-  </div>
+    const noSearchResults =
+      document.getElementById("noSearchResults");
 
-</footer>
+    const courseGrid =
+      document.getElementById("courseGrid");
 
+    const connectionError =
+      document.getElementById("connectionError");
 
-<!-- =========================================================
-     JAVASCRIPT
-========================================================== -->
+    const connectionErrorMessage =
+      document.getElementById("connectionErrorMessage");
 
-<script>
+    const courseSearch =
+      document.getElementById("courseSearch");
 
-"use strict";
+    const retryButton =
+      document.getElementById("retryButton");
 
+    const heroCourseCount =
+      document.getElementById("heroCourseCount");
 
-/*
-==============================================================
-FUNDA ONLINE ACADEMY
-COURSE OVERVIEW
 
-IMPORTANT:
+    // ----------------------------------------------------------
+    // SUPABASE INITIALISATION
+    // ----------------------------------------------------------
 
-There is NO Supabase URL or API key in this file.
+    function initialiseSupabase() {
 
-The connection comes ONLY from:
+      if (
+        typeof window.SUPABASE_URL === "undefined"
+      ) {
 
-    supabase-config.js
-
-which must provide:
-
-    window.SUPABASE_URL
-    window.SUPABASE_ANON_KEY
-==============================================================
-*/
-
-
-let db = null;
-
-let allCourses = [];
-
-
-/* =========================================================
-   SUPABASE INITIALISATION
-========================================================= */
-
-function initialiseSupabase() {
-
-  const errorBox =
-    document.getElementById(
-      "connectionError"
-    );
-
-  const errorMessage =
-    document.getElementById(
-      "connectionErrorMessage"
-    );
-
-
-  if (
-    !window.supabase ||
-    typeof window.supabase.createClient !== "function"
-  ) {
-
-    errorMessage.textContent =
-      "The Supabase JavaScript library could not be loaded.";
-
-    errorBox.classList.add(
-      "show"
-    );
-
-    return false;
-
-  }
-
-
-  if (
-    !window.SUPABASE_URL ||
-    !String(
-      window.SUPABASE_URL
-    ).trim()
-  ) {
-
-    errorMessage.textContent =
-      "SUPABASE_URL is missing from supabase-config.js.";
-
-    errorBox.classList.add(
-      "show"
-    );
-
-    return false;
-
-  }
-
-
-  if (
-    !window.SUPABASE_ANON_KEY ||
-    !String(
-      window.SUPABASE_ANON_KEY
-    ).trim()
-  ) {
-
-    errorMessage.textContent =
-      "SUPABASE_ANON_KEY is missing from supabase-config.js.";
-
-    errorBox.classList.add(
-      "show"
-    );
-
-    return false;
-
-  }
-
-
-  if (
-    window.SUPABASE_ANON_KEY ===
-    "YOUR_LEGACY_ANON_KEY_GOES_HERE"
-  ) {
-
-    errorMessage.textContent =
-      "The shared Supabase configuration still contains the placeholder API key.";
-
-    errorBox.classList.add(
-      "show"
-    );
-
-    return false;
-
-  }
-
-
-  try {
-
-    db =
-      window.supabase.createClient(
-        window.SUPABASE_URL,
-        window.SUPABASE_ANON_KEY
-      );
-
-
-    errorBox.classList.remove(
-      "show"
-    );
-
-
-    console.log(
-      "Funda Online Academy Supabase connection ready."
-    );
-
-
-    return true;
-
-  } catch (error) {
-
-    console.error(
-      "Supabase initialisation error:",
-      error
-    );
-
-
-    errorMessage.textContent =
-      "The Academy Supabase connection could not be initialised.";
-
-    errorBox.classList.add(
-      "show"
-    );
-
-
-    return false;
-
-  }
-
-}
-
-
-/* =========================================================
-   HTML ESCAPE
-========================================================= */
-
-function escapeHTML(
-  value
-) {
-
-  return String(
-    value ?? ""
-  )
-    .replace(
-      /&/g,
-      "&amp;"
-    )
-    .replace(
-      /</g,
-      "&lt;"
-    )
-    .replace(
-      />/g,
-      "&gt;"
-    )
-    .replace(
-      /"/g,
-      "&quot;"
-    )
-    .replace(
-      /'/g,
-      "&#039;"
-    );
-
-}
-
-
-/* =========================================================
-   FIRST VALUE
-========================================================= */
-
-function firstValue(
-  object,
-  keys,
-  fallback = ""
-) {
-
-  for (
-    const key of keys
-  ) {
-
-    if (
-      object &&
-      object[key] !== null &&
-      object[key] !== undefined &&
-      String(
-        object[key]
-      ).trim() !== ""
-    ) {
-
-      return object[key];
-
-    }
-
-  }
-
-
-  return fallback;
-
-}
-
-
-/* =========================================================
-   COURSE TITLE
-========================================================= */
-
-function courseTitle(
-  course
-) {
-
-  return firstValue(
-    course,
-    [
-      "title",
-      "course_name",
-      "name",
-      "course_title"
-    ],
-    "Course"
-  );
-
-}
-
-
-/* =========================================================
-   COURSE DESCRIPTION
-========================================================= */
-
-function courseDescription(
-  course
-) {
-
-  return firstValue(
-    course,
-    [
-      "description",
-      "course_description",
-      "summary",
-      "details"
-    ],
-    ""
-  );
-
-}
-
-
-/* =========================================================
-   COURSE PRICE
-========================================================= */
-
-function coursePrice(
-  course
-) {
-
-  const value =
-    firstValue(
-      course,
-      [
-        "price",
-        "amount",
-        "course_fee",
-        "fee",
-        "cost"
-      ],
-      null
-    );
-
-
-  if (
-    value === null ||
-    value === undefined ||
-    value === ""
-  ) {
-
-    return "Contact Us";
-
-  }
-
-
-  const numeric =
-    Number(
-      String(
-        value
-      )
-        .replace(
-          /R/g,
-          ""
-        )
-        .replace(
-          /,/g,
-          ""
-        )
-        .trim()
-    );
-
-
-  if (
-    !Number.isNaN(
-      numeric
-    )
-  ) {
-
-    return (
-      "R" +
-      numeric.toLocaleString(
-        "en-ZA",
-        {
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 2
-        }
-      )
-    );
-
-  }
-
-
-  return String(
-    value
-  );
-
-}
-
-
-/* =========================================================
-   COURSE DURATION
-========================================================= */
-
-function courseDuration(
-  course
-) {
-
-  return firstValue(
-    course,
-    [
-      "duration",
-      "course_duration",
-      "duration_text",
-      "length"
-    ],
-    "Flexible"
-  );
-
-}
-
-
-/* =========================================================
-   COURSE IMAGE
-========================================================= */
-
-function courseImage(
-  course
-) {
-
-  const storedImage =
-    firstValue(
-      course,
-      [
-        "image_url",
-        "image",
-        "thumbnail",
-        "course_image",
-        "cover_image"
-      ],
-      ""
-    );
-
-
-  if (
-    storedImage
-  ) {
-
-    return storedImage;
-
-  }
-
-
-  const title =
-    String(
-      courseTitle(
-        course
-      )
-    ).toLowerCase();
-
-
-  if (
-    title.includes("nail") ||
-    title.includes("beauty") ||
-    title.includes("makeup")
-  ) {
-
-    return "https://images.unsplash.com/photo-1610992015732-2449b76344bc?auto=format&fit=crop&w=900&q=80";
-
-  }
-
-
-  if (
-    title.includes("fashion") ||
-    title.includes("garment") ||
-    title.includes("sewing")
-  ) {
-
-    return "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=900&q=80";
-
-  }
-
-
-  if (
-    title.includes("food") ||
-    title.includes("beverage") ||
-    title.includes("catering") ||
-    title.includes("safety")
-  ) {
-
-    return "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=900&q=80";
-
-  }
-
-
-  if (
-    title.includes("construction") ||
-    title.includes("carpenter") ||
-    title.includes("carpentry")
-  ) {
-
-    return "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80";
-
-  }
-
-
-  if (
-    title.includes("cyber") ||
-    title.includes("computer") ||
-    title.includes("office") ||
-    title.includes("digital") ||
-    title.includes("administration")
-  ) {
-
-    return "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80";
-
-  }
-
-
-  if (
-    title.includes("farming") ||
-    title.includes("agriculture") ||
-    title.includes("urban farming")
-  ) {
-
-    return "https://images.unsplash.com/photo-1492496913980-501348b61469?auto=format&fit=crop&w=900&q=80";
-
-  }
-
-
-  if (
-    title.includes("housekeeping") ||
-    title.includes("cleaning")
-  ) {
-
-    return "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=900&q=80";
-
-  }
-
-
-  if (
-    title.includes("swimming") ||
-    title.includes("lifeguard")
-  ) {
-
-    return "https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=900&q=80";
-
-  }
-
-
-  if (
-    title.includes("hair")
-  ) {
-
-    return "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=900&q=80";
-
-  }
-
-
-  return "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=80";
-
-}
-
-
-/* =========================================================
-   COURSE LINK
-========================================================= */
-
-function courseLink(
-  course
-) {
-
-  const slug =
-    firstValue(
-      course,
-      [
-        "slug"
-      ],
-      ""
-    );
-
-
-  const id =
-    firstValue(
-      course,
-      [
-        "id",
-        "course_id"
-      ],
-      ""
-    );
-
-
-  if (
-    slug
-  ) {
-
-    return (
-      "course-view.html?slug=" +
-      encodeURIComponent(
-        slug
-      )
-    );
-
-  }
-
-
-  if (
-    id
-  ) {
-
-    return (
-      "course-view.html?id=" +
-      encodeURIComponent(
-        id
-      )
-    );
-
-  }
-
-
-  return "#";
-
-}
-
-
-/* =========================================================
-   COURSE CARD
-========================================================= */
-
-function courseCard(
-  course
-) {
-
-  const title =
-    escapeHTML(
-      courseTitle(
-        course
-      )
-    );
-
-
-  const description =
-    escapeHTML(
-      courseDescription(
-        course
-      )
-    );
-
-
-  const price =
-    escapeHTML(
-      coursePrice(
-        course
-      )
-    );
-
-
-  const duration =
-    escapeHTML(
-      courseDuration(
-        course
-      )
-    );
-
-
-  const image =
-    escapeHTML(
-      courseImage(
-        course
-      )
-    );
-
-
-  const link =
-    escapeHTML(
-      courseLink(
-        course
-      )
-    );
-
-
-  return `
-
-    <article
-      class="
-        course-card
-        bg-white
-        rounded-3xl
-        overflow-hidden
-        border
-        border-gray-100
-        shadow-lg
-      "
-    >
-
-      <div
-        class="
-          relative
-          h-48
-          overflow-hidden
-          bg-[#092A66]
-        "
-      >
-
-        <img
-          src="${image}"
-          alt="${title}"
-          class="
-            course-image
-            w-full
-            h-full
-            object-cover
-          "
-          loading="lazy"
-          onerror="
-            this.onerror=null;
-            this.src='https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=80';
-          "
-        >
-
-
-        <div
-          class="
-            absolute
-            inset-0
-            bg-gradient-to-t
-            from-[#071B50]/80
-            via-transparent
-            to-transparent
-          "
-        ></div>
-
-
-        <div
-          class="
-            absolute
-            bottom-4
-            left-4
-          "
-        >
-
-          <span
-            class="
-              bg-white
-              text-[#092A66]
-              text-[10px]
-              font-black
-              px-3
-              py-1.5
-              rounded-full
-            "
-          >
-            COURSE
-          </span>
-
-        </div>
-
-      </div>
-
-
-      <div class="p-5">
-
-        <h3
-          class="
-            font-black
-            text-lg
-            leading-tight
-            min-h-[56px]
-            text-[#172B4D]
-          "
-        >
-          ${title}
-        </h3>
-
-
-        ${
-          description
-            ? `
-              <p
-                class="
-                  text-xs
-                  text-gray-500
-                  mt-3
-                  line-clamp-2
-                "
-              >
-                ${description}
-              </p>
-            `
-            : ""
-        }
-
-
-        <div
-          class="
-            flex
-            flex-wrap
-            gap-3
-            mt-4
-            text-xs
-            text-gray-500
-          "
-        >
-
-          <span>
-            🕒 ${duration}
-          </span>
-
-
-          <span>
-            📚 Online
-          </span>
-
-        </div>
-
-
-        <div
-          class="
-            flex
-            items-end
-            justify-between
-            gap-3
-            mt-5
-            pt-4
-            border-t
-            border-gray-100
-          "
-        >
-
-          <div>
-
-            <div
-              class="
-                text-xs
-                text-gray-400
-              "
-            >
-              Course Fee
-            </div>
-
-
-            <div
-              class="
-                text-xl
-                font-black
-                text-[#092A66]
-              "
-            >
-              ${price}
-            </div>
-
-          </div>
-
-
-          <a
-            href="${link}"
-            class="
-              px-4
-              py-2.5
-              rounded-xl
-              bg-[#092A66]
-              text-white
-              text-xs
-              font-black
-              hover:bg-[#1456C0]
-              transition
-            "
-          >
-            View Course
-          </a>
-
-        </div>
-
-      </div>
-
-    </article>
-
-  `;
-
-}
-
-
-/* =========================================================
-   RENDER COURSES
-========================================================= */
-
-function renderCourses(
-  courses
-) {
-
-  const grid =
-    document.getElementById(
-      "courseGrid"
-    );
-
-
-  const empty =
-    document.getElementById(
-      "noCourses"
-    );
-
-
-  const count =
-    document.getElementById(
-      "courseCount"
-    );
-
-
-  const heroCount =
-    document.getElementById(
-      "heroCourseCount"
-    );
-
-
-  count.textContent =
-    courses.length +
-    " course" +
-    (
-      courses.length === 1
-        ? ""
-        : "s"
-    ) +
-    " available";
-
-
-  if (
-    heroCount
-  ) {
-
-    heroCount.textContent =
-      allCourses.length;
-
-  }
-
-
-  if (
-    !courses.length
-  ) {
-
-    grid.innerHTML =
-      "";
-
-
-    empty.classList.remove(
-      "hidden"
-    );
-
-
-    return;
-
-  }
-
-
-  empty.classList.add(
-    "hidden"
-  );
-
-
-  grid.innerHTML =
-    courses
-      .map(
-        courseCard
-      )
-      .join("");
-
-}
-
-
-/* =========================================================
-   SHOW DATABASE ERROR
-========================================================= */
-
-function showCourseError(
-  message
-) {
-
-  const grid =
-    document.getElementById(
-      "courseGrid"
-    );
-
-
-  const error =
-    document.getElementById(
-      "courseError"
-    );
-
-
-  const errorMessage =
-    document.getElementById(
-      "courseErrorMessage"
-    );
-
-
-  grid.innerHTML =
-    "";
-
-
-  errorMessage.textContent =
-    message;
-
-
-  error.classList.remove(
-    "hidden"
-  );
-
-}
-
-
-/* =========================================================
-   LOAD COURSES
-========================================================= */
-
-async function loadCourses() {
-
-  const grid =
-    document.getElementById(
-      "courseGrid"
-    );
-
-
-  const error =
-    document.getElementById(
-      "courseError"
-    );
-
-
-  const empty =
-    document.getElementById(
-      "noCourses"
-    );
-
-
-  error.classList.add(
-    "hidden"
-  );
-
-
-  empty.classList.add(
-    "hidden"
-  );
-
-
-  grid.innerHTML = `
-
-    <div
-      class="
-        sm:col-span-2
-        lg:col-span-3
-        xl:col-span-4
-        py-16
-        text-center
-      "
-    >
-
-      <div class="spinner"></div>
-
-      <p
-        class="
-          mt-5
-          text-gray-500
-          font-semibold
-        "
-      >
-        Loading courses...
-      </p>
-
-    </div>
-
-  `;
-
-
-  if (
-    !db
-  ) {
-
-    const connected =
-      initialiseSupabase();
-
-
-    if (
-      !connected
-    ) {
-
-      showCourseError(
-        "The Academy database connection could not be started."
-      );
-
-
-      return;
-
-    }
-
-  }
-
-
-  try {
-
-    /*
-      IMPORTANT:
-
-      We use SELECT * instead of requesting a fixed
-      list of columns.
-
-      That prevents this page from breaking when
-      optional course columns differ.
-    */
-
-    const {
-      data,
-      error: queryError
-    } =
-      await db
-        .from(
-          "courses"
-        )
-        .select(
-          "*"
-        );
-
-
-    if (
-      queryError
-    ) {
-
-      console.error(
-        "Courses database error:",
-        queryError
-      );
-
-
-      throw queryError;
-
-    }
-
-
-    let courses =
-      Array.isArray(
-        data
-      )
-        ? data
-        : [];
-
-
-    /*
-      If the database has an active/status field,
-      honour it.
-
-      If no such field exists, display the course.
-    */
-
-    courses =
-      courses.filter(
-        function(course) {
-
-          if (
-            Object.prototype.hasOwnProperty.call(
-              course,
-              "active"
-            )
-          ) {
-
-            return (
-              course.active === true ||
-              course.active === 1 ||
-              course.active === "true"
-            );
-
-          }
-
-
-          if (
-            Object.prototype.hasOwnProperty.call(
-              course,
-              "is_active"
-            )
-          ) {
-
-            return (
-              course.is_active === true ||
-              course.is_active === 1 ||
-              course.is_active === "true"
-            );
-
-          }
-
-
-          if (
-            Object.prototype.hasOwnProperty.call(
-              course,
-              "status"
-            )
-          ) {
-
-            const status =
-              String(
-                course.status ||
-                ""
-              ).toLowerCase();
-
-
-            return (
-              status === "active" ||
-              status === "approved" ||
-              status === "published"
-            );
-
-          }
-
-
-          return true;
-
-        }
-      );
-
-
-    allCourses =
-      courses;
-
-
-    console.log(
-      "Funda Online Academy:",
-      allCourses.length,
-      "courses loaded."
-    );
-
-
-    console.log(
-      "Course records:",
-      allCourses
-    );
-
-
-    renderCourses(
-      allCourses
-    );
-
-
-  } catch (
-    error
-  ) {
-
-    console.error(
-      "Course loading failed:",
-      error
-    );
-
-
-    let message =
-      "The website could not load the courses from Supabase.";
-
-
-    if (
-      error &&
-      error.message
-    ) {
-
-      message =
-        error.message;
-
-    }
-
-
-    showCourseError(
-      message
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-function searchCourses() {
-
-  const input =
-    document.getElementById(
-      "courseSearch"
-    );
-
-
-  const query =
-    String(
-      input.value ||
-      ""
-    )
-      .trim()
-      .toLowerCase();
-
-
-  if (
-    !query
-  ) {
-
-    renderCourses(
-      allCourses
-    );
-
-
-    return;
-
-  }
-
-
-  const filtered =
-    allCourses.filter(
-      function(course) {
-
-        const title =
-          String(
-            courseTitle(
-              course
-            )
-          ).toLowerCase();
-
-
-        const description =
-          String(
-            courseDescription(
-              course
-            )
-          ).toLowerCase();
-
-
-        const duration =
-          String(
-            courseDuration(
-              course
-            )
-          ).toLowerCase();
-
-
-        return (
-          title.includes(
-            query
-          ) ||
-          description.includes(
-            query
-          ) ||
-          duration.includes(
-            query
-          )
+        throw new Error(
+          "supabase-config.js was not loaded."
         );
 
       }
-    );
 
 
-  renderCourses(
-    filtered
-  );
+      if (
+        typeof window.SUPABASE_ANON_KEY === "undefined"
+      ) {
 
-}
+        throw new Error(
+          "SUPABASE_ANON_KEY was not found in supabase-config.js."
+        );
+
+      }
 
 
-/* =========================================================
-   MOBILE MENU
-========================================================= */
+      if (
+        !window.SUPABASE_URL
+      ) {
 
-document
-  .getElementById(
-    "mobileMenuButton"
-  )
-  .addEventListener(
-    "click",
-    function() {
+        throw new Error(
+          "SUPABASE_URL is empty in supabase-config.js."
+        );
 
-      document
-        .getElementById(
-          "mobileMenu"
-        )
-        .classList.toggle(
-          "hidden"
+      }
+
+
+      if (
+        !window.SUPABASE_ANON_KEY
+      ) {
+
+        throw new Error(
+          "SUPABASE_ANON_KEY is empty in supabase-config.js."
+        );
+
+      }
+
+
+      if (
+        window.SUPABASE_ANON_KEY ===
+        "YOUR_LEGACY_ANON_KEY_GOES_HERE"
+      ) {
+
+        throw new Error(
+          "The Supabase public key has not been configured."
+        );
+
+      }
+
+
+      if (
+        typeof window.supabase === "undefined"
+      ) {
+
+        throw new Error(
+          "The Supabase JavaScript library did not load."
+        );
+
+      }
+
+
+      supabaseClient =
+        window.supabase.createClient(
+          window.SUPABASE_URL,
+          window.SUPABASE_ANON_KEY
         );
 
     }
-  );
 
 
-document
-  .querySelectorAll(
-    ".mobile-link"
-  )
-  .forEach(
-    function(link) {
+    // ----------------------------------------------------------
+    // ESCAPE HTML
+    // ----------------------------------------------------------
 
-      link.addEventListener(
-        "click",
-        function() {
+    function escapeHTML(value) {
 
-          document
-            .getElementById(
-              "mobileMenu"
-            )
-            .classList.add(
-              "hidden"
-            );
+      if (
+        value === null ||
+        value === undefined
+      ) {
+
+        return "";
+
+      }
+
+
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    // ----------------------------------------------------------
+    // PRICE
+    // ----------------------------------------------------------
+
+    function formatPrice(value) {
+
+      if (
+        value === null ||
+        value === undefined ||
+        value === ""
+      ) {
+
+        return "Contact us";
+
+      }
+
+
+      const number =
+        Number(value);
+
+
+      if (
+        Number.isNaN(number)
+      ) {
+
+        return escapeHTML(value);
+
+      }
+
+
+      return "R" +
+        number.toLocaleString(
+          "en-ZA",
+          {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+          }
+        );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // NORMALISE IMAGE
+    // ----------------------------------------------------------
+
+    function getCourseImage(course) {
+
+      return (
+        course.image_url ||
+        course.image ||
+        course.thumbnail_url ||
+        course.thumbnail ||
+        course.cover_image ||
+        ""
+      );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // NORMALISE TITLE
+    // ----------------------------------------------------------
+
+    function getCourseTitle(course) {
+
+      return (
+        course.title ||
+        course.name ||
+        course.course_name ||
+        "Untitled Course"
+      );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // NORMALISE DESCRIPTION
+    // ----------------------------------------------------------
+
+    function getCourseDescription(course) {
+
+      return (
+        course.short_description ||
+        course.description ||
+        course.summary ||
+        "Explore this course and discover what you can learn."
+      );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // NORMALISE CATEGORY
+    // ----------------------------------------------------------
+
+    function getCourseCategory(course) {
+
+      return (
+        course.category ||
+        course.course_category ||
+        "Course"
+      );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // NORMALISE PRICE
+    // ----------------------------------------------------------
+
+    function getCoursePrice(course) {
+
+      return (
+        course.price ??
+        course.amount ??
+        course.course_price ??
+        null
+      );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // COURSE STATUS
+    // ----------------------------------------------------------
+
+    function isPublished(course) {
+
+      if (
+        typeof course.published === "boolean"
+      ) {
+
+        return course.published;
+
+      }
+
+
+      if (
+        typeof course.is_published === "boolean"
+      ) {
+
+        return course.is_published;
+
+      }
+
+
+      if (
+        typeof course.status === "string"
+      ) {
+
+        return (
+          course.status.toLowerCase() ===
+          "published"
+        );
+
+      }
+
+
+      // If the database does not have a
+      // publication flag, allow the course
+      // to appear.
+
+      return true;
+
+    }
+
+
+    // ----------------------------------------------------------
+    // SHOW CONNECTION ERROR
+    // ----------------------------------------------------------
+
+    function showConnectionError(message) {
+
+      loadingState.classList.add("hidden");
+
+      connectionError.classList.remove("hidden");
+
+      connectionErrorMessage.textContent =
+        message ||
+        "Unable to connect to the Academy database.";
+
+    }
+
+
+    // ----------------------------------------------------------
+    // HIDE CONNECTION ERROR
+    // ----------------------------------------------------------
+
+    function hideConnectionError() {
+
+      connectionError.classList.add("hidden");
+
+    }
+
+
+    // ----------------------------------------------------------
+    // SHOW LOADING
+    // ----------------------------------------------------------
+
+    function showLoading() {
+
+      loadingState.classList.remove("hidden");
+
+      emptyState.classList.add("hidden");
+
+      noSearchResults.classList.add("hidden");
+
+      courseGrid.classList.add("hidden");
+
+    }
+
+
+    // ----------------------------------------------------------
+    // LOAD COURSES
+    // ----------------------------------------------------------
+
+    async function loadCourses() {
+
+      showLoading();
+
+      hideConnectionError();
+
+
+      try {
+
+        initialiseSupabase();
+
+
+        /*
+          IMPORTANT
+
+          We intentionally use select("*") here.
+
+          This prevents the public course page from
+          depending on a fixed list of columns that may
+          differ between versions of the Academy database.
+        */
+
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("courses")
+            .select("*");
+
+
+        if (error) {
+
+          console.error(
+            "Supabase courses error:",
+            error
+          );
+
+          throw new Error(
+            error.message ||
+            "The courses table could not be loaded."
+          );
 
         }
-      );
+
+
+        allCourses =
+          Array.isArray(data)
+            ? data.filter(isPublished)
+            : [];
+
+
+        heroCourseCount.textContent =
+          allCourses.length;
+
+
+        loadingState.classList.add("hidden");
+
+
+        if (
+          allCourses.length === 0
+        ) {
+
+          emptyState.classList.remove("hidden");
+
+          courseGrid.classList.add("hidden");
+
+          return;
+
+        }
+
+
+        renderCourses(
+          allCourses
+        );
+
+      } catch (error) {
+
+        console.error(
+          "Funda Online Academy course loading error:",
+          error
+        );
+
+
+        loadingState.classList.add("hidden");
+
+        courseGrid.classList.add("hidden");
+
+        emptyState.classList.add("hidden");
+
+        showConnectionError(
+          error.message ||
+          "Unable to load courses."
+        );
+
+      }
 
     }
-  );
 
 
-/* =========================================================
-   SEARCH EVENTS
-========================================================= */
+    // ----------------------------------------------------------
+    // RENDER COURSES
+    // ----------------------------------------------------------
 
-document
-  .getElementById(
-    "courseSearch"
-  )
-  .addEventListener(
-    "input",
-    searchCourses
-  );
+    function renderCourses(courses) {
+
+      courseGrid.innerHTML = "";
 
 
-document
-  .getElementById(
-    "clearSearch"
-  )
-  .addEventListener(
-    "click",
-    function() {
+      if (
+        !courses ||
+        courses.length === 0
+      ) {
 
-      document
-        .getElementById(
-          "courseSearch"
-        )
-        .value =
-        "";
+        courseGrid.classList.add("hidden");
+
+        noSearchResults.classList.remove("hidden");
+
+        return;
+
+      }
 
 
-      renderCourses(
-        allCourses
-      );
+      noSearchResults.classList.add("hidden");
 
-    }
-  );
+      courseGrid.classList.remove("hidden");
 
 
-/* =========================================================
-   RETRY
-========================================================= */
+      courses.forEach(
+        (course) => {
 
-document
-  .getElementById(
-    "retryButton"
-  )
-  .addEventListener(
-    "click",
-    function() {
-
-      loadCourses();
-
-    }
-  );
+          const id =
+            course.id;
 
 
-document
-  .getElementById(
-    "connectionRetry"
-  )
-  .addEventListener(
-    "click",
-    function() {
-
-      window.location.reload();
-
-    }
-  );
+          const title =
+            getCourseTitle(course);
 
 
-/* =========================================================
-   FAQ
-========================================================= */
-
-document
-  .querySelectorAll(
-    ".faq-question"
-  )
-  .forEach(
-    function(button) {
-
-      button.addEventListener(
-        "click",
-        function() {
-
-          const current =
-            button.closest(
-              ".faq-item"
-            );
+          const description =
+            getCourseDescription(course);
 
 
-          document
-            .querySelectorAll(
-              ".faq-item"
-            )
-            .forEach(
-              function(item) {
-
-                if (
-                  item !== current
-                ) {
-
-                  item.classList.remove(
-                    "open"
-                  );
-
-                }
-
-              }
-            );
+          const category =
+            getCourseCategory(course);
 
 
-          current.classList.toggle(
-            "open"
+          const price =
+            getCoursePrice(course);
+
+
+          const image =
+            getCourseImage(course);
+
+
+          const card =
+            document.createElement("article");
+
+
+          card.className =
+            "course-card bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm";
+
+
+          let imageHTML;
+
+
+          if (image) {
+
+            imageHTML = `
+              <div class="h-52 overflow-hidden bg-[#F5F8FC]">
+                <img
+                  src="${escapeHTML(image)}"
+                  alt="${escapeHTML(title)}"
+                  class="course-image w-full h-full object-cover"
+                  loading="lazy"
+                  onerror="this.parentElement.innerHTML='<div class=&quot;w-full h-full flex items-center justify-center text-6xl&quot;>🎓</div>';"
+                >
+              </div>
+            `;
+
+          } else {
+
+            imageHTML = `
+              <div class="h-52 bg-gradient-to-br from-[#092A66] to-[#1456C0] flex items-center justify-center">
+                <div class="text-6xl">
+                  🎓
+                </div>
+              </div>
+            `;
+
+          }
+
+
+          card.innerHTML = `
+
+            ${imageHTML}
+
+            <div class="p-6">
+
+              <div class="flex items-center justify-between gap-3">
+
+                <span class="inline-flex px-3 py-1 rounded-full bg-blue-50 text-[#092A66] text-xs font-black">
+                  ${escapeHTML(category)}
+                </span>
+
+                <span class="text-xs text-gray-500 font-semibold">
+                  Online
+                </span>
+
+              </div>
+
+
+              <h3 class="mt-4 text-xl font-black text-[#092A66] leading-tight">
+                ${escapeHTML(title)}
+              </h3>
+
+
+              <p class="mt-3 text-sm text-gray-600 leading-6 line-clamp-3">
+                ${escapeHTML(description)}
+              </p>
+
+
+              <div class="mt-6 flex items-end justify-between gap-4">
+
+                <div>
+
+                  <div class="text-xs text-gray-400">
+                    Course Fee
+                  </div>
+
+                  <div class="text-xl font-black text-[#092A66]">
+                    ${formatPrice(price)}
+                  </div>
+
+                </div>
+
+
+                <a
+                  href="course-view.html?id=${encodeURIComponent(id)}"
+                  class="inline-flex items-center justify-center px-5 py-3 rounded-xl bg-[#092A66] text-white text-sm font-black hover:bg-[#1456C0] transition"
+                >
+                  View Course
+                </a>
+
+              </div>
+
+            </div>
+
+          `;
+
+
+          courseGrid.appendChild(
+            card
           );
 
         }
       );
 
     }
-  );
 
 
-/* =========================================================
-   YEAR
-========================================================= */
+    // ----------------------------------------------------------
+    // SEARCH
+    // ----------------------------------------------------------
 
-document
-  .getElementById(
-    "year"
-  )
-  .textContent =
-  new Date().getFullYear();
+    function searchCourses(query) {
 
-
-/* =========================================================
-   START APPLICATION
-========================================================= */
-
-async function startCoursesPage() {
-
-  const connected =
-    initialiseSupabase();
+      const search =
+        String(query || "")
+          .trim()
+          .toLowerCase();
 
 
-  if (
-    !connected
-  ) {
+      if (!search) {
 
-    return;
+        renderCourses(
+          allCourses
+        );
 
-  }
+        return;
 
-
-  await loadCourses();
-
-}
+      }
 
 
-if (
-  document.readyState ===
-  "loading"
-) {
+      const filtered =
+        allCourses.filter(
+          (course) => {
 
-  document.addEventListener(
-    "DOMContentLoaded",
-    startCoursesPage
-  );
+            const title =
+              getCourseTitle(course)
+                .toLowerCase();
 
-} else {
+            const description =
+              getCourseDescription(course)
+                .toLowerCase();
 
-  startCoursesPage();
+            const category =
+              getCourseCategory(course)
+                .toLowerCase();
 
-}
+            return (
+              title.includes(search) ||
+              description.includes(search) ||
+              category.includes(search)
+            );
 
-</script>
+          }
+        );
+
+
+      renderCourses(
+        filtered
+      );
+
+    }
+
+
+    // ----------------------------------------------------------
+    // MOBILE MENU
+    // ----------------------------------------------------------
+
+    document
+      .getElementById("mobileMenuButton")
+      .addEventListener(
+        "click",
+        () => {
+
+          const menu =
+            document.getElementById(
+              "mobileMenu"
+            );
+
+          menu.classList.toggle(
+            "hidden"
+          );
+
+        }
+      );
+
+
+    // ----------------------------------------------------------
+    // CLOSE MOBILE MENU
+    // ----------------------------------------------------------
+
+    document
+      .querySelectorAll(".mobile-link")
+      .forEach(
+        link => {
+
+          link.addEventListener(
+            "click",
+            () => {
+
+              document
+                .getElementById(
+                  "mobileMenu"
+                )
+                .classList.add(
+                  "hidden"
+                );
+
+            }
+          );
+
+        }
+      );
+
+
+    // ----------------------------------------------------------
+    // SEARCH LISTENER
+    // ----------------------------------------------------------
+
+    courseSearch.addEventListener(
+      "input",
+      event => {
+
+        searchCourses(
+          event.target.value
+        );
+
+      }
+    );
+
+
+    // ----------------------------------------------------------
+    // RETRY
+    // ----------------------------------------------------------
+
+    retryButton.addEventListener(
+      "click",
+      () => {
+
+        loadCourses();
+
+      }
+    );
+
+
+    // ----------------------------------------------------------
+    // YEAR
+    // ----------------------------------------------------------
+
+    document
+      .getElementById("year")
+      .textContent =
+        new Date().getFullYear();
+
+
+    // ----------------------------------------------------------
+    // START
+    // ----------------------------------------------------------
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        loadCourses();
+
+      }
+    );
+
+  </script>
 
 </body>
-</html>
+  </html>
