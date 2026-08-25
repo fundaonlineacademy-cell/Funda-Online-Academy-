@@ -3,288 +3,1021 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <title>Funda Online Academy - Login</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet"
   >
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
+    }
+
+    .brand-gradient {
+      background: linear-gradient(
+        135deg,
+        #071b52 0%,
+        #0a2a7a 45%,
+        #1556c9 100%
+      );
+    }
+
+    .gold-gradient {
+      background: linear-gradient(
+        135deg,
+        #f6c453,
+        #e5a928
+      );
+    }
+
+    .hero-pattern {
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(255,255,255,.10) 0 2px, transparent 3px),
+        radial-gradient(circle at 85% 70%, rgba(255,255,255,.08) 0 2px, transparent 3px);
+      background-size: 55px 55px, 70px 70px;
+    }
+
+    .soft-shadow {
+      box-shadow:
+        0 20px 60px rgba(7, 27, 82, .16);
+    }
+
+    .login-shadow {
+      box-shadow:
+        0 20px 60px rgba(15, 35, 80, .12);
+    }
+
+    .student-photo {
+      transition: transform .3s ease;
+    }
+
+    .student-photo:hover {
+      transform: translateY(-4px);
+    }
+
+    .testimonial-card {
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,.94);
+    }
+
+    .input-focus:focus {
+      outline: none;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37,99,235,.10);
     }
   </style>
 </head>
 
-<body class="min-h-screen bg-[#E6F0FF] flex flex-col lg:flex-row">
 
-  <!-- LEFT SIDE -->
-  <div class="lg:w-[48%] bg-[#C2D9FF] p-8 lg:p-12 flex flex-col justify-between">
+<body class="min-h-screen bg-[#eef4ff]">
 
-    <div>
 
-      <!-- LOGO -->
-      <div class="flex items-center gap-3">
-        <div class="w-12 h-12 bg-[#0A2A7A] rounded-full flex items-center justify-center">
-          🎓
+  <!-- =========================================================
+       MAIN PAGE
+  ========================================================== -->
+
+  <main class="min-h-screen flex flex-col lg:flex-row">
+
+
+    <!-- =======================================================
+         LEFT / BRANDING SIDE
+    ======================================================== -->
+
+    <section
+      class="
+        relative
+        overflow-hidden
+        brand-gradient
+        hero-pattern
+        text-white
+        w-full
+        lg:w-[52%]
+        min-h-[620px]
+        lg:min-h-screen
+        px-6
+        py-8
+        sm:px-10
+        lg:px-14
+        xl:px-20
+        flex
+        flex-col
+      "
+    >
+
+      <!-- Decorative circles -->
+      <div
+        class="
+          absolute
+          -top-24
+          -right-24
+          w-72
+          h-72
+          rounded-full
+          bg-white/5
+        "
+      ></div>
+
+      <div
+        class="
+          absolute
+          bottom-[-100px]
+          left-[-100px]
+          w-80
+          h-80
+          rounded-full
+          bg-blue-400/10
+        "
+      ></div>
+
+
+      <!-- =====================================================
+           BRAND
+      ====================================================== -->
+
+      <div class="relative z-10">
+
+        <div class="flex items-center gap-4">
+
+          <!-- Academy Logo Mark -->
+          <div
+            class="
+              w-16
+              h-16
+              sm:w-[72px]
+              sm:h-[72px]
+              rounded-2xl
+              bg-white
+              flex
+              items-center
+              justify-center
+              shadow-xl
+              shrink-0
+            "
+          >
+
+            <div
+              class="
+                w-12
+                h-12
+                sm:w-14
+                sm:h-14
+                rounded-xl
+                bg-[#0A2A7A]
+                flex
+                items-center
+                justify-center
+                text-2xl
+              "
+            >
+              🎓
+            </div>
+
+          </div>
+
+
+          <!-- Brand Name -->
+          <div>
+
+            <div
+              class="
+                text-2xl
+                sm:text-3xl
+                font-black
+                tracking-tight
+                leading-none
+              "
+            >
+              FUNDA ONLINE
+            </div>
+
+            <div
+              class="
+                mt-1
+                text-sm
+                sm:text-base
+                font-bold
+                tracking-[0.28em]
+                text-[#f6c453]
+              "
+            >
+              ACADEMY
+            </div>
+
+          </div>
+
         </div>
 
-        <h1 class="text-[#0A2A7A] font-extrabold text-2xl leading-none">
-          FUNDA ONLINE<br>
-          ACADEMY
+      </div>
+
+
+      <!-- =====================================================
+           HERO CONTENT
+      ====================================================== -->
+
+      <div class="relative z-10 mt-14 lg:mt-20 max-w-xl">
+
+        <div
+          class="
+            inline-flex
+            items-center
+            gap-2
+            rounded-full
+            border
+            border-white/20
+            bg-white/10
+            px-4
+            py-2
+            text-xs
+            sm:text-sm
+            font-bold
+            mb-6
+          "
+        >
+          <span class="text-[#f6c453]">✦</span>
+          PRACTICAL • FLEXIBLE • CAREER FOCUSED
+        </div>
+
+
+        <h1
+          class="
+            text-4xl
+            sm:text-5xl
+            xl:text-6xl
+            font-black
+            leading-[1.05]
+            tracking-tight
+          "
+        >
+          Master Skills
+          <span class="text-[#f6c453]">
+            That Get You Hired.
+          </span>
         </h1>
-      </div>
-
-      <!-- HEADLINE -->
-      <h2 class="mt-10 text-[#0A2A7A] font-extrabold text-4xl leading-tight">
-        Master Skills That Get<br>
-        You Hired
-      </h2>
-
-      <p class="mt-4 text-[#0A2A7A]/70 tracking-[0.2em] text-xs font-bold">
-        TRUSTED BY THOUSANDS OF STUDENTS
-      </p>
-
-      <p class="mt-3 text-[#0A2A7A] text-sm">
-        Trusted by <b>2,450+</b> students · <b>4.8 stars</b> ⭐⭐⭐⭐⭐
-      </p>
-
-    </div>
-
-  </div>
 
 
-  <!-- RIGHT SIDE -->
-  <div class="lg:w-[52%] flex items-center justify-center p-6 bg-[#EEF3FF]">
-
-    <div class="bg-white rounded-[24px] shadow-xl w-full max-w-[520px] p-8">
-
-      <!-- TITLE -->
-      <h2 class="text-3xl font-extrabold text-[#0A1E4A] text-center">
-        Welcome Back
-      </h2>
-
-      <p class="text-center text-gray-500 mt-2">
-        Choose how you want to log in
-      </p>
-
-
-      <!-- LOGIN TYPE -->
-      <div class="grid grid-cols-2 gap-3 mt-8">
-
-        <button
-          id="btn-student"
-          onclick="setRole('student')"
-          class="border-2 border-[#2563EB] bg-[#2563EB] text-white rounded-xl py-3 font-bold"
+        <p
+          class="
+            mt-6
+            text-base
+            sm:text-lg
+            leading-8
+            text-blue-100
+            max-w-lg
+          "
         >
-          🎓 Student Login
-        </button>
+          Learn practical, career-focused skills with Funda Online Academy.
+          Study at your own pace and build knowledge that can help you move
+          confidently toward your career goals.
+        </p>
 
-        <button
-          id="btn-admin"
-          onclick="setRole('admin')"
-          class="border-2 border-gray-200 text-gray-600 rounded-xl py-3 font-semibold"
-        >
-          💼 Admin Staff
-        </button>
+
+        <!-- Trust line -->
+
+        <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+
+          <div class="flex items-center gap-2">
+            <span class="text-[#f6c453] text-lg">★</span>
+            <span class="font-bold">Career-focused learning</span>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <span class="text-[#f6c453] text-lg">✓</span>
+            <span class="font-bold">Flexible online study</span>
+          </div>
+
+        </div>
 
       </div>
 
 
-      <!-- ADMIN STAFF CODE -->
-      <div id="admin-extra" class="hidden mt-4">
+      <!-- =====================================================
+           STUDENT IMAGE / SUCCESS AREA
+      ====================================================== -->
 
-        <label class="text-sm font-semibold">
-          Staff Access Code
-        </label>
+      <div class="relative z-10 mt-10 lg:mt-auto lg:pt-10">
 
-        <input
-          id="staff_code"
-          type="text"
-          placeholder="ADM-042"
-          class="w-full mt-1 border rounded-xl px-4 py-3"
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+
+
+          <!-- Student Image 1 -->
+          <div
+            class="
+              student-photo
+              relative
+              h-40
+              sm:h-48
+              rounded-2xl
+              overflow-hidden
+              bg-blue-900/50
+              border
+              border-white/10
+            "
+          >
+
+            <img
+              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=700&q=85"
+              alt="Students learning together"
+              class="w-full h-full object-cover"
+            >
+
+            <div
+              class="
+                absolute
+                inset-x-0
+                bottom-0
+                p-3
+                bg-gradient-to-t
+                from-black/70
+                to-transparent
+              "
+            >
+              <p class="text-xs sm:text-sm font-bold">
+                Learn Together
+              </p>
+            </div>
+
+          </div>
+
+
+          <!-- Student Image 2 -->
+          <div
+            class="
+              student-photo
+              relative
+              h-40
+              sm:h-48
+              rounded-2xl
+              overflow-hidden
+              bg-blue-900/50
+              border
+              border-white/10
+            "
+          >
+
+            <img
+              src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=700&q=85"
+              alt="Students studying"
+              class="w-full h-full object-cover"
+            >
+
+            <div
+              class="
+                absolute
+                inset-x-0
+                bottom-0
+                p-3
+                bg-gradient-to-t
+                from-black/70
+                to-transparent
+              "
+            >
+              <p class="text-xs sm:text-sm font-bold">
+                Build Your Future
+              </p>
+            </div>
+
+          </div>
+
+
+          <!-- Temporary Review -->
+          <div
+            class="
+              testimonial-card
+              col-span-2
+              sm:col-span-1
+              rounded-2xl
+              p-5
+              text-[#0A1E4A]
+              soft-shadow
+            "
+          >
+
+            <div class="flex gap-1 text-[#e5a928]">
+              ★ ★ ★ ★ ★
+            </div>
+
+            <p
+              class="
+                mt-3
+                text-sm
+                leading-6
+                font-semibold
+              "
+            >
+              “The lessons are easy to follow and the practical approach
+              makes learning much easier.”
+            </p>
+
+            <div class="mt-3">
+
+              <p class="text-xs font-bold">
+                Sample Learner
+              </p>
+
+              <p class="text-[10px] text-gray-500">
+                DEMO TESTIMONIAL
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- Second demo testimonial -->
+
+        <div
+          class="
+            hidden
+            md:flex
+            mt-5
+            items-center
+            gap-4
+            rounded-2xl
+            border
+            border-white/10
+            bg-white/10
+            p-4
+            max-w-xl
+          "
         >
+
+          <div
+            class="
+              w-11
+              h-11
+              rounded-full
+              gold-gradient
+              text-[#0A2A7A]
+              flex
+              items-center
+              justify-center
+              font-black
+            "
+          >
+            ★
+          </div>
+
+          <div>
+
+            <p class="text-sm font-semibold leading-6">
+              “I love being able to learn at my own pace from my phone.”
+            </p>
+
+            <p class="text-[10px] mt-1 text-blue-200 font-bold">
+              SAMPLE LEARNER FEEDBACK — DEMO CONTENT
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- Footer -->
+
+        <div
+          class="
+            mt-8
+            pb-2
+            text-xs
+            text-blue-200
+          "
+        >
+          © 2026 Funda Online Academy · Learn. Grow. Succeed.
+        </div>
 
       </div>
 
-
-      <!-- EMAIL -->
-      <div class="mt-6">
-
-        <label class="text-sm font-semibold">
-          Email
-        </label>
-
-        <input
-          id="email"
-          type="email"
-          placeholder="you@email.com"
-          class="w-full border rounded-xl px-4 py-3 mt-1"
-        >
-
-      </div>
+    </section>
 
 
-      <!-- PASSWORD -->
-      <div class="mt-4">
 
-        <label class="text-sm font-semibold">
-          Password
-        </label>
+    <!-- =======================================================
+         RIGHT / LOGIN SIDE
+    ======================================================== -->
 
-        <input
-          id="password"
-          type="password"
-          placeholder="••••••••"
-          class="w-full border rounded-xl px-4 py-3 mt-1"
-        >
+    <section
+      class="
+        w-full
+        lg:w-[48%]
+        min-h-screen
+        bg-[#f4f7ff]
+        flex
+        items-center
+        justify-center
+        px-5
+        py-10
+        sm:px-8
+        lg:px-12
+      "
+    >
 
-      </div>
-
-
-      <!-- LOGIN BUTTON -->
-      <button
-        onclick="handleLogin()"
-        id="loginBtn"
-        class="w-full bg-[#2563EB] text-white font-bold rounded-xl py-4 mt-6"
+      <div
+        class="
+          w-full
+          max-w-[500px]
+          bg-white
+          rounded-[28px]
+          p-6
+          sm:p-9
+          xl:p-10
+          login-shadow
+          border
+          border-blue-50
+        "
       >
-        Login
-      </button>
 
 
-      <!-- FORGOT PASSWORD -->
-      <p class="text-center mt-3">
+        <!-- Small mobile brand -->
+
+        <div class="lg:hidden flex justify-center mb-7">
+
+          <div class="flex items-center gap-3">
+
+            <div
+              class="
+                w-12
+                h-12
+                rounded-xl
+                bg-[#0A2A7A]
+                flex
+                items-center
+                justify-center
+                text-xl
+              "
+            >
+              🎓
+            </div>
+
+            <div>
+
+              <div class="font-black text-[#0A2A7A] text-xl leading-none">
+                FUNDA ONLINE
+              </div>
+
+              <div
+                class="
+                  text-[10px]
+                  font-black
+                  tracking-[0.25em]
+                  text-[#e5a928]
+                  mt-1
+                "
+              >
+                ACADEMY
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ===================================================
+             LOGIN HEADER
+        ==================================================== -->
+
+        <div class="text-center">
+
+          <div
+            class="
+              inline-flex
+              items-center
+              justify-center
+              w-14
+              h-14
+              rounded-2xl
+              bg-blue-50
+              text-2xl
+              mb-4
+            "
+          >
+            👋
+          </div>
+
+          <h2
+            class="
+              text-3xl
+              sm:text-4xl
+              font-black
+              text-[#0A1E4A]
+            "
+          >
+            Welcome Back
+          </h2>
+
+          <p class="text-gray-500 mt-2">
+            Sign in to continue your learning journey.
+          </p>
+
+        </div>
+
+
+        <!-- ===================================================
+             LOGIN TYPE
+        ==================================================== -->
+
+        <div class="grid grid-cols-2 gap-3 mt-8">
+
+          <button
+            id="btn-student"
+            type="button"
+            onclick="setRole('student')"
+            class="
+              border-2
+              border-[#2563EB]
+              bg-[#2563EB]
+              text-white
+              rounded-xl
+              py-3.5
+              font-extrabold
+              text-sm
+              transition
+              hover:bg-[#1d4ed8]
+            "
+          >
+            🎓 Student Login
+          </button>
+
+
+          <button
+            id="btn-admin"
+            type="button"
+            onclick="setRole('admin')"
+            class="
+              border-2
+              border-gray-200
+              bg-white
+              text-gray-600
+              rounded-xl
+              py-3.5
+              font-bold
+              text-sm
+              transition
+              hover:border-blue-300
+              hover:text-blue-600
+            "
+          >
+            💼 Staff / Admin
+          </button>
+
+        </div>
+
+
+        <!-- ===================================================
+             ADMIN ACCESS CODE
+        ==================================================== -->
+
+        <div id="admin-extra" class="hidden mt-5">
+
+          <label
+            for="staff_code"
+            class="block text-sm font-bold text-[#0A1E4A]"
+          >
+            Staff Access Code
+          </label>
+
+          <input
+            id="staff_code"
+            type="text"
+            placeholder="Enter staff access code"
+            class="
+              input-focus
+              w-full
+              mt-2
+              border
+              border-gray-200
+              rounded-xl
+              px-4
+              py-3.5
+              transition
+            "
+          >
+
+        </div>
+
+
+        <!-- ===================================================
+             EMAIL
+        ==================================================== -->
+
+        <div class="mt-6">
+
+          <label
+            for="email"
+            class="block text-sm font-bold text-[#0A1E4A]"
+          >
+            Email Address
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            autocomplete="email"
+            placeholder="you@email.com"
+            class="
+              input-focus
+              w-full
+              border
+              border-gray-200
+              rounded-xl
+              px-4
+              py-3.5
+              mt-2
+              transition
+            "
+          >
+
+        </div>
+
+
+        <!-- ===================================================
+             PASSWORD
+        ==================================================== -->
+
+        <div class="mt-5">
+
+          <div class="flex items-center justify-between">
+
+            <label
+              for="password"
+              class="text-sm font-bold text-[#0A1E4A]"
+            >
+              Password
+            </label>
+
+            <button
+              type="button"
+              onclick="resetPassword()"
+              class="
+                text-sm
+                font-bold
+                text-[#2563EB]
+                hover:underline
+              "
+            >
+              Forgot password?
+            </button>
+
+          </div>
+
+
+          <input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Enter your password"
+            class="
+              input-focus
+              w-full
+              border
+              border-gray-200
+              rounded-xl
+              px-4
+              py-3.5
+              mt-2
+              transition
+            "
+          >
+
+        </div>
+
+
+        <!-- ===================================================
+             LOGIN BUTTON
+        ==================================================== -->
+
+        <button
+          onclick="handleLogin()"
+          id="loginBtn"
+          type="button"
+          class="
+            w-full
+            bg-[#2563EB]
+            hover:bg-[#1d4ed8]
+            active:scale-[.99]
+            text-white
+            font-extrabold
+            rounded-xl
+            py-4
+            mt-7
+            transition
+            shadow-lg
+            shadow-blue-200
+          "
+        >
+          Login
+        </button>
+
+
+        <!-- ===================================================
+             DIVIDER
+        ==================================================== -->
+
+        <div class="flex items-center gap-3 my-7">
+
+          <div class="h-px bg-gray-200 flex-1"></div>
+
+          <span
+            class="
+              text-xs
+              text-gray-400
+              font-bold
+              tracking-widest
+            "
+          >
+            OR
+          </span>
+
+          <div class="h-px bg-gray-200 flex-1"></div>
+
+        </div>
+
+
+        <!-- ===================================================
+             REGISTER
+        ==================================================== -->
 
         <a
-          href="#"
-          onclick="resetPassword(); return false;"
-          class="text-[#2563EB] underline text-sm"
+          href="register.html"
+          class="
+            w-full
+            border-2
+            border-[#2563EB]
+            text-[#2563EB]
+            hover:bg-blue-50
+            font-extrabold
+            rounded-xl
+            py-3.5
+            block
+            text-center
+            transition
+          "
         >
-          Forgot password?
+          👤 New to Funda? Create Student Account
         </a>
 
-      </p>
+
+        <!-- ===================================================
+             BROWSE COURSES
+        ==================================================== -->
+
+        <a
+          href="courses-public.html"
+          class="
+            w-full
+            mt-3
+            bg-[#f1f5f9]
+            hover:bg-blue-50
+            text-[#334155]
+            hover:text-[#2563EB]
+            font-bold
+            rounded-xl
+            py-3.5
+            block
+            text-center
+            transition
+          "
+        >
+          📚 Browse Courses — No Login Needed
+        </a>
 
 
-      <!-- DIVIDER -->
-      <div class="flex items-center gap-3 my-6">
+        <!-- ===================================================
+             SECURITY
+        ==================================================== -->
 
-        <div class="h-px bg-gray-200 flex-1"></div>
+        <div class="flex items-center justify-center gap-2 mt-6">
 
-        <span class="text-sm text-gray-500">
-          OR
-        </span>
+          <span class="text-green-600">🔒</span>
 
-        <div class="h-px bg-gray-200 flex-1"></div>
+          <p class="text-xs text-gray-400">
+            Secure Login · Your information is protected
+          </p>
+
+        </div>
+
+
+        <!-- ===================================================
+             MOBILE FOOTER
+        ==================================================== -->
+
+        <p class="lg:hidden text-center text-[11px] text-gray-400 mt-6">
+          © 2026 Funda Online Academy
+        </p>
 
       </div>
 
+    </section>
 
-      <!-- REGISTER -->
-      <a
-        href="register.html"
-        class="w-full border-2 border-[#2563EB] text-[#2563EB] font-bold rounded-xl py-3 block text-center"
-      >
-        👤 New to Funda? Register as Student
-      </a>
+  </main>
 
 
-      <!-- BROWSE COURSES -->
-      <a
-        href="courses-public.html"
-        class="w-full mt-3 bg-gray-100 text-gray-700 font-semibold rounded-xl py-3 block text-center"
-      >
-        📖 Browse Courses · No Login Needed
-      </a>
 
+  <!-- =========================================================
+       SUPABASE + LOGIN LOGIC
+  ========================================================== -->
 
-      <!-- SECURITY -->
-      <p class="text-center text-xs text-gray-400 mt-5">
-        🔒 Secure Login · Your information is protected
-      </p>
-
-    </div>
-
-  </div>
-
-
-  <!-- SUPABASE + LOGIN LOGIC -->
   <script>
 
     const supabaseClient = supabase.createClient(
       "https://nzwfowwoazmpnwfrednh.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU"
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwiaWF0IjoxNzg2NTc3MDMyLCJleHAiOjIxMDIxNTMwMzJ9.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU"
     );
 
-    let currentRole = 'student';
+
+    let currentRole = "student";
 
 
-    /* ============================
+    /* =========================================================
        SELECT LOGIN TYPE
-    ============================ */
+    ========================================================== */
 
     function setRole(role) {
 
       currentRole = role;
 
-      const adminExtra = document.getElementById('admin-extra');
-      const studentButton = document.getElementById('btn-student');
-      const adminButton = document.getElementById('btn-admin');
+      const adminExtra =
+        document.getElementById("admin-extra");
 
-      if (role === 'admin') {
+      const studentButton =
+        document.getElementById("btn-student");
 
-        adminExtra.classList.remove('hidden');
+      const adminButton =
+        document.getElementById("btn-admin");
+
+
+      if (role === "admin") {
+
+        adminExtra.classList.remove("hidden");
+
 
         adminButton.classList.remove(
-          'border-gray-200',
-          'text-gray-600'
+          "border-gray-200",
+          "bg-white",
+          "text-gray-600"
         );
 
         adminButton.classList.add(
-          'border-[#2563EB]',
-          'bg-[#2563EB]',
-          'text-white'
+          "border-[#2563EB]",
+          "bg-[#2563EB]",
+          "text-white"
         );
 
+
         studentButton.classList.remove(
-          'border-[#2563EB]',
-          'bg-[#2563EB]',
-          'text-white'
+          "border-[#2563EB]",
+          "bg-[#2563EB]",
+          "text-white"
         );
 
         studentButton.classList.add(
-          'border-gray-200',
-          'text-gray-600'
+          "border-gray-200",
+          "bg-white",
+          "text-gray-600"
         );
+
 
       } else {
 
-        adminExtra.classList.add('hidden');
+        adminExtra.classList.add("hidden");
+
 
         studentButton.classList.remove(
-          'border-gray-200',
-          'text-gray-600'
+          "border-gray-200",
+          "bg-white",
+          "text-gray-600"
         );
 
         studentButton.classList.add(
-          'border-[#2563EB]',
-          'bg-[#2563EB]',
-          'text-white'
+          "border-[#2563EB]",
+          "bg-[#2563EB]",
+          "text-white"
         );
 
+
         adminButton.classList.remove(
-          'border-[#2563EB]',
-          'bg-[#2563EB]',
-          'text-white'
+          "border-[#2563EB]",
+          "bg-[#2563EB]",
+          "text-white"
         );
 
         adminButton.classList.add(
-          'border-gray-200',
-          'text-gray-600'
+          "border-gray-200",
+          "bg-white",
+          "text-gray-600"
         );
 
       }
@@ -292,42 +1025,46 @@
     }
 
 
-    /* ============================
+
+    /* =========================================================
        LOGIN
-    ============================ */
+    ========================================================== */
 
     async function handleLogin() {
 
       const email =
-        document.getElementById('email').value.trim();
+        document.getElementById("email").value.trim();
 
       const password =
-        document.getElementById('password').value;
+        document.getElementById("password").value;
 
       const staffCode =
-        document.getElementById('staff_code').value.trim();
+        document.getElementById("staff_code").value.trim();
 
       const loginButton =
-        document.getElementById('loginBtn');
+        document.getElementById("loginBtn");
 
 
       if (!email || !password) {
 
-        alert('Please enter your email and password.');
+        alert(
+          "Please enter your email and password."
+        );
 
         return;
+
       }
 
 
       loginButton.disabled = true;
-      loginButton.textContent = 'Logging in...';
+      loginButton.textContent = "Logging in...";
 
 
       try {
 
-        /* ============================
+        /* =====================================================
            SUPABASE AUTHENTICATION
-        ============================ */
+        ====================================================== */
 
         const {
           data,
@@ -343,68 +1080,74 @@
           alert(error.message);
 
           return;
+
         }
 
 
         if (!data || !data.user) {
 
-          alert('Login was unsuccessful. Please try again.');
+          alert(
+            "Login was unsuccessful. Please try again."
+          );
 
           return;
+
         }
 
 
-        /* ============================
+        /* =====================================================
            GET USER PROFILE
-        ============================ */
+        ====================================================== */
 
         const {
           data: profile,
           error: profileError
         } = await supabaseClient
-          .from('profiles')
-          .select('role, staff_code')
-          .eq('id', data.user.id)
+          .from("profiles")
+          .select("role, staff_code")
+          .eq("id", data.user.id)
           .single();
 
 
         if (profileError || !profile) {
 
           console.error(
-            'Profile lookup error:',
+            "Profile lookup error:",
             profileError
           );
 
           alert(
-            'Your profile could not be found. Please contact Funda Online Academy support.'
+            "Your profile could not be found. Please contact Funda Online Academy support."
           );
 
           return;
+
         }
 
 
-        /* ============================
+        /* =====================================================
            ADMIN / STAFF LOGIN
-        ============================ */
+        ====================================================== */
 
-        if (currentRole === 'admin') {
+        if (currentRole === "admin") {
 
           const allowedRoles = [
-            'admin',
-            'manager',
-            'staff',
-            'finance',
-            'support'
+            "admin",
+            "manager",
+            "staff",
+            "finance",
+            "support"
           ];
 
 
           if (!allowedRoles.includes(profile.role)) {
 
             alert(
-              'This account does not have staff or admin access.'
+              "This account does not have staff or admin access."
             );
 
             return;
+
           }
 
 
@@ -414,82 +1157,67 @@
           ) {
 
             alert(
-              'Invalid Staff Access Code.'
+              "Invalid Staff Access Code."
             );
 
             return;
+
           }
 
 
-          window.location.href = 'admin-v2.html';
+          window.location.href =
+            "admin-v2.html";
 
           return;
+
         }
 
 
-        /* ============================
-           STUDENT LOGIN
-        ============================
-
-        IMPORTANT:
-        The Supabase enrollments table
-        uses student_id.
-
-        We therefore check:
-
-        enrollments.student_id
-        =
-        authenticated user's ID
-
-        and accept either:
-
-        status = approved
-
-        OR
-
-        enrollment_status = approved
-        */
+        /* =====================================================
+           STUDENT ENROLLMENT CHECK
+        ====================================================== */
 
         const {
           data: enrollments,
           error: enrollmentError
         } = await supabaseClient
-          .from('enrollments')
+          .from("enrollments")
           .select(
-            'id, status, enrollment_status'
+            "id, status, enrollment_status"
           )
           .eq(
-            'student_id',
+            "student_id",
             data.user.id
           )
           .or(
-            'status.eq.approved,enrollment_status.eq.approved'
+            "status.eq.approved,enrollment_status.eq.approved"
           )
           .limit(1);
 
 
-        /* ============================
+        /* =====================================================
            ENROLLMENT ERROR
-        ============================ */
+        ====================================================== */
 
         if (enrollmentError) {
 
           console.error(
-            'Enrollment verification error:',
+            "Enrollment verification error:",
             enrollmentError
           );
 
           alert(
-            'We could not verify your enrollment. Please try again.'
+            "We could not verify your enrollment. Please try again."
           );
 
           return;
+
         }
 
 
-        /* ============================
+        /* =====================================================
            APPROVED STUDENT
-        ============================ */
+        ====================================================== */
 
         if (
           enrollments &&
@@ -497,61 +1225,66 @@
         ) {
 
           window.location.href =
-            'dashboard.html';
+            "dashboard.html";
 
           return;
+
         }
 
 
-        /* ============================
+        /* =====================================================
            NO APPROVED ENROLLMENT
-        ============================ */
+        ====================================================== */
 
         window.location.href =
-          'onboarding.html';
+          "onboarding.html";
 
       }
+
 
       catch (error) {
 
         console.error(
-          'Unexpected login error:',
+          "Unexpected login error:",
           error
         );
 
         alert(
-          'Something went wrong while logging in. Please try again.'
+          "Something went wrong while logging in. Please try again."
         );
 
       }
 
+
       finally {
 
         loginButton.disabled = false;
-        loginButton.textContent = 'Login';
+        loginButton.textContent = "Login";
 
       }
 
     }
 
 
-    /* ============================
+
+    /* =========================================================
        PASSWORD RESET
-    ============================ */
+    ========================================================== */
 
     async function resetPassword() {
 
       const email =
-        document.getElementById('email').value.trim();
+        document.getElementById("email").value.trim();
 
 
       if (!email) {
 
         alert(
-          'Please enter your email address first.'
+          "Please enter your email address first."
         );
 
         return;
+
       }
 
 
@@ -567,16 +1300,34 @@
         alert(error.message);
 
         return;
+
       }
 
 
       alert(
-        'Password reset instructions have been sent to your email.'
+        "Password reset instructions have been sent to your email."
       );
 
     }
 
+
+    /* =========================================================
+       ENTER KEY LOGIN
+    ========================================================== */
+
+    document
+      .getElementById("password")
+      .addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+
+          handleLogin();
+
+        }
+
+      });
+
   </script>
 
 </body>
-</html>
+              </html>
