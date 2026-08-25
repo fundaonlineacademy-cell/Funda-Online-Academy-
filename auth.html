@@ -7,20 +7,36 @@
   <title>Create Student Account | Funda Online Academy</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
+
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-  <!-- Uses the existing working Supabase configuration -->
-  <script src="supabase-config.js"></script>
+  <!--
+    IMPORTANT:
+    Load the shared configuration with a version number.
+    This helps prevent GitHub Pages from serving the old
+    cached configuration.
+  -->
+  <script src="supabase-config.js?v=20260825"></script>
 
   <style>
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
       background: #06152f;
     }
 
@@ -29,21 +45,24 @@
       background: #f8fafc;
       border: 1px solid #cbd5e1;
       border-radius: 12px;
-      padding: 13px 15px;
+      padding: 14px 15px;
       color: #0f172a;
+      font-size: 16px;
       transition: .2s ease;
     }
 
     .input-field:focus {
       outline: none;
-      background: #fff;
+      background: #ffffff;
       border-color: #2563eb;
-      box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+      box-shadow:
+        0 0 0 4px rgba(37, 99, 235, .12);
     }
 
     .input-field.error {
       border-color: #dc2626;
-      box-shadow: 0 0 0 4px rgba(220,38,38,.08);
+      box-shadow:
+        0 0 0 4px rgba(220, 38, 38, .08);
     }
 
     .brand {
@@ -61,7 +80,7 @@
     }
 
     .terms {
-      max-height: 240px;
+      max-height: 250px;
       overflow-y: auto;
       background: #f8fafc;
       border: 1px solid #cbd5e1;
@@ -79,7 +98,26 @@
     }
 
     .card-shadow {
-      box-shadow: 0 25px 80px rgba(0,0,0,.38);
+      box-shadow:
+        0 25px 80px rgba(0, 0, 0, .38);
+    }
+
+    .spinner {
+      width: 19px;
+      height: 19px;
+      border: 3px solid rgba(255,255,255,.35);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </head>
@@ -131,6 +169,7 @@
           src="logo.png"
           alt="Funda Online Academy"
           class="w-16 h-16 object-contain"
+          onerror="this.style.display='none'"
         >
 
         <div>
@@ -167,7 +206,14 @@
 
       <div class="mt-12 lg:mt-20 max-w-xl">
 
-        <p class="gold font-black text-sm tracking-widest">
+        <p
+          class="
+            gold
+            font-black
+            text-sm
+            tracking-widest
+          "
+        >
           START YOUR JOURNEY
         </p>
 
@@ -195,8 +241,9 @@
             sm:text-lg
           "
         >
-          Join Funda Online Academy and take the first step
-          toward gaining practical, career-focused skills.
+          Join Funda Online Academy and take the first
+          step toward gaining practical, career-focused
+          skills.
         </p>
 
       </div>
@@ -206,7 +253,14 @@
 
     <div class="mt-10">
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div
+        class="
+          grid
+          grid-cols-1
+          sm:grid-cols-3
+          gap-3
+        "
+      >
 
         <div
           class="
@@ -217,26 +271,15 @@
             p-4
           "
         >
-          <div class="text-2xl">🎓</div>
+          <div class="text-2xl">
+            🎓
+          </div>
+
           <p class="font-bold text-sm mt-2">
             Learn Online
           </p>
         </div>
 
-        <div
-          class="
-            rounded-2xl
-            bg-white/[0.06]
-            border
-            border-white/10
-            p-4
-          "
-        >
-          <div class="text-2xl">📚</div>
-          <p class="font-bold text-sm mt-2">
-            Practical Courses
-          </p>
-        </div>
 
         <div
           class="
@@ -247,7 +290,29 @@
             p-4
           "
         >
-          <div class="text-2xl">🚀</div>
+          <div class="text-2xl">
+            📚
+          </div>
+
+          <p class="font-bold text-sm mt-2">
+            Practical Courses
+          </p>
+        </div>
+
+
+        <div
+          class="
+            rounded-2xl
+            bg-white/[0.06]
+            border
+            border-white/10
+            p-4
+          "
+        >
+          <div class="text-2xl">
+            🚀
+          </div>
+
           <p class="font-bold text-sm mt-2">
             Build Your Future
           </p>
@@ -255,7 +320,15 @@
 
       </div>
 
-      <p class="text-xs text-blue-200 mt-6 pb-2">
+
+      <p
+        class="
+          text-xs
+          text-blue-200
+          mt-6
+          pb-2
+        "
+      >
         © 2026 Funda Online Academy
       </p>
 
@@ -324,6 +397,7 @@
           👤
         </div>
 
+
         <h2
           class="
             mt-4
@@ -336,8 +410,15 @@
           Create Student Account
         </h2>
 
-        <p class="mt-2 text-gray-500">
-          Complete your details to create your student profile.
+
+        <p
+          class="
+            mt-2
+            text-gray-500
+          "
+        >
+          Complete your details to create your
+          student profile.
         </p>
 
       </div>
@@ -347,7 +428,29 @@
 
       <div
         id="message"
-        class="hidden mt-6 rounded-xl p-4 text-sm font-semibold"
+        class="
+          hidden
+          mt-6
+          rounded-xl
+          p-4
+          text-sm
+          font-semibold
+        "
+      ></div>
+
+
+      <!-- CONNECTION STATUS -->
+
+      <div
+        id="connectionStatus"
+        class="
+          hidden
+          mt-4
+          rounded-xl
+          p-3
+          text-xs
+          font-semibold
+        "
       ></div>
 
 
@@ -361,16 +464,29 @@
 
         <!-- NAME / SURNAME -->
 
-        <div class="grid sm:grid-cols-2 gap-5">
+        <div
+          class="
+            grid
+            sm:grid-cols-2
+            gap-5
+          "
+        >
 
           <div>
 
             <label
               for="first_name"
-              class="block text-sm font-bold text-[#03133d]"
+              class="
+                block
+                text-sm
+                font-bold
+                text-[#03133d]
+              "
             >
-              Name <span class="text-red-500">*</span>
+              Name
+              <span class="text-red-500">*</span>
             </label>
+
 
             <input
               id="first_name"
@@ -389,10 +505,17 @@
 
             <label
               for="surname"
-              class="block text-sm font-bold text-[#03133d]"
+              class="
+                block
+                text-sm
+                font-bold
+                text-[#03133d]
+              "
             >
-              Surname <span class="text-red-500">*</span>
+              Surname
+              <span class="text-red-500">*</span>
             </label>
+
 
             <input
               id="surname"
@@ -415,10 +538,17 @@
 
           <label
             for="gender"
-            class="block text-sm font-bold text-[#03133d]"
+            class="
+              block
+              text-sm
+              font-bold
+              text-[#03133d]
+            "
           >
-            Gender <span class="text-red-500">*</span>
+            Gender
+            <span class="text-red-500">*</span>
           </label>
+
 
           <select
             id="gender"
@@ -454,11 +584,17 @@
 
           <label
             for="phone"
-            class="block text-sm font-bold text-[#03133d]"
+            class="
+              block
+              text-sm
+              font-bold
+              text-[#03133d]
+            "
           >
             Phone / WhatsApp Number
             <span class="text-red-500">*</span>
           </label>
+
 
           <input
             id="phone"
@@ -479,11 +615,17 @@
 
           <label
             for="email"
-            class="block text-sm font-bold text-[#03133d]"
+            class="
+              block
+              text-sm
+              font-bold
+              text-[#03133d]
+            "
           >
             Email Address
             <span class="text-red-500">*</span>
           </label>
+
 
           <input
             id="email"
@@ -495,8 +637,16 @@
             required
           >
 
-          <p class="text-xs text-gray-500 mt-1">
-            Example: yourname@gmail.com
+
+          <p
+            class="
+              text-xs
+              text-gray-500
+              mt-1
+            "
+          >
+            Example:
+            yourname@gmail.com
           </p>
 
         </div>
@@ -508,11 +658,17 @@
 
           <label
             for="confirm_email"
-            class="block text-sm font-bold text-[#03133d]"
+            class="
+              block
+              text-sm
+              font-bold
+              text-[#03133d]
+            "
           >
             Confirm Email Address
             <span class="text-red-500">*</span>
           </label>
+
 
           <input
             id="confirm_email"
@@ -524,9 +680,15 @@
             required
           >
 
+
           <p
             id="emailError"
-            class="hidden text-xs text-red-600 mt-1"
+            class="
+              hidden
+              text-xs
+              text-red-600
+              mt-1
+            "
           >
             The email addresses do not match.
           </p>
@@ -540,10 +702,17 @@
 
           <label
             for="password"
-            class="block text-sm font-bold text-[#03133d]"
+            class="
+              block
+              text-sm
+              font-bold
+              text-[#03133d]
+            "
           >
-            Password <span class="text-red-500">*</span>
+            Password
+            <span class="text-red-500">*</span>
           </label>
+
 
           <input
             id="password"
@@ -555,7 +724,14 @@
             required
           >
 
-          <p class="text-xs text-gray-500 mt-1">
+
+          <p
+            class="
+              text-xs
+              text-gray-500
+              mt-1
+            "
+          >
             Minimum 6 characters.
           </p>
 
@@ -568,11 +744,17 @@
 
           <label
             for="confirm_password"
-            class="block text-sm font-bold text-[#03133d]"
+            class="
+              block
+              text-sm
+              font-bold
+              text-[#03133d]
+            "
           >
             Confirm Password
             <span class="text-red-500">*</span>
           </label>
+
 
           <input
             id="confirm_password"
@@ -584,9 +766,15 @@
             required
           >
 
+
           <p
             id="passwordError"
-            class="hidden text-xs text-red-600 mt-1"
+            class="
+              hidden
+              text-xs
+              text-red-600
+              mt-1
+            "
           >
             The passwords do not match.
           </p>
@@ -595,7 +783,7 @@
 
 
         <!-- =================================================
-             TERMS
+             TERMS & CONDITIONS
         ================================================== -->
 
         <div class="mt-7">
@@ -623,41 +811,95 @@
               Funda Online Academy Student Terms
             </h4>
 
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              By creating a student account with Funda Online
-              Academy, you confirm that the information you provide
-              is accurate and belongs to you.
+
+            <p
+              class="
+                text-sm
+                text-gray-600
+                leading-6
+                mt-3
+              "
+            >
+              By creating a student account with
+              Funda Online Academy, you confirm that
+              the information you provide is accurate
+              and belongs to you.
             </p>
 
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              Your student account is personal to you. You are
-              responsible for keeping your login details secure and
-              must not share your password with another person.
+
+            <p
+              class="
+                text-sm
+                text-gray-600
+                leading-6
+                mt-3
+              "
+            >
+              Your student account is personal to you.
+              You are responsible for keeping your login
+              details secure and must not share your
+              password with another person.
             </p>
 
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              Course enrolment may require approval before you receive
-              access to course materials, assessments or other student
+
+            <p
+              class="
+                text-sm
+                text-gray-600
+                leading-6
+                mt-3
+              "
+            >
+              Course enrolment may require approval
+              before you receive access to course
+              materials, assessments or other student
               services.
             </p>
 
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              Funda Online Academy may use the information supplied
-              during registration for account administration,
-              communication, enrolment processing and delivery of
+
+            <p
+              class="
+                text-sm
+                text-gray-600
+                leading-6
+                mt-3
+              "
+            >
+              Funda Online Academy may use the
+              information supplied during registration
+              for account administration, communication,
+              enrolment processing and delivery of
               educational services.
             </p>
 
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              Personal information will be handled in accordance with
-              applicable South African privacy and data protection
-              requirements, including POPIA where applicable.
+
+            <p
+              class="
+                text-sm
+                text-gray-600
+                leading-6
+                mt-3
+              "
+            >
+              Personal information will be handled in
+              accordance with applicable South African
+              privacy and data protection requirements,
+              including POPIA where applicable.
             </p>
 
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              By registering, you confirm that you have read and
-              understood these terms and agree to comply with the
-              Academy's student requirements.
+
+            <p
+              class="
+                text-sm
+                text-gray-600
+                leading-6
+                mt-3
+              "
+            >
+              By registering, you confirm that you have
+              read and understood these terms and agree
+              to comply with the Academy's student
+              requirements.
             </p>
 
           </div>
@@ -676,13 +918,30 @@
             <input
               id="terms"
               type="checkbox"
-              class="mt-1 w-5 h-5 accent-blue-600 shrink-0"
+              class="
+                mt-1
+                w-5
+                h-5
+                accent-blue-600
+                shrink-0
+              "
             >
 
-            <span class="text-sm leading-6 text-gray-700">
-              I have read and understood the Terms & Conditions
-              and privacy notice, and I agree to them.
-              <span class="text-red-500">*</span>
+
+            <span
+              class="
+                text-sm
+                leading-6
+                text-gray-700
+              "
+            >
+              I have read and understood the Terms &
+              Conditions and privacy notice, and I
+              agree to them.
+
+              <span class="text-red-500">
+                *
+              </span>
             </span>
 
           </label>
@@ -714,17 +973,26 @@
         </button>
 
 
-        <p class="text-center text-sm text-gray-500 mt-6">
-
+        <p
+          class="
+            text-center
+            text-sm
+            text-gray-500
+            mt-6
+          "
+        >
           Already have an account?
 
           <a
             href="login.html"
-            class="font-black text-[#2563eb] hover:underline"
+            class="
+              font-black
+              text-[#2563eb]
+              hover:underline
+            "
           >
             Login here
           </a>
-
         </p>
 
 
@@ -742,7 +1010,12 @@
             🔒
           </span>
 
-          <span class="text-xs text-gray-400">
+          <span
+            class="
+              text-xs
+              text-gray-400
+            "
+          >
             Secure registration
           </span>
 
@@ -764,40 +1037,24 @@
    * FUNDA ONLINE ACADEMY
    * STUDENT REGISTRATION
    *
-   * IMPORTANT:
-   * The Supabase credentials are NOT hard-coded here.
-   * They come from supabase-config.js.
+   * The API key is NEVER written in this HTML file.
+   * It is loaded from:
+   *
+   * supabase-config.js
+   *
    * ==========================================================
    */
 
 
-  // Make sure the shared configuration exists.
-
-  if (
-    !window.SUPABASE_URL ||
-    !window.SUPABASE_ANON_KEY
-  ) {
-
-    console.error(
-      "Supabase configuration was not loaded."
+  const message =
+    document.getElementById(
+      "message"
     );
 
-    alert(
-      "Unable to load the Academy connection settings. Please refresh the page."
+  const connectionStatus =
+    document.getElementById(
+      "connectionStatus"
     );
-
-  }
-
-
-  // Create Supabase client using the EXISTING
-  // configuration from supabase-config.js.
-
-  const supabaseClient =
-    supabase.createClient(
-      window.SUPABASE_URL,
-      window.SUPABASE_ANON_KEY
-    );
-
 
   const form =
     document.getElementById(
@@ -809,22 +1066,26 @@
       "registerButton"
     );
 
-  const message =
-    document.getElementById(
-      "message"
-    );
 
+  /*
+   * ==========================================================
+   * MESSAGE HELPER
+   * ==========================================================
+   */
 
   function showMessage(
     text,
     success = false
   ) {
 
-    message.textContent = text;
+    message.textContent =
+      text;
 
     message.className =
       success
+
         ? "mt-6 rounded-xl p-4 text-sm font-semibold bg-green-100 text-green-800"
+
         : "mt-6 rounded-xl p-4 text-sm font-semibold bg-red-100 text-red-800";
 
     message.classList.remove(
@@ -839,6 +1100,130 @@
   }
 
 
+  /*
+   * ==========================================================
+   * CONNECTION STATUS
+   * ==========================================================
+   */
+
+  function showConnectionError(
+    text
+  ) {
+
+    connectionStatus.textContent =
+      text;
+
+    connectionStatus.className =
+      "mt-4 rounded-xl p-3 text-xs font-semibold bg-red-100 text-red-800";
+
+    connectionStatus.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  /*
+   * ==========================================================
+   * CHECK SUPABASE CONFIGURATION
+   * ==========================================================
+   */
+
+  if (
+    typeof window.SUPABASE_URL !==
+    "string" ||
+
+    !window.SUPABASE_URL ||
+
+    typeof window.SUPABASE_ANON_KEY !==
+    "string" ||
+
+    !window.SUPABASE_ANON_KEY ||
+
+    window.SUPABASE_ANON_KEY.includes(
+      "YOUR_"
+    ) ||
+
+    window.SUPABASE_ANON_KEY.includes(
+      "PASTE_"
+    )
+  ) {
+
+    console.error(
+      "Funda Online Academy: Supabase configuration is missing or still contains a placeholder."
+    );
+
+    showConnectionError(
+      "The Academy connection settings could not be loaded. Please refresh the page."
+    );
+
+  }
+
+
+  /*
+   * ==========================================================
+   * CREATE SUPABASE CLIENT
+   * ==========================================================
+   */
+
+  let supabaseClient = null;
+
+
+  try {
+
+    if (
+      typeof supabase ===
+      "undefined"
+    ) {
+
+      throw new Error(
+        "Supabase JavaScript library did not load."
+      );
+
+    }
+
+
+    if (
+      !window.SUPABASE_URL ||
+      !window.SUPABASE_ANON_KEY
+    ) {
+
+      throw new Error(
+        "Supabase configuration is missing."
+      );
+
+    }
+
+
+    supabaseClient =
+      supabase.createClient(
+        window.SUPABASE_URL,
+        window.SUPABASE_ANON_KEY
+      );
+
+
+  }
+
+  catch (error) {
+
+    console.error(
+      "Supabase initialization failed:",
+      error
+    );
+
+    showConnectionError(
+      "Unable to connect to the Academy database. Please refresh the page."
+    );
+
+  }
+
+
+  /*
+   * ==========================================================
+   * VALIDATE EMAIL
+   * ==========================================================
+   */
+
   function validEmail(
     email
   ) {
@@ -849,17 +1234,31 @@
   }
 
 
+  /*
+   * ==========================================================
+   * VALIDATE PHONE
+   * ==========================================================
+   */
+
   function validPhone(
     phone
   ) {
 
-    return phone.replace(
-      /\D/g,
-      ""
-    ).length >= 9;
+    return phone
+      .replace(
+        /\D/g,
+        ""
+      )
+      .length >= 9;
 
   }
 
+
+  /*
+   * ==========================================================
+   * REGISTRATION
+   * ==========================================================
+   */
 
   form.addEventListener(
     "submit",
@@ -867,65 +1266,113 @@
 
       event.preventDefault();
 
+
       message.classList.add(
         "hidden"
       );
 
 
+      /*
+       * Make absolutely sure the client exists.
+       */
+
+      if (
+        !supabaseClient
+      ) {
+
+        showMessage(
+          "The Academy database connection is not available. Please refresh the page and try again."
+        );
+
+        return;
+
+      }
+
+
       const firstName =
         document
-          .getElementById("first_name")
+          .getElementById(
+            "first_name"
+          )
           .value
           .trim();
+
 
       const surname =
         document
-          .getElementById("surname")
+          .getElementById(
+            "surname"
+          )
           .value
           .trim();
+
 
       const gender =
         document
-          .getElementById("gender")
+          .getElementById(
+            "gender"
+          )
           .value;
+
 
       const phone =
         document
-          .getElementById("phone")
+          .getElementById(
+            "phone"
+          )
           .value
           .trim();
 
+
       const email =
         document
-          .getElementById("email")
+          .getElementById(
+            "email"
+          )
           .value
           .trim()
           .toLowerCase();
+
 
       const confirmEmail =
         document
-          .getElementById("confirm_email")
+          .getElementById(
+            "confirm_email"
+          )
           .value
           .trim()
           .toLowerCase();
 
+
       const password =
         document
-          .getElementById("password")
+          .getElementById(
+            "password"
+          )
           .value;
+
 
       const confirmPassword =
         document
-          .getElementById("confirm_password")
+          .getElementById(
+            "confirm_password"
+          )
           .value;
+
 
       const terms =
         document
-          .getElementById("terms")
+          .getElementById(
+            "terms"
+          )
           .checked;
 
 
-      /* VALIDATION */
+      /*
+       * ======================================================
+       * VALIDATION
+       * ======================================================
+       */
 
       if (!firstName) {
 
@@ -934,6 +1381,7 @@
         );
 
         return;
+
       }
 
 
@@ -944,6 +1392,7 @@
         );
 
         return;
+
       }
 
 
@@ -954,6 +1403,7 @@
         );
 
         return;
+
       }
 
 
@@ -964,6 +1414,7 @@
         );
 
         return;
+
       }
 
 
@@ -974,33 +1425,44 @@
         );
 
         return;
+
       }
 
 
-      if (email !== confirmEmail) {
+      if (
+        email !==
+        confirmEmail
+      ) {
 
         document
           .getElementById(
             "emailError"
           )
           .classList
-          .remove("hidden");
+          .remove(
+            "hidden"
+          );
 
         showMessage(
           "The email addresses do not match."
         );
 
         return;
+
       }
 
 
-      if (password.length < 6) {
+      if (
+        password.length <
+        6
+      ) {
 
         showMessage(
           "Your password must contain at least 6 characters."
         );
 
         return;
+
       }
 
 
@@ -1014,13 +1476,16 @@
             "passwordError"
           )
           .classList
-          .remove("hidden");
+          .remove(
+            "hidden"
+          );
 
         showMessage(
           "The passwords do not match."
         );
 
         return;
+
       }
 
 
@@ -1031,30 +1496,34 @@
         );
 
         return;
+
       }
 
 
-      button.disabled = true;
+      /*
+       * ======================================================
+       * START REGISTRATION
+       * ======================================================
+       */
 
-      button.textContent =
-        "Creating Account...";
+      button.disabled =
+        true;
+
+
+      button.innerHTML =
+        '<span class="spinner"></span>Creating Account...';
 
 
       try {
 
-        /*
-         * CREATE SUPABASE AUTH ACCOUNT
-         */
-
-        const {
-          data,
-          error
-        } =
+        const result =
           await supabaseClient.auth.signUp({
 
-            email: email,
+            email:
+              email,
 
-            password: password,
+            password:
+              password,
 
             options: {
 
@@ -1088,10 +1557,23 @@
           });
 
 
+        const data =
+          result.data;
+
+        const error =
+          result.error;
+
+
+        /*
+         * ====================================================
+         * SUPABASE ERROR
+         * ====================================================
+         */
+
         if (error) {
 
           console.error(
-            "Registration error:",
+            "Supabase registration error:",
             error
           );
 
@@ -1101,12 +1583,30 @@
             "Unable to create your account.";
 
 
+          const lower =
+            errorText.toLowerCase();
+
+
           if (
-            errorText
-              .toLowerCase()
-              .includes(
-                "already registered"
-              )
+            lower.includes(
+              "invalid api key"
+            )
+          ) {
+
+            showMessage(
+              "The Academy connection is still using an invalid API key. Please refresh the page and try again."
+            );
+
+          }
+
+          else if (
+            lower.includes(
+              "already registered"
+            ) ||
+
+            lower.includes(
+              "user already registered"
+            )
           ) {
 
             showMessage(
@@ -1116,20 +1616,28 @@
           }
 
           else if (
-            errorText
-              .toLowerCase()
-              .includes(
-                "invalid"
-              ) &&
-            errorText
-              .toLowerCase()
-              .includes(
-                "email"
-              )
+            lower.includes(
+              "invalid"
+            ) &&
+            lower.includes(
+              "email"
+            )
           ) {
 
             showMessage(
-              "The email address is invalid. Please check the address and try again."
+              "The email address is invalid. Please check it and try again."
+            );
+
+          }
+
+          else if (
+            lower.includes(
+              "password"
+            )
+          ) {
+
+            showMessage(
+              errorText
             );
 
           }
@@ -1142,16 +1650,16 @@
 
           }
 
+
           return;
+
         }
 
 
         /*
-         * UPDATE PROFILE
-         *
-         * The Supabase project already handles the
-         * profile structure. We update the profile
-         * if the user record is immediately available.
+         * ====================================================
+         * SUCCESS
+         * ====================================================
          */
 
         if (
@@ -1159,65 +1667,75 @@
           data.user
         ) {
 
-          const profileResult =
-            await supabaseClient
-              .from("profiles")
-              .update({
+          /*
+           * We deliberately store registration information
+           * in Supabase Auth metadata.
+           *
+           * This avoids failing registration because a
+           * profiles table has a different column structure.
+           */
 
-                full_name:
-                  firstName +
-                  " " +
-                  surname,
+          console.log(
+            "Funda Online Academy account created:",
+            data.user.id
+          );
 
-                gender:
-                  gender,
 
-                phone:
-                  phone,
-
-                email:
-                  email
-
-              })
-              .eq(
-                "id",
-                data.user.id
-              );
-
+          /*
+           * Supabase may require email confirmation.
+           */
 
           if (
-            profileResult.error
+            data.session
           ) {
 
-            console.warn(
-              "Profile update warning:",
-              profileResult.error
+            showMessage(
+              "Your student account has been created successfully. Taking you to your student area...",
+              true
+            );
+
+
+            setTimeout(
+              function() {
+
+                window.location.href =
+                  "onboarding.html";
+
+              },
+              1500
+            );
+
+          }
+
+          else {
+
+            showMessage(
+              "Your account has been created successfully. Please check your email to confirm your account, then log in.",
+              true
+            );
+
+
+            setTimeout(
+              function() {
+
+                window.location.href =
+                  "login.html";
+
+              },
+              2500
             );
 
           }
 
         }
 
+        else {
 
-        /*
-         * SUCCESS
-         */
+          showMessage(
+            "Your registration was submitted. Please check your email for confirmation."
+          );
 
-        showMessage(
-          "Your account has been created successfully. Taking you to course enrollment...",
-          true
-        );
-
-
-        setTimeout(
-          function() {
-
-            window.location.href =
-              "onboarding.html";
-
-          },
-          1500
-        );
+        }
 
 
       }
@@ -1229,7 +1747,9 @@
           error
         );
 
+
         showMessage(
+          error.message ||
           "Something went wrong while creating your account. Please try again."
         );
 
@@ -1250,7 +1770,9 @@
 
 
   /*
+   * ==========================================================
    * LIVE EMAIL MATCH
+   * ==========================================================
    */
 
   document
@@ -1263,15 +1785,19 @@
 
         const email =
           document
-            .getElementById("email")
+            .getElementById(
+              "email"
+            )
             .value
             .trim()
             .toLowerCase();
+
 
         const confirm =
           this.value
             .trim()
             .toLowerCase();
+
 
         const error =
           document
@@ -1282,20 +1808,23 @@
 
         if (
           confirm &&
-          email !== confirm
+          email !==
+          confirm
         ) {
 
-          error.classList.remove(
-            "hidden"
-          );
+          error.classList
+            .remove(
+              "hidden"
+            );
 
         }
 
         else {
 
-          error.classList.add(
-            "hidden"
-          );
+          error.classList
+            .add(
+              "hidden"
+            );
 
         }
 
@@ -1304,7 +1833,9 @@
 
 
   /*
+   * ==========================================================
    * LIVE PASSWORD MATCH
+   * ==========================================================
    */
 
   document
@@ -1322,8 +1853,10 @@
             )
             .value;
 
+
         const confirm =
           this.value;
+
 
         const error =
           document
@@ -1334,20 +1867,23 @@
 
         if (
           confirm &&
-          password !== confirm
+          password !==
+          confirm
         ) {
 
-          error.classList.remove(
-            "hidden"
-          );
+          error.classList
+            .remove(
+              "hidden"
+            );
 
         }
 
         else {
 
-          error.classList.add(
-            "hidden"
-          );
+          error.classList
+            .add(
+              "hidden"
+            );
 
         }
 
@@ -1357,4 +1893,4 @@
 </script>
 
 </body>
-  </html>
+</html>
