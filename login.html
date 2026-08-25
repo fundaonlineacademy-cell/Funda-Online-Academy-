@@ -24,37 +24,38 @@
     }
 
     .brand-gradient {
-      background: linear-gradient(
-        135deg,
-        #071b52 0%,
-        #0a2a7a 45%,
-        #1556c9 100%
-      );
-    }
-
-    .gold-gradient {
-      background: linear-gradient(
-        135deg,
-        #f6c453,
-        #e5a928
-      );
+      background:
+        linear-gradient(
+          135deg,
+          #020b24 0%,
+          #03133d 45%,
+          #061d55 100%
+        );
     }
 
     .hero-pattern {
       background-image:
-        radial-gradient(circle at 10% 20%, rgba(255,255,255,.10) 0 2px, transparent 3px),
-        radial-gradient(circle at 85% 70%, rgba(255,255,255,.08) 0 2px, transparent 3px);
+        radial-gradient(
+          circle at 10% 20%,
+          rgba(255,255,255,.035) 0 2px,
+          transparent 3px
+        ),
+        radial-gradient(
+          circle at 85% 70%,
+          rgba(255,255,255,.025) 0 2px,
+          transparent 3px
+        );
       background-size: 55px 55px, 70px 70px;
     }
 
     .soft-shadow {
       box-shadow:
-        0 20px 60px rgba(7, 27, 82, .16);
+        0 20px 60px rgba(0,0,0,.25);
     }
 
     .login-shadow {
       box-shadow:
-        0 20px 60px rgba(15, 35, 80, .12);
+        0 20px 60px rgba(15,35,80,.14);
     }
 
     .student-photo {
@@ -67,7 +68,7 @@
 
     .testimonial-card {
       backdrop-filter: blur(10px);
-      background: rgba(255,255,255,.94);
+      background: rgba(255,255,255,.96);
     }
 
     .input-focus:focus {
@@ -75,23 +76,24 @@
       border-color: #2563eb;
       box-shadow: 0 0 0 4px rgba(37,99,235,.10);
     }
+
+    .gold-text {
+      color: #f6c453;
+    }
+
+    .gold-border {
+      border-color: #f6c453;
+    }
   </style>
 </head>
 
-
 <body class="min-h-screen bg-[#eef4ff]">
-
-
-  <!-- =========================================================
-       MAIN PAGE
-  ========================================================== -->
 
   <main class="min-h-screen flex flex-col lg:flex-row">
 
-
-    <!-- =======================================================
-         LEFT / BRANDING SIDE
-    ======================================================== -->
+    <!-- =====================================================
+         LEFT BRAND / HERO SECTION
+    ====================================================== -->
 
     <section
       class="
@@ -102,7 +104,7 @@
         text-white
         w-full
         lg:w-[52%]
-        min-h-[620px]
+        min-h-[680px]
         lg:min-h-screen
         px-6
         py-8
@@ -114,78 +116,67 @@
       "
     >
 
-      <!-- Decorative circles -->
-      <div
-        class="
-          absolute
-          -top-24
-          -right-24
-          w-72
-          h-72
-          rounded-full
-          bg-white/5
-        "
-      ></div>
+      <!-- Decorative elements -->
 
       <div
         class="
           absolute
-          bottom-[-100px]
-          left-[-100px]
+          -top-28
+          -right-28
           w-80
           h-80
           rounded-full
-          bg-blue-400/10
+          bg-blue-500/5
+        "
+      ></div>
+
+      <div
+        class="
+          absolute
+          bottom-[-120px]
+          left-[-120px]
+          w-96
+          h-96
+          rounded-full
+          bg-blue-400/5
         "
       ></div>
 
 
-      <!-- =====================================================
-           BRAND
-      ====================================================== -->
+      <!-- ===================================================
+           REAL FUNDA ONLINE ACADEMY LOGO
+      ==================================================== -->
 
       <div class="relative z-10">
 
-        <div class="flex items-center gap-4">
+        <div
+          class="
+            inline-flex
+            items-center
+            gap-5
+            rounded-2xl
+            bg-white
+            px-5
+            py-4
+            shadow-2xl
+          "
+        >
 
-          <!-- Academy Logo Mark -->
-          <div
+          <!-- THIS IS THE EXISTING LOGO FROM YOUR REPOSITORY -->
+
+          <img
+            src="logo.png"
+            alt="Funda Online Academy Logo"
             class="
-              w-16
-              h-16
-              sm:w-[72px]
-              sm:h-[72px]
-              rounded-2xl
-              bg-white
-              flex
-              items-center
-              justify-center
-              shadow-xl
+              w-20
+              h-20
+              sm:w-24
+              sm:h-24
+              object-contain
               shrink-0
             "
           >
 
-            <div
-              class="
-                w-12
-                h-12
-                sm:w-14
-                sm:h-14
-                rounded-xl
-                bg-[#0A2A7A]
-                flex
-                items-center
-                justify-center
-                text-2xl
-              "
-            >
-              🎓
-            </div>
-
-          </div>
-
-
-          <!-- Brand Name -->
           <div>
 
             <div
@@ -195,6 +186,7 @@
                 font-black
                 tracking-tight
                 leading-none
+                text-[#03133d]
               "
             >
               FUNDA ONLINE
@@ -202,12 +194,12 @@
 
             <div
               class="
-                mt-1
+                mt-2
                 text-sm
                 sm:text-base
-                font-bold
-                tracking-[0.28em]
-                text-[#f6c453]
+                font-black
+                tracking-[0.30em]
+                text-[#d79e1f]
               "
             >
               ACADEMY
@@ -220,11 +212,19 @@
       </div>
 
 
-      <!-- =====================================================
+      <!-- ===================================================
            HERO CONTENT
-      ====================================================== -->
+      ==================================================== -->
 
-      <div class="relative z-10 mt-14 lg:mt-20 max-w-xl">
+      <div
+        class="
+          relative
+          z-10
+          mt-14
+          lg:mt-20
+          max-w-2xl
+        "
+      >
 
         <div
           class="
@@ -233,17 +233,18 @@
             gap-2
             rounded-full
             border
-            border-white/20
-            bg-white/10
+            border-white/15
+            bg-white/[0.06]
             px-4
             py-2
             text-xs
             sm:text-sm
             font-bold
+            tracking-wide
             mb-6
           "
         >
-          <span class="text-[#f6c453]">✦</span>
+          <span class="gold-text">✦</span>
           PRACTICAL • FLEXIBLE • CAREER FOCUSED
         </div>
 
@@ -254,12 +255,15 @@
             sm:text-5xl
             xl:text-6xl
             font-black
-            leading-[1.05]
+            leading-[1.04]
             tracking-tight
+            text-white
           "
         >
           Master Skills
-          <span class="text-[#f6c453]">
+          <br>
+
+          <span class="gold-text">
             That Get You Hired.
           </span>
         </h1>
@@ -271,8 +275,8 @@
             text-base
             sm:text-lg
             leading-8
-            text-blue-100
-            max-w-lg
+            text-white
+            max-w-xl
           "
         >
           Learn practical, career-focused skills with Funda Online Academy.
@@ -281,18 +285,42 @@
         </p>
 
 
-        <!-- Trust line -->
+        <!-- Trust points -->
 
-        <div class="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <div
+          class="
+            mt-7
+            flex
+            flex-wrap
+            items-center
+            gap-x-7
+            gap-y-3
+          "
+        >
 
           <div class="flex items-center gap-2">
-            <span class="text-[#f6c453] text-lg">★</span>
-            <span class="font-bold">Career-focused learning</span>
+
+            <span class="gold-text text-lg">
+              ★
+            </span>
+
+            <span class="font-bold text-white">
+              Career-focused learning
+            </span>
+
           </div>
 
+
           <div class="flex items-center gap-2">
-            <span class="text-[#f6c453] text-lg">✓</span>
-            <span class="font-bold">Flexible online study</span>
+
+            <span class="gold-text text-lg">
+              ✓
+            </span>
+
+            <span class="font-bold text-white">
+              Flexible online study
+            </span>
+
           </div>
 
         </div>
@@ -300,16 +328,31 @@
       </div>
 
 
-      <!-- =====================================================
-           STUDENT IMAGE / SUCCESS AREA
-      ====================================================== -->
+      <!-- ===================================================
+           STUDENT IMAGES / TESTIMONIAL AREA
+      ==================================================== -->
 
-      <div class="relative z-10 mt-10 lg:mt-auto lg:pt-10">
+      <div
+        class="
+          relative
+          z-10
+          mt-10
+          lg:mt-auto
+          lg:pt-10
+        "
+      >
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div
+          class="
+            grid
+            grid-cols-2
+            sm:grid-cols-3
+            gap-4
+          "
+        >
 
+          <!-- Student image 1 -->
 
-          <!-- Student Image 1 -->
           <div
             class="
               student-photo
@@ -318,7 +361,7 @@
               sm:h-48
               rounded-2xl
               overflow-hidden
-              bg-blue-900/50
+              bg-[#061d55]
               border
               border-white/10
             "
@@ -327,8 +370,20 @@
             <img
               src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=700&q=85"
               alt="Students learning together"
-              class="w-full h-full object-cover"
+              class="
+                w-full
+                h-full
+                object-cover
+              "
             >
+
+            <div
+              class="
+                absolute
+                inset-0
+                bg-black/20
+              "
+            ></div>
 
             <div
               class="
@@ -337,19 +392,22 @@
                 bottom-0
                 p-3
                 bg-gradient-to-t
-                from-black/70
+                from-black/80
                 to-transparent
               "
             >
-              <p class="text-xs sm:text-sm font-bold">
+
+              <p class="text-xs sm:text-sm font-bold text-white">
                 Learn Together
               </p>
+
             </div>
 
           </div>
 
 
-          <!-- Student Image 2 -->
+          <!-- Student image 2 -->
+
           <div
             class="
               student-photo
@@ -358,7 +416,7 @@
               sm:h-48
               rounded-2xl
               overflow-hidden
-              bg-blue-900/50
+              bg-[#061d55]
               border
               border-white/10
             "
@@ -367,8 +425,20 @@
             <img
               src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=700&q=85"
               alt="Students studying"
-              class="w-full h-full object-cover"
+              class="
+                w-full
+                h-full
+                object-cover
+              "
             >
+
+            <div
+              class="
+                absolute
+                inset-0
+                bg-black/20
+              "
+            ></div>
 
             <div
               class="
@@ -377,19 +447,22 @@
                 bottom-0
                 p-3
                 bg-gradient-to-t
-                from-black/70
+                from-black/80
                 to-transparent
               "
             >
-              <p class="text-xs sm:text-sm font-bold">
+
+              <p class="text-xs sm:text-sm font-bold text-white">
                 Build Your Future
               </p>
+
             </div>
 
           </div>
 
 
-          <!-- Temporary Review -->
+          <!-- Demo testimonial -->
+
           <div
             class="
               testimonial-card
@@ -397,12 +470,12 @@
               sm:col-span-1
               rounded-2xl
               p-5
-              text-[#0A1E4A]
+              text-[#03133d]
               soft-shadow
             "
           >
 
-            <div class="flex gap-1 text-[#e5a928]">
+            <div class="text-[#e5a928] tracking-wide">
               ★ ★ ★ ★ ★
             </div>
 
@@ -424,7 +497,14 @@
                 Sample Learner
               </p>
 
-              <p class="text-[10px] text-gray-500">
+              <p
+                class="
+                  text-[10px]
+                  text-gray-500
+                  font-bold
+                  tracking-wide
+                "
+              >
                 DEMO TESTIMONIAL
               </p>
 
@@ -435,7 +515,7 @@
         </div>
 
 
-        <!-- Second demo testimonial -->
+        <!-- Additional sample feedback -->
 
         <div
           class="
@@ -447,7 +527,7 @@
             rounded-2xl
             border
             border-white/10
-            bg-white/10
+            bg-white/[0.06]
             p-4
             max-w-xl
           "
@@ -458,12 +538,13 @@
               w-11
               h-11
               rounded-full
-              gold-gradient
-              text-[#0A2A7A]
+              bg-[#f6c453]
+              text-[#03133d]
               flex
               items-center
               justify-center
               font-black
+              shrink-0
             "
           >
             ★
@@ -471,11 +552,18 @@
 
           <div>
 
-            <p class="text-sm font-semibold leading-6">
+            <p class="text-sm font-semibold leading-6 text-white">
               “I love being able to learn at my own pace from my phone.”
             </p>
 
-            <p class="text-[10px] mt-1 text-blue-200 font-bold">
+            <p
+              class="
+                text-[10px]
+                mt-1
+                text-blue-200
+                font-bold
+              "
+            >
               SAMPLE LEARNER FEEDBACK — DEMO CONTENT
             </p>
 
@@ -483,8 +571,6 @@
 
         </div>
 
-
-        <!-- Footer -->
 
         <div
           class="
@@ -502,10 +588,9 @@
     </section>
 
 
-
-    <!-- =======================================================
-         RIGHT / LOGIN SIDE
-    ======================================================== -->
+    <!-- =====================================================
+         RIGHT LOGIN SECTION
+    ====================================================== -->
 
     <section
       class="
@@ -539,30 +624,32 @@
       >
 
 
-        <!-- Small mobile brand -->
+        <!-- Mobile logo -->
 
         <div class="lg:hidden flex justify-center mb-7">
 
           <div class="flex items-center gap-3">
 
-            <div
+            <img
+              src="logo.png"
+              alt="Funda Online Academy Logo"
               class="
-                w-12
-                h-12
-                rounded-xl
-                bg-[#0A2A7A]
-                flex
-                items-center
-                justify-center
-                text-xl
+                w-14
+                h-14
+                object-contain
               "
             >
-              🎓
-            </div>
 
             <div>
 
-              <div class="font-black text-[#0A2A7A] text-xl leading-none">
+              <div
+                class="
+                  font-black
+                  text-[#03133d]
+                  text-xl
+                  leading-none
+                "
+              >
                 FUNDA ONLINE
               </div>
 
@@ -571,7 +658,7 @@
                   text-[10px]
                   font-black
                   tracking-[0.25em]
-                  text-[#e5a928]
+                  text-[#d79e1f]
                   mt-1
                 "
               >
@@ -585,9 +672,7 @@
         </div>
 
 
-        <!-- ===================================================
-             LOGIN HEADER
-        ==================================================== -->
+        <!-- Login header -->
 
         <div class="text-center">
 
@@ -612,7 +697,7 @@
               text-3xl
               sm:text-4xl
               font-black
-              text-[#0A1E4A]
+              text-[#03133d]
             "
           >
             Welcome Back
@@ -625,9 +710,7 @@
         </div>
 
 
-        <!-- ===================================================
-             LOGIN TYPE
-        ==================================================== -->
+        <!-- Login type -->
 
         <div class="grid grid-cols-2 gap-3 mt-8">
 
@@ -676,15 +759,16 @@
         </div>
 
 
-        <!-- ===================================================
-             ADMIN ACCESS CODE
-        ==================================================== -->
+        <!-- Staff code -->
 
-        <div id="admin-extra" class="hidden mt-5">
+        <div
+          id="admin-extra"
+          class="hidden mt-5"
+        >
 
           <label
             for="staff_code"
-            class="block text-sm font-bold text-[#0A1E4A]"
+            class="block text-sm font-bold text-[#03133d]"
           >
             Staff Access Code
           </label>
@@ -709,15 +793,18 @@
         </div>
 
 
-        <!-- ===================================================
-             EMAIL
-        ==================================================== -->
+        <!-- Email -->
 
         <div class="mt-6">
 
           <label
             for="email"
-            class="block text-sm font-bold text-[#0A1E4A]"
+            class="
+              block
+              text-sm
+              font-bold
+              text-[#03133d]
+            "
           >
             Email Address
           </label>
@@ -743,9 +830,7 @@
         </div>
 
 
-        <!-- ===================================================
-             PASSWORD
-        ==================================================== -->
+        <!-- Password -->
 
         <div class="mt-5">
 
@@ -753,7 +838,11 @@
 
             <label
               for="password"
-              class="text-sm font-bold text-[#0A1E4A]"
+              class="
+                text-sm
+                font-bold
+                text-[#03133d]
+              "
             >
               Password
             </label>
@@ -795,9 +884,7 @@
         </div>
 
 
-        <!-- ===================================================
-             LOGIN BUTTON
-        ==================================================== -->
+        <!-- Login button -->
 
         <button
           onclick="handleLogin()"
@@ -822,9 +909,7 @@
         </button>
 
 
-        <!-- ===================================================
-             DIVIDER
-        ==================================================== -->
+        <!-- Divider -->
 
         <div class="flex items-center gap-3 my-7">
 
@@ -846,9 +931,7 @@
         </div>
 
 
-        <!-- ===================================================
-             REGISTER
-        ==================================================== -->
+        <!-- Create account -->
 
         <a
           href="register.html"
@@ -870,9 +953,7 @@
         </a>
 
 
-        <!-- ===================================================
-             BROWSE COURSES
-        ==================================================== -->
+        <!-- Browse courses -->
 
         <a
           href="courses-public.html"
@@ -895,13 +976,21 @@
         </a>
 
 
-        <!-- ===================================================
-             SECURITY
-        ==================================================== -->
+        <!-- Security -->
 
-        <div class="flex items-center justify-center gap-2 mt-6">
+        <div
+          class="
+            flex
+            items-center
+            justify-center
+            gap-2
+            mt-6
+          "
+        >
 
-          <span class="text-green-600">🔒</span>
+          <span class="text-green-600">
+            🔒
+          </span>
 
           <p class="text-xs text-gray-400">
             Secure Login · Your information is protected
@@ -910,11 +999,15 @@
         </div>
 
 
-        <!-- ===================================================
-             MOBILE FOOTER
-        ==================================================== -->
-
-        <p class="lg:hidden text-center text-[11px] text-gray-400 mt-6">
+        <p
+          class="
+            lg:hidden
+            text-center
+            text-[11px]
+            text-gray-400
+            mt-6
+          "
+        >
           © 2026 Funda Online Academy
         </p>
 
@@ -925,9 +1018,8 @@
   </main>
 
 
-
   <!-- =========================================================
-       SUPABASE + LOGIN LOGIC
+       SUPABASE
   ========================================================== -->
 
   <script>
@@ -937,12 +1029,11 @@
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwiaWF0IjoxNzg2NTc3MDMyLCJleHAiOjIxMDIxNTMwMzJ9.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU"
     );
 
-
     let currentRole = "student";
 
 
     /* =========================================================
-       SELECT LOGIN TYPE
+       LOGIN ROLE
     ========================================================== */
 
     function setRole(role) {
@@ -989,7 +1080,6 @@
           "text-gray-600"
         );
 
-
       } else {
 
         adminExtra.classList.add("hidden");
@@ -1023,7 +1113,6 @@
       }
 
     }
-
 
 
     /* =========================================================
@@ -1062,16 +1151,12 @@
 
       try {
 
-        /* =====================================================
-           SUPABASE AUTHENTICATION
-        ====================================================== */
-
         const {
           data,
           error
         } = await supabaseClient.auth.signInWithPassword({
-          email,
-          password
+          email: email,
+          password: password
         });
 
 
@@ -1096,7 +1181,7 @@
 
 
         /* =====================================================
-           GET USER PROFILE
+           USER PROFILE
         ====================================================== */
 
         const {
@@ -1126,7 +1211,7 @@
 
 
         /* =====================================================
-           ADMIN / STAFF LOGIN
+           ADMIN / STAFF
         ====================================================== */
 
         if (currentRole === "admin") {
@@ -1174,7 +1259,7 @@
 
 
         /* =====================================================
-           STUDENT ENROLLMENT CHECK
+           STUDENT ENROLLMENT
         ====================================================== */
 
         const {
@@ -1194,10 +1279,6 @@
           )
           .limit(1);
 
-
-        /* =====================================================
-           ENROLLMENT ERROR
-        ====================================================== */
 
         if (enrollmentError) {
 
@@ -1233,7 +1314,7 @@
 
 
         /* =====================================================
-           NO APPROVED ENROLLMENT
+           STUDENT WITHOUT APPROVED ENROLLMENT
         ====================================================== */
 
         window.location.href =
@@ -1264,7 +1345,6 @@
       }
 
     }
-
 
 
     /* =========================================================
@@ -1312,22 +1392,25 @@
 
 
     /* =========================================================
-       ENTER KEY LOGIN
+       ENTER KEY
     ========================================================== */
 
     document
       .getElementById("password")
-      .addEventListener("keydown", function(event) {
+      .addEventListener(
+        "keydown",
+        function(event) {
 
-        if (event.key === "Enter") {
+          if (event.key === "Enter") {
 
-          handleLogin();
+            handleLogin();
+
+          }
 
         }
-
-      });
+      );
 
   </script>
 
 </body>
-              </html>
+              </html> 
