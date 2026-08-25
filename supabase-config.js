@@ -2,6 +2,6 @@ window.SUPABASE_URL =
   "https://nzwfowwoazmpnwfrednh.supabase.co";
 
 window.SUPABASE_ANON_KEY =
-  "sb_publishable_fuB02obKKaki0dRsirVVAw_Wyo99pVP";
+  "PASTE THE eyJ... ANON KEY HERE";
 
-window.FUNDA_ADMIN_EMAIL = "";
+window.FUNDA_ADMIN_EMAIL = "your admin email here";
