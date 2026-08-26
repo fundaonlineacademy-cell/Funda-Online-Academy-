@@ -14,10 +14,8 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Supabase JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- SHARED SUPABASE CONFIGURATION -->
   <script src="supabase-config.js?v=20260826"></script>
 
   <style>
@@ -58,9 +56,7 @@
 
   <header class="bg-[#0A2A7A] text-white shadow-lg">
 
-    <div
-      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5"
-    >
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
 
       <div class="flex items-center justify-between gap-4">
 
@@ -114,9 +110,7 @@
        MAIN
   ========================================================== -->
 
-  <main
-    class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
-  >
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
 
     <!-- LOADING -->
@@ -172,7 +166,9 @@
     </section>
 
 
-    <!-- DASHBOARD -->
+    <!-- =======================================================
+         DASHBOARD
+    ======================================================== -->
 
     <section
       id="dashboardContent"
@@ -184,13 +180,9 @@
            WELCOME
       ====================================================== -->
 
-      <div
-        class="bg-white rounded-3xl shadow-sm p-6 sm:p-8 mb-6"
-      >
+      <div class="bg-white rounded-3xl shadow-sm p-6 sm:p-8 mb-6">
 
-        <div
-          class="flex flex-col md:flex-row md:items-center md:justify-between gap-5"
-        >
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
 
           <div>
 
@@ -228,9 +220,7 @@
            STATISTICS
       ====================================================== -->
 
-      <div
-        class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6"
-      >
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
 
 
         <div class="bg-white rounded-2xl shadow-sm p-5">
@@ -300,7 +290,7 @@
 
 
       <!-- =====================================================
-           CONTENT GRID
+           CONTENT
       ====================================================== -->
 
       <div class="grid lg:grid-cols-3 gap-6">
@@ -310,13 +300,9 @@
              MY COURSES
         ==================================================== -->
 
-        <section
-          class="lg:col-span-2 bg-white rounded-3xl shadow-sm p-6"
-        >
+        <section class="lg:col-span-2 bg-white rounded-3xl shadow-sm p-6">
 
-          <div
-            class="flex items-center justify-between gap-3"
-          >
+          <div class="flex items-center justify-between gap-3">
 
             <div>
 
@@ -382,9 +368,7 @@
              QUICK ACTIONS
         ==================================================== -->
 
-        <aside
-          class="bg-white rounded-3xl shadow-sm p-6"
-        >
+        <aside class="bg-white rounded-3xl shadow-sm p-6">
 
           <h2 class="text-xl font-black text-[#0A2A7A]">
             Quick Access
@@ -525,17 +509,14 @@
            ACCOUNT INFORMATION
       ====================================================== -->
 
-      <section
-        class="bg-white rounded-3xl shadow-sm p-6 mt-6"
-      >
+      <section class="bg-white rounded-3xl shadow-sm p-6 mt-6">
 
         <h2 class="text-xl font-black text-[#0A2A7A]">
           Account Information
         </h2>
 
-        <div
-          class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-5"
-        >
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
+
 
           <div>
 
@@ -581,6 +562,7 @@
 
           </div>
 
+
         </div>
 
       </section>
@@ -598,8 +580,11 @@
   <footer class="max-w-7xl mx-auto px-4 py-8 text-center">
 
     <p class="text-xs text-gray-400">
-      © <span id="year"></span> Funda Online Academy.
+
+      © <span id="year"></span>
+      Funda Online Academy.
       All rights reserved.
+
     </p>
 
   </footer>
@@ -629,60 +614,48 @@
     // ----------------------------------------------------------
 
     const loadingState =
-      document.getElementById("loadingState");
+      document.getElementById(
+        "loadingState"
+      );
 
     const errorState =
-      document.getElementById("errorState");
+      document.getElementById(
+        "errorState"
+      );
 
     const dashboardContent =
-      document.getElementById("dashboardContent");
+      document.getElementById(
+        "dashboardContent"
+      );
 
     const errorMessage =
-      document.getElementById("errorMessage");
+      document.getElementById(
+        "errorMessage"
+      );
 
     const myCourses =
-      document.getElementById("myCourses");
+      document.getElementById(
+        "myCourses"
+      );
 
     const noCourses =
-      document.getElementById("noCourses");
+      document.getElementById(
+        "noCourses"
+      );
 
 
     // ----------------------------------------------------------
-    // INITIALISE SUPABASE
+    // SUPABASE
     // ----------------------------------------------------------
 
     function initialiseSupabase() {
-
-      if (
-        typeof window.SUPABASE_URL ===
-        "undefined"
-      ) {
-
-        throw new Error(
-          "supabase-config.js was not loaded."
-        );
-
-      }
-
-
-      if (
-        typeof window.SUPABASE_ANON_KEY ===
-        "undefined"
-      ) {
-
-        throw new Error(
-          "SUPABASE_ANON_KEY was not found in supabase-config.js."
-        );
-
-      }
-
 
       if (
         !window.SUPABASE_URL
       ) {
 
         throw new Error(
-          "SUPABASE_URL is empty in supabase-config.js."
+          "SUPABASE_URL is missing from supabase-config.js."
         );
 
       }
@@ -693,7 +666,7 @@
       ) {
 
         throw new Error(
-          "SUPABASE_ANON_KEY is empty in supabase-config.js."
+          "SUPABASE_ANON_KEY is missing from supabase-config.js."
         );
 
       }
@@ -726,17 +699,26 @@
       supabaseClient =
         window.supabase.createClient(
           window.SUPABASE_URL,
-          window.SUPABASE_ANON_KEY
+          window.SUPABASE_ANON_KEY,
+          {
+            auth: {
+              persistSession: true,
+              autoRefreshToken: true,
+              detectSessionInUrl: true
+            }
+          }
         );
 
     }
 
 
     // ----------------------------------------------------------
-    // SHOW ERROR
+    // ERROR
     // ----------------------------------------------------------
 
-    function showError(message) {
+    function showError(
+      message
+    ) {
 
       loadingState.classList.add(
         "hidden"
@@ -758,7 +740,7 @@
 
 
     // ----------------------------------------------------------
-    // SHOW DASHBOARD
+    // DASHBOARD
     // ----------------------------------------------------------
 
     function showDashboard() {
@@ -782,7 +764,9 @@
     // ESCAPE HTML
     // ----------------------------------------------------------
 
-    function escapeHTML(value) {
+    function escapeHTML(
+      value
+    ) {
 
       if (
         value === null ||
@@ -820,10 +804,12 @@
 
 
     // ----------------------------------------------------------
-    // GET DISPLAY NAME
+    // DISPLAY NAME
     // ----------------------------------------------------------
 
-    function getDisplayName(user) {
+    function getDisplayName(
+      user
+    ) {
 
       const metadata =
         user?.user_metadata ||
@@ -842,7 +828,7 @@
 
 
     // ----------------------------------------------------------
-    // LOAD CURRENT USER
+    // CURRENT USER
     // ----------------------------------------------------------
 
     async function getCurrentUser() {
@@ -864,7 +850,9 @@
       }
 
 
-      if (!data?.user) {
+      if (
+        !data?.user
+      ) {
 
         window.location.href =
           "login.html?next=dashboard.html";
@@ -881,19 +869,22 @@
 
     // ----------------------------------------------------------
     // LOAD ENROLLMENTS
+    //
+    // IMPORTANT:
+    //
+    // The enrollments table uses:
+    //
+    //     student_id
+    //
+    // It does NOT use:
+    //
+    //     user_id
+    //
+    // The student's profile/Auth UUID is stored in
+    // enrollments.student_id.
     // ----------------------------------------------------------
 
     async function loadEnrollments() {
-
-      /*
-        We use the existing enrollments table.
-
-        The course relationship is requested through
-        the courses table.
-
-        If the relationship exists in Supabase,
-        course information will be returned normally.
-      */
 
       const {
         data,
@@ -902,11 +893,20 @@
         await supabaseClient
           .from("enrollments")
           .select(
-            "*, courses(*)"
+            `
+              *,
+              courses(*)
+            `
           )
           .eq(
-            "user_id",
+            "student_id",
             currentUser.id
+          )
+          .order(
+            "enrolled_at",
+            {
+              ascending: false
+            }
           );
 
 
@@ -919,7 +919,7 @@
 
         throw new Error(
           error.message ||
-          "Unable to load your courses."
+          "Unable to load your enrollments."
         );
 
       }
@@ -937,7 +937,9 @@
     // COURSE TITLE
     // ----------------------------------------------------------
 
-    function getCourseTitle(enrollment) {
+    function getCourseTitle(
+      enrollment
+    ) {
 
       const course =
         enrollment?.courses;
@@ -970,7 +972,9 @@
     // COURSE ID
     // ----------------------------------------------------------
 
-    function getCourseId(enrollment) {
+    function getCourseId(
+      enrollment
+    ) {
 
       const course =
         enrollment?.courses;
@@ -981,9 +985,11 @@
         !Array.isArray(course)
       ) {
 
-        return course.id ||
+        return (
+          course.id ||
           enrollment.course_id ||
-          null;
+          null
+        );
 
       }
 
@@ -997,7 +1003,7 @@
 
 
     // ----------------------------------------------------------
-    // ENROLLMENT STATUS
+    // STATUS
     // ----------------------------------------------------------
 
     function getEnrollmentStatus(
@@ -1006,6 +1012,7 @@
 
       return String(
         enrollment?.status ||
+        enrollment?.enrollment_status ||
         "pending"
       ).toLowerCase();
 
@@ -1020,7 +1027,7 @@
       enrollment
     ) {
 
-      const possibleValues = [
+      const values = [
 
         enrollment?.progress,
 
@@ -1036,7 +1043,7 @@
 
 
       for (
-        const value of possibleValues
+        const value of values
       ) {
 
         if (
@@ -1085,7 +1092,7 @@
 
 
     // ----------------------------------------------------------
-    // CALCULATE OVERALL PROGRESS
+    // OVERALL PROGRESS
     // ----------------------------------------------------------
 
     function calculateOverallProgress() {
@@ -1127,7 +1134,7 @@
 
 
     // ----------------------------------------------------------
-    // UPDATE STATISTICS
+    // STATISTICS
     // ----------------------------------------------------------
 
     function updateStatistics() {
@@ -1144,6 +1151,7 @@
               getEnrollmentStatus(
                 enrollment
               );
+
 
             return (
               status === "approved" ||
@@ -1165,6 +1173,7 @@
                 enrollment
               );
 
+
             return (
               status === "completed" ||
               getProgress(
@@ -1185,7 +1194,7 @@
           "enrolledCount"
         )
         .textContent =
-          enrolled;
+        enrolled;
 
 
       document
@@ -1193,7 +1202,7 @@
           "activeCount"
         )
         .textContent =
-          active;
+        active;
 
 
       document
@@ -1201,7 +1210,7 @@
           "completedCount"
         )
         .textContent =
-          completed;
+        completed;
 
 
       document
@@ -1209,7 +1218,7 @@
           "overallProgress"
         )
         .textContent =
-          progress + "%";
+        progress + "%";
 
 
       document
@@ -1217,7 +1226,7 @@
           "progressLabel"
         )
         .textContent =
-          progress + "%";
+        progress + "%";
 
 
       document
@@ -1225,7 +1234,7 @@
           "progressBar"
         )
         .style.width =
-          progress + "%";
+        progress + "%";
 
     }
 
@@ -1236,7 +1245,8 @@
 
     function renderCourses() {
 
-      myCourses.innerHTML = "";
+      myCourses.innerHTML =
+        "";
 
 
       if (
@@ -1284,11 +1294,6 @@
             );
 
 
-          const isCompleted =
-            status === "completed" ||
-            progress >= 100;
-
-
           let statusText =
             "Pending";
 
@@ -1306,86 +1311,99 @@
               "Active";
 
             statusClass =
-              "bg-green-100 text-green-700";
+              "bg-blue-100 text-blue-700";
 
           }
 
 
           if (
-            isCompleted
+            status === "completed"
           ) {
 
             statusText =
               "Completed";
 
             statusClass =
-              "bg-blue-100 text-blue-700";
+              "bg-green-100 text-green-700";
 
           }
 
 
-          const wrapper =
+          if (
+            status === "rejected" ||
+            status === "cancelled"
+          ) {
+
+            statusText =
+              status === "rejected"
+                ? "Rejected"
+                : "Cancelled";
+
+            statusClass =
+              "bg-red-100 text-red-700";
+
+          }
+
+
+          const card =
             document.createElement(
               "div"
             );
 
 
-          wrapper.className =
-            "border border-gray-100 rounded-2xl p-5";
+          card.className =
+            "border border-gray-100 rounded-2xl p-5 hover:shadow-md transition";
 
 
-          wrapper.innerHTML = `
+          const courseLink =
+            courseId
+              ? `course-view.html?id=${encodeURIComponent(courseId)}`
+              : "courses-public.html";
+
+
+          card.innerHTML = `
 
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
               <div class="min-w-0">
 
-                <div class="flex items-center gap-2 flex-wrap">
+                <h3 class="font-black text-lg text-[#0A2A7A]">
+                  ${escapeHTML(title)}
+                </h3>
 
-                  <h3 class="font-black text-[#0A2A7A] text-lg">
-                    ${escapeHTML(title)}
-                  </h3>
-
-                  <span class="px-2.5 py-1 rounded-full text-xs font-bold ${statusClass}">
-                    ${escapeHTML(statusText)}
-                  </span>
-
-                </div>
-
-                <p class="text-xs text-gray-500 mt-2">
-                  ${progress}% complete
+                <p class="text-xs text-gray-500 mt-1">
+                  Enrollment status:
+                  ${escapeHTML(statusText)}
                 </p>
 
               </div>
 
 
-              ${
-                courseId
-                  ? `
-                    <a
-                      href="course-study.html?id=${encodeURIComponent(courseId)}"
-                      class="shrink-0 text-center bg-[#0A2A7A] text-white px-5 py-3 rounded-xl text-sm font-bold"
-                    >
-                      ${
-                        isCompleted
-                          ? "View Course"
-                          : "Continue"
-                      }
-                    </a>
-                  `
-                  : `
-                    <span class="text-xs text-gray-400">
-                      Course unavailable
-                    </span>
-                  `
-              }
+              <span
+                class="inline-flex w-fit px-3 py-1 rounded-full text-xs font-black ${statusClass}"
+              >
+                ${escapeHTML(statusText)}
+              </span>
 
             </div>
 
 
-            <div class="mt-4">
+            <div class="mt-5">
 
-              <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+              <div class="flex items-center justify-between text-xs">
+
+                <span class="font-bold text-gray-500">
+                  Progress
+                </span>
+
+                <span class="font-black text-[#2563EB]">
+                  ${progress}%
+                </span>
+
+              </div>
+
+
+              <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden mt-2">
 
                 <div
                   class="h-full bg-[#2563EB] rounded-full"
@@ -1396,51 +1414,51 @@
 
             </div>
 
+
+            <div class="mt-5 flex flex-col sm:flex-row gap-3">
+
+              <a
+                href="${courseLink}"
+                class="flex-1 text-center bg-[#0A2A7A] text-white py-3 rounded-xl font-bold"
+              >
+                View Course
+              </a>
+
+              <a
+                href="courses-public.html"
+                class="flex-1 text-center border border-[#0A2A7A] text-[#0A2A7A] py-3 rounded-xl font-bold"
+              >
+                Browse Courses
+              </a>
+
+            </div>
+
           `;
 
 
           myCourses.appendChild(
-            wrapper
+            card
           );
 
         }
       );
 
 
-      // Set Continue Learning button
-      // to the first active course.
-
-      const firstActive =
-        enrollments.find(
-          enrollment => {
-
-            const status =
-              getEnrollmentStatus(
-                enrollment
-              );
-
-            return (
-              status === "approved" ||
-              status === "active" ||
-              status === "enrolled"
-            );
-
-          }
-        );
-
-
       if (
-        firstActive
+        enrollments.length > 0
       ) {
 
-        const id =
+        const first =
+          enrollments[0];
+
+        const firstCourseId =
           getCourseId(
-            firstActive
+            first
           );
 
 
         if (
-          id
+          firstCourseId
         ) {
 
           document
@@ -1448,8 +1466,7 @@
               "continueLearningButton"
             )
             .href =
-              "course-study.html?id=" +
-              encodeURIComponent(id);
+            `course-view.html?id=${encodeURIComponent(firstCourseId)}`;
 
         }
 
@@ -1459,20 +1476,70 @@
 
 
     // ----------------------------------------------------------
-    // LOAD PROFILE INFORMATION
+    // LOAD PROFILE
     // ----------------------------------------------------------
 
-    function renderProfile() {
+    async function loadProfile() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select(
+            "id, full_name, email, phone, gender, role"
+          )
+          .eq(
+            "id",
+            currentUser.id
+          )
+          .maybeSingle();
+
+
+      if (error) {
+
+        console.warn(
+          "Profile loading warning:",
+          error
+        );
+
+        return null;
+
+      }
+
+
+      return data;
+
+    }
+
+
+    // ----------------------------------------------------------
+    // UPDATE ACCOUNT INFORMATION
+    // ----------------------------------------------------------
+
+    function renderAccount(
+      profile
+    ) {
 
       const metadata =
-        currentUser.user_metadata ||
+        currentUser?.user_metadata ||
         {};
 
 
       const name =
-        getDisplayName(
-          currentUser
-        );
+        profile?.full_name ||
+        metadata.full_name ||
+        metadata.name ||
+        metadata.first_name ||
+        currentUser?.email?.split("@")[0] ||
+        "Student";
+
+
+      const email =
+        profile?.email ||
+        currentUser?.email ||
+        "";
 
 
       document
@@ -1480,9 +1547,7 @@
           "welcomeName"
         )
         .textContent =
-          "Welcome Back, " +
-          name +
-          "! 👋";
+        `Welcome Back, ${name}! 👋`;
 
 
       document
@@ -1490,9 +1555,7 @@
           "studentName"
         )
         .textContent =
-          metadata.full_name ||
-          metadata.name ||
-          name;
+        name;
 
 
       document
@@ -1500,8 +1563,7 @@
           "studentEmail"
         )
         .textContent =
-          currentUser.email ||
-          "—";
+        email;
 
     }
 
@@ -1512,22 +1574,28 @@
 
     async function loadDashboard() {
 
-      loadingState.classList.remove(
-        "hidden"
-      );
-
-      errorState.classList.add(
-        "hidden"
-      );
-
-      dashboardContent.classList.add(
-        "hidden"
-      );
-
-
       try {
 
-        initialiseSupabase();
+        loadingState.classList.remove(
+          "hidden"
+        );
+
+        errorState.classList.add(
+          "hidden"
+        );
+
+        dashboardContent.classList.add(
+          "hidden"
+        );
+
+
+        if (
+          !supabaseClient
+        ) {
+
+          initialiseSupabase();
+
+        }
 
 
         currentUser =
@@ -1543,23 +1611,46 @@
         }
 
 
-        renderProfile();
+        const profile =
+          await loadProfile();
 
+
+        renderAccount(
+          profile
+        );
+
+
+        /*
+          THIS IS THE IMPORTANT FIX.
+
+          The old dashboard used:
+
+              .eq("user_id", currentUser.id)
+
+          But the actual enrollments table uses:
+
+              student_id
+
+          and the current student's enrollment stores
+          the authenticated/profile UUID in student_id.
+
+          Therefore:
+
+              .eq("student_id", currentUser.id)
+
+          is the correct query.
+        */
 
         await loadEnrollments();
 
 
         updateStatistics();
 
-
         renderCourses();
-
 
         showDashboard();
 
-      } catch (
-        error
-      ) {
+      } catch (error) {
 
         console.error(
           "Dashboard error:",
@@ -1569,7 +1660,7 @@
 
         showError(
           error.message ||
-          "Unable to load your student dashboard."
+          "Unable to load your dashboard."
         );
 
       }
@@ -1581,64 +1672,38 @@
     // LOGOUT
     // ----------------------------------------------------------
 
-    async function logout() {
-
-      try {
-
-        initialiseSupabase();
-
-
-        const {
-          error
-        } =
-          await supabaseClient.auth.signOut();
-
-
-        if (
-          error
-        ) {
-
-          throw error;
-
-        }
-
-
-        window.location.href =
-          "login.html";
-
-      } catch (
-        error
-      ) {
-
-        console.error(
-          "Logout error:",
-          error
-        );
-
-
-        alert(
-          error.message ||
-          "Unable to log out."
-        );
-
-      }
-
-    }
-
-
-    // ----------------------------------------------------------
-    // EVENTS
-    // ----------------------------------------------------------
-
     document
       .getElementById(
         "logoutButton"
       )
       .addEventListener(
         "click",
-        logout
+        async function() {
+
+          try {
+
+            await supabaseClient.auth.signOut();
+
+          } catch (error) {
+
+            console.error(
+              "Logout error:",
+              error
+            );
+
+          }
+
+
+          window.location.href =
+            "login.html";
+
+        }
       );
 
+
+    // ----------------------------------------------------------
+    // RETRY
+    // ----------------------------------------------------------
 
     document
       .getElementById(
@@ -1646,7 +1711,11 @@
       )
       .addEventListener(
         "click",
-        loadDashboard
+        function() {
+
+          loadDashboard();
+
+        }
       );
 
 
@@ -1659,24 +1728,35 @@
         "year"
       )
       .textContent =
-        new Date().getFullYear();
+      new Date().getFullYear();
 
 
     // ----------------------------------------------------------
     // START
     // ----------------------------------------------------------
 
-    document.addEventListener(
-      "DOMContentLoaded",
-      () => {
+    try {
 
-        loadDashboard();
+      initialiseSupabase();
 
-      }
-    );
+      loadDashboard();
+
+    } catch (error) {
+
+      console.error(
+        "Dashboard initialisation error:",
+        error
+      );
+
+      showError(
+        error.message
+      );
+
+    }
+
 
   </script>
 
 </body>
 
-          </html>
+      </html>
