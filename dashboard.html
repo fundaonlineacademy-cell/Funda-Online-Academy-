@@ -42,12 +42,29 @@
       }
     }
 
+    .status-pulse {
+      animation: statusPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes statusPulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .65;
+      }
+
+    }
+
   </style>
 
 </head>
 
 
-<body class="bg-[#F5F8FC] min-h-screen">
+<body class="bg-[#F5F8FC] min-h-screen text-gray-800">
 
 
   <!-- =========================================================
@@ -56,43 +73,83 @@
 
   <header class="bg-[#0A2A7A] text-white shadow-lg">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-      <div class="flex items-center justify-between gap-4">
+      <div class="min-h-[78px] flex items-center justify-between gap-4">
 
-        <div>
+        <a
+          href="index.html"
+          class="shrink-0"
+        >
 
-          <a
-            href="index.html"
-            class="font-black text-xl tracking-tight"
-          >
+          <div class="font-black text-xl tracking-tight">
             FUNDA
             <span class="font-semibold">
               ONLINE
             </span>
+          </div>
+
+          <div class="text-[10px] tracking-[0.28em] text-blue-200 mt-1">
+            ACADEMY
+          </div>
+
+        </a>
+
+
+        <nav class="hidden lg:flex items-center gap-6 text-sm font-semibold">
+
+          <a
+            href="dashboard.html"
+            class="text-white"
+          >
+            Dashboard
           </a>
 
-          <p class="text-[10px] tracking-[0.25em] text-blue-200 mt-1">
-            ACADEMY
-          </p>
+          <a
+            href="#myCoursesSection"
+            class="text-blue-100 hover:text-white"
+          >
+            My Courses
+          </a>
 
-        </div>
+          <a
+            href="#announcementsSection"
+            class="text-blue-100 hover:text-white"
+          >
+            Announcements
+          </a>
+
+          <a
+            href="#librarySection"
+            class="text-blue-100 hover:text-white"
+          >
+            Library
+          </a>
+
+        </nav>
 
 
         <div class="flex items-center gap-2">
 
-          <a
-            href="digital-library.html"
-            class="hidden sm:inline-flex bg-white text-[#0A2A7A] px-4 py-2.5 rounded-xl font-bold text-sm"
+          <button
+            id="profileButton"
+            type="button"
+            class="hidden sm:inline-flex items-center gap-2 bg-white/10 border border-white/20 hover:bg-white/20 px-4 py-2.5 rounded-xl font-bold text-sm"
           >
-            📚 Library
-          </a>
+
+            <span>
+              👤
+            </span>
+
+            Profile
+
+          </button>
 
 
           <button
             id="logoutButton"
             type="button"
-            class="bg-white/10 hover:bg-white/20 border border-white/20 px-4 py-2.5 rounded-xl font-bold text-sm"
+            class="bg-white text-[#0A2A7A] px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-blue-50"
           >
             Logout
           </button>
@@ -113,7 +170,9 @@
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
 
-    <!-- LOADING -->
+    <!-- =======================================================
+         LOADING
+    ======================================================== -->
 
     <section
       id="loadingState"
@@ -133,7 +192,9 @@
     </section>
 
 
-    <!-- ERROR -->
+    <!-- =======================================================
+         ERROR
+    ======================================================== -->
 
     <section
       id="errorState"
@@ -180,13 +241,13 @@
            WELCOME
       ====================================================== -->
 
-      <div class="bg-white rounded-3xl shadow-sm p-6 sm:p-8 mb-6">
+      <section class="bg-white rounded-3xl shadow-sm p-6 sm:p-8 mb-6">
 
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
           <div>
 
-            <p class="text-sm text-gray-500">
+            <p class="text-sm text-gray-500 font-semibold">
               Student Dashboard
             </p>
 
@@ -194,113 +255,227 @@
               id="welcomeName"
               class="text-3xl sm:text-4xl font-black text-[#0A2A7A] mt-1"
             >
-              Welcome Back! 👋
+              Welcome back! 👋
             </h1>
 
-            <p class="text-gray-600 mt-2">
-              Continue your learning journey with Funda Online Academy.
+            <p class="text-gray-600 mt-2 max-w-2xl">
+              Welcome to Funda Online Academy. Your student application
+              and course registration can be tracked from this dashboard.
             </p>
 
           </div>
 
 
-          <a
-            href="courses-public.html"
-            class="inline-flex justify-center bg-[#0A2A7A] text-white px-6 py-3 rounded-xl font-bold"
-          >
-            Browse Courses
-          </a>
+          <div class="flex flex-wrap gap-3">
+
+            <a
+              href="courses-public.html"
+              class="inline-flex justify-center bg-[#0A2A7A] text-white px-6 py-3 rounded-xl font-bold"
+            >
+              Browse Courses
+            </a>
+
+          </div>
 
         </div>
 
-      </div>
+      </section>
 
 
       <!-- =====================================================
-           STATISTICS
+           APPLICATION STATUS BANNER
       ====================================================== -->
 
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <section
+        id="pendingBanner"
+        class="bg-white rounded-3xl shadow-sm p-6 mb-6 border-l-4 border-yellow-400"
+      >
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+
+          <div class="flex items-start gap-4">
+
+            <div class="w-12 h-12 rounded-2xl bg-yellow-100 flex items-center justify-center text-2xl shrink-0">
+              ⏳
+            </div>
+
+            <div>
+
+              <div class="flex flex-wrap items-center gap-2">
+
+                <h2 class="text-xl font-black text-[#0A2A7A]">
+                  Application Awaiting Approval
+                </h2>
+
+                <span
+                  id="applicationStatusBadge"
+                  class="inline-flex px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-black"
+                >
+                  PENDING
+                </span>
+
+              </div>
+
+              <p
+                id="pendingMessage"
+                class="text-sm text-gray-600 mt-2 max-w-3xl"
+              >
+                Your registration and course application have been submitted.
+                The relevant department is reviewing your information and payment.
+              </p>
+
+            </div>
+
+          </div>
 
 
-        <div class="bg-white rounded-2xl shadow-sm p-5">
-
-          <p class="text-xs text-gray-500 font-semibold">
-            Enrolled Courses
-          </p>
-
-          <p
-            id="enrolledCount"
-            class="text-3xl font-black text-[#0A2A7A] mt-2"
+          <button
+            id="trackStatusButton"
+            type="button"
+            class="shrink-0 bg-[#0A2A7A] text-white px-5 py-3 rounded-xl font-bold"
           >
-            0
-          </p>
+            Track Application Status
+          </button>
 
         </div>
 
-
-        <div class="bg-white rounded-2xl shadow-sm p-5">
-
-          <p class="text-xs text-gray-500 font-semibold">
-            Active Courses
-          </p>
-
-          <p
-            id="activeCount"
-            class="text-3xl font-black text-[#2563EB] mt-2"
-          >
-            0
-          </p>
-
-        </div>
-
-
-        <div class="bg-white rounded-2xl shadow-sm p-5">
-
-          <p class="text-xs text-gray-500 font-semibold">
-            Completed
-          </p>
-
-          <p
-            id="completedCount"
-            class="text-3xl font-black text-green-600 mt-2"
-          >
-            0
-          </p>
-
-        </div>
-
-
-        <div class="bg-white rounded-2xl shadow-sm p-5">
-
-          <p class="text-xs text-gray-500 font-semibold">
-            Overall Progress
-          </p>
-
-          <p
-            id="overallProgress"
-            class="text-3xl font-black text-[#D4A72C] mt-2"
-          >
-            0%
-          </p>
-
-        </div>
-
-      </div>
+      </section>
 
 
       <!-- =====================================================
-           CONTENT
+           ACHIEVEMENTS & STATS
       ====================================================== -->
 
-      <div class="grid lg:grid-cols-3 gap-6">
+      <section class="mb-6">
+
+        <div class="flex items-end justify-between mb-4">
+
+          <div>
+
+            <h2 class="text-xl font-black text-[#0A2A7A]">
+              Achievements & Stats
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-1">
+              Your current Academy account activity.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+
+          <!-- ENROLLED -->
+
+          <div class="bg-white rounded-2xl shadow-sm p-5">
+
+            <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-xl">
+              🎓
+            </div>
+
+            <p class="text-xs text-gray-500 font-semibold mt-4">
+              Enrolled Courses
+            </p>
+
+            <p
+              id="enrolledCount"
+              class="text-3xl font-black text-[#0A2A7A] mt-1"
+            >
+              0
+            </p>
+
+          </div>
+
+
+          <!-- APPLICATIONS -->
+
+          <div class="bg-white rounded-2xl shadow-sm p-5">
+
+            <div class="w-11 h-11 rounded-xl bg-yellow-50 flex items-center justify-center text-xl">
+              📝
+            </div>
+
+            <p class="text-xs text-gray-500 font-semibold mt-4">
+              Applications
+            </p>
+
+            <p
+              id="applicationCount"
+              class="text-3xl font-black text-[#D4A72C] mt-1"
+            >
+              0
+            </p>
+
+          </div>
+
+
+          <!-- ACHIEVEMENTS -->
+
+          <div class="bg-white rounded-2xl shadow-sm p-5">
+
+            <div class="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center text-xl">
+              🏆
+            </div>
+
+            <p class="text-xs text-gray-500 font-semibold mt-4">
+              Achievements
+            </p>
+
+            <p
+              id="achievementCount"
+              class="text-3xl font-black text-green-600 mt-1"
+            >
+              0
+            </p>
+
+          </div>
+
+
+          <!-- PROGRESS -->
+
+          <div class="bg-white rounded-2xl shadow-sm p-5">
+
+            <div class="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center text-xl">
+              📈
+            </div>
+
+            <p class="text-xs text-gray-500 font-semibold mt-4">
+              Learning Progress
+            </p>
+
+            <p
+              id="overallProgress"
+              class="text-3xl font-black text-purple-600 mt-1"
+            >
+              0%
+            </p>
+
+          </div>
+
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           MY COURSES + QUICK ACCESS
+      ====================================================== -->
+
+      <div class="grid lg:grid-cols-3 gap-6 mb-6">
 
 
         <!-- ===================================================
              MY COURSES
         ==================================================== -->
 
-        <section class="lg:col-span-2 bg-white rounded-3xl shadow-sm p-6">
+        <section
+          id="myCoursesSection"
+          class="lg:col-span-2 bg-white rounded-3xl shadow-sm p-6"
+        >
 
           <div class="flex items-center justify-between gap-3">
 
@@ -311,7 +486,7 @@
               </h2>
 
               <p class="text-sm text-gray-500 mt-1">
-                Courses associated with your student account.
+                Courses you have enrolled for.
               </p>
 
             </div>
@@ -332,8 +507,6 @@
           >
           </div>
 
-
-          <!-- EMPTY -->
 
           <div
             id="noCourses"
@@ -365,7 +538,7 @@
 
 
         <!-- ===================================================
-             QUICK ACTIONS
+             QUICK ACCESS
         ==================================================== -->
 
         <aside class="bg-white rounded-3xl shadow-sm p-6">
@@ -375,14 +548,17 @@
           </h2>
 
           <p class="text-sm text-gray-500 mt-1">
-            Student resources
+            Useful student services.
           </p>
 
 
           <div class="space-y-3 mt-6">
 
 
+            <!-- LIBRARY -->
+
             <a
+              id="libraryQuickLink"
               href="digital-library.html"
               class="flex items-center gap-4 p-4 rounded-2xl bg-[#F5F8FC] hover:bg-blue-50 transition"
             >
@@ -391,14 +567,14 @@
                 📚
               </span>
 
-              <div>
+              <div class="min-w-0">
 
                 <p class="font-black text-[#0A2A7A]">
                   Student Library
                 </p>
 
                 <p class="text-xs text-gray-500">
-                  Access learning resources
+                  Login required to access the Library
                 </p>
 
               </div>
@@ -406,97 +582,77 @@
             </a>
 
 
-            <a
-              href="courses-public.html"
-              class="flex items-center gap-4 p-4 rounded-2xl bg-[#F5F8FC] hover:bg-blue-50 transition"
+            <!-- STATUS -->
+
+            <button
+              id="quickStatusButton"
+              type="button"
+              class="w-full text-left flex items-center gap-4 p-4 rounded-2xl bg-[#F5F8FC] hover:bg-blue-50 transition"
             >
 
               <span class="text-2xl">
-                🎓
+                🔎
               </span>
 
-              <div>
+              <div class="min-w-0">
 
                 <p class="font-black text-[#0A2A7A]">
-                  Browse Courses
+                  Track Application
                 </p>
 
                 <p class="text-xs text-gray-500">
-                  Find another course
+                  Check your current application status
                 </p>
 
               </div>
 
-            </a>
+            </button>
 
 
-            <a
-              href="profile.html"
-              class="flex items-center gap-4 p-4 rounded-2xl bg-[#F5F8FC] hover:bg-blue-50 transition"
+            <!-- PROFILE -->
+
+            <button
+              id="quickProfileButton"
+              type="button"
+              class="w-full text-left flex items-center gap-4 p-4 rounded-2xl bg-[#F5F8FC] hover:bg-blue-50 transition"
             >
 
               <span class="text-2xl">
                 👤
               </span>
 
-              <div>
+              <div class="min-w-0">
 
                 <p class="font-black text-[#0A2A7A]">
                   My Profile
                 </p>
 
                 <p class="text-xs text-gray-500">
-                  View your account
+                  View your student information
                 </p>
 
               </div>
 
-            </a>
+            </button>
 
 
           </div>
 
 
-          <!-- PROGRESS -->
+          <!-- ACCESS NOTICE -->
 
-          <div class="mt-7 border-t pt-6">
+          <div class="mt-6 p-4 rounded-2xl bg-blue-50 border border-blue-100">
 
-            <div class="flex items-center justify-between">
+            <p class="text-sm font-black text-[#0A2A7A]">
+              🔐 Course access
+            </p>
 
-              <p class="font-black text-[#0A2A7A]">
-                Learning Progress
-              </p>
-
-              <p
-                id="progressLabel"
-                class="text-sm font-black text-[#2563EB]"
-              >
-                0%
-              </p>
-
-            </div>
-
-
-            <div
-              class="w-full h-3 bg-gray-100 rounded-full overflow-hidden mt-3"
+            <p
+              id="accessNotice"
+              class="text-xs text-gray-600 mt-1"
             >
-
-              <div
-                id="progressBar"
-                class="h-full bg-[#2563EB] rounded-full transition-all duration-500"
-                style="width: 0%;"
-              ></div>
-
-            </div>
-
-
-            <a
-              id="continueLearningButton"
-              href="courses-public.html"
-              class="block text-center bg-[#2563EB] text-white py-3 rounded-xl font-bold mt-5"
-            >
-              ▶️ Continue Learning
-            </a>
+              Course modules will become available after your enrollment is approved.
+            </p>
 
           </div>
 
@@ -506,22 +662,583 @@
 
 
       <!-- =====================================================
+           UPCOMING DEADLINES
+      ====================================================== -->
+
+      <section class="bg-white rounded-3xl shadow-sm p-6 mb-6">
+
+        <div class="mb-5">
+
+          <h2 class="text-xl font-black text-[#0A2A7A]">
+            Upcoming Deadlines
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Important dates and actions related to your application.
+          </p>
+
+        </div>
+
+
+        <div
+          id="deadlinesList"
+          class="grid md:grid-cols-3 gap-4"
+        >
+
+          <div class="border border-gray-100 rounded-2xl p-5">
+
+            <div class="text-2xl">
+              📝
+            </div>
+
+            <p class="font-black text-[#0A2A7A] mt-3">
+              Application Review
+            </p>
+
+            <p class="text-xs text-gray-500 mt-1">
+              Your submitted application is currently being reviewed.
+            </p>
+
+            <span class="inline-flex mt-4 px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-black">
+              Awaiting Review
+            </span>
+
+          </div>
+
+
+          <div class="border border-gray-100 rounded-2xl p-5">
+
+            <div class="text-2xl">
+              💳
+            </div>
+
+            <p class="font-black text-[#0A2A7A] mt-3">
+              Payment Verification
+            </p>
+
+            <p class="text-xs text-gray-500 mt-1">
+              Your proof of payment is awaiting verification.
+            </p>
+
+            <span class="inline-flex mt-4 px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-black">
+              Under Review
+            </span>
+
+          </div>
+
+
+          <div class="border border-gray-100 rounded-2xl p-5">
+
+            <div class="text-2xl">
+              🎓
+            </div>
+
+            <p class="font-black text-[#0A2A7A] mt-3">
+              Course Activation
+            </p>
+
+            <p class="text-xs text-gray-500 mt-1">
+              Course access will activate after approval.
+            </p>
+
+            <span class="inline-flex mt-4 px-3 py-1 rounded-full bg-gray-100 text-gray-600 text-xs font-black">
+              Waiting
+            </span>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           RECENT ACTIVITIES
+      ====================================================== -->
+
+      <section class="bg-white rounded-3xl shadow-sm p-6 mb-6">
+
+        <div class="mb-5">
+
+          <h2 class="text-xl font-black text-[#0A2A7A]">
+            Recent Activities
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Recent activity on your Academy account.
+          </p>
+
+        </div>
+
+
+        <div
+          id="recentActivities"
+          class="space-y-3"
+        >
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           ANNOUNCEMENTS
+      ====================================================== -->
+
+      <section
+        id="announcementsSection"
+        class="bg-white rounded-3xl shadow-sm p-6 mb-6"
+      >
+
+        <div class="flex items-center justify-between gap-3 mb-5">
+
+          <div>
+
+            <h2 class="text-xl font-black text-[#0A2A7A]">
+              Announcements
+            </h2>
+
+            <p class="text-sm text-gray-500 mt-1">
+              Latest information from Funda Online Academy.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="announcementsList"
+          class="space-y-4"
+        >
+
+          <article class="border border-gray-100 rounded-2xl p-5">
+
+            <div class="flex items-start gap-4">
+
+              <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center text-xl shrink-0">
+                📢
+              </div>
+
+              <div>
+
+                <h3 class="font-black text-[#0A2A7A]">
+                  Welcome to Funda Online Academy
+                </h3>
+
+                <p class="text-sm text-gray-600 mt-2">
+                  Thank you for registering. Please monitor your dashboard
+                  for updates regarding your application and payment review.
+                </p>
+
+                <p class="text-xs text-gray-400 mt-3">
+                  Academy announcement
+                </p>
+
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article class="border border-gray-100 rounded-2xl p-5">
+
+            <div class="flex items-start gap-4">
+
+              <div class="w-11 h-11 rounded-xl bg-yellow-50 flex items-center justify-center text-xl shrink-0">
+                ⏳
+              </div>
+
+              <div>
+
+                <h3 class="font-black text-[#0A2A7A]">
+                  Application Review
+                </h3>
+
+                <p class="text-sm text-gray-600 mt-2">
+                  Your application will remain pending until the relevant
+                  department has completed its review.
+                </p>
+
+                <p class="text-xs text-gray-400 mt-3">
+                  Registration notice
+                </p>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           LIBRARY
+      ====================================================== -->
+
+      <section
+        id="librarySection"
+        class="bg-[#0A2A7A] text-white rounded-3xl shadow-sm p-6 sm:p-8 mb-6"
+      >
+
+        <div class="grid lg:grid-cols-3 gap-6 items-center">
+
+          <div class="lg:col-span-2">
+
+            <div class="flex items-center gap-3">
+
+              <div class="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl">
+                📚
+              </div>
+
+              <div>
+
+                <h2 class="text-xl font-black">
+                  Student Library
+                </h2>
+
+                <p class="text-sm text-blue-100">
+                  Your Academy resource centre
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <p class="text-sm text-blue-100 mt-5 max-w-2xl">
+              The Student Library has its own login. Use your student
+              credentials when accessing the Library.
+            </p>
+
+
+            <div class="mt-5 p-4 rounded-2xl bg-white/10 border border-white/10">
+
+              <p class="text-sm font-black">
+                How to access the Library
+              </p>
+
+              <p class="text-xs text-blue-100 mt-1">
+                Select Open Library and sign in when requested.
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <div class="lg:text-right">
+
+            <a
+              href="digital-library.html"
+              class="inline-flex justify-center bg-white text-[#0A2A7A] px-6 py-3 rounded-xl font-black"
+            >
+              🔐 Open Library
+            </a>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           COMPANY DETAILS + CONTACT
+      ====================================================== -->
+
+      <section class="grid md:grid-cols-2 gap-6 mb-6">
+
+
+        <!-- COMPANY -->
+
+        <div class="bg-white rounded-3xl shadow-sm p-6">
+
+          <h2 class="text-xl font-black text-[#0A2A7A]">
+            Company Details
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Funda Online Academy
+          </p>
+
+
+          <div class="mt-6 space-y-4">
+
+            <div class="flex gap-3">
+
+              <span class="text-xl">
+                🏫
+              </span>
+
+              <div>
+
+                <p class="text-xs text-gray-500">
+                  Institution
+                </p>
+
+                <p class="font-bold">
+                  Funda Online Academy
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="flex gap-3">
+
+              <span class="text-xl">
+                🎓
+              </span>
+
+              <div>
+
+                <p class="text-xs text-gray-500">
+                  Service
+                </p>
+
+                <p class="font-bold">
+                  Online Education & Training
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="flex gap-3">
+
+              <span class="text-xl">
+                🌍
+              </span>
+
+              <div>
+
+                <p class="text-xs text-gray-500">
+                  Location
+                </p>
+
+                <p class="font-bold">
+                  South Africa
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- CONTACT -->
+
+        <div class="bg-white rounded-3xl shadow-sm p-6">
+
+          <h2 class="text-xl font-black text-[#0A2A7A]">
+            Contact Information
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Need assistance? Contact the Academy.
+          </p>
+
+
+          <div class="mt-6 space-y-4">
+
+            <a
+              href="mailto:info@fundaonlineacademy.co.za"
+              class="flex gap-3 items-center"
+            >
+
+              <span class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
+                ✉️
+              </span>
+
+              <div>
+
+                <p class="text-xs text-gray-500">
+                  Email
+                </p>
+
+                <p class="font-bold text-[#0A2A7A]">
+                  Academy Support
+                </p>
+
+              </div>
+
+            </a>
+
+
+            <div class="flex gap-3 items-center">
+
+              <span class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
+                📞
+              </span>
+
+              <div>
+
+                <p class="text-xs text-gray-500">
+                  Phone / WhatsApp
+                </p>
+
+                <p class="font-bold">
+                  Academy Support
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <button
+              id="contactSupportButton"
+              type="button"
+              class="w-full mt-2 bg-[#0A2A7A] text-white py-3 rounded-xl font-bold"
+            >
+              Contact Support
+            </button>
+
+          </div>
+
+        </div>
+
+
+      </section>
+
+
+      <!-- =====================================================
+           PARTNERS
+      ====================================================== -->
+
+      <section class="bg-white rounded-3xl shadow-sm p-6 mb-6">
+
+        <div class="text-center">
+
+          <h2 class="text-xl font-black text-[#0A2A7A]">
+            Our Partners
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Proudly connected with our partners.
+          </p>
+
+        </div>
+
+
+        <div
+          class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6"
+        >
+
+          <div class="h-24 rounded-2xl bg-[#F5F8FC] flex items-center justify-center text-sm font-bold text-gray-400">
+            Partner
+          </div>
+
+          <div class="h-24 rounded-2xl bg-[#F5F8FC] flex items-center justify-center text-sm font-bold text-gray-400">
+            Partner
+          </div>
+
+          <div class="h-24 rounded-2xl bg-[#F5F8FC] flex items-center justify-center text-sm font-bold text-gray-400">
+            Partner
+          </div>
+
+          <div class="h-24 rounded-2xl bg-[#F5F8FC] flex items-center justify-center text-sm font-bold text-gray-400">
+            Partner
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
+           SOCIALS
+      ====================================================== -->
+
+      <section class="bg-white rounded-3xl shadow-sm p-6 mb-6">
+
+        <div class="text-center">
+
+          <h2 class="text-xl font-black text-[#0A2A7A]">
+            Follow Funda Online Academy
+          </h2>
+
+          <p class="text-sm text-gray-500 mt-1">
+            Stay connected with the Academy.
+          </p>
+
+        </div>
+
+
+        <div class="flex flex-wrap justify-center gap-3 mt-6">
+
+
+          <a
+            href="#"
+            class="px-5 py-3 rounded-xl bg-[#F5F8FC] font-bold text-sm hover:bg-blue-50"
+          >
+            Facebook
+          </a>
+
+
+          <a
+            href="#"
+            class="px-5 py-3 rounded-xl bg-[#F5F8FC] font-bold text-sm hover:bg-blue-50"
+          >
+            Instagram
+          </a>
+
+
+          <a
+            href="#"
+            class="px-5 py-3 rounded-xl bg-[#F5F8FC] font-bold text-sm hover:bg-blue-50"
+          >
+            WhatsApp
+          </a>
+
+
+          <a
+            href="#"
+            class="px-5 py-3 rounded-xl bg-[#F5F8FC] font-bold text-sm hover:bg-blue-50"
+          >
+            YouTube
+          </a>
+
+
+          <a
+            href="#"
+            class="px-5 py-3 rounded-xl bg-[#F5F8FC] font-bold text-sm hover:bg-blue-50"
+          >
+            TikTok
+          </a>
+
+
+        </div>
+
+      </section>
+
+
+      <!-- =====================================================
            ACCOUNT INFORMATION
       ====================================================== -->
 
-      <section class="bg-white rounded-3xl shadow-sm p-6 mt-6">
+      <section class="bg-white rounded-3xl shadow-sm p-6 mb-6">
 
         <h2 class="text-xl font-black text-[#0A2A7A]">
           Account Information
         </h2>
 
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-5">
 
 
           <div>
 
             <p class="text-xs text-gray-500">
-              Name
+              Student Name
             </p>
 
             <p
@@ -563,6 +1280,22 @@
           </div>
 
 
+          <div>
+
+            <p class="text-xs text-gray-500">
+              Application Status
+            </p>
+
+            <p
+              id="accountApplicationStatus"
+              class="font-bold text-yellow-600 mt-1"
+            >
+              Pending
+            </p>
+
+          </div>
+
+
         </div>
 
       </section>
@@ -577,17 +1310,335 @@
        FOOTER
   ========================================================== -->
 
-  <footer class="max-w-7xl mx-auto px-4 py-8 text-center">
+  <footer class="bg-[#071D55] text-white mt-10">
 
-    <p class="text-xs text-gray-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-      © <span id="year"></span>
-      Funda Online Academy.
-      All rights reserved.
+      <div class="grid md:grid-cols-3 gap-8">
 
-    </p>
+
+        <div>
+
+          <div class="font-black text-xl">
+            FUNDA
+            <span class="font-semibold">
+              ONLINE
+            </span>
+          </div>
+
+          <p class="text-[10px] tracking-[0.28em] text-blue-200 mt-1">
+            ACADEMY
+          </p>
+
+          <p class="text-sm text-blue-100 mt-4 max-w-sm">
+            Education, training and learning opportunities through
+            Funda Online Academy.
+          </p>
+
+        </div>
+
+
+        <div>
+
+          <h3 class="font-black">
+            Quick Links
+          </h3>
+
+          <div class="space-y-2 mt-4 text-sm text-blue-100">
+
+            <a
+              href="dashboard.html"
+              class="block hover:text-white"
+            >
+              Dashboard
+            </a>
+
+            <a
+              href="courses-public.html"
+              class="block hover:text-white"
+            >
+              Courses
+            </a>
+
+            <a
+              href="digital-library.html"
+              class="block hover:text-white"
+            >
+              Student Library
+            </a>
+
+            <button
+              id="footerSupportButton"
+              type="button"
+              class="block hover:text-white"
+            >
+              Contact Support
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div>
+
+          <h3 class="font-black">
+            Student Support
+          </h3>
+
+          <div class="space-y-2 mt-4 text-sm text-blue-100">
+
+            <p>
+              Registration support
+            </p>
+
+            <p>
+              Payment verification
+            </p>
+
+            <p>
+              Application enquiries
+            </p>
+
+            <p>
+              Library access
+            </p>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="border-t border-white/10 mt-8 pt-6">
+
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-blue-200">
+
+          <p>
+            © <span id="year"></span>
+            Funda Online Academy.
+            All rights reserved.
+          </p>
+
+          <div class="flex gap-4">
+
+            <a href="#">
+              Privacy
+            </a>
+
+            <a href="#">
+              Terms
+            </a>
+
+            <a href="#">
+              Help
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </footer>
+
+
+  <!-- =========================================================
+       STATUS MODAL
+  ========================================================== -->
+
+  <div
+    id="statusModal"
+    class="hidden fixed inset-0 z-50 bg-black/50 p-4 flex items-center justify-center"
+  >
+
+    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-6 sm:p-8">
+
+      <div class="flex items-start justify-between gap-4">
+
+        <div>
+
+          <p class="text-xs font-black text-[#D4A72C] uppercase tracking-wider">
+            Application Tracking
+          </p>
+
+          <h2 class="text-2xl font-black text-[#0A2A7A] mt-1">
+            Your Application Status
+          </h2>
+
+        </div>
+
+
+        <button
+          id="closeStatusModal"
+          type="button"
+          class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 font-black"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="mt-6 space-y-4">
+
+
+        <div
+          id="modalRegistrationStep"
+          class="flex items-center gap-4"
+        >
+
+          <div class="status-icon w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-black">
+            ✓
+          </div>
+
+          <div>
+
+            <p class="font-black text-[#0A2A7A]">
+              Registration
+            </p>
+
+            <p class="text-xs text-gray-500">
+              Account successfully created.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="modalDetailsStep"
+          class="flex items-center gap-4"
+        >
+
+          <div class="status-icon w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-black">
+            ✓
+          </div>
+
+          <div>
+
+            <p class="font-black text-[#0A2A7A]">
+              Student Information
+            </p>
+
+            <p class="text-xs text-gray-500">
+              Required registration information submitted.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="modalCourseStep"
+          class="flex items-center gap-4"
+        >
+
+          <div class="status-icon w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-black">
+            ✓
+          </div>
+
+          <div>
+
+            <p class="font-black text-[#0A2A7A]">
+              Course Selection
+            </p>
+
+            <p
+              id="modalCourseName"
+              class="text-xs text-gray-500"
+            >
+              Course submitted.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="modalPaymentStep"
+          class="flex items-center gap-4"
+        >
+
+          <div class="status-icon w-10 h-10 rounded-full bg-green-100 text-green-700 flex items-center justify-center font-black">
+            ✓
+          </div>
+
+          <div>
+
+            <p class="font-black text-[#0A2A7A]">
+              Payment
+            </p>
+
+            <p class="text-xs text-gray-500">
+              Payment/proof submitted for verification.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="modalReviewStep"
+          class="flex items-center gap-4"
+        >
+
+          <div class="status-icon w-10 h-10 rounded-full bg-yellow-100 text-yellow-700 flex items-center justify-center font-black status-pulse">
+            ⏳
+          </div>
+
+          <div>
+
+            <p class="font-black text-[#0A2A7A]">
+              Department Review
+            </p>
+
+            <p class="text-xs text-gray-500">
+              Your application is awaiting approval.
+            </p>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="mt-6 p-4 rounded-2xl bg-yellow-50 border border-yellow-100">
+
+        <p class="text-sm font-black text-yellow-800">
+          What happens next?
+        </p>
+
+        <p class="text-xs text-yellow-700 mt-1">
+          The responsible department will review your student
+          information and payment. Once approved, your course
+          access will be activated.
+        </p>
+
+      </div>
+
+
+      <button
+        id="modalDoneButton"
+        type="button"
+        class="w-full mt-6 bg-[#0A2A7A] text-white py-3 rounded-xl font-bold"
+      >
+        Close
+      </button>
+
+    </div>
+
+  </div>
 
 
   <!-- =========================================================
@@ -596,22 +1647,18 @@
 
   <script>
 
-    // ==========================================================
-    // FUNDA ONLINE ACADEMY
-    // STUDENT DASHBOARD
-    // ==========================================================
-
-
     let supabaseClient = null;
 
     let currentUser = null;
 
+    let profile = null;
+
     let enrollments = [];
 
 
-    // ----------------------------------------------------------
-    // ELEMENTS
-    // ----------------------------------------------------------
+    /* =========================================================
+       ELEMENTS
+    ========================================================= */
 
     const loadingState =
       document.getElementById(
@@ -644,15 +1691,13 @@
       );
 
 
-    // ----------------------------------------------------------
-    // SUPABASE
-    // ----------------------------------------------------------
+    /* =========================================================
+       SUPABASE
+    ========================================================= */
 
     function initialiseSupabase() {
 
-      if (
-        !window.SUPABASE_URL
-      ) {
+      if (!window.SUPABASE_URL) {
 
         throw new Error(
           "SUPABASE_URL is missing from supabase-config.js."
@@ -661,9 +1706,7 @@
       }
 
 
-      if (
-        !window.SUPABASE_ANON_KEY
-      ) {
+      if (!window.SUPABASE_ANON_KEY) {
 
         throw new Error(
           "SUPABASE_ANON_KEY is missing from supabase-config.js."
@@ -712,13 +1755,11 @@
     }
 
 
-    // ----------------------------------------------------------
-    // ERROR
-    // ----------------------------------------------------------
+    /* =========================================================
+       ERROR STATE
+    ========================================================= */
 
-    function showError(
-      message
-    ) {
+    function showError(message) {
 
       loadingState.classList.add(
         "hidden"
@@ -739,9 +1780,9 @@
     }
 
 
-    // ----------------------------------------------------------
-    // DASHBOARD
-    // ----------------------------------------------------------
+    /* =========================================================
+       SHOW DASHBOARD
+    ========================================================= */
 
     function showDashboard() {
 
@@ -760,13 +1801,11 @@
     }
 
 
-    // ----------------------------------------------------------
-    // ESCAPE HTML
-    // ----------------------------------------------------------
+    /* =========================================================
+       ESCAPE HTML
+    ========================================================= */
 
-    function escapeHTML(
-      value
-    ) {
+    function escapeHTML(value) {
 
       if (
         value === null ||
@@ -779,57 +1818,18 @@
 
 
       return String(value)
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
     }
 
 
-    // ----------------------------------------------------------
-    // DISPLAY NAME
-    // ----------------------------------------------------------
-
-    function getDisplayName(
-      user
-    ) {
-
-      const metadata =
-        user?.user_metadata ||
-        {};
-
-
-      return (
-        metadata.full_name ||
-        metadata.name ||
-        metadata.first_name ||
-        user?.email?.split("@")[0] ||
-        "Student"
-      );
-
-    }
-
-
-    // ----------------------------------------------------------
-    // CURRENT USER
-    // ----------------------------------------------------------
+    /* =========================================================
+       GET CURRENT USER
+    ========================================================= */
 
     async function getCurrentUser() {
 
@@ -850,9 +1850,7 @@
       }
 
 
-      if (
-        !data?.user
-      ) {
+      if (!data?.user) {
 
         window.location.href =
           "login.html?next=dashboard.html";
@@ -867,22 +1865,50 @@
     }
 
 
-    // ----------------------------------------------------------
-    // LOAD ENROLLMENTS
-    //
-    // IMPORTANT:
-    //
-    // The enrollments table uses:
-    //
-    //     student_id
-    //
-    // It does NOT use:
-    //
-    //     user_id
-    //
-    // The student's profile/Auth UUID is stored in
-    // enrollments.student_id.
-    // ----------------------------------------------------------
+    /* =========================================================
+       LOAD PROFILE
+    ========================================================= */
+
+    async function loadProfile() {
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+          .from("profiles")
+          .select("*")
+          .eq(
+            "id",
+            currentUser.id
+          )
+          .maybeSingle();
+
+
+      if (error) {
+
+        console.warn(
+          "Profile loading warning:",
+          error
+        );
+
+        return null;
+
+      }
+
+
+      return data;
+
+    }
+
+
+    /* =========================================================
+       LOAD ENROLLMENTS
+
+       IMPORTANT:
+       The database uses student_id.
+       NOT user_id.
+    ========================================================= */
 
     async function loadEnrollments() {
 
@@ -892,12 +1918,10 @@
       } =
         await supabaseClient
           .from("enrollments")
-          .select(
-            `
-              *,
-              courses(*)
-            `
-          )
+          .select(`
+            *,
+            courses(*)
+          `)
           .eq(
             "student_id",
             currentUser.id
@@ -933,68 +1957,89 @@
     }
 
 
-    // ----------------------------------------------------------
-    // COURSE TITLE
-    // ----------------------------------------------------------
+    /* =========================================================
+       DISPLAY NAME
+    ========================================================= */
 
-    function getCourseTitle(
-      enrollment
-    ) {
+    function getDisplayName() {
 
-      const course =
-        enrollment?.courses;
-
-
-      if (
-        course &&
-        !Array.isArray(course)
-      ) {
-
-        return (
-          course.title ||
-          course.name ||
-          course.course_name ||
-          "Course"
-        );
-
-      }
+      const metadata =
+        currentUser?.user_metadata ||
+        {};
 
 
       return (
-        enrollment?.course_title ||
-        "Course"
+        profile?.full_name ||
+        metadata.full_name ||
+        metadata.name ||
+        metadata.first_name ||
+        currentUser?.email?.split("@")[0] ||
+        "Student"
       );
 
     }
 
 
-    // ----------------------------------------------------------
-    // COURSE ID
-    // ----------------------------------------------------------
+    /* =========================================================
+       COURSE OBJECT
+    ========================================================= */
 
-    function getCourseId(
-      enrollment
-    ) {
-
-      const course =
-        enrollment?.courses;
-
+    function getCourse(enrollment) {
 
       if (
-        course &&
-        !Array.isArray(course)
+        enrollment?.courses &&
+        !Array.isArray(
+          enrollment.courses
+        )
       ) {
 
-        return (
-          course.id ||
-          enrollment.course_id ||
-          null
-        );
+        return enrollment.courses;
 
       }
 
 
+      return null;
+
+    }
+
+
+    /* =========================================================
+       COURSE TITLE
+    ========================================================= */
+
+    function getCourseTitle(enrollment) {
+
+      const course =
+        getCourse(
+          enrollment
+        );
+
+
       return (
+        course?.title ||
+        course?.name ||
+        course?.course_name ||
+        enrollment?.course_title ||
+        "Registered Course"
+      );
+
+    }
+
+
+    /* =========================================================
+       COURSE ID
+    ========================================================= */
+
+    function getCourseId(enrollment) {
+
+      const course =
+        getCourse(
+          enrollment
+        );
+
+
+      return (
+        course?.id ||
         enrollment?.course_id ||
         null
       );
@@ -1002,30 +2047,77 @@
     }
 
 
-    // ----------------------------------------------------------
-    // STATUS
-    // ----------------------------------------------------------
+    /* =========================================================
+       ENROLLMENT STATUS
+    ========================================================= */
 
-    function getEnrollmentStatus(
-      enrollment
-    ) {
+    function getEnrollmentStatus(enrollment) {
 
       return String(
         enrollment?.status ||
         enrollment?.enrollment_status ||
         "pending"
-      ).toLowerCase();
+      ).trim().toLowerCase();
 
     }
 
 
-    // ----------------------------------------------------------
-    // PROGRESS
-    // ----------------------------------------------------------
+    /* =========================================================
+       STATUS IS APPROVED?
+    ========================================================= */
 
-    function getProgress(
-      enrollment
-    ) {
+    function isApproved(enrollment) {
+
+      const status =
+        getEnrollmentStatus(
+          enrollment
+        );
+
+
+      return (
+        status === "approved" ||
+        status === "active" ||
+        status === "enrolled"
+      );
+
+    }
+
+
+    /* =========================================================
+       STATUS IS COMPLETED?
+    ========================================================= */
+
+    function isCompleted(enrollment) {
+
+      const status =
+        getEnrollmentStatus(
+          enrollment
+        );
+
+
+      return (
+        status === "completed"
+      );
+
+    }
+
+
+    /* =========================================================
+       PROGRESS
+    ========================================================= */
+
+    function getProgress(enrollment) {
+
+      if (
+        !isApproved(
+          enrollment
+        )
+      ) {
+
+        return 0;
+
+      }
+
 
       const values = [
 
@@ -1055,30 +2147,26 @@
           )
         ) {
 
-          let progress =
+          let result =
             Number(value);
 
 
-          if (
-            progress < 0
-          ) {
+          if (result < 0) {
 
-            progress = 0;
+            result = 0;
 
           }
 
 
-          if (
-            progress > 100
-          ) {
+          if (result > 100) {
 
-            progress = 100;
+            result = 100;
 
           }
 
 
           return Math.round(
-            progress
+            result
           );
 
         }
@@ -1091,51 +2179,270 @@
     }
 
 
-    // ----------------------------------------------------------
-    // OVERALL PROGRESS
-    // ----------------------------------------------------------
+    /* =========================================================
+       UPDATE WELCOME
+    ========================================================= */
 
-    function calculateOverallProgress() {
+    function renderWelcome() {
+
+      const name =
+        getDisplayName();
+
+
+      document
+        .getElementById(
+          "welcomeName"
+        )
+        .textContent =
+        `Welcome back, ${name}! 👋`;
+
+
+      document
+        .getElementById(
+          "studentName"
+        )
+        .textContent =
+        name;
+
+
+      document
+        .getElementById(
+          "studentEmail"
+        )
+        .textContent =
+        profile?.email ||
+        currentUser?.email ||
+        "—";
+
+    }
+
+
+    /* =========================================================
+       APPLICATION STATUS
+    ========================================================= */
+
+    function getOverallApplicationStatus() {
 
       if (
         enrollments.length === 0
       ) {
 
-        return 0;
+        return "none";
 
       }
 
 
-      const total =
-        enrollments.reduce(
-          (
-            sum,
-            enrollment
-          ) => {
-
-            return (
-              sum +
-              getProgress(
-                enrollment
-              )
-            );
-
-          },
-          0
+      const statuses =
+        enrollments.map(
+          enrollment =>
+            getEnrollmentStatus(
+              enrollment
+            )
         );
 
 
-      return Math.round(
-        total /
-        enrollments.length
-      );
+      if (
+        statuses.some(
+          status =>
+            status === "rejected"
+        )
+      ) {
+
+        return "rejected";
+
+      }
+
+
+      if (
+        statuses.every(
+          status =>
+            status === "completed"
+        )
+      ) {
+
+        return "completed";
+
+      }
+
+
+      if (
+        statuses.some(
+          status =>
+            status === "approved" ||
+            status === "active" ||
+            status === "enrolled"
+        )
+      ) {
+
+        return "approved";
+
+      }
+
+
+      return "pending";
 
     }
 
 
-    // ----------------------------------------------------------
-    // STATISTICS
-    // ----------------------------------------------------------
+    /* =========================================================
+       RENDER STATUS BANNER
+    ========================================================= */
+
+    function renderApplicationStatus() {
+
+      const status =
+        getOverallApplicationStatus();
+
+
+      const banner =
+        document.getElementById(
+          "pendingBanner"
+        );
+
+      const badge =
+        document.getElementById(
+          "applicationStatusBadge"
+        );
+
+      const message =
+        document.getElementById(
+          "pendingMessage"
+        );
+
+      const accessNotice =
+        document.getElementById(
+          "accessNotice"
+        );
+
+      const accountStatus =
+        document.getElementById(
+          "accountApplicationStatus"
+        );
+
+
+      if (
+        status === "approved" ||
+        status === "completed"
+      ) {
+
+        banner.classList.remove(
+          "border-yellow-400"
+        );
+
+        banner.classList.add(
+          "border-green-500"
+        );
+
+
+        badge.className =
+          "inline-flex px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-black";
+
+
+        badge.textContent =
+          status === "completed"
+            ? "COMPLETED"
+            : "APPROVED";
+
+
+        message.textContent =
+          "Your application has been approved. Your course access is now available.";
+
+
+        accessNotice.textContent =
+          "Your approved course can now be opened from My Courses.";
+
+
+        accountStatus.className =
+          "font-bold text-green-600 mt-1";
+
+
+        accountStatus.textContent =
+          status === "completed"
+            ? "Completed"
+            : "Approved";
+
+
+        return;
+
+      }
+
+
+      if (
+        status === "rejected"
+      ) {
+
+        banner.classList.remove(
+          "border-yellow-400"
+        );
+
+        banner.classList.add(
+          "border-red-500"
+        );
+
+
+        badge.className =
+          "inline-flex px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-black";
+
+
+        badge.textContent =
+          "ACTION REQUIRED";
+
+
+        message.textContent =
+          "Your application requires attention. Please check your application details or contact Academy support.";
+
+
+        accessNotice.textContent =
+          "Course access remains locked while your application requires attention.";
+
+
+        accountStatus.className =
+          "font-bold text-red-600 mt-1";
+
+
+        accountStatus.textContent =
+          "Action Required";
+
+
+        return;
+
+      }
+
+
+      banner.classList.add(
+        "border-yellow-400"
+      );
+
+
+      badge.className =
+        "inline-flex px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-black";
+
+
+      badge.textContent =
+        "PENDING";
+
+
+      message.textContent =
+        "Your registration and course application have been submitted. The relevant department is reviewing your information and payment.";
+
+
+      accessNotice.textContent =
+        "Course modules will become available after your enrollment is approved.";
+
+
+      accountStatus.className =
+        "font-bold text-yellow-600 mt-1";
+
+
+      accountStatus.textContent =
+        "Pending";
+
+    }
+
+
+    /* =========================================================
+       STATISTICS
+    ========================================================= */
 
     function updateStatistics() {
 
@@ -1143,7 +2450,7 @@
         enrollments.length;
 
 
-      const active =
+      const applications =
         enrollments.filter(
           enrollment => {
 
@@ -1154,6 +2461,7 @@
 
 
             return (
+              status === "pending" ||
               status === "approved" ||
               status === "active" ||
               status === "enrolled" ||
@@ -1166,27 +2474,37 @@
 
       const completed =
         enrollments.filter(
-          enrollment => {
-
-            const status =
-              getEnrollmentStatus(
-                enrollment
-              );
-
-
-            return (
-              status === "completed" ||
-              getProgress(
-                enrollment
-              ) >= 100
-            );
-
-          }
+          enrollment =>
+            isCompleted(
+              enrollment
+            )
         ).length;
 
 
-      const progress =
-        calculateOverallProgress();
+      let totalProgress = 0;
+
+
+      if (
+        enrollments.length > 0
+      ) {
+
+        totalProgress =
+          Math.round(
+            enrollments.reduce(
+              (
+                total,
+                enrollment
+              ) =>
+                total +
+                getProgress(
+                  enrollment
+                ),
+              0
+            ) /
+            enrollments.length
+          );
+
+      }
 
 
       document
@@ -1199,15 +2517,15 @@
 
       document
         .getElementById(
-          "activeCount"
+          "applicationCount"
         )
         .textContent =
-        active;
+        applications;
 
 
       document
         .getElementById(
-          "completedCount"
+          "achievementCount"
         )
         .textContent =
         completed;
@@ -1218,30 +2536,14 @@
           "overallProgress"
         )
         .textContent =
-        progress + "%";
-
-
-      document
-        .getElementById(
-          "progressLabel"
-        )
-        .textContent =
-        progress + "%";
-
-
-      document
-        .getElementById(
-          "progressBar"
-        )
-        .style.width =
-        progress + "%";
+        totalProgress + "%";
 
     }
 
 
-    // ----------------------------------------------------------
-    // RENDER COURSES
-    // ----------------------------------------------------------
+    /* =========================================================
+       RENDER MY COURSES
+    ========================================================= */
 
     function renderCourses() {
 
@@ -1294,60 +2596,120 @@
             );
 
 
-          let statusText =
-            "Pending";
+          const approved =
+            isApproved(
+              enrollment
+            );
 
-          let statusClass =
+
+          const completed =
+            isCompleted(
+              enrollment
+            );
+
+
+          let badgeText =
+            "Pending Approval";
+
+
+          let badgeClass =
             "bg-yellow-100 text-yellow-700";
 
 
-          if (
-            status === "approved" ||
-            status === "active" ||
-            status === "enrolled"
-          ) {
+          if (approved) {
 
-            statusText =
-              "Active";
+            badgeText =
+              "Approved";
 
-            statusClass =
+            badgeClass =
+              "bg-green-100 text-green-700";
+
+          }
+
+
+          if (completed) {
+
+            badgeText =
+              "Completed";
+
+            badgeClass =
               "bg-blue-100 text-blue-700";
 
           }
 
 
           if (
-            status === "completed"
+            status === "rejected"
           ) {
 
-            statusText =
-              "Completed";
+            badgeText =
+              "Action Required";
 
-            statusClass =
-              "bg-green-100 text-green-700";
+            badgeClass =
+              "bg-red-100 text-red-700";
 
           }
 
 
-          if (
-            status === "rejected" ||
-            status === "cancelled"
+          let actionHTML =
+            "";
+
+
+          if (approved) {
+
+            const link =
+              courseId
+                ? `course-view.html?id=${encodeURIComponent(courseId)}`
+                : "courses-public.html";
+
+
+            actionHTML = `
+
+              <a
+                href="${link}"
+                class="flex-1 text-center bg-[#0A2A7A] text-white py-3 rounded-xl font-bold"
+              >
+                ${completed ? "View Course" : "Continue Course"}
+              </a>
+
+            `;
+
+          } else if (
+            status === "rejected"
           ) {
 
-            statusText =
-              status === "rejected"
-                ? "Rejected"
-                : "Cancelled";
+            actionHTML = `
 
-            statusClass =
-              "bg-red-100 text-red-700";
+              <button
+                type="button"
+                onclick="openStatusModal()"
+                class="flex-1 text-center bg-red-600 text-white py-3 rounded-xl font-bold"
+              >
+                View Status
+              </button>
+
+            `;
+
+          } else {
+
+            actionHTML = `
+
+              <button
+                type="button"
+                onclick="openStatusModal()"
+                class="flex-1 text-center bg-[#0A2A7A] text-white py-3 rounded-xl font-bold"
+              >
+                Track Application Status
+              </button>
+
+            `;
 
           }
 
 
           const card =
             document.createElement(
-              "div"
+              "article"
             );
 
 
@@ -1355,34 +2717,39 @@
             "border border-gray-100 rounded-2xl p-5 hover:shadow-md transition";
 
 
-          const courseLink =
-            courseId
-              ? `course-view.html?id=${encodeURIComponent(courseId)}`
-              : "courses-public.html";
-
-
           card.innerHTML = `
 
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
 
               <div class="min-w-0">
 
-                <h3 class="font-black text-lg text-[#0A2A7A]">
-                  ${escapeHTML(title)}
-                </h3>
+                <div class="flex items-center gap-3">
 
-                <p class="text-xs text-gray-500 mt-1">
-                  Enrollment status:
-                  ${escapeHTML(statusText)}
-                </p>
+                  <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-2xl shrink-0">
+                    📚
+                  </div>
+
+                  <div class="min-w-0">
+
+                    <h3 class="font-black text-lg text-[#0A2A7A] truncate">
+                      ${escapeHTML(title)}
+                    </h3>
+
+                    <p class="text-xs text-gray-500 mt-1">
+                      ${approved
+                        ? "Course access available"
+                        : "Enrollment submitted"}
+                    </p>
+
+                  </div>
+
+                </div>
 
               </div>
 
 
-              <span
-                class="inline-flex w-fit px-3 py-1 rounded-full text-xs font-black ${statusClass}"
-              >
-                ${escapeHTML(statusText)}
+              <span class="inline-flex w-fit shrink-0 px-3 py-1 rounded-full text-xs font-black ${badgeClass}">
+                ${escapeHTML(badgeText)}
               </span>
 
             </div>
@@ -1393,11 +2760,11 @@
               <div class="flex items-center justify-between text-xs">
 
                 <span class="font-bold text-gray-500">
-                  Progress
+                  ${approved ? "Learning Progress" : "Application Progress"}
                 </span>
 
-                <span class="font-black text-[#2563EB]">
-                  ${progress}%
+                <span class="font-black ${approved ? "text-[#2563EB]" : "text-yellow-600"}">
+                  ${approved ? progress + "%" : "Awaiting Approval"}
                 </span>
 
               </div>
@@ -1406,8 +2773,8 @@
               <div class="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden mt-2">
 
                 <div
-                  class="h-full bg-[#2563EB] rounded-full"
-                  style="width:${progress}%"
+                  class="h-full ${approved ? "bg-[#2563EB]" : "bg-yellow-400"} rounded-full"
+                  style="width:${approved ? progress : 100}%"
                 ></div>
 
               </div>
@@ -1415,14 +2782,27 @@
             </div>
 
 
+            ${
+              !approved
+                ? `
+                  <div class="mt-4 p-3 rounded-xl bg-yellow-50 border border-yellow-100">
+
+                    <p class="text-xs text-yellow-800">
+
+                      🟡 Your application and payment are awaiting
+                      verification by the responsible department.
+
+                    </p>
+
+                  </div>
+                `
+                : ""
+            }
+
+
             <div class="mt-5 flex flex-col sm:flex-row gap-3">
 
-              <a
-                href="${courseLink}"
-                class="flex-1 text-center bg-[#0A2A7A] text-white py-3 rounded-xl font-bold"
-              >
-                View Course
-              </a>
+              ${actionHTML}
 
               <a
                 href="courses-public.html"
@@ -1443,134 +2823,279 @@
         }
       );
 
-
-      if (
-        enrollments.length > 0
-      ) {
-
-        const first =
-          enrollments[0];
-
-        const firstCourseId =
-          getCourseId(
-            first
-          );
+    }
 
 
-        if (
-          firstCourseId
-        ) {
+    /* =========================================================
+       RECENT ACTIVITIES
+    ========================================================= */
 
-          document
-            .getElementById(
-              "continueLearningButton"
+    function renderActivities() {
+
+      const container =
+        document.getElementById(
+          "recentActivities"
+        );
+
+
+      const latest =
+        enrollments[0];
+
+
+      const courseTitle =
+        latest
+          ? getCourseTitle(
+              latest
             )
-            .href =
-            `course-view.html?id=${encodeURIComponent(firstCourseId)}`;
+          : "No course yet";
 
+
+      const status =
+        latest
+          ? getEnrollmentStatus(
+              latest
+            )
+          : "none";
+
+
+      const activities = [
+
+        {
+          icon: "✓",
+          title: "Account created",
+          text: "Your Funda Online Academy account is active.",
+          type: "success"
+        },
+
+        {
+          icon: "✓",
+          title: "Student registration",
+          text: "Your student registration information was submitted.",
+          type: "success"
         }
 
+      ];
+
+
+      if (latest) {
+
+        activities.push(
+          {
+            icon: "✓",
+            title: "Course selected",
+            text:
+              `${courseTitle} has been added to My Courses.`,
+            type: "success"
+          }
+        );
+
+
+        activities.push(
+          {
+            icon:
+              status === "pending"
+                ? "⏳"
+                : status === "rejected"
+                  ? "!"
+                  : "✓",
+            title:
+              status === "pending"
+                ? "Application awaiting approval"
+                : status === "rejected"
+                  ? "Application requires attention"
+                  : "Enrollment approved",
+            text:
+              status === "pending"
+                ? "Your application is currently being reviewed."
+                : status === "rejected"
+                  ? "Please review your application status."
+                  : "Your course access is available.",
+            type:
+              status === "pending"
+                ? "pending"
+                : status === "rejected"
+                  ? "danger"
+                  : "success"
+          }
+        );
+
       }
+
+
+      container.innerHTML =
+        activities
+          .map(
+            activity => {
+
+              let bg =
+                "bg-green-50";
+
+              let text =
+                "text-green-700";
+
+
+              if (
+                activity.type ===
+                "pending"
+              ) {
+
+                bg =
+                  "bg-yellow-50";
+
+                text =
+                  "text-yellow-700";
+
+              }
+
+
+              if (
+                activity.type ===
+                "danger"
+              ) {
+
+                bg =
+                  "bg-red-50";
+
+                text =
+                  "text-red-700";
+
+              }
+
+
+              return `
+
+                <div class="flex items-start gap-4 p-4 rounded-2xl ${bg}">
+
+                  <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center font-black ${text} shrink-0">
+                    ${activity.icon}
+                  </div>
+
+                  <div>
+
+                    <p class="font-black text-[#0A2A7A]">
+                      ${escapeHTML(activity.title)}
+                    </p>
+
+                    <p class="text-xs text-gray-600 mt-1">
+                      ${escapeHTML(activity.text)}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              `;
+
+            }
+          )
+          .join("");
 
     }
 
 
-    // ----------------------------------------------------------
-    // LOAD PROFILE
-    // ----------------------------------------------------------
+    /* =========================================================
+       MODAL
+    ========================================================= */
 
-    async function loadProfile() {
+    function openStatusModal() {
 
-      const {
-        data,
-        error
-      } =
-        await supabaseClient
-          .from("profiles")
-          .select(
-            "id, full_name, email, phone, gender, role"
+      const modal =
+        document.getElementById(
+          "statusModal"
+        );
+
+
+      const latest =
+        enrollments[0];
+
+
+      if (latest) {
+
+        document
+          .getElementById(
+            "modalCourseName"
           )
-          .eq(
-            "id",
-            currentUser.id
-          )
-          .maybeSingle();
+          .textContent =
+          getCourseTitle(
+            latest
+          );
+
+      }
 
 
-      if (error) {
+      modal.classList.remove(
+        "hidden"
+      );
 
-        console.warn(
-          "Profile loading warning:",
+    }
+
+
+    function closeStatusModal() {
+
+      document
+        .getElementById(
+          "statusModal"
+        )
+        .classList.add(
+          "hidden"
+        );
+
+    }
+
+
+    /* =========================================================
+       PROFILE
+    ========================================================= */
+
+    function openProfile() {
+
+      window.location.href =
+        "profile.html";
+
+    }
+
+
+    /* =========================================================
+       SUPPORT
+    ========================================================= */
+
+    function contactSupport() {
+
+      window.location.href =
+        "mailto:info@fundaonlineacademy.co.za?subject=Funda%20Online%20Academy%20Student%20Support";
+
+    }
+
+
+    /* =========================================================
+       LOGOUT
+    ========================================================= */
+
+    async function logout() {
+
+      try {
+
+        await supabaseClient.auth.signOut();
+
+      } catch (error) {
+
+        console.error(
+          "Logout error:",
           error
         );
 
-        return null;
-
       }
 
 
-      return data;
+      window.location.href =
+        "login.html";
 
     }
 
 
-    // ----------------------------------------------------------
-    // UPDATE ACCOUNT INFORMATION
-    // ----------------------------------------------------------
-
-    function renderAccount(
-      profile
-    ) {
-
-      const metadata =
-        currentUser?.user_metadata ||
-        {};
-
-
-      const name =
-        profile?.full_name ||
-        metadata.full_name ||
-        metadata.name ||
-        metadata.first_name ||
-        currentUser?.email?.split("@")[0] ||
-        "Student";
-
-
-      const email =
-        profile?.email ||
-        currentUser?.email ||
-        "";
-
-
-      document
-        .getElementById(
-          "welcomeName"
-        )
-        .textContent =
-        `Welcome Back, ${name}! 👋`;
-
-
-      document
-        .getElementById(
-          "studentName"
-        )
-        .textContent =
-        name;
-
-
-      document
-        .getElementById(
-          "studentEmail"
-        )
-        .textContent =
-        email;
-
-    }
-
-
-    // ----------------------------------------------------------
-    // LOAD DASHBOARD
-    // ----------------------------------------------------------
+    /* =========================================================
+       LOAD DASHBOARD
+    ========================================================= */
 
     async function loadDashboard() {
 
@@ -1589,9 +3114,7 @@
         );
 
 
-        if (
-          !supabaseClient
-        ) {
+        if (!supabaseClient) {
 
           initialiseSupabase();
 
@@ -1602,51 +3125,29 @@
           await getCurrentUser();
 
 
-        if (
-          !currentUser
-        ) {
+        if (!currentUser) {
 
           return;
 
         }
 
 
-        const profile =
+        profile =
           await loadProfile();
 
-
-        renderAccount(
-          profile
-        );
-
-
-        /*
-          THIS IS THE IMPORTANT FIX.
-
-          The old dashboard used:
-
-              .eq("user_id", currentUser.id)
-
-          But the actual enrollments table uses:
-
-              student_id
-
-          and the current student's enrollment stores
-          the authenticated/profile UUID in student_id.
-
-          Therefore:
-
-              .eq("student_id", currentUser.id)
-
-          is the correct query.
-        */
 
         await loadEnrollments();
 
 
+        renderWelcome();
+
+        renderApplicationStatus();
+
         updateStatistics();
 
         renderCourses();
+
+        renderActivities();
 
         showDashboard();
 
@@ -1668,9 +3169,9 @@
     }
 
 
-    // ----------------------------------------------------------
-    // LOGOUT
-    // ----------------------------------------------------------
+    /* =========================================================
+       EVENTS
+    ========================================================= */
 
     document
       .getElementById(
@@ -1678,32 +3179,89 @@
       )
       .addEventListener(
         "click",
-        async function() {
-
-          try {
-
-            await supabaseClient.auth.signOut();
-
-          } catch (error) {
-
-            console.error(
-              "Logout error:",
-              error
-            );
-
-          }
-
-
-          window.location.href =
-            "login.html";
-
-        }
+        logout
       );
 
 
-    // ----------------------------------------------------------
-    // RETRY
-    // ----------------------------------------------------------
+    document
+      .getElementById(
+        "profileButton"
+      )
+      .addEventListener(
+        "click",
+        openProfile
+      );
+
+
+    document
+      .getElementById(
+        "quickProfileButton"
+      )
+      .addEventListener(
+        "click",
+        openProfile
+      );
+
+
+    document
+      .getElementById(
+        "trackStatusButton"
+      )
+      .addEventListener(
+        "click",
+        openStatusModal
+      );
+
+
+    document
+      .getElementById(
+        "quickStatusButton"
+      )
+      .addEventListener(
+        "click",
+        openStatusModal
+      );
+
+
+    document
+      .getElementById(
+        "closeStatusModal"
+      )
+      .addEventListener(
+        "click",
+        closeStatusModal
+      );
+
+
+    document
+      .getElementById(
+        "modalDoneButton"
+      )
+      .addEventListener(
+        "click",
+        closeStatusModal
+      );
+
+
+    document
+      .getElementById(
+        "contactSupportButton"
+      )
+      .addEventListener(
+        "click",
+        contactSupport
+      );
+
+
+    document
+      .getElementById(
+        "footerSupportButton"
+      )
+      .addEventListener(
+        "click",
+        contactSupport
+      );
+
 
     document
       .getElementById(
@@ -1711,17 +3269,34 @@
       )
       .addEventListener(
         "click",
-        function() {
+        loadDashboard
+      );
 
-          loadDashboard();
+
+    document
+      .getElementById(
+        "statusModal"
+      )
+      .addEventListener(
+        "click",
+        function(event) {
+
+          if (
+            event.target ===
+            this
+          ) {
+
+            closeStatusModal();
+
+          }
 
         }
       );
 
 
-    // ----------------------------------------------------------
-    // YEAR
-    // ----------------------------------------------------------
+    /* =========================================================
+       YEAR
+    ========================================================= */
 
     document
       .getElementById(
@@ -1731,9 +3306,9 @@
       new Date().getFullYear();
 
 
-    // ----------------------------------------------------------
-    // START
-    // ----------------------------------------------------------
+    /* =========================================================
+       START
+    ========================================================= */
 
     try {
 
@@ -1753,7 +3328,6 @@
       );
 
     }
-
 
   </script>
 
