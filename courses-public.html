@@ -19,7 +19,11 @@
   --navy: #092a66;
   --blue: #1456c0;
   --gold: #d4a72c;
-  --soft: #f5f8fc;
+
+  /* Premium academy background */
+  --soft: #e6eef9;
+  --page: #e9f0fa;
+
   --text: #172b4d;
   --muted: #667085;
 }
@@ -34,7 +38,7 @@ html {
 
 body {
   margin: 0;
-  background: #F3F6FC;
+  background: var(--page);
   color: var(--text);
   font-family: "Inter", sans-serif;
   font-size: 15px;
@@ -56,11 +60,15 @@ select {
   font: inherit;
 }
 
+/* ----------------------------------------------------------
+   HERO
+---------------------------------------------------------- */
+
 .hero {
   background:
     radial-gradient(
       circle at 8% 18%,
-      rgba(20, 86, 192, 0.10),
+      rgba(20, 86, 192, 0.12),
       transparent 28%
     ),
     radial-gradient(
@@ -70,6 +78,10 @@ select {
     ),
     var(--soft);
 }
+
+/* ----------------------------------------------------------
+   COURSE CARDS
+---------------------------------------------------------- */
 
 .course-card {
   transition:
@@ -81,13 +93,13 @@ select {
 .course-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 16px 35px rgba(9, 42, 102, 0.11);
-  border-color: #d7e1ef;
+  border-color: #cbd8ea;
 }
 
 .course-image-wrap {
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  background: #edf3fa;
+  background: #dfe8f4;
 }
 
 .course-image {
@@ -101,6 +113,10 @@ select {
   transform: scale(1.035);
 }
 
+/* ----------------------------------------------------------
+   CATEGORY CHIPS
+---------------------------------------------------------- */
+
 .chip {
   white-space: nowrap;
 }
@@ -111,10 +127,18 @@ select {
   border-color: var(--navy);
 }
 
+/* ----------------------------------------------------------
+   FILTER PANEL
+---------------------------------------------------------- */
+
 .filter-panel {
   position: sticky;
   top: 92px;
 }
+
+/* ----------------------------------------------------------
+   TEXT
+---------------------------------------------------------- */
 
 .line-clamp-2 {
   display: -webkit-box;
@@ -123,10 +147,14 @@ select {
   overflow: hidden;
 }
 
+/* ----------------------------------------------------------
+   LOADING
+---------------------------------------------------------- */
+
 .spinner {
   width: 42px;
   height: 42px;
-  border: 4px solid #dbeafe;
+  border: 4px solid #d2def0;
   border-top-color: var(--navy);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -139,7 +167,12 @@ select {
   }
 }
 
+/* ----------------------------------------------------------
+   MOBILE
+---------------------------------------------------------- */
+
 @media (max-width: 767px) {
+
   body {
     font-size: 14px;
   }
@@ -162,27 +195,38 @@ select {
 
 <body>
 
-<header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-100">
+<!-- ==========================================================
+     HEADER
+========================================================== -->
+
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
 
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <div class="h-[68px] sm:h-[76px] flex items-center justify-between gap-4">
 
+      <!-- BRAND -->
+
       <a href="index.html" class="flex items-center gap-2.5 shrink-0">
 
         <div class="w-10 h-10 sm:w-11 sm:h-11 overflow-hidden">
+
           <img
             src="logo.png"
             alt="Funda Online Academy Logo"
             class="w-full h-full object-contain"
             onerror="this.style.display='none'"
           >
+
         </div>
 
         <div class="brand leading-none">
 
           <div class="text-[15px] sm:text-[17px] font-extrabold text-[#092A66]">
-            FUNDA <span class="font-semibold">ONLINE</span>
+            FUNDA
+            <span class="font-semibold">
+              ONLINE
+            </span>
           </div>
 
           <div class="mt-1 text-[8px] sm:text-[9px] font-bold tracking-[.28em] text-[#D4A72C]">
@@ -192,6 +236,9 @@ select {
         </div>
 
       </a>
+
+
+      <!-- DESKTOP NAV -->
 
       <div class="hidden lg:flex items-center gap-7 text-sm">
 
@@ -225,6 +272,9 @@ select {
 
       </div>
 
+
+      <!-- DESKTOP ACTIONS -->
+
       <div class="hidden md:flex items-center gap-2.5">
 
         <a
@@ -243,6 +293,9 @@ select {
 
       </div>
 
+
+      <!-- MOBILE MENU BUTTON -->
+
       <button
         id="mobileMenuButton"
         type="button"
@@ -254,7 +307,13 @@ select {
 
     </div>
 
-    <div id="mobileMenu" class="hidden lg:hidden pb-4">
+
+    <!-- MOBILE MENU -->
+
+    <div
+      id="mobileMenu"
+      class="hidden lg:hidden pb-4"
+    >
 
       <div class="bg-[#F5F8FC] rounded-xl p-3 space-y-1">
 
@@ -286,6 +345,7 @@ select {
           Contact
         </a>
 
+
         <div class="grid grid-cols-2 gap-2 pt-2">
 
           <a
@@ -313,15 +373,22 @@ select {
 </header>
 
 
-<section class="hero border-b border-slate-100">
+<!-- ==========================================================
+     HERO
+========================================================== -->
+
+<section class="hero border-b border-slate-200">
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-11 sm:py-14 lg:py-16">
 
     <div class="max-w-3xl">
 
-      <div class="inline-flex items-center gap-2 bg-white border border-blue-100 rounded-full px-3.5 py-1.5 text-[11px] sm:text-xs font-bold text-[#092A66]">
+      <div class="inline-flex items-center gap-2 bg-white border border-blue-100 rounded-full px-3.5 py-1.5 text-[11px] sm:text-xs font-bold text-[#092A66] shadow-sm">
+
         🎓 PRACTICAL • CAREER-FOCUSED • FLEXIBLE
+
       </div>
+
 
       <h1 class="hero-title mt-5 text-4xl sm:text-5xl font-extrabold leading-tight text-[#092A66]">
 
@@ -333,11 +400,13 @@ select {
 
       </h1>
 
+
       <p class="mt-4 text-sm sm:text-base text-slate-600 leading-7 max-w-2xl">
 
         Browse practical, career-focused programmes designed to help you build useful skills and prepare for real opportunities.
 
       </p>
+
 
       <div class="flex flex-col sm:flex-row gap-2.5 mt-6">
 
@@ -357,6 +426,9 @@ select {
 
       </div>
 
+
+      <!-- STATS -->
+
       <div class="grid grid-cols-3 gap-5 mt-7 max-w-md">
 
         <div>
@@ -374,6 +446,7 @@ select {
 
         </div>
 
+
         <div>
 
           <div class="text-xl sm:text-2xl font-extrabold text-[#092A66]">
@@ -385,6 +458,7 @@ select {
           </div>
 
         </div>
+
 
         <div>
 
@@ -407,9 +481,19 @@ select {
 </section>
 
 
-<section id="courses" class="py-10 sm:py-14 bg-[#F3F6FC]">
+<!-- ==========================================================
+     COURSES
+========================================================== -->
+
+<section
+  id="courses"
+  class="py-10 sm:py-14 bg-[#E9F0FA]"
+>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+
+    <!-- SECTION HEADER -->
 
     <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-4">
 
@@ -423,11 +507,14 @@ select {
           Choose Your Course
         </h2>
 
-        <p class="mt-2 text-sm text-slate-500">
+        <p class="mt-2 text-sm text-slate-600">
           Search, filter and compare programmes before you enrol.
         </p>
 
       </div>
+
+
+      <!-- SEARCH -->
 
       <div class="w-full xl:w-[360px]">
 
@@ -448,7 +535,7 @@ select {
             id="courseSearch"
             type="search"
             placeholder="Search courses, skills or topics..."
-            class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white outline-none focus:border-[#1456C0] focus:ring-2 focus:ring-blue-100 text-sm"
+            class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white outline-none focus:border-[#1456C0] focus:ring-2 focus:ring-blue-100 text-sm shadow-sm"
           >
 
         </div>
@@ -458,18 +545,24 @@ select {
     </div>
 
 
+    <!-- CATEGORY CHIPS -->
+
     <div
       class="mt-5 flex gap-2 overflow-x-auto pb-1"
       id="categoryChips"
     ></div>
 
 
+    <!-- CONTENT -->
+
     <div class="mt-7 grid lg:grid-cols-[205px_minmax(0,1fr)] gap-7 items-start">
 
 
+      <!-- FILTER PANEL -->
+
       <aside class="filter-panel hidden lg:block">
 
-        <div class="rounded-2xl border border-slate-200 bg-white p-4">
+        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
 
           <div class="flex items-center justify-between">
 
@@ -505,12 +598,16 @@ select {
       </aside>
 
 
+      <!-- COURSE AREA -->
+
       <main class="min-w-0">
 
 
+        <!-- RESULTS + SORT -->
+
         <div class="flex items-center justify-between gap-3 mb-4">
 
-          <div class="text-xs sm:text-sm text-slate-500">
+          <div class="text-xs sm:text-sm text-slate-600">
 
             <span id="courseResultCount">
               —
@@ -523,7 +620,7 @@ select {
 
           <select
             id="sortCourses"
-            class="border border-slate-200 rounded-lg px-2.5 py-2 bg-white text-[#092A66] font-semibold text-xs sm:text-sm outline-none"
+            class="border border-slate-200 rounded-lg px-2.5 py-2 bg-white text-[#092A66] font-semibold text-xs sm:text-sm outline-none shadow-sm"
           >
 
             <option value="popular">
@@ -546,6 +643,8 @@ select {
 
         </div>
 
+
+        <!-- CONNECTION ERROR -->
 
         <div
           id="connectionError"
@@ -586,6 +685,8 @@ select {
         </div>
 
 
+        <!-- LOADING -->
+
         <div
           id="loadingState"
           class="py-16 text-center"
@@ -599,6 +700,8 @@ select {
 
         </div>
 
+
+        <!-- EMPTY -->
 
         <div
           id="emptyState"
@@ -620,6 +723,8 @@ select {
         </div>
 
 
+        <!-- NO SEARCH RESULTS -->
+
         <div
           id="noSearchResults"
           class="hidden py-16 text-center"
@@ -640,6 +745,8 @@ select {
         </div>
 
 
+        <!-- COURSE GRID -->
+
         <div
           id="courseGrid"
           class="hidden grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5"
@@ -655,12 +762,17 @@ select {
 </section>
 
 
+<!-- ==========================================================
+     HOW IT WORKS
+========================================================== -->
+
 <section
   id="how-it-works"
-  class="py-11 sm:py-14 bg-[#F5F8FC] border-y border-slate-100"
+  class="py-11 sm:py-14 bg-[#F2F6FC] border-y border-slate-200"
 >
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
 
     <div class="text-center">
 
@@ -682,7 +794,9 @@ select {
     <div class="grid md:grid-cols-3 gap-4 mt-8">
 
 
-      <div class="bg-white border border-slate-100 rounded-2xl p-5">
+      <!-- STEP 1 -->
+
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
 
         <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1456C0] flex items-center justify-center font-extrabold">
           1
@@ -699,7 +813,9 @@ select {
       </div>
 
 
-      <div class="bg-white border border-slate-100 rounded-2xl p-5">
+      <!-- STEP 2 -->
+
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
 
         <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1456C0] flex items-center justify-center font-extrabold">
           2
@@ -716,7 +832,9 @@ select {
       </div>
 
 
-      <div class="bg-white border border-slate-100 rounded-2xl p-5">
+      <!-- STEP 3 -->
+
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
 
         <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1456C0] flex items-center justify-center font-extrabold">
           3
@@ -740,12 +858,17 @@ select {
 </section>
 
 
+<!-- ==========================================================
+     FAQ
+========================================================== -->
+
 <section
   id="faq"
-  class="py-11 sm:py-14 bg-white"
+  class="py-11 sm:py-14 bg-[#F8FAFD]"
 >
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
 
     <div class="text-center">
 
@@ -763,7 +886,7 @@ select {
     <div class="mt-7 space-y-3">
 
 
-      <details class="border border-slate-200 rounded-xl p-4">
+      <details class="border border-slate-200 bg-white rounded-xl p-4 shadow-sm">
 
         <summary class="cursor-pointer font-semibold text-sm text-[#092A66]">
           How do I enrol for a course?
@@ -776,7 +899,7 @@ select {
       </details>
 
 
-      <details class="border border-slate-200 rounded-xl p-4">
+      <details class="border border-slate-200 bg-white rounded-xl p-4 shadow-sm">
 
         <summary class="cursor-pointer font-semibold text-sm text-[#092A66]">
           Can I learn online?
@@ -789,7 +912,7 @@ select {
       </details>
 
 
-      <details class="border border-slate-200 rounded-xl p-4">
+      <details class="border border-slate-200 bg-white rounded-xl p-4 shadow-sm">
 
         <summary class="cursor-pointer font-semibold text-sm text-[#092A66]">
           Will I receive a certificate?
@@ -808,6 +931,10 @@ select {
 
 </section>
 
+
+<!-- ==========================================================
+     CONTACT / CTA
+========================================================== -->
 
 <section
   id="contact"
@@ -852,6 +979,10 @@ select {
 </section>
 
 
+<!-- ==========================================================
+     FOOTER
+========================================================== -->
+
 <footer
   class="bg-[#071B50] text-white"
 >
@@ -861,10 +992,13 @@ select {
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-7">
 
 
+      <!-- BRAND -->
+
       <div>
 
         <div class="brand font-bold">
           FUNDA ONLINE
+
           <span class="text-[#D4A72C]">
             ACADEMY
           </span>
@@ -877,6 +1011,8 @@ select {
       </div>
 
 
+      <!-- QUICK LINKS -->
+
       <div>
 
         <h3 class="font-bold text-sm">
@@ -885,19 +1021,31 @@ select {
 
         <div class="mt-3 space-y-2 text-xs sm:text-sm text-blue-100">
 
-          <a href="#courses" class="block hover:text-white">
+          <a
+            href="#courses"
+            class="block hover:text-white"
+          >
             Courses
           </a>
 
-          <a href="#how-it-works" class="block hover:text-white">
+          <a
+            href="#how-it-works"
+            class="block hover:text-white"
+          >
             How It Works
           </a>
 
-          <a href="#faq" class="block hover:text-white">
+          <a
+            href="#faq"
+            class="block hover:text-white"
+          >
             FAQs
           </a>
 
-          <a href="login.html" class="block hover:text-white">
+          <a
+            href="login.html"
+            class="block hover:text-white"
+          >
             Student Login
           </a>
 
@@ -905,6 +1053,8 @@ select {
 
       </div>
 
+
+      <!-- CONTACT -->
 
       <div>
 
@@ -930,6 +1080,8 @@ select {
 
       </div>
 
+
+      <!-- SOCIALS -->
 
       <div>
 
@@ -966,7 +1118,9 @@ select {
     <div class="mt-8 pt-5 border-t border-white/10 flex flex-col sm:flex-row justify-between gap-2 text-[11px] text-blue-200">
 
       <span>
-        © <span id="year"></span> Funda Online Academy. All rights reserved.
+        ©
+        <span id="year"></span>
+        Funda Online Academy. All rights reserved.
       </span>
 
       <span>
@@ -980,6 +1134,10 @@ select {
 </footer>
 
 
+<!-- ==========================================================
+     JAVASCRIPT
+========================================================== -->
+
 <script>
 
 let supabaseClient = null;
@@ -988,6 +1146,10 @@ let allCourses = [];
 
 let activeCategory = "All";
 
+
+/* ----------------------------------------------------------
+   DOM ELEMENTS
+---------------------------------------------------------- */
 
 const loadingState =
   document.getElementById("loadingState");
@@ -1029,23 +1191,31 @@ const sortCourses =
   document.getElementById("sortCourses");
 
 
+/* ----------------------------------------------------------
+   SUPABASE
+---------------------------------------------------------- */
+
 function initialiseSupabase() {
 
   if (
     typeof window.SUPABASE_URL === "undefined"
   ) {
+
     throw new Error(
       "supabase-config.js was not loaded."
     );
+
   }
 
 
   if (
     typeof window.SUPABASE_ANON_KEY === "undefined"
   ) {
+
     throw new Error(
       "SUPABASE_ANON_KEY was not found in supabase-config.js."
     );
+
   }
 
 
@@ -1055,18 +1225,22 @@ function initialiseSupabase() {
     window.SUPABASE_ANON_KEY ===
       "YOUR_LEGACY_ANON_KEY_GOES_HERE"
   ) {
+
     throw new Error(
       "The Supabase public key has not been configured."
     );
+
   }
 
 
   if (
     typeof window.supabase === "undefined"
   ) {
+
     throw new Error(
       "The Supabase JavaScript library did not load."
     );
+
   }
 
 
@@ -1079,13 +1253,19 @@ function initialiseSupabase() {
 }
 
 
+/* ----------------------------------------------------------
+   SECURITY
+---------------------------------------------------------- */
+
 function escapeHTML(value) {
 
   if (
     value === null ||
     value === undefined
   ) {
+
     return "";
+
   }
 
 
@@ -1099,6 +1279,10 @@ function escapeHTML(value) {
 }
 
 
+/* ----------------------------------------------------------
+   PRICE
+---------------------------------------------------------- */
+
 function formatPrice(value) {
 
   if (
@@ -1106,7 +1290,9 @@ function formatPrice(value) {
     value === undefined ||
     value === ""
   ) {
+
     return "Contact us";
+
   }
 
 
@@ -1117,7 +1303,9 @@ function formatPrice(value) {
   if (
     Number.isNaN(number)
   ) {
+
     return escapeHTML(value);
+
   }
 
 
@@ -1132,6 +1320,10 @@ function formatPrice(value) {
 
 }
 
+
+/* ----------------------------------------------------------
+   COURSE HELPERS
+---------------------------------------------------------- */
 
 function getCourseImage(course) {
 
@@ -1217,26 +1409,36 @@ function getCourseLevel(course) {
 }
 
 
+/* ----------------------------------------------------------
+   PUBLISHED STATUS
+---------------------------------------------------------- */
+
 function isPublished(course) {
 
   if (
     typeof course.published === "boolean"
   ) {
+
     return course.published;
+
   }
 
 
   if (
     typeof course.is_published === "boolean"
   ) {
+
     return course.is_published;
+
   }
 
 
   if (
     typeof course.active === "boolean"
   ) {
+
     return course.active;
+
   }
 
 
@@ -1259,6 +1461,10 @@ function isPublished(course) {
 }
 
 
+/* ----------------------------------------------------------
+   CONNECTION ERROR
+---------------------------------------------------------- */
+
 function showConnectionError(message) {
 
   loadingState.classList.add("hidden");
@@ -1272,6 +1478,10 @@ function showConnectionError(message) {
 }
 
 
+/* ----------------------------------------------------------
+   LOADING
+---------------------------------------------------------- */
+
 function showLoading() {
 
   loadingState.classList.remove("hidden");
@@ -1284,6 +1494,10 @@ function showLoading() {
 
 }
 
+
+/* ----------------------------------------------------------
+   CATEGORY CONTROLS
+---------------------------------------------------------- */
 
 function buildCategoryControls() {
 
@@ -1307,6 +1521,8 @@ function buildCategoryControls() {
   ];
 
 
+  /* CATEGORY CHIPS */
+
   categoryChips.innerHTML =
     all
       .map(
@@ -1318,7 +1534,7 @@ function buildCategoryControls() {
               category === activeCategory
                 ? "active"
                 : ""
-            } px-3.5 py-2 rounded-full border border-slate-200 bg-white text-[#092A66] text-xs font-semibold"
+            } px-3.5 py-2 rounded-full border border-slate-200 bg-white text-[#092A66] text-xs font-semibold shadow-sm"
           >
             ${escapeHTML(category)}
           </button>
@@ -1326,6 +1542,8 @@ function buildCategoryControls() {
       )
       .join("");
 
+
+  /* CATEGORY FILTERS */
 
   categoryFilters.innerHTML =
     all
@@ -1349,6 +1567,8 @@ function buildCategoryControls() {
       )
       .join("");
 
+
+  /* CHIP EVENTS */
 
   categoryChips
     .querySelectorAll(
@@ -1399,6 +1619,8 @@ function buildCategoryControls() {
 
     });
 
+
+  /* FILTER EVENTS */
 
   categoryFilters
     .querySelectorAll(
@@ -1459,6 +1681,10 @@ function buildCategoryControls() {
 
 }
 
+
+/* ----------------------------------------------------------
+   LOAD COURSES
+---------------------------------------------------------- */
 
 async function loadCourses() {
 
@@ -1546,6 +1772,10 @@ async function loadCourses() {
 
 }
 
+
+/* ----------------------------------------------------------
+   FILTER COURSES
+---------------------------------------------------------- */
 
 function applyFilters() {
 
@@ -1669,6 +1899,10 @@ function applyFilters() {
 
 }
 
+
+/* ----------------------------------------------------------
+   RENDER COURSES
+---------------------------------------------------------- */
 
 function renderCourses(
   courses
@@ -1883,6 +2117,10 @@ function renderCourses(
 }
 
 
+/* ----------------------------------------------------------
+   MOBILE MENU
+---------------------------------------------------------- */
+
 document
   .getElementById(
     "mobileMenuButton"
@@ -1902,6 +2140,10 @@ document
     }
   );
 
+
+/* ----------------------------------------------------------
+   CLOSE MOBILE MENU
+---------------------------------------------------------- */
 
 document
   .querySelectorAll(
@@ -1929,17 +2171,29 @@ document
   );
 
 
+/* ----------------------------------------------------------
+   SEARCH
+---------------------------------------------------------- */
+
 courseSearch.addEventListener(
   "input",
   applyFilters
 );
 
 
+/* ----------------------------------------------------------
+   SORT
+---------------------------------------------------------- */
+
 sortCourses.addEventListener(
   "change",
   applyFilters
 );
 
+
+/* ----------------------------------------------------------
+   CLEAR FILTERS
+---------------------------------------------------------- */
 
 document
   .getElementById(
@@ -1996,11 +2250,19 @@ document
   );
 
 
+/* ----------------------------------------------------------
+   RETRY
+---------------------------------------------------------- */
+
 retryButton.addEventListener(
   "click",
   loadCourses
 );
 
+
+/* ----------------------------------------------------------
+   YEAR
+---------------------------------------------------------- */
 
 document
   .getElementById(
@@ -2010,6 +2272,10 @@ document
   new Date()
     .getFullYear();
 
+
+/* ----------------------------------------------------------
+   INITIAL LOAD
+---------------------------------------------------------- */
 
 document.addEventListener(
   "DOMContentLoaded",
