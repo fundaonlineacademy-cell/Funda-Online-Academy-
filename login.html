@@ -1,2146 +1,474 @@
-Complete "login.html"
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Secure student and staff login for Funda Online Academy.">
+  <title>Login | Funda Online Academy</title>
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <title>Funda Online Academy - Login</title>
-
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Supabase -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-  <!-- SHARED FUNDA SUPABASE CONFIG -->
-  <script src="supabase-config.js?v=20260825"></script>
-
-  <!-- Font -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet"
-  >
+  <script src="supabase-config.js?v=20260827"></script>
 
   <style>
-
-    * {
-      box-sizing: border-box;
+    :root{
+      --navy:#06152f;
+      --navy2:#0a1f46;
+      --blue:#184f9f;
+      --gold:#d3aa49;
+      --cream:#f6f3ec;
+      --ink:#10213f;
+      --muted:#667085;
     }
 
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      min-height: 100%;
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%}
+    body{
+      font-family:"Inter",sans-serif;
+      background:var(--navy);
+      color:var(--ink);
     }
+    h1,h2,h3,.brand{font-family:"Montserrat",sans-serif}
 
-    body {
-      font-family: "Inter", sans-serif;
-      background: #07152f;
-    }
-
-    .brand-gradient {
+    .brand-panel{
       background:
-        linear-gradient(
-          135deg,
-          #02091d 0%,
-          #03133d 48%,
-          #061d4d 100%
-        );
+        radial-gradient(circle at 15% 12%,rgba(211,170,73,.10),transparent 27%),
+        radial-gradient(circle at 88% 78%,rgba(24,79,159,.18),transparent 28%),
+        linear-gradient(145deg,#020817 0%,#06152f 52%,#0a214d 100%);
     }
 
-    .hero-pattern {
-      background-image:
-        radial-gradient(
-          circle at 12% 20%,
-          rgba(255,255,255,.025) 0 2px,
-          transparent 3px
-        ),
-        radial-gradient(
-          circle at 88% 72%,
-          rgba(255,255,255,.018) 0 2px,
-          transparent 3px
-        );
-
-      background-size:
-        70px 70px,
-        90px 90px;
+    .auth-panel{
+      background:linear-gradient(145deg,#09162d 0%,#0d2143 100%);
     }
 
-    .soft-shadow {
-      box-shadow:
-        0 22px 65px rgba(0,0,0,.30);
+    .auth-card{
+      box-shadow:0 28px 80px rgba(0,0,0,.35);
     }
 
-    .login-area {
-      background:
-        linear-gradient(
-          145deg,
-          #07152f 0%,
-          #0a1b3b 55%,
-          #0d2146 100%
-        );
+    .input-field{
+      width:100%;
+      border:1px solid #d5dce8;
+      background:#f8fafc;
+      color:#0f172a;
+      border-radius:12px;
+      padding:14px 15px;
+      font-size:15px;
+      transition:.2s ease;
     }
 
-    .login-shadow {
-      box-shadow:
-        0 25px 75px rgba(0,0,0,.42);
+    .input-field:focus{
+      outline:none;
+      border-color:#184f9f;
+      background:#fff;
+      box-shadow:0 0 0 4px rgba(24,79,159,.11);
     }
 
-    .student-photo {
-      transition:
-        transform .3s ease,
-        box-shadow .3s ease;
+    .role-btn{
+      transition:.2s ease;
     }
 
-    .student-photo:hover {
-      transform: translateY(-4px);
-
-      box-shadow:
-        0 18px 40px rgba(0,0,0,.28);
+    .role-btn.active{
+      background:#06152f;
+      color:#fff;
+      border-color:#06152f;
+      box-shadow:0 8px 24px rgba(6,21,47,.15);
     }
 
-    .testimonial-card {
-      background: rgba(255,255,255,.98);
+    .message{display:none}
+    .message.show{display:block}
+    .message.error{
+      background:#fff1f2;
+      border:1px solid #fecdd3;
+      color:#9f1239;
+    }
+    .message.success{
+      background:#ecfdf3;
+      border:1px solid #bbf7d0;
+      color:#166534;
     }
 
-    .input-focus:focus {
-      outline: none;
-
-      border-color: #2563eb;
-
-      box-shadow:
-        0 0 0 4px rgba(37,99,235,.12);
+    .spinner{
+      width:18px;
+      height:18px;
+      display:inline-block;
+      vertical-align:-3px;
+      margin-right:8px;
+      border:3px solid rgba(255,255,255,.35);
+      border-top-color:#fff;
+      border-radius:50%;
+      animation:spin .8s linear infinite;
     }
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-    .gold-text {
-      color: #f6c453;
+    @media(max-width:1023px){
+      .brand-panel{min-height:auto}
+      .auth-panel{min-height:auto}
     }
-
-    .login-input {
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      color: #0f172a;
-    }
-
-    .login-input::placeholder {
-      color: #94a3b8;
-    }
-
-    .login-input:focus {
-      background: #ffffff;
-    }
-
-    .message {
-      display: none;
-    }
-
-    .message.show {
-      display: block;
-    }
-
-    .message.error {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #991b1b;
-    }
-
-    .message.success {
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      color: #166534;
-    }
-
-    .loading-spinner {
-      width: 20px;
-      height: 20px;
-
-      border:
-        3px solid rgba(255,255,255,.35);
-
-      border-top-color:
-        #ffffff;
-
-      border-radius: 50%;
-
-      animation:
-        spin .8s linear infinite;
-
-      display: inline-block;
-
-      vertical-align: middle;
-
-      margin-right: 8px;
-    }
-
-    @keyframes spin {
-
-      to {
-        transform: rotate(360deg);
-      }
-
-    }
-
-    @media (max-width: 1023px) {
-
-      .login-area {
-        min-height: auto;
-      }
-
-    }
-
   </style>
-
 </head>
 
-
 <body>
+<main class="min-h-screen grid lg:grid-cols-[1.08fr_.92fr]">
 
-  <main
-    class="
-      min-h-screen
-      flex
-      flex-col
-      lg:flex-row
-    "
-  >
+  <section class="brand-panel text-white px-6 sm:px-10 lg:px-14 xl:px-20 py-8 lg:py-12 flex flex-col justify-between min-h-[480px] lg:min-h-screen">
+    <div>
+      <a href="index.html" class="inline-flex items-center gap-4 bg-white rounded-2xl px-4 py-3 shadow-2xl">
+        <img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 sm:w-16 sm:h-16 object-contain" onerror="this.style.display='none'">
+        <div class="brand leading-none">
+          <div class="text-lg sm:text-xl font-extrabold text-[#06152f]">FUNDA ONLINE</div>
+          <div class="mt-1.5 text-[10px] font-extrabold tracking-[.28em] text-[#b88622]">ACADEMY</div>
+        </div>
+      </a>
 
-
-    <!-- ======================================================
-         LEFT SIDE
-    ======================================================= -->
-
-    <section
-      class="
-        relative
-        overflow-hidden
-        brand-gradient
-        hero-pattern
-        text-white
-        w-full
-        lg:w-[52%]
-        min-h-[700px]
-        lg:min-h-screen
-        px-6
-        py-8
-        sm:px-10
-        lg:px-14
-        xl:px-20
-        flex
-        flex-col
-      "
-    >
-
-      <div
-        class="
-          absolute
-          -top-32
-          -right-32
-          w-96
-          h-96
-          rounded-full
-          bg-blue-400/[0.035]
-          pointer-events-none
-        "
-      ></div>
-
-
-      <div
-        class="
-          absolute
-          -bottom-40
-          -left-40
-          w-[500px]
-          h-[500px]
-          rounded-full
-          bg-blue-500/[0.025]
-          pointer-events-none
-        "
-      ></div>
-
-
-      <!-- LOGO -->
-
-      <div class="relative z-10">
-
-        <div
-          class="
-            inline-flex
-            items-center
-            gap-5
-            rounded-2xl
-            bg-white
-            px-5
-            py-4
-            shadow-2xl
-          "
-        >
-
-          <img
-            src="logo.png"
-            alt="Funda Online Academy Logo"
-            class="
-              w-20
-              h-20
-              sm:w-24
-              sm:h-24
-              object-contain
-              shrink-0
-            "
-          >
-
-          <div>
-
-            <div
-              class="
-                text-2xl
-                sm:text-3xl
-                font-black
-                tracking-tight
-                leading-none
-                text-[#03133d]
-              "
-            >
-              FUNDA ONLINE
-            </div>
-
-            <div
-              class="
-                mt-2
-                text-sm
-                sm:text-base
-                font-black
-                tracking-[0.30em]
-                text-[#d79e1f]
-              "
-            >
-              ACADEMY
-            </div>
-
-          </div>
-
+      <div class="mt-12 lg:mt-20 max-w-2xl">
+        <div class="inline-flex items-center rounded-full border border-white/10 bg-white/[.05] px-4 py-2 text-[11px] sm:text-xs font-bold tracking-[.16em] text-[#e6c778]">
+          SECURE STUDENT ACCESS
         </div>
 
-      </div>
-
-
-      <!-- HERO -->
-
-      <div
-        class="
-          relative
-          z-10
-          mt-14
-          lg:mt-20
-          max-w-2xl
-        "
-      >
-
-        <div
-          class="
-            inline-flex
-            items-center
-            gap-2
-            rounded-full
-            border
-            border-white/15
-            bg-white/[0.045]
-            px-4
-            py-2
-            text-xs
-            sm:text-sm
-            font-bold
-            tracking-wide
-            mb-6
-          "
-        >
-
-          <span class="gold-text">
-            ✦
-          </span>
-
-          PRACTICAL • FLEXIBLE • CAREER FOCUSED
-
-        </div>
-
-
-        <h1
-          class="
-            text-4xl
-            sm:text-5xl
-            xl:text-6xl
-            font-black
-            leading-[1.04]
-            tracking-tight
-            text-white
-          "
-        >
-
-          Master Skills
-
-          <br>
-
-          <span class="gold-text">
-            That Get You Hired.
-          </span>
-
+        <h1 class="mt-5 text-4xl sm:text-5xl xl:text-6xl font-extrabold leading-[1.05] tracking-tight">
+          Continue your<br>
+          <span class="text-[#e2bd61]">learning journey.</span>
         </h1>
 
-
-        <p
-          class="
-            mt-6
-            text-base
-            sm:text-lg
-            leading-8
-            text-slate-100
-            max-w-xl
-          "
-        >
-          Learn practical, career-focused skills with
-          Funda Online Academy. Study at your own pace
-          and build knowledge that can help you move
-          confidently toward your career goals.
+        <p class="mt-6 max-w-xl text-sm sm:text-base leading-7 text-slate-200">
+          Access your student dashboard, track enrollment progress and continue your Funda Online Academy journey from one secure place.
         </p>
 
-
-        <div
-          class="
-            mt-7
-            flex
-            flex-wrap
-            items-center
-            gap-x-7
-            gap-y-3
-          "
-        >
-
-          <div
-            class="
-              flex
-              items-center
-              gap-2
-            "
-          >
-
-            <span class="gold-text text-lg">
-              ★
-            </span>
-
-            <span class="font-bold text-white">
-              Career-focused learning
-            </span>
-
+        <div class="grid sm:grid-cols-3 gap-3 mt-8 max-w-2xl">
+          <div class="rounded-2xl border border-white/10 bg-white/[.05] p-4">
+            <div class="text-[#e2bd61] text-lg">✓</div>
+            <p class="mt-2 text-sm font-bold">Practical learning</p>
+            <p class="mt-1 text-xs leading-5 text-slate-300">Career-focused course experiences.</p>
           </div>
-
-
-          <div
-            class="
-              flex
-              items-center
-              gap-2
-            "
-          >
-
-            <span class="gold-text text-lg">
-              ✓
-            </span>
-
-            <span class="font-bold text-white">
-              Flexible online study
-            </span>
-
+          <div class="rounded-2xl border border-white/10 bg-white/[.05] p-4">
+            <div class="text-[#e2bd61] text-lg">◫</div>
+            <p class="mt-2 text-sm font-bold">Mobile friendly</p>
+            <p class="mt-1 text-xs leading-5 text-slate-300">Study and manage your journey from your phone.</p>
           </div>
-
+          <div class="rounded-2xl border border-white/10 bg-white/[.05] p-4">
+            <div class="text-[#e2bd61] text-lg">◎</div>
+            <p class="mt-2 text-sm font-bold">Clear progress</p>
+            <p class="mt-1 text-xs leading-5 text-slate-300">See your course and approval status clearly.</p>
+          </div>
         </div>
+      </div>
+    </div>
 
+    <div class="mt-10 text-[11px] text-slate-400">© 2026 Funda Online Academy · Learn. Grow. Succeed.</div>
+  </section>
+
+  <section class="auth-panel px-5 sm:px-8 lg:px-10 py-8 lg:py-12 flex items-center justify-center min-h-screen">
+    <div class="auth-card w-full max-w-[500px] bg-white rounded-[28px] p-6 sm:p-8 lg:p-9 border border-white">
+
+      <div class="text-center">
+        <div class="lg:hidden flex justify-center mb-5">
+          <img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
+        </div>
+        <p class="text-[11px] font-extrabold tracking-[.18em] text-[#b88622] uppercase">Welcome back</p>
+        <h2 class="mt-2 text-3xl sm:text-[34px] font-extrabold text-[#06152f]">Sign in to your portal</h2>
+        <p class="mt-2 text-sm text-slate-500">Use the account details you registered with.</p>
       </div>
 
-
-      <!-- STUDENT IMAGES -->
-
-      <div
-        class="
-          relative
-          z-10
-          mt-10
-          lg:mt-auto
-          lg:pt-10
-        "
-      >
-
-        <div
-          class="
-            grid
-            grid-cols-2
-            sm:grid-cols-3
-            gap-4
-          "
-        >
-
-          <div
-            class="
-              student-photo
-              relative
-              h-40
-              sm:h-48
-              rounded-2xl
-              overflow-hidden
-              bg-[#061d55]
-              border
-              border-white/10
-            "
-          >
-
-            <img
-              src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=700&q=85"
-              alt="Students learning together"
-              class="w-full h-full object-cover"
-            >
-
-            <div
-              class="
-                absolute
-                inset-0
-                bg-black/25
-              "
-            ></div>
-
-            <div
-              class="
-                absolute
-                inset-x-0
-                bottom-0
-                p-3
-                bg-gradient-to-t
-                from-black/85
-                to-transparent
-              "
-            >
-
-              <p
-                class="
-                  text-xs
-                  sm:text-sm
-                  font-bold
-                  text-white
-                "
-              >
-                Learn Together
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <div
-            class="
-              student-photo
-              relative
-              h-40
-              sm:h-48
-              rounded-2xl
-              overflow-hidden
-              bg-[#061d55]
-              border
-              border-white/10
-            "
-          >
-
-            <img
-              src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=700&q=85"
-              alt="Students studying"
-              class="w-full h-full object-cover"
-            >
-
-            <div
-              class="
-                absolute
-                inset-0
-                bg-black/25
-              "
-            ></div>
-
-            <div
-              class="
-                absolute
-                inset-x-0
-                bottom-0
-                p-3
-                bg-gradient-to-t
-                from-black/85
-                to-transparent
-              "
-            >
-
-              <p
-                class="
-                  text-xs
-                  sm:text-sm
-                  font-bold
-                  text-white
-                "
-              >
-                Build Your Future
-              </p>
-
-            </div>
-
-          </div>
-
-
-          <div
-            class="
-              testimonial-card
-              col-span-2
-              sm:col-span-1
-              rounded-2xl
-              p-5
-              text-[#03133d]
-              soft-shadow
-            "
-          >
-
-            <div
-              class="
-                text-[#e5a928]
-                tracking-wide
-              "
-            >
-              ★ ★ ★ ★ ★
-            </div>
-
-            <p
-              class="
-                mt-3
-                text-sm
-                leading-6
-                font-semibold
-              "
-            >
-              “The lessons are easy to follow and the
-              practical approach makes learning much easier.”
-            </p>
-
-            <div class="mt-3">
-
-              <p class="text-xs font-bold">
-                Sample Learner
-              </p>
-
-              <p
-                class="
-                  text-[10px]
-                  text-gray-500
-                  font-bold
-                  tracking-wide
-                "
-              >
-                DEMO TESTIMONIAL
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div
-          class="
-            hidden
-            md:flex
-            mt-5
-            items-center
-            gap-4
-            rounded-2xl
-            border
-            border-white/10
-            bg-white/[0.045]
-            p-4
-            max-w-xl
-          "
-        >
-
-          <div
-            class="
-              w-11
-              h-11
-              rounded-full
-              bg-[#f6c453]
-              text-[#03133d]
-              flex
-              items-center
-              justify-center
-              font-black
-              shrink-0
-            "
-          >
-            ★
-          </div>
-
-          <div>
-
-            <p
-              class="
-                text-sm
-                font-semibold
-                leading-6
-                text-white
-              "
-            >
-              “I love being able to learn at my own pace from my phone.”
-            </p>
-
-            <p
-              class="
-                text-[10px]
-                mt-1
-                text-blue-200
-                font-bold
-              "
-            >
-              SAMPLE LEARNER FEEDBACK — DEMO CONTENT
-            </p>
-
-          </div>
-
-        </div>
-
-
-        <div
-          class="
-            mt-8
-            pb-2
-            text-xs
-            text-blue-200
-          "
-        >
-          © 2026 Funda Online Academy · Learn. Grow. Succeed.
-        </div>
-
+      <div class="grid grid-cols-2 gap-2 mt-7 p-1.5 rounded-xl bg-[#f1f4f8]">
+        <button id="btn-student" type="button" class="role-btn active rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold">Student</button>
+        <button id="btn-admin" type="button" class="role-btn rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold text-slate-600">Staff / Admin</button>
       </div>
 
-    </section>
+      <div id="message" class="message mt-5 rounded-xl p-4 text-sm font-semibold"></div>
 
-
-    <!-- ======================================================
-         RIGHT SIDE LOGIN
-    ======================================================= -->
-
-    <section
-      class="
-        login-area
-        w-full
-        lg:w-[48%]
-        min-h-screen
-        flex
-        items-center
-        justify-center
-        px-5
-        py-10
-        sm:px-8
-        lg:px-12
-      "
-    >
-
-      <div
-        class="
-          w-full
-          max-w-[500px]
-          bg-white
-          rounded-[28px]
-          p-6
-          sm:p-9
-          xl:p-10
-          login-shadow
-          border
-          border-white
-        "
-      >
-
-        <!-- MOBILE LOGO -->
-
-        <div
-          class="
-            lg:hidden
-            flex
-            justify-center
-            mb-7
-          "
-        >
-
-          <div
-            class="
-              flex
-              items-center
-              gap-3
-            "
-          >
-
-            <img
-              src="logo.png"
-              alt="Funda Online Academy Logo"
-              class="
-                w-14
-                h-14
-                object-contain
-              "
-            >
-
-            <div>
-
-              <div
-                class="
-                  font-black
-                  text-[#03133d]
-                  text-xl
-                  leading-none
-                "
-              >
-                FUNDA ONLINE
-              </div>
-
-              <div
-                class="
-                  text-[10px]
-                  font-black
-                  tracking-[0.25em]
-                  text-[#d79e1f]
-                  mt-1
-                "
-              >
-                ACADEMY
-              </div>
-
-            </div>
-
-          </div>
-
+      <form id="loginForm" class="mt-6" novalidate>
+        <div>
+          <label for="email" class="block text-sm font-bold text-[#06152f]">Email address</label>
+          <input id="email" type="email" autocomplete="email" placeholder="you@example.com" class="input-field mt-2" required>
         </div>
-
-
-        <!-- HEADER -->
-
-        <div class="text-center">
-
-          <div
-            class="
-              inline-flex
-              items-center
-              justify-center
-              w-14
-              h-14
-              rounded-2xl
-              bg-blue-50
-              text-2xl
-              mb-4
-            "
-          >
-            👋
-          </div>
-
-          <h2
-            class="
-              text-3xl
-              sm:text-4xl
-              font-black
-              text-[#03133d]
-            "
-          >
-            Welcome Back
-          </h2>
-
-          <p class="text-gray-500 mt-2">
-            Sign in to continue your learning journey.
-          </p>
-
-        </div>
-
-
-        <!-- MESSAGE -->
-
-        <div
-          id="message"
-          class="
-            message
-            rounded-xl
-            px-4
-            py-3
-            text-sm
-            font-semibold
-            mt-6
-          "
-        ></div>
-
-
-        <!-- LOGIN TYPE -->
-
-        <div
-          class="
-            grid
-            grid-cols-2
-            gap-3
-            mt-8
-          "
-        >
-
-          <button
-            id="btn-student"
-            type="button"
-            onclick="setRole('student')"
-            class="
-              border-2
-              border-[#2563EB]
-              bg-[#2563EB]
-              text-white
-              rounded-xl
-              py-3.5
-              font-extrabold
-              text-sm
-              transition
-              hover:bg-[#1d4ed8]
-            "
-          >
-            🎓 Student Login
-          </button>
-
-
-          <button
-            id="btn-admin"
-            type="button"
-            onclick="setRole('admin')"
-            class="
-              border-2
-              border-gray-200
-              bg-white
-              text-gray-600
-              rounded-xl
-              py-3.5
-              font-bold
-              text-sm
-              transition
-              hover:border-blue-300
-              hover:text-blue-600
-            "
-          >
-            💼 Staff / Admin
-          </button>
-
-        </div>
-
-
-        <!-- STAFF CODE -->
-
-        <div
-          id="admin-extra"
-          class="hidden mt-5"
-        >
-
-          <label
-            for="staff_code"
-            class="
-              block
-              text-sm
-              font-bold
-              text-[#03133d]
-            "
-          >
-            Staff Access Code
-          </label>
-
-          <input
-            id="staff_code"
-            type="text"
-            autocomplete="off"
-            placeholder="Enter staff access code"
-            class="
-              login-input
-              input-focus
-              w-full
-              rounded-xl
-              px-4
-              py-3.5
-              mt-2
-              transition
-            "
-          >
-
-        </div>
-
-
-        <!-- EMAIL -->
-
-        <div class="mt-6">
-
-          <label
-            for="email"
-            class="
-              block
-              text-sm
-              font-bold
-              text-[#03133d]
-            "
-          >
-            Email Address
-          </label>
-
-          <input
-            id="email"
-            type="email"
-            autocomplete="email"
-            placeholder="you@email.com"
-            class="
-              login-input
-              input-focus
-              w-full
-              rounded-xl
-              px-4
-              py-3.5
-              mt-2
-              transition
-            "
-          >
-
-        </div>
-
-
-        <!-- PASSWORD -->
 
         <div class="mt-5">
-
-          <div
-            class="
-              flex
-              items-center
-              justify-between
-            "
-          >
-
-            <label
-              for="password"
-              class="
-                text-sm
-                font-bold
-                text-[#03133d]
-              "
-            >
-              Password
-            </label>
-
-            <button
-              type="button"
-              onclick="resetPassword()"
-              class="
-                text-sm
-                font-bold
-                text-[#2563EB]
-                hover:underline
-              "
-            >
-              Forgot password?
-            </button>
-
+          <div class="flex items-center justify-between gap-3">
+            <label for="password" class="block text-sm font-bold text-[#06152f]">Password</label>
+            <button id="forgotBtn" type="button" class="text-xs font-bold text-[#184f9f] hover:underline">Forgot password?</button>
           </div>
-
-
-          <input
-            id="password"
-            type="password"
-            autocomplete="current-password"
-            placeholder="Enter your password"
-            class="
-              login-input
-              input-focus
-              w-full
-              rounded-xl
-              px-4
-              py-3.5
-              mt-2
-              transition
-            "
-          >
-
+          <input id="password" type="password" autocomplete="current-password" placeholder="Enter your password" class="input-field mt-2" required>
         </div>
 
+        <div id="admin-extra" class="hidden mt-5">
+          <label for="staff_code" class="block text-sm font-bold text-[#06152f]">Staff access code</label>
+          <input id="staff_code" type="password" autocomplete="off" placeholder="Enter staff access code" class="input-field mt-2">
+          <p class="mt-1.5 text-xs text-slate-500">Required only where a staff access code has been assigned.</p>
+        </div>
 
-        <!-- LOGIN BUTTON -->
-
-        <button
-          onclick="handleLogin()"
-          id="loginBtn"
-          type="button"
-          class="
-            w-full
-            bg-[#2563EB]
-            hover:bg-[#1d4ed8]
-            active:scale-[.99]
-            text-white
-            font-extrabold
-            rounded-xl
-            py-4
-            mt-7
-            transition
-            shadow-lg
-            shadow-blue-200
-          "
-        >
-          Login
+        <button id="loginBtn" type="submit" class="w-full mt-7 rounded-xl bg-[#06152f] hover:bg-[#0b2b61] text-white py-4 font-extrabold transition shadow-lg shadow-slate-300 disabled:opacity-60 disabled:cursor-not-allowed">
+          Sign In Securely
         </button>
+      </form>
 
-
-        <!-- DIVIDER -->
-
-        <div
-          class="
-            flex
-            items-center
-            gap-3
-            my-7
-          "
-        >
-
-          <div
-            class="
-              h-px
-              bg-gray-200
-              flex-1
-            "
-          ></div>
-
-          <span
-            class="
-              text-xs
-              text-gray-400
-              font-bold
-              tracking-widest
-            "
-          >
-            OR
-          </span>
-
-          <div
-            class="
-              h-px
-              bg-gray-200
-              flex-1
-            "
-          ></div>
-
-        </div>
-
-
-        <!-- CREATE ACCOUNT -->
-
-        <a
-          href="auth.html"
-          class="
-            w-full
-            border-2
-            border-[#2563EB]
-            text-[#2563EB]
-            hover:bg-blue-50
-            font-extrabold
-            rounded-xl
-            py-3.5
-            block
-            text-center
-            transition
-          "
-        >
-          👤 New to Funda? Create Student Account
-        </a>
-
-
-        <!-- BROWSE -->
-
-        <a
-          href="courses-public.html"
-          class="
-            w-full
-            mt-3
-            bg-[#f1f5f9]
-            hover:bg-blue-50
-            text-[#334155]
-            hover:text-[#2563EB]
-            font-bold
-            rounded-xl
-            py-3.5
-            block
-            text-center
-            transition
-          "
-        >
-          📚 Browse Courses — No Login Needed
-        </a>
-
-
-        <!-- SECURITY -->
-
-        <div
-          class="
-            flex
-            items-center
-            justify-center
-            gap-2
-            mt-6
-          "
-        >
-
-          <span class="text-green-600">
-            🔒
-          </span>
-
-          <p class="text-xs text-gray-400">
-            Secure Login · Your information is protected
-          </p>
-
-        </div>
-
-
-        <p
-          class="
-            lg:hidden
-            text-center
-            text-[11px]
-            text-gray-400
-            mt-6
-          "
-        >
-          © 2026 Funda Online Academy
-        </p>
-
+      <div class="mt-6 pt-5 border-t border-slate-200 text-center">
+        <p class="text-sm text-slate-500">New to Funda Online Academy?</p>
+        <a href="auth.html" class="inline-flex mt-2 items-center justify-center font-extrabold text-[#184f9f] hover:underline">Create your student account →</a>
       </div>
 
-    </section>
+      <div class="mt-5 flex items-center justify-center gap-2 text-[11px] text-slate-400">
+        <span>🔒</span>
+        <span>Secure login · Your account information is protected</span>
+      </div>
+    </div>
+  </section>
+</main>
 
-  </main>
+<script>
+  let supabaseClient = null;
+  let currentRole = "student";
 
+  const loginForm = document.getElementById("loginForm");
+  const loginButton = document.getElementById("loginBtn");
+  const studentButton = document.getElementById("btn-student");
+  const adminButton = document.getElementById("btn-admin");
+  const adminExtra = document.getElementById("admin-extra");
 
-  <!-- ======================================================
-       LOGIN JAVASCRIPT
-  ======================================================= -->
+  function showMessage(text, success = false) {
+    const box = document.getElementById("message");
+    box.textContent = text;
+    box.classList.remove("error", "success", "show");
+    box.classList.add(success ? "success" : "error", "show");
+  }
 
-  <script>
+  function clearMessage() {
+    const box = document.getElementById("message");
+    box.textContent = "";
+    box.classList.remove("error", "success", "show");
+  }
 
-    /*
-      =========================================================
-      FUNDA ONLINE ACADEMY LOGIN
-      =========================================================
-
-      IMPORTANT:
-
-      This file does NOT contain a Supabase API key.
-
-      It uses:
-
-        supabase-config.js
-
-      which provides:
-
-        window.SUPABASE_URL
-        window.SUPABASE_ANON_KEY
-    */
-
-
-    let supabaseClient = null;
-
-    let currentRole = "student";
-
-
-    /* =========================================================
-       INITIALISE SUPABASE
-    ========================================================= */
-
-    function initialiseSupabase() {
-
-      if (!window.supabase) {
-
-        showMessage(
-          "The Supabase library could not be loaded.",
-          false
-        );
-
-        return false;
-      }
-
-
-      if (!window.SUPABASE_URL) {
-
-        showMessage(
-          "The Academy Supabase URL is missing.",
-          false
-        );
-
-        return false;
-      }
-
-
-      if (!window.SUPABASE_ANON_KEY) {
-
-        showMessage(
-          "The Academy Supabase publishable key is missing.",
-          false
-        );
-
-        return false;
-      }
-
-
-      if (
-        window.SUPABASE_ANON_KEY ===
-        "YOUR_LEGACY_ANON_KEY_GOES_HERE"
-      ) {
-
-        showMessage(
-          "The Academy Supabase configuration has not been completed.",
-          false
-        );
-
-        return false;
-      }
-
-
-      try {
-
-        supabaseClient =
-          window.supabase.createClient(
-            window.SUPABASE_URL,
-            window.SUPABASE_ANON_KEY
-          );
-
-        return true;
-
-      } catch (error) {
-
-        console.error(
-          "Supabase initialisation error:",
-          error
-        );
-
-        showMessage(
-          "Unable to initialise the Academy connection.",
-          false
-        );
-
-        return false;
-      }
-
+  function initialiseSupabase() {
+    if (!window.supabase) throw new Error("The Supabase library could not be loaded.");
+    if (!window.SUPABASE_URL) throw new Error("The Academy Supabase URL is missing.");
+    if (!window.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY === "YOUR_LEGACY_ANON_KEY_GOES_HERE") {
+      throw new Error("The Academy Supabase public key is missing or invalid.");
     }
 
-
-    /* =========================================================
-       MESSAGE
-    ========================================================= */
-
-    function showMessage(
-      text,
-      success = false
-    ) {
-
-      const box =
-        document.getElementById("message");
-
-
-      if (!box) {
-        return;
-      }
-
-
-      box.textContent = text;
-
-
-      box.classList.remove(
-        "error",
-        "success"
-      );
-
-
-      box.classList.add(
-        success
-          ? "success"
-          : "error"
-      );
-
-
-      box.classList.add("show");
-
-    }
-
-
-    function clearMessage() {
-
-      const box =
-        document.getElementById("message");
-
-
-      if (!box) {
-        return;
-      }
-
-
-      box.textContent = "";
-
-      box.classList.remove(
-        "show",
-        "error",
-        "success"
-      );
-
-    }
-
-
-    /* =========================================================
-       ROLE
-    ========================================================= */
-
-    function setRole(role) {
-
-      currentRole = role;
-
-
-      const adminExtra =
-        document.getElementById(
-          "admin-extra"
-        );
-
-
-      const studentButton =
-        document.getElementById(
-          "btn-student"
-        );
-
-
-      const adminButton =
-        document.getElementById(
-          "btn-admin"
-        );
-
-
-      if (role === "admin") {
-
-        adminExtra.classList.remove(
-          "hidden"
-        );
-
-
-        adminButton.classList.remove(
-          "border-gray-200",
-          "bg-white",
-          "text-gray-600"
-        );
-
-
-        adminButton.classList.add(
-          "border-[#2563EB]",
-          "bg-[#2563EB]",
-          "text-white"
-        );
-
-
-        studentButton.classList.remove(
-          "border-[#2563EB]",
-          "bg-[#2563EB]",
-          "text-white"
-        );
-
-
-        studentButton.classList.add(
-          "border-gray-200",
-          "bg-white",
-          "text-gray-600"
-        );
-
-
-      } else {
-
-        adminExtra.classList.add(
-          "hidden"
-        );
-
-
-        studentButton.classList.remove(
-          "border-gray-200",
-          "bg-white",
-          "text-gray-600"
-        );
-
-
-        studentButton.classList.add(
-          "border-[#2563EB]",
-          "bg-[#2563EB]",
-          "text-white"
-        );
-
-
-        adminButton.classList.remove(
-          "border-[#2563EB]",
-          "bg-[#2563EB]",
-          "text-white"
-        );
-
-
-        adminButton.classList.add(
-          "border-gray-200",
-          "bg-white",
-          "text-gray-600"
-        );
-
-      }
-
-    }
-
-
-    /* =========================================================
-       GET STUDENT RECORD
-    ========================================================= */
-
-    async function getStudentRecord(
-      userId
-    ) {
-
-      const {
-        data,
-        error
-      } = await supabaseClient
-        .from("students")
-        .select("id")
-        .eq(
-          "user_id",
-          userId
-        )
-        .maybeSingle();
-
-
-      if (error) {
-
-        console.error(
-          "Student lookup error:",
-          error
-        );
-
-        return null;
-      }
-
-
-      return data;
-
-    }
-
-
-    /* =========================================================
-       LOGIN
-    ========================================================= */
-
-    async function handleLogin() {
-
-      clearMessage();
-
-
-      const email =
-        document
-          .getElementById("email")
-          .value
-          .trim()
-          .toLowerCase();
-
-
-      const password =
-        document
-          .getElementById("password")
-          .value;
-
-
-      const staffCode =
-        document
-          .getElementById("staff_code")
-          .value
-          .trim();
-
-
-      const loginButton =
-        document.getElementById(
-          "loginBtn"
-        );
-
-
-      if (!email) {
-
-        showMessage(
-          "Please enter your email address.",
-          false
-        );
-
-        return;
-      }
-
-
-      if (!password) {
-
-        showMessage(
-          "Please enter your password.",
-          false
-        );
-
-        return;
-      }
-
-
-      if (!email.includes("@")) {
-
-        showMessage(
-          "Please enter a valid email address.",
-          false
-        );
-
-        return;
-      }
-
-
-      loginButton.disabled = true;
-
-
-      loginButton.innerHTML =
-        '<span class="loading-spinner"></span>Logging in...';
-
-
-      try {
-
-        /* =====================================================
-           AUTHENTICATE
-        ====================================================== */
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient.auth.signInWithPassword({
-            email,
-            password
-          });
-
-
-        if (error) {
-
-          console.error(
-            "Supabase login error:",
-            error
-          );
-
-          showMessage(
-            error.message ||
-            "Unable to log in.",
-            false
-          );
-
-          return;
+    supabaseClient = window.supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
         }
-
-
-        if (
-          !data ||
-          !data.user
-        ) {
-
-          showMessage(
-            "Login was unsuccessful. Please try again.",
-            false
-          );
-
-          return;
-        }
-
-
-        const user =
-          data.user;
-
-
-        /* =====================================================
-           PROFILE
-        ====================================================== */
-
-        const {
-          data: profile,
-          error: profileError
-        } =
-          await supabaseClient
-            .from("profiles")
-            .select(
-              "role, staff_code"
-            )
-            .eq(
-              "id",
-              user.id
-            )
-            .maybeSingle();
-
-
-        if (profileError) {
-
-          console.error(
-            "Profile lookup error:",
-            profileError
-          );
-
-          showMessage(
-            "Your account was authenticated, but your profile could not be loaded.",
-            false
-          );
-
-          return;
-        }
-
-
-        /* =====================================================
-           ADMIN / STAFF
-        ====================================================== */
-
-        if (
-          currentRole === "admin"
-        ) {
-
-          const allowedRoles = [
-            "admin",
-            "manager",
-            "staff",
-            "finance",
-            "support"
-          ];
-
-
-          if (
-            !profile ||
-            !allowedRoles.includes(
-              profile.role
-            )
-          ) {
-
-            showMessage(
-              "This account does not have staff or administrator access.",
-              false
-            );
-
-            await supabaseClient.auth.signOut();
-
-            return;
-          }
-
-
-          if (
-            profile.staff_code &&
-            profile.staff_code !== staffCode
-          ) {
-
-            showMessage(
-              "Invalid Staff Access Code.",
-              false
-            );
-
-            await supabaseClient.auth.signOut();
-
-            return;
-          }
-
-
-          showMessage(
-            "Login successful. Opening Admin Dashboard...",
-            true
-          );
-
-
-          setTimeout(
-            function() {
-
-              window.location.href =
-                "admin-v2.html";
-
-            },
-            500
-          );
-
-
-          return;
-        }
-
-
-        /* =====================================================
-           STUDENT RECORD
-        ====================================================== */
-
-        const student =
-          await getStudentRecord(
-            user.id
-          );
-
-
-        /*
-          If the user has authenticated but has no
-          student record yet, send them to onboarding.
-        */
-
-        if (!student) {
-
-          showMessage(
-            "Your account is active. Let's finish your student profile.",
-            true
-          );
-
-
-          setTimeout(
-            function() {
-
-              window.location.href =
-                "onboarding.html";
-
-            },
-            600
-          );
-
-
-          return;
-        }
-
-
-        /* =====================================================
-           ENROLLMENT
-        ====================================================== */
-
-        const {
-          data: enrollments,
-          error: enrollmentError
-        } =
-          await supabaseClient
-            .from("enrollments")
-            .select(
-              "id, status, enrollment_status"
-            )
-            .eq(
-              "student_id",
-              student.id
-            )
-            .limit(50);
-
-
-        if (enrollmentError) {
-
-          console.error(
-            "Enrollment lookup error:",
-            enrollmentError
-          );
-
-          /*
-            We don't destroy the login session merely
-            because the enrollment query failed.
-
-            The student can continue to onboarding/dashboard
-            where the enrollment state can be handled properly.
-          */
-
-          showMessage(
-            "Login successful. Opening your student area...",
-            true
-          );
-
-
-          setTimeout(
-            function() {
-
-              window.location.href =
-                "dashboard.html";
-
-            },
-            600
-          );
-
-
-          return;
-        }
-
-
-        /* =====================================================
-           CHECK APPROVED ENROLLMENT
-        ====================================================== */
-
-        const approved =
-          Array.isArray(enrollments) &&
-          enrollments.some(
-            function(enrollment) {
-
-              return (
-                enrollment.status ===
-                  "approved" ||
-
-                enrollment.enrollment_status ===
-                  "approved"
-              );
-
-            }
-          );
-
-
-        if (approved) {
-
-          showMessage(
-            "Login successful. Opening your Student Dashboard...",
-            true
-          );
-
-
-          setTimeout(
-            function() {
-
-              window.location.href =
-                "dashboard.html";
-
-            },
-            600
-          );
-
-
-          return;
-        }
-
-
-        /* =====================================================
-           NO APPROVED ENROLLMENT
-        ====================================================== */
-
-        showMessage(
-          "Login successful. Let's continue with your student setup.",
-          true
-        );
-
-
-        setTimeout(
-          function() {
-
-            window.location.href =
-              "onboarding.html";
-
-          },
-          600
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "Unexpected login error:",
-          error
-        );
-
-
-        showMessage(
-          error.message ||
-          "Something went wrong while logging in. Please try again.",
-          false
-        );
-
-      } finally {
-
-        loginButton.disabled = false;
-
-        loginButton.textContent =
-          "Login";
-
-      }
-
-    }
-
-
-    /* =========================================================
-       PASSWORD RESET
-    ========================================================= */
-
-    async function resetPassword() {
-
-      clearMessage();
-
-
-      const email =
-        document
-          .getElementById("email")
-          .value
-          .trim()
-          .toLowerCase();
-
-
-      if (!email) {
-
-        showMessage(
-          "Please enter your email address first.",
-          false
-        );
-
-        return;
-      }
-
-
-      if (!email.includes("@")) {
-
-        showMessage(
-          "Please enter a valid email address.",
-          false
-        );
-
-        return;
-      }
-
-
-      try {
-
-        const {
-          error
-        } =
-          await supabaseClient.auth
-            .resetPasswordForEmail(
-              email,
-              {
-                redirectTo:
-                  window.location.origin +
-                  "/reset-password.html"
-              }
-            );
-
-
-        if (error) {
-
-          console.error(
-            "Password reset error:",
-            error
-          );
-
-          showMessage(
-            error.message ||
-            "Unable to send password reset instructions.",
-            false
-          );
-
-          return;
-        }
-
-
-        showMessage(
-          "Password reset instructions have been sent to your email.",
-          true
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "Password reset exception:",
-          error
-        );
-
-        showMessage(
-          "Unable to send password reset instructions.",
-          false
-        );
-
-      }
-
-    }
-
-
-    /* =========================================================
-       ENTER KEY SUPPORT
-    ========================================================= */
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      function() {
-
-        const emailInput =
-          document.getElementById(
-            "email"
-          );
-
-
-        const passwordInput =
-          document.getElementById(
-            "password"
-          );
-
-
-        if (emailInput) {
-
-          emailInput.addEventListener(
-            "keydown",
-            function(event) {
-
-              if (
-                event.key ===
-                "Enter"
-              ) {
-
-                event.preventDefault();
-
-                handleLogin();
-
-              }
-
-            }
-          );
-
-        }
-
-
-        if (passwordInput) {
-
-          passwordInput.addEventListener(
-            "keydown",
-            function(event) {
-
-              if (
-                event.key ===
-                "Enter"
-              ) {
-
-                event.preventDefault();
-
-                handleLogin();
-
-              }
-
-            }
-          );
-
-        }
-
-
-        /* =====================================================
-           INITIALISE CONNECTION
-        ====================================================== */
-
-        const connected =
-          initialiseSupabase();
-
-
-        if (!connected) {
-
-          return;
-        }
-
-
-        console.log(
-          "Funda Online Academy Supabase connection initialised."
-        );
-
       }
     );
+  }
 
-  </script>
+  function setRole(role) {
+    currentRole = role;
+    clearMessage();
 
+    const isAdmin = role === "admin";
+    adminExtra.classList.toggle("hidden", !isAdmin);
+    studentButton.classList.toggle("active", !isAdmin);
+    adminButton.classList.toggle("active", isAdmin);
+    studentButton.classList.toggle("text-slate-600", isAdmin);
+    adminButton.classList.toggle("text-slate-600", !isAdmin);
+  }
+
+  function getSafeNextDestination() {
+    const params = new URLSearchParams(window.location.search);
+    const next = params.get("next");
+    if (!next) return null;
+
+    try {
+      const decoded = decodeURIComponent(next);
+      if (/^[a-zA-Z0-9._\-]+\.html(?:\?[a-zA-Z0-9%&=_\-.]*)?$/.test(decoded)) {
+        return decoded;
+      }
+    } catch (error) {
+      console.warn("Ignored invalid next destination.", error);
+    }
+
+    return null;
+  }
+
+  async function getStudentRecord(userId) {
+    const { data, error } = await supabaseClient
+      .from("students")
+      .select("id, user_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (error) throw new Error("Your student record could not be loaded. " + error.message);
+    return data;
+  }
+
+  async function handleLogin(event) {
+    if (event) event.preventDefault();
+    clearMessage();
+
+    if (!supabaseClient) {
+      showMessage("The Academy connection is not ready. Please refresh the page and try again.");
+      return;
+    }
+
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value;
+    const staffCode = document.getElementById("staff_code").value.trim();
+
+    if (!email || !email.includes("@")) {
+      showMessage("Please enter a valid email address.");
+      return;
+    }
+
+    if (!password) {
+      showMessage("Please enter your password.");
+      return;
+    }
+
+    loginButton.disabled = true;
+    loginButton.innerHTML = '<span class="spinner"></span>Signing in...';
+
+    try {
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      if (!data?.user) throw new Error("Login was unsuccessful. Please try again.");
+
+      const user = data.user;
+
+      const { data: profile, error: profileError } = await supabaseClient
+        .from("profiles")
+        .select("role, staff_code")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      if (profileError) throw new Error("Your account was authenticated, but your profile could not be loaded. " + profileError.message);
+
+      const staffRoles = ["admin", "manager", "staff", "finance", "support"];
+      const actualRole = profile?.role || "student";
+
+      if (currentRole === "admin") {
+        if (!staffRoles.includes(actualRole)) {
+          await supabaseClient.auth.signOut();
+          showMessage("This account does not have staff or administrator access.");
+          return;
+        }
+
+        if (profile?.staff_code && profile.staff_code !== staffCode) {
+          await supabaseClient.auth.signOut();
+          showMessage("Invalid Staff Access Code.");
+          return;
+        }
+
+        showMessage("Login successful. Opening the Admin Command Center...", true);
+        setTimeout(() => { window.location.href = "admin-v2.html"; }, 450);
+        return;
+      }
+
+      if (staffRoles.includes(actualRole)) {
+        await supabaseClient.auth.signOut();
+        showMessage("This is a staff account. Please choose Staff / Admin above.");
+        return;
+      }
+
+      const student = await getStudentRecord(user.id);
+
+      if (!student) {
+        showMessage("Login successful. Let's complete your student setup.", true);
+        setTimeout(() => { window.location.href = "onboarding.html"; }, 450);
+        return;
+      }
+
+      /*
+        Returning student rule:
+        A valid existing student account always opens the Student Dashboard,
+        whether the enrollment is pending, approved, rejected, or not yet reviewed.
+
+        The only exception is a deliberate course action that supplied a safe ?next=
+        destination, for example returning to a course page after authentication.
+      */
+      const next = getSafeNextDestination();
+
+      if (next) {
+        showMessage("Login successful. Returning you to your selected course...", true);
+        setTimeout(() => { window.location.href = next; }, 450);
+        return;
+      }
+
+      localStorage.removeItem("funda_pending_course");
+      localStorage.removeItem("enroll_after_login");
+
+      showMessage("Login successful. Opening your Student Dashboard...", true);
+      setTimeout(() => { window.location.href = "dashboard.html"; }, 450);
+
+    } catch (error) {
+      console.error("Login error:", error);
+      const text = String(error?.message || "Unable to log in. Please check your email and password.");
+
+      if (text.toLowerCase().includes("invalid login credentials")) {
+        showMessage("The email address or password is incorrect. Please check your details and try again.");
+      } else if (text.toLowerCase().includes("email not confirmed")) {
+        showMessage("This account is waiting for email confirmation. Please contact the Academy if this message continues.");
+      } else {
+        showMessage(text);
+      }
+    } finally {
+      loginButton.disabled = false;
+      loginButton.textContent = "Sign In Securely";
+    }
+  }
+
+  async function resetPassword() {
+    clearMessage();
+
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    if (!email || !email.includes("@")) {
+      showMessage("Enter your registered email address first, then choose Forgot password.");
+      return;
+    }
+
+    try {
+      const redirectTo = new URL("reset-password.html", window.location.href).href;
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
+      if (error) throw error;
+      showMessage("Password reset instructions have been sent to your email.", true);
+    } catch (error) {
+      console.error("Password reset error:", error);
+      showMessage(error?.message || "Unable to send password reset instructions.");
+    }
+  }
+
+  studentButton.addEventListener("click", () => setRole("student"));
+  adminButton.addEventListener("click", () => setRole("admin"));
+  document.getElementById("forgotBtn").addEventListener("click", resetPassword);
+  loginForm.addEventListener("submit", handleLogin);
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      initialiseSupabase();
+
+      /* If an authenticated user opens login.html directly, route them cleanly. */
+      const { data } = await supabaseClient.auth.getSession();
+      const user = data?.session?.user;
+      if (!user) return;
+
+      const { data: profile } = await supabaseClient
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      const staffRoles = ["admin", "manager", "staff", "finance", "support"];
+      if (staffRoles.includes(profile?.role)) return;
+
+      const student = await getStudentRecord(user.id);
+      if (student) {
+        const next = getSafeNextDestination();
+        window.location.href = next || "dashboard.html";
+      }
+    } catch (error) {
+      console.error("Login page initialisation error:", error);
+      showMessage(error?.message || "The Academy connection could not be initialised.");
+    }
+  });
+</script>
 </body>
-
 </html>
