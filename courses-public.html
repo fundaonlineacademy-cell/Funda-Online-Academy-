@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Explore practical and career-focused courses at Funda Online Academy.">
-<title>Courses | Funda Online Academy</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Browse practical, career-focused online courses at Funda Online Academy.">
+<title>Browse Courses | Funda Online Academy</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,2277 +12,354 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js?v=20260825"></script>
+<script src="supabase-config.js?v=20260827"></script>
 
 <style>
-:root {
-  --navy: #092a66;
-  --blue: #1456c0;
-  --gold: #d4a72c;
-
-  /* Premium academy background */
-  --soft: #e6eef9;
-  --page: #e9f0fa;
-
-  --text: #172b4d;
-  --muted: #667085;
+:root{
+  --navy:#071d49;
+  --navy2:#0b2f70;
+  --blue:#2767c6;
+  --gold:#c99a2e;
+  --gold-soft:#f7e8b8;
+  --sky:#edf5ff;
+  --sky-strong:#deecff;
+  --cream:#fff9ea;
+  --mint:#effaf7;
+  --ink:#183153;
+  --muted:#64748b;
+  --line:#d9e4f2;
 }
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  background: var(--page);
-  color: var(--text);
-  font-family: "Inter", sans-serif;
-  font-size: 15px;
-  line-height: 1.5;
-}
-
-h1,
-h2,
-h3,
-h4,
-nav,
-.brand {
-  font-family: "Montserrat", sans-serif;
-}
-
-button,
-input,
-select {
-  font: inherit;
-}
-
-/* ----------------------------------------------------------
-   HERO
----------------------------------------------------------- */
-
-.hero {
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:"Inter",sans-serif;
+  color:var(--ink);
   background:
-    radial-gradient(
-      circle at 8% 18%,
-      rgba(20, 86, 192, 0.12),
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 92% 82%,
-      rgba(212, 167, 44, 0.10),
-      transparent 28%
-    ),
-    var(--soft);
+    radial-gradient(circle at 7% 10%,rgba(39,103,198,.10),transparent 25%),
+    radial-gradient(circle at 92% 12%,rgba(201,154,46,.10),transparent 22%),
+    linear-gradient(180deg,#f6faff 0%,#edf5ff 50%,#fffaf0 100%);
+  font-size:15px;
+  line-height:1.5;
 }
-
-/* ----------------------------------------------------------
-   COURSE CARDS
----------------------------------------------------------- */
-
-.course-card {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
+h1,h2,h3,h4,nav,.brand{font-family:"Montserrat",sans-serif}
+button,input,select{font:inherit}
+.hero{
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 12% 18%,rgba(73,138,230,.20),transparent 27%),
+    radial-gradient(circle at 88% 78%,rgba(230,184,68,.17),transparent 24%),
+    linear-gradient(135deg,#eaf4ff 0%,#f7fbff 48%,#fff7dc 100%);
 }
-
-.course-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 35px rgba(9, 42, 102, 0.11);
-  border-color: #cbd8ea;
+.hero:before{
+  content:"";
+  position:absolute;
+  width:340px;height:340px;border-radius:50%;
+  right:-150px;top:-170px;
+  background:rgba(255,255,255,.55);
 }
-
-.course-image-wrap {
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  background: #dfe8f4;
+.hero:after{
+  content:"";
+  position:absolute;
+  width:260px;height:260px;border-radius:50%;
+  left:-130px;bottom:-150px;
+  background:rgba(255,255,255,.38);
 }
-
-.course-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.35s ease;
+.course-zone{
+  background:
+    radial-gradient(circle at 95% 0%,rgba(255,255,255,.65),transparent 22%),
+    linear-gradient(180deg,#e8f3ff 0%,#f1f7ff 52%,#fffaf0 100%);
 }
-
-.course-card:hover .course-image {
-  transform: scale(1.035);
+.course-card{
+  background:#fff;
+  border:1px solid rgba(163,184,211,.48);
+  box-shadow:0 9px 24px rgba(38,77,126,.07);
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
 }
-
-/* ----------------------------------------------------------
-   CATEGORY CHIPS
----------------------------------------------------------- */
-
-.chip {
-  white-space: nowrap;
+.course-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 18px 40px rgba(32,74,126,.14);
+  border-color:#b6cce8;
 }
-
-.chip.active {
-  background: var(--navy);
-  color: #ffffff;
-  border-color: var(--navy);
-}
-
-/* ----------------------------------------------------------
-   FILTER PANEL
----------------------------------------------------------- */
-
-.filter-panel {
-  position: sticky;
-  top: 92px;
-}
-
-/* ----------------------------------------------------------
-   TEXT
----------------------------------------------------------- */
-
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* ----------------------------------------------------------
-   LOADING
----------------------------------------------------------- */
-
-.spinner {
-  width: 42px;
-  height: 42px;
-  border: 4px solid #d2def0;
-  border-top-color: var(--navy);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: auto;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ----------------------------------------------------------
-   MOBILE
----------------------------------------------------------- */
-
-@media (max-width: 767px) {
-
-  body {
-    font-size: 14px;
-  }
-
-  .hero-title {
-    font-size: 2.15rem !important;
-    line-height: 1.08 !important;
-  }
-
-  .section-title {
-    font-size: 1.65rem !important;
-  }
-
-  .filter-panel {
-    position: static;
-  }
+.course-image-wrap{aspect-ratio:16/9;overflow:hidden;background:#dcecff}
+.course-image{width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
+.course-card:hover .course-image{transform:scale(1.035)}
+.chip{white-space:nowrap;transition:.18s ease}
+.chip.active{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 8px 18px rgba(7,29,73,.14)}
+.filter-panel{position:sticky;top:90px}
+.line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.spinner{width:42px;height:42px;border:4px solid #d5e6fa;border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;margin:auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:767px){
+  body{font-size:14px}
+  .hero-title{font-size:2.12rem!important;line-height:1.08!important}
+  .section-title{font-size:1.7rem!important}
+  .filter-panel{position:static}
 }
 </style>
 </head>
-
 <body>
 
-<!-- ==========================================================
-     HEADER
-========================================================== -->
-
-<header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
-
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-[#dce6f2] shadow-[0_3px_18px_rgba(39,75,120,.05)]">
   <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
     <div class="h-[68px] sm:h-[76px] flex items-center justify-between gap-4">
-
-      <!-- BRAND -->
-
       <a href="index.html" class="flex items-center gap-2.5 shrink-0">
-
-        <div class="w-10 h-10 sm:w-11 sm:h-11 overflow-hidden">
-
-          <img
-            src="logo.png"
-            alt="Funda Online Academy Logo"
-            class="w-full h-full object-contain"
-            onerror="this.style.display='none'"
-          >
-
+        <div class="w-11 h-11 overflow-hidden rounded-xl bg-white">
+          <img src="logo.png" alt="Funda Online Academy Logo" class="w-full h-full object-contain" onerror="this.style.display='none'">
         </div>
-
         <div class="brand leading-none">
-
-          <div class="text-[15px] sm:text-[17px] font-extrabold text-[#092A66]">
-            FUNDA
-            <span class="font-semibold">
-              ONLINE
-            </span>
-          </div>
-
-          <div class="mt-1 text-[8px] sm:text-[9px] font-bold tracking-[.28em] text-[#D4A72C]">
-            ACADEMY
-          </div>
-
+          <div class="text-[15px] sm:text-[17px] font-extrabold text-[#071D49]">FUNDA <span class="font-semibold">ONLINE</span></div>
+          <div class="mt-1 text-[8px] sm:text-[9px] font-bold tracking-[.28em] text-[#C99A2E]">ACADEMY</div>
         </div>
-
       </a>
-
-
-      <!-- DESKTOP NAV -->
 
       <div class="hidden lg:flex items-center gap-7 text-sm">
-
-        <a
-          href="#courses"
-          class="font-semibold text-[#092A66] hover:text-[#1456C0]"
-        >
-          Courses
-        </a>
-
-        <a
-          href="#how-it-works"
-          class="font-semibold text-[#092A66] hover:text-[#1456C0]"
-        >
-          How It Works
-        </a>
-
-        <a
-          href="#faq"
-          class="font-semibold text-[#092A66] hover:text-[#1456C0]"
-        >
-          FAQs
-        </a>
-
-        <a
-          href="#contact"
-          class="font-semibold text-[#092A66] hover:text-[#1456C0]"
-        >
-          Contact
-        </a>
-
+        <a href="#courses" class="font-semibold text-[#071D49] hover:text-[#2767C6]">Courses</a>
+        <a href="#how-it-works" class="font-semibold text-[#071D49] hover:text-[#2767C6]">How It Works</a>
+        <a href="#faq" class="font-semibold text-[#071D49] hover:text-[#2767C6]">FAQs</a>
+        <a href="#contact" class="font-semibold text-[#071D49] hover:text-[#2767C6]">Contact</a>
       </div>
-
-
-      <!-- DESKTOP ACTIONS -->
 
       <div class="hidden md:flex items-center gap-2.5">
-
-        <a
-          href="login.html"
-          class="px-4 py-2 rounded-lg border border-[#092A66] text-[#092A66] font-semibold text-sm hover:bg-[#092A66] hover:text-white transition"
-        >
-          Login
-        </a>
-
-        <a
-          href="register.html"
-          class="px-4 py-2 rounded-lg bg-[#092A66] text-white font-semibold text-sm hover:bg-[#1456C0] transition"
-        >
-          Create Account
-        </a>
-
+        <a href="login.html" class="px-4 py-2 rounded-lg border border-[#071D49] text-[#071D49] font-semibold text-sm hover:bg-[#071D49] hover:text-white transition">Login</a>
+        <a href="auth.html" class="px-4 py-2 rounded-lg bg-[#071D49] text-white font-semibold text-sm hover:bg-[#0B2F70] transition">Create Account</a>
       </div>
 
-
-      <!-- MOBILE MENU BUTTON -->
-
-      <button
-        id="mobileMenuButton"
-        type="button"
-        class="lg:hidden w-10 h-10 rounded-lg bg-[#F1F5FA] text-[#092A66] text-lg font-bold"
-        aria-label="Open navigation"
-      >
-        ☰
-      </button>
-
+      <button id="mobileMenuButton" type="button" class="lg:hidden w-10 h-10 rounded-xl bg-[#eaf3ff] text-[#071D49] text-lg font-bold" aria-label="Open navigation">☰</button>
     </div>
 
-
-    <!-- MOBILE MENU -->
-
-    <div
-      id="mobileMenu"
-      class="hidden lg:hidden pb-4"
-    >
-
-      <div class="bg-[#F5F8FC] rounded-xl p-3 space-y-1">
-
-        <a
-          href="#courses"
-          class="block px-3 py-2.5 rounded-lg font-semibold text-[#092A66]"
-        >
-          Courses
-        </a>
-
-        <a
-          href="#how-it-works"
-          class="block px-3 py-2.5 rounded-lg font-semibold text-[#092A66]"
-        >
-          How It Works
-        </a>
-
-        <a
-          href="#faq"
-          class="block px-3 py-2.5 rounded-lg font-semibold text-[#092A66]"
-        >
-          FAQs
-        </a>
-
-        <a
-          href="#contact"
-          class="block px-3 py-2.5 rounded-lg font-semibold text-[#092A66]"
-        >
-          Contact
-        </a>
-
-
+    <div id="mobileMenu" class="hidden lg:hidden pb-4">
+      <div class="bg-[#f4f8fd] rounded-xl p-3 space-y-1 border border-[#dce6f2]">
+        <a href="#courses" class="block px-3 py-2.5 rounded-lg font-semibold text-[#071D49]">Courses</a>
+        <a href="#how-it-works" class="block px-3 py-2.5 rounded-lg font-semibold text-[#071D49]">How It Works</a>
+        <a href="#faq" class="block px-3 py-2.5 rounded-lg font-semibold text-[#071D49]">FAQs</a>
+        <a href="#contact" class="block px-3 py-2.5 rounded-lg font-semibold text-[#071D49]">Contact</a>
         <div class="grid grid-cols-2 gap-2 pt-2">
-
-          <a
-            href="login.html"
-            class="text-center px-3 py-2.5 rounded-lg border border-[#092A66] text-[#092A66] font-semibold"
-          >
-            Login
-          </a>
-
-          <a
-            href="register.html"
-            class="text-center px-3 py-2.5 rounded-lg bg-[#092A66] text-white font-semibold"
-          >
-            Create Account
-          </a>
-
+          <a href="login.html" class="text-center px-3 py-2.5 rounded-lg border border-[#071D49] text-[#071D49] font-semibold">Login</a>
+          <a href="auth.html" class="text-center px-3 py-2.5 rounded-lg bg-[#071D49] text-white font-semibold">Create Account</a>
         </div>
-
       </div>
-
     </div>
-
   </nav>
-
 </header>
 
-
-<!-- ==========================================================
-     HERO
-========================================================== -->
-
-<section class="hero border-b border-slate-200">
-
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-11 sm:py-14 lg:py-16">
-
+<section class="hero border-b border-[#dbe7f4]">
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
     <div class="max-w-3xl">
-
-      <div class="inline-flex items-center gap-2 bg-white border border-blue-100 rounded-full px-3.5 py-1.5 text-[11px] sm:text-xs font-bold text-[#092A66] shadow-sm">
-
-        🎓 PRACTICAL • CAREER-FOCUSED • FLEXIBLE
-
-      </div>
-
-
-      <h1 class="hero-title mt-5 text-4xl sm:text-5xl font-extrabold leading-tight text-[#092A66]">
-
-        Explore Courses That
-
-        <span class="text-[#1456C0]">
-          Build Your Future
-        </span>
-
-      </h1>
-
-
-      <p class="mt-4 text-sm sm:text-base text-slate-600 leading-7 max-w-2xl">
-
-        Browse practical, career-focused programmes designed to help you build useful skills and prepare for real opportunities.
-
-      </p>
-
-
+      <div class="inline-flex items-center gap-2 bg-white/90 border border-[#d7e5f5] rounded-full px-4 py-2 text-[11px] sm:text-xs font-bold text-[#071D49] shadow-sm">🎓 PRACTICAL • CAREER-FOCUSED • FLEXIBLE</div>
+      <h1 class="hero-title mt-5 text-4xl sm:text-5xl font-extrabold leading-tight text-[#071D49]">Explore courses that <span class="text-[#2767C6]">open new possibilities.</span></h1>
+      <p class="mt-4 text-sm sm:text-base text-slate-600 leading-7 max-w-2xl">Browse freely before creating an account. Compare practical programmes, course fees and study options designed to help you build useful, employable skills.</p>
       <div class="flex flex-col sm:flex-row gap-2.5 mt-6">
-
-        <a
-          href="#courses"
-          class="inline-flex justify-center px-5 py-3 rounded-lg bg-[#092A66] text-white font-semibold text-sm shadow-sm hover:bg-[#1456C0] transition"
-        >
-          Browse Courses
-        </a>
-
-        <a
-          href="#how-it-works"
-          class="inline-flex justify-center px-5 py-3 rounded-lg bg-white border border-slate-200 text-[#092A66] font-semibold text-sm hover:border-[#092A66] transition"
-        >
-          How It Works
-        </a>
-
+        <a href="#courses" class="inline-flex justify-center px-5 py-3 rounded-xl bg-[#071D49] text-white font-semibold text-sm shadow-lg shadow-blue-100 hover:bg-[#0B2F70] transition">Browse Courses</a>
+        <a href="auth.html" class="inline-flex justify-center px-5 py-3 rounded-xl bg-white border border-[#cddbef] text-[#071D49] font-semibold text-sm hover:border-[#071D49] transition">Create Student Account</a>
       </div>
-
-
-      <!-- STATS -->
-
-      <div class="grid grid-cols-3 gap-5 mt-7 max-w-md">
-
-        <div>
-
-          <div
-            id="heroCourseCount"
-            class="text-xl sm:text-2xl font-extrabold text-[#092A66]"
-          >
-            —
-          </div>
-
-          <div class="text-[11px] text-slate-500">
-            Courses
-          </div>
-
-        </div>
-
-
-        <div>
-
-          <div class="text-xl sm:text-2xl font-extrabold text-[#092A66]">
-            100%
-          </div>
-
-          <div class="text-[11px] text-slate-500">
-            Online
-          </div>
-
-        </div>
-
-
-        <div>
-
-          <div class="text-xl sm:text-2xl font-extrabold text-[#092A66]">
-            24/7
-          </div>
-
-          <div class="text-[11px] text-slate-500">
-            Access
-          </div>
-
-        </div>
-
+      <div class="grid grid-cols-3 gap-5 mt-8 max-w-md rounded-2xl bg-white/65 border border-white/80 px-5 py-4 backdrop-blur-sm">
+        <div><div id="heroCourseCount" class="text-xl sm:text-2xl font-extrabold text-[#071D49]">—</div><div class="text-[11px] text-slate-500">Courses</div></div>
+        <div><div class="text-xl sm:text-2xl font-extrabold text-[#071D49]">100%</div><div class="text-[11px] text-slate-500">Online</div></div>
+        <div><div class="text-xl sm:text-2xl font-extrabold text-[#071D49]">24/7</div><div class="text-[11px] text-slate-500">Access</div></div>
       </div>
-
     </div>
-
   </div>
-
 </section>
 
-
-<!-- ==========================================================
-     COURSES
-========================================================== -->
-
-<section
-  id="courses"
-  class="py-10 sm:py-14 bg-[#E9F0FA]"
->
-
+<section id="courses" class="course-zone py-11 sm:py-15">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-
-    <!-- SECTION HEADER -->
-
     <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-4">
-
       <div>
-
-        <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#D4A72C]">
-          Our Courses
-        </p>
-
-        <h2 class="section-title mt-1.5 text-2xl sm:text-3xl font-extrabold text-[#092A66]">
-          Choose Your Course
-        </h2>
-
-        <p class="mt-2 text-sm text-slate-600">
-          Search, filter and compare programmes before you enrol.
-        </p>
-
+        <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#B58216]">Our Courses</p>
+        <h2 class="section-title mt-1.5 text-2xl sm:text-3xl font-extrabold text-[#071D49]">Choose Your Course</h2>
+        <p class="mt-2 text-sm text-slate-600">Search, filter and compare programmes before you enrol.</p>
       </div>
-
-
-      <!-- SEARCH -->
-
-      <div class="w-full xl:w-[360px]">
-
-        <label
-          for="courseSearch"
-          class="sr-only"
-        >
-          Search courses
-        </label>
-
+      <div class="w-full xl:w-[390px]">
+        <label for="courseSearch" class="sr-only">Search courses</label>
         <div class="relative">
-
-          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-            ⌕
-          </span>
-
-          <input
-            id="courseSearch"
-            type="search"
-            placeholder="Search courses, skills or topics..."
-            class="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white outline-none focus:border-[#1456C0] focus:ring-2 focus:ring-blue-100 text-sm shadow-sm"
-          >
-
+          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">⌕</span>
+          <input id="courseSearch" type="search" placeholder="Search courses, skills or topics..." class="w-full pl-10 pr-4 py-3.5 rounded-xl border border-[#cddbef] bg-white outline-none focus:border-[#2767C6] focus:ring-4 focus:ring-blue-100 text-sm shadow-sm">
         </div>
-
       </div>
-
     </div>
 
+    <div class="mt-5 flex gap-2 overflow-x-auto pb-2" id="categoryChips"></div>
 
-    <!-- CATEGORY CHIPS -->
-
-    <div
-      class="mt-5 flex gap-2 overflow-x-auto pb-1"
-      id="categoryChips"
-    ></div>
-
-
-    <!-- CONTENT -->
-
-    <div class="mt-7 grid lg:grid-cols-[205px_minmax(0,1fr)] gap-7 items-start">
-
-
-      <!-- FILTER PANEL -->
-
+    <div class="mt-7 grid lg:grid-cols-[210px_minmax(0,1fr)] gap-7 items-start">
       <aside class="filter-panel hidden lg:block">
-
-        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-
+        <div class="rounded-2xl border border-[#d2dfed] bg-white/95 p-4 shadow-sm">
           <div class="flex items-center justify-between">
-
-            <h3 class="font-bold text-[#092A66] text-sm">
-              Filters
-            </h3>
-
-            <button
-              id="clearFilters"
-              class="text-xs font-semibold text-[#1456C0]"
-            >
-              Clear
-            </button>
-
+            <h3 class="font-bold text-[#071D49] text-sm">Filters</h3>
+            <button id="clearFilters" class="text-xs font-semibold text-[#2767C6]">Clear</button>
           </div>
-
-
           <div class="mt-4">
-
-            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">
-              Categories
-            </p>
-
-            <div
-              id="categoryFilters"
-              class="mt-2 space-y-2"
-            ></div>
-
+            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Categories</p>
+            <div id="categoryFilters" class="mt-2 space-y-2"></div>
           </div>
-
         </div>
-
       </aside>
 
-
-      <!-- COURSE AREA -->
-
       <main class="min-w-0">
-
-
-        <!-- RESULTS + SORT -->
-
         <div class="flex items-center justify-between gap-3 mb-4">
-
-          <div class="text-xs sm:text-sm text-slate-600">
-
-            <span id="courseResultCount">
-              —
-            </span>
-
-            courses found
-
-          </div>
-
-
-          <select
-            id="sortCourses"
-            class="border border-slate-200 rounded-lg px-2.5 py-2 bg-white text-[#092A66] font-semibold text-xs sm:text-sm outline-none shadow-sm"
-          >
-
-            <option value="popular">
-              Most Popular
-            </option>
-
-            <option value="az">
-              A–Z
-            </option>
-
-            <option value="price-low">
-              Price: Low to High
-            </option>
-
-            <option value="price-high">
-              Price: High to Low
-            </option>
-
+          <div class="text-xs sm:text-sm text-slate-600"><span id="courseResultCount">—</span> courses found</div>
+          <select id="sortCourses" class="border border-[#cddbef] rounded-lg px-2.5 py-2.5 bg-white text-[#071D49] font-semibold text-xs sm:text-sm outline-none shadow-sm">
+            <option value="popular">Most Popular</option>
+            <option value="az">A–Z</option>
+            <option value="price-low">Price: Low to High</option>
+            <option value="price-high">Price: High to Low</option>
           </select>
-
         </div>
 
-
-        <!-- CONNECTION ERROR -->
-
-        <div
-          id="connectionError"
-          class="hidden mb-6 bg-red-50 border border-red-200 rounded-xl p-4"
-        >
-
-          <div class="flex gap-3">
-
-            <div>
-              ⚠️
-            </div>
-
-            <div>
-
-              <h3 class="font-bold text-red-700 text-sm">
-                Academy connection problem
-              </h3>
-
-              <p
-                id="connectionErrorMessage"
-                class="text-xs sm:text-sm text-red-600 mt-1"
-              >
-                Unable to connect to the Academy database.
-              </p>
-
-              <button
-                id="retryButton"
-                type="button"
-                class="mt-3 px-4 py-2 rounded-lg bg-red-600 text-white font-semibold text-xs"
-              >
-                Try Again
-              </button>
-
-            </div>
-
-          </div>
-
+        <div id="connectionError" class="hidden mb-6 bg-red-50 border border-red-200 rounded-xl p-4">
+          <h3 class="font-bold text-red-700 text-sm">Academy connection problem</h3>
+          <p id="connectionErrorMessage" class="text-xs sm:text-sm text-red-600 mt-1">Unable to connect to the Academy database.</p>
+          <button id="retryButton" type="button" class="mt-3 px-4 py-2 rounded-lg bg-red-600 text-white font-semibold text-xs">Try Again</button>
         </div>
 
-
-        <!-- LOADING -->
-
-        <div
-          id="loadingState"
-          class="py-16 text-center"
-        >
-
-          <div class="spinner"></div>
-
-          <p class="mt-4 text-[#092A66] font-semibold text-sm">
-            Loading courses...
-          </p>
-
-        </div>
-
-
-        <!-- EMPTY -->
-
-        <div
-          id="emptyState"
-          class="hidden py-16 text-center"
-        >
-
-          <div class="text-4xl">
-            📚
-          </div>
-
-          <h3 class="mt-4 text-lg font-bold text-[#092A66]">
-            No courses found
-          </h3>
-
-          <p class="mt-1 text-sm text-slate-500">
-            There are currently no published courses available.
-          </p>
-
-        </div>
-
-
-        <!-- NO SEARCH RESULTS -->
-
-        <div
-          id="noSearchResults"
-          class="hidden py-16 text-center"
-        >
-
-          <div class="text-4xl">
-            🔎
-          </div>
-
-          <h3 class="mt-4 text-lg font-bold text-[#092A66]">
-            No matching courses
-          </h3>
-
-          <p class="mt-1 text-sm text-slate-500">
-            Try another search term or category.
-          </p>
-
-        </div>
-
-
-        <!-- COURSE GRID -->
-
-        <div
-          id="courseGrid"
-          class="hidden grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5"
-        ></div>
-
-
+        <div id="loadingState" class="py-16 text-center"><div class="spinner"></div><p class="mt-4 text-[#071D49] font-semibold text-sm">Loading courses...</p></div>
+        <div id="emptyState" class="hidden py-16 text-center"><div class="text-4xl">📚</div><h3 class="mt-4 text-lg font-bold text-[#071D49]">No courses found</h3><p class="mt-1 text-sm text-slate-500">There are currently no published courses available.</p></div>
+        <div id="noSearchResults" class="hidden py-16 text-center"><div class="text-4xl">🔎</div><h3 class="mt-4 text-lg font-bold text-[#071D49]">No matching courses</h3><p class="mt-1 text-sm text-slate-500">Try another search term or category.</p></div>
+        <div id="courseGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5"></div>
       </main>
-
     </div>
-
   </div>
-
 </section>
 
-
-<!-- ==========================================================
-     HOW IT WORKS
-========================================================== -->
-
-<section
-  id="how-it-works"
-  class="py-11 sm:py-14 bg-[#F2F6FC] border-y border-slate-200"
->
-
+<section id="how-it-works" class="py-12 sm:py-15 bg-[#fff8e8] border-y border-[#eadfbf]">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-
     <div class="text-center">
-
-      <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#D4A72C]">
-        Simple Process
-      </p>
-
-      <h2 class="section-title mt-1.5 text-2xl sm:text-3xl font-extrabold text-[#092A66]">
-        How It Works
-      </h2>
-
-      <p class="mt-2 text-sm text-slate-500">
-        Get started with Funda Online Academy in three simple steps.
-      </p>
-
+      <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#B58216]">Simple Process</p>
+      <h2 class="section-title mt-1.5 text-2xl sm:text-3xl font-extrabold text-[#071D49]">How It Works</h2>
+      <p class="mt-2 text-sm text-slate-600">See the course first. Register when you are ready. Learn after approval.</p>
     </div>
-
-
     <div class="grid md:grid-cols-3 gap-4 mt-8">
-
-
-      <!-- STEP 1 -->
-
-      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-
-        <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1456C0] flex items-center justify-center font-extrabold">
-          1
-        </div>
-
-        <h3 class="mt-4 text-base font-bold text-[#092A66]">
-          Browse & Choose
-        </h3>
-
-        <p class="mt-2 text-sm text-slate-500 leading-6">
-          Explore the catalogue and find the programme that matches your goals.
-        </p>
-
-      </div>
-
-
-      <!-- STEP 2 -->
-
-      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-
-        <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1456C0] flex items-center justify-center font-extrabold">
-          2
-        </div>
-
-        <h3 class="mt-4 text-base font-bold text-[#092A66]">
-          Register & Enrol
-        </h3>
-
-        <p class="mt-2 text-sm text-slate-500 leading-6">
-          Create your student profile and complete the required enrollment details.
-        </p>
-
-      </div>
-
-
-      <!-- STEP 3 -->
-
-      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-
-        <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#1456C0] flex items-center justify-center font-extrabold">
-          3
-        </div>
-
-        <h3 class="mt-4 text-base font-bold text-[#092A66]">
-          Start Learning
-        </h3>
-
-        <p class="mt-2 text-sm text-slate-500 leading-6">
-          Once approved, access your dashboard and continue your learning journey.
-        </p>
-
-      </div>
-
-
+      <div class="bg-white border border-[#eadfbf] rounded-2xl p-5 shadow-sm"><div class="w-10 h-10 rounded-xl bg-[#e9f3ff] text-[#2767C6] flex items-center justify-center font-extrabold">1</div><h3 class="mt-4 text-base font-bold text-[#071D49]">Browse & Compare</h3><p class="mt-2 text-sm text-slate-500 leading-6">Explore available courses, fees and study details without needing to log in.</p></div>
+      <div class="bg-white border border-[#eadfbf] rounded-2xl p-5 shadow-sm"><div class="w-10 h-10 rounded-xl bg-[#fff1c9] text-[#9C7115] flex items-center justify-center font-extrabold">2</div><h3 class="mt-4 text-base font-bold text-[#071D49]">Register & Apply</h3><p class="mt-2 text-sm text-slate-500 leading-6">Create your student account, complete enrollment details and submit proof of payment.</p></div>
+      <div class="bg-white border border-[#eadfbf] rounded-2xl p-5 shadow-sm"><div class="w-10 h-10 rounded-xl bg-[#e8f7f2] text-[#15725c] flex items-center justify-center font-extrabold">3</div><h3 class="mt-4 text-base font-bold text-[#071D49]">Approval & Learning</h3><p class="mt-2 text-sm text-slate-500 leading-6">Track your application on your dashboard. Learning access opens after approval.</p></div>
     </div>
-
   </div>
-
 </section>
 
-
-<!-- ==========================================================
-     FAQ
-========================================================== -->
-
-<section
-  id="faq"
-  class="py-11 sm:py-14 bg-[#F8FAFD]"
->
-
+<section id="faq" class="py-12 sm:py-15 bg-[#f2f8ff]">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-
-
-    <div class="text-center">
-
-      <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#D4A72C]">
-        FAQs
-      </p>
-
-      <h2 class="section-title mt-1.5 text-2xl sm:text-3xl font-extrabold text-[#092A66]">
-        Frequently Asked Questions
-      </h2>
-
-    </div>
-
-
+    <div class="text-center"><p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#B58216]">FAQs</p><h2 class="section-title mt-1.5 text-2xl sm:text-3xl font-extrabold text-[#071D49]">Questions Before You Enrol?</h2></div>
     <div class="mt-7 space-y-3">
-
-
-      <details class="border border-slate-200 bg-white rounded-xl p-4 shadow-sm">
-
-        <summary class="cursor-pointer font-semibold text-sm text-[#092A66]">
-          How do I enrol for a course?
-        </summary>
-
-        <p class="mt-2 text-sm text-slate-500 leading-6">
-          Select a course, create or log into your student account and follow the enrollment instructions.
-        </p>
-
-      </details>
-
-
-      <details class="border border-slate-200 bg-white rounded-xl p-4 shadow-sm">
-
-        <summary class="cursor-pointer font-semibold text-sm text-[#092A66]">
-          Can I learn online?
-        </summary>
-
-        <p class="mt-2 text-sm text-slate-500 leading-6">
-          Yes. Funda Online Academy is designed to provide online learning access to students.
-        </p>
-
-      </details>
-
-
-      <details class="border border-slate-200 bg-white rounded-xl p-4 shadow-sm">
-
-        <summary class="cursor-pointer font-semibold text-sm text-[#092A66]">
-          Will I receive a certificate?
-        </summary>
-
-        <p class="mt-2 text-sm text-slate-500 leading-6">
-          Certificate availability depends on the specific course and its completion requirements.
-        </p>
-
-      </details>
-
-
+      <details class="border border-[#d6e3f1] bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer font-semibold text-sm text-[#071D49]">Do I need an account to browse courses?</summary><p class="mt-2 text-sm text-slate-500 leading-6">No. You can browse courses, view fees and read course information before creating an account.</p></details>
+      <details class="border border-[#d6e3f1] bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer font-semibold text-sm text-[#071D49]">When do I get access to learning?</summary><p class="mt-2 text-sm text-slate-500 leading-6">After your enrollment and proof of payment have been reviewed and approved by the relevant Academy team.</p></details>
+      <details class="border border-[#d6e3f1] bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer font-semibold text-sm text-[#071D49]">Can I track a pending application?</summary><p class="mt-2 text-sm text-slate-500 leading-6">Yes. Returning students can sign in and view the status of their enrollment from the Student Dashboard.</p></details>
     </div>
-
   </div>
-
 </section>
 
-
-<!-- ==========================================================
-     CONTACT / CTA
-========================================================== -->
-
-<section
-  id="contact"
-  class="py-11 sm:py-14 bg-[#092A66]"
->
-
+<section id="contact" class="py-12 sm:py-15 bg-[#071D49]">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-
-    <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#D4A72C]">
-      Funda Online Academy
-    </p>
-
-    <h2 class="mt-2 text-2xl sm:text-3xl font-extrabold text-white">
-      Ready to Start Learning?
-    </h2>
-
-    <p class="mt-3 text-sm text-blue-100 max-w-xl mx-auto">
-      Create your student account and begin your learning journey with Funda Online Academy.
-    </p>
-
-
+    <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#e3c470]">Funda Online Academy</p>
+    <h2 class="mt-2 text-2xl sm:text-3xl font-extrabold text-white">Found a Course That Fits Your Goal?</h2>
+    <p class="mt-3 text-sm text-blue-100 max-w-xl mx-auto">Create your student account when you are ready to start the enrollment process.</p>
     <div class="flex flex-col sm:flex-row justify-center gap-2.5 mt-6">
-
-      <a
-        href="register.html"
-        class="px-5 py-3 rounded-lg bg-white text-[#092A66] font-semibold text-sm"
-      >
-        Create Account
-      </a>
-
-      <a
-        href="login.html"
-        class="px-5 py-3 rounded-lg border border-white text-white font-semibold text-sm"
-      >
-        Student Login
-      </a>
-
+      <a href="auth.html" class="px-5 py-3 rounded-lg bg-white text-[#071D49] font-semibold text-sm">Create Account</a>
+      <a href="login.html" class="px-5 py-3 rounded-lg border border-white text-white font-semibold text-sm">Student Login</a>
     </div>
-
   </div>
-
 </section>
 
-
-<!-- ==========================================================
-     FOOTER
-========================================================== -->
-
-<footer
-  class="bg-[#071B50] text-white"
->
-
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-9">
-
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-7">
-
-
-      <!-- BRAND -->
-
-      <div>
-
-        <div class="brand font-bold">
-          FUNDA ONLINE
-
-          <span class="text-[#D4A72C]">
-            ACADEMY
-          </span>
-        </div>
-
-        <p class="mt-3 text-xs sm:text-sm text-blue-100 leading-6">
-          Empowering learners with accessible, practical and career-focused online education.
-        </p>
-
-      </div>
-
-
-      <!-- QUICK LINKS -->
-
-      <div>
-
-        <h3 class="font-bold text-sm">
-          Quick Links
-        </h3>
-
-        <div class="mt-3 space-y-2 text-xs sm:text-sm text-blue-100">
-
-          <a
-            href="#courses"
-            class="block hover:text-white"
-          >
-            Courses
-          </a>
-
-          <a
-            href="#how-it-works"
-            class="block hover:text-white"
-          >
-            How It Works
-          </a>
-
-          <a
-            href="#faq"
-            class="block hover:text-white"
-          >
-            FAQs
-          </a>
-
-          <a
-            href="login.html"
-            class="block hover:text-white"
-          >
-            Student Login
-          </a>
-
-        </div>
-
-      </div>
-
-
-      <!-- CONTACT -->
-
-      <div>
-
-        <h3 class="font-bold text-sm">
-          Contact Info
-        </h3>
-
-        <div class="mt-3 space-y-2 text-xs sm:text-sm text-blue-100">
-
-          <div>
-            ✉ support@fundaonlineacademy.co.za
-          </div>
-
-          <div>
-            ☎ +27 21 555 0149
-          </div>
-
-          <div>
-            ⌖ Cape Town, South Africa
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <!-- SOCIALS -->
-
-      <div>
-
-        <h3 class="font-bold text-sm">
-          Partners & Socials
-        </h3>
-
-        <p class="mt-3 text-xs sm:text-sm text-blue-100">
-          Connect with Funda Online Academy and follow our latest learning updates.
-        </p>
-
-        <div class="flex gap-2 mt-4">
-
-          <span class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs">
-            f
-          </span>
-
-          <span class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs">
-            in
-          </span>
-
-          <span class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-xs">
-            ▶
-          </span>
-
-        </div>
-
-      </div>
-
-
+<footer class="bg-[#041533] text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col md:flex-row justify-between gap-5 text-sm">
+      <div><div class="brand font-bold">FUNDA ONLINE <span class="text-[#d9b95e]">ACADEMY</span></div><p class="mt-2 text-xs text-blue-100">Practical, accessible and career-focused learning.</p></div>
+      <div class="text-xs text-blue-100 md:text-right">Courses · Student Login · Create Account<br><span class="text-blue-200">© <span id="year"></span> Funda Online Academy</span></div>
     </div>
-
-
-    <div class="mt-8 pt-5 border-t border-white/10 flex flex-col sm:flex-row justify-between gap-2 text-[11px] text-blue-200">
-
-      <span>
-        ©
-        <span id="year"></span>
-        Funda Online Academy. All rights reserved.
-      </span>
-
-      <span>
-        Terms • Privacy • Contact
-      </span>
-
-    </div>
-
   </div>
-
 </footer>
 
-
-<!-- ==========================================================
-     JAVASCRIPT
-========================================================== -->
-
 <script>
+let supabaseClient=null;
+let allCourses=[];
+let activeCategory="All";
 
-let supabaseClient = null;
+const loadingState=document.getElementById("loadingState");
+const emptyState=document.getElementById("emptyState");
+const noSearchResults=document.getElementById("noSearchResults");
+const courseGrid=document.getElementById("courseGrid");
+const connectionError=document.getElementById("connectionError");
+const connectionErrorMessage=document.getElementById("connectionErrorMessage");
+const courseSearch=document.getElementById("courseSearch");
+const retryButton=document.getElementById("retryButton");
+const heroCourseCount=document.getElementById("heroCourseCount");
+const courseResultCount=document.getElementById("courseResultCount");
+const categoryChips=document.getElementById("categoryChips");
+const categoryFilters=document.getElementById("categoryFilters");
+const sortCourses=document.getElementById("sortCourses");
 
-let allCourses = [];
-
-let activeCategory = "All";
-
-
-/* ----------------------------------------------------------
-   DOM ELEMENTS
----------------------------------------------------------- */
-
-const loadingState =
-  document.getElementById("loadingState");
-
-const emptyState =
-  document.getElementById("emptyState");
-
-const noSearchResults =
-  document.getElementById("noSearchResults");
-
-const courseGrid =
-  document.getElementById("courseGrid");
-
-const connectionError =
-  document.getElementById("connectionError");
-
-const connectionErrorMessage =
-  document.getElementById("connectionErrorMessage");
-
-const courseSearch =
-  document.getElementById("courseSearch");
-
-const retryButton =
-  document.getElementById("retryButton");
-
-const heroCourseCount =
-  document.getElementById("heroCourseCount");
-
-const courseResultCount =
-  document.getElementById("courseResultCount");
-
-const categoryChips =
-  document.getElementById("categoryChips");
-
-const categoryFilters =
-  document.getElementById("categoryFilters");
-
-const sortCourses =
-  document.getElementById("sortCourses");
-
-
-/* ----------------------------------------------------------
-   SUPABASE
----------------------------------------------------------- */
-
-function initialiseSupabase() {
-
-  if (
-    typeof window.SUPABASE_URL === "undefined"
-  ) {
-
-    throw new Error(
-      "supabase-config.js was not loaded."
-    );
-
-  }
-
-
-  if (
-    typeof window.SUPABASE_ANON_KEY === "undefined"
-  ) {
-
-    throw new Error(
-      "SUPABASE_ANON_KEY was not found in supabase-config.js."
-    );
-
-  }
-
-
-  if (
-    !window.SUPABASE_URL ||
-    !window.SUPABASE_ANON_KEY ||
-    window.SUPABASE_ANON_KEY ===
-      "YOUR_LEGACY_ANON_KEY_GOES_HERE"
-  ) {
-
-    throw new Error(
-      "The Supabase public key has not been configured."
-    );
-
-  }
-
-
-  if (
-    typeof window.supabase === "undefined"
-  ) {
-
-    throw new Error(
-      "The Supabase JavaScript library did not load."
-    );
-
-  }
-
-
-  supabaseClient =
-    window.supabase.createClient(
-      window.SUPABASE_URL,
-      window.SUPABASE_ANON_KEY
-    );
-
+function initialiseSupabase(){
+  if(!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY||window.SUPABASE_ANON_KEY==="YOUR_LEGACY_ANON_KEY_GOES_HERE") throw new Error("The Academy database connection is not configured.");
+  if(!window.supabase) throw new Error("The Supabase library did not load.");
+  supabaseClient=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
 }
 
+function escapeHTML(value){return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;").replace(/'/g,"&#039;")}
+function formatPrice(value){if(value===null||value===undefined||value==="")return "Contact us";const n=Number(value);if(Number.isNaN(n))return escapeHTML(value);return "R"+n.toLocaleString("en-ZA",{minimumFractionDigits:0,maximumFractionDigits:2})}
+function getCourseImage(c){return c.image_url||c.image||c.thumbnail_url||c.thumbnail||c.cover_image||""}
+function getCourseTitle(c){return c.title||c.name||c.course_name||"Untitled Course"}
+function getCourseDescription(c){return c.short_description||c.description||c.summary||"Explore this course and discover what you can learn."}
+function getCourseCategory(c){return c.category||c.course_category||"Course"}
+function getCoursePrice(c){return c.price??c.amount??c.course_price??null}
+function getCourseDuration(c){return c.duration||c.duration_text||c.course_duration||"Self-paced"}
+function getCourseLevel(c){return c.level||c.course_level||"All levels"}
+function isPublished(c){if(typeof c.published==="boolean")return c.published;if(typeof c.is_published==="boolean")return c.is_published;if(typeof c.active==="boolean")return c.active;if(typeof c.status==="string")return ["published","active"].includes(c.status.toLowerCase());return true}
 
-/* ----------------------------------------------------------
-   SECURITY
----------------------------------------------------------- */
+function showLoading(){loadingState.classList.remove("hidden");emptyState.classList.add("hidden");noSearchResults.classList.add("hidden");courseGrid.classList.add("hidden")}
+function showConnectionError(message){loadingState.classList.add("hidden");connectionError.classList.remove("hidden");connectionErrorMessage.textContent=message||"Unable to connect to the Academy database."}
 
-function escapeHTML(value) {
-
-  if (
-    value === null ||
-    value === undefined
-  ) {
-
-    return "";
-
-  }
-
-
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
+function buildCategoryControls(){
+  const categories=[...new Set(allCourses.map(getCourseCategory).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
+  const all=["All",...categories];
+  categoryChips.innerHTML=all.map(category=>`<button type="button" data-category="${escapeHTML(category)}" class="chip ${category===activeCategory?"active":""} px-3.5 py-2 rounded-full border border-[#cddbef] bg-white text-[#071D49] text-xs font-semibold shadow-sm">${escapeHTML(category)}</button>`).join("");
+  categoryFilters.innerHTML=categories.map(category=>`<label class="flex items-center gap-2 text-xs text-slate-600"><input type="checkbox" value="${escapeHTML(category)}" class="category-check accent-[#2767C6]"><span>${escapeHTML(category)}</span></label>`).join("");
+  categoryChips.querySelectorAll("[data-category]").forEach(button=>button.addEventListener("click",()=>{activeCategory=button.dataset.category;categoryChips.querySelectorAll("[data-category]").forEach(item=>item.classList.toggle("active",item.dataset.category===activeCategory));categoryFilters.querySelectorAll(".category-check").forEach(item=>item.checked=item.value===activeCategory);applyFilters()}));
+  categoryFilters.querySelectorAll(".category-check").forEach(check=>check.addEventListener("change",()=>{if(check.checked){activeCategory=check.value;categoryFilters.querySelectorAll(".category-check").forEach(item=>{if(item!==check)item.checked=false})}else activeCategory="All";categoryChips.querySelectorAll("[data-category]").forEach(button=>button.classList.toggle("active",button.dataset.category===activeCategory));applyFilters()}));
 }
 
-
-/* ----------------------------------------------------------
-   PRICE
----------------------------------------------------------- */
-
-function formatPrice(value) {
-
-  if (
-    value === null ||
-    value === undefined ||
-    value === ""
-  ) {
-
-    return "Contact us";
-
-  }
-
-
-  const number =
-    Number(value);
-
-
-  if (
-    Number.isNaN(number)
-  ) {
-
-    return escapeHTML(value);
-
-  }
-
-
-  return "R" +
-    number.toLocaleString(
-      "en-ZA",
-      {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2
-      }
-    );
-
-}
-
-
-/* ----------------------------------------------------------
-   COURSE HELPERS
----------------------------------------------------------- */
-
-function getCourseImage(course) {
-
-  return (
-    course.image_url ||
-    course.image ||
-    course.thumbnail_url ||
-    course.thumbnail ||
-    course.cover_image ||
-    ""
-  );
-
-}
-
-
-function getCourseTitle(course) {
-
-  return (
-    course.title ||
-    course.name ||
-    course.course_name ||
-    "Untitled Course"
-  );
-
-}
-
-
-function getCourseDescription(course) {
-
-  return (
-    course.short_description ||
-    course.description ||
-    course.summary ||
-    "Explore this course and discover what you can learn."
-  );
-
-}
-
-
-function getCourseCategory(course) {
-
-  return (
-    course.category ||
-    course.course_category ||
-    "Course"
-  );
-
-}
-
-
-function getCoursePrice(course) {
-
-  return (
-    course.price ??
-    course.amount ??
-    course.course_price ??
-    null
-  );
-
-}
-
-
-function getCourseDuration(course) {
-
-  return (
-    course.duration ||
-    course.duration_text ||
-    course.course_duration ||
-    "Self-paced"
-  );
-
-}
-
-
-function getCourseLevel(course) {
-
-  return (
-    course.level ||
-    course.course_level ||
-    "All levels"
-  );
-
-}
-
-
-/* ----------------------------------------------------------
-   PUBLISHED STATUS
----------------------------------------------------------- */
-
-function isPublished(course) {
-
-  if (
-    typeof course.published === "boolean"
-  ) {
-
-    return course.published;
-
-  }
-
-
-  if (
-    typeof course.is_published === "boolean"
-  ) {
-
-    return course.is_published;
-
-  }
-
-
-  if (
-    typeof course.active === "boolean"
-  ) {
-
-    return course.active;
-
-  }
-
-
-  if (
-    typeof course.status === "string"
-  ) {
-
-    return [
-      "published",
-      "active"
-    ].includes(
-      course.status.toLowerCase()
-    );
-
-  }
-
-
-  return true;
-
-}
-
-
-/* ----------------------------------------------------------
-   CONNECTION ERROR
----------------------------------------------------------- */
-
-function showConnectionError(message) {
-
-  loadingState.classList.add("hidden");
-
-  connectionError.classList.remove("hidden");
-
-  connectionErrorMessage.textContent =
-    message ||
-    "Unable to connect to the Academy database.";
-
-}
-
-
-/* ----------------------------------------------------------
-   LOADING
----------------------------------------------------------- */
-
-function showLoading() {
-
-  loadingState.classList.remove("hidden");
-
-  emptyState.classList.add("hidden");
-
-  noSearchResults.classList.add("hidden");
-
-  courseGrid.classList.add("hidden");
-
-}
-
-
-/* ----------------------------------------------------------
-   CATEGORY CONTROLS
----------------------------------------------------------- */
-
-function buildCategoryControls() {
-
-  const categories = [
-    ...new Set(
-      allCourses
-        .map(getCourseCategory)
-        .filter(Boolean)
-    )
-  ].sort(
-    (a, b) =>
-      String(a).localeCompare(
-        String(b)
-      )
-  );
-
-
-  const all = [
-    "All",
-    ...categories
-  ];
-
-
-  /* CATEGORY CHIPS */
-
-  categoryChips.innerHTML =
-    all
-      .map(
-        category => `
-          <button
-            type="button"
-            data-category="${escapeHTML(category)}"
-            class="chip ${
-              category === activeCategory
-                ? "active"
-                : ""
-            } px-3.5 py-2 rounded-full border border-slate-200 bg-white text-[#092A66] text-xs font-semibold shadow-sm"
-          >
-            ${escapeHTML(category)}
-          </button>
-        `
-      )
-      .join("");
-
-
-  /* CATEGORY FILTERS */
-
-  categoryFilters.innerHTML =
-    all
-      .slice(1)
-      .map(
-        category => `
-          <label class="flex items-center gap-2 text-xs text-slate-600">
-
-            <input
-              type="checkbox"
-              value="${escapeHTML(category)}"
-              class="category-check accent-[#1456C0]"
-            >
-
-            <span>
-              ${escapeHTML(category)}
-            </span>
-
-          </label>
-        `
-      )
-      .join("");
-
-
-  /* CHIP EVENTS */
-
-  categoryChips
-    .querySelectorAll(
-      "[data-category]"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          activeCategory =
-            button.dataset.category;
-
-
-          categoryChips
-            .querySelectorAll(
-              "[data-category]"
-            )
-            .forEach(item => {
-
-              item.classList.toggle(
-                "active",
-                item.dataset.category ===
-                  activeCategory
-              );
-
-            });
-
-
-          categoryFilters
-            .querySelectorAll(
-              ".category-check"
-            )
-            .forEach(item => {
-
-              item.checked =
-                item.value ===
-                activeCategory;
-
-            });
-
-
-          applyFilters();
-
-        }
-      );
-
-    });
-
-
-  /* FILTER EVENTS */
-
-  categoryFilters
-    .querySelectorAll(
-      ".category-check"
-    )
-    .forEach(check => {
-
-      check.addEventListener(
-        "change",
-        () => {
-
-          if (check.checked) {
-
-            activeCategory =
-              check.value;
-
-
-            categoryFilters
-              .querySelectorAll(
-                ".category-check"
-              )
-              .forEach(item => {
-
-                if (item !== check) {
-                  item.checked = false;
-                }
-
-              });
-
-          } else {
-
-            activeCategory = "All";
-
-          }
-
-
-          categoryChips
-            .querySelectorAll(
-              "[data-category]"
-            )
-            .forEach(button => {
-
-              button.classList.toggle(
-                "active",
-                button.dataset.category ===
-                  activeCategory
-              );
-
-            });
-
-
-          applyFilters();
-
-        }
-      );
-
-    });
-
-}
-
-
-/* ----------------------------------------------------------
-   LOAD COURSES
----------------------------------------------------------- */
-
-async function loadCourses() {
-
-  showLoading();
-
-  connectionError.classList.add(
-    "hidden"
-  );
-
-
-  try {
-
+async function loadCourses(){
+  showLoading();connectionError.classList.add("hidden");
+  try{
     initialiseSupabase();
-
-
-    const {
-      data,
-      error
-    } =
-      await supabaseClient
-        .from("courses")
-        .select("*");
-
-
-    if (error) {
-
-      throw new Error(
-        error.message ||
-        "The courses table could not be loaded."
-      );
-
-    }
-
-
-    allCourses =
-      Array.isArray(data)
-        ? data.filter(isPublished)
-        : [];
-
-
-    heroCourseCount.textContent =
-      allCourses.length;
-
-
-    buildCategoryControls();
-
-
-    loadingState.classList.add(
-      "hidden"
-    );
-
-
-    if (!allCourses.length) {
-
-      emptyState.classList.remove(
-        "hidden"
-      );
-
-      return;
-
-    }
-
-
+    const {data,error}=await supabaseClient.from("courses").select("*");
+    if(error)throw new Error(error.message||"The courses table could not be loaded.");
+    allCourses=Array.isArray(data)?data.filter(isPublished):[];
+    heroCourseCount.textContent=allCourses.length;
+    buildCategoryControls();loadingState.classList.add("hidden");
+    if(!allCourses.length){emptyState.classList.remove("hidden");return}
     applyFilters();
-
-  } catch (error) {
-
-    console.error(
-      "Funda Online Academy course loading error:",
-      error
-    );
-
-
-    courseGrid.classList.add(
-      "hidden"
-    );
-
-
-    showConnectionError(
-      error.message ||
-      "Unable to load courses."
-    );
-
-  }
-
+  }catch(error){console.error("Course loading error:",error);showConnectionError(error.message||"Unable to load courses.")}
 }
 
-
-/* ----------------------------------------------------------
-   FILTER COURSES
----------------------------------------------------------- */
-
-function applyFilters() {
-
-  const search =
-    String(
-      courseSearch.value || ""
-    )
-      .trim()
-      .toLowerCase();
-
-
-  let filtered =
-    allCourses.filter(
-      course => {
-
-        const category =
-          getCourseCategory(
-            course
-          );
-
-
-        const categoryMatch =
-          activeCategory === "All" ||
-          String(category)
-            .toLowerCase() ===
-          String(activeCategory)
-            .toLowerCase();
-
-
-        const searchableText = [
-
-          getCourseTitle(course),
-
-          getCourseDescription(course),
-
-          category,
-
-          getCourseLevel(course)
-
-        ]
-          .join(" ")
-          .toLowerCase();
-
-
-        return (
-          categoryMatch &&
-          (
-            !search ||
-            searchableText.includes(
-              search
-            )
-          )
-        );
-
-      }
-    );
-
-
-  const sort =
-    sortCourses.value;
-
-
-  if (sort === "az") {
-
-    filtered.sort(
-      (a, b) =>
-        getCourseTitle(a)
-          .localeCompare(
-            getCourseTitle(b)
-          )
-    );
-
-  }
-
-
-  if (sort === "price-low") {
-
-    filtered.sort(
-      (a, b) =>
-        (
-          Number(
-            getCoursePrice(a)
-          ) || 0
-        ) -
-        (
-          Number(
-            getCoursePrice(b)
-          ) || 0
-        )
-    );
-
-  }
-
-
-  if (sort === "price-high") {
-
-    filtered.sort(
-      (a, b) =>
-        (
-          Number(
-            getCoursePrice(b)
-          ) || 0
-        ) -
-        (
-          Number(
-            getCoursePrice(a)
-          ) || 0
-        )
-    );
-
-  }
-
-
-  courseResultCount.textContent =
-    filtered.length;
-
-
-  renderCourses(
-    filtered
-  );
-
+function applyFilters(){
+  const search=String(courseSearch.value||"").trim().toLowerCase();
+  let filtered=allCourses.filter(course=>{const category=getCourseCategory(course);const categoryMatch=activeCategory==="All"||String(category).toLowerCase()===String(activeCategory).toLowerCase();const text=[getCourseTitle(course),getCourseDescription(course),category,getCourseLevel(course)].join(" ").toLowerCase();return categoryMatch&&(!search||text.includes(search))});
+  const sort=sortCourses.value;
+  if(sort==="az")filtered.sort((a,b)=>getCourseTitle(a).localeCompare(getCourseTitle(b)));
+  if(sort==="price-low")filtered.sort((a,b)=>(Number(getCoursePrice(a))||0)-(Number(getCoursePrice(b))||0));
+  if(sort==="price-high")filtered.sort((a,b)=>(Number(getCoursePrice(b))||0)-(Number(getCoursePrice(a))||0));
+  courseResultCount.textContent=filtered.length;renderCourses(filtered);
 }
 
-
-/* ----------------------------------------------------------
-   RENDER COURSES
----------------------------------------------------------- */
-
-function renderCourses(
-  courses
-) {
-
-  courseGrid.innerHTML = "";
-
-
-  if (
-    !courses ||
-    courses.length === 0
-  ) {
-
-    courseGrid.classList.add(
-      "hidden"
-    );
-
-    noSearchResults.classList.remove(
-      "hidden"
-    );
-
-    return;
-
-  }
-
-
-  noSearchResults.classList.add(
-    "hidden"
-  );
-
-
-  courseGrid.classList.remove(
-    "hidden"
-  );
-
-
-  courses.forEach(
-    course => {
-
-      const id =
-        course.id;
-
-      const title =
-        getCourseTitle(
-          course
-        );
-
-      const image =
-        getCourseImage(
-          course
-        );
-
-
-      const card =
-        document.createElement(
-          "article"
-        );
-
-
-      card.className =
-        "course-card bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm flex flex-col";
-
-
-      const imageHTML =
-        image
-          ? `
-            <div class="course-image-wrap">
-
-              <img
-                src="${escapeHTML(image)}"
-                alt="${escapeHTML(title)}"
-                class="course-image"
-                loading="lazy"
-                onerror="this.parentElement.innerHTML='<div class=&quot;w-full h-full flex items-center justify-center text-5xl&quot;>🎓</div>'"
-              >
-
-            </div>
-          `
-          : `
-            <div class="course-image-wrap flex items-center justify-center bg-gradient-to-br from-[#092A66] to-[#1456C0]">
-
-              <div class="text-5xl">
-                🎓
-              </div>
-
-            </div>
-          `;
-
-
-      card.innerHTML = `
-
-        ${imageHTML}
-
-
-        <div class="p-4 sm:p-4.5 flex flex-col flex-1">
-
-
-          <div class="flex items-center justify-between gap-2">
-
-            <span
-              class="max-w-[70%] truncate px-2.5 py-1 rounded-full bg-blue-50 text-[#092A66] text-[10px] sm:text-[11px] font-bold"
-            >
-              ${escapeHTML(
-                getCourseCategory(
-                  course
-                )
-              )}
-            </span>
-
-
-            <span
-              class="text-[10px] sm:text-[11px] text-slate-400 font-medium"
-            >
-              Online
-            </span>
-
-          </div>
-
-
-          <h3
-            class="mt-3 text-[15px] sm:text-base font-bold text-[#092A66] leading-5 line-clamp-2 min-h-[40px]"
-          >
-            ${escapeHTML(
-              title
-            )}
-          </h3>
-
-
-          <p
-            class="mt-2 text-xs sm:text-[13px] text-slate-500 leading-5 line-clamp-2 min-h-[40px]"
-          >
-            ${escapeHTML(
-              getCourseDescription(
-                course
-              )
-            )}
-          </p>
-
-
-          <div
-            class="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[10px] sm:text-[11px] text-slate-500"
-          >
-
-            <span>
-              ⏱
-              ${escapeHTML(
-                getCourseDuration(
-                  course
-                )
-              )}
-            </span>
-
-            <span>
-              •
-              ${escapeHTML(
-                getCourseLevel(
-                  course
-                )
-              )}
-            </span>
-
-          </div>
-
-
-          <div
-            class="mt-auto pt-4 flex items-end justify-between gap-3"
-          >
-
-
-            <div>
-
-              <div class="text-[10px] text-slate-400">
-                Course Fee
-              </div>
-
-              <div
-                class="text-base sm:text-lg font-extrabold text-[#092A66]"
-              >
-                ${formatPrice(
-                  getCoursePrice(
-                    course
-                  )
-                )}
-              </div>
-
-            </div>
-
-
-            <a
-              href="course-view.html?id=${encodeURIComponent(id)}"
-              class="shrink-0 inline-flex items-center justify-center px-3.5 py-2.5 rounded-lg bg-[#092A66] text-white text-xs font-bold hover:bg-[#1456C0] transition"
-            >
-              View Course
-            </a>
-
-
-          </div>
-
-
-        </div>
-
-      `;
-
-
-      courseGrid.appendChild(
-        card
-      );
-
-    }
-  );
-
+function renderCourses(courses){
+  courseGrid.innerHTML="";
+  if(!courses?.length){courseGrid.classList.add("hidden");noSearchResults.classList.remove("hidden");return}
+  noSearchResults.classList.add("hidden");courseGrid.classList.remove("hidden");
+  courses.forEach(course=>{
+    const id=course.id,title=getCourseTitle(course),image=getCourseImage(course);
+    const card=document.createElement("article");card.className="course-card rounded-2xl overflow-hidden flex flex-col";
+    const imageHTML=image?`<div class="course-image-wrap"><img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" class="course-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=&quot;w-full h-full flex items-center justify-center text-5xl bg-[#e8f3ff]&quot;>🎓</div>'"></div>`:`<div class="course-image-wrap flex items-center justify-center bg-gradient-to-br from-[#dcecff] to-[#fff1c9]"><div class="text-5xl">🎓</div></div>`;
+    card.innerHTML=`${imageHTML}<div class="p-4 flex flex-col flex-1"><div class="flex items-center justify-between gap-2"><span class="max-w-[70%] truncate px-2.5 py-1 rounded-full bg-[#eaf3ff] text-[#071D49] text-[10px] sm:text-[11px] font-bold">${escapeHTML(getCourseCategory(course))}</span><span class="text-[10px] sm:text-[11px] text-slate-400 font-medium">Online</span></div><h3 class="mt-3 text-[15px] sm:text-base font-bold text-[#071D49] leading-5 line-clamp-2 min-h-[40px]">${escapeHTML(title)}</h3><p class="mt-2 text-xs sm:text-[13px] text-slate-500 leading-5 line-clamp-2 min-h-[40px]">${escapeHTML(getCourseDescription(course))}</p><div class="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[10px] sm:text-[11px] text-slate-500"><span>⏱ ${escapeHTML(getCourseDuration(course))}</span><span>• ${escapeHTML(getCourseLevel(course))}</span></div><div class="mt-auto pt-4 flex items-end justify-between gap-3"><div><div class="text-[10px] text-slate-400">Course Fee</div><div class="text-base sm:text-lg font-extrabold text-[#071D49]">${formatPrice(getCoursePrice(course))}</div></div><a href="course-view.html?id=${encodeURIComponent(id)}" class="shrink-0 inline-flex items-center justify-center px-3.5 py-2.5 rounded-lg bg-[#071D49] text-white text-xs font-bold hover:bg-[#0B2F70] transition">View Course</a></div></div>`;
+    courseGrid.appendChild(card);
+  });
 }
 
-
-/* ----------------------------------------------------------
-   MOBILE MENU
----------------------------------------------------------- */
-
-document
-  .getElementById(
-    "mobileMenuButton"
-  )
-  .addEventListener(
-    "click",
-    () => {
-
-      document
-        .getElementById(
-          "mobileMenu"
-        )
-        .classList.toggle(
-          "hidden"
-        );
-
-    }
-  );
-
-
-/* ----------------------------------------------------------
-   CLOSE MOBILE MENU
----------------------------------------------------------- */
-
-document
-  .querySelectorAll(
-    "#mobileMenu a"
-  )
-  .forEach(
-    link => {
-
-      link.addEventListener(
-        "click",
-        () => {
-
-          document
-            .getElementById(
-              "mobileMenu"
-            )
-            .classList.add(
-              "hidden"
-            );
-
-        }
-      );
-
-    }
-  );
-
-
-/* ----------------------------------------------------------
-   SEARCH
----------------------------------------------------------- */
-
-courseSearch.addEventListener(
-  "input",
-  applyFilters
-);
-
-
-/* ----------------------------------------------------------
-   SORT
----------------------------------------------------------- */
-
-sortCourses.addEventListener(
-  "change",
-  applyFilters
-);
-
-
-/* ----------------------------------------------------------
-   CLEAR FILTERS
----------------------------------------------------------- */
-
-document
-  .getElementById(
-    "clearFilters"
-  )
-  .addEventListener(
-    "click",
-    () => {
-
-      activeCategory =
-        "All";
-
-      courseSearch.value =
-        "";
-
-      sortCourses.value =
-        "popular";
-
-
-      categoryChips
-        .querySelectorAll(
-          "[data-category]"
-        )
-        .forEach(
-          button => {
-
-            button.classList.toggle(
-              "active",
-              button.dataset.category ===
-                "All"
-            );
-
-          }
-        );
-
-
-      categoryFilters
-        .querySelectorAll(
-          ".category-check"
-        )
-        .forEach(
-          check => {
-
-            check.checked =
-              false;
-
-          }
-        );
-
-
-      applyFilters();
-
-    }
-  );
-
-
-/* ----------------------------------------------------------
-   RETRY
----------------------------------------------------------- */
-
-retryButton.addEventListener(
-  "click",
-  loadCourses
-);
-
-
-/* ----------------------------------------------------------
-   YEAR
----------------------------------------------------------- */
-
-document
-  .getElementById(
-    "year"
-  )
-  .textContent =
-  new Date()
-    .getFullYear();
-
-
-/* ----------------------------------------------------------
-   INITIAL LOAD
----------------------------------------------------------- */
-
-document.addEventListener(
-  "DOMContentLoaded",
-  loadCourses
-);
-
+document.getElementById("mobileMenuButton").addEventListener("click",()=>document.getElementById("mobileMenu").classList.toggle("hidden"));
+document.querySelectorAll("#mobileMenu a").forEach(link=>link.addEventListener("click",()=>document.getElementById("mobileMenu").classList.add("hidden")));
+courseSearch.addEventListener("input",applyFilters);sortCourses.addEventListener("change",applyFilters);retryButton.addEventListener("click",loadCourses);
+document.getElementById("clearFilters").addEventListener("click",()=>{activeCategory="All";courseSearch.value="";sortCourses.value="popular";categoryFilters.querySelectorAll(".category-check").forEach(c=>c.checked=false);categoryChips.querySelectorAll("[data-category]").forEach(b=>b.classList.toggle("active",b.dataset.category==="All"));applyFilters()});
+document.getElementById("year").textContent=new Date().getFullYear();
+document.addEventListener("DOMContentLoaded",loadCourses);
 </script>
-
 </body>
 </html>
