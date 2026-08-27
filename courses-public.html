@@ -5,361 +5,49 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Browse practical, career-focused online courses at Funda Online Academy.">
 <title>Browse Courses | Funda Online Academy</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
-
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js?v=20260827"></script>
-
 <style>
-:root{
-  --navy:#071d49;
-  --navy2:#0b2f70;
-  --blue:#2767c6;
-  --gold:#c99a2e;
-  --gold-soft:#f7e8b8;
-  --sky:#edf5ff;
-  --sky-strong:#deecff;
-  --cream:#fff9ea;
-  --mint:#effaf7;
-  --ink:#183153;
-  --muted:#64748b;
-  --line:#d9e4f2;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  font-family:"Inter",sans-serif;
-  color:var(--ink);
-  background:
-    radial-gradient(circle at 7% 10%,rgba(39,103,198,.10),transparent 25%),
-    radial-gradient(circle at 92% 12%,rgba(201,154,46,.10),transparent 22%),
-    linear-gradient(180deg,#f6faff 0%,#edf5ff 50%,#fffaf0 100%);
-  font-size:15px;
-  line-height:1.5;
-}
-h1,h2,h3,h4,nav,.brand{font-family:"Montserrat",sans-serif}
-button,input,select{font:inherit}
-.hero{
-  position:relative;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 12% 18%,rgba(73,138,230,.20),transparent 27%),
-    radial-gradient(circle at 88% 78%,rgba(230,184,68,.17),transparent 24%),
-    linear-gradient(135deg,#eaf4ff 0%,#f7fbff 48%,#fff7dc 100%);
-}
-.hero:before{
-  content:"";
-  position:absolute;
-  width:340px;height:340px;border-radius:50%;
-  right:-150px;top:-170px;
-  background:rgba(255,255,255,.55);
-}
-.hero:after{
-  content:"";
-  position:absolute;
-  width:260px;height:260px;border-radius:50%;
-  left:-130px;bottom:-150px;
-  background:rgba(255,255,255,.38);
-}
-.course-zone{
-  background:
-    radial-gradient(circle at 95% 0%,rgba(255,255,255,.65),transparent 22%),
-    linear-gradient(180deg,#e8f3ff 0%,#f1f7ff 52%,#fffaf0 100%);
-}
-.course-card{
-  background:#fff;
-  border:1px solid rgba(163,184,211,.48);
-  box-shadow:0 9px 24px rgba(38,77,126,.07);
-  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
-}
-.course-card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 18px 40px rgba(32,74,126,.14);
-  border-color:#b6cce8;
-}
-.course-image-wrap{aspect-ratio:16/9;overflow:hidden;background:#dcecff}
-.course-image{width:100%;height:100%;object-fit:cover;transition:transform .35s ease}
-.course-card:hover .course-image{transform:scale(1.035)}
-.chip{white-space:nowrap;transition:.18s ease}
-.chip.active{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 8px 18px rgba(7,29,73,.14)}
-.filter-panel{position:sticky;top:90px}
-.line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.spinner{width:42px;height:42px;border:4px solid #d5e6fa;border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;margin:auto}
-@keyframes spin{to{transform:rotate(360deg)}}
-@media(max-width:767px){
-  body{font-size:14px}
-  .hero-title{font-size:2.12rem!important;line-height:1.08!important}
-  .section-title{font-size:1.7rem!important}
-  .filter-panel{position:static}
-}
+:root{--navy:#071d49;--navy2:#0b2f70;--blue:#2767c6;--gold:#c99a2e;--ink:#183153}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:"Inter",sans-serif;color:var(--ink);background:linear-gradient(180deg,#f6faff 0%,#edf5ff 50%,#fffaf0 100%);font-size:15px;line-height:1.5}h1,h2,h3,h4,nav,.brand{font-family:"Montserrat",sans-serif}button,input,select{font:inherit}.hero{position:relative;overflow:hidden;background:radial-gradient(circle at 12% 18%,rgba(73,138,230,.20),transparent 27%),radial-gradient(circle at 88% 78%,rgba(230,184,68,.17),transparent 24%),linear-gradient(135deg,#eaf4ff 0%,#f7fbff 48%,#fff7dc 100%)}.course-zone{background:linear-gradient(180deg,#e8f3ff 0%,#f1f7ff 52%,#fffaf0 100%)}.course-card{background:#fff;border:1px solid rgba(163,184,211,.48);box-shadow:0 9px 24px rgba(38,77,126,.07);transition:.2s}.course-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(32,74,126,.14)}.course-image-wrap{aspect-ratio:16/9;overflow:hidden;background:#dcecff}.course-image{width:100%;height:100%;object-fit:cover;transition:.35s}.course-card:hover .course-image{transform:scale(1.035)}.chip{white-space:nowrap}.chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}.filter-panel{position:sticky;top:90px}.line-clamp-2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.spinner{width:42px;height:42px;border:4px solid #d5e6fa;border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;margin:auto}@keyframes spin{to{transform:rotate(360deg)}}details[open]{border-color:#b8cde7;background:#fbfdff}details summary{list-style:none}details summary::-webkit-details-marker{display:none}.faq-arrow{transition:transform .2s}details[open] .faq-arrow{transform:rotate(45deg)}@media(max-width:767px){body{font-size:14px}.hero-title{font-size:2.12rem!important;line-height:1.08!important}.section-title{font-size:1.7rem!important}.filter-panel{position:static}}
 </style>
 </head>
 <body>
-
-<header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-[#dce6f2] shadow-[0_3px_18px_rgba(39,75,120,.05)]">
-  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="h-[68px] sm:h-[76px] flex items-center justify-between gap-4">
-      <a href="index.html" class="flex items-center gap-2.5 shrink-0">
-        <div class="w-11 h-11 overflow-hidden rounded-xl bg-white">
-          <img src="logo.png" alt="Funda Online Academy Logo" class="w-full h-full object-contain" onerror="this.style.display='none'">
-        </div>
-        <div class="brand leading-none">
-          <div class="text-[15px] sm:text-[17px] font-extrabold text-[#071D49]">FUNDA <span class="font-semibold">ONLINE</span></div>
-          <div class="mt-1 text-[8px] sm:text-[9px] font-bold tracking-[.28em] text-[#C99A2E]">ACADEMY</div>
-        </div>
-      </a>
-
-      <div class="hidden lg:flex items-center gap-7 text-sm">
-        <a href="#courses" class="font-semibold text-[#071D49] hover:text-[#2767C6]">Courses</a>
-        <a href="#how-it-works" class="font-semibold text-[#071D49] hover:text-[#2767C6]">How It Works</a>
-        <a href="#faq" class="font-semibold text-[#071D49] hover:text-[#2767C6]">FAQs</a>
-        <a href="#contact" class="font-semibold text-[#071D49] hover:text-[#2767C6]">Contact</a>
-      </div>
-
-      <div class="hidden md:flex items-center gap-2.5">
-        <a href="login.html" class="px-4 py-2 rounded-lg border border-[#071D49] text-[#071D49] font-semibold text-sm hover:bg-[#071D49] hover:text-white transition">Login</a>
-        <a href="auth.html" class="px-4 py-2 rounded-lg bg-[#071D49] text-white font-semibold text-sm hover:bg-[#0B2F70] transition">Create Account</a>
-      </div>
-
-      <button id="mobileMenuButton" type="button" class="lg:hidden w-10 h-10 rounded-xl bg-[#eaf3ff] text-[#071D49] text-lg font-bold" aria-label="Open navigation">☰</button>
-    </div>
-
-    <div id="mobileMenu" class="hidden lg:hidden pb-4">
-      <div class="bg-[#f4f8fd] rounded-xl p-3 space-y-1 border border-[#dce6f2]">
-        <a href="#courses" class="block px-3 py-2.5 rounded-lg font-semibold text-[#071D49]">Courses</a>
-        <a href="#how-it-works" class="block px-3 py-2.5 rounded-lg font-semibold text-[#071D49]">How It Works</a>
-        <a href="#faq" class="block px-3 py-2.5 rounded-lg font-semibold text-[#071D49]">FAQs</a>
-        <a href="#contact" class="block px-3 py-2.5 rounded-lg font-semibold text-[#071D49]">Contact</a>
-        <div class="grid grid-cols-2 gap-2 pt-2">
-          <a href="login.html" class="text-center px-3 py-2.5 rounded-lg border border-[#071D49] text-[#071D49] font-semibold">Login</a>
-          <a href="auth.html" class="text-center px-3 py-2.5 rounded-lg bg-[#071D49] text-white font-semibold">Create Account</a>
-        </div>
-      </div>
-    </div>
-  </nav>
-</header>
-
-<section class="hero border-b border-[#dbe7f4]">
-  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-    <div class="max-w-3xl">
-      <div class="inline-flex items-center gap-2 bg-white/90 border border-[#d7e5f5] rounded-full px-4 py-2 text-[11px] sm:text-xs font-bold text-[#071D49] shadow-sm">🎓 PRACTICAL • CAREER-FOCUSED • FLEXIBLE</div>
-      <h1 class="hero-title mt-5 text-4xl sm:text-5xl font-extrabold leading-tight text-[#071D49]">Explore courses that <span class="text-[#2767C6]">open new possibilities.</span></h1>
-      <p class="mt-4 text-sm sm:text-base text-slate-600 leading-7 max-w-2xl">Browse freely before creating an account. Compare practical programmes, course fees and study options designed to help you build useful, employable skills.</p>
-      <div class="flex flex-col sm:flex-row gap-2.5 mt-6">
-        <a href="#courses" class="inline-flex justify-center px-5 py-3 rounded-xl bg-[#071D49] text-white font-semibold text-sm shadow-lg shadow-blue-100 hover:bg-[#0B2F70] transition">Browse Courses</a>
-        <a href="auth.html" class="inline-flex justify-center px-5 py-3 rounded-xl bg-white border border-[#cddbef] text-[#071D49] font-semibold text-sm hover:border-[#071D49] transition">Create Student Account</a>
-      </div>
-      <div class="grid grid-cols-3 gap-5 mt-8 max-w-md rounded-2xl bg-white/65 border border-white/80 px-5 py-4 backdrop-blur-sm">
-        <div><div id="heroCourseCount" class="text-xl sm:text-2xl font-extrabold text-[#071D49]">—</div><div class="text-[11px] text-slate-500">Courses</div></div>
-        <div><div class="text-xl sm:text-2xl font-extrabold text-[#071D49]">100%</div><div class="text-[11px] text-slate-500">Online</div></div>
-        <div><div class="text-xl sm:text-2xl font-extrabold text-[#071D49]">24/7</div><div class="text-[11px] text-slate-500">Access</div></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="courses" class="course-zone py-11 sm:py-15">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-4">
-      <div>
-        <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#B58216]">Our Courses</p>
-        <h2 class="section-title mt-1.5 text-2xl sm:text-3xl font-extrabold text-[#071D49]">Choose Your Course</h2>
-        <p class="mt-2 text-sm text-slate-600">Search, filter and compare programmes before you enrol.</p>
-      </div>
-      <div class="w-full xl:w-[390px]">
-        <label for="courseSearch" class="sr-only">Search courses</label>
-        <div class="relative">
-          <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">⌕</span>
-          <input id="courseSearch" type="search" placeholder="Search courses, skills or topics..." class="w-full pl-10 pr-4 py-3.5 rounded-xl border border-[#cddbef] bg-white outline-none focus:border-[#2767C6] focus:ring-4 focus:ring-blue-100 text-sm shadow-sm">
-        </div>
-      </div>
-    </div>
-
-    <div class="mt-5 flex gap-2 overflow-x-auto pb-2" id="categoryChips"></div>
-
-    <div class="mt-7 grid lg:grid-cols-[210px_minmax(0,1fr)] gap-7 items-start">
-      <aside class="filter-panel hidden lg:block">
-        <div class="rounded-2xl border border-[#d2dfed] bg-white/95 p-4 shadow-sm">
-          <div class="flex items-center justify-between">
-            <h3 class="font-bold text-[#071D49] text-sm">Filters</h3>
-            <button id="clearFilters" class="text-xs font-semibold text-[#2767C6]">Clear</button>
-          </div>
-          <div class="mt-4">
-            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Categories</p>
-            <div id="categoryFilters" class="mt-2 space-y-2"></div>
-          </div>
-        </div>
-      </aside>
-
-      <main class="min-w-0">
-        <div class="flex items-center justify-between gap-3 mb-4">
-          <div class="text-xs sm:text-sm text-slate-600"><span id="courseResultCount">—</span> courses found</div>
-          <select id="sortCourses" class="border border-[#cddbef] rounded-lg px-2.5 py-2.5 bg-white text-[#071D49] font-semibold text-xs sm:text-sm outline-none shadow-sm">
-            <option value="popular">Most Popular</option>
-            <option value="az">A–Z</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-          </select>
-        </div>
-
-        <div id="connectionError" class="hidden mb-6 bg-red-50 border border-red-200 rounded-xl p-4">
-          <h3 class="font-bold text-red-700 text-sm">Academy connection problem</h3>
-          <p id="connectionErrorMessage" class="text-xs sm:text-sm text-red-600 mt-1">Unable to connect to the Academy database.</p>
-          <button id="retryButton" type="button" class="mt-3 px-4 py-2 rounded-lg bg-red-600 text-white font-semibold text-xs">Try Again</button>
-        </div>
-
-        <div id="loadingState" class="py-16 text-center"><div class="spinner"></div><p class="mt-4 text-[#071D49] font-semibold text-sm">Loading courses...</p></div>
-        <div id="emptyState" class="hidden py-16 text-center"><div class="text-4xl">📚</div><h3 class="mt-4 text-lg font-bold text-[#071D49]">No courses found</h3><p class="mt-1 text-sm text-slate-500">There are currently no published courses available.</p></div>
-        <div id="noSearchResults" class="hidden py-16 text-center"><div class="text-4xl">🔎</div><h3 class="mt-4 text-lg font-bold text-[#071D49]">No matching courses</h3><p class="mt-1 text-sm text-slate-500">Try another search term or category.</p></div>
-        <div id="courseGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5"></div>
-      </main>
-    </div>
-  </div>
-</section>
-
-<section id="how-it-works" class="py-12 sm:py-15 bg-[#fff8e8] border-y border-[#eadfbf]">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center">
-      <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#B58216]">Simple Process</p>
-      <h2 class="section-title mt-1.5 text-2xl sm:text-3xl font-extrabold text-[#071D49]">How It Works</h2>
-      <p class="mt-2 text-sm text-slate-600">See the course first. Register when you are ready. Learn after approval.</p>
-    </div>
-    <div class="grid md:grid-cols-3 gap-4 mt-8">
-      <div class="bg-white border border-[#eadfbf] rounded-2xl p-5 shadow-sm"><div class="w-10 h-10 rounded-xl bg-[#e9f3ff] text-[#2767C6] flex items-center justify-center font-extrabold">1</div><h3 class="mt-4 text-base font-bold text-[#071D49]">Browse & Compare</h3><p class="mt-2 text-sm text-slate-500 leading-6">Explore available courses, fees and study details without needing to log in.</p></div>
-      <div class="bg-white border border-[#eadfbf] rounded-2xl p-5 shadow-sm"><div class="w-10 h-10 rounded-xl bg-[#fff1c9] text-[#9C7115] flex items-center justify-center font-extrabold">2</div><h3 class="mt-4 text-base font-bold text-[#071D49]">Register & Apply</h3><p class="mt-2 text-sm text-slate-500 leading-6">Create your student account, complete enrollment details and submit proof of payment.</p></div>
-      <div class="bg-white border border-[#eadfbf] rounded-2xl p-5 shadow-sm"><div class="w-10 h-10 rounded-xl bg-[#e8f7f2] text-[#15725c] flex items-center justify-center font-extrabold">3</div><h3 class="mt-4 text-base font-bold text-[#071D49]">Approval & Learning</h3><p class="mt-2 text-sm text-slate-500 leading-6">Track your application on your dashboard. Learning access opens after approval.</p></div>
-    </div>
-  </div>
-</section>
-
-<section id="faq" class="py-12 sm:py-15 bg-[#f2f8ff]">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center"><p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#B58216]">FAQs</p><h2 class="section-title mt-1.5 text-2xl sm:text-3xl font-extrabold text-[#071D49]">Questions Before You Enrol?</h2></div>
-    <div class="mt-7 space-y-3">
-      <details class="border border-[#d6e3f1] bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer font-semibold text-sm text-[#071D49]">Do I need an account to browse courses?</summary><p class="mt-2 text-sm text-slate-500 leading-6">No. You can browse courses, view fees and read course information before creating an account.</p></details>
-      <details class="border border-[#d6e3f1] bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer font-semibold text-sm text-[#071D49]">When do I get access to learning?</summary><p class="mt-2 text-sm text-slate-500 leading-6">After your enrollment and proof of payment have been reviewed and approved by the relevant Academy team.</p></details>
-      <details class="border border-[#d6e3f1] bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer font-semibold text-sm text-[#071D49]">Can I track a pending application?</summary><p class="mt-2 text-sm text-slate-500 leading-6">Yes. Returning students can sign in and view the status of their enrollment from the Student Dashboard.</p></details>
-    </div>
-  </div>
-</section>
-
-<section id="contact" class="py-12 sm:py-15 bg-[#071D49]">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <p class="text-[11px] sm:text-xs font-bold uppercase tracking-[.18em] text-[#e3c470]">Funda Online Academy</p>
-    <h2 class="mt-2 text-2xl sm:text-3xl font-extrabold text-white">Found a Course That Fits Your Goal?</h2>
-    <p class="mt-3 text-sm text-blue-100 max-w-xl mx-auto">Create your student account when you are ready to start the enrollment process.</p>
-    <div class="flex flex-col sm:flex-row justify-center gap-2.5 mt-6">
-      <a href="auth.html" class="px-5 py-3 rounded-lg bg-white text-[#071D49] font-semibold text-sm">Create Account</a>
-      <a href="login.html" class="px-5 py-3 rounded-lg border border-white text-white font-semibold text-sm">Student Login</a>
-    </div>
-  </div>
-</section>
-
-<footer class="bg-[#041533] text-white">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex flex-col md:flex-row justify-between gap-5 text-sm">
-      <div><div class="brand font-bold">FUNDA ONLINE <span class="text-[#d9b95e]">ACADEMY</span></div><p class="mt-2 text-xs text-blue-100">Practical, accessible and career-focused learning.</p></div>
-      <div class="text-xs text-blue-100 md:text-right">Courses · Student Login · Create Account<br><span class="text-blue-200">© <span id="year"></span> Funda Online Academy</span></div>
-    </div>
-  </div>
-</footer>
-
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-[#dce6f2] shadow-sm"><nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="h-[68px] sm:h-[76px] flex items-center justify-between gap-4"><a href="index.html" class="flex items-center gap-2.5 shrink-0"><div class="w-11 h-11 overflow-hidden rounded-xl bg-white"><img src="logo.png" alt="Funda Online Academy Logo" class="w-full h-full object-contain" onerror="this.style.display='none'"></div><div class="brand leading-none"><div class="text-[15px] sm:text-[17px] font-extrabold text-[#071D49]">FUNDA <span class="font-semibold">ONLINE</span></div><div class="mt-1 text-[8px] sm:text-[9px] font-bold tracking-[.28em] text-[#C99A2E]">ACADEMY</div></div></a><div class="hidden lg:flex items-center gap-7 text-sm"><a href="#courses" class="font-semibold text-[#071D49]">Courses</a><a href="#how-it-works" class="font-semibold text-[#071D49]">How It Works</a><a href="#faq" class="font-semibold text-[#071D49]">FAQs</a><a href="#contact" class="font-semibold text-[#071D49]">Contact</a></div><div class="hidden md:flex items-center gap-2.5"><a href="login.html" class="px-4 py-2 rounded-lg border border-[#071D49] text-[#071D49] font-semibold text-sm">Login</a><a href="auth.html" class="px-4 py-2 rounded-lg bg-[#071D49] text-white font-semibold text-sm">Create Account</a></div><button id="mobileMenuButton" type="button" class="lg:hidden w-10 h-10 rounded-xl bg-[#eaf3ff] text-[#071D49] text-lg font-bold">☰</button></div><div id="mobileMenu" class="hidden lg:hidden pb-4"><div class="bg-[#f4f8fd] rounded-xl p-3 space-y-1 border"><a href="#courses" class="block px-3 py-2.5 font-semibold">Courses</a><a href="#how-it-works" class="block px-3 py-2.5 font-semibold">How It Works</a><a href="#faq" class="block px-3 py-2.5 font-semibold">FAQs</a><a href="#contact" class="block px-3 py-2.5 font-semibold">Contact</a><div class="grid grid-cols-2 gap-2 pt-2"><a href="login.html" class="text-center px-3 py-2.5 rounded-lg border border-[#071D49] font-semibold">Login</a><a href="auth.html" class="text-center px-3 py-2.5 rounded-lg bg-[#071D49] text-white font-semibold">Create Account</a></div></div></div></nav></header>
+<section class="hero border-b border-[#dbe7f4]"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20"><div class="max-w-3xl"><div class="inline-flex bg-white/90 border rounded-full px-4 py-2 text-xs font-bold text-[#071D49]">🎓 PRACTICAL • CAREER-FOCUSED • FLEXIBLE</div><h1 class="hero-title mt-5 text-4xl sm:text-5xl font-extrabold leading-tight text-[#071D49]">Explore courses that <span class="text-[#2767C6]">open new possibilities.</span></h1><p class="mt-4 text-sm sm:text-base text-slate-600 leading-7 max-w-2xl">Browse freely before creating an account. Compare practical programmes, course fees and study options designed to help you build useful, employable skills.</p><div class="flex flex-col sm:flex-row gap-2.5 mt-6"><a href="#courses" class="text-center px-5 py-3 rounded-xl bg-[#071D49] text-white font-semibold text-sm">Browse Courses</a><a href="auth.html" class="text-center px-5 py-3 rounded-xl bg-white border text-[#071D49] font-semibold text-sm">Create Student Account</a></div><div class="grid grid-cols-3 gap-5 mt-8 max-w-md rounded-2xl bg-white/65 px-5 py-4"><div><div id="heroCourseCount" class="text-2xl font-extrabold text-[#071D49]">—</div><div class="text-[11px] text-slate-500">Courses</div></div><div><div class="text-2xl font-extrabold text-[#071D49]">100%</div><div class="text-[11px] text-slate-500">Online</div></div><div><div class="text-2xl font-extrabold text-[#071D49]">24/7</div><div class="text-[11px] text-slate-500">Access</div></div></div></div></div></section>
+<section id="courses" class="course-zone py-11"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="flex flex-col xl:flex-row xl:items-end xl:justify-between gap-4"><div><p class="text-xs font-bold uppercase tracking-[.18em] text-[#B58216]">Our Courses</p><h2 class="section-title mt-1.5 text-3xl font-extrabold text-[#071D49]">Choose Your Course</h2><p class="mt-2 text-sm text-slate-600">Search, filter and compare programmes before you enrol.</p></div><div class="w-full xl:w-[390px]"><input id="courseSearch" type="search" placeholder="Search courses, skills or topics..." class="w-full px-4 py-3.5 rounded-xl border bg-white outline-none text-sm shadow-sm"></div></div><div class="mt-5 flex gap-2 overflow-x-auto pb-2" id="categoryChips"></div><div class="mt-7 grid lg:grid-cols-[210px_minmax(0,1fr)] gap-7 items-start"><aside class="filter-panel hidden lg:block"><div class="rounded-2xl border bg-white/95 p-4 shadow-sm"><div class="flex items-center justify-between"><h3 class="font-bold text-[#071D49] text-sm">Filters</h3><button id="clearFilters" class="text-xs font-semibold text-[#2767C6]">Clear</button></div><p class="mt-4 text-xs font-bold text-slate-500 uppercase">Categories</p><div id="categoryFilters" class="mt-2 space-y-2"></div></div></aside><main class="min-w-0"><div class="flex items-center justify-between gap-3 mb-4"><div class="text-sm text-slate-600"><span id="courseResultCount">—</span> courses found</div><select id="sortCourses" class="border rounded-lg px-2.5 py-2.5 bg-white text-[#071D49] font-semibold text-xs"><option value="popular">Most Popular</option><option value="az">A–Z</option><option value="price-low">Price: Low to High</option><option value="price-high">Price: High to Low</option></select></div><div id="connectionError" class="hidden mb-6 bg-red-50 border border-red-200 rounded-xl p-4"><h3 class="font-bold text-red-700 text-sm">Academy connection problem</h3><p id="connectionErrorMessage" class="text-sm text-red-600 mt-1"></p><button id="retryButton" class="mt-3 px-4 py-2 rounded-lg bg-red-600 text-white text-xs">Try Again</button></div><div id="loadingState" class="py-16 text-center"><div class="spinner"></div><p class="mt-4 font-semibold">Loading courses...</p></div><div id="emptyState" class="hidden py-16 text-center"><h3 class="font-bold">No courses found</h3></div><div id="noSearchResults" class="hidden py-16 text-center"><h3 class="font-bold">No matching courses</h3></div><div id="courseGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5"></div></main></div></div></section>
+<section id="how-it-works" class="py-12 bg-[#fff8e8] border-y"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="text-center"><p class="text-xs font-bold uppercase tracking-[.18em] text-[#B58216]">Simple Process</p><h2 class="section-title mt-1.5 text-3xl font-extrabold text-[#071D49]">How It Works</h2><p class="mt-2 text-sm text-slate-600">See the course first. Register when you are ready. Learn after approval.</p></div><div class="grid md:grid-cols-3 gap-4 mt-8"><div class="bg-white border rounded-2xl p-5"><h3 class="font-bold text-[#071D49]">1. Browse & Compare</h3><p class="mt-2 text-sm text-slate-500">Explore courses, fees and study details without logging in.</p></div><div class="bg-white border rounded-2xl p-5"><h3 class="font-bold text-[#071D49]">2. Register & Apply</h3><p class="mt-2 text-sm text-slate-500">Create your account, complete enrollment and submit proof of payment.</p></div><div class="bg-white border rounded-2xl p-5"><h3 class="font-bold text-[#071D49]">3. Approval & Learning</h3><p class="mt-2 text-sm text-slate-500">Track your application. Learning access opens after approval.</p></div></div></div></section>
+<section id="faq" class="py-12 sm:py-16 bg-[#f2f8ff]"><div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div class="text-center"><p class="text-xs font-bold uppercase tracking-[.18em] text-[#B58216]">Student Information</p><h2 class="section-title mt-2 text-3xl font-extrabold text-[#071D49]">Frequently Asked Questions</h2><p class="mt-3 text-sm text-slate-600 max-w-2xl mx-auto">Clear answers to important questions about studying, enrollment, quality assurance and student support.</p></div><div class="mt-8 grid md:grid-cols-2 gap-3">
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">Do I need an account to browse courses?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">No. You may browse available courses, fees and course information without an account. Registration is required only when you are ready to begin the enrollment process.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">Where are your offices?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Funda Online Academy operates as an online learning provider. Our learning and student-support services are delivered remotely, allowing students to register, study, submit work and receive support online without needing to attend a physical campus.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">Is Funda Online Academy a registered business?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Yes. Funda Online Academy operates as a registered business. Our formal business and quality-assurance information is maintained as part of our institutional records and certification processes.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">What is CPD and why is it important?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">CPD means Continuing Professional Development. It supports the ongoing development of knowledge, practical skills and professional competence. Funda Online Academy incorporates CPD-aligned quality principles within its training and certification processes where applicable.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">Are all courses accredited qualifications?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Our programmes are primarily short, skills-focused courses. CPD recognition or accreditation and other quality arrangements may apply to particular training activities, but a short course should not automatically be understood as a nationally registered qualification. Students should review the information provided for the specific course they choose.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">Is NSFAS funding available?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">No. Funda Online Academy short courses are self-funded and are not funded through NSFAS. Students are responsible for paying the applicable course fee shown before enrollment.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">How do you maintain learning quality?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Quality is treated as part of the learning process, not only certification. The Academy applies assessment review, internal verification, learner monitoring, academic-integrity expectations and quality-assurance procedures designed to support consistent and credible learning outcomes.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">Are assessments checked and monitored?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Yes. Assessments are subject to the Academy's assessment and quality-control processes. Academic integrity and malpractice procedures also form part of our approach to protecting the credibility of student achievement.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">When do I receive learning access?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Learning access opens after your enrollment information and proof of payment have been reviewed and your application has been approved by the relevant Academy team.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">Can I track my application while it is pending?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Yes. Once you have submitted an application, you can return to your Student Dashboard to view your enrolled course and follow its approval status.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">Will I receive a certificate?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Students who successfully meet the completion requirements of their course may receive the applicable Funda Online Academy certificate. Course-specific requirements and certification information should be reviewed before enrollment.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">Can I study at my own pace?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Most Academy learning is designed to be flexible and online. Any course-specific deadlines, assessment dates or completion periods will be shown in the relevant course information and student learning area.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">Do I need previous qualifications to enrol?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Entry requirements depend on the course. Many short courses are designed to be accessible, but students should always check the individual course requirements before submitting an application.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">What support is available while I study?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Students can access Academy support for enrollment, account and learning-related queries. Additional learning resources and Library access will be available through the student environment as the relevant services are activated.</p></details>
+<details class="border bg-white rounded-xl p-4 shadow-sm"><summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">How can I ask a question that is not listed here?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">You are welcome to contact Funda Online Academy on WhatsApp. Our student-support number is <strong>069 960 8590</strong>. Use the WhatsApp button below to start a conversation.</p></details>
+</div></div></section>
+<section id="contact" class="py-12 sm:py-16 bg-[#071D49]"><div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><div class="grid lg:grid-cols-[1fr_auto] gap-7 items-center"><div><p class="text-xs font-bold uppercase tracking-[.18em] text-[#e3c470]">Student Support</p><h2 class="mt-2 text-2xl sm:text-3xl font-extrabold text-white">Still have a question?</h2><p class="mt-3 text-sm text-blue-100 max-w-2xl leading-6">Our team can help with course information, enrollment and general student enquiries. Send us a WhatsApp message and tell us what you would like to know.</p><p class="mt-3 text-white font-bold">WhatsApp: 069 960 8590</p></div><div class="flex flex-col sm:flex-row lg:flex-col gap-2.5"><a href="https://wa.me/27699608590?text=Hello%20Funda%20Online%20Academy%2C%20I%20would%20like%20more%20information%20about%20your%20courses." target="_blank" rel="noopener noreferrer" class="px-6 py-3.5 rounded-xl bg-[#25D366] text-[#052e18] font-extrabold text-sm text-center">WhatsApp Student Support</a><a href="auth.html" class="px-6 py-3.5 rounded-xl bg-white text-[#071D49] font-bold text-sm text-center">Create Account</a><a href="login.html" class="px-6 py-3.5 rounded-xl border border-white/60 text-white font-bold text-sm text-center">Student Login</a></div></div></div></section>
+<footer class="bg-[#041533] text-white"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><div class="flex flex-col md:flex-row justify-between gap-5 text-sm"><div><div class="brand font-bold">FUNDA ONLINE <span class="text-[#d9b95e]">ACADEMY</span></div><p class="mt-2 text-xs text-blue-100">Practical, accessible and career-focused learning.</p></div><div class="text-xs text-blue-100 md:text-right">Courses · Student Login · Create Account · WhatsApp Support<br><span class="text-blue-200">© <span id="year"></span> Funda Online Academy</span></div></div></div></footer>
 <script>
-let supabaseClient=null;
-let allCourses=[];
-let activeCategory="All";
-
-const loadingState=document.getElementById("loadingState");
-const emptyState=document.getElementById("emptyState");
-const noSearchResults=document.getElementById("noSearchResults");
-const courseGrid=document.getElementById("courseGrid");
-const connectionError=document.getElementById("connectionError");
-const connectionErrorMessage=document.getElementById("connectionErrorMessage");
-const courseSearch=document.getElementById("courseSearch");
-const retryButton=document.getElementById("retryButton");
-const heroCourseCount=document.getElementById("heroCourseCount");
-const courseResultCount=document.getElementById("courseResultCount");
-const categoryChips=document.getElementById("categoryChips");
-const categoryFilters=document.getElementById("categoryFilters");
-const sortCourses=document.getElementById("sortCourses");
-
-function initialiseSupabase(){
-  if(!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY||window.SUPABASE_ANON_KEY==="YOUR_LEGACY_ANON_KEY_GOES_HERE") throw new Error("The Academy database connection is not configured.");
-  if(!window.supabase) throw new Error("The Supabase library did not load.");
-  supabaseClient=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
-}
-
-function escapeHTML(value){return String(value??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;").replace(/'/g,"&#039;")}
-function formatPrice(value){if(value===null||value===undefined||value==="")return "Contact us";const n=Number(value);if(Number.isNaN(n))return escapeHTML(value);return "R"+n.toLocaleString("en-ZA",{minimumFractionDigits:0,maximumFractionDigits:2})}
-function getCourseImage(c){return c.image_url||c.image||c.thumbnail_url||c.thumbnail||c.cover_image||""}
-function getCourseTitle(c){return c.title||c.name||c.course_name||"Untitled Course"}
-function getCourseDescription(c){return c.short_description||c.description||c.summary||"Explore this course and discover what you can learn."}
-function getCourseCategory(c){return c.category||c.course_category||"Course"}
-function getCoursePrice(c){return c.price??c.amount??c.course_price??null}
-function getCourseDuration(c){return c.duration||c.duration_text||c.course_duration||"Self-paced"}
-function getCourseLevel(c){return c.level||c.course_level||"All levels"}
-function isPublished(c){if(typeof c.published==="boolean")return c.published;if(typeof c.is_published==="boolean")return c.is_published;if(typeof c.active==="boolean")return c.active;if(typeof c.status==="string")return ["published","active"].includes(c.status.toLowerCase());return true}
-
-function showLoading(){loadingState.classList.remove("hidden");emptyState.classList.add("hidden");noSearchResults.classList.add("hidden");courseGrid.classList.add("hidden")}
-function showConnectionError(message){loadingState.classList.add("hidden");connectionError.classList.remove("hidden");connectionErrorMessage.textContent=message||"Unable to connect to the Academy database."}
-
-function buildCategoryControls(){
-  const categories=[...new Set(allCourses.map(getCourseCategory).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b)));
-  const all=["All",...categories];
-  categoryChips.innerHTML=all.map(category=>`<button type="button" data-category="${escapeHTML(category)}" class="chip ${category===activeCategory?"active":""} px-3.5 py-2 rounded-full border border-[#cddbef] bg-white text-[#071D49] text-xs font-semibold shadow-sm">${escapeHTML(category)}</button>`).join("");
-  categoryFilters.innerHTML=categories.map(category=>`<label class="flex items-center gap-2 text-xs text-slate-600"><input type="checkbox" value="${escapeHTML(category)}" class="category-check accent-[#2767C6]"><span>${escapeHTML(category)}</span></label>`).join("");
-  categoryChips.querySelectorAll("[data-category]").forEach(button=>button.addEventListener("click",()=>{activeCategory=button.dataset.category;categoryChips.querySelectorAll("[data-category]").forEach(item=>item.classList.toggle("active",item.dataset.category===activeCategory));categoryFilters.querySelectorAll(".category-check").forEach(item=>item.checked=item.value===activeCategory);applyFilters()}));
-  categoryFilters.querySelectorAll(".category-check").forEach(check=>check.addEventListener("change",()=>{if(check.checked){activeCategory=check.value;categoryFilters.querySelectorAll(".category-check").forEach(item=>{if(item!==check)item.checked=false})}else activeCategory="All";categoryChips.querySelectorAll("[data-category]").forEach(button=>button.classList.toggle("active",button.dataset.category===activeCategory));applyFilters()}));
-}
-
-async function loadCourses(){
-  showLoading();connectionError.classList.add("hidden");
-  try{
-    initialiseSupabase();
-    const {data,error}=await supabaseClient.from("courses").select("*");
-    if(error)throw new Error(error.message||"The courses table could not be loaded.");
-    allCourses=Array.isArray(data)?data.filter(isPublished):[];
-    heroCourseCount.textContent=allCourses.length;
-    buildCategoryControls();loadingState.classList.add("hidden");
-    if(!allCourses.length){emptyState.classList.remove("hidden");return}
-    applyFilters();
-  }catch(error){console.error("Course loading error:",error);showConnectionError(error.message||"Unable to load courses.")}
-}
-
-function applyFilters(){
-  const search=String(courseSearch.value||"").trim().toLowerCase();
-  let filtered=allCourses.filter(course=>{const category=getCourseCategory(course);const categoryMatch=activeCategory==="All"||String(category).toLowerCase()===String(activeCategory).toLowerCase();const text=[getCourseTitle(course),getCourseDescription(course),category,getCourseLevel(course)].join(" ").toLowerCase();return categoryMatch&&(!search||text.includes(search))});
-  const sort=sortCourses.value;
-  if(sort==="az")filtered.sort((a,b)=>getCourseTitle(a).localeCompare(getCourseTitle(b)));
-  if(sort==="price-low")filtered.sort((a,b)=>(Number(getCoursePrice(a))||0)-(Number(getCoursePrice(b))||0));
-  if(sort==="price-high")filtered.sort((a,b)=>(Number(getCoursePrice(b))||0)-(Number(getCoursePrice(a))||0));
-  courseResultCount.textContent=filtered.length;renderCourses(filtered);
-}
-
-function renderCourses(courses){
-  courseGrid.innerHTML="";
-  if(!courses?.length){courseGrid.classList.add("hidden");noSearchResults.classList.remove("hidden");return}
-  noSearchResults.classList.add("hidden");courseGrid.classList.remove("hidden");
-  courses.forEach(course=>{
-    const id=course.id,title=getCourseTitle(course),image=getCourseImage(course);
-    const card=document.createElement("article");card.className="course-card rounded-2xl overflow-hidden flex flex-col";
-    const imageHTML=image?`<div class="course-image-wrap"><img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" class="course-image" loading="lazy" onerror="this.parentElement.innerHTML='<div class=&quot;w-full h-full flex items-center justify-center text-5xl bg-[#e8f3ff]&quot;>🎓</div>'"></div>`:`<div class="course-image-wrap flex items-center justify-center bg-gradient-to-br from-[#dcecff] to-[#fff1c9]"><div class="text-5xl">🎓</div></div>`;
-    card.innerHTML=`${imageHTML}<div class="p-4 flex flex-col flex-1"><div class="flex items-center justify-between gap-2"><span class="max-w-[70%] truncate px-2.5 py-1 rounded-full bg-[#eaf3ff] text-[#071D49] text-[10px] sm:text-[11px] font-bold">${escapeHTML(getCourseCategory(course))}</span><span class="text-[10px] sm:text-[11px] text-slate-400 font-medium">Online</span></div><h3 class="mt-3 text-[15px] sm:text-base font-bold text-[#071D49] leading-5 line-clamp-2 min-h-[40px]">${escapeHTML(title)}</h3><p class="mt-2 text-xs sm:text-[13px] text-slate-500 leading-5 line-clamp-2 min-h-[40px]">${escapeHTML(getCourseDescription(course))}</p><div class="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[10px] sm:text-[11px] text-slate-500"><span>⏱ ${escapeHTML(getCourseDuration(course))}</span><span>• ${escapeHTML(getCourseLevel(course))}</span></div><div class="mt-auto pt-4 flex items-end justify-between gap-3"><div><div class="text-[10px] text-slate-400">Course Fee</div><div class="text-base sm:text-lg font-extrabold text-[#071D49]">${formatPrice(getCoursePrice(course))}</div></div><a href="course-view.html?id=${encodeURIComponent(id)}" class="shrink-0 inline-flex items-center justify-center px-3.5 py-2.5 rounded-lg bg-[#071D49] text-white text-xs font-bold hover:bg-[#0B2F70] transition">View Course</a></div></div>`;
-    courseGrid.appendChild(card);
-  });
-}
-
-document.getElementById("mobileMenuButton").addEventListener("click",()=>document.getElementById("mobileMenu").classList.toggle("hidden"));
-document.querySelectorAll("#mobileMenu a").forEach(link=>link.addEventListener("click",()=>document.getElementById("mobileMenu").classList.add("hidden")));
-courseSearch.addEventListener("input",applyFilters);sortCourses.addEventListener("change",applyFilters);retryButton.addEventListener("click",loadCourses);
-document.getElementById("clearFilters").addEventListener("click",()=>{activeCategory="All";courseSearch.value="";sortCourses.value="popular";categoryFilters.querySelectorAll(".category-check").forEach(c=>c.checked=false);categoryChips.querySelectorAll("[data-category]").forEach(b=>b.classList.toggle("active",b.dataset.category==="All"));applyFilters()});
-document.getElementById("year").textContent=new Date().getFullYear();
-document.addEventListener("DOMContentLoaded",loadCourses);
+let supabaseClient=null,allCourses=[],activeCategory="All";const $=id=>document.getElementById(id);const loadingState=$("loadingState"),emptyState=$("emptyState"),noSearchResults=$("noSearchResults"),courseGrid=$("courseGrid"),connectionError=$("connectionError"),connectionErrorMessage=$("connectionErrorMessage"),courseSearch=$("courseSearch"),retryButton=$("retryButton"),heroCourseCount=$("heroCourseCount"),courseResultCount=$("courseResultCount"),categoryChips=$("categoryChips"),categoryFilters=$("categoryFilters"),sortCourses=$("sortCourses");
+function initialiseSupabase(){if(!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY||!window.supabase)throw new Error("The Academy database connection is not configured.");supabaseClient=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}})}
+function escapeHTML(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\"/g,"&quot;").replace(/'/g,"&#039;")}function formatPrice(v){if(v===null||v===undefined||v==="")return "Contact us";const n=Number(v);return Number.isNaN(n)?escapeHTML(v):"R"+n.toLocaleString("en-ZA",{maximumFractionDigits:2})}function getCourseImage(c){return c.image_url||c.image||c.thumbnail_url||c.thumbnail||c.cover_image||""}function getCourseTitle(c){return c.title||c.name||c.course_name||"Untitled Course"}function getCourseDescription(c){return c.short_description||c.description||c.summary||"Explore this course and discover what you can learn."}function getCourseCategory(c){return c.category||c.course_category||"Course"}function getCoursePrice(c){return c.price??c.amount??c.course_price??null}function getCourseDuration(c){return c.duration||c.duration_text||c.course_duration||"Self-paced"}function getCourseLevel(c){return c.level||c.course_level||"All levels"}function isPublished(c){if(typeof c.published==="boolean")return c.published;if(typeof c.is_published==="boolean")return c.is_published;if(typeof c.active==="boolean")return c.active;if(typeof c.status==="string")return ["published","active"].includes(c.status.toLowerCase());return true}
+function buildCategoryControls(){const cats=[...new Set(allCourses.map(getCourseCategory).filter(Boolean))].sort();categoryChips.innerHTML=["All",...cats].map(x=>`<button data-category="${escapeHTML(x)}" class="chip ${x===activeCategory?"active":""} px-3.5 py-2 rounded-full border bg-white text-[#071D49] text-xs font-semibold">${escapeHTML(x)}</button>`).join("");categoryFilters.innerHTML=cats.map(x=>`<label class="flex items-center gap-2 text-xs"><input type="checkbox" value="${escapeHTML(x)}" class="category-check"><span>${escapeHTML(x)}</span></label>`).join("");categoryChips.querySelectorAll("[data-category]").forEach(b=>b.onclick=()=>{activeCategory=b.dataset.category;buildCategoryControls();applyFilters()});categoryFilters.querySelectorAll(".category-check").forEach(c=>c.onchange=()=>{activeCategory=c.checked?c.value:"All";buildCategoryControls();applyFilters()})}
+async function loadCourses(){loadingState.classList.remove("hidden");connectionError.classList.add("hidden");try{initialiseSupabase();const {data,error}=await supabaseClient.from("courses").select("*");if(error)throw error;allCourses=(data||[]).filter(isPublished);heroCourseCount.textContent=allCourses.length;buildCategoryControls();loadingState.classList.add("hidden");if(!allCourses.length){emptyState.classList.remove("hidden");return}applyFilters()}catch(e){loadingState.classList.add("hidden");connectionError.classList.remove("hidden");connectionErrorMessage.textContent=e.message||"Unable to load courses."}}
+function applyFilters(){const q=(courseSearch.value||"").toLowerCase();let list=allCourses.filter(c=>(activeCategory==="All"||getCourseCategory(c).toLowerCase()===activeCategory.toLowerCase())&&[getCourseTitle(c),getCourseDescription(c),getCourseCategory(c),getCourseLevel(c)].join(" ").toLowerCase().includes(q));if(sortCourses.value==="az")list.sort((a,b)=>getCourseTitle(a).localeCompare(getCourseTitle(b)));if(sortCourses.value==="price-low")list.sort((a,b)=>(+getCoursePrice(a)||0)-(+getCoursePrice(b)||0));if(sortCourses.value==="price-high")list.sort((a,b)=>(+getCoursePrice(b)||0)-(+getCoursePrice(a)||0));courseResultCount.textContent=list.length;renderCourses(list)}
+function renderCourses(list){courseGrid.innerHTML="";if(!list.length){courseGrid.classList.add("hidden");noSearchResults.classList.remove("hidden");return}noSearchResults.classList.add("hidden");courseGrid.classList.remove("hidden");list.forEach(c=>{const title=getCourseTitle(c),image=getCourseImage(c),card=document.createElement("article");card.className="course-card rounded-2xl overflow-hidden flex flex-col";card.innerHTML=`${image?`<div class="course-image-wrap"><img src="${escapeHTML(image)}" alt="${escapeHTML(title)}" class="course-image" loading="lazy"></div>`:`<div class="course-image-wrap flex items-center justify-center text-5xl">🎓</div>`}<div class="p-4 flex flex-col flex-1"><div class="flex justify-between"><span class="px-2.5 py-1 rounded-full bg-[#eaf3ff] text-[#071D49] text-[11px] font-bold">${escapeHTML(getCourseCategory(c))}</span><span class="text-[11px] text-slate-400">Online</span></div><h3 class="mt-3 text-base font-bold text-[#071D49] line-clamp-2">${escapeHTML(title)}</h3><p class="mt-2 text-[13px] text-slate-500 line-clamp-2">${escapeHTML(getCourseDescription(c))}</p><div class="mt-3 text-[11px] text-slate-500">⏱ ${escapeHTML(getCourseDuration(c))} • ${escapeHTML(getCourseLevel(c))}</div><div class="mt-auto pt-4 flex items-end justify-between"><div><div class="text-[10px] text-slate-400">Course Fee</div><div class="text-lg font-extrabold text-[#071D49]">${formatPrice(getCoursePrice(c))}</div></div><a href="course-view.html?id=${encodeURIComponent(c.id)}" class="px-3.5 py-2.5 rounded-lg bg-[#071D49] text-white text-xs font-bold">View Course</a></div></div>`;courseGrid.appendChild(card)})}
+$("mobileMenuButton").onclick=()=>$("mobileMenu").classList.toggle("hidden");courseSearch.oninput=applyFilters;sortCourses.onchange=applyFilters;retryButton.onclick=loadCourses;$("clearFilters").onclick=()=>{activeCategory="All";courseSearch.value="";sortCourses.value="popular";buildCategoryControls();applyFilters()};$("year").textContent=new Date().getFullYear();document.addEventListener("DOMContentLoaded",loadCourses);
 </script>
-</body>
-</html>
+</body></html>
