@@ -2,1890 +2,450 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Create your secure Funda Online Academy student account.">
   <title>Create Student Account | Funda Online Academy</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-  <!-- Shared Supabase configuration -->
-  <script src="supabase-config.js?v=20260826"></script>
+  <script src="supabase-config.js?v=20260827"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
+    :root{
+      --navy:#06152f;
+      --navy2:#0a214d;
+      --blue:#184f9f;
+      --gold:#d3aa49;
+      --ink:#10213f;
     }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%}
+    body{font-family:"Inter",sans-serif;background:#06152f;color:var(--ink)}
+    h1,h2,h3,.brand{font-family:"Montserrat",sans-serif}
 
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      margin: 0;
-      font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-      background: #06152f;
-    }
-
-    .input-field {
-      width: 100%;
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 14px 15px;
-      color: #0f172a;
-      font-size: 16px;
-      transition: .2s ease;
-    }
-
-    .input-field:focus {
-      outline: none;
-      background: #ffffff;
-      border-color: #2563eb;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, .12);
-    }
-
-    .input-field.error {
-      border-color: #dc2626;
-      box-shadow: 0 0 0 4px rgba(220, 38, 38, .08);
-    }
-
-    .brand {
+    .brand-panel{
       background:
-        linear-gradient(
-          145deg,
-          #010817 0%,
-          #03143b 52%,
-          #061e4e 100%
-        );
+        radial-gradient(circle at 15% 12%,rgba(211,170,73,.10),transparent 27%),
+        radial-gradient(circle at 88% 78%,rgba(24,79,159,.18),transparent 28%),
+        linear-gradient(145deg,#020817 0%,#06152f 52%,#0a214d 100%);
+    }
+    .form-panel{background:linear-gradient(145deg,#09162d 0%,#0d2143 100%)}
+    .form-card{box-shadow:0 28px 80px rgba(0,0,0,.35)}
+
+    .input-field{
+      width:100%;
+      border:1px solid #d5dce8;
+      background:#f8fafc;
+      color:#0f172a;
+      border-radius:12px;
+      padding:13px 14px;
+      font-size:15px;
+      transition:.2s ease;
+    }
+    .input-field:focus{
+      outline:none;
+      border-color:#184f9f;
+      background:#fff;
+      box-shadow:0 0 0 4px rgba(24,79,159,.11);
     }
 
-    .gold {
-      color: #f6c453;
+    .terms-box{
+      max-height:210px;
+      overflow:auto;
+      background:#f8fafc;
+      border:1px solid #dbe2ec;
+      border-radius:14px;
+      padding:16px;
     }
 
-    .terms {
-      max-height: 250px;
-      overflow-y: auto;
-      background: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 14px;
-      padding: 18px;
-    }
+    .message{display:none}
+    .message.show{display:block}
+    .message.error{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239}
+    .message.success{background:#ecfdf3;border:1px solid #bbf7d0;color:#166534}
 
-    .terms::-webkit-scrollbar {
-      width: 7px;
+    .spinner{
+      width:18px;height:18px;display:inline-block;vertical-align:-3px;margin-right:8px;
+      border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;
+      animation:spin .8s linear infinite;
     }
-
-    .terms::-webkit-scrollbar-thumb {
-      background: #94a3b8;
-      border-radius: 10px;
-    }
-
-    .card-shadow {
-      box-shadow: 0 25px 80px rgba(0, 0, 0, .38);
-    }
-
-    .spinner {
-      width: 19px;
-      height: 19px;
-      border: 3px solid rgba(255,255,255,.35);
-      border-top-color: #ffffff;
-      border-radius: 50%;
-      animation: spin .8s linear infinite;
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 8px;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
+    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 
 <body>
+<main class="min-h-screen grid lg:grid-cols-[.92fr_1.08fr]">
 
-<div class="min-h-screen flex flex-col lg:flex-row">
-
-  <!-- LEFT SIDE -->
-  <section
-    class="
-      brand
-      w-full
-      lg:w-[42%]
-      min-h-[330px]
-      lg:min-h-screen
-      text-white
-      px-6
-      py-8
-      sm:px-10
-      lg:px-14
-      flex
-      flex-col
-      justify-between
-    "
-  >
-
+  <section class="brand-panel text-white px-6 sm:px-10 lg:px-14 xl:px-18 py-8 lg:py-12 flex flex-col justify-between min-h-[420px] lg:min-h-screen">
     <div>
-
-      <a
-        href="login.html"
-        class="
-          inline-flex
-          items-center
-          gap-4
-          bg-white
-          rounded-2xl
-          px-4
-          py-3
-        "
-      >
-
-        <img
-          src="logo.png"
-          alt="Funda Online Academy"
-          class="w-16 h-16 object-contain"
-          onerror="this.style.display='none'"
-        >
-
-        <div>
-
-          <div
-            class="
-              text-xl
-              sm:text-2xl
-              font-black
-              text-[#03133d]
-              leading-none
-            "
-          >
-            FUNDA ONLINE
-          </div>
-
-          <div
-            class="
-              mt-1
-              text-[10px]
-              sm:text-xs
-              font-black
-              tracking-[0.28em]
-              text-[#d79e1f]
-            "
-          >
-            ACADEMY
-          </div>
-
+      <a href="index.html" class="inline-flex items-center gap-4 bg-white rounded-2xl px-4 py-3 shadow-2xl">
+        <img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 sm:w-16 sm:h-16 object-contain" onerror="this.style.display='none'">
+        <div class="brand leading-none">
+          <div class="text-lg sm:text-xl font-extrabold text-[#06152f]">FUNDA ONLINE</div>
+          <div class="mt-1.5 text-[10px] font-extrabold tracking-[.28em] text-[#b88622]">ACADEMY</div>
         </div>
-
       </a>
 
-
       <div class="mt-12 lg:mt-20 max-w-xl">
+        <div class="inline-flex rounded-full border border-white/10 bg-white/[.05] px-4 py-2 text-[11px] font-bold tracking-[.16em] text-[#e6c778]">
+          YOUR JOURNEY STARTS HERE
+        </div>
 
-        <p
-          class="
-            gold
-            font-black
-            text-sm
-            tracking-widest
-          "
-        >
-          START YOUR JOURNEY
-        </p>
-
-        <h1
-          class="
-            mt-3
-            text-4xl
-            sm:text-5xl
-            font-black
-            leading-tight
-          "
-        >
-          Create Your
-          <span class="gold">
-            Student Profile.
-          </span>
+        <h1 class="mt-5 text-4xl sm:text-5xl font-extrabold leading-[1.06] tracking-tight">
+          Build your future<br><span class="text-[#e2bd61]">one skill at a time.</span>
         </h1>
 
-        <p
-          class="
-            mt-6
-            text-blue-100
-            leading-7
-            text-base
-            sm:text-lg
-          "
-        >
-          Join Funda Online Academy and take the first
-          step toward gaining practical, career-focused
-          skills.
+        <p class="mt-6 text-sm sm:text-base leading-7 text-slate-200">
+          Create your student account first. After that, you can choose a course, complete the detailed enrollment process and submit the required information for Academy review.
         </p>
 
+        <div class="mt-8 space-y-3">
+          <div class="flex gap-3 items-start rounded-2xl border border-white/10 bg-white/[.05] p-4">
+            <div class="text-[#e2bd61] font-bold">01</div>
+            <div><p class="text-sm font-bold">Create your secure account</p><p class="mt-1 text-xs leading-5 text-slate-300">Basic details only — the full course application comes next.</p></div>
+          </div>
+          <div class="flex gap-3 items-start rounded-2xl border border-white/10 bg-white/[.05] p-4">
+            <div class="text-[#e2bd61] font-bold">02</div>
+            <div><p class="text-sm font-bold">Choose and apply for your course</p><p class="mt-1 text-xs leading-5 text-slate-300">Complete the detailed enrollment and payment information.</p></div>
+          </div>
+          <div class="flex gap-3 items-start rounded-2xl border border-white/10 bg-white/[.05] p-4">
+            <div class="text-[#e2bd61] font-bold">03</div>
+            <div><p class="text-sm font-bold">Track approval from your dashboard</p><p class="mt-1 text-xs leading-5 text-slate-300">Your dashboard keeps you informed while your application is reviewed.</p></div>
+          </div>
+        </div>
       </div>
-
     </div>
 
-
-    <div class="mt-10">
-
-      <div
-        class="
-          grid
-          grid-cols-1
-          sm:grid-cols-3
-          gap-3
-        "
-      >
-
-        <div
-          class="
-            rounded-2xl
-            bg-white/[0.06]
-            border
-            border-white/10
-            p-4
-          "
-        >
-          <div class="text-2xl">🎓</div>
-
-          <p class="font-bold text-sm mt-2">
-            Learn Online
-          </p>
-        </div>
-
-
-        <div
-          class="
-            rounded-2xl
-            bg-white/[0.06]
-            border
-            border-white/10
-            p-4
-          "
-        >
-          <div class="text-2xl">📚</div>
-
-          <p class="font-bold text-sm mt-2">
-            Practical Courses
-          </p>
-        </div>
-
-
-        <div
-          class="
-            rounded-2xl
-            bg-white/[0.06]
-            border
-            border-white/10
-            p-4
-          "
-        >
-          <div class="text-2xl">🚀</div>
-
-          <p class="font-bold text-sm mt-2">
-            Build Your Future
-          </p>
-        </div>
-
-      </div>
-
-
-      <p
-        class="
-          text-xs
-          text-blue-200
-          mt-6
-          pb-2
-        "
-      >
-        © 2026 Funda Online Academy
-      </p>
-
-    </div>
-
+    <div class="mt-10 text-[11px] text-slate-400">© 2026 Funda Online Academy · Practical learning for real opportunity.</div>
   </section>
 
-
-  <!-- RIGHT SIDE -->
-  <section
-    class="
-      w-full
-      lg:w-[58%]
-      min-h-screen
-      px-5
-      py-8
-      sm:px-8
-      lg:px-12
-      flex
-      justify-center
-    "
-    style="
-      background:
-        linear-gradient(
-          145deg,
-          #07152f 0%,
-          #0a1b3b 55%,
-          #0d2146 100%
-        );
-    "
-  >
-
-    <div
-      class="
-        card-shadow
-        w-full
-        max-w-2xl
-        bg-white
-        rounded-[28px]
-        p-6
-        sm:p-8
-        lg:p-10
-        h-fit
-      "
-    >
-
-      <!-- HEADER -->
+  <section class="form-panel px-5 sm:px-8 lg:px-10 py-8 lg:py-12 flex justify-center">
+    <div class="form-card w-full max-w-[660px] bg-white rounded-[28px] p-6 sm:p-8 lg:p-9 h-fit border border-white">
       <div class="text-center">
-
-        <div
-          class="
-            inline-flex
-            items-center
-            justify-center
-            w-14
-            h-14
-            rounded-2xl
-            bg-blue-50
-            text-2xl
-          "
-        >
-          👤
+        <div class="lg:hidden flex justify-center mb-5">
+          <img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
         </div>
-
-        <h2
-          class="
-            mt-4
-            text-3xl
-            sm:text-4xl
-            font-black
-            text-[#03133d]
-          "
-        >
-          Create Student Account
-        </h2>
-
-        <p
-          class="
-            mt-2
-            text-gray-500
-          "
-        >
-          Complete your details to create your
-          student profile.
-        </p>
-
+        <p class="text-[11px] font-extrabold tracking-[.18em] text-[#b88622] uppercase">Student Registration</p>
+        <h2 class="mt-2 text-3xl sm:text-[34px] font-extrabold text-[#06152f]">Create your account</h2>
+        <p class="mt-2 text-sm text-slate-500">Enter your basic details. Your full course application will follow after account creation.</p>
       </div>
 
+      <div id="message" class="message mt-5 rounded-xl p-4 text-sm font-semibold"></div>
 
-      <!-- MESSAGE -->
-      <div
-        id="message"
-        class="
-          hidden
-          mt-6
-          rounded-xl
-          p-4
-          text-sm
-          font-semibold
-        "
-      ></div>
-
-
-      <!-- CONNECTION STATUS -->
-      <div
-        id="connectionStatus"
-        class="
-          hidden
-          mt-4
-          rounded-xl
-          p-3
-          text-xs
-          font-semibold
-        "
-      ></div>
-
-
-      <!-- FORM -->
-      <form
-        id="registerForm"
-        class="mt-8"
-        novalidate
-      >
-
-        <!-- NAME / SURNAME -->
-        <div
-          class="
-            grid
-            sm:grid-cols-2
-            gap-5
-          "
-        >
-
+      <form id="registerForm" class="mt-7" novalidate>
+        <div class="grid sm:grid-cols-2 gap-5">
           <div>
-
-            <label
-              for="first_name"
-              class="
-                block
-                text-sm
-                font-bold
-                text-[#03133d]
-              "
-            >
-              Name
-              <span class="text-red-500">*</span>
-            </label>
-
-            <input
-              id="first_name"
-              name="first_name"
-              type="text"
-              autocomplete="given-name"
-              placeholder="Enter your name"
-              class="input-field mt-2"
-              required
-            >
-
+            <label for="first_name" class="block text-sm font-bold text-[#06152f]">Name <span class="text-red-500">*</span></label>
+            <input id="first_name" type="text" autocomplete="given-name" placeholder="Your name" class="input-field mt-2" required>
           </div>
-
-
           <div>
-
-            <label
-              for="surname"
-              class="
-                block
-                text-sm
-                font-bold
-                text-[#03133d]
-              "
-            >
-              Surname
-              <span class="text-red-500">*</span>
-            </label>
-
-            <input
-              id="surname"
-              name="surname"
-              type="text"
-              autocomplete="family-name"
-              placeholder="Enter your surname"
-              class="input-field mt-2"
-              required
-            >
-
+            <label for="surname" class="block text-sm font-bold text-[#06152f]">Surname <span class="text-red-500">*</span></label>
+            <input id="surname" type="text" autocomplete="family-name" placeholder="Your surname" class="input-field mt-2" required>
           </div>
-
         </div>
 
-
-        <!-- GENDER -->
-        <div class="mt-5">
-
-          <label
-            for="gender"
-            class="
-              block
-              text-sm
-              font-bold
-              text-[#03133d]
-            "
-          >
-            Gender
-            <span class="text-red-500">*</span>
-          </label>
-
-          <select
-            id="gender"
-            name="gender"
-            class="input-field mt-2"
-            required
-          >
-
-            <option value="">
-              Select your gender
-            </option>
-
-            <option value="Male">
-              Male
-            </option>
-
-            <option value="Female">
-              Female
-            </option>
-
-            <option value="Prefer not to say">
-              Prefer not to say
-            </option>
-
-          </select>
-
+        <div class="grid sm:grid-cols-2 gap-5 mt-5">
+          <div>
+            <label for="gender" class="block text-sm font-bold text-[#06152f]">Gender <span class="text-red-500">*</span></label>
+            <select id="gender" class="input-field mt-2" required>
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </div>
+          <div>
+            <label for="phone" class="block text-sm font-bold text-[#06152f]">Phone / WhatsApp <span class="text-red-500">*</span></label>
+            <input id="phone" type="tel" autocomplete="tel" placeholder="e.g. 078 123 4567" class="input-field mt-2" required>
+          </div>
         </div>
 
-
-        <!-- PHONE -->
-        <div class="mt-5">
-
-          <label
-            for="phone"
-            class="
-              block
-              text-sm
-              font-bold
-              text-[#03133d]
-            "
-          >
-            Phone / WhatsApp Number
-            <span class="text-red-500">*</span>
-          </label>
-
-          <input
-            id="phone"
-            name="phone"
-            type="tel"
-            autocomplete="tel"
-            placeholder="e.g. 078 123 4567"
-            class="input-field mt-2"
-            required
-          >
-
+        <div class="grid sm:grid-cols-2 gap-5 mt-5">
+          <div>
+            <label for="email" class="block text-sm font-bold text-[#06152f]">Email address <span class="text-red-500">*</span></label>
+            <input id="email" type="email" autocomplete="email" placeholder="you@example.com" class="input-field mt-2" required>
+          </div>
+          <div>
+            <label for="confirm_email" class="block text-sm font-bold text-[#06152f]">Confirm email <span class="text-red-500">*</span></label>
+            <input id="confirm_email" type="email" autocomplete="email" placeholder="Re-enter email" class="input-field mt-2" required>
+          </div>
         </div>
 
-
-        <!-- EMAIL -->
-        <div class="mt-5">
-
-          <label
-            for="email"
-            class="
-              block
-              text-sm
-              font-bold
-              text-[#03133d]
-            "
-          >
-            Email Address
-            <span class="text-red-500">*</span>
-          </label>
-
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autocomplete="email"
-            placeholder="you@example.com"
-            class="input-field mt-2"
-            required
-          >
-
-          <p class="text-xs text-gray-500 mt-1">
-            Example: yourname@gmail.com
-          </p>
-
+        <div class="grid sm:grid-cols-2 gap-5 mt-5">
+          <div>
+            <label for="password" class="block text-sm font-bold text-[#06152f]">Password <span class="text-red-500">*</span></label>
+            <input id="password" type="password" autocomplete="new-password" placeholder="Minimum 6 characters" class="input-field mt-2" required>
+          </div>
+          <div>
+            <label for="confirm_password" class="block text-sm font-bold text-[#06152f]">Confirm password <span class="text-red-500">*</span></label>
+            <input id="confirm_password" type="password" autocomplete="new-password" placeholder="Re-enter password" class="input-field mt-2" required>
+          </div>
         </div>
 
-
-        <!-- CONFIRM EMAIL -->
-        <div class="mt-5">
-
-          <label
-            for="confirm_email"
-            class="
-              block
-              text-sm
-              font-bold
-              text-[#03133d]
-            "
-          >
-            Confirm Email Address
-            <span class="text-red-500">*</span>
-          </label>
-
-          <input
-            id="confirm_email"
-            name="confirm_email"
-            type="email"
-            autocomplete="email"
-            placeholder="Re-enter your email address"
-            class="input-field mt-2"
-            required
-          >
-
-          <p
-            id="emailError"
-            class="
-              hidden
-              text-xs
-              text-red-600
-              mt-1
-            "
-          >
-            The email addresses do not match.
-          </p>
-
-        </div>
-
-
-        <!-- PASSWORD -->
-        <div class="mt-5">
-
-          <label
-            for="password"
-            class="
-              block
-              text-sm
-              font-bold
-              text-[#03133d]
-            "
-          >
-            Password
-            <span class="text-red-500">*</span>
-          </label>
-
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autocomplete="new-password"
-            placeholder="Create a password"
-            class="input-field mt-2"
-            required
-          >
-
-          <p class="text-xs text-gray-500 mt-1">
-            Minimum 6 characters.
-          </p>
-
-        </div>
-
-
-        <!-- CONFIRM PASSWORD -->
-        <div class="mt-5">
-
-          <label
-            for="confirm_password"
-            class="
-              block
-              text-sm
-              font-bold
-              text-[#03133d]
-            "
-          >
-            Confirm Password
-            <span class="text-red-500">*</span>
-          </label>
-
-          <input
-            id="confirm_password"
-            name="confirm_password"
-            type="password"
-            autocomplete="new-password"
-            placeholder="Re-enter your password"
-            class="input-field mt-2"
-            required
-          >
-
-          <p
-            id="passwordError"
-            class="
-              hidden
-              text-xs
-              text-red-600
-              mt-1
-            "
-          >
-            The passwords do not match.
-          </p>
-
-        </div>
-
-
-        <!-- TERMS -->
         <div class="mt-7">
-
-          <h3
-            class="
-              font-black
-              text-[#03133d]
-              mb-3
-            "
-          >
-            Terms & Conditions
-          </h3>
-
-          <div class="terms">
-
-            <h4
-              class="
-                font-black
-                text-[#03133d]
-                text-sm
-              "
-            >
-              Funda Online Academy Student Terms
-            </h4>
-
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              By creating a student account with
-              Funda Online Academy, you confirm that
-              the information you provide is accurate
-              and belongs to you.
-            </p>
-
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              Your student account is personal to you.
-              You are responsible for keeping your login
-              details secure and must not share your
-              password with another person.
-            </p>
-
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              Course enrolment may require approval
-              before you receive access to course
-              materials, assessments or other student
-              services.
-            </p>
-
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              Funda Online Academy may use the
-              information supplied during registration
-              for account administration, communication,
-              enrolment processing and delivery of
-              educational services.
-            </p>
-
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              Personal information will be handled in
-              accordance with applicable South African
-              privacy and data protection requirements,
-              including POPIA where applicable.
-            </p>
-
-            <p class="text-sm text-gray-600 leading-6 mt-3">
-              By registering, you confirm that you have
-              read and understood these terms and agree
-              to comply with the Academy's student
-              requirements.
-            </p>
-
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <h3 class="font-extrabold text-[#06152f]">Student Terms & Privacy</h3>
+            <span class="text-[10px] font-bold tracking-wider text-[#b88622]">FOA TERMS v1.0</span>
           </div>
 
+          <div class="terms-box text-sm leading-6 text-slate-600">
+            <p>By creating a Funda Online Academy student account, you confirm that the information you provide is accurate and belongs to you.</p>
+            <p class="mt-3">Your account is personal. Keep your password secure and do not allow another person to use your student access.</p>
+            <p class="mt-3">Creating an account does not automatically grant access to paid course content. Course access may depend on completion of enrollment, payment verification and Academy approval.</p>
+            <p class="mt-3">The Academy may use your information for account administration, enrollment processing, student communication and delivery of educational services.</p>
+            <p class="mt-3">Personal information will be handled in line with applicable South African privacy requirements, including POPIA where applicable.</p>
+          </div>
 
-          <label
-            class="
-              flex
-              items-start
-              gap-3
-              mt-4
-              cursor-pointer
-            "
-          >
-
-            <input
-              id="terms"
-              type="checkbox"
-              class="
-                mt-1
-                w-5
-                h-5
-                accent-blue-600
-                shrink-0
-              "
-            >
-
-            <span
-              class="
-                text-sm
-                leading-6
-                text-gray-700
-              "
-            >
-              I have read and understood the Terms &
-              Conditions and privacy notice, and I
-              agree to them.
-
-              <span class="text-red-500">*</span>
-            </span>
-
+          <label class="flex items-start gap-3 mt-4 cursor-pointer">
+            <input id="terms" type="checkbox" class="mt-1 w-5 h-5 accent-[#184f9f] shrink-0">
+            <span class="text-sm leading-6 text-slate-700">I have read and accept the Student Terms and privacy information. <span class="text-red-500">*</span></span>
           </label>
-
         </div>
 
-
-        <!-- REGISTER -->
-        <button
-          id="registerButton"
-          type="submit"
-          class="
-            w-full
-            mt-7
-            bg-[#2563eb]
-            hover:bg-[#1d4ed8]
-            disabled:bg-gray-400
-            text-white
-            rounded-xl
-            py-4
-            font-black
-            transition
-            shadow-lg
-            shadow-blue-200
-          "
-        >
+        <button id="registerButton" type="submit" class="w-full mt-7 rounded-xl bg-[#06152f] hover:bg-[#0b2b61] text-white py-4 font-extrabold transition shadow-lg shadow-slate-300 disabled:opacity-60 disabled:cursor-not-allowed">
           Create Student Account
         </button>
 
-
-        <p
-          class="
-            text-center
-            text-sm
-            text-gray-500
-            mt-6
-          "
-        >
-          Already have an account?
-
-          <a
-            href="login.html"
-            class="
-              font-black
-              text-[#2563eb]
-              hover:underline
-            "
-          >
-            Login here
-          </a>
-        </p>
-
-
-        <div
-          class="
-            flex
-            items-center
-            justify-center
-            gap-2
-            mt-5
-          "
-        >
-
-          <span class="text-green-600">
-            🔒
-          </span>
-
-          <span class="text-xs text-gray-400">
-            Secure registration
-          </span>
-
+        <div class="mt-6 pt-5 border-t border-slate-200 text-center">
+          <p class="text-sm text-slate-500">Already registered?</p>
+          <a href="login.html" class="inline-flex mt-2 font-extrabold text-[#184f9f] hover:underline">Sign in to your student portal →</a>
         </div>
 
+        <div class="mt-5 flex items-center justify-center gap-2 text-[11px] text-slate-400">
+          <span>🔒</span><span>Secure registration · Your information is protected</span>
+        </div>
       </form>
-
     </div>
-
   </section>
-
-</div>
-
+</main>
 
 <script>
-
-  // ==========================================================
-  // FUNDA ONLINE ACADEMY
-  // GLOBAL STUDENT REGISTRATION
-  // ==========================================================
-
-  const message =
-    document.getElementById("message");
-
-  const connectionStatus =
-    document.getElementById("connectionStatus");
-
-  const form =
-    document.getElementById("registerForm");
-
-  const button =
-    document.getElementById("registerButton");
-
-
-  // ==========================================================
-  // SUPABASE CLIENT
-  // ==========================================================
+  const POLICY_VERSION = "FOA Terms v1.0";
+  const DECLARATION_TEXT = "I confirm that the information I supplied when creating my Funda Online Academy student account is true and correct to the best of my knowledge. I have read and accepted the Academy student terms and privacy information.";
 
   let supabaseClient = null;
-
+  const form = document.getElementById("registerForm");
+  const button = document.getElementById("registerButton");
 
   function showMessage(text, success = false) {
-
-    message.textContent = text;
-
-    message.className =
-      success
-        ? "mt-6 rounded-xl p-4 text-sm font-semibold bg-green-100 text-green-800"
-        : "mt-6 rounded-xl p-4 text-sm font-semibold bg-red-100 text-red-800";
-
-    message.classList.remove("hidden");
-
-    message.scrollIntoView({
-      behavior: "smooth",
-      block: "nearest"
-    });
-
+    const box = document.getElementById("message");
+    box.textContent = text;
+    box.classList.remove("error", "success", "show");
+    box.classList.add(success ? "success" : "error", "show");
+    box.scrollIntoView({ behavior:"smooth", block:"nearest" });
   }
-
-
-  function showConnectionError(text) {
-
-    connectionStatus.textContent = text;
-
-    connectionStatus.className =
-      "mt-4 rounded-xl p-3 text-xs font-semibold bg-red-100 text-red-800";
-
-    connectionStatus.classList.remove("hidden");
-
-  }
-
-
-  // ==========================================================
-  // INITIALISE SUPABASE
-  // ==========================================================
-
-  function initialiseSupabase() {
-
-    if (
-      typeof window.SUPABASE_URL !== "string" ||
-      !window.SUPABASE_URL
-    ) {
-      throw new Error(
-        "SUPABASE_URL is missing from supabase-config.js."
-      );
-    }
-
-
-    if (
-      typeof window.SUPABASE_ANON_KEY !== "string" ||
-      !window.SUPABASE_ANON_KEY
-    ) {
-      throw new Error(
-        "SUPABASE_ANON_KEY is missing from supabase-config.js."
-      );
-    }
-
-
-    if (
-      window.SUPABASE_ANON_KEY.includes("YOUR_") ||
-      window.SUPABASE_ANON_KEY.includes("PASTE_")
-    ) {
-      throw new Error(
-        "supabase-config.js still contains a placeholder public key."
-      );
-    }
-
-
-    if (
-      typeof window.supabase === "undefined"
-    ) {
-      throw new Error(
-        "The Supabase JavaScript library did not load."
-      );
-    }
-
-
-    supabaseClient =
-      window.supabase.createClient(
-        window.SUPABASE_URL,
-        window.SUPABASE_ANON_KEY,
-        {
-          auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true
-          }
-        }
-      );
-
-  }
-
-
-  try {
-
-    initialiseSupabase();
-
-  } catch (error) {
-
-    console.error(
-      "Supabase initialisation failed:",
-      error
-    );
-
-    showConnectionError(
-      error.message
-    );
-
-  }
-
-
-  // ==========================================================
-  // VALIDATION
-  // ==========================================================
-
-  function validEmail(email) {
-
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-      email
-    );
-
-  }
-
-
-  function validPhone(phone) {
-
-    return phone
-      .replace(/\D/g, "")
-      .length >= 9;
-
-  }
-
 
   function cleanName(value) {
-
-    return value
-      .trim()
-      .replace(/\s+/g, " ");
-
+    return String(value || "").trim().replace(/\s+/g," ");
   }
 
+  function validEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
 
-  // ==========================================================
-  // CREATE / SYNC PROFILE
-  // ==========================================================
+  function validPhone(value) {
+    return String(value || "").replace(/\D/g,"").length >= 9;
+  }
 
-  async function createStudentRecords(
-    user,
-    student
-  ) {
-
-    const fullName =
-      `${student.firstName} ${student.surname}`.trim();
-
-
-    // --------------------------------------------------------
-    // PROFILE
-    // --------------------------------------------------------
-
-    const {
-      data: profile,
-      error: profileError
-    } =
-      await supabaseClient
-        .from("profiles")
-        .upsert(
-          {
-            id: user.id,
-            full_name: fullName,
-            email: student.email,
-            phone: student.phone,
-            gender: student.gender,
-            role: "student"
-          },
-          {
-            onConflict: "id"
-          }
-        )
-        .select(
-          "id, full_name, email, phone, gender, role"
-        )
-        .single();
-
-
-    if (profileError) {
-
-      console.error(
-        "Profile creation failed:",
-        profileError
-      );
-
-      throw new Error(
-        "Your account was created, but your student profile could not be completed. " +
-        profileError.message
-      );
-
+  function initialiseSupabase() {
+    if (!window.supabase) throw new Error("The Supabase library could not be loaded.");
+    if (!window.SUPABASE_URL) throw new Error("The Academy Supabase URL is missing.");
+    if (!window.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY === "YOUR_LEGACY_ANON_KEY_GOES_HERE") {
+      throw new Error("The Academy Supabase public key is missing or invalid.");
     }
 
+    supabaseClient = window.supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY,
+      { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } }
+    );
+  }
 
-    // --------------------------------------------------------
-    // STUDENTS
-    // --------------------------------------------------------
+  async function createStudentRecords(user, student) {
+    const fullName = `${student.firstName} ${student.surname}`.trim();
 
-    const {
-      data: existingStudent,
-      error: studentLookupError
-    } =
-      await supabaseClient
+    const { error: profileError } = await supabaseClient
+      .from("profiles")
+      .upsert({
+        id:user.id,
+        full_name:fullName,
+        email:student.email,
+        phone:student.phone,
+        gender:student.gender,
+        role:"student"
+      }, { onConflict:"id" });
+
+    if (profileError) throw new Error("Your account was created, but your profile could not be saved. " + profileError.message);
+
+    const { data: existingStudent, error: lookupError } = await supabaseClient
+      .from("students")
+      .select("id")
+      .eq("user_id",user.id)
+      .maybeSingle();
+
+    if (lookupError) throw new Error("Your account was created, but your student record could not be checked. " + lookupError.message);
+
+    let studentId = existingStudent?.id || null;
+
+    if (studentId) {
+      const { error } = await supabaseClient
         .from("students")
-        .select(
-          "id, user_id"
-        )
-        .eq(
-          "user_id",
-          user.id
-        )
-        .maybeSingle();
-
-
-    if (
-      studentLookupError &&
-      studentLookupError.code !== "PGRST116"
-    ) {
-
-      console.warn(
-        "Student lookup warning:",
-        studentLookupError
-      );
-
-    }
-
-
-    let studentRecord =
-      existingStudent || null;
-
-
-    if (studentRecord) {
-
-      const {
-        error: studentUpdateError
-      } =
-        await supabaseClient
-          .from("students")
-          .update(
-            {
-              full_name: fullName,
-              gender: student.gender,
-              email: student.email,
-              mobile_whatsapp: student.phone
-            }
-          )
-          .eq(
-            "user_id",
-            user.id
-          );
-
-
-      if (studentUpdateError) {
-
-        console.error(
-          "Student update failed:",
-          studentUpdateError
-        );
-
-        throw new Error(
-          "Your account was created, but your student record could not be updated. " +
-          studentUpdateError.message
-        );
-
-      }
-
+        .update({
+          full_name:fullName,
+          gender:student.gender,
+          email:student.email,
+          mobile_whatsapp:student.phone
+        })
+        .eq("id",studentId);
+      if (error) throw new Error("Your student record could not be updated. " + error.message);
     } else {
-
-      const {
-        data: createdStudent,
-        error: studentCreateError
-      } =
-        await supabaseClient
-          .from("students")
-          .insert(
-            {
-              user_id: user.id,
-              full_name: fullName,
-              gender: student.gender,
-              email: student.email,
-              mobile_whatsapp: student.phone
-            }
-          )
-          .select(
-            "id, user_id, full_name, gender, email, mobile_whatsapp"
-          )
-          .single();
-
-
-      if (studentCreateError) {
-
-        console.error(
-          "Student creation failed:",
-          studentCreateError
-        );
-
-        throw new Error(
-          "Your account was created, but your student record could not be created. " +
-          studentCreateError.message
-        );
-
-      }
-
-
-      studentRecord =
-        createdStudent;
-
+      const { data: created, error } = await supabaseClient
+        .from("students")
+        .insert({
+          user_id:user.id,
+          full_name:fullName,
+          gender:student.gender,
+          email:student.email,
+          mobile_whatsapp:student.phone
+        })
+        .select("id")
+        .single();
+      if (error) throw new Error("Your student record could not be created. " + error.message);
+      studentId = created.id;
     }
 
+    const { data: existingPolicy, error: policyLookupError } = await supabaseClient
+      .from("policy_acceptances")
+      .select("id")
+      .eq("user_id",user.id)
+      .eq("policy_version",POLICY_VERSION)
+      .maybeSingle();
 
-    // --------------------------------------------------------
-    // TERMS ACCEPTANCE
-    //
-    // policy_acceptances belongs to the student record.
-    // --------------------------------------------------------
+    if (policyLookupError) console.warn("Policy lookup warning:", policyLookupError);
 
-    if (studentRecord?.id) {
-
-      const {
-        error: policyError
-      } =
-        await supabaseClient
-          .from("policy_acceptances")
-          .insert(
-            {
-              student_id: studentRecord.id,
-              user_id: user.id
-            }
-          );
-
+    if (!existingPolicy && studentId) {
+      const { error: policyError } = await supabaseClient
+        .from("policy_acceptances")
+        .insert({
+          student_id:studentId,
+          user_id:user.id,
+          policy_version:POLICY_VERSION,
+          policies_accepted:true,
+          declaration_accepted:true,
+          declaration_text:DECLARATION_TEXT,
+          accepted_at:new Date().toISOString()
+        });
 
       if (policyError) {
-
-        /*
-         * Do not destroy an otherwise successful account
-         * because the policy table may have additional
-         * required columns or duplicate protection.
-         */
-
-        console.warn(
-          "Policy acceptance was not recorded:",
-          policyError
-        );
-
+        console.warn("Policy acceptance could not be recorded:", policyError);
       }
-
     }
-
-
-    return {
-      profile,
-      student: studentRecord
-    };
-
   }
 
-
-  // ==========================================================
-  // REGISTRATION
-  // ==========================================================
-
-  form.addEventListener(
-    "submit",
-    async function(event) {
-
-      event.preventDefault();
-
-
-      if (!supabaseClient) {
-
-        showMessage(
-          "The Academy database connection is not available. Please refresh the page and try again."
-        );
-
-        return;
-
-      }
-
-
-      message.classList.add("hidden");
-
-
-      // ------------------------------------------------------
-      // READ FORM
-      // ------------------------------------------------------
-
-      const firstName =
-        cleanName(
-          document
-            .getElementById("first_name")
-            .value
-        );
-
-
-      const surname =
-        cleanName(
-          document
-            .getElementById("surname")
-            .value
-        );
-
-
-      const gender =
-        document
-          .getElementById("gender")
-          .value;
-
-
-      const phone =
-        document
-          .getElementById("phone")
-          .value
-          .trim();
-
-
-      const email =
-        document
-          .getElementById("email")
-          .value
-          .trim()
-          .toLowerCase();
-
-
-      const confirmEmail =
-        document
-          .getElementById("confirm_email")
-          .value
-          .trim()
-          .toLowerCase();
-
-
-      const password =
-        document
-          .getElementById("password")
-          .value;
-
-
-      const confirmPassword =
-        document
-          .getElementById("confirm_password")
-          .value;
-
-
-      const terms =
-        document
-          .getElementById("terms")
-          .checked;
-
-
-      // ------------------------------------------------------
-      // VALIDATION
-      // ------------------------------------------------------
-
-      if (!firstName) {
-
-        showMessage(
-          "Please enter your name."
-        );
-
-        return;
-
-      }
-
-
-      if (!surname) {
-
-        showMessage(
-          "Please enter your surname."
-        );
-
-        return;
-
-      }
-
-
-      if (!gender) {
-
-        showMessage(
-          "Please select your gender."
-        );
-
-        return;
-
-      }
-
-
-      if (!validPhone(phone)) {
-
-        showMessage(
-          "Please enter a valid phone or WhatsApp number."
-        );
-
-        return;
-
-      }
-
-
-      if (!validEmail(email)) {
-
-        showMessage(
-          "Please enter a valid email address, for example: yourname@gmail.com"
-        );
-
-        return;
-
-      }
-
-
-      if (email !== confirmEmail) {
-
-        document
-          .getElementById("emailError")
-          .classList
-          .remove("hidden");
-
-        showMessage(
-          "The email addresses do not match."
-        );
-
-        return;
-
-      }
-
-
-      if (password.length < 6) {
-
-        showMessage(
-          "Your password must contain at least 6 characters."
-        );
-
-        return;
-
-      }
-
-
-      if (password !== confirmPassword) {
-
-        document
-          .getElementById("passwordError")
-          .classList
-          .remove("hidden");
-
-        showMessage(
-          "The passwords do not match."
-        );
-
-        return;
-
-      }
-
-
-      if (!terms) {
-
-        showMessage(
-          "Please read the Terms & Conditions and tick the agreement box before registering."
-        );
-
-        return;
-
-      }
-
-
-      // ------------------------------------------------------
-      // DISABLE BUTTON
-      // ------------------------------------------------------
-
-      button.disabled = true;
-
-      button.innerHTML =
-        '<span class="spinner"></span>Creating Account...';
-
-
-      try {
-
-        // ----------------------------------------------------
-        // CREATE AUTH USER
-        // ----------------------------------------------------
-
-        const {
-          data,
-          error
-        } =
-          await supabaseClient.auth.signUp(
-            {
-              email: email,
-
-              password: password,
-
-              options: {
-
-                emailRedirectTo:
-                  `${window.location.origin}/login.html`,
-
-                data: {
-
-                  first_name:
-                    firstName,
-
-                  surname:
-                    surname,
-
-                  full_name:
-                    `${firstName} ${surname}`,
-
-                  gender:
-                    gender,
-
-                  phone:
-                    phone,
-
-                  role:
-                    "student"
-
-                }
-
-              }
-
-            }
-          );
-
-
-        if (error) {
-
-          console.error(
-            "Supabase registration error:",
-            error
-          );
-
-
-          const errorText =
-            error.message ||
-            "Unable to create your account.";
-
-
-          const lower =
-            errorText.toLowerCase();
-
-
-          if (
-            lower.includes("already registered") ||
-            lower.includes("user already registered") ||
-            lower.includes("already exists")
-          ) {
-
-            showMessage(
-              "An account with this email already exists. Please use a different email address or log in to the existing account."
-            );
-
-          }
-
-          else if (
-            lower.includes("invalid api key")
-          ) {
-
-            showMessage(
-              "The Academy connection is using an invalid public API key. Please check supabase-config.js."
-            );
-
-          }
-
-          else if (
-            lower.includes("password")
-          ) {
-
-            showMessage(
-              errorText
-            );
-
-          }
-
-          else if (
-            lower.includes("email")
-          ) {
-
-            showMessage(
-              errorText
-            );
-
-          }
-
-          else {
-
-            showMessage(
-              errorText
-            );
-
-          }
-
-
-          return;
-
-        }
-
-
-        // ----------------------------------------------------
-        // AUTH USER WAS CREATED
-        // ----------------------------------------------------
-
-        if (!data?.user) {
-
-          throw new Error(
-            "Supabase did not return the newly created user."
-          );
-
-        }
-
-
-        console.log(
-          "New Funda Online Academy user:",
-          data.user.id
-        );
-
-
-        // ----------------------------------------------------
-        // IMPORTANT
-        //
-        // If Supabase email confirmation is disabled,
-        // data.session will be available immediately.
-        //
-        // If email confirmation is enabled, the user must
-        // confirm their email before we can create the
-        // authenticated profile/student rows from the browser.
-        // ----------------------------------------------------
-
-        if (data.session) {
-
-          button.innerHTML =
-            '<span class="spinner"></span>Setting up profile...';
-
-
-          await createStudentRecords(
-            data.user,
-            {
-              firstName,
-              surname,
-              gender,
-              phone,
-              email
-            }
-          );
-
-
-          showMessage(
-            "Your student account and profile have been created successfully. Taking you to your enrollment area...",
-            true
-          );
-
-
-          setTimeout(
-            function() {
-
-              window.location.href =
-                "onboarding.html";
-
-            },
-            1200
-          );
-
-
-          return;
-
-        }
-
-
-        // ----------------------------------------------------
-        // EMAIL CONFIRMATION REQUIRED
-        // ----------------------------------------------------
-
-        showMessage(
-          "Your account has been created successfully. Please check your email and confirm your account. After confirmation, return to the Login page to continue.",
-          true
-        );
-
-
-        /*
-         * We do NOT pretend the profile is complete when
-         * Supabase has not authenticated the new account yet.
-         */
-
-        setTimeout(
-          function() {
-
-            window.location.href =
-              "login.html";
-
-          },
-          3000
-        );
-
-
-      } catch (error) {
-
-        console.error(
-          "Registration process failed:",
-          error
-        );
-
-
-        showMessage(
-          error.message ||
-          "Something went wrong while creating your account. Please try again."
-        );
-
-      } finally {
-
-        button.disabled =
-          false;
-
-        button.textContent =
-          "Create Student Account";
-
-      }
-
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!supabaseClient) {
+      showMessage("The Academy connection is not ready. Please refresh the page and try again.");
+      return;
     }
-  );
 
+    const firstName = cleanName(document.getElementById("first_name").value);
+    const surname = cleanName(document.getElementById("surname").value);
+    const gender = document.getElementById("gender").value;
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const confirmEmail = document.getElementById("confirm_email").value.trim().toLowerCase();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm_password").value;
+    const terms = document.getElementById("terms").checked;
 
-  // ==========================================================
-  // EMAIL MATCH
-  // ==========================================================
+    if (!firstName || !surname) return showMessage("Please enter your name and surname.");
+    if (!gender) return showMessage("Please select your gender.");
+    if (!validPhone(phone)) return showMessage("Please enter a valid phone or WhatsApp number.");
+    if (!validEmail(email)) return showMessage("Please enter a valid email address, for example yourname@gmail.com.");
+    if (email !== confirmEmail) return showMessage("The email addresses do not match.");
+    if (password.length < 6) return showMessage("Your password must contain at least 6 characters.");
+    if (password !== confirmPassword) return showMessage("The passwords do not match.");
+    if (!terms) return showMessage("Please read and accept the Student Terms before creating your account.");
 
-  document
-    .getElementById("confirm_email")
-    .addEventListener(
-      "input",
-      function() {
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner"></span>Creating your account...';
 
-        const email =
-          document
-            .getElementById("email")
-            .value
-            .trim()
-            .toLowerCase();
-
-
-        const confirm =
-          this.value
-            .trim()
-            .toLowerCase();
-
-
-        const error =
-          document
-            .getElementById("emailError");
-
-
-        if (
-          confirm &&
-          email !== confirm
-        ) {
-
-          error.classList.remove(
-            "hidden"
-          );
-
-        } else {
-
-          error.classList.add(
-            "hidden"
-          );
-
+    try {
+      const redirectTo = new URL("login.html", window.location.href).href;
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options:{
+          emailRedirectTo:redirectTo,
+          data:{ first_name:firstName, surname, full_name:`${firstName} ${surname}`, gender, phone, role:"student" }
         }
+      });
 
-      }
-    );
-
-
-  // ==========================================================
-  // PASSWORD MATCH
-  // ==========================================================
-
-  document
-    .getElementById("confirm_password")
-    .addEventListener(
-      "input",
-      function() {
-
-        const password =
-          document
-            .getElementById("password")
-            .value;
-
-
-        const confirm =
-          this.value;
-
-
-        const error =
-          document
-            .getElementById("passwordError");
-
-
-        if (
-          confirm &&
-          password !== confirm
-        ) {
-
-          error.classList.remove(
-            "hidden"
-          );
-
-        } else {
-
-          error.classList.add(
-            "hidden"
-          );
-
+      if (error) {
+        const lower = String(error.message || "").toLowerCase();
+        if (lower.includes("already") || lower.includes("exists") || lower.includes("registered")) {
+          throw new Error("An account with this email already exists. Please sign in instead of creating another account.");
         }
-
+        throw error;
       }
-    );
 
+      if (!data?.user) throw new Error("The account could not be created. Please try again.");
 
-  // ==========================================================
-  // CLEAR VALIDATION MESSAGES WHILE USER CORRECTS INPUT
-  // ==========================================================
-
-  document
-    .getElementById("email")
-    .addEventListener(
-      "input",
-      function() {
-
-        document
-          .getElementById("emailError")
-          .classList
-          .add("hidden");
-
+      /* Supabase may intentionally return an obfuscated user for an existing email. */
+      if (Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        throw new Error("An account with this email already exists. Please sign in instead of creating another account.");
       }
-    );
 
-
-  document
-    .getElementById("password")
-    .addEventListener(
-      "input",
-      function() {
-
-        document
-          .getElementById("passwordError")
-          .classList
-          .add("hidden");
-
+      if (!data.session) {
+        showMessage("Your account was created, but Supabase is currently requesting email confirmation. Please contact the Academy if you cannot sign in immediately.", true);
+        setTimeout(() => { window.location.href = "login.html"; }, 2500);
+        return;
       }
-    );
 
+      button.innerHTML = '<span class="spinner"></span>Preparing your student profile...';
+      await createStudentRecords(data.user,{ firstName,surname,gender,phone,email });
 
+      localStorage.removeItem("funda_pending_course");
+      localStorage.removeItem("enroll_after_login");
+
+      showMessage("Your student account has been created successfully. Taking you to course selection...", true);
+      setTimeout(() => { window.location.href = "onboarding.html"; }, 900);
+
+    } catch (error) {
+      console.error("Registration error:", error);
+      showMessage(error?.message || "Something went wrong while creating your account. Please try again.");
+    } finally {
+      button.disabled = false;
+      button.textContent = "Create Student Account";
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      initialiseSupabase();
+
+      /* An already signed-in student should not accidentally create another account. */
+      const { data } = await supabaseClient.auth.getSession();
+      const user = data?.session?.user;
+      if (!user) return;
+
+      const { data: student } = await supabaseClient
+        .from("students")
+        .select("id")
+        .eq("user_id",user.id)
+        .maybeSingle();
+
+      if (student) window.location.href = "dashboard.html";
+    } catch (error) {
+      console.error("Registration page initialisation error:", error);
+      showMessage(error?.message || "The Academy connection could not be initialised.");
+    }
+  });
 </script>
-
 </body>
-              </html>
+</html>
