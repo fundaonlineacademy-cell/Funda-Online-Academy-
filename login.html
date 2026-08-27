@@ -20,6 +20,7 @@
       --navy2:#0a1f46;
       --blue:#184f9f;
       --gold:#d3aa49;
+      --gold-soft:#ead79f;
       --cream:#f6f3ec;
       --ink:#10213f;
       --muted:#667085;
@@ -35,10 +36,24 @@
     h1,h2,h3,.brand{font-family:"Montserrat",sans-serif}
 
     .brand-panel{
+      position:relative;
+      overflow:hidden;
       background:
-        radial-gradient(circle at 15% 12%,rgba(211,170,73,.10),transparent 27%),
-        radial-gradient(circle at 88% 78%,rgba(24,79,159,.18),transparent 28%),
-        linear-gradient(145deg,#020817 0%,#06152f 52%,#0a214d 100%);
+        radial-gradient(circle at 12% 10%,rgba(211,170,73,.12),transparent 28%),
+        radial-gradient(circle at 86% 80%,rgba(24,79,159,.24),transparent 32%),
+        linear-gradient(145deg,#020817 0%,#06152f 50%,#0a214d 100%);
+    }
+
+    .brand-panel::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:.18;
+      background-image:
+        linear-gradient(rgba(255,255,255,.024) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.024) 1px,transparent 1px);
+      background-size:44px 44px;
     }
 
     .auth-panel{
@@ -47,6 +62,44 @@
 
     .auth-card{
       box-shadow:0 28px 80px rgba(0,0,0,.35);
+    }
+
+    .promo-image{
+      position:relative;
+      overflow:hidden;
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 16px 40px rgba(0,0,0,.22);
+      min-height:165px;
+    }
+
+    .promo-image img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .promo-image::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(to top,rgba(2,8,23,.78),rgba(2,8,23,.08) 58%,transparent);
+    }
+
+    .promo-caption{
+      position:absolute;
+      z-index:2;
+      left:16px;
+      right:16px;
+      bottom:14px;
+    }
+
+    .proof-card{
+      background:rgba(255,255,255,.97);
+      color:#10213f;
+      border:1px solid rgba(255,255,255,.65);
+      box-shadow:0 18px 44px rgba(0,0,0,.22);
     }
 
     .input-field{
@@ -67,10 +120,7 @@
       box-shadow:0 0 0 4px rgba(24,79,159,.11);
     }
 
-    .role-btn{
-      transition:.2s ease;
-    }
-
+    .role-btn{transition:.2s ease}
     .role-btn.active{
       background:#06152f;
       color:#fff;
@@ -102,11 +152,16 @@
       border-radius:50%;
       animation:spin .8s linear infinite;
     }
+
     @keyframes spin{to{transform:rotate(360deg)}}
 
     @media(max-width:1023px){
-      .brand-panel{min-height:auto}
-      .auth-panel{min-height:auto}
+      .brand-panel,.auth-panel{min-height:auto}
+      .brand-panel{padding-bottom:34px}
+    }
+
+    @media(max-width:639px){
+      .promo-image{min-height:145px}
     }
   </style>
 </head>
@@ -114,8 +169,13 @@
 <body>
 <main class="min-h-screen grid lg:grid-cols-[1.08fr_.92fr]">
 
-  <section class="brand-panel text-white px-6 sm:px-10 lg:px-14 xl:px-20 py-8 lg:py-12 flex flex-col justify-between min-h-[480px] lg:min-h-screen">
-    <div>
+  <!-- =========================================================
+       PROMOTIONAL / BRAND SIDE
+       Desktop: book-style left panel
+       Mobile: remains visible above login rather than disappearing
+  ========================================================== -->
+  <section class="brand-panel text-white px-6 sm:px-10 lg:px-14 xl:px-16 py-8 lg:py-10 flex flex-col justify-between min-h-[620px] lg:min-h-screen">
+    <div class="relative z-10">
       <a href="index.html" class="inline-flex items-center gap-4 bg-white rounded-2xl px-4 py-3 shadow-2xl">
         <img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 sm:w-16 sm:h-16 object-contain" onerror="this.style.display='none'">
         <div class="brand leading-none">
@@ -124,43 +184,69 @@
         </div>
       </a>
 
-      <div class="mt-12 lg:mt-20 max-w-2xl">
+      <div class="mt-9 lg:mt-12 max-w-2xl">
         <div class="inline-flex items-center rounded-full border border-white/10 bg-white/[.05] px-4 py-2 text-[11px] sm:text-xs font-bold tracking-[.16em] text-[#e6c778]">
-          SECURE STUDENT ACCESS
+          PRACTICAL • FLEXIBLE • CAREER-FOCUSED
         </div>
 
-        <h1 class="mt-5 text-4xl sm:text-5xl xl:text-6xl font-extrabold leading-[1.05] tracking-tight">
-          Continue your<br>
-          <span class="text-[#e2bd61]">learning journey.</span>
+        <h1 class="mt-5 text-4xl sm:text-5xl xl:text-[54px] font-extrabold leading-[1.03] tracking-tight">
+          Master Skills That<br>
+          <span class="text-[#e2bd61]">Get You Hired.</span>
         </h1>
 
-        <p class="mt-6 max-w-xl text-sm sm:text-base leading-7 text-slate-200">
-          Access your student dashboard, track enrollment progress and continue your Funda Online Academy journey from one secure place.
+        <p class="mt-5 max-w-xl text-sm sm:text-base leading-7 text-slate-200">
+          Learn practical skills, build confidence and move toward real career opportunities with affordable online learning designed around your future.
         </p>
 
-        <div class="grid sm:grid-cols-3 gap-3 mt-8 max-w-2xl">
-          <div class="rounded-2xl border border-white/10 bg-white/[.05] p-4">
-            <div class="text-[#e2bd61] text-lg">✓</div>
-            <p class="mt-2 text-sm font-bold">Practical learning</p>
-            <p class="mt-1 text-xs leading-5 text-slate-300">Career-focused course experiences.</p>
+        <div class="grid grid-cols-2 gap-3 mt-7">
+          <div class="promo-image h-[175px] sm:h-[205px]">
+            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=85" alt="Students learning together">
+            <div class="promo-caption">
+              <p class="text-[10px] sm:text-xs uppercase tracking-[.18em] text-[#e9d28d] font-bold">Learn together</p>
+              <p class="text-sm sm:text-base font-extrabold text-white mt-1">Build practical confidence</p>
+            </div>
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/[.05] p-4">
-            <div class="text-[#e2bd61] text-lg">◫</div>
-            <p class="mt-2 text-sm font-bold">Mobile friendly</p>
-            <p class="mt-1 text-xs leading-5 text-slate-300">Study and manage your journey from your phone.</p>
+
+          <div class="promo-image h-[175px] sm:h-[205px]">
+            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=85" alt="Students studying online">
+            <div class="promo-caption">
+              <p class="text-[10px] sm:text-xs uppercase tracking-[.18em] text-[#e9d28d] font-bold">Learn anywhere</p>
+              <p class="text-sm sm:text-base font-extrabold text-white mt-1">Study at your own pace</p>
+            </div>
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/[.05] p-4">
-            <div class="text-[#e2bd61] text-lg">◎</div>
-            <p class="mt-2 text-sm font-bold">Clear progress</p>
-            <p class="mt-1 text-xs leading-5 text-slate-300">See your course and approval status clearly.</p>
+        </div>
+
+        <div class="grid sm:grid-cols-[1.25fr_.75fr] gap-3 mt-3">
+          <div class="proof-card rounded-2xl p-4 sm:p-5">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <p class="text-[10px] font-extrabold tracking-[.18em] uppercase text-[#b88622]">Learner experience</p>
+                <div class="mt-2 text-[#d09a26] tracking-wide text-sm">★★★★★</div>
+              </div>
+              <div class="w-10 h-10 rounded-full bg-[#06152f] text-white flex items-center justify-center font-extrabold">F</div>
+            </div>
+            <p class="mt-3 text-sm leading-6 font-semibold text-[#263854]">“Flexible, practical and easy to follow — exactly what online learning should feel like.”</p>
+            <p class="mt-2 text-[10px] text-slate-500 font-bold uppercase tracking-wide">Sample learner feedback</p>
+          </div>
+
+          <div class="rounded-2xl border border-white/10 bg-white/[.055] p-4 sm:p-5 flex flex-col justify-center">
+            <div class="text-[#e2bd61] text-lg">✦</div>
+            <p class="mt-2 text-sm font-extrabold text-white">Your future is worth investing in.</p>
+            <p class="mt-2 text-xs leading-5 text-slate-300">Career-focused learning without premium-price barriers.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="mt-10 text-[11px] text-slate-400">© 2026 Funda Online Academy · Learn. Grow. Succeed.</div>
+    <div class="relative z-10 mt-7 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-400">
+      <span>© 2026 Funda Online Academy · Learn. Grow. Succeed.</span>
+      <span class="text-[#d7bd78]">Affordable learning. Premium experience.</span>
+    </div>
   </section>
 
+  <!-- =========================================================
+       LOGIN SIDE
+  ========================================================== -->
   <section class="auth-panel px-5 sm:px-8 lg:px-10 py-8 lg:py-12 flex items-center justify-center min-h-screen">
     <div class="auth-card w-full max-w-[500px] bg-white rounded-[28px] p-6 sm:p-8 lg:p-9 border border-white">
 
@@ -170,12 +256,12 @@
         </div>
         <p class="text-[11px] font-extrabold tracking-[.18em] text-[#b88622] uppercase">Welcome back</p>
         <h2 class="mt-2 text-3xl sm:text-[34px] font-extrabold text-[#06152f]">Sign in to your portal</h2>
-        <p class="mt-2 text-sm text-slate-500">Use the account details you registered with.</p>
+        <p class="mt-2 text-sm text-slate-500">Choose your access type and use the details you registered with.</p>
       </div>
 
       <div class="grid grid-cols-2 gap-2 mt-7 p-1.5 rounded-xl bg-[#f1f4f8]">
-        <button id="btn-student" type="button" class="role-btn active rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold">Student</button>
-        <button id="btn-admin" type="button" class="role-btn rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold text-slate-600">Staff / Admin</button>
+        <button id="btn-student" type="button" class="role-btn active rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold">🎓 Student</button>
+        <button id="btn-admin" type="button" class="role-btn rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold text-slate-600">▣ Staff / Admin</button>
       </div>
 
       <div id="message" class="message mt-5 rounded-xl p-4 text-sm font-semibold"></div>
@@ -205,10 +291,25 @@
         </button>
       </form>
 
-      <div class="mt-6 pt-5 border-t border-slate-200 text-center">
-        <p class="text-sm text-slate-500">New to Funda Online Academy?</p>
-        <a href="auth.html" class="inline-flex mt-2 items-center justify-center font-extrabold text-[#184f9f] hover:underline">Create your student account →</a>
+      <div class="mt-6 flex items-center gap-3">
+        <div class="h-px bg-slate-200 flex-1"></div>
+        <span class="text-[10px] font-bold tracking-[.16em] text-slate-400 uppercase">or</span>
+        <div class="h-px bg-slate-200 flex-1"></div>
       </div>
+
+      <div class="mt-5 grid gap-3">
+        <a href="auth.html" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-[#184f9f] bg-white text-[#184f9f] py-3.5 font-extrabold text-sm hover:bg-blue-50 transition">
+          ◉ New to Funda? Create Student Account
+        </a>
+
+        <a href="courses-public.html" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-[#f7f9fc] text-[#06152f] py-3.5 font-extrabold text-sm hover:border-[#184f9f] transition">
+          ◫ Browse Courses — No Login Needed
+        </a>
+      </div>
+
+      <p class="mt-3 text-center text-[11px] leading-5 text-slate-400">
+        Want to see what we teach before registering? Explore the Academy course catalogue freely.
+      </p>
 
       <div class="mt-5 flex items-center justify-center gap-2 text-[11px] text-slate-400">
         <span>🔒</span>
@@ -340,7 +441,9 @@
         .eq("id", user.id)
         .maybeSingle();
 
-      if (profileError) throw new Error("Your account was authenticated, but your profile could not be loaded. " + profileError.message);
+      if (profileError) {
+        throw new Error("Your account was authenticated, but your profile could not be loaded. " + profileError.message);
+      }
 
       const staffRoles = ["admin", "manager", "staff", "finance", "support"];
       const actualRole = profile?.role || "student";
@@ -377,14 +480,6 @@
         return;
       }
 
-      /*
-        Returning student rule:
-        A valid existing student account always opens the Student Dashboard,
-        whether the enrollment is pending, approved, rejected, or not yet reviewed.
-
-        The only exception is a deliberate course action that supplied a safe ?next=
-        destination, for example returning to a course page after authentication.
-      */
       const next = getSafeNextDestination();
 
       if (next) {
@@ -445,7 +540,6 @@
     try {
       initialiseSupabase();
 
-      /* If an authenticated user opens login.html directly, route them cleanly. */
       const { data } = await supabaseClient.auth.getSession();
       const user = data?.session?.user;
       if (!user) return;
