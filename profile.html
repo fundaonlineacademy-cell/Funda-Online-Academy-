@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="View your Funda Online Academy student profile and registration details.">
+  <title>My Profile | Funda Online Academy</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js?v=20260827"></script>
+
+  <style>
+    :root{--navy:#06152f;--navy2:#0b2f70;--blue:#2767c6;--gold:#c99a2e;--ink:#183153;--muted:#64748b;--line:#d9e4f2}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:"Inter",sans-serif;color:var(--ink);background:radial-gradient(circle at 5% 4%,rgba(39,103,198,.10),transparent 25%),radial-gradient(circle at 94% 12%,rgba(201,154,46,.10),transparent 22%),linear-gradient(180deg,#f7fbff 0%,#edf5ff 54%,#fffaf0 100%);min-height:100vh}
+    h1,h2,h3,.brand{font-family:"Montserrat",sans-serif}
+    .card{background:rgba(255,255,255,.97);border:1px solid rgba(195,211,230,.70);box-shadow:0 10px 28px rgba(34,72,119,.07)}
+    .hero{background:linear-gradient(135deg,#071d49 0%,#0c377c 62%,#174b93 100%)}
+    .spinner{width:40px;height:40px;border:4px solid #d7e6fa;border-top-color:#071d49;border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+
+<header class="sticky top-0 z-40 bg-[#06152F]/95 backdrop-blur text-white border-b border-white/10 shadow-lg">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-[72px] flex items-center justify-between gap-4">
+    <a href="dashboard.html" class="flex items-center gap-3 shrink-0">
+      <img src="logo.png" alt="Funda Online Academy" class="w-10 h-10 rounded-xl bg-white object-contain p-1" onerror="this.style.display='none'">
+      <div class="brand leading-none">
+        <div class="text-[15px] sm:text-[17px] font-extrabold">FUNDA <span class="font-semibold">ONLINE</span></div>
+        <div class="mt-1 text-[8px] sm:text-[9px] tracking-[.28em] font-bold text-[#e1bf67]">ACADEMY</div>
+      </div>
+    </a>
+    <a href="dashboard.html" class="px-4 py-2.5 rounded-xl bg-white text-[#06152F] text-sm font-extrabold">← Dashboard</a>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+  <section id="loadingState" class="card rounded-3xl p-12 text-center">
+    <div class="spinner mx-auto"></div>
+    <h2 class="mt-5 text-xl font-extrabold text-[#071D49]">Loading your student profile...</h2>
+    <p class="mt-2 text-sm text-slate-500">Retrieving your registered information securely.</p>
+  </section>
+
+  <section id="errorState" class="hidden card rounded-3xl p-10 text-center">
+    <div class="text-5xl">⚠️</div>
+    <h2 class="mt-4 text-2xl font-extrabold text-red-600">Unable to load profile</h2>
+    <p id="errorMessage" class="mt-2 text-sm text-slate-600">Something went wrong.</p>
+    <a href="dashboard.html" class="inline-flex mt-6 px-5 py-3 rounded-xl bg-[#071D49] text-white font-bold">Return to Dashboard</a>
+  </section>
+
+  <div id="profileContent" class="hidden">
+    <section class="hero rounded-[28px] text-white p-6 sm:p-8 shadow-xl mb-6">
+      <p class="text-[11px] uppercase tracking-[.18em] font-bold text-[#e4c777]">Student Account</p>
+      <h1 class="mt-2 text-3xl sm:text-4xl font-extrabold">My Profile</h1>
+      <p class="mt-3 text-sm sm:text-base text-blue-100 max-w-2xl">Review the information connected to your Funda Online Academy student account.</p>
+    </section>
+
+    <div class="grid lg:grid-cols-[minmax(0,1.5fr)_minmax(280px,.75fr)] gap-6">
+      <div class="space-y-6">
+        <section class="card rounded-3xl p-5 sm:p-6">
+          <p class="text-[11px] uppercase tracking-[.17em] font-bold text-[#B58216]">Personal Details</p>
+          <h2 class="mt-1 text-xl sm:text-2xl font-extrabold text-[#071D49]">Student Information</h2>
+          <div class="grid sm:grid-cols-2 gap-x-6 gap-y-5 mt-6">
+            <div><p class="text-xs text-slate-500">Full Name</p><p id="fullName" class="mt-1 font-bold text-[#071D49]">—</p></div>
+            <div><p class="text-xs text-slate-500">Email Address</p><p id="email" class="mt-1 font-bold text-[#071D49] break-all">—</p></div>
+            <div><p class="text-xs text-slate-500">Mobile / WhatsApp</p><p id="mobile" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">Gender</p><p id="gender" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">Date of Birth</p><p id="dob" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">Nationality</p><p id="nationality" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">ID Number</p><p id="idNumber" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">Account Status</p><p class="mt-1 font-bold text-emerald-600">Active</p></div>
+          </div>
+        </section>
+
+        <section class="card rounded-3xl p-5 sm:p-6">
+          <p class="text-[11px] uppercase tracking-[.17em] font-bold text-[#B58216]">Location & Background</p>
+          <h2 class="mt-1 text-xl sm:text-2xl font-extrabold text-[#071D49]">Registration Details</h2>
+          <div class="grid sm:grid-cols-2 gap-x-6 gap-y-5 mt-6">
+            <div class="sm:col-span-2"><p class="text-xs text-slate-500">Address</p><p id="address" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">City</p><p id="city" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">Province</p><p id="province" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">Postal Code</p><p id="postalCode" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">Employment Status</p><p id="employment" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">Highest Education</p><p id="education" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">How You Heard About Us</p><p id="heardAbout" class="mt-1 font-bold">—</p></div>
+          </div>
+        </section>
+
+        <section class="card rounded-3xl p-5 sm:p-6">
+          <p class="text-[11px] uppercase tracking-[.17em] font-bold text-[#B58216]">Emergency Contact</p>
+          <h2 class="mt-1 text-xl sm:text-2xl font-extrabold text-[#071D49]">Contact Person</h2>
+          <div class="grid sm:grid-cols-2 gap-6 mt-6">
+            <div><p class="text-xs text-slate-500">Name</p><p id="emergencyName" class="mt-1 font-bold">—</p></div>
+            <div><p class="text-xs text-slate-500">Phone</p><p id="emergencyPhone" class="mt-1 font-bold">—</p></div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="space-y-6">
+        <section class="card rounded-3xl p-5 sm:p-6">
+          <p class="text-[11px] uppercase tracking-[.17em] font-bold text-[#B58216]">Student Support</p>
+          <h2 class="mt-1 text-xl font-extrabold text-[#071D49]">Need Help?</h2>
+          <p class="mt-3 text-sm text-slate-600 leading-6">Contact the Academy if your registered information needs to be corrected or updated.</p>
+          <a href="https://wa.me/27699608590?text=Hello%20Funda%20Online%20Academy%2C%20I%20need%20help%20with%20my%20student%20profile." target="_blank" rel="noopener" class="mt-5 inline-flex w-full justify-center px-5 py-3 rounded-xl bg-[#071D49] text-white font-bold">WhatsApp Support</a>
+          <p class="mt-3 text-center text-xs text-slate-500">069 960 8590</p>
+        </section>
+
+        <section class="card rounded-3xl p-5 sm:p-6">
+          <p class="text-[11px] uppercase tracking-[.17em] font-bold text-[#B58216]">Academy Details</p>
+          <h2 class="mt-1 text-xl font-extrabold text-[#071D49]">Funda Online Academy</h2>
+          <div class="mt-5 space-y-4 text-sm">
+            <div><p class="text-xs text-slate-500">Company Registration</p><p class="mt-1 font-bold">2023/830451/07</p></div>
+            <div><p class="text-xs text-slate-500">Training Framework</p><p class="mt-1 font-bold">International CPD Accredited Trainer</p></div>
+            <div><p class="text-xs text-slate-500">Delivery Model</p><p class="mt-1 font-bold">100% Online Learning</p></div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer class="mt-10 bg-[#06152F] text-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between text-xs text-blue-100">
+    <p>© <span id="year"></span> Funda Online Academy. All rights reserved.</p>
+    <a href="dashboard.html" class="font-bold text-white">Back to Student Dashboard</a>
+  </div>
+</footer>
+
+<script>
+let supabaseClient=null;
+function value(v){return v===null||v===undefined||String(v).trim()===""?"—":String(v)}
+function setText(id,v){document.getElementById(id).textContent=value(v)}
+function showError(message){document.getElementById("loadingState").classList.add("hidden");document.getElementById("profileContent").classList.add("hidden");document.getElementById("errorState").classList.remove("hidden");document.getElementById("errorMessage").textContent=message||"Unable to load your profile."}
+function initialiseSupabase(){if(!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw new Error("Academy database configuration is missing.");if(!window.supabase)throw new Error("Supabase library failed to load.");supabaseClient=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}})}
+async function loadProfile(){
+  try{
+    initialiseSupabase();
+    const {data:userData,error:userError}=await supabaseClient.auth.getUser();
+    if(userError)throw userError;
+    const user=userData?.user;
+    if(!user){window.location.href="login.html?next=profile.html";return}
+
+    const [{data:profile,error:profileError},{data:student,error:studentError}]=await Promise.all([
+      supabaseClient.from("profiles").select("*").eq("id",user.id).maybeSingle(),
+      supabaseClient.from("students").select("*").eq("user_id",user.id).maybeSingle()
+    ]);
+    if(profileError)console.warn("Profile warning:",profileError);
+    if(studentError)console.warn("Student warning:",studentError);
+
+    setText("fullName",student?.full_name||profile?.full_name||user.user_metadata?.full_name||user.email?.split("@")[0]);
+    setText("email",student?.email||profile?.email||user.email);
+    setText("mobile",student?.mobile_whatsapp||profile?.phone);
+    setText("gender",student?.gender||profile?.gender);
+    setText("dob",student?.date_of_birth);
+    setText("nationality",student?.nationality);
+    setText("idNumber",student?.south_african_id||profile?.id_number);
+    setText("address",student?.address);
+    setText("city",student?.city);
+    setText("province",student?.province);
+    setText("postalCode",student?.postal_code);
+    setText("employment",student?.employment_status);
+    setText("education",student?.highest_education);
+    setText("heardAbout",student?.where_heard_about_us);
+    setText("emergencyName",student?.emergency_contact_name);
+    setText("emergencyPhone",student?.emergency_contact_phone);
+
+    document.getElementById("loadingState").classList.add("hidden");
+    document.getElementById("errorState").classList.add("hidden");
+    document.getElementById("profileContent").classList.remove("hidden");
+  }catch(error){console.error("Profile error:",error);showError(error.message||"Unable to load your profile.")}
+}
+document.getElementById("year").textContent=new Date().getFullYear();
+document.addEventListener("DOMContentLoaded",loadProfile);
+</script>
+</body>
+</html>
