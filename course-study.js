@@ -1,83 +1,22 @@
-// ============================================================
-// FUNDA ONLINE ACADEMY - COURSE STUDY
-// ============================================================
+// FUNDA ONLINE ACADEMY — PHASE 3 LEARNING WORKSPACE
 const {createClient}=supabase;
 const db=createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
-const content=document.getElementById("course-content");
-const message=document.getElementById("message");
-const logout=document.getElementById("logout");
-
-const esc=v=>v==null?"":String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
-const statusOf=r=>String(r?.enrollment_status??r?.status??"pending").trim().toLowerCase();
-function show(t,ok=false){if(message){message.textContent=t;message.className="message "+(ok?"success":"error");}}
-
-function normaliseModules(raw){
-  if(Array.isArray(raw))return raw;
-  if(typeof raw==="string"){
-    try{const x=JSON.parse(raw);if(Array.isArray(x))return x;}catch{}
-    return raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-  }
-  if(raw&&typeof raw==="object")return Object.values(raw);
-  return [];
-}
-function moduleHtml(item,i){
-  if(typeof item==="string")return `<div class="module"><div class="module-number">Module ${i+1}</div><h3>${esc(item)}</h3><p>Study this module carefully and complete the activities provided by the Academy.</p></div>`;
-  const title=item?.title||item?.name||item?.module||`Module ${i+1}`;
-  const body=item?.content||item?.description||item?.lesson||item?.text||"Study the learning material for this module and complete the required activities.";
-  return `<div class="module"><div class="module-number">Module ${i+1}</div><h3>${esc(title)}</h3><p>${esc(body)}</p></div>`;
-}
-
-async function init(){
-  try{
-    const params=new URLSearchParams(location.search);
-    const courseId=params.get("id")||params.get("course");
-    if(!courseId){show("No course was selected.");return;}
-
-    const {data:{user},error:authError}=await db.auth.getUser();
-    if(authError||!user){location.href="login.html?next="+encodeURIComponent(location.pathname+location.search);return;}
-
-    // enrollments.student_id is the authenticated profile/user id in the Academy schema.
-    const {data:enrolments,error:enrolError}=await db.from("enrollments").select("*").eq("student_id",user.id).eq("course_id",courseId).order("enrolled_at",{ascending:false}).limit(1);
-    if(enrolError)throw enrolError;
-    if(!enrolments?.length){show("You are not enrolled in this course.");return;}
-
-    const enrol=enrolments[0];
-    const status=statusOf(enrol);
-    if(!["approved","active","enrolled","completed"].includes(status)){
-      content.innerHTML=`<div class="study-head"><h1>Course access pending</h1><p>Your enrollment is currently <strong>${esc(status)}</strong>. Once the Academy approves it, your learning material will be available here.</p><a class="btn green" href="dashboard.html">Back to Dashboard</a></div>`;
-      return;
-    }
-
-    const {data:course,error:courseError}=await db.from("courses").select("*").eq("id",courseId).maybeSingle();
-    if(courseError)throw courseError;
-    if(!course){show("Course could not be found.");return;}
-
-    let modules=[];
-    const moduleResult=await db.from("course_modules").select("id,module_number,module_name,description,learning_outcomes").eq("course_id",courseId).order("module_number",{ascending:true});
-    if(!moduleResult.error&&moduleResult.data?.length){modules=moduleResult.data.map(m=>({title:m.module_name,description:m.description||"Open this module in the Academy learning area."}));}
-    else modules=normaliseModules(course.modules);
-
-    const title=course.title||course.name||"Course";
-    content.innerHTML=`
-      <div class="study-head">
-        <span class="badge">APPROVED LEARNING ACCESS</span>
-        <h1>${esc(title)}</h1>
-        <p>${esc(course.description||"Welcome to your Funda Online Academy course.")}</p>
-        ${course.duration?`<p><strong>Duration:</strong> ${esc(course.duration)}</p>`:""}
-        <div class="study-actions"><a class="btn ghost" href="dashboard.html">← Dashboard</a></div>
-      </div>
-      <section>
-        <h2>Course Modules</h2>
-        ${modules.length?modules.map(moduleHtml).join(""):`<div class="card"><h3>Learning material is being prepared</h3><p>Modules have not yet been added to this course.</p></div>`}
-      </section>
-      <section>
-        <h2>Assessments</h2>
-        <div class="card"><p>Your assessments, results and completion requirements will appear in the full learning area as we complete the next learning-platform phase.</p></div>
-      </section>`;
-  }catch(err){
-    console.error("Course study:",err);
-    show("Unable to load this course: "+(err.message||"Please try again."));
-  }
-}
-if(logout)logout.addEventListener("click",async()=>{await db.auth.signOut();location.href="login.html";});
-if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",init);else init();
+const $=id=>document.getElementById(id);
+const esc=v=>v==null?'':String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+const statusOf=r=>String(r?.enrollment_status??r?.status??'pending').trim().toLowerCase();
+const BENCHMARK_TITLE='Carpentry — Professional Skills Short Course';
+const MODULES=[
+'Carpentry Practice, Workshop Safety & Professional Standards','Hand Tools: Selection, Use & Maintenance','Power Tools & Safe Operating Practice','Measurement, Marking & Technical Accuracy','Timber, Boards & Material Selection','Carpentry Joints & Assembly Techniques','Construction Methods & Practical Application','Surface Preparation, Finishing & Protection','Quality Control, Defects & Corrective Practice','Applied Carpentry Practice & Workplace Readiness'];
+const M1=[
+{t:'The Carpentry Profession & Workplace Environment',time:'30–40 min',o:['Describe the role of carpentry in construction and maintenance.','Identify common carpentry workplace environments.','Explain core responsibilities expected of a professional carpenter.','Recognise how safety, accuracy and quality influence workmanship.'],intro:'Professional carpentry combines technical knowledge, practical skill, safe working practice and consistent quality. Understanding the workplace is the foundation for every skill that follows.',terms:[['Carpentry','The skilled trade of cutting, shaping, joining, installing and repairing timber and related materials.'],['Workmanship','The standard of skill, accuracy and care demonstrated in completed work.'],['Specification','A stated requirement describing how work or a product should be completed.'],['Tolerance','An acceptable limit of variation from a required measurement or standard.']],sections:[['What professional carpentry involves','Carpenters work with timber, manufactured boards, fittings and related materials to produce, install, maintain and repair components. Professional practice requires more than operating tools: the carpenter interprets requirements, plans work, measures accurately, selects suitable materials and completes work safely.'],['Where carpenters work','Carpentry may take place in workshops, construction sites, residential properties, commercial buildings and maintenance environments. Each workplace presents different hazards, access requirements and expectations.'],['Professional responsibilities','A carpenter is responsible for protecting people and property, using tools correctly, reducing waste, following instructions and specifications, checking accuracy and reporting unsafe or defective conditions.'],['Quality from the beginning','Quality is built into the process. Correct measurement, appropriate material selection, sharp and serviceable tools, careful assembly and final inspection reduce defects and rework.']],example:'A carpenter is asked to fit a timber shelf into an existing opening. A professional approach is to inspect the area, confirm the required dimensions, identify hazards and services, select appropriate material and fixings, measure more than once, cut accurately, install securely and inspect the finished work.',activity:'Look at a wooden item in your home or workplace. Identify three signs that would indicate good workmanship and two defects that would make you question its quality.',q:{text:'Which action best demonstrates professional carpentry practice?',answers:['Starting immediately to save time','Confirming measurements and requirements before cutting','Using any available material regardless of specification','Ignoring a small defect if the item still fits'],correct:1,why:'Professional work begins by confirming requirements and measurements. This reduces waste, defects and unsafe improvisation.'},take:['Carpentry combines technical knowledge, practical skill and professional judgement.','Work environments differ and must be assessed before work begins.','Accuracy, safety and quality are responsibilities throughout the job.','Good workmanship is planned and checked rather than left to chance.']},
+{t:'Roles, Responsibilities & Professional Conduct',time:'25–35 min'},{t:'Workshop Hazards & Risk Awareness',time:'30–40 min'},{t:'Personal Protective Equipment (PPE)',time:'25–35 min'},{t:'Safe Tool Handling & Pre-use Checks',time:'30–40 min'},{t:'Workshop Housekeeping & Material Storage',time:'25–35 min'},{t:'Emergency, Fire & Incident Procedures',time:'30–40 min'},{t:'Quality Workmanship & Professional Standards',time:'30–40 min'}];
+let state={course:null,enrol:null,user:null,module:1,unit:1};
+function show(t,ok=false){const m=$('message');if(!m)return;m.style.display='block';m.textContent=t;m.className='message '+(ok?'success':'');}
+function genericLesson(i){const names=M1[i-1]||{t:`Lesson ${i}`};return {...names,o:['Explain the key principles covered in this lesson.','Apply safe and professional practice to a workplace situation.','Identify common errors or risks relevant to the topic.','Use the lesson principles to support quality workmanship.'],intro:'This lesson develops another essential part of safe, accurate and professional carpentry practice.',terms:[['Safe practice','A planned way of working that reduces preventable harm.'],['Quality assurance','Checks and processes used to maintain an expected standard.']],sections:[['Professional knowledge','Study the principles in this topic carefully and connect them to real carpentry work.'],['Safe application','Before performing a task, consider hazards, required controls, correct tools and the standard expected.'],['Quality checkpoint','Inspect work during the process rather than waiting until the end to discover errors.']],example:'Consider how this topic would affect a carpenter preparing for a normal workshop task. Identify what must be checked before work starts, during the task and before the work is accepted.',activity:'Write three checks you would perform before applying this lesson in a workshop environment.',q:{text:'What should happen before a carpentry task begins?',answers:['Hazards and requirements should be checked','The fastest tool should always be selected','Inspection should only happen after completion','Safety checks are optional for experienced workers'],correct:0,why:'Planning, hazard identification and requirement checks should happen before work begins.'},take:['Plan before acting.','Use the correct controls and equipment.','Check accuracy during the work.','Professional standards apply from preparation through completion.']};}
+function lesson(){return M1[state.unit-1]?.o?M1[state.unit-1]:genericLesson(state.unit)}
+function renderModules(){const host=$('moduleList');host.innerHTML=MODULES.map((m,mi)=>{const n=mi+1;let units='';for(let u=1;u<=10;u++){const assessment=u===9?'Formative Assessment':u===10?'Summative Assessment':(n===1?(M1[u-1]?.t||`Lesson ${u}`):`Lesson ${u}`);const active=n===state.module&&u===state.unit;const locked=n>1;units+=`<button class="unit ${active?'active':''} ${locked?'locked':''}" data-m="${n}" data-u="${u}" ${locked?'disabled':''}><span class="dot">${active?'▶':u}</span><span>${esc(assessment)}</span></button>`}return `<div class="module"><h3>Module ${n} · ${esc(m)}</h3>${units}</div>`}).join('');host.querySelectorAll('.unit:not(.locked)').forEach(b=>b.onclick=()=>{state.module=+b.dataset.m;state.unit=+b.dataset.u;render();if(innerWidth<761)$('modulePanel').classList.remove('open')});}
+function renderAssessment(type){$('breadcrumb').textContent=`${BENCHMARK_TITLE} / Module 1 / ${type}`;$('moduleLabel').textContent='MODULE 1 · ASSESSMENT';$('lessonTitle').textContent=type;$('studyTime').textContent=type.startsWith('Formative')?'15 randomised questions':'25 randomised questions';$('unitType').textContent=type;$('outcomes').innerHTML='<li>Demonstrate achievement of the learning outcomes covered across Lessons 1–8.</li><li>Apply safe, professional and quality-focused judgement to carpentry scenarios.</li>';$('intro').textContent=type.startsWith('Formative')?'This is a developmental assessment. Your result and feedback will help you identify topics to revise before the summative assessment.':'This assessment contributes to your module result. Questions will be selected and ordered from the protected assessment bank.';$('lessonBody').innerHTML=`<p><strong>Assessment design:</strong> ${type.startsWith('Formative')?'15':'25'} automatically marked questions, random question selection, shuffled options and immediate results.</p><div class="callout"><strong>Benchmark build:</strong> The assessment engine and protected question bank are the next technical layer. We will not publish a fake fixed quiz as the final assessment.</div>`;$('example').innerHTML='<p>Read every question carefully and select the best answer based on the learning material and workplace practice.</p>';$('activity').innerHTML='<p>Before starting, review your lesson summaries and key terms. Do not begin until you are ready to complete the attempt.</p>';$('knowledgeCheck').innerHTML='<button class="btn primary" disabled>Assessment engine being connected</button>';$('takeaways').innerHTML='<li>Your attempt, score and outcome will be stored in your student record.</li><li>Formative feedback supports revision; summative results contribute to module completion.</li>';$('completeLesson').style.display='none';}
+function renderLesson(){const l=lesson();$('breadcrumb').textContent=`${BENCHMARK_TITLE} / Module 1 / Lesson ${state.unit}`;$('moduleLabel').textContent=`MODULE 1 · LESSON ${state.unit} OF 8`;$('lessonTitle').textContent=l.t;$('studyTime').textContent=`Study time · ${l.time||'25–35 min'}`;$('unitType').textContent='Teaching Lesson';$('outcomes').innerHTML=l.o.map(x=>`<li>${esc(x)}</li>`).join('');$('intro').textContent=l.intro;$('lessonBody').innerHTML=l.sections.map(([h,p])=>`<h3>${esc(h)}</h3><p>${esc(p)}</p>`).join('');$('example').innerHTML=`<p>${esc(l.example)}</p>`;$('activity').innerHTML=`<p>${esc(l.activity)}</p>`;$('knowledgeCheck').innerHTML=`<p><strong>${esc(l.q.text)}</strong></p>${l.q.answers.map((a,i)=>`<button class="answer" data-a="${i}">${String.fromCharCode(65+i)}. ${esc(a)}</button>`).join('')}<div id="feedback"></div>`;$('knowledgeCheck').querySelectorAll('.answer').forEach(b=>b.onclick=()=>{const good=+b.dataset.a===l.q.correct;$('feedback').innerHTML=`<div class="callout"><strong>${good?'Correct ✓':'Review this point'}</strong><br>${esc(l.q.why)}</div>`});$('takeaways').innerHTML=l.take.map(x=>`<li>${esc(x)}</li>`).join('');$('keyTerms').innerHTML=l.terms.map(([a,b])=>`<div class="term"><b>${esc(a)}</b><span>${esc(b)}</span></div>`).join('');$('completeLesson').style.display='inline-flex';}
+function render(){renderModules();if(state.unit===9)renderAssessment('Formative Assessment');else if(state.unit===10)renderAssessment('Summative Assessment');else renderLesson();$('sidebarCourse').textContent=BENCHMARK_TITLE;const done=state.unit-1;const pct=Math.round(done/100*100);$('progressText').textContent=`${pct}%`;$('progressFill').style.width=`${pct}%`;$('prevLesson').disabled=state.unit===1;$('prevLesson').onclick=()=>{if(state.unit>1){state.unit--;render();scrollTo(0,0)}};$('completeLesson').onclick=()=>{if(state.unit<10){state.unit++;render();scrollTo(0,0)}};const notesKey=`funda-note-${state.course?.id||'benchmark'}-m${state.module}-u${state.unit}`;$('lessonNotes').value=localStorage.getItem(notesKey)||'';$('saveNotes').onclick=()=>{localStorage.setItem(notesKey,$('lessonNotes').value);show('Lesson notes saved on this device.',true)}}
+async function init(){try{const p=new URLSearchParams(location.search),courseId=p.get('id')||p.get('course');if(!courseId){show('No course was selected.');return}const {data:{user},error:ae}=await db.auth.getUser();if(ae||!user){location.href='login.html?next='+encodeURIComponent(location.pathname+location.search);return}state.user=user;const {data:ens,error:ee}=await db.from('enrollments').select('*').eq('student_id',user.id).eq('course_id',courseId).order('enrolled_at',{ascending:false}).limit(1);if(ee)throw ee;if(!ens?.length){show('You are not enrolled in this course.');return}state.enrol=ens[0];if(!['approved','active','enrolled','completed'].includes(statusOf(state.enrol))){show('Your course access is still awaiting Academy approval.');return}const {data:course,error:ce}=await db.from('courses').select('*').eq('id',courseId).maybeSingle();if(ce)throw ce;state.course=course||{id:courseId};render()}catch(e){console.error(e);show('Unable to load the Learning Workspace: '+(e.message||'Please try again.'))}}
+$('logout')?.addEventListener('click',async()=>{await db.auth.signOut();location.href='login.html'});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
