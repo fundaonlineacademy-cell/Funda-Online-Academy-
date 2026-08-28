@@ -28,4 +28,8 @@ if (/admin-v2\.html$/i.test(window.location.pathname)) {
   const adminBusinessIntelligence = document.createElement('script');
   adminBusinessIntelligence.src = 'admin-business-intelligence.js?v=' + Date.now();
   document.head.appendChild(adminBusinessIntelligence);
+
+  const adminMarketingStudio = document.createElement('script');
+  adminMarketingStudio.src = 'admin-marketing-studio.js?v=' + Date.now();
+  document.head.appendChild(adminMarketingStudio);
 }
