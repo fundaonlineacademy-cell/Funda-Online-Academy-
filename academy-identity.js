@@ -15,3 +15,12 @@ function installStyle(){if(document.getElementById('funda-identity-style'))retur
 function mount(){installStyle();if(document.getElementById('academy-identity'))return;const path=location.pathname.toLowerCase();let target=null,compact=false;if(path.endsWith('/admin-v2.html')||path.endsWith('admin-v2.html')){target=document.querySelector('main')||document.getElementById('main');}else if(path.endsWith('/dashboard.html')||path.endsWith('dashboard.html')){target=document.querySelector('main')||document.querySelector('.main-content')||document.body;}else if(path.endsWith('/courses-public.html')||path.endsWith('courses-public.html')||path==='/'||path.endsWith('/index.html')){target=document.querySelector('footer');compact=true;}if(!target)return;const box=document.createElement('div');box.innerHTML=markup(compact);const section=box.firstElementChild;if(target.tagName==='FOOTER')target.parentNode.insertBefore(section,target);else target.appendChild(section)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(mount,700));else setTimeout(mount,700);
 })();
+
+(()=>{
+  if(!/admin-v2\.html$/i.test(location.pathname)) return;
+  if(document.querySelector('script[data-funda-communication-v2]')) return;
+  const s=document.createElement('script');
+  s.dataset.fundaCommunicationV2='1';
+  s.src='admin-communication-v2.js?v=20260828-comm-hotfix-'+Date.now();
+  document.head.appendChild(s);
+})();
