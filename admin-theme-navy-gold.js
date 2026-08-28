@@ -65,3 +65,31 @@
   `;
   document.head.appendChild(s);
 })();
+
+// Direct, one-time bridge from the legacy Communication Hub to the upgraded centre.
+// This avoids cache-dependent nav binding and does not use observers or polling.
+(()=>{
+  if(!/admin-v2\.html$/i.test(location.pathname)) return;
+  const ensureCommunicationV2=()=>new Promise(resolve=>{
+    if(window.FundaCommunicationCentre){resolve();return;}
+    let existing=document.querySelector('script[data-funda-communication-direct]');
+    if(existing){existing.addEventListener('load',resolve,{once:true});return;}
+    const s=document.createElement('script');
+    s.dataset.fundaCommunicationDirect='1';
+    s.src='admin-communication-v2.js?v=20260828-direct-bridge-'+Date.now();
+    s.onload=resolve;
+    document.head.appendChild(s);
+  });
+  window.addEventListener('load',async()=>{
+    await ensureCommunicationV2();
+    const legacy=window.communication;
+    if(typeof legacy!=='function'||legacy.__fundaV2Bridge)return;
+    function upgradedCommunication(){
+      legacy.apply(this,arguments);
+      setTimeout(()=>window.FundaCommunicationCentre?.open(),0);
+    }
+    upgradedCommunication.__fundaV2Bridge=true;
+    window.communication=upgradedCommunication;
+    if(window.current==='communication') window.FundaCommunicationCentre?.open();
+  },{once:true});
+})();
