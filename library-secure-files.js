@@ -7,14 +7,8 @@ async function loadUser(){if(user)return user;const s=await db.auth.getSession()
 async function logDownload(id){
  const u=await loadUser();if(!u)return;
  const now=new Date().toISOString();
- const q=await db.from('library_activity').select('*').eq('student_id',u.id).eq('resource_id',id).order('updated_at',{ascending:false}).limit(1);
- const old=q.data?.[0]||null;
- if(old){
-   // Keep reading/completion progress intact. Download is an access event, not a new reading state.
-   await db.from('library_activity').update({last_opened_at:now,updated_at:now}).eq('id',old.id);
- }else{
-   await db.from('library_activity').insert({student_id:u.id,resource_id:id,activity_type:'downloaded',progress_percent:0,last_opened_at:now,updated_at:now});
- }
+ // Downloads are true event-history rows. They must never overwrite reading progress.
+ await db.from('library_activity').insert({student_id:u.id,resource_id:id,activity_type:'downloaded',progress_percent:0,minutes_read:0,last_opened_at:now,updated_at:now});
 }
 async function secureOpen(id,download){
  if(busy)return;busy=true;
