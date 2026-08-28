@@ -6,43 +6,10 @@ window.SUPABASE_ANON_KEY =
 
 window.FUNDA_ADMIN_EMAIL = "";
 
-// Shared Academy identity: vision, mission, purpose, values and strategy.
-const identityUi = document.createElement('script');
-identityUi.src = 'academy-identity.js?v=' + Date.now();
-document.head.appendChild(identityUi);
+const identityUi = document.createElement('script'); identityUi.src = 'academy-identity.js?v=' + Date.now(); document.head.appendChild(identityUi);
+const publicMarketing = document.createElement('script'); publicMarketing.src = 'marketing-public-tracking.js?v=' + Date.now(); document.head.appendChild(publicMarketing);
 
-// Public marketing subscription + site activity tracking.
-const publicMarketing = document.createElement('script');
-publicMarketing.src = 'marketing-public-tracking.js?v=' + Date.now();
-document.head.appendChild(publicMarketing);
-
-// Admin Command Center direct UI layer. Student/public pages are unaffected.
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
-  const adminUi = document.createElement('script');
-  adminUi.src = 'admin-ui-direct.js?v=' + Date.now();
-  document.head.appendChild(adminUi);
-
-  const adminTheme = document.createElement('script');
-  adminTheme.src = 'admin-theme-navy-gold.js?v=' + Date.now();
-  document.head.appendChild(adminTheme);
-
-  const adminReports = document.createElement('script');
-  adminReports.src = 'admin-report-centre.js?v=' + Date.now();
-  document.head.appendChild(adminReports);
-
-  const adminBusinessIntelligence = document.createElement('script');
-  adminBusinessIntelligence.src = 'admin-business-intelligence.js?v=' + Date.now();
-  document.head.appendChild(adminBusinessIntelligence);
-
-  const adminMarketingStudio = document.createElement('script');
-  adminMarketingStudio.src = 'admin-marketing-studio.js?v=' + Date.now();
-  document.head.appendChild(adminMarketingStudio);
-
-  const adminMarketingLiveFixes = document.createElement('script');
-  adminMarketingLiveFixes.src = 'admin-marketing-live-fixes.js?v=' + Date.now();
-  document.head.appendChild(adminMarketingLiveFixes);
-
-  const adminGovernanceCentre = document.createElement('script');
-  adminGovernanceCentre.src = 'admin-governance-centre.js?v=' + Date.now();
-  document.head.appendChild(adminGovernanceCentre);
+  const files=['admin-ui-direct.js','admin-theme-navy-gold.js','admin-report-centre.js','admin-business-intelligence.js','admin-marketing-studio.js','admin-marketing-live-fixes.js','admin-governance-centre.js','admin-finance-control-centre.js'];
+  files.forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
