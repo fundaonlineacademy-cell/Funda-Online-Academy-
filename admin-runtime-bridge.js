@@ -1,0 +1,1 @@
+(()=>{const bridge=setInterval(()=>{try{if(typeof db==='undefined'||typeof U==='undefined'||!db||!U)return;window.db=db;window.U=U;clearInterval(bridge)}catch(e){}},50);setTimeout(()=>clearInterval(bridge),30000)})();
