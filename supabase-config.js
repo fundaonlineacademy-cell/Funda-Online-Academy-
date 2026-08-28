@@ -10,9 +10,8 @@ const identityUi = document.createElement('script'); identityUi.src = 'academy-i
 const publicMarketing = document.createElement('script'); publicMarketing.src = 'marketing-public-tracking.js?v=' + Date.now(); document.head.appendChild(publicMarketing);
 
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
-  // Stable Admin stack: no whole-document MutationObservers and no competing
-  // communication overlay. Executive dashboard/header, Finance and Governance
-  // each bind only to the navigation they own.
-  const files=['admin-theme-navy-gold.js','admin-report-centre.js','admin-executive-safe.js','admin-finance-control-centre.js','admin-governance-safe.js'];
+  // Stable Admin stack: each upgrade owns one navigation surface only.
+  // No whole-document MutationObservers and no duplicate Communication controller.
+  const files=['admin-theme-navy-gold.js','admin-report-centre.js','admin-executive-safe.js','admin-finance-control-centre.js','admin-governance-safe.js','admin-communication-safe.js'];
   files.forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
