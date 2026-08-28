@@ -15,4 +15,8 @@ if (/admin-v2\.html$/i.test(window.location.pathname)) {
   const adminTheme = document.createElement('script');
   adminTheme.src = 'admin-theme-navy-gold.js?v=' + Date.now();
   document.head.appendChild(adminTheme);
+
+  const adminReports = document.createElement('script');
+  adminReports.src = 'admin-report-centre.js?v=' + Date.now();
+  document.head.appendChild(adminReports);
 }
