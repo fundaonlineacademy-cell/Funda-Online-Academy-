@@ -29,7 +29,9 @@ if (/library-admin\.html$/i.test(window.location.pathname)) {
 }
 
 if (/digital-library\.html$/i.test(window.location.pathname)) {
-  const librarySecure=document.createElement('script');
-  librarySecure.src='library-secure-files.js?v='+Date.now();
-  document.head.appendChild(librarySecure);
+  ['library-secure-files.js','library-notes-progress.js'].forEach(file=>{
+    const s=document.createElement('script');
+    s.src=file+'?v='+Date.now();
+    document.head.appendChild(s);
+  });
 }
