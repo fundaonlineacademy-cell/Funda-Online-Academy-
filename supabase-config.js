@@ -10,6 +10,9 @@ const identityUi = document.createElement('script'); identityUi.src = 'academy-i
 const publicMarketing = document.createElement('script'); publicMarketing.src = 'marketing-public-tracking.js?v=' + Date.now(); document.head.appendChild(publicMarketing);
 
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
-  const files=['admin-ui-direct.js','admin-theme-navy-gold.js','admin-report-centre.js','admin-business-intelligence.js','admin-marketing-studio.js','admin-marketing-live-fixes.js','admin-governance-centre.js','admin-finance-control-centre.js','admin-header-lock.js'];
+  // Stability mode: load the core Admin enhancements only. Observer-heavy
+  // department overlays are temporarily excluded while their navigation
+  // lifecycle is refactored so they cannot fight over #view.
+  const files=['admin-ui-direct.js','admin-theme-navy-gold.js','admin-report-centre.js','admin-business-intelligence.js','admin-marketing-studio.js','admin-marketing-live-fixes.js'];
   files.forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
