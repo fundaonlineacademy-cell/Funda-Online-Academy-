@@ -6,6 +6,11 @@ window.SUPABASE_ANON_KEY =
 
 window.FUNDA_ADMIN_EMAIL = "";
 
+// Shared Academy identity: vision, mission, purpose, values and strategy.
+const identityUi = document.createElement('script');
+identityUi.src = 'academy-identity.js?v=' + Date.now();
+document.head.appendChild(identityUi);
+
 // Admin Command Center direct UI layer. Student/public pages are unaffected.
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
   const adminUi = document.createElement('script');
