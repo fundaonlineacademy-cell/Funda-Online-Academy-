@@ -11,6 +11,11 @@ const identityUi = document.createElement('script');
 identityUi.src = 'academy-identity.js?v=' + Date.now();
 document.head.appendChild(identityUi);
 
+// Public marketing subscription + site activity tracking.
+const publicMarketing = document.createElement('script');
+publicMarketing.src = 'marketing-public-tracking.js?v=' + Date.now();
+document.head.appendChild(publicMarketing);
+
 // Admin Command Center direct UI layer. Student/public pages are unaffected.
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
   const adminUi = document.createElement('script');
@@ -32,4 +37,8 @@ if (/admin-v2\.html$/i.test(window.location.pathname)) {
   const adminMarketingStudio = document.createElement('script');
   adminMarketingStudio.src = 'admin-marketing-studio.js?v=' + Date.now();
   document.head.appendChild(adminMarketingStudio);
+
+  const adminMarketingLiveFixes = document.createElement('script');
+  adminMarketingLiveFixes.src = 'admin-marketing-live-fixes.js?v=' + Date.now();
+  document.head.appendChild(adminMarketingLiveFixes);
 }
