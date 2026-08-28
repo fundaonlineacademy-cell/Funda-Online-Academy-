@@ -24,4 +24,8 @@ if (/admin-v2\.html$/i.test(window.location.pathname)) {
   const adminReports = document.createElement('script');
   adminReports.src = 'admin-report-centre.js?v=' + Date.now();
   document.head.appendChild(adminReports);
+
+  const adminBusinessIntelligence = document.createElement('script');
+  adminBusinessIntelligence.src = 'admin-business-intelligence.js?v=' + Date.now();
+  document.head.appendChild(adminBusinessIntelligence);
 }
