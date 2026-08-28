@@ -2,7 +2,7 @@ window.SUPABASE_URL =
   "https://nzwfowwoazmpnwfrednh.supabase.co";
 
 window.SUPABASE_ANON_KEY =
-  "sb_publishable_fuB02obKKaki0dRsirVVAw_Wyo99pVP";
+  "sb_publishable_fuB02obKKaki0dRsirVVAwWyo99pVP";
 
 window.FUNDA_ADMIN_EMAIL = "";
 
@@ -20,4 +20,16 @@ if (/dashboard\.html$/i.test(window.location.pathname)) {
   const studentSupport=document.createElement('script');
   studentSupport.src='student-support-portal.js?v='+Date.now();
   document.head.appendChild(studentSupport);
+}
+
+if (/library-admin\.html$/i.test(window.location.pathname)) {
+  const libraryUpload=document.createElement('script');
+  libraryUpload.src='library-admin-upload.js?v='+Date.now();
+  document.head.appendChild(libraryUpload);
+}
+
+if (/digital-library\.html$/i.test(window.location.pathname)) {
+  const librarySecure=document.createElement('script');
+  librarySecure.src='library-secure-files.js?v='+Date.now();
+  document.head.appendChild(librarySecure);
 }
