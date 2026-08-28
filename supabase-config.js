@@ -41,4 +41,8 @@ if (/admin-v2\.html$/i.test(window.location.pathname)) {
   const adminMarketingLiveFixes = document.createElement('script');
   adminMarketingLiveFixes.src = 'admin-marketing-live-fixes.js?v=' + Date.now();
   document.head.appendChild(adminMarketingLiveFixes);
+
+  const adminGovernanceCentre = document.createElement('script');
+  adminGovernanceCentre.src = 'admin-governance-centre.js?v=' + Date.now();
+  document.head.appendChild(adminGovernanceCentre);
 }
