@@ -23,9 +23,11 @@ if (/dashboard\.html$/i.test(window.location.pathname)) {
 }
 
 if (/library-admin\.html$/i.test(window.location.pathname)) {
-  const libraryUpload=document.createElement('script');
-  libraryUpload.src='library-admin-upload.js?v='+Date.now();
-  document.head.appendChild(libraryUpload);
+  ['library-admin-upload.js','library-admin-mobile.js'].forEach(file=>{
+    const s=document.createElement('script');
+    s.src=file+'?v='+Date.now();
+    document.head.appendChild(s);
+  });
 }
 
 if (/digital-library\.html$/i.test(window.location.pathname)) {
