@@ -29,7 +29,7 @@ if (/library-admin\.html$/i.test(window.location.pathname)) {
 }
 
 if (/digital-library\.html$/i.test(window.location.pathname)) {
-  ['library-secure-files.js','library-notes-progress.js','library-reader.js','library-smart-discovery.js','library-usability-polish.js','library-theme-navy-gold-rose.js','library-theme-premium.js','library-course-sections.js','library-course-sections-v2.js','library-course-focus-view.js','library-student-collections.js'].forEach(file=>{
+  ['library-secure-files.js','library-notes-progress.js','library-reader.js','library-smart-discovery.js','library-usability-polish.js','library-theme-navy-gold-rose.js','library-theme-premium.js','library-course-sections.js','library-course-sections-v2.js','library-course-focus-view.js','library-student-collections.js','library-final-qc.js'].forEach(file=>{
     const s=document.createElement('script');
     s.src=file+'?v='+Date.now();
     document.head.appendChild(s);
