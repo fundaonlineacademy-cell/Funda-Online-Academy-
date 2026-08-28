@@ -11,4 +11,8 @@ if (/admin-v2\.html$/i.test(window.location.pathname)) {
   const adminUi = document.createElement('script');
   adminUi.src = 'admin-ui-direct.js?v=' + Date.now();
   document.head.appendChild(adminUi);
+
+  const adminTheme = document.createElement('script');
+  adminTheme.src = 'admin-theme-navy-gold.js?v=' + Date.now();
+  document.head.appendChild(adminTheme);
 }
