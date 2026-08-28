@@ -11,7 +11,7 @@ const publicMarketing = document.createElement('script'); publicMarketing.src = 
 
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
   // Stable Admin stack: each upgrade owns one navigation surface only.
-  // No whole-document MutationObservers and no duplicate Communication controller.
-  const files=['admin-theme-navy-gold.js','admin-report-centre.js','admin-executive-safe.js','admin-finance-control-centre.js','admin-governance-safe.js','admin-communication-v2.js'];
+  // No whole-document MutationObservers and no duplicate department controllers.
+  const files=['admin-theme-navy-gold.js','admin-report-centre.js','admin-executive-safe.js','admin-finance-control-centre.js','admin-governance-safe.js','admin-communication-v2.js','admin-marketing-safe.js'];
   files.forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
