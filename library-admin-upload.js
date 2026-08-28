@@ -1,6 +1,6 @@
 (()=>{
 if(!/library-admin\.html$/i.test(location.pathname))return;
-const wait=()=>new Promise(r=>setTimeout(r,0));
+const wait=()=>new Promise(r=>setTimeout(r,60));
 function addUploadUI(){
  const url=document.getElementById('fUrl'),cover=document.getElementById('fCover');
  if(!url||document.getElementById('fFileUpload'))return;
@@ -15,19 +15,19 @@ async function boot(){
  if(typeof oldEdit==='function')window.edit=function(id){oldEdit(id);setTimeout(addUploadUI,0)};
  if(typeof oldSave!=='function')return;
  window.save=async function(){
-   const db=window.db||window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+   const db=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
    const file=document.getElementById('fFileUpload')?.files?.[0]||null,cover=document.getElementById('fCoverUpload')?.files?.[0]||null;
    const external=(document.getElementById('fUrl')?.value||'').trim();
    if(!file&&!external)return alert('Upload a Library file or provide an external resource URL.');
    const title=(document.getElementById('fTitle')?.value||'resource').trim();
-   let filePath=null,coverPath=null,coverUrl=null;
+   let filePath=null,coverPath=null;
    try{
      if(file){
        const ext=(file.name.split('.').pop()||'bin').toLowerCase(),safe=title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,55)||'resource';
        filePath=`${new Date().getFullYear()}/${Date.now()}-${safe}.${ext}`;
        const s=document.getElementById('fFileStatus');if(s)s.textContent='Uploading secure Library file…';
        const up=await db.storage.from('library-files').upload(filePath,file,{upsert:false,cacheControl:'3600'});if(up.error)throw up.error;
-       document.getElementById('fUrl').value='';
+       document.getElementById('fUrl').value=`secure:${filePath}`;
        const fmt=document.getElementById('fFormat');if(fmt){const map={pdf:'PDF',epub:'EPUB',doc:'DOCX',docx:'DOCX',txt:'WEB'};if(map[ext])fmt.value=map[ext]}
        if(s)s.textContent='Secure file uploaded.';
      }
@@ -36,15 +36,14 @@ async function boot(){
        coverPath=`${new Date().getFullYear()}/${Date.now()}-${safe}.${ext}`;
        const s=document.getElementById('fCoverStatus');if(s)s.textContent='Uploading cover…';
        const up=await db.storage.from('library-covers').upload(coverPath,cover,{upsert:false,cacheControl:'86400'});if(up.error)throw up.error;
-       coverUrl=db.storage.from('library-covers').getPublicUrl(coverPath).data.publicUrl;
-       document.getElementById('fCover').value=coverUrl;
+       document.getElementById('fCover').value=db.storage.from('library-covers').getPublicUrl(coverPath).data.publicUrl;
        if(s)s.textContent='Cover uploaded.';
      }
      await oldSave();
      if(filePath||coverPath){
        await wait();
        const q=await db.from('library_resources').select('id').eq('title',title).order('updated_at',{ascending:false}).limit(1).maybeSingle();
-       if(q.data?.id){const patch={};if(filePath)patch.file_path=filePath;if(coverPath)patch.cover_path=coverPath;await db.from('library_resources').update(patch).eq('id',q.data.id)}
+       if(q.data?.id){const patch={};if(filePath){patch.file_path=filePath;patch.file_url=null}if(coverPath)patch.cover_path=coverPath;await db.from('library_resources').update(patch).eq('id',q.data.id)}
      }
    }catch(e){alert('Upload failed: '+(e?.message||e));}
  };
