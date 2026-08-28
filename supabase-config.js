@@ -9,7 +9,7 @@ window.FUNDA_ADMIN_EMAIL = "";
 // Admin Command Center enhancement layer. Kept conditional so student/public pages are unaffected.
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
   const adminEnhancements = document.createElement('script');
-  adminEnhancements.src = 'admin-enhancements.js?v=20260828-system-control';
+  adminEnhancements.src = 'admin-enhancements.js?v=20260828-executive-dashboard';
   adminEnhancements.defer = true;
   document.head.appendChild(adminEnhancements);
 }
