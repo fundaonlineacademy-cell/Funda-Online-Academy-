@@ -8,11 +8,11 @@
 **Coverage:** All eight Module 5 lessons.
 
 1. Which statement BEST describes a professional diary?  
-A. A list of meetings only  
-B. A control system for time, commitments, preparation and availability  
+A. A control system for time, commitments, preparation and availability  
+B. A list of meetings only  
 C. A personal notebook only  
 D. A record of travel expenses only  
-**Answer: B**
+**Answer: A**
 
 2. Which calendar entry is MOST complete?  
 A. “Meeting”  
@@ -23,17 +23,17 @@ D. “Call later”
 
 3. What is the purpose of buffer time?  
 A. To fill empty diary space  
-B. To allow for preparation, travel, transition and reasonable overruns  
-C. To make all meetings longer  
+B. To make all meetings longer  
+C. To allow for preparation, travel, transition and reasonable overruns  
 D. To replace planning  
-**Answer: B**
+**Answer: C**
 
 4. Which is a fixed commitment?  
-A. A client meeting confirmed for 14:00  
-B. Drafting a report any time before Friday  
-C. Filing routine documents  
-D. Reviewing emails during the week  
-**Answer: A**
+A. Drafting a report any time before Friday  
+B. Filing routine documents  
+C. Reviewing emails during the week  
+D. A client meeting confirmed for 14:00  
+**Answer: D**
 
 5. Why should recurring events be reviewed periodically?  
 A. They may continue after schedules or requirements change  
@@ -43,25 +43,25 @@ D. They do not appear in calendars
 **Answer: A**
 
 6. Why can calendar titles create confidentiality risk?  
-A. They may reveal sensitive business or personal information  
-B. All calendar titles are public  
+A. All calendar titles are public  
+B. They may reveal sensitive business or personal information  
 C. Titles cannot be hidden  
 D. Confidentiality applies only to email  
-**Answer: A**
+**Answer: B**
 
 7. Before accepting a new meeting request, what should be checked?  
-A. Existing commitments and operational constraints  
-B. Only whether the slot looks empty  
-C. Only the requester's seniority  
+A. Only whether the slot looks empty  
+B. Only the requester's seniority  
+C. Existing commitments and operational constraints  
 D. Only room availability  
-**Answer: A**
+**Answer: C**
 
 8. Which factor is MOST relevant to priority assessment?  
-A. Purpose, deadline, impact and movability  
-B. Message length  
-C. Number of attachments  
-D. Alphabetical order  
-**Answer: A**
+A. Message length  
+B. Number of attachments  
+C. Alphabetical order  
+D. Purpose, deadline, impact and movability  
+**Answer: D**
 
 9. A routine internal catch-up conflicts with a fixed external tender presentation. What is the BEST likely approach?  
 A. Protect the less movable high-impact commitment and seek an alternative for the routine meeting  
@@ -71,25 +71,25 @@ D. Ignore the conflict
 **Answer: A**
 
 10. When should a scheduling conflict be escalated?  
-A. When the administrator lacks authority to choose between significant competing commitments  
-B. For every meeting request  
+A. For every meeting request  
+B. When the administrator lacks authority to choose between significant competing commitments  
 C. Only after both meetings have started  
 D. Never  
-**Answer: A**
+**Answer: B**
 
 11. Why should preparation time be scheduled?  
-A. A person may attend on time but still be unprepared  
-B. Preparation is optional  
-C. It replaces all meetings  
+A. Preparation is optional  
+B. It replaces all meetings  
+C. A person may attend on time but still be unprepared  
 D. It is only for external visitors  
-**Answer: A**
+**Answer: C**
 
 12. What should be done after a material diary change?  
-A. Update the calendar and all affected dependencies/stakeholders  
-B. Rely on memory  
-C. Tell only one attendee  
-D. Leave old information visible  
-**Answer: A**
+A. Rely on memory  
+B. Tell only one attendee  
+C. Leave old information visible  
+D. Update the calendar and all affected dependencies/stakeholders  
+**Answer: D**
 
 13. Why should meeting purpose be clarified before invitations are sent?  
 A. It guides attendees, duration, preparation and desired outcome  
@@ -99,25 +99,25 @@ D. It eliminates follow-up
 **Answer: A**
 
 14. Who is a required attendee?  
-A. Someone whose participation or authority is necessary for the meeting purpose  
-B. Everyone in the organisation  
+A. Everyone in the organisation  
+B. Someone whose participation or authority is necessary for the meeting purpose  
 C. Anyone copied on another email  
 D. Every person with an open diary  
-**Answer: A**
+**Answer: B**
 
 15. Which is a key invitation element?  
-A. Date, time, venue/link and required preparation  
-B. The organiser's personal social plans  
-C. Every internal discussion about the meeting  
+A. The organiser's personal social plans  
+B. Every internal discussion about the meeting  
+C. Date, time, venue/link and required preparation  
 D. Only the meeting title  
-**Answer: A**
+**Answer: C**
 
 16. Why is a free meeting room not automatically suitable?  
-A. Capacity, privacy, equipment or accessibility may be wrong  
-B. Free rooms cannot be booked  
-C. Rooms do not need checks  
-D. Only online meetings need logistics  
-**Answer: A**
+A. Free rooms cannot be booked  
+B. Rooms do not need checks  
+C. Only online meetings need logistics  
+D. Capacity, privacy, equipment or accessibility may be wrong  
+**Answer: D**
 
 17. What should happen if a required attendee declines?  
 A. Resolve the impact before the meeting through rescheduling, substitute authority or escalation  
@@ -127,25 +127,25 @@ D. Start the meeting anyway in every case
 **Answer: A**
 
 18. Why should confidential meeting links or materials be restricted?  
-A. To prevent unauthorised access  
-B. To make meetings harder to join  
+A. To make meetings harder to join  
+B. To prevent unauthorised access  
 C. Because all meetings are confidential  
 D. To avoid using a calendar  
-**Answer: A**
+**Answer: B**
 
 19. Which agenda item is MOST decision-focused?  
 A. “Budget”  
-B. “Approve revised Q3 budget”  
-C. “Other matters”  
+B. “Other matters”  
+C. “Approve revised Q3 budget”  
 D. “Finance update maybe”  
-**Answer: B**
+**Answer: C**
 
 20. Why assign an owner to an agenda item?  
-A. To clarify who will present or lead the item  
-B. To transfer full meeting authority  
-C. To eliminate the chair  
-D. To avoid timing the item  
-**Answer: A**
+A. To transfer full meeting authority  
+B. To eliminate the chair  
+C. To avoid timing the item  
+D. To clarify who will present or lead the item  
+**Answer: D**
 
 21. Why should agenda time allocations be realistic?  
 A. To keep the meeting within available time and protect important items  
@@ -155,25 +155,25 @@ D. To increase the number of items
 **Answer: A**
 
 22. What should happen when meeting-pack material is late?  
-A. Track and escalate if the delay threatens the meeting purpose  
-B. Insert an old version without checking  
+A. Insert an old version without checking  
+B. Track and escalate if the delay threatens the meeting purpose  
 C. Ignore it  
 D. Cancel all meetings  
-**Answer: A**
+**Answer: B**
 
 23. Why must pack documents be version-checked?  
-A. Participants need current authoritative information  
-B. Older versions are always better  
-C. Version control applies only after the meeting  
+A. Older versions are always better  
+B. Version control applies only after the meeting  
+C. Participants need current authoritative information  
 D. Drafts are always approved  
-**Answer: A**
+**Answer: C**
 
 24. Which logistics should be checked for a hybrid meeting?  
-A. Room, connectivity, audio, link and screen sharing  
-B. Paper clips only  
-C. Travel passports for all attendees  
-D. Reception badges only  
-**Answer: A**
+A. Paper clips only  
+B. Travel passports for all attendees  
+C. Reception badges only  
+D. Room, connectivity, audio, link and screen sharing  
+**Answer: D**
 
 25. What are minutes intended to record?  
 A. Key proceedings, decisions and actions according to the required style  
@@ -190,18 +190,18 @@ D. “Discuss later.”
 **Answer: B**
 
 27. Why should minutes be neutral?  
-A. They are organisational records and should focus on relevant facts rather than unnecessary judgement  
-B. Neutral minutes cannot contain decisions  
-C. Opinions are always required  
+A. Neutral minutes cannot contain decisions  
+B. Opinions are always required  
+C. They are organisational records and should focus on relevant facts rather than unnecessary judgement  
 D. Neutrality means omitting actions  
-**Answer: A**
+**Answer: C**
 
 28. When is clarification during a meeting useful?  
-A. When a material decision, owner or deadline is unclear  
-B. Whenever the minute taker disagrees  
-C. To prolong the meeting  
-D. Only after the meeting ends  
-**Answer: A**
+A. Whenever the minute taker disagrees  
+B. To prolong the meeting  
+C. Only after the meeting ends  
+D. When a material decision, owner or deadline is unclear  
+**Answer: D**
 
 29. Why should minutes be drafted soon after the meeting?  
 A. Context is easier to verify while fresh  
@@ -211,25 +211,25 @@ D. Minutes expire after one day
 **Answer: A**
 
 30. Why use an action register?  
-A. To make outstanding commitments easier to monitor  
-B. To replace approved minutes entirely  
+A. To replace approved minutes entirely  
+B. To make outstanding commitments easier to monitor  
 C. To avoid deadlines  
 D. To record only completed work  
-**Answer: A**
+**Answer: B**
 
 31. Which status is MORE informative than “pending”?  
-A. Waiting for Finance approval  
-B. Pending  
-C. Maybe later  
+A. Pending  
+B. Maybe later  
+C. Waiting for Finance approval  
 D. Unknown  
-**Answer: A**
+**Answer: C**
 
 32. Why should follow-up occur before the due date?  
-A. To leave time to recover from blockers or missing inputs  
-B. To create unnecessary pressure  
-C. To make the deadline irrelevant  
-D. To transfer ownership  
-**Answer: A**
+A. To create unnecessary pressure  
+B. To make the deadline irrelevant  
+C. To transfer ownership  
+D. To leave time to recover from blockers or missing inputs  
+**Answer: D**
 
 33. What is a dependency?  
 A. Something required before an action can progress  
@@ -239,25 +239,25 @@ D. An agenda heading
 **Answer: A**
 
 34. What should be known before escalating an overdue action?  
-A. Current status, attempts made, impact and required support  
-B. Only the owner's job title  
+A. Only the owner's job title  
+B. Current status, attempts made, impact and required support  
 C. Only the original meeting date  
 D. Nothing  
-**Answer: A**
+**Answer: B**
 
 35. What is closure evidence?  
-A. Information confirming the expected output was delivered or completed  
-B. A reminder email only  
-C. A cancelled deadline  
+A. A reminder email only  
+B. A cancelled deadline  
+C. Information confirming the expected output was delivered or completed  
 D. A meeting invitation  
-**Answer: A**
+**Answer: C**
 
 36. Why should the action register be updated before the next meeting?  
-A. So unresolved exceptions can be addressed efficiently  
-B. So completed actions can be reopened  
-C. To remove all owners  
-D. To avoid chair review  
-**Answer: A**
+A. So completed actions can be reopened  
+B. To remove all owners  
+C. To avoid chair review  
+D. So unresolved exceptions can be addressed efficiently  
+**Answer: D**
 
 37. What should travel planning begin with?  
 A. The business purpose, dates and required commitments  
@@ -267,25 +267,25 @@ D. Seat preference only
 **Answer: A**
 
 38. Why must traveller names and identification details be verified?  
-A. Incorrect details can cause booking and travel problems  
-B. Travel systems correct all errors automatically  
+A. Travel systems correct all errors automatically  
+B. Incorrect details can cause booking and travel problems  
 C. Names are not important  
 D. It is only required for accommodation  
-**Answer: A**
+**Answer: B**
 
 39. What should travel policy be checked for?  
-A. Suppliers, booking classes, limits, approvals and expenses  
-B. Only preferred airlines  
-C. Only meal times  
+A. Only preferred airlines  
+B. Only meal times  
+C. Suppliers, booking classes, limits, approvals and expenses  
 D. Public holidays only  
-**Answer: A**
+**Answer: C**
 
 40. Why can a more expensive flight be the better business option?  
-A. It may protect the meeting schedule and reduce total disruption or transfer risk  
-B. Higher prices always mean better service  
-C. Policy never matters  
-D. Cost should never be considered  
-**Answer: A**
+A. Higher prices always mean better service  
+B. Policy never matters  
+C. Cost should never be considered  
+D. It may protect the meeting schedule and reduce total disruption or transfer risk  
+**Answer: D**
 
 41. Which itinerary format is BEST?  
 A. Chronological and easy to scan  
@@ -295,25 +295,25 @@ D. Flights only
 **Answer: A**
 
 42. Why should ground transport be planned, not assumed?  
-A. Distance, traffic, collection arrangements and local conditions affect timing  
-B. Ground travel never affects meetings  
+A. Ground travel never affects meetings  
+B. Distance, traffic, collection arrangements and local conditions affect timing  
 C. Airports are always beside meeting venues  
 D. Transfers are always included  
-**Answer: A**
+**Answer: B**
 
 43. Why should executive travel details be shared selectively?  
-A. They may reveal sensitive movement and accommodation information  
-B. Travel data is always public  
-C. Itinerary sharing is illegal  
+A. Travel data is always public  
+B. Itinerary sharing is illegal  
+C. They may reveal sensitive movement and accommodation information  
 D. Only Finance can see bookings  
-**Answer: A**
+**Answer: C**
 
 44. What is contingency planning?  
-A. Identifying likely disruption points and preparing buffers or alternatives  
-B. Booking two of everything without approval  
-C. Ignoring cancellation terms  
-D. Travelling without an itinerary  
-**Answer: A**
+A. Booking two of everything without approval  
+B. Ignoring cancellation terms  
+C. Travelling without an itinerary  
+D. Identifying likely disruption points and preparing buffers or alternatives  
+**Answer: D**
 
 45. During a disruption, what should be established first?  
 A. What changed, the business impact and available options  
@@ -323,25 +323,25 @@ D. How to delete the old itinerary
 **Answer: A**
 
 46. Why should the entire itinerary be reviewed after a flight change?  
-A. Transfers, hotels, meetings and other bookings may be affected  
-B. Only the flight matters  
+A. Only the flight matters  
+B. Transfers, hotels, meetings and other bookings may be affected  
 C. Calendar commitments are unrelated  
 D. Expenses never change  
-**Answer: A**
+**Answer: B**
 
 47. When may travel changes require approval?  
-A. When extra cost or policy thresholds exceed delegated authority  
-B. Never  
-C. Only after the trip  
+A. Never  
+B. Only after the trip  
+C. When extra cost or policy thresholds exceed delegated authority  
 D. Only when the traveller asks  
-**Answer: A**
+**Answer: C**
 
 48. Which records should be retained after rebooking?  
-A. Updated confirmations, change/cancellation evidence, costs and approvals  
-B. Nothing once the new flight is booked  
-C. Only the boarding pass  
-D. Only personal text messages  
-**Answer: A**
+A. Nothing once the new flight is booked  
+B. Only the boarding pass  
+C. Only personal text messages  
+D. Updated confirmations, change/cancellation evidence, costs and approvals  
+**Answer: D**
 
 49. Why should company-paid and employee-paid travel costs be distinguished?  
 A. To prevent duplicate reimbursement  
@@ -351,22 +351,22 @@ D. To remove approval
 **Answer: A**
 
 50. What should happen with an out-of-policy emergency expense?  
-A. Follow the approved exception process and provide genuine evidence  
-B. Hide the expense  
+A. Hide the expense  
+B. Follow the approved exception process and provide genuine evidence  
 C. Create a false receipt  
 D. Change the expense description  
-**Answer: A**
+**Answer: B**
 
 51. What is travel reconciliation?  
-A. Comparing expenses, bookings, approvals and supporting evidence  
-B. Choosing a seat  
-C. Creating the first itinerary  
+A. Choosing a seat  
+B. Creating the first itinerary  
+C. Comparing expenses, bookings, approvals and supporting evidence  
 D. Cancelling all outstanding claims  
-**Answer: A**
+**Answer: C**
 
 52. Which principle links diary, meeting and travel administration?  
-A. Protect the underlying business commitment through accurate planning, controlled changes and follow-through  
-B. Always choose the cheapest option  
-C. Keep every minute of the diary full  
-D. Avoid escalation  
-**Answer: A**
+A. Always choose the cheapest option  
+B. Keep every minute of the diary full  
+C. Avoid escalation  
+D. Protect the underlying business commitment through accurate planning, controlled changes and follow-through  
+**Answer: D**
