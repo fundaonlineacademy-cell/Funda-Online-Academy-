@@ -2,92 +2,184 @@
 ## Module 3: Products, Listings, Pricing & Merchandising
 ### Lesson 6: Discounts, Promotions & Promotional Pricing
 
-**Estimated study time:** 30–35 minutes
+**Estimated study time:** 40–45 minutes
 
 ## Learning Outcomes
 By the end of this lesson, you should be able to:
-1. Explain common types of e-commerce promotions.
-2. Calculate basic percentage and fixed-amount discounts.
-3. Identify commercial and customer risks in poorly designed promotions.
-4. Apply clear promotional-pricing rules.
-5. Review a promotion before launch.
+1. Explain common types of e-commerce promotions and when each may be appropriate.
+2. Calculate percentage, fixed-amount and multi-step discounts accurately.
+3. Identify commercial, operational and customer risks in poorly designed promotions.
+4. Apply clear eligibility, stacking and expiry rules.
+5. Review a promotion before launch and evaluate its results afterwards.
 
 ## Why This Lesson Matters
-Promotions can increase sales, clear stock or attract new customers, but they can also reduce profit, confuse customers or damage trust when the rules are unclear. A discount should therefore be treated as a controlled commercial decision rather than simply lowering a price.
+Promotions can increase order volume, attract new customers, clear slow-moving stock and support seasonal campaigns. They can also reduce profit, confuse shoppers and damage trust when the offer is badly designed. A successful promotion is therefore more than a lower price: it is a controlled commercial decision with a defined objective, accurate calculation, clear conditions and tested system behaviour.
+
+For an online store, promotional mistakes can scale quickly. A coupon configured incorrectly may apply to thousands of orders. A misleading reference price can create customer complaints. A free-delivery offer may increase sales while making every order unprofitable. Staff should therefore understand both the customer-facing and commercial sides of a campaign.
 
 ## Key Terms / Vocabulary
-- **Percentage discount** — A reduction calculated as a percentage of the original price.
-- **Fixed discount** — A set monetary amount deducted from the price.
-- **Coupon code** — A code used to activate a promotional benefit.
-- **Bundle** — Two or more products offered together under a combined offer.
+- **Percentage discount** — A reduction calculated as a percentage of the original or qualifying price.
+- **Fixed discount** — A set monetary amount deducted from a product or order.
+- **Coupon code** — A code used to activate a defined promotional benefit.
+- **Bundle** — Two or more products offered together under a combined commercial offer.
 - **Promotional period** — The defined start and end dates of an offer.
 - **Minimum spend** — A required order value before a promotion applies.
+- **Discount stacking** — More than one promotion applying to the same product or transaction.
+- **Reference price** — A price used as the basis for showing a promotional saving.
+- **Contribution** — The amount remaining after relevant variable costs to contribute toward fixed costs and profit.
 
 ## Main Lesson Content
-### 1. Choose the right promotion type
-Common promotions include percentage discounts, fixed-amount reductions, bundles, free-delivery offers, coupon codes and limited-period sale pricing. The correct method depends on the business objective.
+### 1. Start with a clear business objective
+Every promotion should answer the question: **What business problem are we trying to solve?** Common objectives include clearing old stock, acquiring new customers, increasing average order value, encouraging repeat purchases, supporting a product launch or increasing sales during a seasonal period.
 
-A clearance campaign may focus on selected slow-moving stock, while a customer-acquisition campaign may use a first-order coupon. Every promotion should have a clear purpose and defined eligibility.
+The objective influences the promotion type. A clearance campaign may use a direct markdown on selected products. A customer-acquisition campaign may use a first-order coupon. A basket-building campaign may use a minimum-spend reward or bundle.
 
-### 2. Calculate discounts accurately
-For a percentage discount:
+Without a clear objective, a campaign can create extra orders without creating useful business value.
+
+### 2. Understand common promotion types
+Common e-commerce promotions include:
+- percentage discounts, such as 15% off;
+- fixed reductions, such as R100 off;
+- coupon codes;
+- product bundles;
+- buy-one-get-one or multi-buy offers;
+- free-delivery thresholds;
+- first-order or loyalty offers; and
+- limited-period sale pricing.
+
+The store should define exactly which products, customers, dates and order conditions qualify.
+
+### 3. Calculate percentage discounts accurately
+Use the formula:
 
 `Discount = Original Price × Discount %`
 
-If a product costs R800 and receives a 15% discount:
-- Discount = R800 × 15% = R120
-- Promotional price = R680
+If a product sells for R800 and receives a 15% discount:
+- Discount = R800 × 0.15 = R120
+- Promotional price = R800 − R120 = **R680**
 
-For a fixed discount of R100 on an R800 product, the promotional price is R700.
+For a fixed R100 reduction on the same R800 item, the promotional price is **R700**.
 
-Staff should calculate the final price before publishing the offer and confirm that the discount does not create an unacceptable commercial result.
+Calculations should be checked before the campaign is published, especially when several products or tiers are involved.
 
-### 3. Define the rules clearly
-A promotion should state relevant conditions such as eligible products, minimum spend, coupon requirement, start and end dates, usage limits and exclusions.
+### 4. Understand sequential discounts
+Two discounts do not always mean their percentages can simply be added. If a R1,000 product receives 20% off and then another 10% discount on the reduced price:
+- First discount: R1,000 × 20% = R200
+- Price after first discount = R800
+- Second discount: R800 × 10% = R80
+- Final price = **R720**
 
-Ambiguous wording creates complaints. If free delivery applies only to orders over R600 or only to certain delivery areas, that condition should be made clear before the customer relies on the offer.
+The effective total reduction is R280, or 28%, not 30%.
 
-### 4. Protect pricing integrity
-Promotional pricing should be based on genuine pricing information. Avoid creating an exaggerated “was” price purely to make the discount appear larger. Promotional claims should reflect the actual offer and should not mislead customers about the value or urgency of the deal.
+This matters when coupons and automatic sale pricing can combine.
 
-### 5. Check stacking and system behaviour
-Some platforms allow several discounts to apply at once. This can unintentionally create a much larger reduction than planned. Test whether coupon codes, automatic discounts, bundles and free-shipping rules can combine.
+### 5. Protect margin and contribution
+Before launching a promotion, compare the proposed selling price with relevant costs. Suppose an item costs R420, normally sells for R700 and has payment and fulfilment costs of R40 per order. A 30% discount reduces the selling price to R490.
 
-The business should decide whether promotions may stack and configure the store accordingly.
+At R490, the amount remaining after the R420 product cost and R40 variable costs is only R30. The promotion may still make strategic sense, but the business should make that decision knowingly rather than assuming higher sales volume automatically means a strong result.
 
-### 6. Review results after the campaign
-A successful promotion is not measured only by sales volume. Review revenue, margin effect, stock movement, average order value and customer behaviour. A campaign that produces many orders but poor contribution may not be commercially successful.
+### 6. Define conditions clearly
+A promotion should state relevant conditions such as:
+- eligible products or categories;
+- minimum spend;
+- customer eligibility;
+- coupon requirement;
+- start and end dates;
+- usage limits;
+- excluded products;
+- whether delivery is included; and
+- whether the promotion can combine with another offer.
+
+If free delivery applies only above R600 or only to selected service areas, that condition should be clear before checkout.
+
+### 7. Protect pricing integrity
+Promotional pricing should be based on genuine pricing information. Avoid inflating a supposed “was” price simply to make the discount appear larger. Likewise, avoid artificial urgency such as a countdown that continually restarts when the offer is not genuinely ending.
+
+Promotional claims should accurately describe the actual benefit and material conditions. Clear pricing supports informed customer decisions and reduces complaints.
+
+### 8. Test stacking and system behaviour
+Promotions should be tested in the actual store before launch. Test scenarios can include:
+- one qualifying product;
+- one excluded product;
+- basket values just below and just above a threshold;
+- coupon plus automatic markdown;
+- free-delivery plus product discount;
+- repeated coupon use; and
+- checkout immediately before and after the promotional end time.
+
+The business should decide which combinations are allowed and configure the platform accordingly.
+
+### 9. Monitor live campaigns
+Once a campaign is active, monitor whether the configured prices and rules are working as intended. Check customer complaints, order totals, coupon usage, stock movement and unusual combinations. If an error is discovered, correct it quickly and document what happened.
+
+### 10. Evaluate results after the campaign
+A successful promotion is not measured only by the number of orders. Review relevant measures such as:
+- revenue;
+- units sold;
+- gross profit or contribution;
+- average order value;
+- stock cleared;
+- new-customer acquisition;
+- repeat purchase behaviour; and
+- return or cancellation rate.
+
+A campaign may produce record sales volume while reducing profit or attracting customers who never return. The result should therefore be judged against the original objective.
 
 ## Worked Example / Demonstration
-**Scenario:** A store offers 20% off a R500 product and also has a R50 coupon active.
+**Scenario:** A store normally sells a backpack for R500. It plans a 20% sale and also has a R50 coupon available.
 
-If both discounts stack, the final price may be lower than intended. The team therefore tests the promotion, decides the coupon cannot be combined with sale pricing and publishes the rule clearly.
+**Step 1:** 20% of R500 = R100, so the sale price is R400.
+
+**Step 2:** If the R50 coupon stacks, the final price becomes R350.
+
+**Step 3:** The team checks the product cost and discovers that R350 would leave an unacceptably low contribution after payment and fulfilment costs.
+
+**Decision:** The coupon is configured not to combine with sale pricing. The exclusion is stated clearly in the promotion terms and tested at checkout before launch.
 
 ## Practical Activity
-Design one promotional campaign for an imaginary store. State the objective, products included, discount type, final customer price, start and end dates, exclusions and whether the offer can combine with other discounts.
+Design one promotional campaign for an imaginary South African online store. Record:
+1. campaign objective;
+2. products included;
+3. normal selling price;
+4. discount type and calculation;
+5. final promotional price;
+6. relevant unit or fulfilment costs;
+7. minimum-spend or eligibility rules;
+8. start and end dates;
+9. exclusions;
+10. stacking rule; and
+11. three test transactions you would perform before launch.
+
+Then explain how you would decide whether the campaign succeeded.
 
 ## Knowledge Check
 1. What is the final price after 10% off R900?
-2. Why should promotion rules be clearly stated?
-3. What does discount stacking mean?
-4. Why can a large sales increase still be commercially poor?
-5. Give one reason to use a bundle promotion.
+2. A R1,000 item receives 20% off and then 10% off the reduced price. What is the final price?
+3. Why should promotion rules be clearly stated?
+4. What does discount stacking mean?
+5. Why can a large sales increase still be commercially poor?
+6. Why should a reference price be genuine?
+7. Give two test cases for a minimum-spend promotion.
 
 ## Feedback / Explanation
 1. R810.
-2. Customers need to understand eligibility and conditions before relying on the offer.
-3. More than one discount applies to the same transaction.
-4. Margin or contribution may fall too far.
-5. Bundles can increase order value or help move complementary products.
+2. R720.
+3. Customers and staff need to understand eligibility, exclusions and conditions consistently.
+4. More than one discount applies to the same product or transaction.
+5. Margin or contribution may fall too far, or the promotion may not achieve its intended objective.
+6. An artificial reference price can create a misleading impression of the saving.
+7. For example, test a basket just below the threshold and one just above it.
 
 ## Key Takeaways
-- Promotions need a clear business objective.
+- Promotions should begin with a defined commercial objective.
 - Discount calculations must be accurate before launch.
+- Sequential discounts can produce a different result from simply adding percentages.
+- Margin and contribution should be reviewed before approving a campaign.
 - Conditions and exclusions should be easy to understand.
 - Systems must be tested for unintended discount combinations.
-- Promotion success should be judged by commercial results, not sales volume alone.
+- Promotion success should be judged against commercial and customer outcomes, not sales volume alone.
 
 ## Visual Learning Guidance
-**Recommended visual:** A promotion-check flow: Objective → Discount Calculation → Rules → System Test → Launch → Results Review.
+**Recommended visual:** Objective → Promotion Type → Price Calculation → Margin Check → Rules → System Testing → Launch → Monitor → Results Review.
 
-**Caption:** “A promotion is a controlled pricing decision, not just a lower number.”
+**Caption:** “A promotion is a controlled commercial decision from calculation through post-campaign review.”
