@@ -23,11 +23,11 @@ D. A salary schedule
 **Answer: C**
 
 3. Why should authority limits be defined?  
-A. To show which actions may be performed and which require approval or escalation  
+A. To remove management  
 B. To allow the learner to approve everything  
-C. To remove management  
-D. To avoid journals  
-**Answer: A**
+C. To avoid journals  
+D. To show which actions may be performed and which require approval or escalation  
+**Answer: D**
 
 4. What should be checked before current-period processing begins?  
 A. Whether opening debits and credits agree  
@@ -52,11 +52,11 @@ D. Equity
 **Answer: C**
 
 7. Why are duplicate ledger accounts risky?  
-A. Transactions may be split inconsistently between similar accounts  
-B. They make reports shorter  
-C. They guarantee accuracy  
-D. They eliminate reconciliation  
-**Answer: A**
+A. They make reports shorter  
+B. They guarantee accuracy  
+C. They eliminate reconciliation  
+D. Transactions may be split inconsistently between similar accounts  
+**Answer: D**
 
 8. Which is the normal balance of an expense account?  
 A. Debit  
@@ -81,11 +81,11 @@ D. increases expenses
 **Answer: C**
 
 11. What should happen with an unidentified receipt?  
-A. Investigate before allocation  
-B. Post it to the largest customer  
-C. Record it as sales automatically  
-D. Ignore it permanently  
-**Answer: A**
+A. Post it to the largest customer  
+B. Record it as sales automatically  
+C. Ignore it permanently  
+D. Investigate before allocation  
+**Answer: D**
 
 12. Why should duplicate invoice numbers be investigated?  
 A. They may indicate duplicate capture or payment risk  
@@ -96,25 +96,25 @@ D. They affect only filing
 
 ## Lesson 4 — Maintain Journals, Ledgers and Cashbooks
 13. What must always be true of a journal entry?  
-A. Total debits equal total credits  
-B. It uses only two accounts  
+A. It uses only two accounts  
+B. Total debits equal total credits  
 C. It affects bank  
 D. It is a correction  
-**Answer: A**
+**Answer: B**
 
 14. What is a subsidiary ledger?  
 A. A tax table  
-B. A detailed set of records supporting a general-ledger control account  
-C. A bank reconciliation  
+B. A bank reconciliation  
+C. A detailed set of records supporting a general-ledger control account  
 D. A final report  
-**Answer: B**
+**Answer: C**
 
 15. What is the purpose of posting references?  
-A. Make transactions traceable between evidence, journals and ledgers  
-B. Replace balances  
-C. Increase account numbers  
-D. Remove approvals  
-**Answer: A**
+A. Replace balances  
+B. Increase account numbers  
+C. Remove approvals  
+D. Make transactions traceable between evidence, journals and ledgers  
+**Answer: D**
 
 16. What should happen when a control account does not reconcile?  
 A. Investigate before posting any correcting entry  
@@ -125,25 +125,25 @@ D. Ignore the difference
 
 ## Lesson 5 — Reconcile Bank, Debtors and Creditors
 17. Why update the cashbook before bank reconciliation?  
-A. Internal records should include known valid bank items first  
-B. Bank statements are always wrong  
+A. Bank statements are always wrong  
+B. Internal records should include known valid bank items first  
 C. Timing items disappear  
 D. It removes the need for reconciliation  
-**Answer: A**
+**Answer: B**
 
 18. What is a reconciling item?  
-A. A difference explaining why related records do not yet agree  
-B. A tax invoice  
-C. A permanent error account  
+A. A tax invoice  
+B. A permanent error account  
+C. A difference explaining why related records do not yet agree  
 D. A payroll deduction  
-**Answer: A**
+**Answer: C**
 
 19. What should Creditors Control agree to?  
 A. Customer balances  
 B. Bank balance  
-C. Net total of supplier balances  
-D. Sales  
-**Answer: C**
+C. Sales  
+D. Net total of supplier balances  
+**Answer: D**
 
 20. What should happen to unresolved reconciliation differences?  
 A. Assign ownership and follow up until resolved or escalated  
@@ -154,25 +154,25 @@ D. Leave them off the reconciliation
 
 ## Lesson 6 — Process Period-end Adjustments
 21. What is a period-end adjustment?  
-A. An entry updating accounts before final reporting  
-B. A supplier payment  
+A. A supplier payment  
+B. An entry updating accounts before final reporting  
 C. A customer receipt  
 D. A bank transfer only  
-**Answer: A**
+**Answer: B**
 
 22. What is an accrual?  
 A. A future asset purchase  
-B. Recognition of an item relating to the period before settlement where applicable  
-C. A cash withdrawal  
+B. A cash withdrawal  
+C. Recognition of an item relating to the period before settlement where applicable  
 D. A duplicate transaction  
-**Answer: B**
+**Answer: C**
 
 23. Why should depreciation follow an approved policy?  
-A. Useful lives and methods should not be invented by the bookkeeper  
-B. Depreciation never affects reports  
-C. Every asset uses the same rate  
-D. It replaces the asset register  
-**Answer: A**
+A. Depreciation never affects reports  
+B. Every asset uses the same rate  
+C. It replaces the asset register  
+D. Useful lives and methods should not be invented by the bookkeeper  
+**Answer: D**
 
 24. What should follow approved adjustments?  
 A. An adjusted trial balance and review  
@@ -183,25 +183,25 @@ D. Supplier reconciliation only
 
 ## Lesson 7 — Prepare Basic Financial Reports and Control Schedules
 25. Which trial balance should be used for final reports?  
-A. The final reviewed adjusted trial balance  
-B. The first draft  
+A. The first draft  
+B. The final reviewed adjusted trial balance  
 C. Opening trial balance only  
 D. Any trial balance that balances  
-**Answer: A**
+**Answer: B**
 
 26. What does the statement of profit or loss show?  
 A. Assets and liabilities only  
-B. Income, expenses and resulting profit or loss for the period  
-C. Customer balances only  
+B. Customer balances only  
+C. Income, expenses and resulting profit or loss for the period  
 D. Bank timing differences  
-**Answer: B**
+**Answer: C**
 
 27. What should the reported bank balance agree to?  
-A. The reconciled bank ledger/cashbook balance  
-B. Supplier balances  
-C. Revenue  
-D. Equity only  
-**Answer: A**
+A. Supplier balances  
+B. Revenue  
+C. Equity only  
+D. The reconciled bank ledger/cashbook balance  
+**Answer: D**
 
 28. Why perform cross-document checks?  
 A. To detect inconsistencies between reports, ledgers and supporting schedules  
@@ -212,25 +212,25 @@ D. To remove draft labels
 
 ## Lesson 8 — Final Portfolio, Handover and Continuous-improvement Review
 29. What is the purpose of a final evidence index?  
-A. Trace required outputs to supporting evidence and locations  
-B. Replace all actual documents  
+A. Replace all actual documents  
+B. Trace required outputs to supporting evidence and locations  
 C. Store passwords  
 D. Record only completed lessons  
-**Answer: A**
+**Answer: B**
 
 30. Which item belongs in a bookkeeping handover?  
 A. Personal opinions about customers  
-B. Outstanding items, deadlines, record locations and owners  
-C. Shared passwords  
+B. Shared passwords  
+C. Outstanding items, deadlines, record locations and owners  
 D. Unrelated office gossip  
-**Answer: B**
+**Answer: C**
 
 31. What is a root cause?  
-A. The underlying reason a problem keeps occurring  
-B. A temporary workaround  
-C. A ledger balance  
-D. A bank charge  
-**Answer: A**
+A. A temporary workaround  
+B. A ledger balance  
+C. A bank charge  
+D. The underlying reason a problem keeps occurring  
+**Answer: D**
 
 32. When should a bookkeeper refer a matter?  
 A. When it exceeds role authority or requires specialist tax, legal, accounting-policy or management judgement  
