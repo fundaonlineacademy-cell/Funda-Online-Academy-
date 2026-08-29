@@ -1,12 +1,13 @@
-# Office Administration Certificate: From Admin to PA — Source Audit
+# Office Administration Certificate: From Admin to PA — Source & Production Audit
 
 ## Audit status
 **Source build:** COMPLETE  
-**Audit stage:** COMPLETE for structure, assessment architecture, answer-position balance, and high-risk legal/privacy scope.  
-**Production reconciliation:** READY, subject to controlled database replacement that preserves the existing enrolment record.
+**Source audit:** COMPLETE  
+**Production reconciliation:** COMPLETE  
+**Post-deployment integrity verification:** PASSED
 
-## 1. Course structure
-The approved rebuild contains eight modules with eight lessons each (64 lessons total):
+## 1. Approved course structure
+The rebuilt course contains eight modules with eight lessons each (64 lessons total):
 
 1. Office Administration Foundations
 2. Professional Communication
@@ -17,12 +18,10 @@ The approved rebuild contains eight modules with eight lessons each (64 lessons 
 7. Office Technology, Information & Confidentiality
 8. Practical Admin-to-PA Project
 
-Each module source directory contains:
+Each repository module contains:
 - `lesson-1.md` through `lesson-8.md`
 - `formative-assessment.md`
 - `summative-assessment-bank.md`
-
-The previous live database structure has 10 lesson records per module and is treated as legacy material to be replaced only during controlled production reconciliation.
 
 ## 2. Lesson quality standard
 The rebuilt lessons use the agreed modern course pattern, including as appropriate:
@@ -38,10 +37,10 @@ The rebuilt lessons use the agreed modern course pattern, including as appropria
 - key takeaways
 - visual learning guidance
 
-Lesson depth varies according to subject complexity rather than artificial padding. Narrower topics are kept concise while complex operational topics receive deeper treatment.
+Lesson depth varies according to subject complexity rather than artificial padding. Narrower topics are concise while deeper operational topics receive fuller treatment.
 
 ## 3. Assessment architecture
-Every module contains two assessment banks:
+Every module contains two active assessment banks.
 
 ### Formative
 - 32 MCQs per module
@@ -57,7 +56,7 @@ Every module contains two assessment banks:
 - 70% pass standard
 - maximum 3 attempts
 
-Course totals after deployment should therefore be:
+Course totals:
 - 8 formative assessments
 - 8 summative assessments
 - 256 formative-bank questions
@@ -65,64 +64,99 @@ Course totals after deployment should therefore be:
 - 672 protected assessment-bank questions in total
 
 ## 4. Assessment answer-position audit
-A systematic answer-key audit identified over-concentration of correct answers in option A in several banks. This was corrected without changing the underlying correct response.
+A systematic answer-key audit identified over-concentration of correct answers in several banks. The options were re-ordered without changing the underlying correct response.
 
 ### Summative banks
-All 8 module summative banks are now balanced to:
+All 8 summative banks are balanced to:
 - A = 13
 - B = 13
 - C = 13
 - D = 13
 
 ### Formative banks
-All 8 module formative banks are now balanced to:
+All 8 formative banks are balanced to:
 - A = 8
 - B = 8
 - C = 8
 - D = 8
 
-Modules 1–4 were already balanced on inspection. Modules 5–8 were corrected where necessary.
+Modules 1–4 formative banks were already balanced on inspection. Modules 5–8 were corrected where required. All eight summative banks were validated after rebalancing.
 
-## 5. Question-quality checks
+## 5. Question-quality controls
 The assessment review applied these controls:
 - one clearly best answer
-- distractors remain plausible but incorrect
-- answer position does not reveal a predictable pattern across the bank
-- no change to the factual meaning of the correct answer during rebalancing
-- wording remains aligned to lesson content and workplace application
-- questions avoid requiring unsupported legal conclusions
+- plausible but incorrect distractors
+- balanced answer positions
+- no factual change to the correct response during rebalancing
+- alignment to lesson content and workplace application
+- no unsupported legal conclusions
 
 ## 6. South African relevance and legal/privacy scope
-The course uses South African workplace context where relevant, including rand-denominated examples.
+The course uses realistic South African office context and rand-denominated examples where relevant.
 
-Module 7 Lesson 7 covers POPIA at workplace-awareness level. It correctly teaches administrators to recognise personal information, use authorised processes, limit unnecessary collection/access, protect physical and digital records, and escalate privacy incidents or complex requests through the organisation's authorised privacy/compliance function. The lesson explicitly avoids presenting itself as individual legal advice.
+Module 7 Lesson 7 covers POPIA at workplace-awareness level. It teaches administrators to recognise personal information, use authorised processes, limit unnecessary collection/access, protect physical and digital records, and escalate privacy incidents or complex requests through the organisation's authorised privacy/compliance function. The lesson does not present itself as individual legal advice.
 
-The course intentionally avoids inventing universal legal retention periods because actual retention requirements depend on record type, applicable law, organisational policy, legal holds and other context.
+The course intentionally avoids inventing universal legal retention periods because actual requirements depend on record type, applicable law, organisational policy, legal holds and other context.
 
-## 7. Production safety inspection
-Before replacing the legacy live course, the production database was checked.
-
-Current live Office Administration state at the time of this audit:
+## 7. Pre-deployment production safety check
+Before production replacement, the live course contained:
 - 8 modules
 - 80 legacy lesson records (10 per module)
-- 1 enrolment
-- 0 lesson-progress rows for this course
-- 1 legacy assessment
+- 1 approved enrolment
+- 0 lesson-progress rows
+- 1 legacy final assessment
 - 0 assessment attempts
 
-This means the rebuild can be reconciled without destroying learner lesson progress or assessment attempts because none currently exist for this course. The existing course enrolment must be preserved.
+Because there was no learner lesson progress or assessment-attempt history for this course, the legacy lesson and assessment structure could be reconciled without destroying learner progress. The existing enrolment was preserved.
 
-## 8. Production reconciliation requirements
-The production deployment must:
-1. preserve the existing course and enrolment identifiers where practical;
-2. replace the 80 legacy lesson records with the approved 64-lesson source structure;
-3. update module names/content to the approved eight-module structure;
-4. create 16 active module assessments (formative + summative for each module);
-5. load exactly 672 protected assessment-bank questions;
-6. archive or deactivate the superseded legacy assessment rather than presenting it to learners;
-7. use the generic secure database-driven assessment runtime already established for module assessments;
-8. keep correct answers inaccessible through direct learner SELECT access;
-9. run post-deployment counts and integrity checks before declaring the course live-ready.
+## 8. Production reconciliation completed
+Production was reconciled to the approved repository source.
 
-## 9. Audit conclusion
-The repository source is approved for controlled production reconciliation. The remaining work is deployment and post-deployment verification, not further course drafting.
+Completed actions:
+1. preserved the existing course and enrolment;
+2. replaced the 80 legacy lesson records with the approved 64 lessons;
+3. updated all eight module names and descriptions;
+4. created 16 active published module assessments;
+5. loaded exactly 672 assessment-bank questions;
+6. archived the superseded legacy final assessment as inactive/draft;
+7. retained the generic secure database-driven formative/summative runtime;
+8. preserved protected answer-key access controls;
+9. removed the temporary import helper functions and HTTP extension after deployment.
+
+## 9. Post-deployment verification
+Production verification returned:
+- modules: 8
+- lessons: 64
+- active module assessments: 16
+- protected bank questions: 672
+- archived legacy assessments: 1
+- enrolments preserved: 1
+- lesson-progress rows: 0
+- assessment attempts: 0
+
+Every module has exactly:
+- 8 lessons
+- 1 active formative assessment
+- 1 active summative assessment
+- 32 formative-bank questions
+- 52 summative-bank questions
+
+Lesson-content integrity check:
+- missing titles: 0
+- unexpectedly short lessons: 0
+- shortest deployed lesson content: more than 4,300 characters
+
+Database answer-key verification confirmed the required A/B/C/D distribution for every module and both assessment types.
+
+## 10. Runtime acceptance check
+An authenticated-style assessment-state check was run against the existing approved enrolment for Module 1 Formative.
+
+Expected result was returned:
+- status: `locked_lessons`
+- total lessons: 8
+- completed lessons: 0
+
+This confirms the secure generic assessment runtime recognises the newly deployed Office Administration assessment and correctly enforces lesson completion before formative access.
+
+## 11. Final conclusion
+The Office Administration Certificate: From Admin to PA rebuild is complete, audited, corrected, deployed and database-verified. The course is now structurally aligned with the academy's modern 8-lesson module standard and secure assessment architecture.
