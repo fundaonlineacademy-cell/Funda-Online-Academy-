@@ -8,7 +8,7 @@
 By the end of this lesson, you should be able to:
 1. Explain why return decisions must consider both store policy and applicable law.
 2. Identify key South African consumer rights relevant to online transactions.
-3. Distinguish cooling-off rights from defective-goods remedies.
+3. Distinguish ECTA cooling-off rights from CPA defective-goods remedies.
 4. Recognise common exceptions and limits to return rights.
 5. Escalate legally sensitive return cases appropriately.
 
@@ -27,55 +27,77 @@ This lesson provides operational awareness rather than legal advice. Staff shoul
 
 ## Main Lesson Content
 ### 1. Policy and law must work together
-A retailer may publish its own return and refund policy, but that policy should not contradict rights granted by applicable law. ECTA requires online suppliers to make their return, exchange and refund policy available to consumers and to disclose applicable cooling-off rights.
+A retailer may publish its own return and refund policy, but that policy should not contradict rights granted by applicable law. For electronic transactions, ECTA requires specified supplier and transaction information to be made available to consumers, including the supplier's return, exchange and refund policy. ECTA also creates a statutory cooling-off right for qualifying electronic transactions.
 
 ### 2. ECTA cooling-off for certain electronic transactions
-Section 44 of ECTA gives consumers, for qualifying electronic transactions, a right to cancel without reason and without penalty within seven days after receipt of goods, or within seven days after conclusion of an agreement for services. The consumer may be responsible for the direct cost of returning goods. Where payment has already been made, the Act provides for a full refund within the statutory period after cancellation.
+Section 44 of ECTA generally gives a consumer in a qualifying electronic transaction the right to cancel without reason and without penalty within seven days after receiving goods, or within seven days after conclusion of an agreement for services. The consumer may be responsible for the direct cost of returning goods. If payment has already been made, ECTA requires the supplier to refund payment within 30 days of cancellation.
 
-This right has exclusions. ECTA section 42 identifies transactions to which section 44 does not apply, including certain financial services, auctions, everyday-consumption goods supplied to the home or workplace, services that began with consent before the cooling-off period ended, and certain personalised, perishable or non-returnable goods.
+The cooling-off right does not apply to every electronic transaction. Section 42 lists exclusions, including specified financial services, auctions, certain food and everyday-consumption goods physically supplied to the consumer's home or workplace, services that began with the consumer's consent before the seven-day period ended, and specified goods or services such as customised goods, goods that by their nature cannot be returned, rapidly deteriorating goods, certain unsealed media or software, newspapers and magazines, and certain time-specific accommodation, transport, catering or leisure services.
+
+Staff should therefore verify whether the transaction qualifies instead of promising that every online purchase can automatically be returned under section 44.
 
 ### 3. CPA rights for defective goods
-The CPA provides an implied warranty of quality. In general, within six months after delivery, if goods fail to meet the applicable quality standards, the consumer may return them without penalty and at the supplier's risk and expense and may direct the supplier to repair, replace or refund, subject to the Act and the facts of the case.
+Section 55 of the CPA establishes important consumer rights concerning safe, good-quality goods. Section 56 provides an implied warranty of quality. In general, within six months after delivery, goods that fail to satisfy the applicable section 55 requirements may be returned to the supplier without penalty and at the supplier's risk and expense. Subject to the Act and the facts, the consumer may direct the supplier to repair or replace the failed goods, or refund the price paid.
 
-Staff should not treat a defective-goods claim as merely a voluntary “change of mind” return. The legal basis and remedy can be different.
+If the consumer chooses repair and, within three months after that repair, the repaired defect is not remedied or another defect is discovered, section 56 provides a further remedy: the supplier must replace the goods or refund the price paid. This is one reason service staff should maintain accurate records of repairs, dates and previous complaints.
+
+Staff should not treat a defective-goods claim as merely a voluntary “change of mind” return. The legal basis, time period, cost responsibility and available remedy can be different.
 
 ### 4. Other CPA return situations
-The CPA also addresses returns in situations such as certain direct-marketing transactions, goods the consumer did not have an opportunity to examine before delivery, mixed deliveries and goods found unsuitable for a particular purpose that was communicated to the supplier. The exact conditions and time periods matter, so staff should use approved procedures rather than memorising a simplified rule for every case.
+The CPA also contains return rights in other circumstances. These can include goods delivered after certain direct-marketing transactions, goods that the consumer did not have an opportunity to examine before delivery, mixed deliveries, and goods that are unsuitable for a particular purpose that the consumer specifically communicated to the supplier in circumstances covered by the Act.
+
+The conditions and time periods differ. A single slogan such as “all returns within 14 days” is therefore not an adequate substitute for a properly designed returns procedure.
 
 ### 5. Ask the right operational questions
-When a return is requested, identify why the customer wants to return the item, when it was delivered, whether the product is defective or unsuitable, whether the transaction may qualify for cooling-off, whether an exclusion applies and whether the store's policy provides additional rights.
+When a return is requested, establish the facts before selecting a remedy:
+1. Why does the customer want to return the item?
+2. When was the transaction concluded and when were the goods delivered?
+3. Is the complaint a change of mind, incorrect supply, unsuitable product or possible defect?
+4. Was the transaction concluded electronically and could ECTA section 44 apply?
+5. Does a statutory exclusion appear relevant?
+6. Has the product previously been repaired or replaced?
+7. Does the store's own policy give the customer additional rights beyond the statutory minimum?
 
-### 6. Escalate uncertainty
-Cases involving health or safety, repeated repair failure, disputed defects, personalised goods, digital services, significant financial value or unclear statutory rights should be escalated to an authorised person rather than decided by guesswork.
+### 6. Do not confuse different cooling-off regimes
+South African consumer law can contain different cancellation rules for different transaction types. For example, the CPA has provisions dealing with direct marketing, while ECTA section 44 deals with qualifying electronic transactions. Staff should not assume that every reference to a “cooling-off period” means the same number of days or the same conditions.
+
+### 7. Escalate uncertainty
+Cases involving health or safety, repeated repair failure, disputed defects, customised or perishable goods, digital content or services, significant financial value, or uncertainty about which statute applies should be escalated to an authorised person. The goal is not for frontline staff to act as lawyers; it is for them to recognise risk and avoid denying or promising rights without verification.
 
 ## Worked Example / Demonstration
-A customer buys headphones online and reports after two months that one side has stopped working during normal use. Staff should not automatically reject the claim because the store's voluntary “change-of-mind” policy is 14 days. The complaint concerns possible defective goods and should be handled under the applicable quality/warranty process.
+A customer buys headphones online and reports after two months that one side has stopped working during normal use. Staff should not automatically reject the claim because the store's voluntary “change-of-mind” policy is 14 days. The complaint concerns possible defective goods and should be assessed under the applicable CPA quality and warranty process. The order date, delivery date, product condition and any evidence of misuse should be recorded before the authorised remedy is processed.
 
 ## Practical Activity
-Classify five imaginary return requests as: possible cooling-off, possible defective-goods claim, voluntary store-policy return, possible exception, or needs escalation. For each, state what facts must be verified before a decision is made.
+Classify five imaginary return requests as: possible ECTA cooling-off, possible CPA defective-goods claim, voluntary store-policy return, possible statutory exception, or needs escalation. For each case, state the facts that must be verified and identify who is authorised to approve the outcome.
 
 ## Knowledge Check
 1. Why can a store policy not be the only source used for every return decision?
-2. What is the general ECTA cooling-off period for qualifying goods purchased electronically?
-3. What is the general CPA period linked to the implied warranty of quality for defective goods?
-4. Why are personalised or rapidly perishable goods important to identify?
-5. What should staff do when the legal category is uncertain?
+2. What is the general ECTA section 44 cancellation period for qualifying goods purchased electronically?
+3. By when must payment generally be refunded following a valid ECTA section 44 cancellation?
+4. What is the general CPA period linked to the implied warranty of quality for defective goods?
+5. What additional protection can apply after a repair fails within the statutory follow-up period?
+6. Why are customised or rapidly deteriorating goods important to identify?
+7. What should staff do when the legal category is uncertain?
 
 ## Feedback / Explanation
 1. Statutory consumer rights may apply in addition to or instead of voluntary store policy.
 2. Seven days after receipt of qualifying goods.
-3. Six months after delivery, subject to the Act and facts.
-4. They may fall within exceptions to certain cooling-off rights.
-5. Escalate the case and verify the applicable rule rather than guessing.
+3. Within 30 days of cancellation under section 44.
+4. Six months after delivery, subject to the Act and facts.
+5. If the repaired defect is not remedied or another defect appears within three months after repair, the supplier must replace the goods or refund the consumer, subject to section 56.
+6. They may fall within exclusions from the ECTA section 44 cooling-off right.
+7. Escalate and verify the applicable rule rather than guessing.
 
 ## Key Takeaways
 - South African online returns may involve ECTA, the CPA and the store's own policy.
-- Cooling-off and defective-goods rights are different legal concepts.
-- ECTA cooling-off contains specific exclusions.
-- Defective-goods claims should not be treated as ordinary change-of-mind returns.
+- ECTA cooling-off and CPA defective-goods rights are different legal concepts.
+- ECTA section 44 generally provides seven days for qualifying transactions and a refund within 30 days of cancellation.
+- ECTA section 42 contains important exclusions.
+- The CPA implied warranty of quality generally operates for six months after delivery, subject to the Act and facts.
+- A failed repair can trigger additional section 56 protection during the three-month follow-up period.
 - Legally uncertain cases should be escalated and verified.
 
 ## Visual Learning Guidance
-**Recommended visual:** Return Request → Identify Reason → ECTA / CPA / Store Policy → Check Conditions & Exceptions → Approved Remedy.
+**Recommended visual:** Return Request → Identify Reason → Identify Transaction Type → ECTA / CPA / Store Policy → Check Dates & Exceptions → Approved Remedy → Record Outcome.
 
-**Caption:** “The correct return outcome starts by identifying why the customer is returning the goods and which rules apply.”
+**Caption:** “The correct return outcome starts with the facts: why the goods are being returned, when the transaction occurred, and which legal rule applies.”
