@@ -8,32 +8,32 @@
 **Coverage:** All eight Module 6 lessons.
 
 1. Which capability MOST clearly distinguishes PA-level support from basic task execution?  
-A. Faster typing only  
-B. Anticipation and judgement within authority  
+A. Anticipation and judgement within authority  
+B. Faster typing only  
 C. Avoiding meetings  
 D. Working without records  
-**Answer: B**
+**Answer: A**
 
 2. Why do strong administrative fundamentals remain essential in PA work?  
-A. PA work increases complexity rather than replacing the basics  
-B. PAs never use digital tools  
+A. PAs never use digital tools  
+B. PA work increases complexity rather than replacing the basics  
 C. Executive work is always routine  
 D. Fundamentals apply only to reception  
-**Answer: A**
+**Answer: B**
 
 3. Which is an example of proactive but authorised support?  
 A. Approving a budget without authority  
-B. Checking tomorrow's meeting pack before being asked  
-C. Cancelling an executive meeting secretly  
+B. Cancelling an executive meeting secretly  
+C. Checking tomorrow's meeting pack before being asked  
 D. Signing a contract for the executive  
-**Answer: B**
+**Answer: C**
 
 4. What is delegated authority?  
 A. Unlimited executive power  
-B. Authority assigned within defined limits  
-C. A personal preference  
-D. Authority created by job title alone  
-**Answer: B**
+B. A personal preference  
+C. Authority created by job title alone  
+D. Authority assigned within defined limits  
+**Answer: D**
 
 5. Why should a PA understand recurring executive commitments?  
 A. To prepare before deadlines and reduce preventable surprises  
@@ -57,11 +57,11 @@ D. Clarifying an instruction
 **Answer: C**
 
 8. What is a priority map?  
-A. A practical view of important commitments, deadlines, stakeholders and risks  
-B. An office floor plan  
-C. A list of social events only  
-D. A filing index  
-**Answer: A**
+A. An office floor plan  
+B. A list of social events only  
+C. A filing index  
+D. A practical view of important commitments, deadlines, stakeholders and risks  
+**Answer: D**
 
 9. Why should executive attention be treated as limited?  
 A. High-value decisions and commitments compete for finite time and concentration  
@@ -71,25 +71,25 @@ D. Diaries cannot be changed
 **Answer: A**
 
 10. What makes information decision-ready?  
-A. The issue, key facts, options/impact, timing and decision required  
-B. A long email chain with no summary  
+A. A long email chain with no summary  
+B. The issue, key facts, options/impact, timing and decision required  
 C. Every possible detail  
 D. Personal opinion only  
-**Answer: A**
+**Answer: B**
 
 11. Why should preparation time be protected in the executive diary?  
-A. Important meetings and decisions require work before the scheduled event  
-B. It makes the diary look full  
-C. It replaces priorities  
+A. It makes the diary look full  
+B. It replaces priorities  
+C. Important meetings and decisions require work before the scheduled event  
 D. It is only for travel  
-**Answer: A**
+**Answer: C**
 
 12. What is the purpose of a regular PA-manager planning review?  
-A. Confirm priorities, risks, diary changes and decisions needed  
-B. Rebuild the inbox manually  
-C. Avoid all independent PA work  
-D. Discuss only completed tasks  
-**Answer: A**
+A. Rebuild the inbox manually  
+B. Avoid all independent PA work  
+C. Discuss only completed tasks  
+D. Confirm priorities, risks, diary changes and decisions needed  
+**Answer: D**
 
 13. Why should inbox items not be handled strictly in arrival order?  
 A. Business impact, risk and deadlines vary  
@@ -106,18 +106,18 @@ D. Newsletter
 **Answer: B**
 
 15. What should a PA do with a message that can be handled by the responsible department?  
-A. Route or delegate it according to agreed authority and track if necessary  
-B. Hide it from everyone  
-C. Ask the executive to handle all details  
+A. Hide it from everyone  
+B. Ask the executive to handle all details  
+C. Route or delegate it according to agreed authority and track if necessary  
 D. Delete it  
-**Answer: A**
+**Answer: C**
 
 16. Why is email filing alone not enough?  
-A. The underlying commitment may still need a diary or task-control action  
-B. Folders cannot store mail  
-C. Filing automatically closes tasks  
-D. Email should never be retained  
-**Answer: A**
+A. Folders cannot store mail  
+B. Filing automatically closes tasks  
+C. Email should never be retained  
+D. The underlying commitment may still need a diary or task-control action  
+**Answer: D**
 
 17. An email asks for urgent payment to changed supplier banking details. What should the PA do?  
 A. Treat the unusual change as a verification trigger and follow security/finance procedure  
@@ -127,25 +127,25 @@ D. Reply with the executive's credentials
 **Answer: A**
 
 18. Why should a PA check entire email threads before forwarding?  
-A. The thread may contain sensitive or irrelevant information for the new recipient  
-B. Forwarding always removes attachments  
+A. Forwarding always removes attachments  
+B. The thread may contain sensitive or irrelevant information for the new recipient  
 C. Threads cannot be searched  
 D. All thread content should always be public  
-**Answer: A**
+**Answer: B**
 
 19. What is the goal of professional gatekeeping?  
-A. Protect executive attention while helping legitimate requests reach an appropriate outcome  
-B. Demonstrate the PA's power  
-C. Reject all external requests  
+A. Demonstrate the PA's power  
+B. Reject all external requests  
+C. Protect executive attention while helping legitimate requests reach an appropriate outcome  
 D. Keep stakeholders uncertain  
-**Answer: A**
+**Answer: C**
 
 20. Why are standing access instructions useful?  
-A. They clarify priority, delegation and interruption rules  
-B. They eliminate all judgement forever  
-C. They allow unrestricted disclosure  
-D. They replace stakeholder records  
-**Answer: A**
+A. They eliminate all judgement forever  
+B. They allow unrestricted disclosure  
+C. They replace stakeholder records  
+D. They clarify priority, delegation and interruption rules  
+**Answer: D**
 
 21. What should screening questions establish?  
 A. Purpose, timing, required decision and relevant context  
@@ -163,17 +163,17 @@ D. Pretend the executive refused personally
 
 23. Which situation is MOST likely to justify immediate interruption under typical standing instructions?  
 A. Routine sales pitch  
-B. Material safety incident  
-C. General brochure request  
+B. General brochure request  
+C. Material safety incident  
 D. Non-urgent supplier introduction  
-**Answer: B**
+**Answer: C**
 
 24. Why must promised callbacks be tracked?  
-A. A gatekeeping decision still creates a commitment that must be closed  
-B. Callbacks are optional  
-C. It makes the diary longer  
-D. Stakeholders should always call again themselves  
-**Answer: A**
+A. Callbacks are optional  
+B. It makes the diary longer  
+C. Stakeholders should always call again themselves  
+D. A gatekeeping decision still creates a commitment that must be closed  
+**Answer: D**
 
 25. What should appear at the beginning of an executive briefing?  
 A. Issue, deadline and decision required  
@@ -183,25 +183,25 @@ D. Personal commentary
 **Answer: A**
 
 26. How should uncertain information be presented?  
-A. Clearly identified as pending confirmation  
-B. As a confirmed fact  
+A. As a confirmed fact  
+B. Clearly identified as pending confirmation  
 C. Omitted even if important  
 D. Replaced with a guess  
-**Answer: A**
+**Answer: B**
 
 27. Why should briefing options include material implications?  
-A. The executive needs to understand consequences of each choice  
-B. It makes the document longer  
-C. Options are only decorative  
+A. It makes the document longer  
+B. Options are only decorative  
+C. The executive needs to understand consequences of each choice  
 D. It removes the need for evidence  
-**Answer: A**
+**Answer: C**
 
 28. What is the difference between a fact and a recommendation?  
-A. A fact is verified information; a recommendation is a suggested course of action  
-B. They are the same  
-C. Recommendations are always approved  
-D. Facts do not require verification  
-**Answer: A**
+A. They are the same  
+B. Recommendations are always approved  
+C. Facts do not require verification  
+D. A fact is verified information; a recommendation is a suggested course of action  
+**Answer: D**
 
 29. Why should a PA anticipate obvious executive questions?  
 A. To have relevant evidence and answers ready for efficient decision-making  
@@ -211,25 +211,25 @@ D. To lengthen the meeting
 **Answer: A**
 
 30. What is useful initiative?  
-A. Appropriate proactive action within authority  
-B. Ignoring approval limits  
+A. Ignoring approval limits  
+B. Appropriate proactive action within authority  
 C. Making strategic decisions alone  
 D. Avoiding procedures  
-**Answer: A**
+**Answer: B**
 
 31. What is forward planning?  
-A. Reviewing future commitments early enough to prepare  
-B. Working only on today's inbox  
-C. Predicting without evidence  
+A. Working only on today's inbox  
+B. Predicting without evidence  
+C. Reviewing future commitments early enough to prepare  
 D. Cancelling long-term meetings  
-**Answer: A**
+**Answer: C**
 
 32. What is a trigger rule?  
-A. A defined event that prompts related checks or actions  
-B. A rule to escalate every task  
-C. A personal complaint  
-D. A diary colour  
-**Answer: A**
+A. A rule to escalate every task  
+B. A personal complaint  
+C. A diary colour  
+D. A defined event that prompts related checks or actions  
+**Answer: D**
 
 33. If a board pack always depends on late Finance figures, what should a PA do?  
 A. Start the dependency follow-up earlier and improve the process trigger  
@@ -239,25 +239,25 @@ D. Use old figures automatically
 **Answer: A**
 
 34. Why are checklists useful for recurring PA work?  
-A. They reduce omissions in repeated high-risk processes  
-B. They remove all judgement  
+A. They remove all judgement  
+B. They reduce omissions in repeated high-risk processes  
 C. They prevent process improvement  
 D. They should never change  
-**Answer: A**
+**Answer: B**
 
 35. What should happen after a preventable disruption?  
-A. Identify whether an earlier practical control could reduce recurrence  
-B. Work around it forever  
-C. Avoid documenting it  
+A. Work around it forever  
+B. Avoid documenting it  
+C. Identify whether an earlier practical control could reduce recurrence  
 D. Blame a stakeholder  
-**Answer: A**
+**Answer: C**
 
 36. New urgent work arrives when the PA is at full capacity. What is the BEST first response?  
-A. Reassess priorities and identify what must move, delegate or escalate  
-B. Promise everything  
-C. Ignore the request  
-D. Work on all tasks simultaneously  
-**Answer: A**
+A. Promise everything  
+B. Ignore the request  
+C. Work on all tasks simultaneously  
+D. Reassess priorities and identify what must move, delegate or escalate  
+**Answer: D**
 
 37. Which question BEST tests whether a request is genuinely urgent?  
 A. What happens if this waits?  
@@ -267,25 +267,25 @@ D. How many times did they call?
 **Answer: A**
 
 38. What is a trade-off?  
-A. Consequence of choosing one option over another  
-B. A completed task  
+A. A completed task  
+B. Consequence of choosing one option over another  
 C. An unlimited resource  
 D. An office benefit  
-**Answer: A**
+**Answer: B**
 
 39. Why should a PA communicate impossible deadline conflicts early?  
-A. Authorised people need time to choose priorities or provide support  
-B. It is better to miss both silently  
-C. Early communication removes accountability  
+A. It is better to miss both silently  
+B. Early communication removes accountability  
+C. Authorised people need time to choose priorities or provide support  
 D. Deadlines cannot change  
-**Answer: A**
+**Answer: C**
 
 40. How does excessive task-switching affect work?  
-A. It can reduce focus and increase errors  
-B. It always improves quality  
-C. It removes capacity problems  
-D. It increases confidentiality  
-**Answer: A**
+A. It always improves quality  
+B. It removes capacity problems  
+C. It increases confidentiality  
+D. It can reduce focus and increase errors  
+**Answer: D**
 
 41. Which status view is useful under pressure?  
 A. Critical, Scheduled, Waiting and Completed  
@@ -295,25 +295,25 @@ D. Completed items only
 **Answer: A**
 
 42. Why should quality checks continue during urgent work?  
-A. Rushed errors can create larger delays, risk and rework  
-B. Accuracy is optional under pressure  
+A. Accuracy is optional under pressure  
+B. Rushed errors can create larger delays, risk and rework  
 C. Urgent tasks cannot be checked  
 D. Checklists slow all work unnecessarily  
-**Answer: A**
+**Answer: B**
 
 43. What should a capacity escalation include?  
-A. Outstanding work, deadlines, impact and realistic options  
-B. Emotional frustration only  
-C. A promise to work indefinitely  
+A. Emotional frustration only  
+B. A promise to work indefinitely  
+C. Outstanding work, deadlines, impact and realistic options  
 D. No evidence  
-**Answer: A**
+**Answer: C**
 
 44. Why should routine tasks be reviewed after a peak period?  
-A. Lower-priority work may still need completion after urgent demands subside  
-B. Routine tasks automatically disappear  
-C. Only urgent tasks matter  
-D. All routine work should be cancelled  
-**Answer: A**
+A. Routine tasks automatically disappear  
+B. Only urgent tasks matter  
+C. All routine work should be cancelled  
+D. Lower-priority work may still need completion after urgent demands subside  
+**Answer: D**
 
 45. What is a professional boundary?  
 A. A limit protecting appropriate role, authority and behaviour  
@@ -323,25 +323,25 @@ D. A personal preference only
 **Answer: A**
 
 46. Which statement about confidentiality is correct?  
-A. It protects information according to legitimate work requirements but does not cancel formal reporting duties  
-B. It means hiding every concern  
+A. It means hiding every concern  
+B. It protects information according to legitimate work requirements but does not cancel formal reporting duties  
 C. It allows private gossip  
 D. It applies only to paper documents  
-**Answer: A**
+**Answer: B**
 
 47. What is misrepresentation?  
-A. Inaccurately presenting an approval, instruction or authority  
-B. Clarifying a decision  
-C. Recording an action  
+A. Clarifying a decision  
+B. Recording an action  
+C. Inaccurately presenting an approval, instruction or authority  
 D. Asking for approval  
-**Answer: A**
+**Answer: C**
 
 48. Why should PA systems not depend on one person's memory?  
-A. Shared authorised records support continuity and handover  
-B. Memory is always perfect  
-C. Systems reduce trust  
-D. PAs should work alone  
-**Answer: A**
+A. Memory is always perfect  
+B. Systems reduce trust  
+C. PAs should work alone  
+D. Shared authorised records support continuity and handover  
+**Answer: D**
 
 49. Which is a useful PA performance measure?  
 A. Reduction in preventable diary conflicts and missed actions  
@@ -351,22 +351,22 @@ D. Number of hours the inbox remains open
 **Answer: A**
 
 50. What kind of feedback is MOST useful?  
-A. Specific feedback tied to observable work and outcomes  
-B. Vague praise only  
+A. Vague praise only  
+B. Specific feedback tied to observable work and outcomes  
 C. Rumours from colleagues  
 D. Feedback with no examples  
-**Answer: A**
+**Answer: B**
 
 51. Why review repeated mistakes as patterns?  
-A. Patterns can reveal a process weakness that individual corrections do not solve  
-B. Repetition proves nothing  
-C. It removes accountability  
+A. Repetition proves nothing  
+B. It removes accountability  
+C. Patterns can reveal a process weakness that individual corrections do not solve  
 D. It replaces all performance measures  
-**Answer: A**
+**Answer: C**
 
 52. What BEST describes trusted PA performance?  
-A. Reliable, discreet, proactive support that protects priorities while respecting authority  
-B. Acting as if the PA is the executive  
-C. Keeping all information personally  
-D. Agreeing to every request  
-**Answer: A**
+A. Acting as if the PA is the executive  
+B. Keeping all information personally  
+C. Agreeing to every request  
+D. Reliable, discreet, proactive support that protects priorities while respecting authority  
+**Answer: D**
