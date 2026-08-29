@@ -21,7 +21,7 @@ if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
   s.src='public-course-value.js?v='+Date.now();
   document.head.appendChild(s);
   if (/course-view\.html$/i.test(window.location.pathname)) {
-    ['retail-course-overview-premium.js','bookkeeping-premium-overview.js','office-administration-premium-overview.js','carpentry-premium-overview.js','business-administration-premium-overview.js','all-courses-premium-overview.js'].forEach(file=>{
+    ['retail-course-overview-premium.js','bookkeeping-premium-overview.js','office-administration-premium-overview.js','carpentry-premium-overview.js','business-administration-premium-overview.js','all-courses-premium-overview.js','course-overview-brand-theme.js'].forEach(file=>{
       const premium=document.createElement('script');
       premium.src=file+'?v='+Date.now();
       document.head.appendChild(premium);
