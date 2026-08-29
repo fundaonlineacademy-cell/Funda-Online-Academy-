@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Funda Online Academy secure module assessment">
+<title>Module Assessment | Funda Online Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js?v=20260829-assessment"></script>
+<style>
+:root{--navy:#06152f;--navy2:#0b2f70;--blue:#2767c6;--gold:#c99a2e;--ink:#183153;--line:#d9e4f2;--green:#176b38;--red:#a92d2d}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,sans-serif;color:var(--ink);background:linear-gradient(180deg,#f6faff,#edf5ff 55%,#fffaf0);min-height:100vh}h1,h2,h3,.brand{font-family:Montserrat,sans-serif}.top{position:sticky;top:0;z-index:20;background:rgba(6,21,47,.97);color:white;border-bottom:1px solid rgba(255,255,255,.1);box-shadow:0 8px 24px rgba(6,21,47,.14)}.topin{max-width:980px;margin:auto;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{font-weight:800;letter-spacing:.02em}.brand small{display:block;color:#e2c46d;font-size:8px;letter-spacing:.28em;margin-top:4px}.back{color:white;text-decoration:none;border:1px solid rgba(255,255,255,.2);padding:9px 13px;border-radius:11px;font-weight:700;font-size:13px}.wrap{max-width:900px;margin:28px auto;padding:0 18px 50px}.card{background:white;border:1px solid #dce6f1;border-radius:22px;box-shadow:0 12px 32px rgba(30,70,118,.08);padding:24px}.hero{background:linear-gradient(135deg,#071d49,#0c377c 68%,#174b93);color:white;border:none}.eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:11px;font-weight:800;color:#e4c777}.hero h1{margin:8px 0 6px;font-size:clamp(25px,5vw,38px)}.hero p{margin:0;color:#dbe8ff;line-height:1.7}.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}.badge{font-size:12px;font-weight:800;border-radius:999px;padding:8px 11px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.17)}.status{margin-top:18px}.notice{padding:18px;border-radius:16px;background:#fff8e8;border:1px solid #efdca8;line-height:1.7}.notice.good{background:#eef9f2;border-color:#cce8d5}.notice.bad{background:#fff1f1;border-color:#edcaca}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.btn{appearance:none;border:0;border-radius:12px;padding:12px 18px;font:inherit;font-weight:800;cursor:pointer;text-decoration:none;display:inline-flex;justify-content:center;align-items:center}.btn.primary{background:var(--navy);color:white}.btn.secondary{background:white;color:var(--navy);border:1px solid #cddbec}.btn:disabled{opacity:.55;cursor:not-allowed}.question{margin-top:16px}.qhead{display:flex;gap:12px;align-items:flex-start}.qnum{width:34px;height:34px;border-radius:10px;background:#eaf2ff;color:#0b2f70;display:grid;place-items:center;font-weight:900;flex:0 0 auto}.qtext{font-weight:750;line-height:1.6;padding-top:4px}.options{display:grid;gap:10px;margin-top:16px}.opt{border:1px solid #dbe5f0;border-radius:14px;padding:13px 14px;display:flex;gap:11px;align-items:flex-start;cursor:pointer;background:#fbfdff}.opt:hover{border-color:#9db9df;background:#f5f9ff}.opt input{margin-top:3px}.opt strong{color:#0b2f70}.submitbar{position:sticky;bottom:10px;margin-top:22px;padding:14px;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border:1px solid #dce6f1;border-radius:16px;box-shadow:0 10px 28px rgba(30,70,118,.12);display:flex;justify-content:space-between;align-items:center;gap:12px}.muted{color:#64748b;font-size:13px}.spinner{width:38px;height:38px;border:4px solid #d8e7f9;border-top-color:#0b2f70;border-radius:50%;animation:spin .8s linear infinite;margin:30px auto}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:600px){.card{padding:18px;border-radius:18px}.topin{padding:12px 14px}.submitbar{align-items:stretch;flex-direction:column}.btn{width:100%}}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin"><div class="brand">FUNDA ONLINE<small>ACADEMY</small></div><a class="back" href="dashboard.html#myCoursesSection">← My Courses</a></div></header>
+<main class="wrap">
+<section id="assessmentHero" class="card hero"><div class="eyebrow">Secure Assessment</div><h1 id="assessmentTitle">Loading assessment…</h1><p id="assessmentSubtitle">Please wait while the Academy verifies your enrolment and progression.</p><div id="assessmentBadges" class="badges"></div></section>
+<section id="assessmentStatus" class="card status"><div class="spinner"></div></section>
+<form id="assessmentForm" hidden></form>
+</main>
+<script src="module-assessment.js?v=20260829"></script>
+</body>
+</html>
