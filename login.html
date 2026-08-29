@@ -445,7 +445,7 @@
         throw new Error("Your account was authenticated, but your profile could not be loaded. " + profileError.message);
       }
 
-      const staffRoles = ["admin", "manager", "staff", "finance", "support"];
+      const staffRoles = ["admin", "staff"];
       const actualRole = profile?.role || "student";
 
       if (currentRole === "admin") {
@@ -461,8 +461,10 @@
           return;
         }
 
-        showMessage("Login successful. Opening the Admin Command Center...", true);
-        setTimeout(() => { window.location.href = "admin-v2.html"; }, 450);
+        const destination = actualRole === "admin" ? "admin-v2.html" : "staff-portal.html";
+        const portalName = actualRole === "admin" ? "Admin Command Center" : "Staff Workspace";
+        showMessage(`Login successful. Opening the ${portalName}...`, true);
+        setTimeout(() => { window.location.href = destination; }, 450);
         return;
       }
 
@@ -536,28 +538,13 @@
   document.getElementById("forgotBtn").addEventListener("click", resetPassword);
   loginForm.addEventListener("submit", handleLogin);
 
-  document.addEventListener("DOMContentLoaded", async () => {
+  document.addEventListener("DOMContentLoaded", () => {
     try {
       initialiseSupabase();
-
-      const { data } = await supabaseClient.auth.getSession();
-      const user = data?.session?.user;
-      if (!user) return;
-
-      const { data: profile } = await supabaseClient
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      const staffRoles = ["admin", "manager", "staff", "finance", "support"];
-      if (staffRoles.includes(profile?.role)) return;
-
-      const student = await getStudentRecord(user.id);
-      if (student) {
-        const next = getSafeNextDestination();
-        window.location.href = next || "dashboard.html";
-      }
+      /* Intentionally do not auto-redirect an existing session.
+         Visiting Login must always leave the login form available so a user
+         can deliberately sign in or switch accounts. Portal pages still
+         enforce their own authenticated role guards. */
     } catch (error) {
       console.error("Login page initialisation error:", error);
       showMessage(error?.message || "The Academy connection could not be initialised.");
