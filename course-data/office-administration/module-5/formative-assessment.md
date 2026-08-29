@@ -70,32 +70,32 @@ D. It removes the need for materials
 ## Lesson 3 — Meeting Preparation & Invitations
 
 9. What should be clarified BEFORE sending invitations?  
-A. Meeting purpose and required outcome  
-B. Refreshment preference only  
+A. Refreshment preference only  
+B. Meeting purpose and required outcome  
 C. Number of pages in the agenda  
 D. Who has the largest office  
-**Answer: A**
+**Answer: B**
 
 10. What is a required attendee?  
 A. Anyone copied on an email  
-B. A person whose presence or authority is necessary for the meeting purpose  
-C. Every employee in the department  
+B. Every employee in the department  
+C. A person whose presence or authority is necessary for the meeting purpose  
 D. Any visitor in reception  
-**Answer: B**
+**Answer: C**
 
 11. A required attendee declines an invitation. What should the administrator do?  
 A. Ignore it  
 B. Keep the meeting unchanged automatically  
-C. Resolve the impact through rescheduling, substitute authority or escalation as appropriate  
-D. Remove all other attendees  
-**Answer: C**
+C. Remove all other attendees  
+D. Resolve the impact through rescheduling, substitute authority or escalation as appropriate  
+**Answer: D**
 
 12. Why might a confidential meeting use a discreet title?  
-A. To hide it from all authorised participants  
-B. To make the diary difficult to use  
-C. To avoid confirming the date  
-D. To reduce unnecessary exposure of sensitive subject matter  
-**Answer: D**
+A. To reduce unnecessary exposure of sensitive subject matter  
+B. To hide it from all authorised participants  
+C. To make the diary difficult to use  
+D. To avoid confirming the date  
+**Answer: A**
 
 ## Lesson 4 — Agendas, Meeting Packs & Logistics
 
@@ -114,11 +114,11 @@ D. To remove decision items
 **Answer: C**
 
 15. What is a key meeting-pack quality check?  
-A. Confirm documents are current and approved where required  
-B. Include every draft available  
-C. Remove all labels  
-D. Send packs only after the meeting  
-**Answer: A**
+A. Include every draft available  
+B. Remove all labels  
+C. Send packs only after the meeting  
+D. Confirm documents are current and approved where required  
+**Answer: D**
 
 16. Why should pack documents be ordered logically?  
 A. So participants can find supporting information efficiently  
@@ -144,11 +144,11 @@ D. “Discuss next time.”
 **Answer: C**
 
 19. Why should minutes remain neutral?  
-A. They are organisational records and should avoid unnecessary personal judgement  
-B. Opinions are always required  
-C. Neutrality prevents decisions  
-D. Minutes should never name actions  
-**Answer: A**
+A. Opinions are always required  
+B. Neutrality prevents decisions  
+C. Minutes should never name actions  
+D. They are organisational records and should avoid unnecessary personal judgement  
+**Answer: D**
 
 20. Why should minutes be drafted promptly?  
 A. Context and details are easier to verify while still fresh  
@@ -174,27 +174,27 @@ D. To replace escalation
 **Answer: C**
 
 23. What is a dependency?  
-A. Something required before an action can progress  
-B. A completed action  
-C. A meeting room  
-D. A travel itinerary  
-**Answer: A**
+A. A completed action  
+B. A meeting room  
+C. A travel itinerary  
+D. Something required before an action can progress  
+**Answer: D**
 
 24. When should an action be marked complete?  
-A. As soon as the owner says “done,” regardless of output  
-B. When the expected result or closure evidence has been confirmed where appropriate  
+A. When the expected result or closure evidence has been confirmed where appropriate  
+B. As soon as the owner says “done,” regardless of output  
 C. Before the deadline  
 D. When the next meeting starts  
-**Answer: B**
+**Answer: A**
 
 ## Lesson 7 — Business Travel Planning & Itineraries
 
 25. What should be confirmed before business travel is booked?  
-A. Purpose, dates, destination, meetings and required arrival/departure times  
-B. Only the cheapest fare  
+A. Only the cheapest fare  
+B. Purpose, dates, destination, meetings and required arrival/departure times  
 C. Only hotel breakfast options  
 D. The traveller's favourite seat only  
-**Answer: A**
+**Answer: B**
 
 26. Why is the lowest airfare not always the best business option?  
 A. Expensive flights are always better  
@@ -205,10 +205,10 @@ D. Fare price never matters
 
 27. What should an itinerary include?  
 A. Only flight numbers  
-B. Chronological travel, accommodation, meetings, transfers, references and contacts  
-C. Only meeting names  
-D. Personal social plans  
-**Answer: B**
+B. Only meeting names  
+C. Personal social plans  
+D. Chronological travel, accommodation, meetings, transfers, references and contacts  
+**Answer: D**
 
 28. Why can an executive itinerary be sensitive?  
 A. It may reveal exact movements, times and accommodation details  
@@ -227,22 +227,22 @@ D. The hotel loyalty points
 **Answer: B**
 
 30. Why must the whole itinerary be reviewed after one booking changes?  
-A. Other travel, meetings and accommodation may depend on that segment  
-B. Changes never affect anything else  
-C. It makes the itinerary longer  
+A. Changes never affect anything else  
+B. It makes the itinerary longer  
+C. Other travel, meetings and accommodation may depend on that segment  
 D. Only finance needs updated details  
-**Answer: A**
+**Answer: C**
 
 31. Why should company-paid expenses be separated from employee-paid costs?  
-A. To avoid duplicate reimbursement  
-B. To increase claims  
-C. To remove receipts  
-D. To avoid approval  
-**Answer: A**
+A. To increase claims  
+B. To remove receipts  
+C. To avoid approval  
+D. To avoid duplicate reimbursement  
+**Answer: D**
 
 32. What should happen when a receipt is missing?  
-A. Create a fake receipt  
-B. Hide the cost  
-C. Change the category  
-D. Follow the organisation's approved exception process  
-**Answer: D**
+A. Follow the organisation's approved exception process  
+B. Create a fake receipt  
+C. Hide the cost  
+D. Change the category  
+**Answer: A**
