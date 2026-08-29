@@ -8,32 +8,32 @@
 **Coverage:** All eight Module 7 lessons.
 
 1. What is the main purpose of office technology?  
-A. Use as many applications as possible  
-B. Support accurate, efficient and controlled work  
+A. Support accurate, efficient and controlled work  
+B. Use as many applications as possible  
 C. Replace all human judgement  
 D. Eliminate records  
-**Answer: B**
+**Answer: A**
 
 2. Which tool is MOST suitable for structured calculations and tabular data?  
-A. Spreadsheet  
-B. Presentation deck  
+A. Presentation deck  
+B. Spreadsheet  
 C. Calendar  
 D. Video meeting  
-**Answer: A**
+**Answer: B**
 
 3. Why can tracking one task in several separate systems be risky?  
-A. Status may become inconsistent  
-B. It guarantees backup  
-C. It prevents duplication  
+A. It guarantees backup  
+B. It prevents duplication  
+C. Status may become inconsistent  
 D. It removes permissions  
-**Answer: A**
+**Answer: C**
 
 4. What is workflow?  
-A. Defined sequence through which work moves from request to completion  
-B. A folder colour  
-C. A password method  
-D. A printer setting  
-**Answer: A**
+A. A folder colour  
+B. A password method  
+C. A printer setting  
+D. Defined sequence through which work moves from request to completion  
+**Answer: D**
 
 5. Why should notifications be configured deliberately?  
 A. Excessive alerts can fragment attention and hide important ones  
@@ -43,25 +43,25 @@ D. Alerts replace task tracking
 **Answer: A**
 
 6. What information should be included in a technical escalation?  
-A. System, error, timing, checks tried and business impact  
-B. Password and PIN  
+A. Password and PIN  
+B. System, error, timing, checks tried and business impact  
 C. Only “not working”  
 D. Personal speculation  
-**Answer: A**
+**Answer: B**
 
 7. Why use heading styles in professional documents?  
-A. They support consistent structure and efficient formatting  
-B. They remove approval requirements  
-C. They automatically correct facts  
+A. They remove approval requirements  
+B. They automatically correct facts  
+C. They support consistent structure and efficient formatting  
 D. They prevent all edits  
-**Answer: A**
+**Answer: C**
 
 8. What is tracked changes used for?  
-A. Recording edits for review  
-B. Creating backups  
-C. Encrypting files  
-D. Deleting comments  
-**Answer: A**
+A. Creating backups  
+B. Encrypting files  
+C. Deleting comments  
+D. Recording edits for review  
+**Answer: D**
 
 9. Why should comments be resolved before external release?  
 A. They may expose internal discussion  
@@ -71,25 +71,25 @@ D. Comments are required in final copies
 **Answer: A**
 
 10. What is a section break useful for?  
-A. Separating document areas that need different layout settings  
-B. Deleting a page  
+A. Deleting a page  
+B. Separating document areas that need different layout settings  
 C. Creating a password  
 D. Sorting spreadsheet data  
-**Answer: A**
+**Answer: B**
 
 11. Which is an accessibility-friendly document practice?  
-A. Meaningful headings  
-B. Random font changes  
-C. Images without context  
+A. Random font changes  
+B. Images without context  
+C. Meaningful headings  
 D. Very small text  
-**Answer: A**
+**Answer: C**
 
 12. Why should the final PDF be reviewed after export?  
-A. Conversion can change layout or reveal unresolved content  
-B. PDF automatically guarantees accuracy  
-C. Source documents do not matter  
-D. Export removes version control  
-**Answer: A**
+A. PDF automatically guarantees accuracy  
+B. Source documents do not matter  
+C. Export removes version control  
+D. Conversion can change layout or reveal unresolved content  
+**Answer: D**
 
 13. In a well-designed spreadsheet, each row generally represents:  
 A. one logical record  
@@ -99,25 +99,25 @@ D. one password
 **Answer: A**
 
 14. What is a formula?  
-A. Expression calculating a result from data  
-B. A permission setting  
+A. A permission setting  
+B. Expression calculating a result from data  
 C. A page break  
 D. A cloud folder  
-**Answer: A**
+**Answer: B**
 
 15. What is data validation?  
-A. A rule restricting or checking permitted entries  
-B. Proof that all data is true  
-C. A replacement for source documents  
+A. Proof that all data is true  
+B. A replacement for source documents  
+C. A rule restricting or checking permitted entries  
 D. A PDF feature  
-**Answer: A**
+**Answer: C**
 
 16. What is a risk when sorting only one spreadsheet column?  
-A. Values can become disconnected from their original records  
-B. Dates become approved  
-C. Filters are removed permanently  
-D. Files become encrypted  
-**Answer: A**
+A. Dates become approved  
+B. Filters are removed permanently  
+C. Files become encrypted  
+D. Values can become disconnected from their original records  
+**Answer: D**
 
 17. Why should formulas be quality-checked?  
 A. Incorrect ranges can produce plausible but wrong results  
@@ -127,25 +127,25 @@ D. Quality applies only to text documents
 **Answer: A**
 
 18. When should a stronger system than a spreadsheet be considered?  
-A. When scale, sensitivity or workflow complexity needs better controls  
-B. Whenever there are numbers  
+A. Whenever there are numbers  
+B. When scale, sensitivity or workflow complexity needs better controls  
 C. For every small list  
 D. Never  
-**Answer: A**
+**Answer: B**
 
 19. What makes a good business presentation slide?  
-A. A clear purpose supporting the message  
-B. Maximum text density  
-C. Decorative content unrelated to the issue  
+A. Maximum text density  
+B. Decorative content unrelated to the issue  
+C. A clear purpose supporting the message  
 D. Multiple inconsistent fonts  
-**Answer: A**
+**Answer: C**
 
 20. Why must charts be checked carefully?  
-A. Wrong labels, units or scales can mislead viewers  
-B. Charts are always accurate  
-C. Charts need no source data  
-D. Visuals cannot contain errors  
-**Answer: A**
+A. Charts are always accurate  
+B. Charts need no source data  
+C. Visuals cannot contain errors  
+D. Wrong labels, units or scales can mislead viewers  
+**Answer: D**
 
 21. What is a key advantage of a shared working document?  
 A. One collaborative working copy can reduce duplicate versions  
@@ -155,25 +155,25 @@ D. Final approval is unnecessary
 **Answer: A**
 
 22. What does View access normally allow?  
-A. Reading without editing  
-B. Full administration  
+A. Full administration  
+B. Reading without editing  
 C. Deleting the file  
 D. Changing ownership  
-**Answer: A**
+**Answer: B**
 
 23. Why can broad link access be unsafe?  
-A. Links may be forwarded to unintended recipients  
-B. Links always expire instantly  
-C. Broad access prevents downloads  
+A. Links always expire instantly  
+B. Broad access prevents downloads  
+C. Links may be forwarded to unintended recipients  
 D. It automatically encrypts data  
-**Answer: A**
+**Answer: C**
 
 24. Why is the latest shared edit not automatically an approved version?  
-A. Approval is a separate authorised status  
-B. Shared documents cannot be approved  
-C. Latest edits are always drafts  
-D. Approval applies only to paper  
-**Answer: A**
+A. Shared documents cannot be approved  
+B. Latest edits are always drafts  
+C. Approval applies only to paper  
+D. Approval is a separate authorised status  
+**Answer: D**
 
 25. Why should business cloud files remain under organisational ownership?  
 A. To support continuity, security and controlled access  
@@ -183,25 +183,25 @@ D. It removes the need for backups
 **Answer: A**
 
 26. What is least-necessary access?  
-A. Granting only the permissions required for legitimate work  
-B. Giving everyone Edit access  
+A. Giving everyone Edit access  
+B. Granting only the permissions required for legitimate work  
 C. Never sharing anything  
 D. Giving all external users full access  
-**Answer: A**
+**Answer: B**
 
 27. When should external collaborator access be removed or reviewed?  
-A. When the project or legitimate need ends  
-B. Never  
-C. Only after five years  
+A. Never  
+B. Only after five years  
+C. When the project or legitimate need ends  
 D. When the collaborator asks for more access  
-**Answer: A**
+**Answer: C**
 
 28. What is an access review?  
-A. Checking whether existing permissions are still appropriate  
-B. Reviewing document grammar  
-C. Sorting a spreadsheet  
-D. Updating a meeting agenda  
-**Answer: A**
+A. Reviewing document grammar  
+B. Sorting a spreadsheet  
+C. Updating a meeting agenda  
+D. Checking whether existing permissions are still appropriate  
+**Answer: D**
 
 29. What risk comes from personal cloud accounts for work records?  
 A. Loss of organisational ownership, continuity and control  
@@ -211,25 +211,25 @@ D. Stronger shared ownership
 **Answer: A**
 
 30. Why can offline copies be problematic?  
-A. They can become outdated or remain on devices after need ends  
-B. They never open  
+A. They never open  
+B. They can become outdated or remain on devices after need ends  
 C. They automatically delete cloud originals  
 D. They cannot contain confidential data  
-**Answer: A**
+**Answer: B**
 
 31. Why should passwords not be shared?  
-A. It weakens security and user accountability  
-B. It makes logins slower  
-C. Shared passwords improve audit trails  
+A. It makes logins slower  
+B. Shared passwords improve audit trails  
+C. It weakens security and user accountability  
 D. Passwords should be public internally  
-**Answer: A**
+**Answer: C**
 
 32. What does MFA add?  
-A. An additional verification factor beyond the password  
-B. A spreadsheet formula  
-C. A file-sharing link  
-D. A meeting reminder  
-**Answer: A**
+A. A spreadsheet formula  
+B. A file-sharing link  
+C. A meeting reminder  
+D. An additional verification factor beyond the password  
+**Answer: D**
 
 33. What should happen with an unexpected MFA approval request?  
 A. Do not approve it and follow security guidance  
@@ -239,25 +239,25 @@ D. Disable MFA
 **Answer: A**
 
 34. Which is a phishing warning sign?  
-A. Unusual urgent request for credentials or payment change  
-B. Expected internal meeting invitation  
+A. Expected internal meeting invitation  
+B. Unusual urgent request for credentials or payment change  
 C. Routine approved newsletter  
 D. Standard calendar reminder  
-**Answer: A**
+**Answer: B**
 
 35. What should a staff member do after clicking a suspicious link?  
-A. Report the potential incident promptly through the authorised channel  
-B. Hide it  
-C. Delete browser history only  
+A. Hide it  
+B. Delete browser history only  
+C. Report the potential incident promptly through the authorised channel  
 D. Wait to see whether anything happens  
-**Answer: A**
+**Answer: C**
 
 36. Why should a PA use delegated mailbox access rather than the executive's password?  
-A. It preserves individual identity, access controls and audit trails  
-B. Shared passwords are more convenient  
-C. Delegated access removes accountability  
-D. Executives do not need security  
-**Answer: A**
+A. Shared passwords are more convenient  
+B. Delegated access removes accountability  
+C. Executives do not need security  
+D. It preserves individual identity, access controls and audit trails  
+**Answer: D**
 
 37. Which is personal information in a workplace context?  
 A. Customer contact and account information linked to an identifiable customer  
@@ -267,25 +267,25 @@ D. A blank form
 **Answer: A**
 
 38. What does processing personal information broadly include?  
-A. Collecting, recording, storing, using, sharing or deleting it  
-B. Printing only  
+A. Printing only  
+B. Collecting, recording, storing, using, sharing or deleting it  
 C. Emailing only  
 D. Filing paper only  
-**Answer: A**
+**Answer: B**
 
 39. Does access to personal information mean it can be used freely?  
-A. No; use should follow authorised legitimate purposes and controls  
-B. Yes, for all employees  
-C. Yes, if stored internally  
+A. Yes, for all employees  
+B. Yes, if stored internally  
+C. No; use should follow authorised legitimate purposes and controls  
 D. Yes, if a manager is absent  
-**Answer: A**
+**Answer: C**
 
 40. Why should unnecessary personal information not be collected?  
-A. It increases exposure without supporting the defined purpose  
-B. More information always improves service  
-C. It eliminates retention requirements  
-D. It removes confidentiality  
-**Answer: A**
+A. More information always improves service  
+B. It eliminates retention requirements  
+C. It removes confidentiality  
+D. It increases exposure without supporting the defined purpose  
+**Answer: D**
 
 41. What should happen when personal information is sent to the wrong recipient?  
 A. Follow the organisation's privacy/security incident procedure promptly  
@@ -295,25 +295,25 @@ D. Contact the media
 **Answer: A**
 
 42. Why should administrators refer complex privacy requests to the authorised function?  
-A. Legal and organisational requirements may require specialist judgement  
-B. Administrators can ignore privacy requests  
+A. Administrators can ignore privacy requests  
+B. Legal and organisational requirements may require specialist judgement  
 C. Privacy applies only to IT staff  
 D. All requests must be refused  
-**Answer: A**
+**Answer: B**
 
 43. What is digital housekeeping?  
-A. Controlled organisation and cleanup of digital workspaces  
-B. Deleting everything old  
-C. Reinstalling software monthly  
+A. Deleting everything old  
+B. Reinstalling software monthly  
+C. Controlled organisation and cleanup of digital workspaces  
 D. Printing all files  
-**Answer: A**
+**Answer: C**
 
 44. Why should retention rules be checked before deleting files?  
-A. Records may still be required  
-B. Nothing can ever be deleted  
-C. Retention applies only to paper  
-D. Old files are always useless  
-**Answer: A**
+A. Nothing can ever be deleted  
+B. Retention applies only to paper  
+C. Old files are always useless  
+D. Records may still be required  
+**Answer: D**
 
 45. What is a backup?  
 A. Protected additional copy used for recovery  
@@ -323,25 +323,25 @@ D. An access password
 **Answer: A**
 
 46. Why is sync not necessarily backup?  
-A. Accidental deletion or corruption may synchronise across copies  
-B. Sync never copies data  
+A. Sync never copies data  
+B. Accidental deletion or corruption may synchronise across copies  
 C. Backups only exist offline  
 D. Sync is illegal  
-**Answer: A**
+**Answer: B**
 
 47. What risk comes from unapproved USB drives?  
-A. Malware, loss and unauthorised copies  
-B. Better continuity  
-C. Automatic encryption  
+A. Better continuity  
+B. Automatic encryption  
+C. Malware, loss and unauthorised copies  
 D. Guaranteed backups  
-**Answer: A**
+**Answer: C**
 
 48. Which is a technology warning sign worth escalating?  
-A. Repeated sync failure or unexpected access problem  
-B. A normal calendar reminder  
-C. Correctly formatted file  
-D. Completed backup notification  
-**Answer: A**
+A. A normal calendar reminder  
+B. Correctly formatted file  
+C. Completed backup notification  
+D. Repeated sync failure or unexpected access problem  
+**Answer: D**
 
 49. Which troubleshooting action should office staff avoid without authority?  
 A. Disabling security software or bypassing controls  
@@ -351,22 +351,22 @@ D. Recording an error message
 **Answer: A**
 
 50. What is business continuity in a technology context?  
-A. Maintaining essential work during disruption  
-B. Keeping every system online forever  
+A. Keeping every system online forever  
+B. Maintaining essential work during disruption  
 C. Avoiding backups  
 D. Using personal accounts in emergencies  
-**Answer: A**
+**Answer: B**
 
 51. After an outage, why should offline work be reconciled?  
-A. Temporary notes or transactions must be captured in the official system  
-B. Recovery automatically imports every manual action  
-C. Offline records should always be destroyed immediately  
+A. Recovery automatically imports every manual action  
+B. Offline records should always be destroyed immediately  
+C. Temporary notes or transactions must be captured in the official system  
 D. The outage removes recordkeeping duties  
-**Answer: A**
+**Answer: C**
 
 52. Which principle BEST connects technology, privacy and confidentiality?  
-A. Use approved systems, least necessary access, accurate controls and prompt escalation when something goes wrong  
-B. Convenience should override controls  
-C. Share information widely to avoid delays  
-D. Security is solely the IT department's responsibility  
-**Answer: A**
+A. Convenience should override controls  
+B. Share information widely to avoid delays  
+C. Security is solely the IT department's responsibility  
+D. Use approved systems, least necessary access, accurate controls and prompt escalation when something goes wrong  
+**Answer: D**
