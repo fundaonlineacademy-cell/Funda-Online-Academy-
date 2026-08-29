@@ -10,4 +10,5 @@
     }
   };
   const sync=document.createElement('script');sync.src='carpentry-progress-sync.js?v=20260829-sync1';document.body.appendChild(sync);
+  const persistence=document.createElement('script');persistence.src='carpentry-module1-persistence.js?v=20260829-m1schemafix';document.body.appendChild(persistence);
 })();
