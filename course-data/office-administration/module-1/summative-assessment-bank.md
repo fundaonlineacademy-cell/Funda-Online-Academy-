@@ -15,46 +15,46 @@ D. Filing paper only
 **Answer: B**
 
 2. Why is follow-up essential in administration?  
-A. It confirms expected actions reach completion  
-B. It replaces deadlines  
-C. It removes the need for records  
+A. It replaces deadlines  
+B. It removes the need for records  
+C. It confirms expected actions reach completion  
 D. It gives administrators unlimited authority  
-**Answer: A**
+**Answer: C**
 
 3. What is an audit trail?  
-A. A traceable record of relevant actions or changes  
-B. A meeting agenda  
-C. A travel route  
-D. A staff directory  
-**Answer: A**
+A. A meeting agenda  
+B. A travel route  
+C. A staff directory  
+D. A traceable record of relevant actions or changes  
+**Answer: D**
 
 4. Which behaviour demonstrates confidentiality?  
-A. Discussing customer records in reception  
-B. Sharing information only through authorised channels with appropriate people  
+A. Sharing information only through authorised channels with appropriate people  
+B. Discussing customer records in reception  
 C. Leaving payroll documents at the printer  
 D. Forwarding private files to a personal email  
-**Answer: B**
+**Answer: A**
 
 5. Why should an administrator understand authority limits?  
-A. To know what can be completed independently and what requires approval or escalation  
-B. To avoid all decisions  
+A. To avoid all decisions  
+B. To know what can be completed independently and what requires approval or escalation  
 C. To approve manager-only matters  
 D. To ignore procedures  
-**Answer: A**
+**Answer: B**
 
 6. Which activity BEST reflects PA progression?  
-A. Anticipating needs and protecting executive commitments while respecting authority  
-B. Typing faster only  
-C. Avoiding stakeholders  
+A. Typing faster only  
+B. Avoiding stakeholders  
+C. Anticipating needs and protecting executive commitments while respecting authority  
 D. Making strategic decisions alone  
-**Answer: A**
+**Answer: C**
 
 7. What does reliability mean in office work?  
-A. Consistently meeting commitments and communicating early when something is at risk  
-B. Accepting every request regardless of capacity  
-C. Hiding errors  
-D. Working without deadlines  
-**Answer: A**
+A. Accepting every request regardless of capacity  
+B. Hiding errors  
+C. Working without deadlines  
+D. Consistently meeting commitments and communicating early when something is at risk  
+**Answer: D**
 
 8. What is accountability?  
 A. Taking responsibility for actions, outcomes and appropriate correction  
@@ -64,25 +64,25 @@ D. Delegating every task
 **Answer: A**
 
 9. Why is punctuality an operational issue as well as etiquette?  
-A. Delays can affect other people's commitments and workflows  
-B. It only affects appearance  
+A. It only affects appearance  
+B. Delays can affect other people's commitments and workflows  
 C. Time never affects administration  
 D. Meetings always start late  
-**Answer: A**
+**Answer: B**
 
 10. Which is a professional boundary?  
-A. Not making commitments on behalf of a manager without authority  
-B. Ignoring customers  
-C. Refusing all delegated work  
+A. Ignoring customers  
+B. Refusing all delegated work  
+C. Not making commitments on behalf of a manager without authority  
 D. Keeping every process secret  
-**Answer: A**
+**Answer: C**
 
 11. Why should workplace resources be used appropriately?  
-A. They belong to organisational operations and may be subject to policy and accountability  
-B. Employees may use them for anything  
-C. Resources never cost money  
-D. Only managers are responsible for them  
-**Answer: A**
+A. Employees may use them for anything  
+B. Resources never cost money  
+C. Only managers are responsible for them  
+D. They belong to organisational operations and may be subject to policy and accountability  
+**Answer: D**
 
 12. What is professional reputation built from?  
 A. Repeated observable reliability, accuracy, respect and follow-through  
@@ -92,25 +92,25 @@ D. Social popularity
 **Answer: A**
 
 13. What does an organisational structure show?  
-A. How roles and functions relate within the organisation  
-B. Only office addresses  
+A. Only office addresses  
+B. How roles and functions relate within the organisation  
 C. Employee hobbies  
 D. Customer complaints  
-**Answer: A**
+**Answer: B**
 
 14. What is a reporting line?  
-A. Formal supervision relationship between roles  
-B. Every colleague an employee may speak to  
-C. A customer queue  
+A. Every colleague an employee may speak to  
+B. A customer queue  
+C. Formal supervision relationship between roles  
 D. A document filing rule  
-**Answer: A**
+**Answer: C**
 
 15. Why should approval authority be separated from routine coordination when required?  
-A. The person who organises information may not have authority to approve the decision  
-B. Coordination is unimportant  
-C. Administrators should approve everything  
-D. Managers should never delegate  
-**Answer: A**
+A. Coordination is unimportant  
+B. Administrators should approve everything  
+C. Managers should never delegate  
+D. The person who organises information may not have authority to approve the decision  
+**Answer: D**
 
 16. What should be identified before routing a request?  
 A. Which function or process owns it  
@@ -120,25 +120,25 @@ D. The requester's favourite department
 **Answer: A**
 
 17. When is escalation MOST appropriate?  
-A. When an issue exceeds authority, risk tolerance or specialist capability  
-B. For every routine request  
+A. For every routine request  
+B. When an issue exceeds authority, risk tolerance or specialist capability  
 C. Only after a deadline is missed  
 D. Never  
-**Answer: A**
+**Answer: B**
 
 18. What is delegation?  
-A. Assigning work or responsibility within authorised arrangements  
-B. Giving away accountability permanently  
-C. Ignoring the task  
+A. Giving away accountability permanently  
+B. Ignoring the task  
+C. Assigning work or responsibility within authorised arrangements  
 D. Escalating everything  
-**Answer: A**
+**Answer: C**
 
 19. What is an administrative workflow?  
-A. Sequence through which a task moves from request to completion  
-B. A stationery list  
-C. An office map  
-D. A staff leave schedule only  
-**Answer: A**
+A. A stationery list  
+B. An office map  
+C. A staff leave schedule only  
+D. Sequence through which a task moves from request to completion  
+**Answer: D**
 
 20. Why should incoming work be captured?  
 A. So commitments remain visible rather than depending on memory  
@@ -148,25 +148,25 @@ D. To avoid prioritisation
 **Answer: A**
 
 21. Which status is MOST useful?  
-A. “Waiting for signed approval; follow up Thursday 10:00”  
-B. “Pending”  
+A. “Pending”  
+B. “Waiting for signed approval; follow up Thursday 10:00”  
 C. “Maybe”  
 D. “Busy”  
-**Answer: A**
+**Answer: B**
 
 22. What is a dependency?  
-A. Something required before a task can proceed  
-B. A completed task  
-C. A cancelled meeting  
+A. A completed task  
+B. A cancelled meeting  
+C. Something required before a task can proceed  
 D. A personal preference  
-**Answer: A**
+**Answer: C**
 
 23. Why are checklists useful for recurring work?  
-A. They reduce omissions and reliance on memory  
-B. They eliminate all judgement  
-C. They never need updating  
-D. They make all tasks urgent  
-**Answer: A**
+A. They eliminate all judgement  
+B. They never need updating  
+C. They make all tasks urgent  
+D. They reduce omissions and reliance on memory  
+**Answer: D**
 
 24. What should an end-of-day close-out include?  
 A. Outstanding actions, follow-up points and handover needs  
@@ -176,25 +176,25 @@ D. Ignoring tomorrow's diary
 **Answer: A**
 
 25. What makes a handover useful?  
-A. Clear status, owner, next action and timing  
-B. “Check emails”  
+A. “Check emails”  
+B. Clear status, owner, next action and timing  
 C. “Busy today”  
 D. Completed work only  
-**Answer: A**
+**Answer: B**
 
 26. Why should workflows be improved after recurring failures?  
-A. Repeated exceptions may reveal a process weakness  
-B. Every failure is unrelated  
-C. Improvement removes procedures  
+A. Every failure is unrelated  
+B. Improvement removes procedures  
+C. Repeated exceptions may reveal a process weakness  
 D. Administrators should simply work faster  
-**Answer: A**
+**Answer: C**
 
 27. What is a policy?  
-A. Organisational principle or requirement guiding decisions and behaviour  
-B. Detailed step-by-step instruction only  
-C. A personal preference  
-D. A task register  
-**Answer: A**
+A. Detailed step-by-step instruction only  
+B. A personal preference  
+C. A task register  
+D. Organisational principle or requirement guiding decisions and behaviour  
+**Answer: D**
 
 28. What is a procedure?  
 A. Defined method for carrying out a process  
@@ -204,25 +204,25 @@ D. A job description only
 **Answer: A**
 
 29. What is an SOP?  
-A. Standard operating procedure describing consistent execution of routine work  
-B. A customer survey  
+A. A customer survey  
+B. Standard operating procedure describing consistent execution of routine work  
 C. A social media policy only  
 D. A financial statement  
-**Answer: A**
+**Answer: B**
 
 30. Why should the current approved procedure be used?  
-A. Older versions may contain outdated controls or instructions  
-B. New versions are always shorter  
-C. Procedures never change  
+A. New versions are always shorter  
+B. Procedures never change  
+C. Older versions may contain outdated controls or instructions  
 D. Approval applies only to managers  
-**Answer: A**
+**Answer: C**
 
 31. What should happen when a normal procedure does not fit an unusual situation?  
-A. Use the approved exception or escalation route  
-B. Ignore the procedure secretly  
-C. Invent a permanent new rule  
-D. Delete the procedure  
-**Answer: A**
+A. Ignore the procedure secretly  
+B. Invent a permanent new rule  
+C. Delete the procedure  
+D. Use the approved exception or escalation route  
+**Answer: D**
 
 32. Why should procedure evidence be retained where required?  
 A. It shows that required steps, approvals or controls occurred  
@@ -232,25 +232,25 @@ D. It is only for auditors
 **Answer: A**
 
 33. What is urgency?  
-A. How soon action is required  
-B. How expensive a task is  
+A. How expensive a task is  
+B. How soon action is required  
 C. Who requested it  
 D. How long the task is  
-**Answer: A**
+**Answer: B**
 
 34. What is importance?  
-A. Degree of impact on goals, risk or outcomes  
-B. How quickly the email arrived  
-C. The number of people copied  
+A. How quickly the email arrived  
+B. The number of people copied  
+C. Degree of impact on goals, risk or outcomes  
 D. The task's font colour  
-**Answer: A**
+**Answer: C**
 
 35. Why should fixed commitments be considered when planning flexible work?  
-A. Flexible tasks still need protected time around immovable deadlines and meetings  
-B. Flexible tasks never need scheduling  
-C. Fixed commitments can always move  
-D. Only managers need work blocks  
-**Answer: A**
+A. Flexible tasks never need scheduling  
+B. Fixed commitments can always move  
+C. Only managers need work blocks  
+D. Flexible tasks still need protected time around immovable deadlines and meetings  
+**Answer: D**
 
 36. Two authorised managers give incompatible urgent deadlines. What should the administrator do?  
 A. Present the conflict and seek authorised prioritisation  
@@ -260,25 +260,25 @@ D. Cancel both
 **Answer: A**
 
 37. What is a planning buffer?  
-A. Time left available for interruptions, transitions or unexpected work  
-B. A cancelled task  
+A. A cancelled task  
+B. Time left available for interruptions, transitions or unexpected work  
 C. An overtime requirement  
 D. A fixed meeting  
-**Answer: A**
+**Answer: B**
 
 38. Why should large tasks be broken into next actions?  
-A. It makes scheduling, progress and dependencies clearer  
-B. It removes ownership  
-C. It makes tasks less important  
+A. It removes ownership  
+B. It makes tasks less important  
+C. It makes scheduling, progress and dependencies clearer  
 D. It eliminates deadlines  
-**Answer: A**
+**Answer: C**
 
 39. Why can constantly checking email reduce productivity?  
-A. Frequent interruption can fragment focused work  
-B. Email is never useful  
-C. Messages do not require action  
-D. It improves every task  
-**Answer: A**
+A. Email is never useful  
+B. Messages do not require action  
+C. It improves every task  
+D. Frequent interruption can fragment focused work  
+**Answer: D**
 
 40. When should workload capacity be escalated?  
 A. Before important commitments fail when realistic capacity is exceeded  
@@ -288,25 +288,25 @@ D. Whenever one task is difficult
 **Answer: A**
 
 41. What is professional office etiquette?  
-A. Courteous, appropriate behaviour supporting respectful and efficient interaction  
-B. Formal dress only  
+A. Formal dress only  
+B. Courteous, appropriate behaviour supporting respectful and efficient interaction  
 C. Avoiding difficult conversations  
 D. Agreeing with everyone  
-**Answer: A**
+**Answer: B**
 
 42. How should a visitor whose host is delayed be handled?  
-A. Acknowledge them, follow procedure and provide an appropriate update  
-B. Ignore them  
-C. Reveal the host's private schedule  
+A. Ignore them  
+B. Reveal the host's private schedule  
+C. Acknowledge them, follow procedure and provide an appropriate update  
 D. Give unrestricted access  
-**Answer: A**
+**Answer: C**
 
 43. Why should email recipients and attachments be checked before sending?  
-A. To prevent misdirection and confidentiality errors  
-B. To make the email longer  
-C. To avoid subject lines  
-D. To increase copying  
-**Answer: A**
+A. To make the email longer  
+B. To avoid subject lines  
+C. To increase copying  
+D. To prevent misdirection and confidentiality errors  
+**Answer: D**
 
 44. What does discretion mean?  
 A. Using judgement about what information should or should not be repeated  
@@ -316,25 +316,25 @@ D. Ignoring authorised reporting
 **Answer: A**
 
 45. How should cultural differences be approached professionally?  
-A. Avoid assumptions and communicate respectfully  
-B. Apply stereotypes  
+A. Apply stereotypes  
+B. Avoid assumptions and communicate respectfully  
 C. Ignore individual preferences  
 D. Treat roles differently based on background  
-**Answer: A**
+**Answer: B**
 
 46. What should routine problem-solving begin with?  
-A. Establishing facts  
-B. Assigning blame  
-C. Promising a solution  
+A. Assigning blame  
+B. Promising a solution  
+C. Establishing facts  
 D. Escalating to the CEO  
-**Answer: A**
+**Answer: C**
 
 47. What is the difference between a symptom and a root cause?  
-A. A symptom is a visible effect; root cause is the underlying reason  
-B. They are the same  
-C. Root cause is always a person  
-D. Symptoms require no action  
-**Answer: A**
+A. They are the same  
+B. Root cause is always a person  
+C. Symptoms require no action  
+D. A symptom is a visible effect; root cause is the underlying reason  
+**Answer: D**
 
 48. What is a workaround?  
 A. Temporary method that allows work to continue without permanently fixing the cause  
@@ -344,25 +344,25 @@ D. A final solution in every case
 **Answer: A**
 
 49. When should a problem be escalated?  
-A. When authority, risk, time or expertise requires higher intervention  
-B. Only when a customer complains  
+A. Only when a customer complains  
+B. When authority, risk, time or expertise requires higher intervention  
 C. Never  
 D. For every small inconvenience  
-**Answer: A**
+**Answer: B**
 
 50. What should a useful problem update include?  
-A. What is known, action underway and next update timing  
-B. Blame  
-C. Unverified promises  
+A. Blame  
+B. Unverified promises  
+C. What is known, action underway and next update timing  
 D. Personal opinion only  
-**Answer: A**
+**Answer: C**
 
 51. Why should recurring administrative problems be investigated?  
-A. They may signal a weakness in process or control  
-B. Repetition proves the process is strong  
-C. Repeated problems should be ignored  
-D. Workarounds are always enough  
-**Answer: A**
+A. Repetition proves the process is strong  
+B. Repeated problems should be ignored  
+C. Workarounds are always enough  
+D. They may signal a weakness in process or control  
+**Answer: D**
 
 52. Which principle BEST summarises Module 1?  
 A. Reliable administration combines controlled workflows, professional conduct, prioritisation, procedures and sound judgement  
