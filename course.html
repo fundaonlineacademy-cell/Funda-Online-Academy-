@@ -1,8 +1,18 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Courses - Funda</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/@supabase/supabase-js@2"></script></head>
-<body class="bg-white"><nav class="flex justify-between p-6 max-w-7xl mx-auto"><div class="font-extrabold">FUNDA ONLINE ACADEMY</div><div class="flex gap-3"><a href="login.html" class="border px-5 py-2 rounded-full">Login</a><a href="register.html" class="bg-blue-600 text-white px-5 py-2 rounded-full">Register</a></div></nav>
-<div class="bg-[#E8F0FF] p-16 text-center"><h1 class="text-5xl font-extrabold text-[#0A2A7A]">Master Skills That Get You Hired</h1><p class="mt-4">No login needed to browse</p></div>
-<div class="max-w-7xl mx-auto p-6"><div id="courses" class="grid md:grid-cols-3 gap-6"></div></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="refresh" content="0; url=courses-public.html">
+<title>Courses | Funda Online Academy</title>
 <script>
-const supabaseClient=supabase.createClient("https://nzwfowwoazmpnwfrednh.supabase.co","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56d2Zvd3dvYXptcG53ZnJlZG5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NzcwMzIsImV4cCI6MjEwMjE1MzAzMn0.7bY4V_KCPsJMz4Kf7QsErRSKGbKbxwxTY8R4YbVj7rU");
-async function loadCourses(){const {data}=await supabaseClient.from('courses').select('*');document.getElementById('courses').innerHTML=data.map(c=>`<div class="border rounded-[20px] overflow-hidden shadow"><div class="h-40 bg-blue-600 flex items-center justify-center text-4xl">📚</div><div class="p-5"><h3 class="font-bold">${c.title}</h3><p class="text-sm text-gray-500">${c.description}</p><div class="flex justify-between mt-4"><span class="font-bold">R${c.price}</span><a href="register.html" class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm">Enroll Now</a></div></div></div>`).join('');}loadCourses();
-</script></body></html>
+(function(){
+  var target='courses-public.html'+(location.search||'')+(location.hash||'');
+  location.replace(target);
+})();
+</script>
+</head>
+<body>
+<p>Opening the current Funda Online Academy course catalogue… <a href="courses-public.html">Continue to Courses</a></p>
+</body>
+</html>
