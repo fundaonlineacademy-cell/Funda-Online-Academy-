@@ -1,154 +1,165 @@
 # Professional Certificate in Bookkeeping
-## Module 2: Source Documents & Transaction Analysis
-### Lesson 7: Document Filing, Audit Trails, POPIA & Record Control
+## Module 3: Journals, Ledgers & Trial Balance
+### Lesson 7: Control Accounts and Subsidiary Records
 
-**Estimated study time:** 45–55 minutes
+**Estimated study time:** 50–55 minutes
 
 ## Learning Outcomes
 By the end of this lesson, you should be able to:
-1. Organise financial source documents for reliable retrieval.
-2. Explain how filing supports an audit trail.
-3. Apply basic confidentiality and access controls to bookkeeping records.
-4. Recognise personal information commonly found in financial documents.
-5. Explain why retention and disposal should follow authorised requirements rather than personal judgement.
+1. Explain the purpose of control accounts.
+2. Distinguish general-ledger control balances from subsidiary-account detail.
+3. Reconcile debtors and creditors control accounts to subsidiary ledgers.
+4. Identify common causes of control-account differences.
+5. Explain why control-account reconciliations strengthen bookkeeping accuracy.
 
 ## Why This Lesson Matters
-Accurate capture is not enough if the supporting evidence cannot later be found. Bookkeeping records may be needed for reconciliations, customer or supplier disputes, tax administration, management review or external accounting work.
+A business with many customers and suppliers needs both summary and detail. The general ledger may show one Debtors Control balance, while the customer subledger shows exactly which customers owe the total. The same applies to Creditors Control and supplier balances.
 
-Financial documents also contain sensitive information. Supplier bank details, employee information, customer addresses and identity data should not be left in uncontrolled folders simply because finance staff need access to them. Good records management combines retrieval, auditability, confidentiality and controlled retention.
+If the control balance and subsidiary records disagree, something is incomplete or incorrectly allocated. Regular reconciliation helps detect errors before customer statements, supplier payments or financial reports become unreliable.
 
 ## Key Terms
-- **Audit trail** — Traceable path connecting source evidence, approvals and accounting entries.
-- **Indexing** — Organising records using consistent identifiers so they can be retrieved.
-- **Retention** — Keeping records for the required period under applicable law and organisational policy.
-- **Disposition** — Approved final action when a record reaches the end of its retention period.
-- **Personal information** — Information relating to an identifiable person or, in certain POPIA contexts, an identifiable juristic person.
-- **Access control** — Restricting records to authorised users and actions.
+- **Control account** — General-ledger summary account representing a group of detailed subsidiary balances.
+- **Subsidiary ledger** — Detailed records supporting a control account, such as customer or supplier accounts.
+- **Debtors control** — General-ledger summary of amounts receivable from customers.
+- **Creditors control** — General-ledger summary of amounts owed to suppliers.
+- **Age analysis** — Report grouping outstanding balances by age or overdue period.
+- **Reconciliation difference** — Unexplained difference between related summary and detail records.
 
 ## Main Lesson Content
-### 1. Design filing around retrieval
-A filing system should answer a practical question: can an authorised person find the right supporting document when the transaction is reviewed?
+### 1. Summary versus detail
+Suppose five customers owe:
+- Customer A R8,000
+- Customer B R5,000
+- Customer C R12,000
+- Customer D R3,000
+- Customer E R2,000
 
-Possible filing structures include:
-- supplier → year/month → invoices;
-- customer → invoice number;
-- transaction type → period;
-- accounting-system attachment linked directly to the transaction.
+Total subsidiary debtors = R30,000.
 
-The best structure is the organisation's approved one, used consistently.
+The Debtors Control account in the general ledger should also show R30,000, assuming all transactions are correctly posted and reconciled.
 
-### 2. Use meaningful references
-Useful identifiers include:
-- invoice number;
-- supplier/customer code;
-- payment reference;
-- journal number;
-- batch number;
-- period/date.
+### 2. Why use control accounts?
+Control accounts:
+- keep the general ledger manageable;
+- provide a summary balance for reporting;
+- allow detailed customer/supplier records separately;
+- create a reconciliation control between two record sets.
 
-A file called `scan0005.pdf` is harder to retrieve than `ABC-Supplies_INV804_2026-08-12.pdf` if the naming standard permits that format.
+### 3. Debtors-control movements
+Typical movements include:
+- credit sales → increase Debtors Control;
+- customer receipts → decrease it;
+- customer credit notes → decrease it;
+- approved adjustments/bad-debt entries → affect it according to the transaction.
 
-### 3. Connect digital evidence to accounting entries
-Where the accounting system supports attachments, the source document may be linked to the transaction. This improves retrieval but does not remove the need for backup, access or retention controls.
+The subsidiary customer accounts should reflect the same underlying events in detail.
 
-If evidence is stored separately, use references that allow the ledger entry and file repository to point to each other.
+### 4. Creditors-control movements
+Typical movements include:
+- supplier invoices → increase Creditors Control;
+- supplier payments → decrease it;
+- supplier credit notes → decrease it;
+- approved adjustments → affect it appropriately.
 
-### 4. Avoid uncontrolled duplicates
-Multiple uncontrolled copies create uncertainty about which document is authoritative.
+### 5. Reconcile control to subsidiary totals
+A practical reconciliation process:
+1. obtain the control-account balance;
+2. obtain the subsidiary-ledger listing at the same date;
+3. total the subsidiary balances;
+4. compare the totals;
+5. investigate differences;
+6. correct authorised errors;
+7. retain the reconciliation evidence.
 
-For example, the same supplier invoice might exist in:
-- email inbox;
-- employee desktop;
-- shared folder;
-- accounting attachment;
-- personal cloud storage.
+The comparison must use the same cut-off date.
 
-A controlled process identifies the official location and removes unnecessary copies where authorised.
+### 6. Common debtors differences
+Possible causes include:
+- customer receipt posted to general ledger but not customer account;
+- invoice allocated to wrong customer;
+- credit note missing from a customer account;
+- opening-balance error;
+- manual journal to control account without matching subsidiary detail;
+- timing/interface failure.
 
-### 5. Financial documents can contain personal information
-Examples include:
-- employee banking details on payroll records;
-- sole-proprietor identity/contact details;
-- customer addresses;
-- signatures;
-- contact numbers;
-- bank-account information.
+### 7. Common creditors differences
+Possible causes include:
+- supplier invoice posted to wrong supplier;
+- payment not allocated;
+- supplier credit omitted;
+- direct manual journal to the control account;
+- duplicate supplier record;
+- system import failure.
 
-POPIA awareness means this information should be processed through authorised business processes and protected from unnecessary disclosure.
+### 8. Manual journals to control accounts
+Direct journals to Debtors Control or Creditors Control can create differences if the subsidiary records do not receive corresponding detail.
 
-### 6. Need-to-know access
-Not every employee needs access to every finance folder. Payroll files may require more restricted permissions than a general supplier-invoice folder.
+Many accounting systems restrict such journals or require special procedures. Follow system and organisational controls.
 
-Use organisational accounts and approved shared repositories. Do not copy sensitive records to personal email, personal cloud drives or unapproved USB devices merely for convenience.
+### 9. Age analysis as a reasonableness tool
+An age analysis shows how long balances have been outstanding. It can reveal:
+- very old customer debt;
+- old supplier credits;
+- unapplied receipts;
+- accounts with unusual negative balances.
 
-### 7. Protect physical documents
-Paper files can also expose information. Controls can include:
-- locked storage;
-- clean-desk practices;
-- controlled file removal;
-- secure printing;
-- approved confidential disposal.
+An age analysis should reconcile to the relevant control balance before being relied on for management action.
 
-A supplier banking form left on a reception printer can create a real confidentiality and fraud risk.
+### 10. Reconciliation is evidence
+A completed reconciliation should show:
+- period/date;
+- control balance;
+- subsidiary total;
+- reconciling items;
+- action taken;
+- preparer/reviewer where required.
 
-### 8. Retention must be authorised
-Do not invent one retention period for every bookkeeping record. Different legal and business requirements can apply to different records, and holds or investigations can prevent normal disposal.
-
-Follow the organisation's retention schedule and current legal/tax guidance. If uncertain, refer to the authorised records, tax or legal function.
-
-### 9. Disposal should protect confidentiality
-Throwing sensitive finance records into ordinary waste may expose information. Use approved secure destruction for paper and controlled deletion/disposition for electronic records.
-
-Simply pressing Delete may not satisfy the organisation's disposal process where backups, shared copies or retention controls exist.
-
-### 10. Handover and continuity
-A good filing system should not depend on one bookkeeper's memory. Another authorised employee should be able to locate source evidence using documented rules.
-
-This supports leave cover, staff changes, audits and business continuity.
+It should not simply state “agrees” without support.
 
 ## Worked Example
-A bookkeeper is asked to explain a R27,500 payment made four months ago. The ledger shows payment reference PAY-481. Searching the approved supplier folder using PAY-481 finds the invoice, approval and independent bank-detail verification record. The documents show why the payment was made and who authorised it.
+Debtors Control shows R46,000. The customer age analysis totals R44,500. Difference = R1,500.
 
-This is a strong audit trail. If the evidence existed only in a former employee's personal inbox, the business would struggle to support the transaction.
+Investigation finds a R1,500 customer receipt posted directly to Debtors Control but not allocated to the customer's subsidiary account. The control decreased, but the individual customer balance did not.
+
+The bookkeeper uses the authorised allocation/correction process so both records agree at R44,500.
 
 ## Practical Activity
-Design a filing structure for:
-1. sales invoices;
-2. supplier invoices;
-3. bank reconciliations;
-4. petty-cash vouchers;
-5. payroll-support records.
+A creditors control account shows R28,000. Supplier balances total R31,000.
 
-For each, state a useful filename/reference rule, appropriate access level and one confidentiality risk.
+Possible evidence reveals:
+- Supplier A payment R2,000 posted to control but not supplier account.
+- Supplier B credit note R1,000 posted to control but not supplier account.
+
+Explain how these items create the R3,000 difference and what must be corrected.
 
 ## Knowledge Check
-1. What makes a filing system useful?
-2. Why are meaningful references important?
-3. What is an authoritative record location?
-4. Give three examples of personal information in finance records.
-5. What does need-to-know access mean?
-6. Why should records not be stored in personal cloud accounts?
-7. Should a bookkeeper invent a universal retention period?
-8. What should controlled disposal achieve?
+1. What is a control account?
+2. What is a subsidiary ledger?
+3. What should customer balances reconcile to?
+4. What should supplier balances reconcile to?
+5. Why must reconciliation dates match?
+6. Why can direct journals to control accounts be risky?
+7. What can an age analysis reveal?
+8. What evidence should a reconciliation retain?
 
 ## Feedback / Explanation
-1. Authorised users can consistently find the correct evidence.
-2. They connect documents to transactions and support retrieval.
-3. The recognised controlled location for the official business record.
-4. Examples include bank details, addresses, contact information, signatures and payroll data.
-5. Access only for people with a legitimate work requirement.
-6. They may fall outside organisational security, ownership, retention and access controls.
-7. No. Use authorised schedules and applicable requirements.
-8. Remove records when authorised without exposing confidential information.
+1. A general-ledger summary of related detailed balances.
+2. Detailed supporting records, such as individual customers or suppliers.
+3. Debtors Control.
+4. Creditors Control.
+5. Different cut-off dates can create valid timing differences and misleading comparisons.
+6. They can change the summary without updating subsidiary detail.
+7. Old balances, credits, unapplied receipts and unusual balances.
+8. Date, balances compared, reconciling items, actions and review evidence where required.
 
 ## Key Takeaways
-- Filing is part of bookkeeping control, not just administration.
-- Source documents must be retrievable and linked to accounting entries.
-- Financial records often contain personal and confidential information.
-- Use organisational repositories and least-necessary access.
-- Retention and disposal should follow approved requirements, not guesses.
+- Control accounts summarise detailed customer or supplier records.
+- Subsidiary totals should reconcile to the control balance.
+- Differences often reveal allocation, posting or timing problems.
+- Direct journals to control accounts require caution.
+- Reconciliation evidence should be retained and reviewed.
 
 ## Visual Learning Guidance
-**Recommended visual:** Transaction Reference → Accounting Entry ↔ Authorised Source Document Repository → Access Control → Retention → Secure Disposal
+**Recommended visual:** Customer/Supplier Subledger → Total → Control Account → Compare → Investigate Differences → Correct → Sign Off
 
-**Caption:** “A strong audit trail makes evidence easy for authorised users to find and hard for unauthorised users to access.”
+**Caption:** “Control-account reconciliation checks that summary balances agree with the detailed records behind them.”

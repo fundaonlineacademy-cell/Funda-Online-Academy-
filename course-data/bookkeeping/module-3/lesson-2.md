@@ -1,146 +1,164 @@
 # Professional Certificate in Bookkeeping
-## Module 2: Source Documents & Transaction Analysis
-### Lesson 2: Sales Invoices, Credit Notes, Receipts & Customer Documents
+## Module 3: Journals, Ledgers & Trial Balance
+### Lesson 2: General Ledger and T-Account Logic
 
-**Estimated study time:** 50 minutes
+**Estimated study time:** 50–55 minutes
 
 ## Learning Outcomes
 By the end of this lesson, you should be able to:
-1. Distinguish common customer-side documents.
-2. Explain how sales invoices affect debtor and income records.
-3. Explain the purpose of credit notes and receipts.
-4. Match customer documents to the correct transaction stage.
-5. Apply basic controls to customer-document processing.
+1. Explain the purpose of the general ledger.
+2. Read and prepare simple T-accounts.
+3. Identify debit and credit sides of ledger accounts.
+4. Calculate a closing balance from ledger movements.
+5. Explain how individual ledger accounts connect to the trial balance.
 
 ## Why This Lesson Matters
-Customer transactions can pass through several stages: quotation, order, delivery, invoice, payment and sometimes a return or credit. If the documents are confused, income can be duplicated, customer balances can be wrong and collection activity can become unreliable.
+The general ledger is where transaction effects accumulate by account. It answers questions such as: What is the bank balance according to the books? How much rent has been recorded? What is the loan balance? How much sales income has accumulated?
 
-A bookkeeper should understand what each customer document proves and how it affects the accounting records.
+T-accounts are a simple visual tool for understanding the same debit-and-credit logic used inside accounting systems. They help learners see how transactions affect balances instead of memorising software screens.
 
 ## Key Terms
-- **Sales invoice** — Document issued to a customer showing goods or services supplied and the amount due.
-- **Credit note** — Document reducing or reversing all or part of a previously billed amount.
-- **Receipt** — Evidence that money was received.
-- **Customer statement** — Summary of transactions and balance on a customer's account for a period.
-- **Debtor / accounts receivable** — Amount owed to the business by a customer.
-- **Allocation** — Matching a receipt or credit to the correct customer transaction.
+- **General ledger** — Collection of accounts summarising the financial effects of transactions.
+- **T-account** — Simple account diagram with debits on the left and credits on the right.
+- **Opening balance** — Balance brought forward from a previous period.
+- **Closing balance** — Balance after all recorded movements for the period.
+- **Balance carried down (c/d)** — Balance used to close an account at period end in traditional manual bookkeeping.
+- **Balance brought down (b/d)** — Closing balance carried forward as the next period's opening balance.
 
 ## Main Lesson Content
-### 1. Sales invoices
-A sales invoice records an amount billed to a customer. In a credit sale, it normally increases the customer/debtors balance and records income according to the accounting system and transaction type.
+### 1. The general ledger groups transactions by account
+Journals organise transactions chronologically. The ledger reorganises them by account.
 
-Before posting, check:
-- customer identity;
-- invoice number and date;
-- goods/services and quantity;
-- prices and calculations;
-- VAT treatment where applicable;
-- approved terms;
-- supporting order or delivery evidence where required.
+For example, several payments may appear in a cash-payments journal, but the general ledger groups the rent portions together in Rent Expense, the bank effects in Bank and the stationery effects in Stationery Expense.
 
-### 2. Cash sale versus credit sale
-A credit sale creates an amount receivable from the customer. A cash or immediately paid sale normally creates cash/bank and income without an outstanding debtor balance.
+### 2. T-account structure
+A basic T-account looks like this:
 
-A common mistake is to record a customer payment as another sale after the original credit invoice was already recorded. The receipt should settle the debtor, not duplicate revenue.
+**Bank**
+- Debit side: increases to Bank.
+- Credit side: decreases to Bank.
 
-### 3. Credit notes
-A credit note may be issued when:
-- goods are returned;
-- an invoice was overstated;
-- an authorised discount or adjustment is granted;
-- a transaction is partly reversed.
+For assets, debits normally increase the account and credits decrease it. For liabilities, equity and income, the normal pattern is generally reversed.
 
-A credit note should reference the original transaction where practical and be approved according to procedure. It is not simply a convenient way to make a customer balance disappear.
+### 3. Example: Bank account
+Opening Bank balance: R20,000 debit.
+Transactions:
+- Customer cash receipt R5,000 → debit Bank.
+- Rent payment R3,000 → credit Bank.
+- Supplier payment R4,500 → credit Bank.
 
-### 4. Receipts
-A receipt proves payment was received. Depending on the channel, evidence might include a numbered cash receipt, card record, EFT confirmation or bank statement entry.
+Closing Bank balance:
+R20,000 + R5,000 - R3,000 - R4,500 = R17,500 debit.
 
-For a debtor receipt, the bookkeeper should identify:
-- customer;
-- amount;
-- date;
-- reference;
-- invoice(s) being paid where known.
+The balance reflects the ledger record, which should later be reconciled to the bank statement.
 
-Unidentified deposits should be investigated rather than allocated to a random customer.
+### 4. Expense account example
+Rent Expense starts at zero for the new period. The business records:
+- January rent R3,000 debit.
+- February rent R3,000 debit.
 
-### 5. Customer statements
-A customer statement summarises items such as:
-- opening balance;
-- invoices;
-- credit notes;
-- receipts;
-- closing balance.
+Closing Rent Expense = R6,000 debit.
 
-The statement is useful for collections and reconciliation, but it must reflect the underlying customer ledger accurately.
+Expenses normally carry debit balances because increases are debited.
 
-### 6. Allocating receipts
-Suppose Customer A owes invoice 101 for R3,000 and invoice 115 for R5,000. The customer pays R3,000 with reference “INV101”. The receipt should be allocated to invoice 101 rather than left as an unexplained general credit where the system supports matching.
+### 5. Liability account example
+A business receives a R50,000 loan:
+- Credit Loan Payable R50,000.
 
-Correct allocation makes outstanding balances meaningful.
+Later R8,000 of principal is repaid:
+- Debit Loan Payable R8,000.
 
-### 7. Overpayments and unidentified receipts
-If a customer pays more than expected, do not create false sales to absorb the difference. Investigate whether:
-- another invoice is being paid;
-- the customer made an error;
-- the business owes a refund;
-- the amount should remain as a customer credit pending instruction.
+Remaining liability = R42,000 credit, assuming the R8,000 relates to principal and ignoring interest for this simplified example.
 
-Follow approved policy.
+### 6. Income account example
+The business earns R12,000 service revenue:
+- Credit Service Income R12,000.
 
-### 8. Document numbering and audit trail
-Sequential or system-generated document numbers help identify missing, duplicated or altered documents. Do not reuse invoice numbers casually.
+A later authorised credit adjustment reduces revenue by R2,000:
+- Debit Service Income R2,000.
 
-If an invoice is cancelled, the system should retain appropriate evidence of the cancellation rather than deleting the history in a way that breaks traceability.
+Net income-account balance = R10,000 credit.
+
+### 7. Balancing an account
+To balance a manual T-account:
+1. total both sides;
+2. identify the difference;
+3. enter the balancing amount on the smaller side as balance c/d;
+4. carry that balance to the next period as balance b/d where appropriate.
+
+Temporary income/expense accounts are normally closed through the period-end process rather than carried indefinitely in the same way as balance-sheet accounts.
+
+### 8. Normal balances help detect errors
+Knowing the expected normal balance can flag unusual situations.
+
+Examples:
+- Bank normally debit unless overdrawn/structured differently.
+- Creditors normally credit.
+- Debtors normally debit.
+- Sales income normally credit.
+- Expenses normally debit.
+
+An unusual balance is not automatically wrong, but it deserves investigation.
+
+### 9. General ledger to trial balance
+At period end, the closing balances of general-ledger accounts are listed in the trial balance. Debit balances go in the debit column and credit balances in the credit column.
+
+If double-entry has been recorded correctly, total trial-balance debits should equal total credits.
+
+### 10. Subsidiary detail is not lost
+The general ledger may show Debtors Control R80,000 while individual customer accounts provide the detail making up that total. The control account gives the summary; the subsidiary ledger explains who owes the amount.
 
 ## Worked Example
-A business invoices a customer R11,500 for services. The invoice is recorded as a credit sale. A week later the customer pays R10,000 and the business approves a R1,500 credit because part of the service was not delivered.
+A business has these Bank movements:
+- Opening balance R15,000 debit.
+- Customer receipt R8,000 debit.
+- Owner capital R10,000 debit.
+- Supplier payment R6,500 credit.
+- Rent R4,000 credit.
 
-The bookkeeper records:
-- original invoice: debtor + R11,500;
-- receipt: debtor - R10,000 and bank + R10,000;
-- approved credit note: debtor - R1,500 and corresponding reduction to the relevant income/tax treatment.
+Closing balance = R15,000 + R8,000 + R10,000 - R6,500 - R4,000 = R22,500 debit.
 
-The customer balance becomes R0 without recording the payment as new income.
+That R22,500 would appear as the bookkeeping bank balance before reconciliation adjustments.
 
 ## Practical Activity
-Create a transaction timeline for a customer who:
-1. orders services worth R8,000;
-2. receives an invoice;
-3. pays R5,000;
-4. receives an approved R1,000 credit;
-5. pays the remaining balance.
+Prepare simple T-accounts for Bank, Sales, Rent Expense and Creditors using:
+1. Owner contributes R20,000 cash.
+2. Credit sale R6,000.
+3. Supplier invoice for stationery R2,500 on credit.
+4. Customer pays R4,000.
+5. Supplier paid R1,500.
+6. Rent paid R3,000.
 
-Show the documents created and how the debtor balance changes after each accounting event.
+Calculate closing balances.
 
 ## Knowledge Check
-1. What does a sales invoice represent?
-2. What is the purpose of a credit note?
-3. Why is a debtor payment not normally new income?
-4. What is receipt allocation?
-5. What should happen with an unidentified bank deposit?
-6. What does a customer statement show?
-7. Why should invoice numbering be controlled?
-8. How should an overpayment be handled?
+1. What is the general ledger?
+2. Which side of a T-account is debit?
+3. Which side normally increases an asset?
+4. What is an opening balance?
+5. What is a closing balance?
+6. Why are normal balances useful?
+7. What balance normally appears in Creditors?
+8. How does the general ledger connect to the trial balance?
 
 ## Feedback / Explanation
-1. An amount billed to a customer for goods/services supplied.
-2. To reduce or reverse an authorised part of an earlier billed transaction.
-3. The income was recorded with the original sale; the later receipt settles the receivable.
-4. Matching the payment to the correct customer transaction(s).
-5. Investigate and hold appropriately until identified rather than guessing.
-6. The customer's transaction history and balance for a period.
-7. It supports completeness and audit-trail control.
-8. Investigate and process according to authorised customer-credit/refund policy.
+1. Collection of accounts summarising financial transaction effects.
+2. Left side.
+3. Debit.
+4. Balance carried into the period from the previous period where applicable.
+5. Balance remaining after recorded movements.
+6. Unexpected balances can signal coding or reconciliation issues.
+7. Credit balance.
+8. Closing ledger balances are listed in the trial balance.
 
 ## Key Takeaways
-- Sales invoices, receipts and credit notes affect different stages of the customer account.
-- A receipt against a debtor should not duplicate sales income.
-- Credit notes require a valid reason and approval.
-- Accurate allocation makes debtor balances reliable.
-- Customer documents must remain traceable through controlled numbering and records.
+- Journals organise transactions by time; ledgers organise them by account.
+- T-accounts make debit/credit movement visible.
+- Account balances are calculated from opening balances and movements.
+- Normal balances help identify unusual records.
+- General-ledger balances feed the trial balance.
 
 ## Visual Learning Guidance
-**Recommended visual:** Sale → Invoice → Debtor Balance → Receipt / Credit Note → Allocation → Customer Statement → Reconciliation
+**Recommended visual:** Journal entries → separate T-accounts → closing balances → trial balance.
 
-**Caption:** “Customer documents explain how an amount moves from sale to settlement.”
+**Caption:** “The general ledger gathers every transaction into the account balances used for reporting.”

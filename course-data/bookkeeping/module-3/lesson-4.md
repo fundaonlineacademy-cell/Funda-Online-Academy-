@@ -1,157 +1,143 @@
 # Professional Certificate in Bookkeeping
-## Module 2: Source Documents & Transaction Analysis
-### Lesson 4: Cash, EFT, Card & Petty-cash Evidence
+## Module 3: Journals, Ledgers & Trial Balance
+### Lesson 4: Debits, Credits and Balancing Accounts
 
-**Estimated study time:** 45–50 minutes
+**Estimated study time:** 50–60 minutes
 
 ## Learning Outcomes
 By the end of this lesson, you should be able to:
-1. Identify evidence supporting common payment and receipt methods.
-2. Explain the difference between transaction evidence and bank-settlement evidence.
-3. Apply basic cash and petty-cash controls.
-4. Match EFT and card activity to the underlying business transaction.
-5. Recognise unresolved or suspicious payment evidence that requires escalation.
+1. Apply debit and credit rules to major account types.
+2. Calculate balances on simple ledger accounts.
+3. Distinguish normal debit and credit balances.
+4. Explain balance carried down and brought down in manual records.
+5. Use unusual balances as a prompt for investigation rather than automatic correction.
 
 ## Why This Lesson Matters
-Modern businesses move money in several ways: cash, EFT, debit order, card, online payment and petty cash. The payment method changes the evidence available, but it does not remove the need to prove the business reason for the transaction.
+Bookkeepers often know that “debits must equal credits” but still struggle when deciding which side of an individual account should increase. This lesson strengthens the logic behind account movements and shows how ledger balances are calculated.
 
-A line on a bank statement proves that money moved. It does not necessarily prove what was bought, who approved it or whether the amount was correctly classified. Bookkeepers need both settlement evidence and transaction evidence.
+A reliable bookkeeper should be able to look at an account and ask whether the balance makes sense. An unusual balance can reveal incorrect coding, overpayments, missing receipts or another issue that needs review.
 
 ## Key Terms
-- **EFT** — Electronic funds transfer between bank accounts.
-- **Card transaction** — Payment or receipt processed through a debit/credit-card or merchant system.
-- **Petty cash** — Small controlled cash float used for authorised minor expenditure.
-- **Imprest** — Petty-cash method that restores the float to an approved fixed amount after documented expenditure.
-- **Settlement** — Final movement of funds through a payment system.
-- **Merchant record** — Evidence from a card/payment provider showing transaction and settlement information.
+- **Normal balance** — Side on which an account type generally carries a positive balance.
+- **Debit balance** — Account balance where debit movements exceed credit movements.
+- **Credit balance** — Account balance where credit movements exceed debit movements.
+- **Balance c/d** — Balance carried down to close a traditional ledger account.
+- **Balance b/d** — Balance brought down into the next period.
+- **Contra** — Entry that offsets or reduces a balance on the normal side.
 
 ## Main Lesson Content
-### 1. Cash evidence
-Cash transactions are vulnerable because physical money can change hands without an automatic electronic record.
+### 1. The core normal-balance pattern
+A practical guide is:
 
-Useful evidence may include:
-- numbered cash receipt;
-- till slip or POS report;
-- cash-up sheet;
-- deposit slip;
-- petty-cash voucher;
-- supporting supplier receipt.
+| Account type | Normal increase | Typical normal balance |
+| --- | --- | --- |
+| Assets | Debit | Debit |
+| Expenses | Debit | Debit |
+| Drawings | Debit | Debit |
+| Liabilities | Credit | Credit |
+| Equity | Credit | Credit |
+| Income | Credit | Credit |
 
-Cash received should be counted, recorded and secured according to procedure. Cash shortages or overages should not be hidden by adjusting records without explanation.
+This pattern comes from the accounting equation and double-entry system.
 
-### 2. EFT evidence
-For an EFT payment, a bank confirmation can show:
-- amount;
-- date;
-- beneficiary;
-- payment reference.
+### 2. Assets
+If Bank starts with R10,000 and receives R4,000, Bank is debited. If R3,000 is paid out, Bank is credited.
 
-But the EFT confirmation should be linked to the supplier invoice, approval or other underlying business document.
+Closing balance = R10,000 + R4,000 - R3,000 = R11,000 debit.
 
-For an EFT receipt, the bank entry should be matched to the correct customer or transaction. If the payer cannot be identified, investigate rather than guessing.
+An asset can sometimes have an unusual credit balance, such as an overdrawn bank account depending on presentation and system setup. Do not “fix” it merely because it is unusual; investigate the facts.
 
-### 3. Debit orders and recurring payments
-Recurring bank deductions may include insurance, subscriptions, loans and service contracts.
+### 3. Liabilities
+If Creditors starts at R8,000 credit and a new supplier invoice of R2,500 is recorded, Creditors is credited to R10,500. If R6,000 is paid, Creditors is debited, leaving R4,500 credit.
 
-The bookkeeper should know what each debit order represents and retain or reference the underlying agreement/invoice where required. A new or unexpectedly increased debit order should be checked rather than automatically accepted.
+If a supplier account shows a debit balance, possible explanations include an advance payment, overpayment or unallocated supplier credit. It may be legitimate, but should be understood.
 
-### 4. Card payments
-A business card payment may generate several records:
-- card slip or digital receipt;
-- supplier invoice/till slip;
-- card statement;
-- bank settlement.
+### 4. Income and expenses
+Income normally increases with credits. Expenses normally increase with debits.
 
-The card slip proves the payment method but may not provide enough detail to classify the expense. The itemised supplier document is often needed too.
+If Sales is R40,000 credit and an approved sales credit of R3,000 is recorded, Sales may be debited by R3,000, leaving net sales of R37,000 before other adjustments.
 
-### 5. Merchant receipts
-When customers pay by card, the business may see gross sales transactions but receive a net bank settlement after merchant fees.
+If Repairs Expense is R5,000 debit and R1,500 was found to belong to Equipment, the correction may credit Repairs R1,500 and debit Equipment R1,500.
 
-Example:
-- card sales: R10,000;
-- merchant fee: R250;
-- bank settlement: R9,750.
+### 5. Balancing a manual account
+Suppose the Bank T-account contains:
 
-The R9,750 bank deposit should not cause the bookkeeper to reduce sales to R9,750 if the gross sales were R10,000. The merchant fee is a separate cost according to the accounting policy.
+Debits: R20,000 opening + R5,000 receipts = R25,000.  
+Credits: R4,000 rent + R6,000 suppliers = R10,000.
 
-### 6. Petty cash
-Petty cash is designed for small authorised expenditure, not as an uncontrolled alternative to normal procurement.
+Difference = R15,000.
 
-A controlled petty-cash payment should normally show:
-- date;
-- amount;
-- purpose;
-- recipient/requester;
-- supporting receipt;
-- required approval;
-- voucher/reference.
+In traditional manual presentation, balance c/d R15,000 is written on the credit side so both sides total R25,000. The next period opens with balance b/d R15,000 on the debit side.
 
-### 7. Imprest example
-Suppose the approved petty-cash float is R2,000. At replenishment, cash remaining is R650 and valid vouchers total R1,350.
+The c/d entry is a balancing presentation, not a new economic transaction.
 
-R650 + R1,350 = R2,000.
+### 6. Temporary accounts
+Income and expense accounts usually relate to a reporting period. Through closing procedures, their net effect ultimately transfers into equity/retained results according to the accounting framework and system.
 
-The replenishment needed to restore the float is R1,350, subject to the approved process.
+They are not normally treated exactly like permanent asset/liability balances carried forward indefinitely without closing.
 
-If vouchers total only R1,300, there is an unexplained R50 difference that should be investigated.
+### 7. Contra balances can be meaningful
+Some accounts are deliberately designed to offset related balances, such as accumulated depreciation against fixed assets. These concepts are developed later.
 
-### 8. Personal and business cards
-Business purchases made with personal cards may be reimbursable if authorised and supported. Personal purchases made on a business card should not automatically be recorded as business expenses.
+Do not assume every credit balance attached to an asset-related area is an error without understanding the account purpose.
 
-The bookkeeper should classify based on the economic purpose and approved policy, not simply the card used.
+### 8. Investigate unusual balances
+Useful questions include:
+- Was a transaction posted to the wrong side?
+- Is there an overpayment?
+- Was a receipt or credit allocated incorrectly?
+- Is the account designed as a contra account?
+- Is the bank actually overdrawn?
+- Is there a missing opening balance?
 
-### 9. Fraud and error warning signs
-Examples include:
-- repeated cash vouchers with no receipts;
-- altered card slips;
-- payment confirmations that do not match bank records;
-- many payments just below approval limits;
-- unknown recurring debit orders;
-- unexplained refunds or reversals.
-
-These indicators require verification and appropriate escalation, not accusation.
+Investigation should use source evidence, not simply force the account back to its “expected” side.
 
 ## Worked Example
-An employee uses the company card for R1,840 at a hardware store. The card statement shows only the merchant and amount. The employee submits an itemised invoice showing R1,500 of authorised office shelving and R340 of personal items.
+Debtors Control begins at R25,000 debit. During the month:
+- credit sales R18,000 debit;
+- customer receipts R30,000 credit;
+- customer credit notes R4,000 credit.
 
-The bookkeeper should not classify the full R1,840 as office equipment. The personal portion must be handled according to the organisation's recovery or employee-account process, with the transaction documented appropriately.
+Closing balance = R25,000 + R18,000 - R30,000 - R4,000 = R9,000 debit.
+
+If the customer subledger totals R8,600 instead, there is a R400 reconciliation difference requiring investigation.
 
 ## Practical Activity
-For each payment method, list the ideal supporting evidence:
-1. Supplier paid by EFT.
-2. Customer pays cash.
-3. Employee buys approved stationery with a company card.
-4. Petty cash used for parking.
-5. Customer card sales are settled net of merchant fees.
+Calculate closing balances and state whether they are debit or credit:
+1. Bank: opening R12,000 Dr; receipts R9,000 Dr; payments R15,000 Cr.
+2. Creditors: opening R20,000 Cr; new invoices R7,000 Cr; payments R18,000 Dr.
+3. Sales: R35,000 Cr; sales credits R2,500 Dr.
+4. Rent: R4,000 Dr + R4,000 Dr.
+5. Debtors: opening R10,000 Dr; sales R5,000 Dr; receipts R13,000 Cr.
 
 ## Knowledge Check
-1. Does a bank statement alone always prove the business purpose of a payment?
-2. What should an EFT payment be matched to?
-3. Why is an itemised card receipt useful?
-4. What is an imprest petty-cash system?
-5. If gross card sales are R10,000 but only R9,750 reaches the bank because of fees, what should be investigated?
-6. What should happen with unidentified receipts?
-7. Should a personal item on a business card automatically become a business expense?
-8. Why are cash transactions considered higher-control risk?
+1. Which account types normally increase with debits?
+2. Which account types normally increase with credits?
+3. What is a normal balance?
+4. Does an unusual balance automatically mean an error?
+5. What is balance c/d?
+6. What is balance b/d?
+7. Why might a supplier account have a debit balance?
+8. Why should an unusual balance be investigated using source evidence?
 
 ## Feedback / Explanation
-1. No. It proves movement of money but not necessarily purpose, approval or classification.
-2. The underlying authorised business transaction and source evidence.
-3. It shows what was actually purchased for classification and control.
-4. A fixed float restored to its approved amount after supported expenditure.
-5. Record gross activity and the merchant fee separately according to the approved accounting process.
-6. Investigate and hold appropriately until identified.
-7. No. Economic purpose and policy determine treatment.
-8. Physical cash can move without an automatic external audit trail.
+1. Assets, expenses and drawings.
+2. Liabilities, equity and income.
+3. The side an account type generally carries a positive balance.
+4. No. It can be legitimate but requires explanation.
+5. The balancing amount used to close a traditional manual account.
+6. The balance carried into the next period.
+7. Possible advance payment, overpayment or credit.
+8. Because the correct response depends on the actual transaction, not an assumed normal side.
 
 ## Key Takeaways
-- Payment evidence must connect to the underlying business transaction.
-- Card slips and bank entries may need supporting invoices or receipts.
-- Petty cash requires vouchers, evidence, reconciliation and secure custody.
-- Merchant settlements can differ from gross sales because of fees.
-- Unexplained cash or payment differences must be investigated.
+- Debit and credit meaning depends on account type.
+- Assets/expenses normally carry debit balances; liabilities/equity/income normally carry credit balances.
+- Ledger balances reflect opening amounts plus period movements.
+- Balance c/d is not a new transaction.
+- Unusual balances should trigger investigation, not automatic manipulation.
 
 ## Visual Learning Guidance
-**Recommended visual:** Business Transaction → Approval → Payment Method → Settlement Evidence → Match to Source Document → Capture → Reconcile
+**Recommended visual:** Account type → normal increase side → ledger movements → closing balance → reasonableness check.
 
-**Caption:** “Money movement is only one part of the evidence needed for reliable bookkeeping.”
+**Caption:** “Balancing accounts combines debit-credit rules with a reasonableness check on the final balance.”

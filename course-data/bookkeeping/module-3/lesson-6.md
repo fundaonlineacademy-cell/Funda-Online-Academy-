@@ -1,166 +1,153 @@
 # Professional Certificate in Bookkeeping
-## Module 2: Source Documents & Transaction Analysis
-### Lesson 6: VAT-Inclusive and VAT-Exclusive Transaction Analysis
+## Module 3: Journals, Ledgers & Trial Balance
+### Lesson 6: Finding and Correcting Bookkeeping Errors
 
-**Estimated study time:** 55–65 minutes
+**Estimated study time:** 50–60 minutes
 
 ## Learning Outcomes
 By the end of this lesson, you should be able to:
-1. Distinguish VAT-inclusive and VAT-exclusive amounts.
-2. Calculate VAT on standard-rated transactions using the current standard rate where applicable.
-3. Extract the VAT portion from an inclusive amount.
-4. Explain input tax and output tax at a basic bookkeeping level.
-5. Recognise when VAT treatment should be checked rather than assumed.
+1. Recognise common bookkeeping errors.
+2. Distinguish errors that affect trial-balance equality from those that may not.
+3. Investigate errors using source documents, journals and ledgers.
+4. Correct entries through a traceable authorised process.
+5. Explain why error prevention is stronger than repeated correction.
 
 ## Why This Lesson Matters
-VAT affects many South African sales and purchase documents. A bookkeeper who confuses inclusive and exclusive values can overstate income, understate expenses or place the wrong amount in the VAT control records.
+Errors can occur during capture, coding, posting, allocation or reconciliation. Some cause the trial balance to disagree; others remain hidden because the debit and credit totals still match. A professional bookkeeper needs a method for finding the cause rather than changing figures until reports look right.
 
-As at August 2026, SARS states that South Africa's standard VAT rate is 15%. Some supplies are zero-rated or exempt, and VAT treatment depends on the facts and the vendor's status. This lesson teaches calculation and transaction-analysis skills, not personalised tax advice.
+Correction should restore accurate records while preserving evidence of what happened.
 
 ## Key Terms
-- **VAT** — Value-Added Tax.
-- **VAT vendor** — Person/entity registered for VAT under the applicable rules.
-- **Standard-rated supply** — Taxable supply on which the standard VAT rate applies.
-- **Zero-rated supply** — Taxable supply charged at 0% where legal requirements are met.
-- **Exempt supply** — Supply that is exempt from VAT under the law.
-- **Output tax** — VAT charged by a vendor on taxable supplies made.
-- **Input tax** — VAT incurred that may be deductible subject to the VAT Act and required conditions.
-- **VAT-exclusive amount** — Amount before VAT is added.
-- **VAT-inclusive amount** — Total amount including VAT.
+- **Error of omission** — Transaction not recorded, or one required part omitted.
+- **Error of commission** — Entry made to the wrong account of the same general type or wrong subsidiary account.
+- **Error of principle** — Transaction classified against an inappropriate accounting principle/category, such as treating an asset as an ordinary expense.
+- **Transposition error** — Digits reversed, such as 64 entered as 46.
+- **Reversal error** — Correct accounts used but debit and credit sides reversed.
+- **Compensating errors** — Separate errors whose amounts offset each other in totals.
 
 ## Main Lesson Content
-### 1. Confirm whether VAT applies
-Do not add VAT simply because an invoice looks formal. First consider whether:
-- the business is a VAT vendor;
-- the supply is taxable;
-- the document supports the treatment;
-- the transaction is standard-rated, zero-rated or exempt as applicable.
+### 1. Start with evidence, not assumptions
+When an error is suspected:
+1. define what looks wrong;
+2. identify the affected account/transaction;
+3. retrieve source evidence;
+4. compare source → journal → ledger → report;
+5. identify where the difference arose;
+6. prepare the authorised correction;
+7. recheck the balance/reconciliation.
 
-Complex or unusual treatment should be referred to the authorised tax/accounting function.
+### 2. Complete omission
+A supplier invoice for R5,000 is never captured. Because neither the debit nor credit is recorded, the trial balance may still balance. Expenses and creditors are both understated.
 
-### 2. Calculating VAT on an exclusive amount
-Using the current 15% standard rate:
+This shows why completeness checks and supplier reconciliations are necessary.
 
-**VAT = VAT-exclusive amount × 15%**
+### 3. One-sided posting error
+A manual journal debits Rent R3,000 correctly but the corresponding credit to Bank is not posted.
 
-If goods cost R2,000 excluding VAT:
-- VAT = R2,000 × 15% = R300.
-- VAT-inclusive total = R2,300.
+The trial balance may differ by R3,000 because one side is missing.
 
-For a standard-rated sale by a VAT vendor, the R2,300 total is not normally all sales income. The bookkeeping records separate the exclusive value from output VAT.
+### 4. Error of commission
+A payment intended for Supplier A is posted to Supplier B. The creditors-control total may remain correct while individual supplier balances are wrong.
 
-### 3. Extracting VAT from an inclusive amount
-If the price already includes 15% VAT, the VAT portion can be calculated using the tax fraction:
+Supplier reconciliation or account review is needed to detect it.
 
-**VAT = Inclusive amount × 15 / 115**
+### 5. Error of principle
+The business buys equipment for R20,000, but it is posted to Repairs Expense rather than an asset account contrary to the approved accounting policy.
 
-For an inclusive amount of R1,150:
-- VAT = R1,150 × 15/115 = R150.
-- Exclusive amount = R1,000.
+Debit and credit totals still balance. The error affects classification and financial reporting, not arithmetic equality.
 
-A common mistake is to calculate 15% of R1,150, which gives R172.50 and is incorrect when R1,150 already includes VAT.
+### 6. Transposition errors
+R7,540 is entered as R7,450. The difference is R90.
 
-### 4. Exclusive from inclusive
-Another method is:
+Because transposition differences are often divisible by 9, this can provide an investigation clue. Do not rely on this test alone.
 
-**Exclusive amount = Inclusive amount ÷ 1.15**
+### 7. Reversal errors
+Correct accounts are identified but the sides are reversed.
 
-For R2,875 inclusive:
-- Exclusive = R2,875 ÷ 1.15 = R2,500.
-- VAT = R375.
+Example correct entry:
+- Debit Rent Expense R4,000.
+- Credit Bank R4,000.
 
-Always check rounding according to the system and organisational policy.
+Incorrect reversal:
+- Debit Bank R4,000.
+- Credit Rent Expense R4,000.
 
-### 5. Output tax on sales
-Suppose a VAT vendor makes a standard-rated sale of R5,000 excluding VAT.
+The trial balance still balances, but the economic effect is wrong.
 
-At 15%:
-- Sales exclusive = R5,000.
-- Output VAT = R750.
-- Customer total = R5,750.
+### 8. Duplicate entries
+An invoice is captured twice with both sides duplicated. The trial balance still balances, but expenses/assets and creditors may be overstated.
 
-A simplified credit-sale entry may therefore affect:
-- Debtors R5,750 debit;
-- Sales R5,000 credit;
-- Output VAT/VAT control R750 credit.
+Duplicate-document checks and reconciliations help detect this.
 
-The exact account names depend on the accounting system.
+### 9. Correct through authorised entries
+In a controlled system, do not simply edit history if the system or policy requires reversal/correction entries.
 
-### 6. Input tax on purchases
-Suppose a VAT vendor purchases eligible office supplies for R2,300 inclusive and the transaction meets the requirements for an input-tax deduction.
+A correction should show:
+- original transaction/reference;
+- incorrect treatment;
+- correcting debit/credit;
+- reason;
+- required approval;
+- date of correction.
 
-At 15%:
-- Exclusive amount = R2,000.
-- VAT portion = R300.
+### 10. Prevent recurrence
+After correcting an error, ask why it happened.
 
-A simplified entry may separate the expense/asset from input VAT and record the full amount owed or paid.
+Possible improvements:
+- duplicate validation;
+- better account descriptions;
+- mandatory references;
+- checklist before payment;
+- training on VAT codes;
+- improved segregation/review;
+- automated control reports.
 
-Do not assume every VAT amount on every purchase is deductible. The VAT Act contains conditions and restrictions, so uncertain items should be referred.
-
-### 7. Zero-rated is not the same as exempt
-Both may result in no VAT being added to the customer price, but they are not the same legal category. This distinction can affect VAT reporting and input-tax treatment.
-
-A bookkeeper should use the approved tax code supported by the transaction and organisational tax guidance.
-
-### 8. VAT codes in accounting software
-Common systems use tax codes such as standard sales, standard purchases, zero-rated or exempt. Selecting the wrong code can affect the VAT report even if the gross amount is correct.
-
-Automation or bank rules should therefore be reviewed rather than blindly accepted.
-
-### 9. Credit notes and VAT
-Where an original taxable invoice is properly reduced through a credit note, the VAT component also needs appropriate adjustment according to the transaction and system. The credit should not reduce only the exclusive amount while leaving the VAT unchanged.
-
-### 10. Reconcile VAT records
-VAT control balances should be supported by transaction reports and source documents. Unusual differences, manual journals or unsupported VAT codes need investigation before return preparation.
+Repeated corrections without process improvement waste time and increase risk.
 
 ## Worked Example
-A VAT-registered office supplier sells furniture for R11,500 VAT-inclusive at the standard 15% rate.
+A R9,600 supplier payment was posted to Supplier Blue instead of Supplier Green. The general-ledger creditors control and bank remain correct, but the two supplier accounts are wrong.
 
-VAT = R11,500 × 15/115 = R1,500.  
-Exclusive sales value = R10,000.
-
-If the customer pays later, the receipt settles the full debtor balance of R11,500. The receipt is not another VATable sale because the sale and output VAT were already recorded with the invoice.
+The bookkeeper verifies the payment evidence and supplier invoice, then uses the approved correction/allocation method to move the payment from Supplier Blue to Supplier Green. The reason and references are retained.
 
 ## Practical Activity
-Using 15% for the following standard-rated examples:
-1. Calculate VAT and inclusive total on R4,000 exclusive.
-2. Extract VAT and exclusive value from R6,900 inclusive.
-3. A supplier invoice is R2,300 inclusive. Calculate the VAT portion, assuming the transaction qualifies for normal input-tax treatment.
-4. Explain why 15% of an inclusive total is not the correct VAT extraction formula.
-5. Identify two reasons a bookkeeper should not assume a purchase VAT amount is deductible.
+Identify the error type and likely detection method:
+1. R6,500 invoice omitted completely.
+2. R8,420 entered as R8,240 on one side.
+3. Equipment purchase posted to Repairs.
+4. Customer receipt posted to the wrong customer.
+5. Supplier invoice captured twice.
+6. Debit and credit accounts reversed.
+
+Then describe how each should be corrected without destroying the audit trail.
 
 ## Knowledge Check
-1. What is the current standard VAT rate used in this lesson?
-2. How do you calculate VAT on an exclusive amount?
-3. How do you extract VAT from an amount inclusive of 15% VAT?
-4. What is output tax?
-5. What is input tax?
-6. Is zero-rated the same as exempt?
-7. Why are accounting-system VAT codes important?
-8. What should happen when VAT treatment is uncertain?
+1. What is an error of omission?
+2. Can a complete omission leave a trial balance balanced?
+3. What is an error of principle?
+4. What is a transposition error?
+5. Why can a wrong-customer allocation be missed by the trial balance?
+6. Why are duplicate entries dangerous even if debits equal credits?
+7. What should a correction record contain?
+8. Why should recurring errors trigger process review?
 
 ## Feedback / Explanation
-1. 15% as confirmed by SARS for 2026.
-2. Exclusive amount × 15% for a standard-rated transaction.
-3. Inclusive amount × 15/115.
-4. VAT charged by a vendor on taxable supplies made.
-5. VAT incurred that may be deductible subject to applicable requirements.
-6. No. They are different VAT categories.
-7. They determine how transactions flow into VAT records and reports.
-8. Refer to approved tax guidance or the authorised specialist rather than guessing.
+1. A required transaction or posting is missing.
+2. Yes, if both debit and credit are omitted.
+3. Correct values are recorded using an inappropriate accounting classification/principle.
+4. Digits are reversed.
+5. The general-ledger total may remain unchanged while subsidiary detail is wrong.
+6. Both sides can be duplicated equally while balances are overstated.
+7. Original reference, reason, correct treatment and approval/audit information.
+8. The underlying control weakness should be fixed, not merely the symptoms.
 
 ## Key Takeaways
-- Inclusive and exclusive amounts must be distinguished before calculation.
-- At 15%, exclusive × 15% gives VAT; inclusive × 15/115 extracts VAT.
-- VAT should be separated from income/expense where the accounting treatment requires it.
-- Input-tax deductions are subject to legal conditions and should not be assumed.
-- Zero-rated and exempt are different categories.
-- Correct tax codes and reconciliations are essential for reliable VAT records.
+- Some errors affect trial-balance equality; many do not.
+- Source documents and reconciliations are essential investigation tools.
+- Never force an account to a desired value without understanding the cause.
+- Corrections should be authorised and traceable.
+- Error prevention and process improvement reduce repeated failures.
 
 ## Visual Learning Guidance
-**Recommended visual:** Exclusive Value + VAT = Inclusive Total; Inclusive Total × 15/115 = VAT.
+**Recommended visual:** Exception → Trace Source → Journal → Ledger → Identify Error Type → Correct → Reconcile → Improve Control
 
-**Caption:** “First identify whether the amount includes VAT—then use the correct calculation and tax code.”
-
-## Accuracy Note
-VAT rate checked against the South African Revenue Service 2026 tax-rate information before this lesson was approved.
+**Caption:** “Professional correction finds the cause, fixes the records and strengthens the process.”
