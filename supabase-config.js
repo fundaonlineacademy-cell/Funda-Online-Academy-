@@ -20,6 +20,7 @@ if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
     const brand=document.createElement('script');brand.src='courses-public-brand-theme.js?v='+Date.now();document.head.appendChild(brand);
   }
   if (/course-view\.html$/i.test(window.location.pathname)) {
+    const runtimeFix=document.createElement('script');runtimeFix.src='course-view-runtime-fix.js?v='+Date.now();document.head.appendChild(runtimeFix);
     ['retail-course-overview-premium.js','bookkeeping-premium-overview.js','office-administration-premium-overview.js','carpentry-premium-overview.js','business-administration-premium-overview.js','all-courses-premium-overview.js','course-overview-brand-theme.js'].forEach(file=>{const premium=document.createElement('script');premium.src=file+'?v='+Date.now();document.head.appendChild(premium)});
   }
 }
