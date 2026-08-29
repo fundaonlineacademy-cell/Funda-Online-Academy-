@@ -23,40 +23,40 @@ D. Making strategic decisions alone
 **Answer: C**
 
 3. Why should a PA understand executive priorities?  
-A. To prioritise and reduce unnecessary interruptions  
-B. To replace the executive  
-C. To ignore routine work  
-D. To control all departments  
-**Answer: A**
+A. To replace the executive  
+B. To ignore routine work  
+C. To control all departments  
+D. To prioritise and reduce unnecessary interruptions  
+**Answer: D**
 
 4. Which action damages PA trust?  
-A. Tracking commitments  
-B. Protecting confidentiality  
-C. Escalating early  
-D. Pretending to have authority that was not delegated  
-**Answer: D**
+A. Pretending to have authority that was not delegated  
+B. Tracking commitments  
+C. Protecting confidentiality  
+D. Escalating early  
+**Answer: A**
 
 ## Lesson 2 — Executive Support & Understanding Manager Priorities
 5. What is a decision cycle?  
-A. A recurring pattern of information, review and approval  
-B. A calendar colour  
+A. A calendar colour  
+B. A recurring pattern of information, review and approval  
 C. A filing rule  
 D. A travel route  
-**Answer: A**
+**Answer: B**
 
 6. Why is inbox volume not a reliable priority measure?  
 A. Email is never important  
-B. Business impact and deadlines vary across messages  
-C. All messages are equal  
+B. All messages are equal  
+C. Business impact and deadlines vary across messages  
 D. Priority is based on message length  
-**Answer: B**
+**Answer: C**
 
 7. Which information makes a priority map useful?  
 A. Only task names  
 B. Only deadlines  
-C. Commitment, deadline, stakeholder, decision, dependency and risk  
-D. Personal opinions  
-**Answer: C**
+C. Personal opinions  
+D. Commitment, deadline, stakeholder, decision, dependency and risk  
+**Answer: D**
 
 8. Why protect executive preparation time?  
 A. Important meetings and decisions often require work before the event  
@@ -74,25 +74,25 @@ D. Forwarding everything
 **Answer: B**
 
 10. Which is a useful inbox category?  
-A. Executive Decision  
-B. Favourite Message  
-C. Maybe Important  
+A. Favourite Message  
+B. Maybe Important  
+C. Executive Decision  
 D. Random  
-**Answer: A**
+**Answer: C**
 
 11. Why is moving an email into a folder not the same as completing it?  
-A. The underlying action may still be outstanding  
-B. Folders delete actions  
-C. Emails cannot be filed  
-D. Every folder is an archive  
-**Answer: A**
+A. Folders delete actions  
+B. Emails cannot be filed  
+C. Every folder is an archive  
+D. The underlying action may still be outstanding  
+**Answer: D**
 
 12. Which request should trigger extra verification?  
-A. Routine meeting confirmation  
-B. Public brochure request  
-C. Unusual urgent request to change supplier banking details  
+A. Unusual urgent request to change supplier banking details  
+B. Routine meeting confirmation  
+C. Public brochure request  
 D. Staff birthday notice  
-**Answer: C**
+**Answer: A**
 
 ## Lesson 4 — Gatekeeping & Stakeholder Coordination
 13. What is the purpose of gatekeeping?  
@@ -103,18 +103,18 @@ D. Replace departments
 **Answer: B**
 
 14. Why should standing instructions be understood?  
-A. They define access, delegation and escalation boundaries  
-B. They remove all judgement  
-C. They are only for reception  
+A. They remove all judgement  
+B. They are only for reception  
+C. They define access, delegation and escalation boundaries  
 D. They allow the PA to make any decision  
-**Answer: A**
+**Answer: C**
 
 15. If the executive is unavailable, what is a good PA response?  
 A. Reveal the private reason  
-B. Offer an authorised alternative route or time  
-C. Ignore the stakeholder  
-D. Invent an approval  
-**Answer: B**
+B. Ignore the stakeholder  
+C. Invent an approval  
+D. Offer an authorised alternative route or time  
+**Answer: D**
 
 16. Why must callbacks be recorded?  
 A. Gatekeeping is incomplete without follow-through  
@@ -139,11 +139,11 @@ D. Guess the likely answer
 **Answer: C**
 
 19. Why should options include major implications?  
-A. To support informed decision-making  
-B. To make the briefing longer  
-C. To remove deadlines  
-D. To avoid recommendations  
-**Answer: A**
+A. To make the briefing longer  
+B. To remove deadlines  
+C. To avoid recommendations  
+D. To support informed decision-making  
+**Answer: D**
 
 20. Why should supporting documents be organised?  
 A. So the executive can find relevant evidence quickly  
@@ -154,32 +154,32 @@ D. To avoid summaries
 
 ## Lesson 6 — Anticipation, Initiative & Problem Prevention
 21. What is useful initiative?  
-A. Taking authorised proactive action without waiting for every small instruction  
-B. Making strategic decisions alone  
+A. Making strategic decisions alone  
+B. Taking authorised proactive action without waiting for every small instruction  
 C. Ignoring procedures  
 D. Avoiding escalation  
-**Answer: A**
+**Answer: B**
 
 22. Why review the next 7–30 days?  
-A. Earlier visibility leaves more options to prevent problems  
-B. Future commitments never change  
-C. It replaces daily work  
+A. Future commitments never change  
+B. It replaces daily work  
+C. Earlier visibility leaves more options to prevent problems  
 D. Only travel matters in the future  
-**Answer: A**
+**Answer: C**
 
 23. What is trigger-based thinking?  
-A. Defining events that prompt related checks or actions  
-B. Reacting emotionally  
-C. Waiting for failure  
-D. Escalating every task  
-**Answer: A**
+A. Reacting emotionally  
+B. Waiting for failure  
+C. Escalating every task  
+D. Defining events that prompt related checks or actions  
+**Answer: D**
 
 24. What should happen after a recurring exception is identified?  
-A. Ignore it  
-B. Work around it forever  
-C. Investigate and improve the process or trigger where practical  
+A. Investigate and improve the process or trigger where practical  
+B. Ignore it  
+C. Work around it forever  
 D. Blame an employee  
-**Answer: C**
+**Answer: A**
 
 ## Lesson 7 — Managing Competing Priorities Under Pressure
 25. What should happen when new urgent work arrives?  
@@ -191,17 +191,17 @@ D. Ignore the new request
 
 26. Which question helps test urgency?  
 A. Who asked most loudly?  
-B. What happens if this waits?  
-C. How long is the email?  
+B. How long is the email?  
+C. What happens if this waits?  
 D. Who is most senior?  
-**Answer: B**
+**Answer: C**
 
 27. Why reduce unnecessary task-switching?  
-A. It can improve focus and reduce errors  
-B. It makes work slower  
-C. It removes priorities  
-D. It prevents teamwork  
-**Answer: A**
+A. It makes work slower  
+B. It removes priorities  
+C. It prevents teamwork  
+D. It can improve focus and reduce errors  
+**Answer: D**
 
 28. What should a capacity escalation include?  
 A. Outstanding work, deadlines, impact and realistic options  
@@ -212,25 +212,25 @@ D. A promise to do everything
 
 ## Lesson 8 — Professional Boundaries, Trust & PA Performance
 29. Why do professional boundaries matter?  
-A. They protect appropriate use of information, authority and resources  
-B. They prevent good relationships  
+A. They prevent good relationships  
+B. They protect appropriate use of information, authority and resources  
 C. They eliminate trust  
 D. They are only for junior staff  
-**Answer: A**
+**Answer: B**
 
 30. What is misrepresentation of authority?  
 A. Recording approval accurately  
-B. Claiming an approval or power that was not actually given  
-C. Asking for clarification  
+B. Asking for clarification  
+C. Claiming an approval or power that was not actually given  
 D. Escalating a decision  
-**Answer: B**
+**Answer: C**
 
 31. Which is a useful PA performance indicator?  
-A. Diary accuracy and action follow-through  
-B. Number of rumours heard  
-C. Number of people blocked  
-D. Size of inbox  
-**Answer: A**
+A. Number of rumours heard  
+B. Number of people blocked  
+C. Size of inbox  
+D. Diary accuracy and action follow-through  
+**Answer: D**
 
 32. Why review recurring mistakes as patterns?  
 A. Patterns reveal process weaknesses that can be improved  
