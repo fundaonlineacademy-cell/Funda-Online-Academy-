@@ -21,9 +21,11 @@ if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
   s.src='public-course-value.js?v='+Date.now();
   document.head.appendChild(s);
   if (/course-view\.html$/i.test(window.location.pathname)) {
-    const premium=document.createElement('script');
-    premium.src='retail-course-overview-premium.js?v='+Date.now();
-    document.head.appendChild(premium);
+    ['retail-course-overview-premium.js','bookkeeping-premium-overview.js'].forEach(file=>{
+      const premium=document.createElement('script');
+      premium.src=file+'?v='+Date.now();
+      document.head.appendChild(premium);
+    });
   }
 }
 
