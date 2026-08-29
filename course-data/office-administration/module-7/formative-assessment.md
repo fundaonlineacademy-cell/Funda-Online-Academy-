@@ -23,11 +23,11 @@ D. Emails always delete automatically
 **Answer: C**
 
 3. What is a major risk of tracking the same status in several tools?  
-A. Information becomes inconsistent  
-B. Work completes faster automatically  
-C. Access becomes more secure  
-D. Deadlines disappear  
-**Answer: A**
+A. Work completes faster automatically  
+B. Access becomes more secure  
+C. Deadlines disappear  
+D. Information becomes inconsistent  
+**Answer: D**
 
 4. Why should automated recurring processes be reviewed?  
 A. Conditions or source information may change  
@@ -45,18 +45,18 @@ D. They automatically approve documents
 **Answer: B**
 
 6. What risk comes from leaving comments in a final document?  
-A. Internal discussion may be exposed  
-B. The file becomes too small  
-C. The document cannot be opened  
+A. The file becomes too small  
+B. The document cannot be opened  
+C. Internal discussion may be exposed  
 D. Page numbers disappear  
-**Answer: A**
+**Answer: C**
 
 7. Why should bulk find-and-replace be checked?  
-A. It may replace text in unintended places  
-B. It always damages the file  
-C. It cannot change words  
-D. It removes headings  
-**Answer: A**
+A. It always damages the file  
+B. It cannot change words  
+C. It removes headings  
+D. It may replace text in unintended places  
+**Answer: D**
 
 8. Why should both source and final versions be stored correctly?  
 A. To keep authoritative editable and released versions identifiable  
@@ -67,25 +67,25 @@ D. To remove document history
 
 ## Lesson 3 — Spreadsheets for Administrative Work
 9. Why should each spreadsheet row normally represent one record?  
-A. It keeps related fields together for sorting and filtering  
-B. It increases font size  
+A. It increases font size  
+B. It keeps related fields together for sorting and filtering  
 C. It prevents formulas  
 D. It removes headers  
-**Answer: A**
+**Answer: B**
 
 10. What does data validation do?  
 A. Guarantees all information is true  
-B. Restricts or checks permitted data entry  
-C. Deletes duplicates automatically in every case  
+B. Deletes duplicates automatically in every case  
+C. Restricts or checks permitted data entry  
 D. Replaces source verification  
-**Answer: B**
+**Answer: C**
 
 11. What can happen if only one column is sorted?  
-A. Data can become separated from the record it belongs to  
-B. Formulas become approved  
-C. Filters stop working permanently  
-D. Dates turn into text automatically  
-**Answer: A**
+A. Formulas become approved  
+B. Filters stop working permanently  
+C. Dates turn into text automatically  
+D. Data can become separated from the record it belongs to  
+**Answer: D**
 
 12. When might a spreadsheet be the wrong tool?  
 A. When data sensitivity, scale or workflow complexity requires stronger controls  
@@ -96,25 +96,25 @@ D. Only when printing
 
 ## Lesson 4 — Presentations, PDFs & Shared Documents
 13. What should guide presentation slide content?  
-A. The message and audience need  
-B. Maximum word count  
+A. Maximum word count  
+B. The message and audience need  
 C. Decorative graphics only  
 D. The number of templates available  
-**Answer: A**
+**Answer: B**
 
 14. Does PDF automatically make information secure?  
 A. Yes  
-B. No, content and access still need review  
-C. Only if printed  
+B. Only if printed  
+C. No, content and access still need review  
 D. Only for internal use  
-**Answer: B**
+**Answer: C**
 
 15. Why should least-necessary permissions be used?  
-A. To limit unnecessary ability to view or change information  
-B. To stop collaboration completely  
-C. To make links longer  
-D. To remove file ownership  
-**Answer: A**
+A. To stop collaboration completely  
+B. To make links longer  
+C. To remove file ownership  
+D. To limit unnecessary ability to view or change information  
+**Answer: D**
 
 16. What risk can “anyone with the link” create?  
 A. Links may be forwarded to unintended people  
@@ -125,25 +125,25 @@ D. Comments disappear
 
 ## Lesson 5 — Cloud Collaboration & File Sharing
 17. Why should business records use approved cloud services?  
-A. To maintain organisational ownership, continuity and security  
-B. Personal drives are always faster  
+A. Personal drives are always faster  
+B. To maintain organisational ownership, continuity and security  
 C. Approved systems never need access control  
 D. Cloud files cannot be shared  
-**Answer: A**
+**Answer: B**
 
 18. What does least-necessary access mean?  
-A. Give only the access required for legitimate work  
-B. Give every user Edit access  
-C. Never share files  
+A. Give every user Edit access  
+B. Never share files  
+C. Give only the access required for legitimate work  
 D. Give external users Manage access  
-**Answer: A**
+**Answer: C**
 
 19. Why should external access be reviewed after a project?  
-A. Permissions may no longer be needed  
-B. External access always expires automatically  
-C. Projects never contain sensitive information  
-D. Review makes files public  
-**Answer: A**
+A. External access always expires automatically  
+B. Projects never contain sensitive information  
+C. Review makes files public  
+D. Permissions may no longer be needed  
+**Answer: D**
 
 20. Why can offline copies create risk?  
 A. They may become outdated or remain on devices unnecessarily  
@@ -154,25 +154,25 @@ D. They remove permissions from the original
 
 ## Lesson 6 — Information Security, Passwords & Access Control
 21. Why should passwords not be shared?  
-A. Sharing weakens accountability and security  
-B. It makes logins shorter  
+A. It makes logins shorter  
+B. Sharing weakens accountability and security  
 C. Shared passwords improve audit trails  
 D. Passwords are public information  
-**Answer: A**
+**Answer: B**
 
 22. What is MFA?  
-A. Authentication using more than one verification factor  
-B. A file format  
-C. A spreadsheet function  
+A. A file format  
+B. A spreadsheet function  
+C. Authentication using more than one verification factor  
 D. A meeting type  
-**Answer: A**
+**Answer: C**
 
 23. An unexpected MFA prompt appears. What should you do?  
 A. Approve it quickly  
 B. Ignore all security forever  
-C. Do not approve it and follow the security reporting process  
-D. Share the code with a colleague  
-**Answer: C**
+C. Share the code with a colleague  
+D. Do not approve it and follow the security reporting process  
+**Answer: D**
 
 24. What should happen after a suspected security incident?  
 A. Report it promptly through the authorised process  
@@ -183,25 +183,25 @@ D. Discuss it publicly
 
 ## Lesson 7 — POPIA Awareness, Personal Information & Confidentiality
 25. Which is personal information in ordinary office work?  
-A. An employee's banking details  
-B. A blank sheet of paper  
+A. A blank sheet of paper  
+B. An employee's banking details  
 C. A public weather forecast  
 D. An empty meeting room  
-**Answer: A**
+**Answer: B**
 
 26. Does access to personal information mean it can be used for any purpose?  
 A. Yes  
-B. No, use should remain within authorised legitimate processes  
-C. Yes, for senior staff  
+B. Yes, for senior staff  
+C. No, use should remain within authorised legitimate processes  
 D. Yes, if emailed internally  
-**Answer: B**
+**Answer: C**
 
 27. Why should forms avoid unnecessary personal-information fields?  
-A. Extra collection increases exposure without serving the defined purpose  
-B. Forms cannot contain names  
-C. Personal information is never needed  
-D. Fewer fields always remove legal duties  
-**Answer: A**
+A. Forms cannot contain names  
+B. Personal information is never needed  
+C. Fewer fields always remove legal duties  
+D. Extra collection increases exposure without serving the defined purpose  
+**Answer: D**
 
 28. What should happen after accidental disclosure of personal information?  
 A. Report promptly through the organisation's privacy/security process  
@@ -212,25 +212,25 @@ D. Post an apology publicly without authority
 
 ## Lesson 8 — Digital Housekeeping, Backups & Technology Problem Escalation
 29. Why should old files not be deleted simply because they look obsolete?  
-A. Retention or hold requirements may still apply  
-B. Nothing may ever be deleted  
+A. Nothing may ever be deleted  
+B. Retention or hold requirements may still apply  
 C. Old files are always authoritative  
 D. Storage has no limits  
-**Answer: A**
+**Answer: B**
 
 30. Why is sync not always the same as backup?  
-A. Sync can reproduce accidental deletion or corruption  
-B. Sync never moves files  
-C. Backups are only paper  
+A. Sync never moves files  
+B. Backups are only paper  
+C. Sync can reproduce accidental deletion or corruption  
 D. Sync always creates three copies  
-**Answer: A**
+**Answer: C**
 
 31. What belongs in a useful IT support request?  
-A. System, error, time, steps tried and business impact  
-B. “It doesn't work” only  
-C. Your password  
-D. No details  
-**Answer: A**
+A. “It doesn't work” only  
+B. Your password  
+C. No details  
+D. System, error, time, steps tried and business impact  
+**Answer: D**
 
 32. After system recovery, what should happen?  
 A. Reconcile offline work and confirm missing process records  
