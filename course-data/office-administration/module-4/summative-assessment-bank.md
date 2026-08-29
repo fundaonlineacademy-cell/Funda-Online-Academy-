@@ -8,11 +8,11 @@
 **Coverage:** All eight Module 4 lessons.
 
 1. Which statement BEST describes the role of a professional front desk?  
-A. It is mainly decorative  
-B. It combines service, communication, access and administrative control  
+A. It combines service, communication, access and administrative control  
+B. It is mainly decorative  
 C. It replaces all departments  
 D. It exists only to answer calls  
-**Answer: B**
+**Answer: A**
 
 2. What does professional presence include?  
 A. Appearance only  
@@ -22,18 +22,18 @@ D. Formal language in every situation
 **Answer: B**
 
 3. Why should a reception workstation be kept controlled?  
-A. To reduce exposure of sensitive information and support efficient service  
-B. So visitors cannot see any office equipment  
-C. Because paper is never allowed at reception  
+A. So visitors cannot see any office equipment  
+B. Because paper is never allowed at reception  
+C. To reduce exposure of sensitive information and support efficient service  
 D. To avoid using visitor registers  
-**Answer: A**
+**Answer: C**
 
 4. Which is the BEST response when several demands arrive at once?  
 A. Ignore everyone until one task is finished  
-B. Acknowledge people, assess safety/urgency and complete controlled actions in order  
-C. Transfer every request to management  
-D. Abandon all recordkeeping  
-**Answer: B**
+B. Transfer every request to management  
+C. Abandon all recordkeeping  
+D. Acknowledge people, assess safety/urgency and complete controlled actions in order  
+**Answer: D**
 
 5. Why is a front-desk handover important?  
 A. It transfers unresolved status and next actions to the next responsible person  
@@ -43,25 +43,25 @@ D. It allows confidential information to be shared widely
 **Answer: A**
 
 6. Before admitting an expected visitor, reception should normally:  
-A. verify the appointment and applicable access requirements  
-B. ask another visitor for permission  
+A. ask another visitor for permission  
+B. verify the appointment and applicable access requirements  
 C. provide unrestricted access  
 D. reveal the host's private schedule  
-**Answer: A**
+**Answer: B**
 
 7. How should identity requirements be applied?  
 A. Only to people who look unfamiliar  
-B. Consistently according to approved procedure  
-C. Only to contractors  
+B. Only to contractors  
+C. Consistently according to approved procedure  
 D. Only when the office is busy  
-**Answer: B**
+**Answer: C**
 
 8. An unexpected visitor says, “The director knows me.” What is the BEST response?  
 A. Allow immediate access  
-B. Verify through the authorised process before granting access  
-C. Send the visitor directly to the director's office  
-D. Disclose the director's current location  
-**Answer: B**
+B. Send the visitor directly to the director's office  
+C. Disclose the director's current location  
+D. Verify through the authorised process before granting access  
+**Answer: D**
 
 9. Why might contractors require extra visitor controls?  
 A. They may require work-order, safety, permit or escort verification  
@@ -78,18 +78,18 @@ D. It should be left at reception unattended
 **Answer: B**
 
 11. What is front-desk triage?  
-A. Assessing an enquiry quickly so it can be prioritised and routed  
-B. Closing all enquiries immediately  
-C. Giving every caller the same information  
+A. Closing all enquiries immediately  
+B. Giving every caller the same information  
+C. Assessing an enquiry quickly so it can be prioritised and routed  
 D. Forwarding every call to executives  
-**Answer: A**
+**Answer: C**
 
 12. Which information is MOST important in a message record?  
-A. Caller identity, contact, purpose, relevant reference and timing  
-B. The receptionist's private opinion  
-C. Unrelated personal details  
-D. Every word spoken  
-**Answer: A**
+A. The receptionist's private opinion  
+B. Unrelated personal details  
+C. Every word spoken  
+D. Caller identity, contact, purpose, relevant reference and timing  
+**Answer: D**
 
 13. Why should an enquiry be routed by process ownership rather than seniority alone?  
 A. The responsible function is more likely to resolve it correctly  
@@ -114,10 +114,10 @@ D. Public website address
 
 16. When is an enquiry truly closed?  
 A. As soon as it is transferred  
-B. When the appropriate outcome or controlled handoff has been confirmed  
-C. When the caller hangs up  
-D. When a message is deleted  
-**Answer: B**
+B. When the caller hangs up  
+C. When a message is deleted  
+D. When the appropriate outcome or controlled handoff has been confirmed  
+**Answer: D**
 
 17. Which combination BEST describes good customer service?  
 A. Courtesy, accuracy, reliability and follow-through  
@@ -127,53 +127,53 @@ D. Agreeing with every request
 **Answer: A**
 
 18. What is responsiveness?  
-A. Timely acknowledgement and appropriate action  
-B. Immediate final resolution in every case  
+A. Immediate final resolution in every case  
+B. Timely acknowledgement and appropriate action  
 C. Promising the fastest possible result  
 D. Avoiding updates  
-**Answer: A**
+**Answer: B**
 
 19. Why should service information be consistent across channels?  
-A. Contradictory information confuses customers and weakens trust  
-B. Every employee must use identical wording  
-C. Email should replace telephone service  
+A. Every employee must use identical wording  
+B. Email should replace telephone service  
+C. Contradictory information confuses customers and weakens trust  
 D. Reception should never refer customers  
-**Answer: A**
+**Answer: C**
 
 20. A process normally takes three working days. What is the BEST customer response?  
 A. Promise same-day completion to be helpful  
-B. Explain the realistic timeframe and next update  
-C. Avoid giving any timing information  
-D. Blame another department  
-**Answer: B**
+B. Avoid giving any timing information  
+C. Blame another department  
+D. Explain the realistic timeframe and next update  
+**Answer: D**
 
 21. What does service ownership mean for reception?  
-A. Reception must personally make every final decision  
-B. Reception can coordinate and follow up while respecting authority limits  
+A. Reception can coordinate and follow up while respecting authority limits  
+B. Reception must personally make every final decision  
 C. Reception should never take responsibility for follow-up  
 D. Reception can override policy  
-**Answer: B**
+**Answer: A**
 
 22. Why should service failures be acknowledged?  
-A. Visible correction and communication help restore trust  
-B. Acknowledgement always admits legal liability  
+A. Acknowledgement always admits legal liability  
+B. Visible correction and communication help restore trust  
 C. Customers prefer no explanation  
 D. It prevents escalation automatically  
-**Answer: A**
+**Answer: B**
 
 23. Which is the BEST first response to a complaint?  
-A. Listen and clarify the concern  
-B. Promise a refund  
-C. Defend the organisation immediately  
+A. Promise a refund  
+B. Defend the organisation immediately  
+C. Listen and clarify the concern  
 D. Close the complaint  
-**Answer: A**
+**Answer: C**
 
 24. What is the difference between acknowledging frustration and accepting liability?  
 A. There is no difference  
-B. Acknowledgement recognises the experience without confirming unverified responsibility  
-C. Liability should always be accepted by reception  
-D. Frustration should never be acknowledged  
-**Answer: B**
+B. Liability should always be accepted by reception  
+C. Frustration should never be acknowledged  
+D. Acknowledgement recognises the experience without confirming unverified responsibility  
+**Answer: D**
 
 25. Why should complaint facts be verified?  
 A. To distinguish confirmed information from allegations or incomplete information  
@@ -183,25 +183,25 @@ D. To prove the customer wrong
 **Answer: A**
 
 26. What is an authorised remedy?  
-A. Corrective action the employee is permitted to offer or arrange  
-B. Any solution the customer demands  
+A. Any solution the customer demands  
+B. Corrective action the employee is permitted to offer or arrange  
 C. A promise made to end an argument  
 D. A private payment by the receptionist  
-**Answer: A**
+**Answer: B**
 
 27. Which complaint should be escalated promptly?  
 A. Request for a brochure  
-B. Serious allegation of fraud or confidentiality breach  
-C. Question about parking  
+B. Question about parking  
+C. Serious allegation of fraud or confidentiality breach  
 D. Request for office hours  
-**Answer: B**
+**Answer: C**
 
 28. Why are complaint logs useful beyond the individual case?  
-A. They allow trend and root-cause analysis  
-B. They eliminate all future complaints  
-C. They replace customer communication  
-D. They are only for decoration  
-**Answer: A**
+A. They eliminate all future complaints  
+B. They replace customer communication  
+C. They are only for decoration  
+D. They allow trend and root-cause analysis  
+**Answer: D**
 
 29. What is visitor flow?  
 A. Movement of visitors from arrival through waiting, meeting and departure  
@@ -211,25 +211,25 @@ D. The visitor's travel route to the city
 **Answer: A**
 
 30. What is an appointment overrun?  
-A. A meeting continuing beyond its scheduled end time  
-B. A visitor arriving early  
+A. A visitor arriving early  
+B. A meeting continuing beyond its scheduled end time  
 C. A cancelled meeting  
 D. A room booked in advance  
-**Answer: A**
+**Answer: B**
 
 31. Why should reception monitor waiting-area capacity?  
-A. Overcrowding can create service, safety and privacy problems  
-B. More people always improve service  
-C. Capacity matters only after closing  
+A. More people always improve service  
+B. Capacity matters only after closing  
+C. Overcrowding can create service, safety and privacy problems  
 D. Visitors do not notice delays  
-**Answer: A**
+**Answer: C**
 
 32. If a meeting room is double-booked, reception should:  
 A. send both groups into the same room  
-B. resolve or escalate the conflict before misdirecting visitors  
-C. blame the visitors  
-D. delete one booking without authority  
-**Answer: B**
+B. blame the visitors  
+C. delete one booking without authority  
+D. resolve or escalate the conflict before misdirecting visitors  
+**Answer: D**
 
 33. Why should group visits be planned in advance?  
 A. They may require coordinated sign-in, badges, seating and escorts  
@@ -246,46 +246,46 @@ D. Discuss them publicly
 **Answer: B**
 
 35. What is social engineering?  
-A. Manipulating people into revealing information or bypassing controls  
-B. Training employees in social skills  
-C. Designing visitor seating  
+A. Training employees in social skills  
+B. Designing visitor seating  
+C. Manipulating people into revealing information or bypassing controls  
 D. Creating customer surveys  
-**Answer: A**
+**Answer: C**
 
 36. Why should an urgent caller claiming to be “IT” still be verified?  
-A. Urgency and authority claims can be used to bypass controls  
-B. IT staff are never trusted  
-C. Reception should disconnect all technical calls  
-D. Caller ID always proves identity  
-**Answer: A**
+A. IT staff are never trusted  
+B. Reception should disconnect all technical calls  
+C. Caller ID always proves identity  
+D. Urgency and authority claims can be used to bypass controls  
+**Answer: D**
 
 37. Which is a good front-desk screen control?  
-A. Leaving systems unlocked for convenience  
-B. Locking the screen when unattended  
+A. Locking the screen when unattended  
+B. Leaving systems unlocked for convenience  
 C. Sharing the login with colleagues  
 D. Displaying passwords nearby  
-**Answer: B**
+**Answer: A**
 
 38. What is tailgating?  
-A. Following an authorised person through a secured entry without proper access  
-B. Waiting behind another customer in a queue  
+A. Waiting behind another customer in a queue  
+B. Following an authorised person through a secured entry without proper access  
 C. Arriving late to a meeting  
 D. Sending a second email  
-**Answer: A**
+**Answer: B**
 
 39. Why should sensitive conversations not take place openly at reception?  
-A. Visitors may overhear private information  
-B. Reception should never communicate  
-C. Meetings are always confidential  
+A. Reception should never communicate  
+B. Meetings are always confidential  
+C. Visitors may overhear private information  
 D. Telephone calls are prohibited  
-**Answer: A**
+**Answer: C**
 
 40. How can security procedures be explained professionally?  
-A. Calmly state the requirement and next authorised step  
-B. Accuse the visitor of wrongdoing  
-C. Refuse to explain anything  
-D. Bypass the rule to avoid conflict  
-**Answer: A**
+A. Accuse the visitor of wrongdoing  
+B. Refuse to explain anything  
+C. Bypass the rule to avoid conflict  
+D. Calmly state the requirement and next authorised step  
+**Answer: D**
 
 41. Which information should an opening reception check include?  
 A. Systems readiness and expected visitors  
@@ -302,18 +302,18 @@ D. No next action
 **Answer: B**
 
 43. Which belongs in a front-desk handover?  
-A. Unresolved visitor, delivery and callback actions  
-B. Every greeting from the day  
-C. Private gossip  
+A. Every greeting from the day  
+B. Private gossip  
+C. Unresolved visitor, delivery and callback actions  
 D. Only completed work  
-**Answer: A**
+**Answer: C**
 
 44. Why should a visitor badge count be reconciled?  
-A. Missing badges can indicate an unresolved access-control issue  
-B. Badges are decorative  
-C. Visitors should keep badges  
-D. Badge counts replace visitor records  
-**Answer: A**
+A. Badges are decorative  
+B. Visitors should keep badges  
+C. Badge counts replace visitor records  
+D. Missing badges can indicate an unresolved access-control issue  
+**Answer: D**
 
 45. What is the BEST way to record a significant incident?  
 A. Facts, actions, timing and escalation according to procedure  
@@ -323,25 +323,25 @@ D. No record
 **Answer: A**
 
 46. Why should an uncollected confidential parcel be part of closing control?  
-A. It remains an unresolved security and custody item  
-B. Parcels never need records  
+A. Parcels never need records  
+B. It remains an unresolved security and custody item  
 C. It should be left on the reception counter  
 D. It can be taken home by staff  
-**Answer: A**
+**Answer: B**
 
 47. What is an exception in daily front-desk control?  
-A. A situation outside the normal expected process requiring attention  
-B. A routine completed greeting  
-C. A standard opening time  
+A. A routine completed greeting  
+B. A standard opening time  
+C. A situation outside the normal expected process requiring attention  
 D. A normal telephone ringtone  
-**Answer: A**
+**Answer: C**
 
 48. Which repeated pattern MOST clearly requires management attention?  
-A. Multiple customers repeatedly not receiving promised callbacks  
-B. Reception opening on time  
-C. Visitors signing out correctly  
-D. Couriers using reference numbers  
-**Answer: A**
+A. Reception opening on time  
+B. Visitors signing out correctly  
+C. Couriers using reference numbers  
+D. Multiple customers repeatedly not receiving promised callbacks  
+**Answer: D**
 
 49. Which combination BEST describes secure and professional visitor handling?  
 A. Welcome, verify, record, route/escort, monitor and close out  
@@ -351,22 +351,22 @@ D. Record visitors without telling hosts
 **Answer: A**
 
 50. A receptionist receives a difficult complaint and a suspicious access request at the same time. Which should be prioritised?  
-A. The access/security risk according to the applicable safety process  
-B. Whichever person speaks louder  
+A. Whichever person speaks louder  
+B. The access/security risk according to the applicable safety process  
 C. The complaint because customers always come first  
 D. Neither  
-**Answer: A**
+**Answer: B**
 
 51. What is the BEST indicator of a mature front-desk process?  
-A. Visitors are welcomed while records, access, follow-up and handovers remain controlled  
-B. Staff rely on memory  
-C. Every issue goes to the CEO  
+A. Staff rely on memory  
+B. Every issue goes to the CEO  
+C. Visitors are welcomed while records, access, follow-up and handovers remain controlled  
 D. Security rules are relaxed for important visitors  
-**Answer: A**
+**Answer: C**
 
 52. Which principle applies across the entire module?  
-A. Good service and strong operational controls should support each other  
-B. Security should always replace service  
-C. Service means agreeing to every request  
-D. Records are unnecessary when staff are experienced  
-**Answer: A**
+A. Security should always replace service  
+B. Service means agreeing to every request  
+C. Records are unnecessary when staff are experienced  
+D. Good service and strong operational controls should support each other  
+**Answer: D**
