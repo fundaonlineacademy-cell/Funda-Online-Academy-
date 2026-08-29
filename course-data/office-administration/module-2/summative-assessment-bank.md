@@ -15,25 +15,25 @@ D. Whether informal language can be used
 **Answer: A**
 
 2. Which channel is appropriate when an approval needs clear written evidence?  
-A. An authorised business email or workflow system  
-B. A private social media message  
+A. A private social media message  
+B. An authorised business email or workflow system  
 C. An unrecorded corridor conversation only  
 D. A public post  
-**Answer: A**
+**Answer: B**
 
 3. Why should important information appear early in a message?  
-A. Readers should quickly understand the purpose and required action  
-B. It makes messages longer  
-C. It removes deadlines  
+A. It makes messages longer  
+B. It removes deadlines  
+C. Readers should quickly understand the purpose and required action  
 D. It eliminates follow-up  
-**Answer: A**
+**Answer: C**
 
 4. What is a communication barrier?  
-A. Anything that interferes with accurate transmission or understanding  
-B. A confirmed deadline  
-C. A clear subject line  
-D. A concise summary  
-**Answer: A**
+A. A confirmed deadline  
+B. A clear subject line  
+C. A concise summary  
+D. Anything that interferes with accurate transmission or understanding  
+**Answer: D**
 
 5. Which technique BEST reduces misunderstanding after complex verbal instructions?  
 A. Summarise key points and confirm them  
@@ -43,25 +43,25 @@ D. Send unrelated follow-ups
 **Answer: A**
 
 6. Why does communication sometimes require a record?  
-A. Approvals, commitments, deadlines or important decisions may need evidence  
-B. Every casual greeting must be retained  
+A. Every casual greeting must be retained  
+B. Approvals, commitments, deadlines or important decisions may need evidence  
 C. Records replace action  
 D. Telephone calls can never be recorded administratively  
-**Answer: A**
+**Answer: B**
 
 7. What should a professional telephone greeting achieve?  
-A. Identify the organisation/employee where appropriate and offer assistance  
-B. Ask for private information immediately  
-C. Keep the caller waiting  
+A. Ask for private information immediately  
+B. Keep the caller waiting  
+C. Identify the organisation/employee where appropriate and offer assistance  
 D. Transfer without listening  
-**Answer: A**
+**Answer: C**
 
 8. Why should caller purpose be established before transfer?  
-A. To route the call correctly and reduce unnecessary transfers  
-B. To make the call longer  
-C. To avoid helping  
-D. To collect irrelevant details  
-**Answer: A**
+A. To make the call longer  
+B. To avoid helping  
+C. To collect irrelevant details  
+D. To route the call correctly and reduce unnecessary transfers  
+**Answer: D**
 
 9. What should a complete telephone message include?  
 A. Caller, contact, purpose/reference and relevant timing  
@@ -71,25 +71,25 @@ D. Every unrelated detail
 **Answer: A**
 
 10. What should happen if a caller is held longer than expected?  
-A. Return with an update and offer an appropriate alternative  
-B. Leave them indefinitely  
+A. Leave them indefinitely  
+B. Return with an update and offer an appropriate alternative  
 C. Disconnect silently  
 D. Transfer randomly  
-**Answer: A**
+**Answer: B**
 
 11. Why should private reasons for an employee's absence not be disclosed?  
-A. Availability does not remove privacy and confidentiality obligations  
-B. Callers never need any information  
-C. Employees cannot be absent  
+A. Callers never need any information  
+B. Employees cannot be absent  
+C. Availability does not remove privacy and confidentiality obligations  
 D. Only HR can answer phones  
-**Answer: A**
+**Answer: C**
 
 12. How should a difficult caller be handled?  
-A. Remain calm, clarify facts, apply authority limits and escalate if required  
-B. Match their anger  
-C. Promise any remedy requested  
-D. Share private information to calm them  
-**Answer: A**
+A. Match their anger  
+B. Promise any remedy requested  
+C. Share private information to calm them  
+D. Remain calm, clarify facts, apply authority limits and escalate if required  
+**Answer: D**
 
 13. What is the role of a business email subject line?  
 A. Make the topic and, where useful, action/timing easy to identify  
@@ -99,25 +99,25 @@ D. Show the writer's job title only
 **Answer: A**
 
 14. When should Cc be used?  
-A. When someone genuinely needs visibility but is not the primary actor  
-B. To pressure colleagues  
+A. To pressure colleagues  
+B. When someone genuinely needs visibility but is not the primary actor  
 C. To copy every manager  
 D. For every message  
-**Answer: A**
+**Answer: B**
 
 15. When is Reply All appropriate?  
-A. When every included recipient genuinely needs the response  
-B. Always  
-C. Never  
+A. Always  
+B. Never  
+C. When every included recipient genuinely needs the response  
 D. Only when an executive is copied  
-**Answer: A**
+**Answer: C**
 
 16. What should be checked before sending an attachment?  
-A. Correct file, current version and authorised recipients  
-B. Only file size  
-C. Whether the filename says final  
-D. Whether every colleague is copied  
-**Answer: A**
+A. Only file size  
+B. Whether the filename says final  
+C. Whether every colleague is copied  
+D. Correct file, current version and authorised recipients  
+**Answer: D**
 
 17. What makes an email request actionable?  
 A. Clear required action, context and deadline  
@@ -127,25 +127,25 @@ D. No stated owner
 **Answer: A**
 
 18. Why can a phone call or meeting be better than a long argumentative email?  
-A. Complex or sensitive issues may be easier to clarify interactively  
-B. Written communication is never useful  
+A. Written communication is never useful  
+B. Complex or sensitive issues may be easier to clarify interactively  
 C. Calls never need records  
 D. Meetings remove conflict automatically  
-**Answer: A**
+**Answer: B**
 
 19. What should determine the format of business correspondence?  
-A. Purpose, audience and organisational requirements  
-B. Which template is longest  
-C. The writer's favourite format  
+A. Which template is longest  
+B. The writer's favourite format  
+C. Purpose, audience and organisational requirements  
 D. Number of pages  
-**Answer: A**
+**Answer: C**
 
 20. What is plain language?  
-A. Clear wording that avoids unnecessary complexity  
-B. Informal slang  
-C. Short messages with missing details  
-D. Technical jargon  
-**Answer: A**
+A. Informal slang  
+B. Short messages with missing details  
+C. Technical jargon  
+D. Clear wording that avoids unnecessary complexity  
+**Answer: D**
 
 21. What should a workplace notice make clear?  
 A. What is happening, who is affected, timing and required action  
@@ -155,25 +155,25 @@ D. Personal opinions
 **Answer: A**
 
 22. Why should routine external correspondence use current templates?  
-A. Old copies may contain outdated names, addresses or requirements  
-B. Templates never change  
+A. Templates never change  
+B. Old copies may contain outdated names, addresses or requirements  
 C. External recipients prefer old branding  
 D. Current templates remove proofreading  
-**Answer: A**
+**Answer: B**
 
 23. What does proofreading include beyond spelling?  
-A. Names, dates, amounts, references, attachments and required actions  
-B. Font colour only  
-C. Page count only  
+A. Font colour only  
+B. Page count only  
+C. Names, dates, amounts, references, attachments and required actions  
 D. Printing only  
-**Answer: A**
+**Answer: C**
 
 24. What should happen if a material change is made after document approval?  
-A. Return it for appropriate review/approval  
-B. Change it silently  
-C. Send both versions  
-D. Ignore the difference  
-**Answer: A**
+A. Change it silently  
+B. Send both versions  
+C. Ignore the difference  
+D. Return it for appropriate review/approval  
+**Answer: D**
 
 25. What is an open question?  
 A. A question inviting explanation or context  
@@ -183,25 +183,25 @@ D. A repeated instruction
 **Answer: A**
 
 26. When is a closed question useful?  
-A. When a specific fact or choice needs confirmation  
-B. When broad explanation is required  
+A. When broad explanation is required  
+B. When a specific fact or choice needs confirmation  
 C. Only during complaints  
 D. Never  
-**Answer: A**
+**Answer: B**
 
 27. What is a probing question?  
-A. A relevant follow-up seeking necessary detail  
-B. An intrusive personal question unrelated to work  
-C. A greeting  
+A. An intrusive personal question unrelated to work  
+B. A greeting  
+C. A relevant follow-up seeking necessary detail  
 D. A final approval  
-**Answer: A**
+**Answer: C**
 
 28. Why should vague words such as “soon” be clarified?  
-A. Different people may interpret them differently  
-B. They are always prohibited  
-C. They automatically mean today  
-D. Clarification wastes time  
-**Answer: A**
+A. They are always prohibited  
+B. They automatically mean today  
+C. Clarification wastes time  
+D. Different people may interpret them differently  
+**Answer: D**
 
 29. What is paraphrasing?  
 A. Restating information in your own words to confirm meaning  
@@ -211,25 +211,25 @@ D. Ignoring details
 **Answer: A**
 
 30. Why should available records be checked before repeatedly asking questions?  
-A. Efficient administrators use existing information and avoid unnecessary interruptions  
-B. Managers should never answer questions  
+A. Managers should never answer questions  
+B. Efficient administrators use existing information and avoid unnecessary interruptions  
 C. Records are always correct  
 D. Clarification is not allowed  
-**Answer: A**
+**Answer: B**
 
 31. What does communicating upward effectively require?  
-A. Concise issue, status, impact and decision needed  
-B. Long background before the main point  
-C. Hiding bad news  
+A. Long background before the main point  
+B. Hiding bad news  
+C. Concise issue, status, impact and decision needed  
 D. Sending every detail without organisation  
-**Answer: A**
+**Answer: C**
 
 32. Why should significant bad news be communicated early?  
-A. Managers need time to consider options and protect commitments  
-B. Problems disappear when reported  
-C. Early reporting removes responsibility  
-D. Managers prefer surprises  
-**Answer: A**
+A. Problems disappear when reported  
+B. Early reporting removes responsibility  
+C. Managers prefer surprises  
+D. Managers need time to consider options and protect commitments  
+**Answer: D**
 
 33. How can an administrator coordinate colleagues without supervisory authority?  
 A. Clear requests, deadlines, follow-up and appropriate escalation  
@@ -239,25 +239,25 @@ D. Avoid follow-up
 **Answer: A**
 
 34. Why are realistic customer expectations important?  
-A. Reliable commitments build more trust than impossible promises  
-B. Customers always prefer faster promises  
+A. Customers always prefer faster promises  
+B. Reliable commitments build more trust than impossible promises  
 C. Expectations are not part of service  
 D. Unconfirmed deadlines should be guaranteed  
-**Answer: A**
+**Answer: B**
 
 35. What does need-to-know mean?  
-A. Share information only with people who legitimately require it for work  
-B. Share all information internally  
-C. Never share any information  
+A. Share all information internally  
+B. Never share any information  
+C. Share information only with people who legitimately require it for work  
 D. Copy all managers  
-**Answer: A**
+**Answer: C**
 
 36. What should a status update include?  
-A. Status, issue, impact and next action/decision  
-B. Personal frustration  
-C. Only “still working”  
-D. Every unrelated detail  
-**Answer: A**
+A. Personal frustration  
+B. Only “still working”  
+C. Every unrelated detail  
+D. Status, issue, impact and next action/decision  
+**Answer: D**
 
 37. What should happen first in a difficult conversation?  
 A. Listen and understand the issue before becoming defensive  
@@ -267,25 +267,25 @@ D. End the conversation
 **Answer: A**
 
 38. What does acknowledgement mean in a complaint?  
-A. Recognising the person's experience without necessarily accepting unverified liability  
-B. Agreeing with every allegation  
+A. Agreeing with every allegation  
+B. Recognising the person's experience without necessarily accepting unverified liability  
 C. Offering compensation immediately  
 D. Refusing to listen  
-**Answer: A**
+**Answer: B**
 
 39. Why should difficult discussions focus on facts rather than motives?  
-A. Facts support resolution while assumed motives can inflame conflict  
-B. Motives are always obvious  
-C. Facts are not relevant  
+A. Motives are always obvious  
+B. Facts are not relevant  
+C. Facts support resolution while assumed motives can inflame conflict  
 D. Conflict requires personal criticism  
-**Answer: A**
+**Answer: C**
 
 40. What commitment is safest when the final outcome is outside your control?  
-A. A specific next action or update time you can control  
-B. Guaranteed final approval  
-C. An immediate refund  
-D. A promise on another employee's behalf  
-**Answer: A**
+A. Guaranteed final approval  
+B. An immediate refund  
+C. A promise on another employee's behalf  
+D. A specific next action or update time you can control  
+**Answer: D**
 
 41. When should communication boundaries be set?  
 A. When behaviour becomes abusive, threatening or unsafe  
@@ -295,25 +295,25 @@ D. Never
 **Answer: A**
 
 42. How should an internal work error be raised?  
-A. Describe the specific issue, impact and required correction  
-B. Attack the person's character  
+A. Attack the person's character  
+B. Describe the specific issue, impact and required correction  
 C. Discuss it publicly  
 D. Ignore it  
-**Answer: A**
+**Answer: B**
 
 43. Which communication is MOST likely to need a formal or system record?  
-A. A manager's approval with a deadline  
-B. A casual greeting  
-C. A joke  
+A. A casual greeting  
+B. A joke  
+C. A manager's approval with a deadline  
 D. Lunch discussion  
-**Answer: A**
+**Answer: C**
 
 44. What should a concise communication record contain?  
-A. Key issue, people, decision/commitment, action and timing  
-B. Every word spoken  
-C. Personal opinions  
-D. Only the date  
-**Answer: A**
+A. Every word spoken  
+B. Personal opinions  
+C. Only the date  
+D. Key issue, people, decision/commitment, action and timing  
+**Answer: D**
 
 45. Why should action items have owners?  
 A. Responsibility for completion must be clear  
@@ -323,25 +323,25 @@ D. Ownership is optional
 **Answer: A**
 
 46. Why can follow-up at only the final deadline be risky?  
-A. There may be no time to recover from missing or incorrect input  
-B. Deadlines are flexible  
+A. Deadlines are flexible  
+B. There may be no time to recover from missing or incorrect input  
 C. Early follow-up is never useful  
 D. Follow-up should happen only after failure  
-**Answer: A**
+**Answer: B**
 
 47. What is an escalation trigger?  
-A. A defined condition indicating that higher attention or authority is needed  
-B. A completed task  
-C. A greeting  
+A. A completed task  
+B. A greeting  
+C. A defined condition indicating that higher attention or authority is needed  
 D. A filing rule  
-**Answer: A**
+**Answer: C**
 
 48. What makes an escalation useful?  
-A. It explains the issue, actions already taken, impact and support/decision required  
-B. It forwards a long thread with no context  
-C. It blames someone  
-D. It hides the deadline  
-**Answer: A**
+A. It forwards a long thread with no context  
+B. It blames someone  
+C. It hides the deadline  
+D. It explains the issue, actions already taken, impact and support/decision required  
+**Answer: D**
 
 49. What does closing the communication loop mean?  
 A. Confirm completion, communicate the outcome and update required records  
@@ -351,22 +351,22 @@ D. Archive before action
 **Answer: A**
 
 50. Why should communication records be protected?  
-A. They may contain personal, commercial or confidential information  
-B. Records are always public  
+A. Records are always public  
+B. They may contain personal, commercial or confidential information  
 C. Protection removes accountability  
 D. Only paper records need security  
-**Answer: A**
+**Answer: B**
 
 51. Why is handover important for outstanding communication?  
-A. Another employee needs enough context to continue follow-up without starting over  
-B. Handovers should include completed greetings  
-C. It replaces communication logs  
+A. Handovers should include completed greetings  
+B. It replaces communication logs  
+C. Another employee needs enough context to continue follow-up without starting over  
 D. It removes ownership  
-**Answer: A**
+**Answer: C**
 
 52. Which principle BEST summarises professional communication?  
-A. Send the right information to the right people, through the right channel, and control the resulting action to closure  
-B. Communicate as much as possible  
-C. Always use email  
-D. Avoid escalation  
-**Answer: A**
+A. Communicate as much as possible  
+B. Always use email  
+C. Avoid escalation  
+D. Send the right information to the right people, through the right channel, and control the resulting action to closure  
+**Answer: D**
