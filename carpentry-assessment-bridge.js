@@ -9,4 +9,5 @@
       window.renderCarpentryGenericAssessment(state.unit===9?'formative':'summative');
     }
   };
+  const sync=document.createElement('script');sync.src='carpentry-progress-sync.js?v=20260829-sync1';document.body.appendChild(sync);
 })();
