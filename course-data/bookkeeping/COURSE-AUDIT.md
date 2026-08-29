@@ -5,7 +5,8 @@
 **Structure audit:** PASSED  
 **Assessment audit:** PASSED  
 **South African tax/payroll source check:** PASSED for the exact rates and thresholds used in the course  
-**Production reconciliation:** APPROVED for controlled in-place deployment that preserves existing learner progress.
+**Production reconciliation:** COMPLETE  
+**Post-deployment integrity checks:** PASSED
 
 ## 1. Source structure
 The authoritative repository contains 10 modules with 8 lessons each: **80 lessons total**.
@@ -30,13 +31,15 @@ Automated source retrieval confirmed all 80 lesson files and all 20 assessment f
 10. Practical Bookkeeping Project
 
 ## 2. Lesson quality audit
-All 80 lessons contain substantive instructional content. Automated checks found:
+All 80 lessons contain substantive instructional content. Automated source checks found:
 - successful source retrieval: 80/80
-- minimum lesson size: more than 4,700 characters
+- minimum source lesson size: more than 4,700 characters
 - no placeholder or empty lesson files
 - modern lesson pattern used throughout: study time, learning outcomes, relevance, teaching content, practical application, knowledge check, feedback, key takeaways and visual guidance.
 
 Six integrative/practical lessons use scenario- or project-led headings instead of the exact `Key Terms` / `Main Lesson Content` labels used by standard theory lessons. Their substantive content remains complete; the variation is intentional and appropriate to practical application rather than a missing-content defect.
+
+After production conversion, all 80 lessons contain formatted HTML, no repository title-heading leakage, no missing titles and no short placeholder content. Production lesson HTML ranges from more than 5,100 characters to more than 10,500 characters.
 
 ## 3. Assessment architecture audit
 There are 20 source assessment banks.
@@ -64,7 +67,7 @@ Every one of the 10 modules contains:
 Total summative-bank questions: **520**.
 
 ### Course assessment total
-**840 protected question-bank questions** are expected after production deployment.
+Production contains **840 protected assessment-bank questions**.
 
 ## 4. Assessment quality controls
 The assessment review applied these standards:
@@ -75,6 +78,10 @@ The assessment review applied these standards:
 - arithmetic and bookkeeping mechanics aligned with lesson examples
 - formative questions remain traceable to specific lessons
 - summative questions test both knowledge and applied bookkeeping judgement.
+
+Post-deployment database checks confirmed every module retained the exact source-bank counts and answer-key balance:
+- formative: 32 questions, A/B/C/D = 8/8/8/8
+- summative: 52 questions, A/B/C/D = 13/13/13/13.
 
 ## 5. South African tax and payroll accuracy check
 High-risk current figures were rechecked against current SARS material during the final audit.
@@ -111,36 +118,51 @@ Worked examples use double-entry consistently and reinforce these controls:
 
 The Module 10 capstone uses internally consistent opening-balance, reconciliation, depreciation and profit calculations and teaches learners not to create unexplained balancing journals.
 
-## 7. Production safety preflight
-The live Bookkeeping course currently has:
+## 7. Production safety preflight and learner-progress preservation
+Before deployment, the live Bookkeeping course had:
 - course ID: `fcbe0c39-c31f-4a39-833f-7b89d553bef2`
 - 10 existing module records
 - 80 existing lesson records
 - 1 approved enrolment
 - 1 existing completed lesson-progress row
 - 1 legacy published final course assessment
-- 0 assessment attempts for the legacy assessment.
+- 0 assessment attempts.
 
-The existing progress row is linked to **Module 1, Lesson 1** lesson ID:
+The existing progress row was linked to Module 1, Lesson 1 lesson ID:
 `416dd8ef-dc15-472e-ad0b-74f4db053b39`
 
-This lesson ID must remain unchanged during deployment.
+Production deployment updated all lessons **in place** and did not delete/recreate lesson rows. After deployment, the same progress row remains completed against the same lesson ID, now titled `The Role of Bookkeeping in a Business`.
 
-## 8. Required production reconciliation method
-Because learner progress already exists, production deployment must **not delete and recreate lessons**.
+## 8. Production deployment result
+Controlled production reconciliation is complete.
 
-The approved method is:
-1. preserve the existing course ID;
-2. preserve all 10 existing module IDs;
-3. update module names/descriptions to the approved structure;
-4. update each of the 80 existing lesson rows **in place** by module number + lesson number, preserving every lesson ID;
-5. archive/deactivate the superseded legacy final assessment;
-6. create 10 formative and 10 summative module assessments;
-7. load exactly 320 formative + 520 summative = **840** protected questions;
-8. use the existing secure database-driven module assessment runtime;
-9. retain direct answer-key protection for learners;
-10. verify the existing enrolment and completed progress row after deployment;
-11. run final module, lesson, assessment, question, progress and runtime checks before declaring the course live-ready.
+Final live state:
+- **10 modules**
+- **80 lessons**
+- **20 active published module assessments**
+- **840 protected assessment-bank questions**
+- **1 archived legacy final assessment**
+- **1 approved enrolment preserved**
+- **1 completed lesson-progress row preserved**
+- **0 unintended assessment attempts**.
 
-## 9. Audit conclusion
-The Bookkeeping repository source is approved for controlled production deployment. No further drafting is required before reconciliation. The key production constraint is preservation of the existing lesson identifiers and learner-progress relationship while replacing legacy lesson content in place.
+The legacy `Final Course Assessment` was renamed and deactivated as `Legacy Final Course Assessment (Archived)`.
+
+The secure generic module-assessment runtime is reused. Direct learner access to `assessment_questions` remains protected by the existing admin-only RLS policy.
+
+## 9. Runtime acceptance check
+An authenticated-style runtime check was performed using the enrolled learner context for Module 1 Formative.
+
+Result:
+- status: `locked_lessons`
+- total lessons: 8
+- completed lessons: 1
+- no attempt consumed.
+
+This confirms that the deployed Bookkeeping course correctly recognises the preserved learner progress and applies the prerequisite that all eight module lessons must be completed before the formative assessment opens.
+
+## 10. Cleanup
+Temporary HTTP/Markdown/assessment parsing helpers used for source validation and deployment were removed after successful verification. No temporary deployment helper remains as part of the permanent course runtime.
+
+## 11. Final conclusion
+The Professional Certificate in Bookkeeping is fully rebuilt, audited, reconciled to production and integrity-checked. The authoritative source is retained in GitHub, the production database now reflects the approved 10-module/80-lesson structure, assessment security and answer-bank architecture are intact, and the pre-existing learner enrolment and completed lesson progress were preserved.
