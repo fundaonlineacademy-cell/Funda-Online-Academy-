@@ -16,6 +16,12 @@ if (/admin-v2\.html$/i.test(window.location.pathname)) {
   files.forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
+if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
+  const s=document.createElement('script');
+  s.src='public-course-value.js?v='+Date.now();
+  document.head.appendChild(s);
+}
+
 if (/dashboard\.html$/i.test(window.location.pathname)) {
   ['student-support-portal.js','student-consultations.js','student-module-assessments.js'].forEach(file=>{
     const s=document.createElement('script');
