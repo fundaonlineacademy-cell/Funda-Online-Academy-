@@ -91,5 +91,10 @@ Each lesson normally includes estimated study time, learning outcomes, why the l
 ## South African grounding
 The course should reflect realistic South African store conditions and terminology. Retail-manager responsibilities should include product mix/stock levels, service standards, financial records/budgets, staff supervision and occupational safety awareness, consistent with the occupational role described by Statistics South Africa. Wholesale/retail learning should meaningfully cover customer service and stock control. Current legal or regulatory specifics must be verified before exact claims are taught.
 
+## Build status — audited 29 August 2026
+The repository source build now contains all 8 modules × 8 lessons = 64 lessons and all 16 module assessment banks. The assessment configuration is 32-question formative banks with 15 delivered and 52-question summative banks with 25 delivered, with a 70% pass mark and maximum 3 attempts. A formal source audit is recorded in `COURSE-AUDIT.md` and a repeatable validator is available at `scripts/audit-retail-management-course.py`.
+
+The audit found no missing or placeholder lessons in the source build. Later modules use a leaner lesson shell and may omit an explicit estimated-study-time line; this is a presentation-normalisation item rather than a substantive-content failure and should not be corrected by padding otherwise sound lessons.
+
 ## Production safety
-The live course currently has one enrolment and no lesson-progress rows. Repository content becomes the approved source before production reconciliation. Do not overwrite production until all 64 lessons and 16 assessment banks are built and audited. Preserve course/module relationships and enrolment data during deployment.
+The source build is complete, but production reconciliation remains a separate gate. Do not overwrite production until the validator has been run against the deployment checkout and the live course/module/lesson/assessment mapping has been reconciled. Preserve course/module relationships, enrolment data and learner progress during deployment.
