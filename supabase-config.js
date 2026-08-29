@@ -17,9 +17,11 @@ if (/admin-v2\.html$/i.test(window.location.pathname)) {
 }
 
 if (/dashboard\.html$/i.test(window.location.pathname)) {
-  const studentSupport=document.createElement('script');
-  studentSupport.src='student-support-portal.js?v='+Date.now();
-  document.head.appendChild(studentSupport);
+  ['student-support-portal.js','student-module-assessments.js'].forEach(file=>{
+    const s=document.createElement('script');
+    s.src=file+'?v='+Date.now();
+    document.head.appendChild(s);
+  });
 }
 
 if (/library-admin\.html$/i.test(window.location.pathname)) {
