@@ -22,13 +22,33 @@ main{position:relative}
 #createAccountLink{background:#fff4dc!important;border-color:#d8b85e!important;color:#21384d!important}
 .feature{background:linear-gradient(145deg,#fff6e4 0%,#fff0d5 68%,#f5dbe4 135%)!important;border-color:rgba(201,154,46,.25)!important}
 #courseContent .bg-white,#courseContent .bg-\[\#fbfdff\],#courseContent .bg-\[\#fff\]{background-color:transparent!important}
-/* Strong readable typography across all premium overview injectors */
 #courseContent h1,#courseContent h2,#courseContent h3,#courseContent h4,#courseContent strong,#courseContent .text-\[\#071D49\],body .rpoSection h2,body .rpoSection h3,body .basec h2,body .basec h3,body .copSection h2,body .copSection h3{color:#21384d!important}
 #courseContent p,#courseContent li,#courseContent .text-slate-400,#courseContent .text-slate-500,#courseContent .text-slate-600,#courseContent .text-slate-700,body .rpoSection p,body .rpoSection li,body .basec p,body .basec li,body .copSection p,body .copSection li{color:#495968!important;opacity:1!important}
 body .rpoIntro,body .bahero,body .copHero,body [class*='PremiumIntro']{box-shadow:0 18px 46px rgba(48,70,88,.13)!important}
 body .rpoSection,body .basec,body .copSection{border-color:rgba(70,103,127,.20)!important;background:linear-gradient(150deg,#fff6e4,#f8f5ef 72%,#f5e5e9 130%)!important;color:#243750!important}
 body .cpcard,body .bacard,body .cpoutcome,body .baoutcome,body .cpapply div,body .baapply div,body .cpmodule,body .bamodule{background:linear-gradient(145deg,#fff6e4,#f8f5ef 74%,#f5e5e9 135%)!important;border-color:rgba(70,103,127,.20)!important;color:#243750!important}
 body .cpinclude,body .bainclude{background:#fff0d5!important;border-color:rgba(201,154,46,.25)!important;color:#243750!important}
+/* Public-course-value surfaces */
+body .pcvDisclosure,body .pcvMetric,body .pcvValue,body .pcvModule,body .pcvRetailPromise{background:linear-gradient(145deg,#fff6e4,#f8f5ef 78%,#f5e5e9 135%)!important;border-color:rgba(70,103,127,.22)!important;box-shadow:0 10px 26px rgba(48,70,88,.08)!important;color:#243750!important}
+body .pcvDisclosure p,body .pcvValue p,body .pcvModule p,body .pcvRetailIntro p,body .pcvLead,body .pcvFeeNote{color:#495968!important;opacity:1!important}
+body .pcvDisclosure b,body .pcvMetric strong,body .pcvValue h3,body .pcvModule h3,body .pcvRetailIntro h2,body .pcvSection h2{color:#21384d!important}
+body .pcvMetric span{color:#566675!important}
+body .pcvFlagship{background:linear-gradient(135deg,#2d4b63,#46677f 72%,#8f5369 135%)!important;box-shadow:0 16px 38px rgba(48,70,88,.16)!important}
+body .pcvFlagship h2,body .pcvFlagship p,body .pcvFlagship .pcvAudience div{color:#f8f4eb!important}
+/* General 25-course premium framework */
+body .acpo,body .acpoCard,body .acpoMod{background:linear-gradient(145deg,#fff6e4,#f8f5ef 76%,#f5e5e9 135%)!important;border-color:rgba(70,103,127,.22)!important;color:#243750!important;box-shadow:0 10px 28px rgba(48,70,88,.08)!important}
+body .acpoHero{background:linear-gradient(135deg,#2d4b63,#46677f 72%,#8f5369 135%)!important;box-shadow:0 16px 38px rgba(48,70,88,.16)!important}
+body .acpoDark{background:linear-gradient(145deg,#efe9df,#f4e4e8)!important;border:1px solid rgba(70,103,127,.20)!important;color:#243750!important}
+body .acpoDark h2,body .acpoDark .acpop,body .acpoDark .acpoNote{color:#243750!important}
+body .acpoDark .acpol{color:#936d1f!important}
+body .acpoStep{background:#e8e4dc!important;color:#243750!important;border:1px solid rgba(70,103,127,.18)!important}
+body .acpoStep b{color:#815f18!important}
+body .acpoN{background:#46677f!important;color:#fff!important}
+body .acpoPrice{background:linear-gradient(135deg,#2d4b63,#46677f)!important;color:#fff!important}
+body .acpoPrice small{color:#f3d680!important}
+body .acpo h2,body .acpoCard b,body .acpoMod h3{color:#21384d!important}
+body .acpop,body .acpoCard,body .acpoMod p,body .acpoD{color:#495968!important;opacity:1!important}
+body .acpoNote{background:#fff0cf!important;color:#5a4b2f!important;border-left-color:#c99a2e!important}
 footer{background:#21384d!important;border-color:rgba(201,154,46,.24)!important;color:#e8edf0!important}footer *{color:#e8edf0!important}
 @media(max-width:700px){body{background-attachment:scroll!important;background:radial-gradient(circle at 90% 8%,rgba(184,95,125,.10),transparent 20rem),radial-gradient(circle at 8% 20%,rgba(201,154,46,.10),transparent 18rem),linear-gradient(160deg,#eceeea,#f4eee6 60%,#f4e3e8)!important}main{padding-top:20px!important;padding-bottom:28px!important}header{background:linear-gradient(100deg,#21384d,#2d4b63)!important}}
 `;
