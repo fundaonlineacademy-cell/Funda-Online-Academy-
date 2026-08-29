@@ -1,0 +1,59 @@
+// FUNDA ONLINE ACADEMY — GENERIC CARPENTRY MODULE ASSESSMENTS
+// Protected-branch integration engine for Modules 2–10.
+(function(){
+  const MAX_ATTEMPTS=3, PASS_MARK=70;
+  const bankPath=(m,kind)=>`course-data/carpentry/module-${String(m).padStart(2,'0')}/${kind==='formative'?'formative-assessment-bank.md':'summative-assessment-bank.md'}`;
+  const key=(m,kind,suffix)=>`funda-${kind}-${suffix}-${state.course?.id||'benchmark'}-m${m}`;
+  const readJson=(k,f)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(f))}catch{return f}};
+  const shuffle=x=>{const a=[...x];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  const li=l=>'ABCD'.indexOf(String(l||'').toUpperCase());
+  const clean=s=>String(s||'').replace(/\s{2,}$/,'').replace(/^\*+|\*+$/g,'').trim();
+
+  function parseCompactNumbered(line){
+    const m=line.match(/^(\d+)\.\s+(.+)$/);if(!m)return null;
+    const body=m[2],ans=body.match(/\*\*(?:Answer|Correct answer):\s*([A-D])\.?\*\*/i)||body.match(/(?:Answer|Correct answer):\s*([A-D])\.?/i);if(!ans)return null;
+    const answerPos=body.search(/\*\*(?:Answer|Correct answer):|(?:Answer|Correct answer):/i);const prefix=body.slice(0,answerPos).trim();
+    const marks=[];for(const l of 'ABCD'){const r=new RegExp(`\\s${l}[.)]?\\s+`,'i'),x=prefix.search(r);if(x<0)return null;marks.push(x)}
+    if(!(marks[0]<marks[1]&&marks[1]<marks[2]&&marks[2]<marks[3]))return null;
+    const text=clean(prefix.slice(0,marks[0]));
+    const opts=[];for(let i=0;i<4;i++){const start=marks[i]+prefix.slice(marks[i]).match(/^\s[A-D][.)]?\s+/i)[0].length;const end=i<3?marks[i+1]:prefix.length;opts.push(clean(prefix.slice(start,end)))}
+    return {n:+m[1],q:text,a:opts,c:li(ans[1])};
+  }
+
+  function parseBank(md){
+    const lines=String(md||'').replace(/\r/g,'').split('\n');const out=[];
+    for(let i=0;i<lines.length;i++){
+      const t=lines[i].trim();const compact=parseCompactNumbered(t);if(compact){out.push(compact);continue}
+      let n=null,remainder='';let m=t.match(/^#{2,4}\s+(?:Q|Question)\s*(\d+)\.?\s*(.*)$/i);if(m){n=+m[1];remainder=clean(m[2])}
+      if(n===null){m=t.match(/^\*\*Q(\d+)(?:\s*\[[^\]]+\])?\.\*\*\s*(.*)$/i);if(m){n=+m[1];remainder=clean(m[2])}}
+      if(n===null){m=t.match(/^Q(\d+)\.\s*(.*)$/i);if(m){n=+m[1];remainder=clean(m[2])}}
+      if(n===null)continue;
+      const item={n,q:remainder,a:[],c:null};let j=i+1;
+      for(;j<lines.length;j++){
+        const s=lines[j].trim();if(/^#{2,4}\s+(?:Q|Question)\s*\d+/i.test(s)||/^\*\*Q\d+/i.test(s)||/^Q\d+\./i.test(s))break;
+        const cn=parseCompactNumbered(s);if(cn)break;
+        const om=s.match(/^([A-D])[.)]?\s+(.+?)\s*$/);if(om){item.a[li(om[1])]=clean(om[2]);continue}
+        const ans=s.match(/^\*\*(?:Correct answer|Answer):\s*([A-D])\.?\*\*/i)||s.match(/^(?:Correct answer|Answer):\s*([A-D])\.?/i);if(ans){item.c=li(ans[1]);continue}
+        if(!item.q&&s&&!/^\*\*(?:Explanation|Traceability):/i.test(s)&&!/^---+$/.test(s))item.q=clean(s)
+      }
+      if(item.q&&item.a.filter(Boolean).length===4&&item.c>=0)out.push(item);i=j-1;
+    }
+    const unique=new Map();for(const q of out)if(!unique.has(q.n))unique.set(q.n,q);return [...unique.values()].sort((a,b)=>a.n-b.n)
+  }
+
+  async function loadBank(m,kind){const r=await fetch(bankPath(m,kind),{cache:'no-store'});if(!r.ok)throw new Error(`Assessment bank unavailable (${r.status})`);const qs=parseBank(await r.text()),expected=kind==='formative'?32:52;if(qs.length!==expected)throw new Error(`Assessment bank QA failed: expected ${expected} questions, parsed ${qs.length}`);return qs}
+  const attempts=(m,k)=>readJson(key(m,k,'attempts'),[]), finalResult=(m,k)=>readJson(key(m,k,'final'),null);
+  const formativePassed=m=>localStorage.getItem(`funda-formative-pass-${state.course?.id||'benchmark'}-m${m}`)==='1';
+
+  function shell(m,kind){const label=kind==='formative'?'Formative':'Summative',used=attempts(m,kind).length,final=finalResult(m,kind),count=kind==='formative'?15:25;
+    if(kind==='summative'&&!formativePassed(m))return `<div class="assess-wrap"><div class="assess-crumb">${esc(state.course?.title||BENCHMARK_TITLE)} › Module ${m} › ${label} Assessment</div><h1 class="assess-title">Module ${m} · ${label} Assessment</h1><div class="assess-intro"><h2>🔒 Complete the Formative Assessment first</h2><p>Achieve at least 70% in the Module ${m} Formative Assessment before the Summative Assessment unlocks.</p><button class="start-assessment" id="backFormativeGeneric">Go to Formative Assessment</button></div></div>`;
+    if(final)return `<div class="assess-wrap"><div class="assess-crumb">${esc(state.course?.title||BENCHMARK_TITLE)} › Module ${m} › ${label} Assessment</div><div class="result-card"><div class="result-score ${final.passed?'result-pass':'result-fail'}">${final.score}%</div><h1>${final.passed?label+' Assessment Passed':label+' Assessment Finalised'}</h1><p>Recorded result: <strong>${final.score}%</strong> on Attempt ${final.attempt} of 3.</p><div class="result-actions"><button class="btn secondary" id="reviewGenericModule">Review Module ${m}</button></div></div></div>`;
+    const attemptNo=used+1;return `<div class="assess-wrap"><div class="assess-crumb">${esc(state.course?.title||BENCHMARK_TITLE)} › Module ${m} › ${label} Assessment</div><div class="assess-title-row"><div><h1 class="assess-title">Module ${m} · ${label} Assessment</h1><div class="assess-badges"><span class="pill">${count} Questions</span><span class="pill gold">Pass mark · 70%</span><span class="pill">${attemptNo===3?'Final Attempt · 3 of 3':'Attempt '+attemptNo+' of 3'}</span></div></div></div><div class="assess-intro"><h2>You are about to take the ${label} Assessment</h2><p>${kind==='formative'?'This checks readiness across Lessons 1–8. A pass unlocks the Summative Assessment.':'This evaluates achievement across all eight teaching lessons in the module.'}</p><div class="assess-rules"><div class="assess-rule"><i>✓</i><span>Questions are randomly selected from the protected Module ${m} bank.</span></div><div class="assess-rule"><i>✓</i><span>Pass mark: <strong>70%</strong>.</span></div><div class="assess-rule"><i>✓</i><span>Maximum: <strong>3 attempts</strong>.</span></div></div><button class="start-assessment" id="startGenericAssessment">Begin ${attemptNo===3?'Final ':''}Assessment</button></div></div>`}
+
+  async function start(m,kind){try{const bank=await loadBank(m,kind),count=kind==='formative'?15:25,selected=shuffle(bank).slice(0,count).map(q=>({...q,opts:shuffle(q.a.map((label,i)=>({label,correct:i===q.c})))}));window.__fundaGenericQuiz={m,kind,questions:selected,answers:new Array(count).fill(null),index:0};renderQuestion()}catch(e){console.error(e);$('course-content').innerHTML=`<div class="assess-wrap"><div class="assess-intro"><h2>Assessment QA check stopped this attempt</h2><p>${esc(e.message)}</p><p>No attempt was consumed.</p></div></div>`}}
+  function renderQuestion(){const z=window.__fundaGenericQuiz,q=z.questions[z.index],sel=z.answers[z.index],count=z.questions.length,label=z.kind==='formative'?'Formative':'Summative';$('course-content').innerHTML=`<div class="assess-wrap"><div class="assess-crumb">${esc(state.course?.title||BENCHMARK_TITLE)} › Module ${z.m} › ${label} Assessment</div><div class="question-card"><div class="question-top"><span class="question-chip">Question ${z.index+1}</span><span class="question-progress">${z.index+1} of ${count} · ${Math.round((z.index+1)/count*100)}%</span></div><h2>${esc(q.q)}</h2>${q.opts.map((o,i)=>`<button class="quiz-option ${sel===i?'selected':''}" data-choice="${i}"><span class="quiz-letter">${String.fromCharCode(65+i)}</span><span>${esc(o.label)}</span></button>`).join('')}<div class="quiz-nav"><button class="btn secondary" id="genericPrev" ${z.index===0?'disabled':''}>← Previous</button><button class="btn primary" id="genericNext">${z.index===count-1?'Submit Assessment':'Next Question →'}</button></div></div></div>`;document.querySelectorAll('.quiz-option').forEach(b=>b.onclick=()=>{z.answers[z.index]=+b.dataset.choice;renderQuestion()});$('genericPrev').onclick=()=>{if(z.index>0){z.index--;renderQuestion()}};$('genericNext').onclick=()=>{if(z.answers[z.index]===null){show('Please select an answer before continuing.');return}if(z.index<count-1){z.index++;renderQuestion()}else submit()}}
+  async function persistAttempt(r){try{const {data:assessment}=await db.from('assessments').select('id').eq('course_id',state.course.id).ilike('title',`%Module ${r.m}%${r.kind}%`).limit(1).maybeSingle();if(!assessment?.id)return;await db.from('assessment_attempts').insert({assessment_id:assessment.id,student_id:state.user.id,attempt_number:r.attempt,score:r.correct,total_marks:r.total,percentage:r.score,passed:r.passed,submitted_at:r.submittedAt})}catch(e){console.warn('Supabase assessment persistence deferred:',e?.message||e)}}
+  function submit(){const z=window.__fundaGenericQuiz;let correct=0;z.questions.forEach((q,i)=>{if(q.opts[z.answers[i]]?.correct)correct++});const total=z.questions.length,score=Math.round(correct/total*100),passed=score>=PASS_MARK,a=attempts(z.m,z.kind),attemptNo=a.length+1,final=passed||attemptNo===MAX_ATTEMPTS,r={m:z.m,kind:z.kind,attempt:attemptNo,correct,total,score,passed,final,submittedAt:new Date().toISOString()};a.push(r);localStorage.setItem(key(z.m,z.kind,'attempts'),JSON.stringify(a));if(final)localStorage.setItem(key(z.m,z.kind,'final'),JSON.stringify(r));if(passed&&z.kind==='formative')localStorage.setItem(`funda-formative-pass-${state.course?.id||'benchmark'}-m${z.m}`,'1');if(passed&&z.kind==='summative')localStorage.setItem(`funda-module-pass-${state.course?.id||'benchmark'}-m${z.m}`,'1');persistAttempt(r);renderResult(r)}
+  function renderResult(r){const label=r.kind==='formative'?'Formative':'Summative',remaining=3-r.attempt;$('course-content').innerHTML=`<div class="assess-wrap"><div class="result-card"><div class="result-score ${r.passed?'result-pass':'result-fail'}">${r.score}%</div><h1>${r.passed?label+' Assessment Passed':r.final?'Final Attempt Completed':'More Revision Required'}</h1><p>You answered <strong>${r.correct} of ${r.total}</strong> correctly on Attempt ${r.attempt} of 3.</p><p>${r.passed?(r.kind==='formative'?'The Summative Assessment is now unlocked.':'This module assessment requirement is complete.'):r.final?'All three attempts have been used; this third-attempt mark is the final recorded result.':`You have ${remaining} attempt${remaining===1?'':'s'} remaining.`}</p><div class="result-actions">${r.passed&&r.kind==='formative'?'<button class="btn primary" id="genericGoSummative">Proceed to Summative →</button>':!r.final?'<button class="btn primary" id="genericRetry">Try Again</button>':''}<button class="btn secondary" id="genericReview">Review Lessons</button></div></div></div>`;$('genericGoSummative')?.addEventListener('click',()=>{state.unit=10;render()});$('genericRetry')?.addEventListener('click',()=>window.renderCarpentryGenericAssessment(r.kind));$('genericReview').onclick=()=>{state.unit=1;render()}}
+  window.renderCarpentryGenericAssessment=function(kind){const m=state.module;$('course-content').innerHTML=shell(m,kind);wireMobile();$('backFormativeGeneric')?.addEventListener('click',()=>{state.unit=9;render()});$('reviewGenericModule')?.addEventListener('click',()=>{state.unit=1;render()});$('startGenericAssessment')?.addEventListener('click',()=>start(m,kind))};
+})();
