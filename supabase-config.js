@@ -20,6 +20,11 @@ if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
   const s=document.createElement('script');
   s.src='public-course-value.js?v='+Date.now();
   document.head.appendChild(s);
+  if (/course-view\.html$/i.test(window.location.pathname)) {
+    const premium=document.createElement('script');
+    premium.src='retail-course-overview-premium.js?v='+Date.now();
+    document.head.appendChild(premium);
+  }
 }
 
 if (/dashboard\.html$/i.test(window.location.pathname)) {
