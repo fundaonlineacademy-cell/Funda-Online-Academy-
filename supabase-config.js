@@ -10,45 +10,28 @@ const identityUi = document.createElement('script'); identityUi.src = 'academy-i
 const publicMarketing = document.createElement('script'); publicMarketing.src = 'marketing-public-tracking.js?v=' + Date.now(); document.head.appendChild(publicMarketing);
 
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
-  // Stable Admin stack: each upgrade owns one navigation surface only.
-  // No whole-document MutationObservers and no duplicate department controllers.
   const files=['admin-theme-navy-gold.js','admin-report-centre.js','admin-executive-safe.js','admin-finance-control-centre.js','admin-governance-safe.js','admin-executive-actions.js','admin-executive-action-summary.js','admin-communication-v2.js','admin-marketing-safe.js','admin-support-safe.js','admin-consultations.js','admin-enrolments-safe.js','admin-academic-qa-safe.js','admin-course-qa-review.js','admin-course-inspector.js','admin-security-safe.js','admin-hr-safe.js','admin-hr-contract-fix.js','admin-hr-compliance-safe.js','admin-hr-training-performance-safe.js','admin-audit-compliance-safe.js','admin-accounting-safe.js','admin-library-safe.js'];
   files.forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
-  const s=document.createElement('script');
-  s.src='public-course-value.js?v='+Date.now();
-  document.head.appendChild(s);
+  const s=document.createElement('script');s.src='public-course-value.js?v='+Date.now();document.head.appendChild(s);
+  if (/courses-public\.html$/i.test(window.location.pathname)) {
+    const brand=document.createElement('script');brand.src='courses-public-brand-theme.js?v='+Date.now();document.head.appendChild(brand);
+  }
   if (/course-view\.html$/i.test(window.location.pathname)) {
-    ['retail-course-overview-premium.js','bookkeeping-premium-overview.js','office-administration-premium-overview.js','carpentry-premium-overview.js','business-administration-premium-overview.js','all-courses-premium-overview.js','course-overview-brand-theme.js'].forEach(file=>{
-      const premium=document.createElement('script');
-      premium.src=file+'?v='+Date.now();
-      document.head.appendChild(premium);
-    });
+    ['retail-course-overview-premium.js','bookkeeping-premium-overview.js','office-administration-premium-overview.js','carpentry-premium-overview.js','business-administration-premium-overview.js','all-courses-premium-overview.js','course-overview-brand-theme.js'].forEach(file=>{const premium=document.createElement('script');premium.src=file+'?v='+Date.now();document.head.appendChild(premium)});
   }
 }
 
 if (/dashboard\.html$/i.test(window.location.pathname)) {
-  ['student-support-portal.js','student-consultations.js','student-module-assessments.js'].forEach(file=>{
-    const s=document.createElement('script');
-    s.src=file+'?v='+Date.now();
-    document.head.appendChild(s);
-  });
+  ['student-support-portal.js','student-consultations.js','student-module-assessments.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/library-admin\.html$/i.test(window.location.pathname)) {
-  ['library-admin-upload.js','library-admin-mobile.js'].forEach(file=>{
-    const s=document.createElement('script');
-    s.src=file+'?v='+Date.now();
-    document.head.appendChild(s);
-  });
+  ['library-admin-upload.js','library-admin-mobile.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/digital-library\.html$/i.test(window.location.pathname)) {
-  ['library-secure-files.js','library-notes-progress.js','library-reader.js','library-smart-discovery.js','library-usability-polish.js','library-theme-navy-gold-rose.js','library-theme-premium.js','library-course-sections.js','library-course-sections-v2.js','library-course-focus-view.js','library-student-collections.js','library-final-qc.js'].forEach(file=>{
-    const s=document.createElement('script');
-    s.src=file+'?v='+Date.now();
-    document.head.appendChild(s);
-  });
+  ['library-secure-files.js','library-notes-progress.js','library-reader.js','library-smart-discovery.js','library-usability-polish.js','library-theme-navy-gold-rose.js','library-theme-premium.js','library-course-sections.js','library-course-sections-v2.js','library-course-focus-view.js','library-student-collections.js','library-final-qc.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
