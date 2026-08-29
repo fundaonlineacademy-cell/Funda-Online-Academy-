@@ -22,46 +22,46 @@ D. Internal nickname
 **Answer: B**
 
 3. Why should payroll changes have an effective date?  
-A. To show when the authorised change begins to affect payroll  
-B. To make forms longer  
-C. To remove approval requirements  
+A. To make forms longer  
+B. To remove approval requirements  
+C. To show when the authorised change begins to affect payroll  
 D. To prevent reconciliations  
-**Answer: A**
+**Answer: C**
 
 4. An employee advises new bank details verbally. What is the BEST response?  
 A. Update immediately without evidence  
-B. Follow the organisation's authorised change and verification process  
-C. Ask another employee to confirm  
-D. Pay cash instead  
-**Answer: B**
+B. Ask another employee to confirm  
+C. Pay cash instead  
+D. Follow the organisation's authorised change and verification process  
+**Answer: D**
 
 5. What is gross pay?  
-A. Pay after all deductions  
-B. Total earnings before deductions  
+A. Total earnings before deductions  
+B. Pay after all deductions  
 C. Employer bank balance  
 D. Tax only  
-**Answer: B**
+**Answer: A**
 
 6. If ordinary pay is R12,000 and an authorised allowance is R1,500, gross earnings before any other items are:  
 A. R10,500  
-B. R12,000  
-C. R13,500  
+B. R13,500  
+C. R12,000  
 D. R15,000  
-**Answer: C**
+**Answer: B**
 
 7. Why must overtime calculations use authorised hours and rates?  
-A. Payroll may not invent time or pay rules  
-B. Overtime never affects gross pay  
-C. Every employee receives the same overtime  
+A. Overtime never affects gross pay  
+B. Every employee receives the same overtime  
+C. Payroll may not invent time or pay rules  
 D. Overtime is always tax-free  
-**Answer: A**
+**Answer: C**
 
 8. Which source is strongest for payroll hours?  
 A. An employee's memory after payday  
-B. Approved time/attendance evidence under company procedure  
-C. A colleague's estimate  
-D. A social-media message  
-**Answer: B**
+B. A colleague's estimate  
+C. A social-media message  
+D. Approved time/attendance evidence under company procedure  
+**Answer: D**
 
 9. Net pay is generally:  
 A. Gross earnings minus authorised deductions  
@@ -78,18 +78,18 @@ D. A supplier credit note
 **Answer: B**
 
 11. Why should voluntary deductions be supported by proper authorisation?  
-A. To prove the employee or applicable process authorised the deduction  
-B. To avoid payslips  
-C. To increase gross pay  
+A. To avoid payslips  
+B. To increase gross pay  
+C. To prove the employee or applicable process authorised the deduction  
 D. To remove payroll controls  
-**Answer: A**
+**Answer: C**
 
 12. A deduction appears twice for one employee. What should happen?  
 A. Leave it until year-end  
-B. Investigate and correct through the authorised payroll process  
-C. Delete the employee  
-D. Hide the payslip  
-**Answer: B**
+B. Delete the employee  
+C. Hide the payslip  
+D. Investigate and correct through the authorised payroll process  
+**Answer: D**
 
 13. PAYE is best described as:  
 A. A payroll mechanism through which employers withhold employees' tax according to applicable rules  
@@ -99,25 +99,25 @@ D. A voluntary savings account
 **Answer: A**
 
 14. UIF contributions in payroll should be handled using:  
-A. Current authorised payroll rules and official guidance  
-B. Last year's spreadsheet regardless of changes  
+A. Last year's spreadsheet regardless of changes  
+B. Current authorised payroll rules and official guidance  
 C. A guessed percentage  
 D. Employee preference only  
-**Answer: A**
+**Answer: B**
 
 15. Why should payroll staff verify current statutory tables and rules?  
-A. Rates, thresholds or requirements may change  
-B. Payroll law never changes  
-C. Old tax tables are always valid  
+A. Payroll law never changes  
+B. Old tax tables are always valid  
+C. Rates, thresholds or requirements may change  
 D. Software removes all responsibility  
-**Answer: A**
+**Answer: C**
 
 16. SDL is generally an employer-side payroll-related levy where applicable. What should the bookkeeper do if applicability is uncertain?  
 A. Guess  
-B. Use current official guidance or refer to the authorised payroll/tax specialist  
-C. Deduct it from every employee automatically  
-D. Ignore it permanently  
-**Answer: B**
+B. Deduct it from every employee automatically  
+C. Ignore it permanently  
+D. Use current official guidance or refer to the authorised payroll/tax specialist  
+**Answer: D**
 
 17. Which document commonly shows an employee the calculation of their pay?  
 A. Payslip  
@@ -127,25 +127,25 @@ D. Purchase order
 **Answer: A**
 
 18. Why should payroll input forms be retained according to approved rules?  
-A. They support the audit trail for changes and calculations  
-B. They replace payroll software  
+A. They replace payroll software  
+B. They support the audit trail for changes and calculations  
 C. They should be kept forever regardless of policy  
 D. They eliminate confidentiality requirements  
-**Answer: A**
+**Answer: B**
 
 19. What should a payroll change form normally identify?  
-A. Employee, change, effective date and authorisation  
-B. Only the employee name  
-C. Only the manager name  
+A. Only the employee name  
+B. Only the manager name  
+C. Employee, change, effective date and authorisation  
 D. Only the final net pay  
-**Answer: A**
+**Answer: C**
 
 20. Why are payroll records sensitive?  
-A. They may contain identity, banking, earnings and tax information  
-B. Payroll information is public  
-C. Payslips contain no personal information  
-D. Only managers' records are confidential  
-**Answer: A**
+A. Payroll information is public  
+B. Payslips contain no personal information  
+C. Only managers' records are confidential  
+D. They may contain identity, banking, earnings and tax information  
+**Answer: D**
 
 21. What is a payroll reconciliation?  
 A. Comparing payroll totals and related records to identify unexplained differences  
@@ -162,18 +162,18 @@ D. Split the difference
 **Answer: B**
 
 23. Why should payroll control totals be compared period to period?  
-A. Unexpected movements can reveal errors or unusual changes  
-B. Payroll should never change  
-C. Reconciliation is only for banks  
+A. Payroll should never change  
+B. Reconciliation is only for banks  
+C. Unexpected movements can reveal errors or unusual changes  
 D. It removes the need for approvals  
-**Answer: A**
+**Answer: C**
 
 24. Which is a useful payroll control total?  
-A. Total gross earnings, total deductions and total net pay  
-B. Number of emails sent  
-C. Number of office chairs  
-D. Supplier invoice total  
-**Answer: A**
+A. Number of emails sent  
+B. Number of office chairs  
+C. Supplier invoice total  
+D. Total gross earnings, total deductions and total net pay  
+**Answer: D**
 
 25. Why should one person not control every payroll stage where segregation is practical?  
 A. Separation reduces error and fraud risk  
@@ -183,25 +183,25 @@ D. One user should always approve themselves
 **Answer: A**
 
 26. What does payroll approval confirm?  
-A. The authorised reviewer has accepted the payroll for release according to process  
-B. Every employee is happy with their salary  
+A. Every employee is happy with their salary  
+B. The authorised reviewer has accepted the payroll for release according to process  
 C. Tax law will never change  
 D. No future correction will ever be required  
-**Answer: A**
+**Answer: B**
 
 27. A payroll file is emailed to the wrong distribution list. What is the BEST response?  
 A. Ignore it if nobody complains  
-B. Follow the organisation's privacy/security incident process promptly  
-C. Delete your sent email only  
+B. Delete your sent email only  
+C. Follow the organisation's privacy/security incident process promptly  
 D. Post a correction publicly  
-**Answer: B**
+**Answer: C**
 
 28. Why should payroll access follow least-necessary access?  
-A. Users should see only what they need for legitimate work  
-B. Everyone should have payroll access  
-C. Access control slows payroll  
-D. Payroll is not sensitive  
-**Answer: A**
+A. Everyone should have payroll access  
+B. Access control slows payroll  
+C. Payroll is not sensitive  
+D. Users should see only what they need for legitimate work  
+**Answer: D**
 
 29. Which behaviour weakens payroll audit trails?  
 A. Shared user credentials  
@@ -211,53 +211,53 @@ D. Change reports
 **Answer: A**
 
 30. What is the safest way to correct a payroll error after processing?  
-A. Use the authorised correction/reversal process and preserve traceability  
-B. Delete all evidence  
+A. Delete all evidence  
+B. Use the authorised correction/reversal process and preserve traceability  
 C. Backdate without approval  
 D. Edit the payslip image only  
-**Answer: A**
-
-31. Why must payroll corrections be communicated appropriately?  
-A. Affected employees and authorised functions may need accurate updated information  
-B. Corrections should always be secret  
-C. Communication changes tax automatically  
-D. Payroll errors never affect employees  
-**Answer: A**
-
-32. What is an audit trail in payroll?  
-A. Traceable evidence of changes, calculations, approvals and actions  
-B. A list of employee birthdays  
-C. A salary survey  
-D. A tax table  
-**Answer: A**
-
-33. A new employee is missing approved banking details two days before payroll cut-off. What is the BEST action?  
-A. Guess from an old record  
-B. Escalate and follow the approved exception/verification process  
-C. Use a colleague's bank account  
-D. Exclude the employee without telling anyone  
 **Answer: B**
 
-34. What should happen before payroll is finalised?  
-A. Input, changes, calculations, exceptions and control totals should be reviewed  
-B. Only payslips should be printed  
-C. All records should be deleted  
-D. Payroll should be released automatically  
+31. Why must payroll corrections be communicated appropriately?  
+A. Corrections should always be secret  
+B. Communication changes tax automatically  
+C. Affected employees and authorised functions may need accurate updated information  
+D. Payroll errors never affect employees  
+**Answer: C**
+
+32. What is an audit trail in payroll?  
+A. A list of employee birthdays  
+B. A salary survey  
+C. A tax table  
+D. Traceable evidence of changes, calculations, approvals and actions  
+**Answer: D**
+
+33. A new employee is missing approved banking details two days before payroll cut-off. What is the BEST action?  
+A. Escalate and follow the approved exception/verification process  
+B. Guess from an old record  
+C. Use a colleague's bank account  
+D. Exclude the employee without telling anyone  
 **Answer: A**
 
+34. What should happen before payroll is finalised?  
+A. Only payslips should be printed  
+B. Input, changes, calculations, exceptions and control totals should be reviewed  
+C. All records should be deleted  
+D. Payroll should be released automatically  
+**Answer: B**
+
 35. Why is a payroll cut-off date useful?  
-A. It defines when routine inputs should be submitted for the current cycle  
-B. It prevents all later corrections  
-C. It replaces employment policies  
+A. It prevents all later corrections  
+B. It replaces employment policies  
+C. It defines when routine inputs should be submitted for the current cycle  
 D. It sets tax rates  
-**Answer: A**
+**Answer: C**
 
 36. A manager submits a late salary change after cut-off. What should the payroll administrator do?  
 A. Apply it secretly  
-B. Follow the authorised late-change/exception process and effective-date rules  
-C. Ignore all future instructions  
-D. Change another employee's pay instead  
-**Answer: B**
+B. Ignore all future instructions  
+C. Change another employee's pay instead  
+D. Follow the authorised late-change/exception process and effective-date rules  
+**Answer: D**
 
 37. What is the purpose of a payroll checklist?  
 A. Standardise critical controls across each payroll cycle  
@@ -267,25 +267,25 @@ D. Guarantee that legislation never changes
 **Answer: A**
 
 38. Why should payroll totals be reconciled before payment-file release?  
-A. To verify the payment file agrees with the approved payroll  
-B. To increase bank charges  
+A. To increase bank charges  
+B. To verify the payment file agrees with the approved payroll  
 C. To delay salaries  
 D. To remove payslips  
-**Answer: A**
+**Answer: B**
 
 39. Which item should be included in a payroll handover?  
-A. Outstanding exceptions, deadlines, approvals and unresolved employee issues  
-B. Personal opinions about employees  
-C. Passwords for shared access  
+A. Personal opinions about employees  
+B. Passwords for shared access  
+C. Outstanding exceptions, deadlines, approvals and unresolved employee issues  
 D. Irrelevant office gossip  
-**Answer: A**
+**Answer: C**
 
 40. Why should employee master-data changes be reviewed separately from ordinary payroll inputs?  
-A. They can affect recurring future payments and sensitive identity/payment information  
-B. They have no impact after one month  
-C. They are always temporary  
-D. They cannot cause fraud  
-**Answer: A**
+A. They have no impact after one month  
+B. They are always temporary  
+C. They cannot cause fraud  
+D. They can affect recurring future payments and sensitive identity/payment information  
+**Answer: D**
 
 41. What is the BEST response to an unexplained large increase in payroll expense?  
 A. Investigate headcount, pay changes, overtime, allowances and corrections before accepting it  
@@ -295,25 +295,25 @@ D. Reduce all salaries proportionally
 **Answer: A**
 
 42. Why should payroll software output not be accepted blindly?  
-A. Incorrect inputs or configuration can still produce incorrect results  
-B. Software never uses data  
+A. Software never uses data  
+B. Incorrect inputs or configuration can still produce incorrect results  
 C. Payroll systems cannot calculate totals  
 D. Manual work is always more accurate  
-**Answer: A**
+**Answer: B**
 
 43. What is a reasonable role boundary for a junior payroll/bookkeeping administrator?  
-A. Process according to approved rules and escalate tax/legal uncertainty  
-B. Give personalised tax advice to employees  
-C. Invent statutory rates  
+A. Give personalised tax advice to employees  
+B. Invent statutory rates  
+C. Process according to approved rules and escalate tax/legal uncertainty  
 D. Approve own salary changes  
-**Answer: A**
+**Answer: C**
 
 44. A payslip includes an unfamiliar deduction code. What should happen?  
-A. Investigate the code, authority and calculation before finalising  
-B. Leave it because the system created it  
-C. Rename it “miscellaneous”  
-D. Add the same deduction to everyone  
-**Answer: A**
+A. Leave it because the system created it  
+B. Rename it “miscellaneous”  
+C. Add the same deduction to everyone  
+D. Investigate the code, authority and calculation before finalising  
+**Answer: D**
 
 45. Why should payroll records use authorised storage?  
 A. To support confidentiality, continuity, access control and retention requirements  
@@ -323,25 +323,25 @@ D. Shared public folders are easier
 **Answer: A**
 
 46. Which payroll control most directly protects against unauthorised bank-detail changes?  
-A. Independent verification and authorised change approval  
-B. Bigger fonts on payslips  
+A. Bigger fonts on payslips  
+B. Independent verification and authorised change approval  
 C. Sorting employees alphabetically  
 D. Printing the payroll twice  
-**Answer: A**
+**Answer: B**
 
 47. What should happen when a payroll exception remains unresolved at payment deadline?  
-A. Escalate to the authorised decision-maker with facts and impact  
-B. Invent a solution without authority  
-C. Hide the issue  
+A. Invent a solution without authority  
+B. Hide the issue  
+C. Escalate to the authorised decision-maker with facts and impact  
 D. Pay an estimated amount automatically  
-**Answer: A**
+**Answer: C**
 
 48. What is the relationship between gross pay and net pay?  
-A. Net pay results after authorised deductions from gross earnings  
-B. They are always equal  
-C. Gross pay is after deductions  
-D. Net pay excludes all earnings  
-**Answer: A**
+A. They are always equal  
+B. Gross pay is after deductions  
+C. Net pay excludes all earnings  
+D. Net pay results after authorised deductions from gross earnings  
+**Answer: D**
 
 49. Why is payroll confidentiality still important after payment is complete?  
 A. Records remain sensitive throughout storage, reporting and retention  
@@ -351,22 +351,22 @@ D. Old records can be emailed anywhere
 **Answer: A**
 
 50. What should happen at payroll-cycle close?  
-A. Reconcile outputs, secure records, communicate authorised results and carry forward unresolved actions  
-B. Delete all working evidence  
+A. Delete all working evidence  
+B. Reconcile outputs, secure records, communicate authorised results and carry forward unresolved actions  
 C. Remove audit logs  
 D. Stop retaining records immediately  
-**Answer: A**
+**Answer: B**
 
 51. Which scenario BEST demonstrates proper payroll control?  
 A. One employee captures, approves and releases their own salary change  
-B. Approved changes are captured, independently reviewed, reconciled and authorised before payment  
-C. Bank details are accepted by text message only  
+B. Bank details are accepted by text message only  
+C. Approved changes are captured, independently reviewed, reconciled and authorised before payment  
 D. Payroll is paid before checking totals  
-**Answer: B**
+**Answer: C**
 
 52. Which principle is MOST important across the full payroll cycle?  
-A. Accuracy, authorisation, confidentiality and traceability  
-B. Speed regardless of controls  
-C. Avoiding all documentation  
-D. Relying on memory  
-**Answer: A**
+A. Speed regardless of controls  
+B. Avoiding all documentation  
+C. Relying on memory  
+D. Accuracy, authorisation, confidentiality and traceability  
+**Answer: D**
