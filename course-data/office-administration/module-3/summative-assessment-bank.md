@@ -8,18 +8,18 @@
 **Coverage:** All eight Module 3 lessons.
 
 1. Which factor should guide the structure of a business document FIRST?  
-A. Decorative preference  
-B. Purpose, audience and required action  
+A. Purpose, audience and required action  
+B. Decorative preference  
 C. Number of available fonts  
 D. Printer settings  
-**Answer: B**
+**Answer: A**
 
 2. A controlled document is BEST described as one that:  
-A. has an approved version and managed changes  
-B. is stored only on paper  
+A. is stored only on paper  
+B. has an approved version and managed changes  
 C. contains a logo  
 D. is more than one page  
-**Answer: A**
+**Answer: B**
 
 3. Which error is primarily a content-quality problem?  
 A. Uneven margins  
@@ -57,18 +57,18 @@ D. They guarantee approval
 **Answer: C**
 
 8. Which is the BEST use of a table?  
-A. To organise structured comparisons or schedules  
-B. To hide all important information  
-C. To replace every paragraph  
-D. To avoid headings  
-**Answer: A**
+A. To hide all important information  
+B. To replace every paragraph  
+C. To avoid headings  
+D. To organise structured comparisons or schedules  
+**Answer: D**
 
 9. A heading appears alone at the bottom of a page while its text starts on the next page. This is mainly a:  
-A. retention error  
-B. page-layout problem  
+A. page-layout problem  
+B. retention error  
 C. access-control issue  
 D. filing error  
-**Answer: B**
+**Answer: A**
 
 10. Why should final output be inspected after PDF conversion?  
 A. PDF guarantees perfect layout  
@@ -78,18 +78,18 @@ D. Spellcheck becomes unnecessary
 **Answer: B**
 
 11. What is classification in records management?  
-A. Grouping records according to defined categories  
-B. Destroying obsolete files  
-C. Encrypting every document  
+A. Destroying obsolete files  
+B. Encrypting every document  
+C. Grouping records according to defined categories  
 D. Printing duplicates  
-**Answer: A**
+**Answer: C**
 
 12. Which filing method is BEST suited to records organised by client surname?  
 A. Numeric  
 B. Chronological  
-C. Alphabetical  
-D. Random  
-**Answer: C**
+C. Random  
+D. Alphabetical  
+**Answer: D**
 
 13. A daily visitor log is MOST naturally suited to which primary sequence?  
 A. Chronological  
@@ -107,17 +107,17 @@ D. They remove the need for retrieval
 
 15. What is a hybrid filing system?  
 A. A filing system with no rules  
-B. A combination of two or more classification methods  
-C. A system that stores only emails  
+B. A system that stores only emails  
+C. A combination of two or more classification methods  
 D. A filing room shared with reception  
-**Answer: B**
+**Answer: C**
 
 16. What is the main risk of too many overlapping filing categories?  
 A. Records become easier to retrieve  
-B. Users cannot predict where records belong  
-C. Access becomes automatically secure  
-D. Retention becomes unnecessary  
-**Answer: B**
+B. Access becomes automatically secure  
+C. Retention becomes unnecessary  
+D. Users cannot predict where records belong  
+**Answer: D**
 
 17. Why may a physical file movement register be useful?  
 A. It records who has removed a file and supports its return  
@@ -148,11 +148,11 @@ D. Loss of continuity and organisational control
 **Answer: D**
 
 21. When should shared-folder permissions be broad?  
-A. Whenever setup is easier  
-B. Only when legitimate business need justifies the access  
+A. Only when legitimate business need justifies the access  
+B. Whenever setup is easier  
 C. Whenever employees request them  
 D. Whenever the folder contains personal information  
-**Answer: B**
+**Answer: A**
 
 22. Why is search alone not enough to manage electronic records?  
 A. Search cannot return files  
@@ -162,18 +162,18 @@ D. Search is illegal
 **Answer: B**
 
 23. Which statement about downloaded working copies is MOST accurate?  
-A. They can become outdated and should be controlled  
-B. They automatically become authoritative  
-C. They never contain sensitive information  
+A. They automatically become authoritative  
+B. They never contain sensitive information  
+C. They can become outdated and should be controlled  
 D. They should always be kept forever  
-**Answer: A**
+**Answer: C**
 
 24. What is the core purpose of version control?  
 A. Increase the number of copies  
-B. Identify the current authorised version  
-C. Make filenames longer  
-D. Avoid approvals  
-**Answer: B**
+B. Make filenames longer  
+C. Avoid approvals  
+D. Identify the current authorised version  
+**Answer: D**
 
 25. What does draft status indicate?  
 A. The document is still under development  
@@ -191,45 +191,45 @@ D. Remove all previous evidence
 
 27. Which statement about version numbering is correct?  
 A. Every organisation must use the same numbering scheme  
-B. Consistency with the organisation's defined method is what matters  
-C. Version numbers are unnecessary for controlled documents  
+B. Version numbers are unnecessary for controlled documents  
+C. Consistency with the organisation's defined method is what matters  
 D. The newest timestamp always equals approval  
-**Answer: B**
+**Answer: C**
 
 28. What does a change history normally record?  
-A. Significant revisions, dates and relevant approval information  
-B. Employees' private opinions  
-C. Only file size  
-D. Printer settings  
-**Answer: A**
+A. Employees' private opinions  
+B. Only file size  
+C. Printer settings  
+D. Significant revisions, dates and relevant approval information  
+**Answer: D**
 
 29. What should happen to superseded versions in active folders?  
-A. Leave them indistinguishable from the current copy  
-B. Remove or clearly control/archive them according to procedure  
+A. Remove or clearly control/archive them according to procedure  
+B. Leave them indistinguishable from the current copy  
 C. Email them to everyone  
 D. Rename them all “current”  
-**Answer: B**
+**Answer: A**
 
 30. Why does automatic edit history not prove a document is approved?  
-A. The latest edit may not have received authorised approval  
-B. Automatic histories never record time  
+A. Automatic histories never record time  
+B. The latest edit may not have received authorised approval  
 C. Approval cannot occur electronically  
 D. All edits are approved by default  
-**Answer: A**
+**Answer: B**
 
 31. What is the records lifecycle?  
-A. Creation/receipt through use, retention and final disposition  
-B. Printing and stapling only  
-C. Filing and never reviewing again  
+A. Printing and stapling only  
+B. Filing and never reviewing again  
+C. Creation/receipt through use, retention and final disposition  
 D. Keeping all records forever  
-**Answer: A**
+**Answer: C**
 
 32. Which statement BEST describes an archived record?  
 A. It is automatically destroyed  
-B. It is retained in controlled storage but not needed frequently for active work  
-C. It becomes public  
-D. It is no longer subject to access control  
-**Answer: B**
+B. It becomes public  
+C. It is no longer subject to access control  
+D. It is retained in controlled storage but not needed frequently for active work  
+**Answer: D**
 
 33. Why should retention periods not be guessed?  
 A. Requirements can vary by record type and context  
@@ -239,81 +239,81 @@ D. Old records are always useless
 **Answer: A**
 
 34. Before retrieving a restricted employee record, an administrator should confirm:  
-A. whether the requester is authorised  
-B. whether the requester is a friend  
+A. whether the requester is a friend  
+B. whether the requester is authorised  
 C. whether the file is colourful  
 D. whether it can be emailed personally  
-**Answer: A**
+**Answer: B**
 
 35. What can prevent otherwise scheduled disposal?  
-A. A legal hold or authorised investigation requirement  
-B. A short filename  
-C. A colour-coded folder  
+A. A short filename  
+B. A colour-coded folder  
+C. A legal hold or authorised investigation requirement  
 D. A meeting invitation  
-**Answer: A**
+**Answer: C**
 
 36. Which is the BEST disposal approach for sensitive paper records?  
 A. Public recycling bin  
-B. Approved secure destruction method  
-C. Leave them in reception  
-D. Give them to staff as scrap paper  
-**Answer: B**
+B. Leave them in reception  
+C. Give them to staff as scrap paper  
+D. Approved secure destruction method  
+**Answer: D**
 
 37. Why are unofficial shadow archives risky?  
-A. They improve controlled disposal  
-B. They can undermine retention, access and confidentiality controls  
+A. They can undermine retention, access and confidentiality controls  
+B. They improve controlled disposal  
 C. They reduce duplicates  
 D. They become authoritative automatically  
-**Answer: B**
+**Answer: A**
 
 38. What is data validation?  
-A. Checking whether data meets defined rules or expected conditions  
-B. Approving every transaction  
+A. Approving every transaction  
+B. Checking whether data meets defined rules or expected conditions  
 C. Deleting source documents  
 D. Guessing missing values  
-**Answer: A**
+**Answer: B**
 
 39. Which action is an example of verification?  
-A. Comparing a captured ID number to the approved source document  
-B. Changing an amount until it looks reasonable  
-C. Copying from an unverified spreadsheet  
+A. Changing an amount until it looks reasonable  
+B. Copying from an unverified spreadsheet  
+C. Comparing a captured ID number to the approved source document  
 D. Ignoring discrepancies  
-**Answer: A**
+**Answer: C**
 
 40. What is the purpose of reconciliation?  
 A. Make two records look identical by force  
-B. Compare related records and investigate differences  
-C. Replace audit trails  
-D. Eliminate source documents  
-**Answer: B**
+B. Replace audit trails  
+C. Eliminate source documents  
+D. Compare related records and investigate differences  
+**Answer: D**
 
 41. Which action damages an audit trail MOST directly?  
-A. Using individual user accounts  
-B. Recording approvals  
-C. Sharing login credentials  
+A. Sharing login credentials  
+B. Using individual user accounts  
+C. Recording approvals  
 D. Documenting corrections  
-**Answer: C**
+**Answer: A**
 
 42. A four-eyes check is effective only when:  
-A. the second person genuinely reviews the work  
-B. the second person automatically approves  
+A. the second person automatically approves  
+B. the second person genuinely reviews the work  
 C. the same employee performs both roles  
 D. no evidence is kept  
-**Answer: A**
+**Answer: B**
 
 43. An unexplained R2,500 discrepancy is found during reconciliation. What should happen?  
 A. Adjust a number until totals match  
-B. Investigate against source records and escalate if unresolved  
-C. Delete one record  
+B. Delete one record  
+C. Investigate against source records and escalate if unresolved  
 D. Ignore it because the difference is small  
-**Answer: B**
+**Answer: C**
 
 44. Which is a useful routine quality check?  
-A. Names, dates, references, totals, attachments and approvals  
-B. Font colour only  
-C. Number of pages only  
-D. Whether the document looks busy  
-**Answer: A**
+A. Font colour only  
+B. Number of pages only  
+C. Whether the document looks busy  
+D. Names, dates, references, totals, attachments and approvals  
+**Answer: D**
 
 45. What is an exception report?  
 A. A report highlighting items that do not meet expected conditions  
@@ -323,32 +323,32 @@ D. A retention schedule
 **Answer: A**
 
 46. Which stage should follow classification in a controlled records workflow?  
-A. Apply naming/identification and appropriate storage controls  
-B. Destroy the record  
+A. Destroy the record  
+B. Apply naming/identification and appropriate storage controls  
 C. Email it to every employee  
 D. Remove its owner  
-**Answer: A**
+**Answer: B**
 
 47. Why should quality checks occur before approval?  
-A. To reduce the chance that incorrect content is formally authorised  
-B. Approval automatically corrects mistakes  
-C. Quality matters only after distribution  
+A. Approval automatically corrects mistakes  
+B. Quality matters only after distribution  
+C. To reduce the chance that incorrect content is formally authorised  
 D. It makes retention unnecessary  
-**Answer: A**
+**Answer: C**
 
 48. What should happen after a document is approved and distributed?  
-A. Store the authoritative record in its controlled location  
-B. Keep only the author's personal copy  
-C. Delete approval evidence  
-D. Rename every draft as approved  
-**Answer: A**
+A. Keep only the author's personal copy  
+B. Delete approval evidence  
+C. Rename every draft as approved  
+D. Store the authoritative record in its controlled location  
+**Answer: D**
 
 49. Which combination BEST reflects a complete records-control approach?  
-A. Naming only  
-B. Filing only  
-C. Classification, versioning, quality, access, retention and disposal controls  
+A. Classification, versioning, quality, access, retention and disposal controls  
+B. Naming only  
+C. Filing only  
 D. Printing and scanning only  
-**Answer: C**
+**Answer: A**
 
 50. Which problem MOST clearly indicates weak records management?  
 A. Users consistently find the current approved version  
@@ -358,15 +358,15 @@ D. Retention reviews follow an approved schedule
 **Answer: B**
 
 51. Why is a handover important in records management?  
-A. It transfers knowledge of important locations, access and outstanding work  
-B. It gives the replacement employee all passwords  
-C. It removes the need for shared storage  
+A. It gives the replacement employee all passwords  
+B. It removes the need for shared storage  
+C. It transfers knowledge of important locations, access and outstanding work  
 D. It makes retention unnecessary  
-**Answer: A**
+**Answer: C**
 
 52. What is the BEST description of a reliable records system?  
 A. One that keeps every possible duplicate  
 B. One that relies on a single person's memory  
-C. One that makes authoritative records identifiable, retrievable, secure and controlled throughout their lifecycle  
-D. One that never archives anything  
-**Answer: C**
+C. One that never archives anything  
+D. One that makes authoritative records identifiable, retrievable, secure and controlled throughout their lifecycle  
+**Answer: D**
