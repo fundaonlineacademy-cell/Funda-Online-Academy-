@@ -31,7 +31,7 @@ if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
 }
 
 if (/dashboard\.html$/i.test(window.location.pathname)) {
-  ['student-registration-route-guard.js','student-support-portal.js','student-support-ticket-feedback.js','student-consultations.js','student-module-assessments.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
+  ['student-registration-route-guard.js','student-career-workplace-support.js','student-support-portal.js','student-support-ticket-feedback.js','student-consultations.js','student-module-assessments.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/library-admin\.html$/i.test(window.location.pathname)) {
