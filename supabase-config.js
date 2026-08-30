@@ -11,9 +11,7 @@ const publicMarketing = document.createElement('script'); publicMarketing.src = 
 const createAccountRoute = document.createElement('script'); createAccountRoute.src = 'create-account-route-fix.js?v=' + Date.now(); document.head.appendChild(createAccountRoute);
 
 if (/onboarding\.html$/i.test(window.location.pathname)) {
-  const onboardingEnhancements=document.createElement('script');
-  onboardingEnhancements.src='onboarding-integrity-payments.js?v='+Date.now();
-  document.head.appendChild(onboardingEnhancements);
+  ['onboarding-integrity-payments.js','enrolment-terms-payment-guard.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
@@ -33,7 +31,7 @@ if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
 }
 
 if (/dashboard\.html$/i.test(window.location.pathname)) {
-  ['student-support-portal.js','student-consultations.js','student-module-assessments.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
+  ['student-registration-route-guard.js','student-support-portal.js','student-consultations.js','student-module-assessments.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/library-admin\.html$/i.test(window.location.pathname)) {
