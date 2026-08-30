@@ -10,12 +10,16 @@ const identityUi = document.createElement('script'); identityUi.src = 'academy-i
 const publicMarketing = document.createElement('script'); publicMarketing.src = 'marketing-public-tracking.js?v=' + Date.now(); document.head.appendChild(publicMarketing);
 const createAccountRoute = document.createElement('script'); createAccountRoute.src = 'create-account-route-fix.js?v=' + Date.now(); document.head.appendChild(createAccountRoute);
 
+if (/(^|\/)(index|courses-public|course-view|employers)\.html$/i.test(window.location.pathname) || /\/$/.test(window.location.pathname)) {
+  const employerPublic=document.createElement('script'); employerPublic.src='public-employer-link.js?v='+Date.now(); document.head.appendChild(employerPublic);
+}
+
 if (/onboarding\.html$/i.test(window.location.pathname)) {
   ['onboarding-integrity-payments.js','onboarding-bank-details-multi.js','enrolment-terms-payment-guard.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
-  const files=['admin-theme-navy-gold.js','admin-document-vault.js','admin-career-workplace-support.js','admin-report-centre.js','admin-executive-safe.js','admin-finance-live-sync.js','admin-header-interactions.js','admin-finance-control-centre.js','admin-payment-proof-review.js','admin-governance-safe.js','admin-executive-actions.js','admin-executive-action-summary.js','admin-communication-v2.js','admin-marketing-safe.js','admin-support-safe.js','admin-consultations.js','admin-enrolments-safe.js','admin-academic-qa-safe.js','admin-course-qa-review.js','admin-course-inspector.js','admin-security-safe.js','admin-hr-safe.js','admin-hr-contract-fix.js','admin-hr-compliance-safe.js','admin-hr-training-performance-safe.js','admin-audit-compliance-safe.js','admin-accounting-safe.js','admin-library-safe.js'];
+  const files=['admin-theme-navy-gold.js','admin-document-vault.js','admin-career-workplace-support.js','admin-employer-partnerships.js','admin-report-centre.js','admin-executive-safe.js','admin-finance-live-sync.js','admin-header-interactions.js','admin-finance-control-centre.js','admin-payment-proof-review.js','admin-governance-safe.js','admin-executive-actions.js','admin-executive-action-summary.js','admin-communication-v2.js','admin-marketing-safe.js','admin-support-safe.js','admin-consultations.js','admin-enrolments-safe.js','admin-academic-qa-safe.js','admin-course-qa-review.js','admin-course-inspector.js','admin-security-safe.js','admin-hr-safe.js','admin-hr-contract-fix.js','admin-hr-compliance-safe.js','admin-hr-training-performance-safe.js','admin-audit-compliance-safe.js','admin-accounting-safe.js','admin-library-safe.js'];
   files.forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
@@ -31,7 +35,7 @@ if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
 }
 
 if (/dashboard\.html$/i.test(window.location.pathname)) {
-  ['student-registration-route-guard.js','student-payment-review-feedback.js','student-career-workplace-support.js','student-support-portal.js','student-support-ticket-feedback.js','student-consultations.js','student-module-assessments.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
+  ['student-registration-route-guard.js','student-payment-review-feedback.js','student-career-workplace-support.js','student-employer-opportunities.js','student-support-portal.js','student-support-ticket-feedback.js','student-consultations.js','student-module-assessments.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/library-admin\.html$/i.test(window.location.pathname)) {
