@@ -23,6 +23,10 @@ if (/admin-v2\.html$/i.test(window.location.pathname)) {
   files.forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
+if (/staff-portal\.html$/i.test(window.location.pathname)) {
+  const staffAccess=document.createElement('script'); staffAccess.src='staff-password-access.js?v='+Date.now(); document.head.appendChild(staffAccess);
+}
+
 if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
   const s=document.createElement('script');s.src='public-course-value.js?v='+Date.now();document.head.appendChild(s);
   if (/courses-public\.html$/i.test(window.location.pathname)) {
