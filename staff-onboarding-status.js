@@ -13,4 +13,5 @@ async function sync(){
   }catch(e){}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(sync,500));else setTimeout(sync,500);
+if(!window.__fundaFinanceCompatLoader){window.__fundaFinanceCompatLoader=true;const s=document.createElement('script');s.src='staff-finance-workspace.js?v='+Date.now();document.head.appendChild(s)}
 })();
