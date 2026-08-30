@@ -1,1 +1,111 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Funda Staff Portal</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js?v=staff-portal"></script><style>body{margin:0;font-family:Arial,sans-serif;background:#f3f6fb;color:#17233b}.top{background:linear-gradient(135deg,#03101f,#0b315c);color:#fff;padding:20px}.top b{color:#d6b45c;font-size:11px;letter-spacing:.12em}.wrap{max-width:1100px;margin:auto;padding:18px}.card{background:#fff;border:1px solid #e1dac9;border-radius:14px;padding:16px;margin:10px 0}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.metric strong{display:block;font-size:20px}.metric span,.meta{font-size:11px;color:#718096}.btn{border:0;border-radius:8px;padding:9px 12px;background:#071b31;color:#efd78e;font-weight:800;cursor:pointer}.btn.alt{background:#fff;color:#071b31;border:1px solid #d9d1bf}.input,textarea{width:100%;padding:10px;border:1px solid #d9d1bf;border-radius:8px;box-sizing:border-box;margin:5px 0}.pill{display:inline-block;padding:5px 8px;border-radius:99px;background:#edf2f7;font-size:10px;font-weight:800}.accepted,.approved,.completed{background:#e5f6ef;color:#176b50}.issued,.pending{background:#fff2d2;color:#8a5a05}@media(max-width:750px){.grid{grid-template-columns:1fr 1fr}}</style></head><body><div class="top"><b>FUNDA ONLINE ACADEMY</b><h2>Staff Workspace</h2><div id="who">Secure staff access</div></div><div class="wrap"><div id="app" class="card">Loading…</div></div><script>const e=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));let db,u,p,contracts=[],leave=[],training=[],reviews=[],access=[];async function load(){db=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);let g=await db.auth.getUser();u=g.data.user;if(!u){document.getElementById('app').innerHTML='<h3>Sign in required</h3><p class="meta">Use the email address that received your staff invitation.</p><input class="input" id="em" placeholder="Email"><input class="input" id="pw" type="password" placeholder="Password"><button class="btn" onclick="login()">Sign in</button>';return}let pr=await db.from('profiles').select('*').eq('id',u.id).maybeSingle();p=pr.data;if(!p||p.role!=='staff'){document.getElementById('app').innerHTML='<h3>Staff access not available</h3><p class="meta">This workspace is for authorised staff accounts.</p>';return}document.getElementById('who').textContent=(p.full_name||p.email)+' · '+(p.staff_code||'Staff');let rs=await Promise.all([db.from('hr_contracts').select('*').eq('profile_id',u.id).order('created_at',{ascending:false}),db.from('hr_leave_requests').select('*').eq('profile_id',u.id).order('requested_at',{ascending:false}),db.from('hr_training_records').select('*').eq('profile_id',u.id).order('created_at',{ascending:false}),db.from('hr_performance_reviews').select('*').eq('profile_id',u.id).order('created_at',{ascending:false}),db.from('staff_access_assignments').select('*').eq('profile_id',u.id).eq('active',true)]);[contracts,leave,training,reviews,access]=rs.map(x=>x.data||[]);render()}async function login(){let r=await db.auth.signInWithPassword({email:em.value.trim(),password:pw.value});if(r.error)return alert(r.error.message);load()}function render(){app.innerHTML=`<div class="grid"><div class="card metric"><strong>${e(p.department||'—')}</strong><span>Department</span></div><div class="card metric"><strong>${e(p.job_title||'—')}</strong><span>Job title</span></div><div class="card metric"><strong>${contracts.filter(x=>x.status==='issued').length}</strong><span>Contracts awaiting action</span></div><div class="card metric"><strong>${access.length}</strong><span>Active access assignments</span></div></div><div class="card"><h3>My Access</h3>${access.map(a=>`<p><b>${e(a.department)}</b> · ${e(a.access_level)} ${a.can_approve?'· Approval authority':''}</p>`).join('')||'<p class="meta">No active departmental access.</p>'}</div><div class="card"><h3>Employment Contracts & Acknowledgements</h3>${contracts.map(c=>`<div class="card"><b>${e(c.contract_number)} · ${e(c.title)}</b><p class="meta">${e(c.contract_type)} · <span class="pill ${e(c.status)}">${e(c.status.toUpperCase())}</span></p><div style="white-space:pre-wrap;line-height:1.5">${e(c.body)}</div>${c.status==='issued'?`<hr><label><input type="checkbox" id="agree-${c.id}"> I confirm that I have read and accept these terms.</label><input class="input" id="sig-${c.id}" placeholder="Type your full name as digital signature"><button class="btn" onclick="acceptContract('${c.id}')">Accept & Sign</button> <button class="btn alt" onclick="declineContract('${c.id}')">Decline</button>`:c.status==='accepted'?`<p class="meta">Accepted ${e(c.accepted_at||'')} · Signature: ${e(c.typed_signature||'')}</p>`:''}</div>`).join('')||'<p class="meta">No contracts issued to you.</p>'}</div><div class="card"><h3>Leave Requests</h3><select class="input" id="lt"><option>Annual Leave</option><option>Sick Leave</option><option>Family Responsibility</option><option>Unpaid Leave</option></select><input class="input" id="ls" type="date"><input class="input" id="le" type="date"><textarea class="input" id="lr" placeholder="Reason / notes"></textarea><button class="btn" onclick="requestLeave()">Submit Leave Request</button>${leave.map(x=>`<p>${e(x.leave_type)} · ${e(x.start_date)} to ${e(x.end_date)} · <span class="pill ${e(x.status)}">${e(x.status)}</span></p>`).join('')}</div><div class="card"><h3>Training & Performance</h3>${training.map(x=>`<p><b>${e(x.training_name)}</b> · ${e(x.status)} ${x.completed_on?'· '+e(x.completed_on):''}</p>`).join('')||'<p class="meta">No training records yet.</p>'}${reviews.map(x=>`<p><b>Performance review ${e(x.review_period)}</b> · ${e(x.status)} · Rating ${e(x.rating??'—')}</p>`).join('')}</div><button class="btn alt" onclick="logout()">Sign out</button>`}async function acceptContract(id){if(!document.getElementById('agree-'+id).checked)return alert('Please confirm that you accept the contract terms.');let sig=document.getElementById('sig-'+id).value.trim();if(!sig)return alert('Type your full name as your digital signature.');let declaration='I confirm that I have read, understood and accepted this agreement electronically.';let r=await db.from('hr_contracts').update({status:'accepted',typed_signature:sig,acceptance_declaration:declaration,accepted_at:new Date().toISOString()}).eq('id',id).eq('profile_id',u.id).eq('status','issued');if(r.error)return alert(r.error.message);await db.from('hr_audit_log').insert({actor_id:u.id,action:'contract_accepted',entity_type:'hr_contract',entity_id:id,subject_profile_id:u.id,details:{typed_signature:sig,declaration}});load()}async function declineContract(id){let reason=prompt('Reason for declining this contract:');if(!reason)return;let r=await db.from('hr_contracts').update({status:'declined',declined_at:new Date().toISOString(),decline_reason:reason}).eq('id',id).eq('profile_id',u.id).eq('status','issued');if(r.error)return alert(r.error.message);load()}async function requestLeave(){if(!ls.value||!le.value)return alert('Choose the leave dates.');let r=await db.from('hr_leave_requests').insert({profile_id:u.id,leave_type:lt.value,start_date:ls.value,end_date:le.value,reason:lr.value.trim()});if(r.error)return alert(r.error.message);load()}async function logout(){await db.auth.signOut();location.reload()}load();</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Funda Staff Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js?v=staff-portal-20260830"></script>
+<style>
+:root{--deep:#21384d;--navy:#2d4b63;--gold:#c99a2e;--cream:#fff4dc;--rose:#f5dbe4;--mist:#eef1f0;--line:#ddd3bd;--ink:#243750;--ok:#267255;--bad:#9a3b3b}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#eef1f0,#fff4dc 58%,#f5e8ec);color:var(--ink)}button,input,select,textarea{font:inherit}.top{background:linear-gradient(135deg,#21384d,#46677f);color:#fff;padding:22px 18px}.topInner{max-width:1120px;margin:auto;display:flex;justify-content:space-between;gap:18px;align-items:center}.top b{color:#efd78e;font-size:10px;letter-spacing:.14em}.top h2{margin:4px 0 2px;font-size:24px}.who{font-size:12px;color:#e5edf1}.wrap{max-width:1120px;margin:auto;padding:16px}.card{background:#fffaf0;border:1px solid var(--line);border-radius:16px;padding:16px;margin:10px 0;box-shadow:0 8px 24px rgba(33,56,77,.05)}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.metric strong{display:block;font-size:19px;color:var(--deep)}.metric span,.meta{font-size:10px;color:#718096}.btn{border:0;border-radius:9px;padding:10px 12px;background:var(--deep);color:#fff;font-weight:800;cursor:pointer}.btn.alt{background:#fff;color:var(--deep);border:1px solid #d7cba9}.btn.bad{background:var(--bad)}.btn:disabled{opacity:.55}.input,textarea,select{width:100%;padding:10px;border:1px solid #d9d1bf;border-radius:9px;box-sizing:border-box;margin:5px 0;background:#fffdf8}.pill{display:inline-block;padding:5px 8px;border-radius:99px;background:#edf2f7;font-size:9px;font-weight:800}.accepted,.approved,.completed,.active{background:#e5f6ef;color:#176b50}.issued,.pending{background:#fff2d2;color:#8a5a05}.declined,.rejected{background:#ffe7e7;color:#9d2828}.security{background:linear-gradient(135deg,#fff4dc,#f5dbe4);border:1px solid #d8c27e}.security h3{color:var(--deep);margin:0 0 5px}.notice{border-radius:11px;padding:11px;font-size:11px;margin-top:8px}.notice.ok{background:#e7f4ed;color:#1e674e}.notice.err{background:#fbe5e5;color:#8d3333}.sectionTitle{color:var(--deep);margin:0 0 8px}.row{border:1px solid #e6dece;border-radius:12px;padding:12px;background:#fff;margin:8px 0}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.welcome{background:linear-gradient(135deg,#21384d,#2d4b63);color:#fff}.welcome h3{margin:0 0 5px}.welcome p{color:#e7edf0;font-size:12px;line-height:1.6}@media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.topInner{display:block}.wrap{padding:11px}}@media(max-width:520px){.grid{grid-template-columns:1fr}.btn{width:100%}.actions{display:grid}.card{padding:14px}.top h2{font-size:21px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="topInner"><div><b>FUNDA ONLINE ACADEMY</b><h2>Staff Workspace</h2><div id="who" class="who">Secure staff access</div></div><button id="topLogout" class="btn alt" style="display:none">Sign out</button></div></header>
+<main class="wrap"><div id="app" class="card">Loading secure staff workspace…</div></main>
+<script>
+const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+const inviteArrival=/type=invite|type=recovery|code=/i.test(location.href);
+let db,u,p,contracts=[],leave=[],training=[],reviews=[],access=[];
+async function initClient(){if(db)return;db=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}
+async function load(){
+  await initClient();
+  let g=await db.auth.getUser();u=g.data.user;
+  document.getElementById('topLogout').style.display=u?'inline-flex':'none';
+  if(!u){renderLogin();return}
+  let pr=await db.from('profiles').select('*').eq('id',u.id).maybeSingle();p=pr.data;
+  if(!p||p.role!=='staff'){
+    document.getElementById('app').innerHTML='<h3>Staff access not available</h3><p class="meta">This workspace is reserved for authorised Funda Online Academy staff accounts.</p><button class="btn alt" onclick="logout()">Sign out</button>';
+    return;
+  }
+  document.getElementById('who').textContent=(p.full_name||p.email)+' · '+(p.staff_code||'Staff')+' · '+(p.job_title||p.department||'Team member');
+  let rs=await Promise.all([
+    db.from('hr_contracts').select('*').eq('profile_id',u.id).order('created_at',{ascending:false}),
+    db.from('hr_leave_requests').select('*').eq('profile_id',u.id).order('requested_at',{ascending:false}),
+    db.from('hr_training_records').select('*').eq('profile_id',u.id).order('created_at',{ascending:false}),
+    db.from('hr_performance_reviews').select('*').eq('profile_id',u.id).order('created_at',{ascending:false}),
+    db.from('staff_access_assignments').select('*').eq('profile_id',u.id).eq('active',true)
+  ]);
+  [contracts,leave,training,reviews,access]=rs.map(x=>x.data||[]);
+  render();
+}
+function renderLogin(){
+  document.getElementById('who').textContent='Secure staff access';
+  document.getElementById('app').innerHTML=`<h3 class="sectionTitle">Staff sign in</h3><p class="meta">Use the email address connected to your staff invitation.</p><input class="input" id="em" type="email" autocomplete="email" placeholder="Staff email"><input class="input" id="pw" type="password" autocomplete="current-password" placeholder="Password"><button class="btn" onclick="login()">Sign in</button><div id="loginStatus"></div>`;
+}
+async function login(){
+  let email=document.getElementById('em').value.trim(),password=document.getElementById('pw').value;
+  if(!email||!password)return showInline('loginStatus','Enter your email and password.',false);
+  let r=await db.auth.signInWithPassword({email,password});
+  if(r.error)return showInline('loginStatus',r.error.message,false);
+  load();
+}
+function render(){
+  let awaiting=contracts.filter(x=>x.status==='issued').length;
+  document.getElementById('app').outerHTML=`<div id="app">
+  ${inviteArrival?`<div class="card welcome"><h3>Welcome to the Funda Online Academy team</h3><p>Your secure staff invitation has been accepted. Complete the account-security step below by setting a password you will use for future staff logins.</p></div>`:''}
+  <div class="grid">
+    <div class="card metric"><strong>${esc(p.department||'—')}</strong><span>Department</span></div>
+    <div class="card metric"><strong>${esc(p.job_title||'—')}</strong><span>Job title</span></div>
+    <div class="card metric"><strong>${awaiting}</strong><span>Contracts awaiting action</span></div>
+    <div class="card metric"><strong>${access.length}</strong><span>Active access assignments</span></div>
+  </div>
+  <div class="card security"><h3>${inviteArrival?'Complete Account Security':'Account Security'}</h3><p class="meta">Set or change the password used for future Staff Portal sign-ins. Use at least 10 characters.</p><input class="input" id="newPw" type="password" autocomplete="new-password" placeholder="New password"><input class="input" id="newPw2" type="password" autocomplete="new-password" placeholder="Confirm new password"><button class="btn" id="savePw" onclick="setPassword()">${inviteArrival?'Set My Staff Password':'Update Password'}</button><div id="pwStatus"></div></div>
+  <div class="card"><h3 class="sectionTitle">My Department Access</h3>${access.map(a=>`<div class="row"><b>${esc(a.department)}</b><div class="meta">Access level: ${esc(a.access_level)} ${a.can_approve?'· Approval authority granted':''}</div></div>`).join('')||'<p class="meta">No active departmental access assignment is currently recorded.</p>'}</div>
+  <div class="card"><h3 class="sectionTitle">Employment Contracts & Acknowledgements</h3>${contracts.map(c=>`<div class="row"><b>${esc(c.contract_number)} · ${esc(c.title)}</b><p class="meta">${esc(c.contract_type)} · <span class="pill ${esc(c.status)}">${esc(String(c.status).toUpperCase())}</span></p><div style="white-space:pre-wrap;line-height:1.55;font-size:12px">${esc(c.body)}</div>${c.status==='issued'?`<hr><label class="meta"><input type="checkbox" id="agree-${c.id}"> I confirm that I have read and accept these terms.</label><input class="input" id="sig-${c.id}" placeholder="Type your full name as digital signature"><div class="actions"><button class="btn" onclick="acceptContract('${c.id}')">Accept & Sign</button><button class="btn bad" onclick="declineContract('${c.id}')">Decline</button></div>`:c.status==='accepted'?`<p class="meta">Accepted ${esc(c.accepted_at||'')} · Signature: ${esc(c.typed_signature||'')}</p>`:c.status==='declined'?`<p class="meta">Declined ${esc(c.declined_at||'')} · Reason: ${esc(c.decline_reason||'Not stated')}</p>`:''}</div>`).join('')||'<p class="meta">No contracts have been issued to you.</p>'}</div>
+  <div class="card"><h3 class="sectionTitle">Leave Requests</h3><select class="input" id="lt"><option>Annual Leave</option><option>Sick Leave</option><option>Family Responsibility Leave</option><option>Unpaid Leave</option><option>Study Leave</option><option>Compassionate Leave</option><option>Other</option></select><input class="input" id="ls" type="date"><input class="input" id="le" type="date"><textarea class="input" id="lr" placeholder="Reason / notes"></textarea><button class="btn" onclick="requestLeave()">Submit Leave Request</button>${leave.map(x=>`<div class="row">${esc(x.leave_type)} · ${esc(x.start_date)} to ${esc(x.end_date)} · <span class="pill ${esc(x.status)}">${esc(x.status)}</span>${x.review_notes?`<div class="meta">Review note: ${esc(x.review_notes)}</div>`:''}</div>`).join('')}</div>
+  <div class="card"><h3 class="sectionTitle">Training & Performance</h3>${training.map(x=>`<div class="row"><b>${esc(x.training_name)}</b><div class="meta">${esc(x.status)} ${x.completed_on?'· '+esc(x.completed_on):''}</div></div>`).join('')||'<p class="meta">No training records yet.</p>'}${reviews.map(x=>`<div class="row"><b>Performance review ${esc(x.review_period)}</b><div class="meta">${esc(x.status)} · Rating ${esc(x.rating??'—')}</div></div>`).join('')}</div>
+  <div class="card"><button class="btn alt" onclick="logout()">Sign out</button></div>
+  </div>`;
+}
+async function setPassword(){
+  let a=document.getElementById('newPw').value,b=document.getElementById('newPw2').value,btn=document.getElementById('savePw');
+  if(a.length<10)return showInline('pwStatus','Use a password with at least 10 characters.',false);
+  if(a!==b)return showInline('pwStatus','The two passwords do not match.',false);
+  btn.disabled=true;let r=await db.auth.updateUser({password:a});btn.disabled=false;
+  if(r.error)return showInline('pwStatus','Could not update password: '+r.error.message,false);
+  await db.from('hr_audit_log').insert({actor_id:u.id,action:'staff_password_updated',entity_type:'profile',entity_id:u.id,subject_profile_id:u.id,details:{method:'staff_self_service'}});
+  history.replaceState({},document.title,location.pathname);
+  showInline('pwStatus','Password saved. You can now use it for future staff sign-ins.',true);
+}
+async function acceptContract(id){
+  if(!document.getElementById('agree-'+id).checked)return alert('Please confirm that you accept the contract terms.');
+  let sig=document.getElementById('sig-'+id).value.trim();if(!sig)return alert('Type your full name as your digital signature.');
+  let declaration='I confirm that I have read, understood and accepted this agreement electronically.';
+  let r=await db.from('hr_contracts').update({status:'accepted',typed_signature:sig,acceptance_declaration:declaration,accepted_at:new Date().toISOString()}).eq('id',id).eq('profile_id',u.id).eq('status','issued');
+  if(r.error)return alert(r.error.message);
+  await db.from('hr_audit_log').insert({actor_id:u.id,action:'contract_accepted',entity_type:'hr_contract',entity_id:id,subject_profile_id:u.id,details:{typed_signature:sig,declaration}});
+  load();
+}
+async function declineContract(id){
+  let reason=prompt('Reason for declining this contract:');if(!reason||!reason.trim())return;
+  let r=await db.from('hr_contracts').update({status:'declined',declined_at:new Date().toISOString(),decline_reason:reason.trim()}).eq('id',id).eq('profile_id',u.id).eq('status','issued');
+  if(r.error)return alert(r.error.message);
+  await db.from('hr_audit_log').insert({actor_id:u.id,action:'contract_declined',entity_type:'hr_contract',entity_id:id,subject_profile_id:u.id,details:{reason:reason.trim()}});
+  load();
+}
+async function requestLeave(){
+  let start=document.getElementById('ls').value,end=document.getElementById('le').value;
+  if(!start||!end)return alert('Choose the leave start and end dates.');
+  if(end<start)return alert('End date cannot be before the start date.');
+  let r=await db.from('hr_leave_requests').insert({profile_id:u.id,leave_type:document.getElementById('lt').value,start_date:start,end_date:end,reason:document.getElementById('lr').value.trim()||null});
+  if(r.error)return alert(r.error.message);load();
+}
+function showInline(id,msg,ok){let x=document.getElementById(id);if(!x)return;x.className='notice '+(ok?'ok':'err');x.textContent=msg}
+async function logout(){await initClient();await db.auth.signOut();location.href='staff-portal.html'}
+document.getElementById('topLogout').onclick=logout;
+load();
+</script>
+</body>
+</html>
