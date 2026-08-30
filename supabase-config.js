@@ -24,7 +24,7 @@ if (/admin-v2\.html$/i.test(window.location.pathname)) {
 }
 
 if (/staff-portal\.html$/i.test(window.location.pathname)) {
-  ['staff-password-access.js','staff-session-switch.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
+  ['staff-password-access.js','staff-session-switch.js','staff-onboarding-status.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
