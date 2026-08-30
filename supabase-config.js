@@ -11,7 +11,7 @@ const publicMarketing = document.createElement('script'); publicMarketing.src = 
 const createAccountRoute = document.createElement('script'); createAccountRoute.src = 'create-account-route-fix.js?v=' + Date.now(); document.head.appendChild(createAccountRoute);
 
 if (/onboarding\.html$/i.test(window.location.pathname)) {
-  ['onboarding-integrity-payments.js','enrolment-terms-payment-guard.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
+  ['onboarding-integrity-payments.js','multiple-bank-details-fix.js','enrolment-terms-payment-guard.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
