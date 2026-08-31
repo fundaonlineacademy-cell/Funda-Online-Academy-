@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fundaonlineacademy.co.za/sitemap.xml
