@@ -12,6 +12,7 @@ const createAccountRoute = document.createElement('script'); createAccountRoute.
 
 if (/(^|\/)(index|courses-public|course-view|employers)\.html$/i.test(window.location.pathname) || /\/$/.test(window.location.pathname)) {
   const employerPublic=document.createElement('script'); employerPublic.src='public-employer-link.js?v='+Date.now(); document.head.appendChild(employerPublic);
+  const learnerTestimonial=document.createElement('script'); learnerTestimonial.src='public-learner-testimonial-name.js?v='+Date.now(); document.head.appendChild(learnerTestimonial);
 }
 
 if (/onboarding\.html$/i.test(window.location.pathname)) {
