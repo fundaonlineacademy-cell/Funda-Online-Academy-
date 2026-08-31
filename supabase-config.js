@@ -20,7 +20,7 @@ if (/onboarding\.html$/i.test(window.location.pathname)) {
 }
 
 if (/admin-v2\.html$/i.test(window.location.pathname)) {
-  const files=['admin-theme-navy-gold.js','admin-document-vault.js','admin-career-workplace-support.js','admin-employer-partnerships.js','admin-report-centre.js','admin-executive-safe.js','admin-finance-live-sync.js','admin-header-interactions.js','admin-finance-control-centre.js','admin-payment-proof-review.js','admin-governance-safe.js','admin-executive-actions.js','admin-executive-action-summary.js','admin-communication-v2.js','admin-marketing-safe.js','admin-support-safe.js','admin-consultations.js','admin-enrolments-safe.js','admin-academic-qa-safe.js','admin-course-qa-review.js','admin-course-inspector.js','admin-security-safe.js','admin-hr-safe.js','admin-hr-leave-live-fix.js','admin-staff-invite-redirect-fix.js','admin-hr-contract-fix.js','admin-hr-compliance-safe.js','admin-hr-training-performance-safe.js','admin-audit-compliance-safe.js','admin-accounting-safe.js','admin-library-safe.js'];
+  const files=['admin-theme-navy-gold.js','admin-document-vault.js','admin-career-workplace-support.js','admin-employer-partnerships.js','admin-graduate-employment-pipeline.js','admin-report-centre.js','admin-executive-safe.js','admin-finance-live-sync.js','admin-header-interactions.js','admin-finance-control-centre.js','admin-payment-proof-review.js','admin-governance-safe.js','admin-executive-actions.js','admin-executive-action-summary.js','admin-communication-v2.js','admin-marketing-safe.js','admin-support-safe.js','admin-consultations.js','admin-enrolments-safe.js','admin-academic-qa-safe.js','admin-course-qa-review.js','admin-course-inspector.js','admin-security-safe.js','admin-hr-safe.js','admin-hr-leave-live-fix.js','admin-staff-invite-redirect-fix.js','admin-hr-contract-fix.js','admin-hr-compliance-safe.js','admin-hr-training-performance-safe.js','admin-audit-compliance-safe.js','admin-accounting-safe.js','admin-library-safe.js'];
   files.forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
@@ -40,7 +40,7 @@ if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
 }
 
 if (/dashboard\.html$/i.test(window.location.pathname)) {
-  ['student-registration-route-guard.js','student-payment-review-feedback.js','student-career-workplace-support.js','student-employer-opportunities.js','student-support-portal.js','student-support-ticket-feedback.js','student-consultations.js','student-module-assessments.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
+  ['student-registration-route-guard.js','student-payment-review-feedback.js','student-career-workplace-support.js','student-employer-opportunities.js','student-employment-readiness.js','student-support-portal.js','student-support-ticket-feedback.js','student-consultations.js','student-module-assessments.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/library-admin\.html$/i.test(window.location.pathname)) {
