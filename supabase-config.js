@@ -10,7 +10,7 @@ const identityUi = document.createElement('script'); identityUi.src = 'academy-i
 const publicMarketing = document.createElement('script'); publicMarketing.src = 'marketing-public-tracking.js?v=' + Date.now(); document.head.appendChild(publicMarketing);
 const createAccountRoute = document.createElement('script'); createAccountRoute.src = 'create-account-route-fix.js?v=' + Date.now(); document.head.appendChild(createAccountRoute);
 
-if (/(^|\/)(index|courses-public|course-view|employers)\.html$/i.test(window.location.pathname) || /\/$/.test(window.location.pathname)) {
+if (/(^|\/)(index|courses-public|course-view|employers|login)\.html$/i.test(window.location.pathname) || /\/$/.test(window.location.pathname)) {
   const employerPublic=document.createElement('script'); employerPublic.src='public-employer-link.js?v='+Date.now(); document.head.appendChild(employerPublic);
   const learnerTestimonial=document.createElement('script'); learnerTestimonial.src='public-learner-testimonial-name.js?v='+Date.now(); document.head.appendChild(learnerTestimonial);
 }
