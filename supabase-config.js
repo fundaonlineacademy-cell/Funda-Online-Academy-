@@ -56,6 +56,10 @@ if (/dashboard\.html$/i.test(window.location.pathname)) {
   ['student-registration-route-guard.js','student-payment-review-feedback.js','student-career-workplace-support.js','student-employer-opportunities.js','student-employment-readiness.js','student-support-portal.js','student-support-ticket-feedback.js','student-consultations.js','student-module-assessments.js','student-communication-centre.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
+if (/course-study\.html$/i.test(window.location.pathname)) {
+  const graphicRecovery=document.createElement('script');graphicRecovery.src='graphic-design-workspace-recovery.js?v='+Date.now();document.head.appendChild(graphicRecovery);
+}
+
 if (/library-admin\.html$/i.test(window.location.pathname)) {
   ['library-admin-upload.js','library-admin-mobile.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
