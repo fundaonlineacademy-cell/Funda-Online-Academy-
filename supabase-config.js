@@ -11,9 +11,13 @@ const publicMarketing = document.createElement('script'); publicMarketing.src = 
 const createAccountRoute = document.createElement('script'); createAccountRoute.src = 'create-account-route-fix.js?v=' + Date.now(); document.head.appendChild(createAccountRoute);
 const ambassadorReferral = document.createElement('script'); ambassadorReferral.src = 'ambassador-referral-tracking.js?v=' + Date.now(); document.head.appendChild(ambassadorReferral);
 
+if (/(admin-v2|dashboard)\.html$/i.test(window.location.pathname)) {
+  const reminderClient=document.createElement('script'); reminderClient.src='calendar-notification-client.js?v='+Date.now(); document.head.appendChild(reminderClient);
+}
+
 if (/(^|\/)(index|courses-public|course-view|employers|ambassadors|login)\.html$/i.test(window.location.pathname) || /\/$/.test(window.location.pathname)) {
   const employerPublic=document.createElement('script'); employerPublic.src='public-employer-link.js?v='+Date.now(); document.head.appendChild(employerPublic);
-  const ambassadorPublic=document.createElement('script'); ambassadorPublic.src='public-ambassador-link.js?v='+Date.now(); document.head.appendChild(ambassadorPublic);
+  const ambassadorPublic=document.createElement('script'); ambassadorPublic.src='ambassador-referral-tracking.js?v='+Date.now(); document.head.appendChild(ambassadorPublic);
   const learnerTestimonial=document.createElement('script'); learnerTestimonial.src='public-learner-testimonial-name.js?v='+Date.now(); document.head.appendChild(learnerTestimonial);
 }
 
