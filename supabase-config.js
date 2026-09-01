@@ -44,6 +44,7 @@ if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
   const careerAreas=document.createElement('script');careerAreas.src='course-career-skill-areas.js?v='+Date.now();document.head.appendChild(careerAreas);
   if (/courses-public\.html$/i.test(window.location.pathname)) {
     const brand=document.createElement('script');brand.src='courses-public-brand-theme.js?v='+Date.now();document.head.appendChild(brand);
+    const searchPolish=document.createElement('script');searchPolish.src='course-search-mobile-polish.js?v='+Date.now();document.head.appendChild(searchPolish);
   }
   if (/course-view\.html$/i.test(window.location.pathname)) {
     const runtimeFix=document.createElement('script');runtimeFix.src='course-view-runtime-fix.js?v='+Date.now();document.head.appendChild(runtimeFix);
