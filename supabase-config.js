@@ -23,6 +23,7 @@ if (/onboarding\.html$/i.test(window.location.pathname)) {
 
 if (/(admin-v2|dashboard)\.html$/i.test(window.location.pathname)) {
   const calendarLinks=document.createElement('script');calendarLinks.src='calendar-dashboard-links.js?v='+Date.now();document.head.appendChild(calendarLinks);
+  const consultationModes=document.createElement('script');consultationModes.src='consultation-professional-modes.js?v='+Date.now();document.head.appendChild(consultationModes);
 }
 
 if (/(student-calendar|admin-calendar)\.html$/i.test(window.location.pathname)) {
