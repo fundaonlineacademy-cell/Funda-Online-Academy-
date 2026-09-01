@@ -30,7 +30,7 @@ function studentLinks(){
 }
 function adminLink(){
   const nav=document.getElementById('nav');
-  if(!nav)return false;
+  if(!nav||!nav.querySelector('button'))return false;
   if(!nav.querySelector('[data-funda-calendar-link]')){
     const a=document.createElement('a');
     a.href='admin-calendar.html';
@@ -45,7 +45,7 @@ function adminLink(){
 function mount(){
   attempts++;
   const done=isStudent?studentLinks():adminLink();
-  if(!done&&attempts<40)setTimeout(mount,100);
+  if(!done&&attempts<50)setTimeout(mount,100);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
 })();
