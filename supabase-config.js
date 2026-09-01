@@ -41,6 +41,7 @@ if (/staff-portal\.html$/i.test(window.location.pathname)) {
 
 if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
   const s=document.createElement('script');s.src='public-course-value.js?v='+Date.now();document.head.appendChild(s);
+  const careerAreas=document.createElement('script');careerAreas.src='course-career-skill-areas.js?v='+Date.now();document.head.appendChild(careerAreas);
   if (/courses-public\.html$/i.test(window.location.pathname)) {
     const brand=document.createElement('script');brand.src='courses-public-brand-theme.js?v='+Date.now();document.head.appendChild(brand);
   }
