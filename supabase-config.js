@@ -11,7 +11,7 @@ const publicMarketing = document.createElement('script'); publicMarketing.src = 
 const createAccountRoute = document.createElement('script'); createAccountRoute.src = 'create-account-route-fix.js?v=' + Date.now(); document.head.appendChild(createAccountRoute);
 const ambassadorReferral = document.createElement('script'); ambassadorReferral.src = 'ambassador-referral-tracking.js?v=' + Date.now(); document.head.appendChild(ambassadorReferral);
 
-if (/(admin-v2|dashboard)\.html$/i.test(window.location.pathname)) {
+if (/admin-v2\.html$/i.test(window.location.pathname)) {
   const reminderClient=document.createElement('script'); reminderClient.src='calendar-notification-client.js?v='+Date.now(); document.head.appendChild(reminderClient);
 }
 
@@ -46,7 +46,7 @@ if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
 }
 
 if (/dashboard\.html$/i.test(window.location.pathname)) {
-  ['student-registration-route-guard.js','student-payment-review-feedback.js','student-career-workplace-support.js','student-employer-opportunities.js','student-employment-readiness.js','student-support-portal.js','student-support-ticket-feedback.js','student-consultations.js','student-consultation-availability.js','student-calendar-reminders.js','student-module-assessments.js','student-communication-centre.js','student-course-card-layout-guard.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
+  ['student-registration-route-guard.js','student-payment-review-feedback.js','student-career-workplace-support.js','student-employer-opportunities.js','student-employment-readiness.js','student-support-portal.js','student-support-ticket-feedback.js','student-consultations.js','student-calendar-reminders.js','student-module-assessments.js','student-communication-centre.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/library-admin\.html$/i.test(window.location.pathname)) {
