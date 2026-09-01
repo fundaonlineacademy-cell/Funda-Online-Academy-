@@ -53,7 +53,7 @@ if (/(courses-public|course-view)\.html$/i.test(window.location.pathname)) {
 }
 
 if (/dashboard\.html$/i.test(window.location.pathname)) {
-  ['student-registration-route-guard.js','student-payment-review-feedback.js','student-career-workplace-support.js','student-employer-opportunities.js','student-employment-readiness.js','student-support-portal.js','student-support-ticket-feedback.js','student-consultations.js','student-module-assessments.js','student-communication-centre.js','student-dashboard-tab-navigation.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
+  ['student-registration-route-guard.js','student-payment-review-feedback.js','student-career-workplace-support.js','student-employer-opportunities.js','student-employment-readiness.js','student-support-portal.js','student-support-ticket-feedback.js','student-consultations.js','student-module-assessments.js','student-communication-centre.js','student-dashboard-tab-navigation.js','student-dashboard-readability.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
 
 if (/course-study\.html$/i.test(window.location.pathname)) {
