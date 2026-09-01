@@ -48,4 +48,19 @@ function lessonView(){
 }
 async function draw(){try{await load();if(!data.modules.length){$('course-content').innerHTML='<div class="message">No modules are configured for this course.</div>';return}if(!unlocked(state.module)){state.module=1;state.unit=1}$('sidebarCourse').textContent=state.course.title||'Selected Course';const p=progress();$('progressText').textContent=`${p}%`;$('progressFill').style.width=`${p}%`;sidebar();if(state.unit>8){const t=state.unit===9?'formative':'summative';window.location.assign(`module-assessment.html?course=${encodeURIComponent(state.course.id)}&module=${state.module}&type=${t}`);return}lessonView()}catch(e){console.error(e);$('course-content').innerHTML=`<div class="message">Unable to load course content: ${text(e.message||'Please try again.')}</div>`}}
 render=function(){if(!state.course||isCarpentry())return prior();draw()};
+
+// Post-attach boot guard: course-study.js and this database runtime load as separate
+// scripts. On slower/mobile browsers the base course may finish loading before this
+// wrapper is attached. Once course/user state is ready, explicitly invoke the new
+// renderer so the workspace cannot remain on "Preparing your course...".
+let bootTries=0;
+function bootDatabaseCourse(){
+ bootTries++;
+ if(state.course&&state.user&&!isCarpentry()){
+  render();
+  return;
+ }
+ if(bootTries<30)setTimeout(bootDatabaseCourse,200);
+}
+setTimeout(bootDatabaseCourse,0);
 })();
