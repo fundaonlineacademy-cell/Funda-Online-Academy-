@@ -1,41 +1,9 @@
+// Funda Online Academy — profile photo feature retired.
+// The optional avatar upload experiment was removed to restore the original
+// Admin and Student dashboard header behaviour and avoid unnecessary runtime
+// observers. Existing profile avatar data is left untouched in the database,
+// but no profile-photo UI or repaint logic runs on Academy dashboards.
 (()=>{
-'use strict';
-if(!/(admin-v2|dashboard)\.html$/i.test(location.pathname)||window.__fundaProfilePhotoUpload)return;
-window.__fundaProfilePhotoUpload=true;
-const db=window.supabase?.createClient?.(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
-if(!db)return;
-let user=null,profile=null,selected=null,objectUrl='';
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const style=document.createElement('style');style.id='fundaProfilePhotoStyles';style.textContent=`
-#fundaPhotoModal{position:fixed;inset:0;z-index:65000;background:#020817aa;display:none;align-items:center;justify-content:center;padding:18px}#fundaPhotoModal.open{display:flex}.fpmCard{width:min(430px,100%);background:#fff;border-radius:20px;padding:20px;box-shadow:0 25px 80px #0006;color:#10213f}.fpmTop{display:flex;justify-content:space-between;gap:12px;align-items:start}.fpmTop h3{margin:0;font-size:20px;color:#07172f}.fpmClose{border:0;background:#eef2f7;border-radius:9px;padding:7px 10px;font-weight:900;cursor:pointer}.fpmPreview{width:112px;height:112px;border-radius:50%;margin:18px auto 10px;display:grid;place-items:center;overflow:hidden;background:#f3e1a6;color:#07172f;border:4px solid #fff;box-shadow:0 0 0 2px #d4af58;font-size:38px;font-weight:900}.fpmPreview img{width:100%;height:100%;object-fit:cover}.fpmChoose,.fpmUpload,.fundaPhotoAction{border:0;border-radius:12px;padding:12px 14px;font-weight:900;cursor:pointer;text-align:center}.fpmChoose,.fpmUpload{display:block;width:100%}.fpmChoose{background:#f3f6fb;color:#07172f;border:1px solid #d5deea}.fpmUpload{margin-top:10px;background:#07172f;color:#fff}.fpmUpload:disabled{opacity:.45;cursor:not-allowed}.fpmStatus{min-height:20px;margin-top:10px;font-size:12px;color:#475569;text-align:center}.fpmHint{font-size:12px;line-height:1.5;color:#475569;text-align:center;margin:8px 0 0}.fundaPhotoAction{display:flex;align-items:center;gap:8px;background:#fff7df!important;color:#07172f!important;border:1px solid #d4af58!important;margin:0!important}.fundaStudentAvatar{width:40px;height:40px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:#e7cf88;color:#07172f;font-weight:900;flex:0 0 auto}.fundaStudentAvatar img,.safeAvatar img,.adminAvatar img,[data-funda-avatar-target] img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:block}
-`;document.head.appendChild(style);
-const modal=document.createElement('div');modal.id='fundaPhotoModal';modal.innerHTML=`<div class="fpmCard"><div class="fpmTop"><div><h3>Profile Photo</h3><div class="fpmHint">Choose a JPG, PNG or WebP image up to 5 MB.</div></div><button class="fpmClose" type="button">Close</button></div><div class="fpmPreview" id="fpmPreview">?</div><input id="fpmInput" type="file" accept="image/jpeg,image/png,image/webp" hidden><button class="fpmChoose" id="fpmChoose" type="button">Choose Photo</button><button class="fpmUpload" id="fpmUpload" type="button" disabled>Upload Photo</button><div class="fpmStatus" id="fpmStatus" aria-live="polite"></div></div>`;document.body.appendChild(modal);
-const input=modal.querySelector('#fpmInput'),preview=modal.querySelector('#fpmPreview'),upload=modal.querySelector('#fpmUpload'),status=modal.querySelector('#fpmStatus');
-const initial=()=>String(profile?.full_name||user?.email||'?').trim().charAt(0).toUpperCase()||'?';
-const img=(url,alt='Profile photo')=>`<img src="${esc(url)}" alt="${esc(alt)}">`;
-function renderPreview(url){preview.innerHTML=url?img(url,'Profile photo preview'):initial()}
-function studentButtonMarkup(url){return `<span class="fundaStudentAvatar" data-funda-avatar-target>${url?img(url):esc(initial())}</span><span>Profile Photo</span>`}
-function paint(url){
-  if(!url)return;
-  document.querySelectorAll('.safeAvatar,.adminAvatar,[data-funda-avatar-target]').forEach(el=>{el.innerHTML=img(url)});
-  const student=document.getElementById('studentProfilePhotoAction');if(student)student.innerHTML=studentButtonMarkup(url);
-}
-async function getProfile(){const r=await db.auth.getUser();user=r.data?.user||null;if(!user)return false;const p=await db.from('profiles').select('id,full_name,email,avatar_url').eq('id',user.id).maybeSingle();profile=p.data||{id:user.id,email:user.email};renderPreview(profile.avatar_url||'');inject();paint(profile.avatar_url||'');return true}
-async function open(){selected=null;upload.disabled=true;upload.textContent='Upload Photo';status.textContent='';input.value='';await getProfile();modal.classList.add('open')}
-function close(){modal.classList.remove('open');if(objectUrl){URL.revokeObjectURL(objectUrl);objectUrl=''}}
-modal.querySelector('.fpmClose').onclick=close;modal.addEventListener('click',e=>{if(e.target===modal)close()});modal.querySelector('#fpmChoose').onclick=()=>input.click();
-input.addEventListener('change',()=>{const f=input.files?.[0];selected=null;upload.disabled=true;status.textContent='';if(!f)return;if(!['image/jpeg','image/png','image/webp'].includes(f.type)){status.textContent='Please choose a JPG, PNG or WebP image.';return}if(f.size>5*1024*1024){status.textContent='That image is larger than 5 MB.';return}selected=f;if(objectUrl)URL.revokeObjectURL(objectUrl);objectUrl=URL.createObjectURL(f);renderPreview(objectUrl);upload.disabled=false;status.textContent='Photo selected. Click Upload Photo to save it.'});
-upload.addEventListener('click',async()=>{if(!selected)return;if(!user&&!(await getProfile())){status.textContent='Your session could not be found. Please sign in again.';return}upload.disabled=true;upload.textContent='Uploading…';status.textContent='Saving your profile photo…';try{const ext=selected.type==='image/png'?'png':selected.type==='image/webp'?'webp':'jpg';const path=`${user.id}/avatar-${Date.now()}.${ext}`;const up=await db.storage.from('profile-avatars').upload(path,selected,{cacheControl:'3600',upsert:false,contentType:selected.type});if(up.error)throw up.error;const publicUrl=db.storage.from('profile-avatars').getPublicUrl(path).data?.publicUrl;if(!publicUrl)throw new Error('Could not create profile photo URL');const save=await db.from('profiles').update({avatar_url:publicUrl,updated_at:new Date().toISOString()}).eq('id',user.id).select('avatar_url').single();if(save.error)throw save.error;profile={...(profile||{}),avatar_url:save.data.avatar_url};renderPreview(save.data.avatar_url);paint(save.data.avatar_url);status.textContent='Profile photo uploaded successfully.';upload.textContent='Uploaded';setTimeout(close,800)}catch(err){console.error('Profile photo upload failed',err);status.textContent='Upload failed: '+(err?.message||'Please try again.');upload.disabled=false;upload.textContent='Upload Photo'}});
-function inject(){
- if(/dashboard\.html$/i.test(location.pathname)){
-   const profileButton=document.getElementById('profileButton');
-   if(profileButton&&!document.getElementById('studentProfilePhotoAction')){const b=document.createElement('button');b.id='studentProfilePhotoAction';b.type='button';b.className='fundaPhotoAction';b.innerHTML=studentButtonMarkup(profile?.avatar_url||'');b.onclick=open;profileButton.parentNode.insertBefore(b,profileButton)}
-   const b=document.getElementById('studentProfilePhotoAction');if(b&&profile?.avatar_url)b.innerHTML=studentButtonMarkup(profile.avatar_url);
- }
- if(/admin-v2\.html$/i.test(location.pathname)){
-   const menu=document.querySelector('.safeMenu,.adminProfileMenu');if(menu&&!menu.querySelector('.fundaPhotoAction')){const b=document.createElement('button');b.type='button';b.className='fundaPhotoAction';b.textContent='Upload / Change Profile Photo';b.onclick=e=>{e.preventDefault();e.stopPropagation();open()};menu.insertBefore(b,menu.querySelector('.signout')||null)}
-   const avatar=document.querySelector('.safeAvatar,.adminAvatar');if(avatar){if(profile?.avatar_url)avatar.innerHTML=img(profile.avatar_url);if(!avatar.dataset.fundaPhotoBound){avatar.dataset.fundaPhotoBound='1';avatar.style.cursor='pointer';avatar.title='Change profile photo';avatar.onclick=e=>{e.preventDefault();e.stopPropagation();open()}}}
- }
-}
-getProfile();inject();new MutationObserver(()=>{inject();if(profile?.avatar_url)paint(profile.avatar_url)}).observe(document.body,{childList:true,subtree:true});
+  'use strict';
+  window.__fundaProfilePhotoUpload = true;
 })();
