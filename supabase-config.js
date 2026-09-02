@@ -6,6 +6,10 @@ window.SUPABASE_ANON_KEY =
 
 window.FUNDA_ADMIN_EMAIL = "";
 
+// Profile-photo experiment retired. Set this before any legacy cached copy of
+// profile-photo-upload.js can run so the original Admin/Student header remains.
+window.__fundaProfilePhotoUpload = true;
+
 const identityUi = document.createElement('script'); identityUi.src = 'academy-identity.js?v=' + Date.now(); document.head.appendChild(identityUi);
 const publicMarketing = document.createElement('script'); publicMarketing.src = 'marketing-public-tracking.js?v=' + Date.now(); document.head.appendChild(publicMarketing);
 const createAccountRoute = document.createElement('script'); createAccountRoute.src = 'create-account-route-fix.js?v=' + Date.now(); document.head.appendChild(createAccountRoute);
@@ -25,7 +29,6 @@ if (/onboarding\.html$/i.test(window.location.pathname)) {
 if (/(admin-v2|dashboard)\.html$/i.test(window.location.pathname)) {
   const calendarLinks=document.createElement('script');calendarLinks.src='calendar-dashboard-links.js?v='+Date.now();document.head.appendChild(calendarLinks);
   const consultationModes=document.createElement('script');consultationModes.src='consultation-professional-modes.js?v='+Date.now();document.head.appendChild(consultationModes);
-  const profilePhoto=document.createElement('script');profilePhoto.src='profile-photo-upload.js?v='+Date.now();document.head.appendChild(profilePhoto);
 }
 
 if (/(student-calendar|admin-calendar)\.html$/i.test(window.location.pathname)) {
