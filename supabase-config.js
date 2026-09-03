@@ -22,6 +22,10 @@ if (/(^|\/)(index|courses-public|course-view|employers|ambassadors|login)\.html$
   const learnerTestimonial=document.createElement('script'); learnerTestimonial.src='public-learner-testimonial-name.js?v='+Date.now(); document.head.appendChild(learnerTestimonial);
 }
 
+if (/ambassadors\.html$/i.test(window.location.pathname)) {
+  const ambassadorV2=document.createElement('script'); ambassadorV2.src='ambassador-programme-v2.js?v='+Date.now(); document.head.appendChild(ambassadorV2);
+}
+
 if (/onboarding\.html$/i.test(window.location.pathname)) {
   ['onboarding-integrity-payments.js','onboarding-bank-details-multi.js','enrolment-terms-payment-guard.js'].forEach(file=>{const s=document.createElement('script');s.src=file+'?v='+Date.now();document.head.appendChild(s)});
 }
