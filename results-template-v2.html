@@ -1,17 +1,1 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Statement of Results</title></head><body><script>(async()=>{const r=await fetch('results-template-v1.html?v=20260903-bottom-base',{cache:'no-store'});let h=await r.text();const css=`<style id="bottom-polish-v2">
-/* Bottom-section polish only: preserve approved document layout. */
-.sig{height:18mm;overflow:hidden;position:relative;align-items:flex-end!important}
-.sig img{display:block!important;width:45mm!important;height:17mm!important;max-width:none!important;max-height:none!important;object-fit:fill!important;object-position:left bottom!important;transform:translateY(.35mm)!important;filter:none!important;opacity:1!important;mix-blend-mode:multiply}
-.awardmark{border:0!important;width:43mm!important;height:35mm!important;border-radius:0!important;font-size:0!important;overflow:visible!important}
-.awardmark:before,.awardmark:after{display:none!important}
-.awardmark svg{width:43mm;height:35mm;display:block}
-.qr{width:27mm!important;height:27mm!important;border:.3mm solid #c69b32;border-radius:1.5mm;padding:1.2mm;background:#fff}
-.qr canvas{width:24mm!important;height:24mm!important;max-width:24mm!important;max-height:24mm!important;image-rendering:pixelated}
-</style>`;
-const js=`<script id="bottom-polish-runtime-v2">(function(){
-const emblem='<svg viewBox="0 0 180 145" xmlns="http://www.w3.org/2000/svg" aria-label="Academic achievement"><g fill="none" stroke="#c69b32" stroke-width="5" stroke-linecap="round"><path d="M43 118C19 91 19 51 42 25"/><path d="M137 118c24-27 24-67 1-93"/><path d="M35 105l-14-5M30 88l-15-8M28 69l-14-11M31 50l-11-13M145 105l14-5M150 88l15-8M152 69l14-11M149 50l11-13"/></g><g fill="#0a315f"><path d="M90 34 48 54l42 20 42-20-42-20Z"/><path d="M62 65v23c17 14 39 14 56 0V65L90 79 62 65Z"/><path d="M130 57v29h5V55Z"/><circle cx="132.5" cy="89" r="4"/></g><path d="M90 105l5 10 11 2-8 8 2 11-10-5-10 5 2-11-8-8 11-2 5-10Z" fill="#c69b32"/></svg>';
-function qrText(d){return d&&d.test?('FUNDA CONTROLLED TEST | '+(d.result||'TEST')):('https://fundaonlineacademy.co.za/verify?result='+encodeURIComponent((d&&d.result)||''));}
-function polish(d){document.querySelectorAll('.awardmark').forEach(e=>e.innerHTML=emblem);document.querySelectorAll('.sig img').forEach(i=>{i.style.filter='none';i.style.opacity='1'});document.querySelectorAll('.qr').forEach(q=>{q.innerHTML='';const c=document.createElement('canvas');q.appendChild(c);if(window.QRCode&&QRCode.toCanvas){QRCode.toCanvas(c,qrText(d),{width:220,margin:1,errorCorrectionLevel:'M',color:{dark:'#07172f',light:'#ffffff'}},err=>{if(err)console.error(err)})}})}
-const old=window.renderFundaResult;if(typeof old==='function'){window.renderFundaResult=function(d){const out=old.apply(this,arguments);setTimeout(()=>polish(d),40);setTimeout(()=>polish(d),250);return out}}
-})();<\/script>`;
-h=h.replace('</head>',css+'</head>').replace('</body>',js+'</body>');document.open();document.write(h);document.close();})().catch(e=>{document.body.textContent='Template load failed: '+e.message});</script></body></html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Statement of Results</title></head><body><script>(async()=>{const r=await fetch('results-template-v1.html?v=20260903-approved-final',{cache:'no-store'});if(!r.ok)throw new Error('Approved template could not be loaded');const h=await r.text();document.open();document.write(h);document.close();})().catch(e=>{document.body.textContent='Template load failed: '+e.message});</script></body></html>
