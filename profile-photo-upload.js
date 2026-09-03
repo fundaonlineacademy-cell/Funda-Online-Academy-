@@ -1,9 +1,15 @@
 // Funda Online Academy — profile photo feature retired.
-// The optional avatar upload experiment was removed to restore the original
-// Admin and Student dashboard header behaviour and avoid unnecessary runtime
-// observers. Existing profile avatar data is left untouched in the database,
-// but no profile-photo UI or repaint logic runs on Academy dashboards.
+// No profile-photo UI or repaint logic runs on Academy dashboards.
+// This legacy bootstrap remains loaded by dashboard.html; it now only loads
+// the independent secure certificate access module.
 (()=>{
   'use strict';
   window.__fundaProfilePhotoUpload = true;
+  if(!document.querySelector('script[data-funda-certificates]')){
+    const s=document.createElement('script');
+    s.src='student-certificates-dashboard-link.js?v=20260903-secure-certificates';
+    s.async=true;
+    s.dataset.fundaCertificates='1';
+    document.head.appendChild(s);
+  }
 })();
