@@ -32,8 +32,12 @@
 </div>
 </main>
 <footer class="site-footer"><div class="foot-inner"><div><div class="brand" style="color:white">FUNDA ONLINE <span style="color:#e4c36a">ACADEMY</span></div><div style="font-size:11px;color:#d9e5ef;margin-top:5px">Practical, accessible and career-focused online learning.</div></div><div class="foot-links"><a href="index.html">Home</a><a href="courses-public.html">All Courses</a><a href="login.html">Student Login</a><a href="auth.html">Create Account</a></div></div></footer>
-<script>const courseMenuButton=document.getElementById('courseMobileMenuButton'),courseMenu=document.getElementById('courseMobileMenu');if(courseMenuButton&&courseMenu){courseMenuButton.addEventListener('click',()=>{const opening=!courseMenu.classList.contains('open');courseMenu.classList.toggle('open');courseMenuButton.setAttribute('aria-expanded',String(opening));courseMenuButton.textContent=opening?'×':'☰'});courseMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{courseMenu.classList.remove('open');courseMenuButton.setAttribute('aria-expanded','false');courseMenuButton.textContent='☰'}));}
 <script>
+const courseMenuButton=document.getElementById('courseMobileMenuButton'),courseMenu=document.getElementById('courseMobileMenu');
+if(courseMenuButton&&courseMenu){
+ courseMenuButton.addEventListener('click',()=>{const opening=!courseMenu.classList.contains('open');courseMenu.classList.toggle('open');courseMenuButton.setAttribute('aria-expanded',String(opening));courseMenuButton.textContent=opening?'×':'☰'});
+ courseMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{courseMenu.classList.remove('open');courseMenuButton.setAttribute('aria-expanded','false');courseMenuButton.textContent='☰'}));
+}
 (function(){
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
