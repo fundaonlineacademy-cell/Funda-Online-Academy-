@@ -8,7 +8,25 @@ function active(){let a=document.querySelector('#nav button.on,#nav button.activ
 async function load(force=false){if(loading)return;loading=true;try{db=db||window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);if(!db)return;let [e,c,p,pa]=await Promise.all([db.from('enrollments').select('*').order('created_at',{ascending:false}),db.from('courses').select('*').order('title'),db.from('profiles').select('id,full_name,email,phone,role'),db.from('payments').select('*')]);EN=e.data||[];CO=c.data||[];PR=p.data||[];PAY=pa.data||[]}finally{loading=false}}
 const person=e=>PR.find(p=>p.id===e.student_id)||{},course=e=>CO.find(c=>c.id===e.course_id)||{},stat=e=>low(e.enrollment_status||e.status||'pending');
 function payment(e){let a=PAY.filter(p=>p.enrolment_id===e.id||p.student_id===e.student_id);return a.find(p=>['verified','paid','approved','completed'].includes(low(p.status)))||a[0]}
-async function updateEnrollment(id,status){let notes=prompt('Review note / reason (optional):','')||'';let {data:{user}}=await db.auth.getUser();let patch={enrollment_status:status,status:status,reviewed_at:new Date().toISOString(),reviewed_by:user?.id||null,approval_department:'Admissions',review_notes:notes};if(status==='rejected')patch.rejection_reason=notes||'Application not approved';let r=await db.from('enrollments').update(patch).eq('id',id);if(r.error)return alert(r.error.message);await open()}
+async function updateEnrollment(id,status){
+ let target=EN.find(x=>x.id===id)||{};
+ if(status==='approved'){
+  let pay=PAY.find(p=>p.enrolment_id===id&&['verified','paid','approved','completed'].includes(low(p.status)));
+  if(!pay)return alert('This enrolment cannot be approved until Finance verifies the payment.');
+  if(target.legacy_claim_id){
+   let lr=await db.from('legacy_verification_claims').select('verification_status').eq('id',target.legacy_claim_id).maybeSingle();
+   if(lr.error)return alert(lr.error.message);
+   if(lr.data?.verification_status!=='approved')return alert('This is a legacy enrolment. Approve the legacy investigation first.');
+  }
+ }
+ let notes=prompt('Review note / reason (optional):','')||'';
+ let {data:{user}}=await db.auth.getUser();
+ let patch={enrollment_status:status,status:status,reviewed_at:new Date().toISOString(),reviewed_by:user?.id||null,approval_department:'Admissions',review_notes:notes};
+ if(status==='rejected')patch.rejection_reason=notes||'Application not approved';
+ let r=await db.from('enrollments').update(patch).eq('id',id);
+ if(r.error)return alert(r.error.message);
+ await open()
+}
 async function toggleCourse(id,on){let r=await db.from('courses').update({active:on,updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return alert(r.error.message);await open()}
 function enrollmentRow(e){let p=person(e),c=course(e),s=stat(e),pay=payment(e),ps=low(pay?.status||'not submitted');return `<div class="ecRow" data-search="${esc(low((p.full_name||'')+' '+(p.email||'')+' '+(c.title||'')+' '+s+' '+ps))}"><div><strong>${esc(p.full_name||p.email||'Student')}</strong><br>${esc(p.email||'')}</div><div><strong>${esc(c.title||'Course')}</strong><br>${fmt(e.submitted_at||e.created_at)}</div><div><span class="ecPill ${s}">${esc(s.toUpperCase())}</span></div><div><span class="ecPill ${ps}">${esc(ps.toUpperCase())}</span><br>${money(pay?.amount||e.amount||c.price)}</div><div>${!['approved','active'].includes(s)?`<button class="ecBtn" data-enrol="${esc(e.id)}" data-state="approved">Approve</button>`:''} ${s!=='rejected'?`<button class="ecBtn alt" data-enrol="${esc(e.id)}" data-state="rejected">Reject</button>`:''}</div></div>`}
 function courseRow(c){let n=EN.filter(e=>e.course_id===c.id).length,on=c.active!==false;return `<div class="ecCourse" data-search="${esc(low(c.title+' '+c.slug))}"><div><strong>${esc(c.title)}</strong><br>${esc(c.duration||'Duration not set')}</div><div>${money(c.price)}</div><div>${n} enrolment${n===1?'':'s'}</div><div><span class="ecPill ${on?'active':'inactive'}">${on?'ACTIVE':'INACTIVE'}</span></div><div><button class="ecBtn ${on?'alt':''}" data-course="${esc(c.id)}" data-active="${on?'0':'1'}">${on?'Deactivate':'Activate'}</button></div></div>`}
