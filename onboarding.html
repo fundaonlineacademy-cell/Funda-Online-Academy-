@@ -2828,9 +2828,97 @@
 
     /*
       ============================================================
+      SOUTH AFRICAN ID -> DATE OF BIRTH
+      ============================================================
+    */
+
+    function syncDateOfBirthFromId() {
+
+      const idInput =
+        document.getElementById("idNumber");
+
+      const dobInput =
+        document.getElementById("dateOfBirth");
+
+      if (!idInput || !dobInput) return;
+
+      const id =
+        String(idInput.value || "")
+          .replace(/\D/g, "");
+
+      if (id.length !== 13) {
+
+        dobInput.value = "";
+        return;
+
+      }
+
+      const yy = Number(id.slice(0, 2));
+      const mm = Number(id.slice(2, 4));
+      const dd = Number(id.slice(4, 6));
+
+      if (
+        !Number.isInteger(yy) ||
+        mm < 1 || mm > 12 ||
+        dd < 1 || dd > 31
+      ) {
+
+        dobInput.value = "";
+        return;
+
+      }
+
+      const currentYear =
+        new Date().getFullYear();
+
+      const currentTwoDigitYear =
+        currentYear % 100;
+
+      const fullYear =
+        yy <= currentTwoDigitYear
+          ? 2000 + yy
+          : 1900 + yy;
+
+      const candidate =
+        new Date(fullYear, mm - 1, dd);
+
+      if (
+        candidate.getFullYear() !== fullYear ||
+        candidate.getMonth() !== mm - 1 ||
+        candidate.getDate() !== dd ||
+        candidate > new Date()
+      ) {
+
+        dobInput.value = "";
+        return;
+
+      }
+
+      dobInput.value =
+        `${String(fullYear).padStart(4, "0")}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`;
+
+    }
+
+
+    /*
+      ============================================================
       EVENTS
       ============================================================
     */
+
+    document.getElementById(
+      "idNumber"
+    ).addEventListener(
+      "input",
+      syncDateOfBirthFromId
+    );
+
+    document.getElementById(
+      "idNumber"
+    ).addEventListener(
+      "change",
+      syncDateOfBirthFromId
+    );
 
     continueButton.addEventListener(
       "click",
@@ -2912,6 +3000,12 @@
 
 
         await loadProfileAndStudent();
+
+        if (
+          !document.getElementById("dateOfBirth").value
+        ) {
+          syncDateOfBirthFromId();
+        }
 
 
         document.getElementById(
