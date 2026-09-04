@@ -25,12 +25,12 @@ begin
  select coalesce(sum(qualifying_revenue),0) into mon from public.ambassador_earnings_ledger
  where application_id=p_application_id and earning_type='commission' and earning_status in ('approved','paid','pending','held') and earning_month=month_start;
 
- if life>=500000 then rank_name:='Elite'; bonus_value:=45000; target:=125000; monthly_pay:=25000;
- elsif life>=275000 then rank_name:='Executive'; bonus_value:=25000; target:=90000; monthly_pay:=18000;
- elsif life>=175000 then rank_name:='Diamond'; bonus_value:=15000; target:=60000; monthly_pay:=12000;
- elsif life>=100000 then rank_name:='Platinum'; bonus_value:=7500; target:=40000; monthly_pay:=8000;
- elsif life>=50000 then rank_name:='Gold'; bonus_value:=3500; target:=25000; monthly_pay:=5000;
- elsif life>=25000 then rank_name:='Silver'; bonus_value:=1500;
+ if life>=1000000 then rank_name:='Elite'; bonus_value:=45000; target:=0; monthly_pay:=25000;
+ elsif life>=500000 then rank_name:='Executive'; bonus_value:=20000; target:=0; monthly_pay:=18000;
+ elsif life>=250000 then rank_name:='Diamond'; bonus_value:=10000; target:=0; monthly_pay:=12000;
+ elsif life>=100000 then rank_name:='Platinum'; bonus_value:=5000; target:=0; monthly_pay:=8000;
+ elsif life>=50000 then rank_name:='Gold'; bonus_value:=2500; target:=0; monthly_pay:=5000;
+ elsif life>=25000 then rank_name:='Silver'; bonus_value:=1000;
  elsif life>=10000 then rank_name:='Bronze'; bonus_value:=500;
  end if;
 
@@ -44,12 +44,8 @@ begin
    update public.ambassador_v2_reward_state set highest_bonus_value=bonus_value,highest_rank=rank_name,updated_at=now() where application_id=p_application_id;
  end if;
 
- if target>0 and mon>=target then
-   insert into public.ambassador_earnings_ledger(application_id,qualifying_revenue,commission_rate,commission_amount,earning_type,earning_status,earning_month,notes)
-   values(p_application_id,0,0,monthly_pay,'monthly_performance','approved',month_start,rank_name||' monthly performance payment: target '||target||' achieved.')
-   on conflict do nothing;
- end if;
- return jsonb_build_object('rank',rank_name,'lifetime_revenue',life,'monthly_revenue',mon,'achievement_bonus_added',bonus_delta,'monthly_target',target,'monthly_payment',case when target>0 and mon>=target then monthly_pay else 0 end);
+ -- Monthly performance payments are capped by rank but are not auto-created here. They require separate monthly performance verification/approval by Funda.
+ return jsonb_build_object('rank',rank_name,'lifetime_revenue',life,'monthly_revenue',mon,'achievement_bonus_added',bonus_delta,'monthly_payment_cap',monthly_pay,'monthly_payment',0);
 end $$;
 
 revoke all on function public.refresh_ambassador_v2_rewards(uuid,date) from public;
