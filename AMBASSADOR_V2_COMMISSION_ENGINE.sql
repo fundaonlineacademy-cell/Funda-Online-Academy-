@@ -31,10 +31,10 @@ begin
  if v_student_user is null then return false;end if;
  select application_id into v_app from public.ambassador_v2_referrals where student_user_id=v_student_user limit 1;if v_app is null then return false;end if;
  insert into public.ambassador_earnings_ledger(application_id,enrolment_id,payment_id,qualifying_revenue,commission_rate,commission_amount,earning_type,earning_status,earning_month,notes)
- values(v_app,v_enrol,p_payment_id,v_amount,0.20,round(v_amount*0.20,2),'commission','approved',date_trunc('month',current_date)::date,'Automatically credited from verified student payment.') on conflict do nothing;
+ values(v_app,v_enrol,p_payment_id,v_amount,0.15,round(v_amount*0.15,2),'commission','approved',date_trunc('month',current_date)::date,'Automatically credited from verified student payment.') on conflict do nothing;
  v_added:=found;
  if v_added then begin perform public.refresh_ambassador_v2_rewards(v_app,date_trunc('month',current_date)::date);exception when undefined_function then null;end;end if;
  return v_added;
 end $$;
 revoke all on function public.credit_ambassador_v2_verified_payment(uuid) from public;grant execute on function public.credit_ambassador_v2_verified_payment(uuid) to authenticated;
-comment on function public.credit_ambassador_v2_verified_payment(uuid) is 'Credits one 20% Ambassador V2 commission for an attributed verified payment and refreshes rank rewards.';
+comment on function public.credit_ambassador_v2_verified_payment(uuid) is 'Credits one 15% Ambassador V2 commission for an attributed verified payment and refreshes rank rewards.';
