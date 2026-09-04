@@ -66,11 +66,8 @@ function choose(type){
 async function check(){
  const course=selected(), db=client(); if(!course||!db)return;
  const id=($("#legacyId")?.value||"").replace(/\D/g,"");
- const evidence=$("#legacyEvidence")?.files?.[0];
- const result=$("#legacyResult");
  if(id.length!==13)return showResult("Enter the 13-digit ID number used on your previous Funda records.",false);
  $("#idNumber").value=id;
- if(!evidence)return showResult("Please upload the required historical evidence before we check your claim.",false);
  if(state.type==="legacy_incomplete"){
    if(!$("#legacyPaymentDate").value)return showResult("Please enter the date you previously paid for the course.",false);
    if(!$("#legacyReason").value.trim())return showResult("Please tell us why you did not complete the course.",false);
@@ -81,9 +78,17 @@ async function check(){
   if(error)throw error;
   state.entitlement=data||null;
   if(data?.matched){
+    if(!data.approved_claim_id && !$("#legacyEvidence")?.files?.[0]){
+      state.entitlement=null;
+      setPaymentVisible(false);
+      return showResult("Your historical record was found. Please upload the required old Funda evidence so Admin can complete the final verification.",false);
+    }
     showResult(`${data.message} Your price for this application is ${money(data.payable_amount)} (${data.discount_percent}% off).`,true);
     setPaymentVisible(true); updateSummary();
   }else{
+    if(!$("#legacyEvidence")?.files?.[0]){
+      return showResult("We could not automatically match the record. Upload the required old Funda evidence so you can submit a manual verification request before paying.",false);
+    }
     showResult(data?.message||"We could not automatically match the historical record. Please submit it for manual verification before paying.",false,true);
     setPaymentVisible(false); addManualButton();
   }
@@ -134,13 +139,17 @@ function validate(){
  if(!state.type)return "Please tell us whether you are a first-time, legacy, incomplete legacy or returning Funda student.";
  if(state.type==="first_time")return null;
  if(!state.entitlement?.matched)return "Your legacy discount must be matched or manually approved before you make payment.";
- if(!$("#legacyEvidence")?.files?.[0]&&!state.evidencePath)return "Please upload the required previous Funda evidence.";
+ if(!state.entitlement.approved_claim_id&&!$("#legacyEvidence")?.files?.[0]&&!state.evidencePath)return "Please upload the required previous Funda evidence.";
  if(state.type==="legacy_incomplete"&&(!$("#legacyPaymentDate").value||!$("#legacyReason").value.trim()))return "Previous payment date and reason for not completing are required.";
  return null;
 }
 async function saveClaim(enrollmentId){
  if(state.type==="first_time")return null;
  const db=client(),u=user(),s=student(),course=selected(); if(!db||!u||!course||!state.entitlement?.matched)return null;
+ if(state.entitlement.approved_claim_id){
+   await db.from("legacy_verification_claims").update({enrollment_id:enrollmentId}).eq("id",state.entitlement.approved_claim_id).eq("user_id",u.id);
+   return {id:state.entitlement.approved_claim_id};
+ }
  const path=await uploadEvidence();
  const payload={user_id:u.id,student_id:s?.id||null,course_id:course.id,enrollment_id:enrollmentId,claim_type:state.type,legacy_record_id:state.entitlement.legacy_record_id||null,id_number:($("#legacyId").value||"").replace(/\D/g,""),evidence_path:path,old_payment_date:$("#legacyPaymentDate")?.value||null,noncompletion_reason:$("#legacyReason")?.value.trim()||null,original_amount:Number(course.price||0),discount_percent:Number(state.entitlement.discount_percent||0),payable_amount:Number(state.entitlement.payable_amount||0),auto_matched:true,verification_status:"pending"};
  const {data,error}=await db.from("legacy_verification_claims").insert(payload).select("id").single();if(error)throw error;return data;
