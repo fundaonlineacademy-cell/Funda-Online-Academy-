@@ -2,10 +2,8 @@
 (function(){
 'use strict';
 if(typeof render!=='function'||typeof state==='undefined'||typeof db==='undefined')return;
-const CARPENTRY='60cfc5ea-6d3b-4dd1-abd6-cb68800930b5';
 const prior=render;
 const data={id:null,modules:[],lessons:[],progress:[],assessments:[],attempts:[],loading:null};
-const isCarpentry=()=>state.course&&(state.course.id===CARPENTRY||/carpentry/i.test(String(state.course.title||'')));
 const doneSet=()=>new Set(data.progress.filter(x=>x.completed).map(x=>String(x.lesson_id)));
 const mod=n=>data.modules.find(x=>Number(x.module_number)===Number(n));
 const lessons=n=>{const m=mod(n);return m?data.lessons.filter(x=>x.module_id===m.id).sort((a,b)=>a.lesson_number-b.lesson_number):[]};
@@ -47,7 +45,7 @@ function lessonView(){
  $('completeLesson').onclick=async()=>{const b=$('completeLesson');b.disabled=true;b.textContent='Saving…';try{if(!complete){const now=new Date().toISOString();const r=await db.from('lesson_progress').upsert({student_id:state.user.id,lesson_id:l.id,completed:true,completed_at:now,updated_at:now},{onConflict:'student_id,lesson_id'});if(r.error)throw r.error;await load(true)}if(Number(l.lesson_number)<ls.length)state.unit=Number(l.lesson_number)+1;else{window.location.assign(`module-assessment.html?course=${encodeURIComponent(state.course.id)}&module=${state.module}&type=formative`);return}render();scrollTo(0,0)}catch(e){console.error(e);show('Lesson completion could not be saved.');b.disabled=false;b.textContent='Complete Lesson & Continue →'}}
 }
 async function draw(){try{await load();if(!data.modules.length){$('course-content').innerHTML='<div class="message">No modules are configured for this course.</div>';return}if(!unlocked(state.module)){state.module=1;state.unit=1}$('sidebarCourse').textContent=state.course.title||'Selected Course';const p=progress();$('progressText').textContent=`${p}%`;$('progressFill').style.width=`${p}%`;sidebar();if(state.unit>8){const t=state.unit===9?'formative':'summative';window.location.assign(`module-assessment.html?course=${encodeURIComponent(state.course.id)}&module=${state.module}&type=${t}`);return}lessonView()}catch(e){console.error(e);$('course-content').innerHTML=`<div class="message">Unable to load course content: ${text(e.message||'Please try again.')}</div>`}}
-render=function(){if(!state.course||isCarpentry())return prior();draw()};
+render=function(){if(!state.course)return prior();draw()};
 
 // Post-attach boot guard: course-study.js and this database runtime load as separate
 // scripts. On slower/mobile browsers the base course may finish loading before this
@@ -56,7 +54,7 @@ render=function(){if(!state.course||isCarpentry())return prior();draw()};
 let bootTries=0;
 function bootDatabaseCourse(){
  bootTries++;
- if(state.course&&state.user&&!isCarpentry()){
+ if(state.course&&state.user){
   render();
   return;
  }
