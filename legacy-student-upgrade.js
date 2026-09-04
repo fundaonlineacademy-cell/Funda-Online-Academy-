@@ -196,7 +196,7 @@ function updateSummary(){
  const course=selected(),price=$("#summaryPrice");if(!course||!price)return;
  const payable=getPayableAmount(course);
  if(state.type&&state.type!=="first_time"&&state.entitlement?.matched){
-   price.innerHTML=`<span style="text-decoration:line-through;color:#94a3b8;font-size:14px">${money(course.price)}</span><br>${money(payable)} <span style="font-size:12px;color:#15803d">(${state.entitlement.discount_percent}% off)</span>`;
+   price.innerHTML=`${money(payable)} <span style="display:block;font-size:12px;color:#15803d;margin-top:4px">Legacy price · ${state.entitlement.discount_percent}% off</span>`;
  }else price.textContent=money(course.price);
  try{window.FundaPaymentIntegrity?.refresh?.();}catch(e){}
 }
