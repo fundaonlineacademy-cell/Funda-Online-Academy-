@@ -2268,6 +2268,26 @@
 
         }
 
+        if (!isValidSouthAfricanId(values.south_african_id)) {
+
+          return "This South African ID number is not valid. Please check all 13 digits.";
+
+        }
+
+        const expectedDob =
+          birthDateFromSouthAfricanId(
+            values.south_african_id
+          );
+
+        if (
+          !expectedDob ||
+          values.date_of_birth !== expectedDob
+        ) {
+
+          return "Date of birth could not be confirmed from the South African ID number. Please check the ID number.";
+
+        }
+
       } else {
 
         if (
@@ -3017,6 +3037,105 @@
     }
 
 
+    function birthDateFromSouthAfricanId(idValue) {
+
+      const id =
+        String(idValue || "")
+          .replace(/\D/g, "")
+          .slice(0, 13);
+
+      if (id.length !== 13) return null;
+
+      const yy = Number(id.slice(0, 2));
+      const mm = Number(id.slice(2, 4));
+      const dd = Number(id.slice(4, 6));
+
+      const now = new Date();
+      const currentYear = now.getFullYear();
+
+      const possibleYears = [
+        1900 + yy,
+        2000 + yy
+      ].filter(year => year <= currentYear);
+
+      const validDates =
+        possibleYears
+          .map(year => ({
+            year,
+            date: new Date(year, mm - 1, dd)
+          }))
+          .filter(item =>
+            mm >= 1 &&
+            mm <= 12 &&
+            dd >= 1 &&
+            dd <= 31 &&
+            item.date.getFullYear() === item.year &&
+            item.date.getMonth() === mm - 1 &&
+            item.date.getDate() === dd &&
+            item.date <= now
+          )
+          .sort((a, b) => b.year - a.year);
+
+      if (!validDates.length) return null;
+
+      /*
+        A Funda learner must be at least 16.
+        If the 2000-century interpretation is too young,
+        use the valid 1900-century interpretation instead.
+      */
+      const sixteenYearsAgo =
+        new Date(
+          now.getFullYear() - 16,
+          now.getMonth(),
+          now.getDate()
+        );
+
+      const ageValid =
+        validDates.find(
+          item => item.date <= sixteenYearsAgo
+        ) || validDates[0];
+
+      return `${String(ageValid.year).padStart(4, "0")}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`;
+
+    }
+
+
+    function isValidSouthAfricanId(idValue) {
+
+      const id =
+        String(idValue || "").replace(/\D/g, "");
+
+      if (!/^\d{13}$/.test(id)) return false;
+      if (!birthDateFromSouthAfricanId(id)) return false;
+
+      let sum = 0;
+
+      for (let i = 0; i < 12; i++) {
+
+        let digit = Number(id[i]);
+
+        if (i % 2 === 1) {
+
+          digit *= 2;
+
+          if (digit > 9) {
+            digit -= 9;
+          }
+
+        }
+
+        sum += digit;
+
+      }
+
+      const checkDigit =
+        (10 - (sum % 10)) % 10;
+
+      return checkDigit === Number(id[12]);
+
+    }
+
+
     function syncDateOfBirthFromId() {
 
       const type =
@@ -3049,32 +3168,10 @@
 
       }
 
-      const yy = Number(id.slice(0, 2));
-      const mm = Number(id.slice(2, 4));
-      const dd = Number(id.slice(4, 6));
+      const iso =
+        birthDateFromSouthAfricanId(id);
 
-      const currentYear =
-        new Date().getFullYear();
-
-      const currentTwoDigitYear =
-        currentYear % 100;
-
-      const fullYear =
-        yy <= currentTwoDigitYear
-          ? 2000 + yy
-          : 1900 + yy;
-
-      const candidate =
-        new Date(fullYear, mm - 1, dd);
-
-      if (
-        mm < 1 || mm > 12 ||
-        dd < 1 || dd > 31 ||
-        candidate.getFullYear() !== fullYear ||
-        candidate.getMonth() !== mm - 1 ||
-        candidate.getDate() !== dd ||
-        candidate > new Date()
-      ) {
+      if (!iso) {
 
         dobInput.value = "";
 
@@ -3087,15 +3184,17 @@
 
       }
 
-      const iso =
-        `${String(fullYear).padStart(4, "0")}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`;
-
       dobInput.value = iso;
       dobInput.setAttribute("value", iso);
 
       if (help) {
+
+        const [year, month, day] =
+          iso.split("-");
+
         help.textContent =
-          `Date of birth read from ID: ${String(dd).padStart(2, "0")}/${String(mm).padStart(2, "0")}/${fullYear}`;
+          `Date of birth read from ID: ${day}/${month}/${year}`;
+
       }
 
     }
