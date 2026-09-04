@@ -121,12 +121,19 @@
     }
 
     .role-btn{transition:.2s ease}
+    .role-btn{
+      color:#475569;
+      background:transparent;
+    }
     .role-btn.active{
       background:#06152f;
-      color:#fff;
+      color:#fff !important;
       border-color:#06152f;
       box-shadow:0 8px 24px rgba(6,21,47,.15);
     }
+    .role-btn.active .role-icon{color:#e2bd61}
+    .role-btn:not(.active){color:#334155 !important}
+    .role-btn:not(.active):hover{background:#fff;color:#06152f !important}
 
     .message{display:none}
     .message.show{display:block}
@@ -260,8 +267,8 @@
       </div>
 
       <div class="grid grid-cols-2 gap-2 mt-7 p-1.5 rounded-xl bg-[#f1f4f8]">
-        <button id="btn-student" type="button" class="role-btn active rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold">🎓 Student</button>
-        <button id="btn-admin" type="button" class="role-btn rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold text-slate-600">▣ Staff / Admin</button>
+        <button id="btn-student" type="button" class="role-btn active rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold"><span class="role-icon" aria-hidden="true">🎓</span> Student</button>
+        <button id="btn-admin" type="button" class="role-btn rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold text-slate-600"><span class="role-icon" aria-hidden="true">▣</span> Staff / Admin</button>
       </div>
 
       <div id="message" class="message mt-5 rounded-xl p-4 text-sm font-semibold"></div>
