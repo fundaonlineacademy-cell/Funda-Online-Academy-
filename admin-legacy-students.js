@@ -101,7 +101,7 @@ function reviewClaim(id){
  modal.onclick=ev=>{if(ev.target===modal)return closeReview();const a=ev.target.closest('[data-review-legacy-proof]');if(a)return evidence(a.dataset.reviewLegacyProof);const pbtn=ev.target.closest('[data-review-payment-proof]');if(pbtn)return paymentProof(pbtn.dataset.reviewPaymentProof);const ok=ev.target.closest('[data-review-approve]');if(ok){closeReview();return decide(ok.dataset.reviewApprove,'approved')}const no=ev.target.closest('[data-review-decline]');if(no){closeReview();return decide(no.dataset.reviewDecline,'declined')}};
 }
 async function decide(id,status){
- const note=prompt(status==='approved'?'Approval note / historical record checked:':'Reason for declining this legacy claim:');
+ const note=prompt(status==='approved'?'Approval note — confirm the old certificate/evidence has been manually checked. This does not by itself approve course access; Finance must verify payment and Admissions must approve the enrolment.':'Reason for declining this legacy claim:');
  if(!note?.trim())return;
  const u=await db.auth.getUser();
  const r=await db.from('legacy_verification_claims').update({verification_status:status,review_notes:note.trim(),reviewed_by:u.data?.user?.id||null,reviewed_at:new Date().toISOString()}).eq('id',id);
