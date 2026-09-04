@@ -413,9 +413,32 @@
               </div>
 
 
-              <!-- ID -->
+              <!-- IDENTITY DOCUMENT TYPE -->
 
               <div>
+
+                <label
+                  for="identityDocumentType"
+                  class="block text-sm font-bold text-gray-700 mb-2"
+                >
+                  Identification Type *
+                </label>
+
+                <select
+                  id="identityDocumentType"
+                  required
+                  class="w-full rounded-xl border border-gray-200 px-4 py-3 bg-white"
+                >
+                  <option value="south_african_id">South African ID</option>
+                  <option value="passport">Passport / Foreign ID</option>
+                </select>
+
+              </div>
+
+
+              <!-- SOUTH AFRICAN ID -->
+
+              <div id="saIdWrap">
 
                 <label
                   for="idNumber"
@@ -429,9 +452,30 @@
                   type="text"
                   inputmode="numeric"
                   maxlength="13"
-                  required
                   class="w-full rounded-xl border border-gray-200 px-4 py-3"
                   placeholder="13-digit ID number"
+                >
+
+              </div>
+
+
+              <!-- PASSPORT / FOREIGN ID -->
+
+              <div id="passportWrap" class="hidden">
+
+                <label
+                  for="passportNumber"
+                  class="block text-sm font-bold text-gray-700 mb-2"
+                >
+                  Passport / Foreign ID Number *
+                </label>
+
+                <input
+                  id="passportNumber"
+                  type="text"
+                  maxlength="40"
+                  class="w-full rounded-xl border border-gray-200 px-4 py-3"
+                  placeholder="Passport or foreign identity number"
                 >
 
               </div>
@@ -445,14 +489,22 @@
                   for="dateOfBirth"
                   class="block text-sm font-bold text-gray-700 mb-2"
                 >
-                  Date of Birth
+                  Date of Birth *
                 </label>
 
                 <input
                   id="dateOfBirth"
                   type="date"
+                  required
                   class="w-full rounded-xl border border-gray-200 px-4 py-3"
                 >
+
+                <p
+                  id="dobIdentityHelp"
+                  class="text-xs text-gray-500 mt-2 leading-5"
+                >
+                  For South African IDs, your date of birth is filled automatically.
+                </p>
 
               </div>
 
@@ -465,12 +517,13 @@
                   for="nationality"
                   class="block text-sm font-bold text-gray-700 mb-2"
                 >
-                  Nationality
+                  Nationality *
                 </label>
 
                 <input
                   id="nationality"
                   type="text"
+                  required
                   class="w-full rounded-xl border border-gray-200 px-4 py-3"
                   placeholder="Nationality"
                 >
@@ -1234,7 +1287,7 @@
         await supabaseClient
           .from("profiles")
           .select(
-            "id,full_name,phone,email,gender,role,id_number"
+            "id,full_name,phone,email,gender,role,id_number,identity_document_type,passport_number"
           )
           .eq("id", currentUser.id)
           .maybeSingle();
@@ -1284,7 +1337,7 @@
               role: "student"
             })
             .select(
-              "id,full_name,phone,email,gender,role,id_number"
+              "id,full_name,phone,email,gender,role,id_number,identity_document_type,passport_number"
             )
             .single();
 
@@ -1322,6 +1375,8 @@
               full_name,
               gender,
               south_african_id,
+              identity_document_type,
+              passport_number,
               email,
               mobile_whatsapp,
               address,
@@ -1392,6 +1447,8 @@
                 full_name,
                 gender,
                 south_african_id,
+                identity_document_type,
+                passport_number,
                 email,
                 mobile_whatsapp,
                 address,
@@ -1451,9 +1508,19 @@
         currentProfile.gender ||
         "";
 
+      document.getElementById("identityDocumentType").value =
+        currentStudent.identity_document_type ||
+        currentProfile.identity_document_type ||
+        "south_african_id";
+
       document.getElementById("idNumber").value =
         currentStudent.south_african_id ||
         currentProfile.id_number ||
+        "";
+
+      document.getElementById("passportNumber").value =
+        currentStudent.passport_number ||
+        currentProfile.passport_number ||
         "";
 
       document.getElementById("dateOfBirth").value =
@@ -2023,10 +2090,24 @@
             "gender"
           ).value,
 
+        identity_document_type:
+          document.getElementById(
+            "identityDocumentType"
+          ).value,
+
         south_african_id:
           document.getElementById(
-            "idNumber"
-          ).value.trim(),
+            "identityDocumentType"
+          ).value === "south_african_id"
+            ? document.getElementById("idNumber").value.trim()
+            : null,
+
+        passport_number:
+          document.getElementById(
+            "identityDocumentType"
+          ).value === "passport"
+            ? document.getElementById("passportNumber").value.trim()
+            : null,
 
         mobile_whatsapp:
           document.getElementById(
@@ -2118,8 +2199,18 @@
         ],
 
         [
-          "South African ID number",
-          values.south_african_id
+          "Identification type",
+          values.identity_document_type
+        ],
+
+        [
+          "Date of birth",
+          values.date_of_birth
+        ],
+
+        [
+          "Nationality",
+          values.nationality
         ],
 
         [
@@ -2164,12 +2255,29 @@
 
 
       if (
-        !/^\d{13}$/.test(
-          values.south_african_id
-        )
+        values.identity_document_type === "south_african_id"
       ) {
 
-        return "Please enter a valid 13-digit South African ID number.";
+        if (
+          !/^\d{13}$/.test(
+            values.south_african_id || ""
+          )
+        ) {
+
+          return "Please enter a valid 13-digit South African ID number.";
+
+        }
+
+      } else {
+
+        if (
+          !values.passport_number ||
+          values.passport_number.length < 4
+        ) {
+
+          return "Please enter a valid passport or foreign ID number.";
+
+        }
 
       }
 
@@ -2378,6 +2486,8 @@
               full_name,
               gender,
               south_african_id,
+              identity_document_type,
+              passport_number,
               email,
               mobile_whatsapp,
               address,
@@ -2429,6 +2539,12 @@
 
             id_number:
               values.south_african_id,
+
+            identity_document_type:
+              values.identity_document_type,
+
+            passport_number:
+              values.passport_number,
 
             phone:
               values.mobile_whatsapp
@@ -2832,7 +2948,81 @@
       ============================================================
     */
 
+    function setIdentityMode() {
+
+      const type =
+        document.getElementById("identityDocumentType").value;
+
+      const saWrap =
+        document.getElementById("saIdWrap");
+
+      const passportWrap =
+        document.getElementById("passportWrap");
+
+      const idInput =
+        document.getElementById("idNumber");
+
+      const passportInput =
+        document.getElementById("passportNumber");
+
+      const dobInput =
+        document.getElementById("dateOfBirth");
+
+      const help =
+        document.getElementById("dobIdentityHelp");
+
+      const nationality =
+        document.getElementById("nationality");
+
+      const isSA =
+        type === "south_african_id";
+
+      saWrap.classList.toggle("hidden", !isSA);
+      passportWrap.classList.toggle("hidden", isSA);
+
+      idInput.required = isSA;
+      passportInput.required = !isSA;
+
+      dobInput.readOnly = isSA;
+
+      if (isSA) {
+
+        if (
+          !nationality.value ||
+          nationality.dataset.autoNationality === "1"
+        ) {
+          nationality.value = "South African";
+          nationality.dataset.autoNationality = "1";
+        }
+
+        help.textContent =
+          "Date of birth is read automatically from the South African ID number.";
+
+        syncDateOfBirthFromId();
+
+      } else {
+
+        if (nationality.dataset.autoNationality === "1") {
+          nationality.value = "";
+          nationality.dataset.autoNationality = "0";
+        }
+
+        dobInput.readOnly = false;
+
+        help.textContent =
+          "Enter the date of birth shown on the passport or foreign identity document.";
+
+      }
+
+    }
+
+
     function syncDateOfBirthFromId() {
+
+      const type =
+        document.getElementById("identityDocumentType")?.value;
+
+      if (type !== "south_african_id") return;
 
       const idInput =
         document.getElementById("idNumber");
@@ -2840,11 +3030,17 @@
       const dobInput =
         document.getElementById("dateOfBirth");
 
+      const help =
+        document.getElementById("dobIdentityHelp");
+
       if (!idInput || !dobInput) return;
 
       const id =
         String(idInput.value || "")
-          .replace(/\D/g, "");
+          .replace(/\D/g, "")
+          .slice(0, 13);
+
+      idInput.value = id;
 
       if (id.length !== 13) {
 
@@ -2856,17 +3052,6 @@
       const yy = Number(id.slice(0, 2));
       const mm = Number(id.slice(2, 4));
       const dd = Number(id.slice(4, 6));
-
-      if (
-        !Number.isInteger(yy) ||
-        mm < 1 || mm > 12 ||
-        dd < 1 || dd > 31
-      ) {
-
-        dobInput.value = "";
-        return;
-
-      }
 
       const currentYear =
         new Date().getFullYear();
@@ -2883,6 +3068,8 @@
         new Date(fullYear, mm - 1, dd);
 
       if (
+        mm < 1 || mm > 12 ||
+        dd < 1 || dd > 31 ||
         candidate.getFullYear() !== fullYear ||
         candidate.getMonth() !== mm - 1 ||
         candidate.getDate() !== dd ||
@@ -2890,21 +3077,36 @@
       ) {
 
         dobInput.value = "";
+
+        if (help) {
+          help.textContent =
+            "The date encoded in this South African ID could not be read. Please check the ID number.";
+        }
+
         return;
 
       }
 
-      dobInput.value =
+      const iso =
         `${String(fullYear).padStart(4, "0")}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`;
+
+      dobInput.value = iso;
+      dobInput.setAttribute("value", iso);
+
+      if (help) {
+        help.textContent =
+          `Date of birth read from ID: ${String(dd).padStart(2, "0")}/${String(mm).padStart(2, "0")}/${fullYear}`;
+      }
 
     }
 
 
-    /*
-      ============================================================
-      EVENTS
-      ============================================================
-    */
+    document.getElementById(
+      "identityDocumentType"
+    ).addEventListener(
+      "change",
+      setIdentityMode
+    );
 
     document.getElementById(
       "idNumber"
@@ -2919,6 +3121,7 @@
       "change",
       syncDateOfBirthFromId
     );
+
 
     continueButton.addEventListener(
       "click",
@@ -3001,11 +3204,7 @@
 
         await loadProfileAndStudent();
 
-        if (
-          !document.getElementById("dateOfBirth").value
-        ) {
-          syncDateOfBirthFromId();
-        }
+        setIdentityMode();
 
 
         document.getElementById(
