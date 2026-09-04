@@ -1,0 +1,22 @@
+-- Funda Online Academy Legacy Student Upgrade Programme
+-- No Student Left Behind
+-- Applied to live Supabase on 2026-09-04.
+
+-- Core live objects:
+-- public.legacy_student_records
+-- public.legacy_verification_claims
+-- storage bucket: legacy-verification
+-- RPC: public.check_legacy_entitlement(uuid,text,text)
+-- Added enrollment/payment fields:
+-- student_category, original_amount, discount_percent, legacy_claim_id
+--
+-- Discount rules:
+-- first_time: 0%
+-- legacy_completed same mapped course: 70%
+-- legacy_incomplete same mapped course: 50%
+-- returning_student different course with prior completed record: 25%
+--
+-- Students never receive a public list of historic names.
+-- Matching is private against ID number and course mapping.
+-- Unmatched claims are blocked from discounted payment and routed to manual admin verification.
+-- Final course access remains subject to admin approval.
