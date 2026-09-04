@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://fundaonlineacademy.co.za/</loc><lastmod>2026-08-31</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://fundaonlineacademy.co.za/courses-public.html</loc><lastmod>2026-08-31</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://fundaonlineacademy.co.za/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://fundaonlineacademy.co.za/courses-public.html</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://fundaonlineacademy.co.za/employers.html</loc><lastmod>2026-08-31</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://fundaonlineacademy.co.za/ambassadors.html</loc><lastmod>2026-08-31</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://fundaonlineacademy.co.za/course-view.html?id=fcbe0c39-c31f-4a39-833f-7b89d553bef2</loc><lastmod>2026-08-31</lastmod><priority>0.8</priority></url>
@@ -34,4 +34,9 @@
   <url><loc>https://fundaonlineacademy.co.za/course-view.html?id=a8645d16-6d5b-40aa-8fa2-f935e2d36296</loc><lastmod>2026-08-31</lastmod><priority>0.8</priority></url>
   <url><loc>https://fundaonlineacademy.co.za/course-view.html?id=60483eb1-e117-4396-aa15-87365e316f7e</loc><lastmod>2026-08-31</lastmod><priority>0.8</priority></url>
   <url><loc>https://fundaonlineacademy.co.za/course-view.html?id=bf078a22-a152-4237-a97a-3f990cd73a8a</loc><lastmod>2026-08-31</lastmod><priority>0.8</priority></url>
+  <url><loc>https://fundaonlineacademy.co.za/course-view.html?id=8a59da17-0a32-4306-a774-635772e617c4</loc><lastmod>2026-09-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://fundaonlineacademy.co.za/course-view.html?id=2fc729c0-7323-4407-80a7-92bd662a4b00</loc><lastmod>2026-09-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://fundaonlineacademy.co.za/course-view.html?id=f153c7ee-d458-4dce-926c-fe2f538e4739</loc><lastmod>2026-09-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://fundaonlineacademy.co.za/course-view.html?id=1c454e6c-5b56-4ebe-a44f-565e6248714a</loc><lastmod>2026-09-04</lastmod><priority>0.8</priority></url>
+  <url><loc>https://fundaonlineacademy.co.za/course-view.html?id=4a799e4f-07d2-4d18-b447-09a2e7b82932</loc><lastmod>2026-09-04</lastmod><priority>0.8</priority></url>
 </urlset>
