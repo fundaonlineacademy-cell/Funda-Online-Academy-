@@ -152,25 +152,34 @@
     }catch(e){status.textContent='Banking details could not be loaded. Do not make payment until the official details are displayed.';status.className='text-sm text-red-700 font-semibold leading-6 mt-2';}
   }
 
-  function updatePaymentPlanUI(){
+  function effectiveFee(){
+    const base=Number(selectedCourse?.price||0);
+    try{
+      const value=window.FundaLegacy?.getPayableAmount?.(selectedCourse);
+      return Number.isFinite(Number(value))?Number(value):base;
+    }catch(e){return base}
+  }
+
+  function updatePaymentPlanUI(forceAmount=false){
     const select=document.getElementById('paymentPlanChoice');
     if(!select||!selectedCourse)return;
-    const plan=paymentPlanFor(selectedCourse.price,selectedCourse.duration);
+    const fee=effectiveFee();
+    const plan=paymentPlanFor(fee,selectedCourse.duration);
     const parts=paymentParts(plan.fee,plan.installments);
     select.innerHTML='<option value="">Select payment option</option><option value="full">Pay full course fee — '+money(plan.fee)+'</option>';
     if(plan.installments>1)select.innerHTML+=`<option value="installments">Pay in ${plan.installments} instalments — first payment ${money(parts[0])}</option>`;
     select.value=plan.installments>1?'installments':'full';
-    updateScheduleDisplay();
+    updateScheduleDisplay(forceAmount);
   }
 
-  function updateScheduleDisplay(){
+  function updateScheduleDisplay(forceAmount=false){
     const select=document.getElementById('paymentPlanChoice'),schedule=document.getElementById('paymentSchedule'),minimum=document.getElementById('minimumDueNow'),amount=document.getElementById('amountPaidNow');
     if(!select||!selectedCourse)return;
-    const plan=paymentPlanFor(selectedCourse.price,selectedCourse.duration),parts=paymentParts(plan.fee,plan.installments);
+    const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration),parts=paymentParts(plan.fee,plan.installments);
     const full=select.value==='full'||plan.installments===1;
     const due=full?plan.fee:parts[0];
     minimum.textContent=money(due);
-    if(amount&&!amount.value)amount.value=due.toFixed(2);
+    if(amount&&(forceAmount||!amount.value))amount.value=due.toFixed(2);
     schedule.innerHTML=full?`Full payment of <strong>${money(plan.fee)}</strong> is due now.`:`Your course qualifies for <strong>${plan.installments} instalments</strong>: ${parts.map((p,i)=>`Payment ${i+1}: ${money(p)}`).join(' · ')}. The first instalment is required with this application.`;
   }
 
@@ -186,7 +195,7 @@
     if(!['EFT / Bank Transfer','Bank Deposit'].includes(method))return 'Please select EFT / Bank Transfer or Bank Deposit.';
     const choice=document.getElementById('paymentPlanChoice')?.value;
     if(!choice)return 'Please select a payment option.';
-    const plan=paymentPlanFor(selectedCourse.price,selectedCourse.duration),parts=paymentParts(plan.fee,plan.installments),required=choice==='full'?plan.fee:parts[0];
+    const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration),parts=paymentParts(plan.fee,plan.installments),required=choice==='full'?plan.fee:parts[0];
     const paid=Number(document.getElementById('amountPaidNow')?.value||0);
     if(!Number.isFinite(paid)||paid<=0)return 'Please enter the amount you paid.';
     if(paid+0.009<required)return `The minimum amount due now is ${money(required)}.`;
@@ -207,24 +216,39 @@
     try{
       await updateStudent(values);
       const enrollment=await ensureEnrollment();
+      const legacyClaim=await window.FundaLegacy?.saveClaim?.(enrollment.id)||null;
       const proofPath=await uploadProofOfPayment(file,enrollment.id);
       const submittedAt=new Date().toISOString();
       const paymentMethod=document.getElementById('paymentMethod').value;
       const paymentReference=document.getElementById('paymentReference').value.trim();
       const amountPaid=Number(document.getElementById('amountPaidNow').value);
       const planChoice=document.getElementById('paymentPlanChoice').value;
-      const plan=paymentPlanFor(selectedCourse.price,selectedCourse.duration);
+      const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration);
       const parts=paymentParts(plan.fee,plan.installments);
       const note=`Payment reference: ${paymentReference}; Payment option: ${planChoice==='full'?'Full payment':plan.installments+' instalments'}; Amount paid now: ${money(amountPaid)}; Course fee: ${money(plan.fee)}; Schedule: ${parts.map((p,i)=>`#${i+1} ${money(p)}`).join(', ')}`;
-      const {error:enrollmentError}=await supabaseClient.from('enrollments').update({amount:Number(selectedCourse.price||0),enrollment_status:'pending',status:'pending',proof_url:proofPath,submitted_at:submittedAt,approval_department:'Admissions & Finance',review_notes:null,rejection_reason:null}).eq('id',enrollment.id);
+      const {error:enrollmentError}=await supabaseClient.from('enrollments').update({
+        amount:plan.fee,
+        ...(window.FundaLegacy?.getEnrollmentFields?.(legacyClaim)||{}),
+        enrollment_status:'pending',status:'pending',proof_url:proofPath,submitted_at:submittedAt,
+        approval_department:'Admissions & Finance',review_notes:null,rejection_reason:null
+      }).eq('id',enrollment.id);
       if(enrollmentError)throw new Error('Unable to submit your enrollment application: '+enrollmentError.message);
-      const {error:paymentError}=await supabaseClient.from('payments').insert({student_id:currentStudent.id,enrolment_id:enrollment.id,amount:amountPaid,payment_method:paymentMethod,status:'submitted',proof_url:proofPath,submitted_at:submittedAt,notes:note});
+      const {error:paymentError}=await supabaseClient.from('payments').insert({
+        student_id:currentStudent.id,enrolment_id:enrollment.id,amount:amountPaid,
+        ...(window.FundaLegacy?.getPaymentFields?.(legacyClaim)||{}),
+        payment_method:paymentMethod,status:'submitted',proof_url:proofPath,submitted_at:submittedAt,notes:note
+      });
       if(paymentError)throw new Error('Your application was saved, but the payment record could not be created: '+paymentError.message);
       showMessage(`Your enrollment for ${selectedCourse.title} has been submitted successfully. Your payment of ${money(amountPaid)} is awaiting verification by Admissions & Finance.`,true);
       submitButton.textContent='Application Submitted ✓';
       setTimeout(()=>{window.location.href=`dashboard.html?application=submitted&enrollment=${encodeURIComponent(enrollment.id)}`;},1800);
     }catch(error){console.error('Enhanced enrollment submission error:',error);showMessage(error.message||'We could not complete your enrollment application.');submitButton.disabled=false;submitButton.textContent='Submit Enrollment Application';}
   }
+
+  window.FundaPaymentIntegrity={
+    refresh:()=>updatePaymentPlanUI(true),
+    effectiveFee
+  };
 
   function boot(){
     ensureIdentityUI();injectPaymentUI();
