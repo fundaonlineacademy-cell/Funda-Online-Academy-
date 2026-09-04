@@ -611,7 +611,11 @@ async function loadAllStudents() {
       user_id,
       full_name,
       gender,
+      identity_document_type,
       south_african_id,
+      passport_number,
+      date_of_birth,
+      nationality,
       email,
       mobile_whatsapp,
       address,
@@ -752,7 +756,11 @@ async function loadStudents() {
       user_id,
       full_name,
       gender,
+      identity_document_type,
       south_african_id,
+      passport_number,
+      date_of_birth,
+      nationality,
       email,
       mobile_whatsapp,
       address,
@@ -818,6 +826,9 @@ async function loadStudents() {
             <th>Email</th>
             <th>Mobile / WhatsApp</th>
             <th>Gender</th>
+            <th>Identification</th>
+            <th>Date of Birth</th>
+            <th>Nationality</th>
             <th>Registration</th>
           </tr>
 
@@ -856,6 +867,36 @@ async function loadStudents() {
               <td>
                 ${escapeHTML(
                   student.gender ||
+                  "—"
+                )}
+              </td>
+
+              <td>
+                <strong>
+                  ${escapeHTML(
+                    student.identity_document_type === "passport"
+                      ? "Passport / Foreign ID"
+                      : "South African ID"
+                  )}
+                </strong>
+                <br>
+                ${escapeHTML(
+                  student.identity_document_type === "passport"
+                    ? (student.passport_number || "—")
+                    : (student.south_african_id || "—")
+                )}
+              </td>
+
+              <td>
+                ${escapeHTML(
+                  student.date_of_birth ||
+                  "—"
+                )}
+              </td>
+
+              <td>
+                ${escapeHTML(
+                  student.nationality ||
                   "—"
                 )}
               </td>
