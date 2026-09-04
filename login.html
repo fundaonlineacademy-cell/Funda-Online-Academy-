@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="description" content="Secure student and staff login for Funda Online Academy.">
   <title>Login | Funda Online Academy</title>
 
@@ -267,8 +270,8 @@
       </div>
 
       <div class="grid grid-cols-2 gap-2 mt-7 p-1.5 rounded-xl bg-[#f1f4f8]">
-        <button id="btn-student" type="button" class="role-btn active rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold"><span class="role-icon" aria-hidden="true">🎓</span> Student</button>
-        <button id="btn-admin" type="button" class="role-btn rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold text-slate-600"><span class="role-icon" aria-hidden="true">▣</span> Staff / Admin</button>
+        <button id="btn-student" type="button" class="role-btn active rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold" style="background:#06152f;color:#ffffff;"><span class="role-icon" aria-hidden="true">🎓</span> Student</button>
+        <button id="btn-admin" type="button" class="role-btn rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold text-slate-600" style="background:transparent;color:#334155;"><span class="role-icon" aria-hidden="true">▣</span> Staff / Admin</button>
       </div>
 
       <div id="message" class="message mt-5 rounded-xl p-4 text-sm font-semibold"></div>
@@ -379,6 +382,19 @@
     adminButton.classList.toggle("active", isAdmin);
     studentButton.classList.toggle("text-slate-600", isAdmin);
     adminButton.classList.toggle("text-slate-600", !isAdmin);
+
+    // Force contrast directly so the selected label can never inherit dark text.
+    if (isAdmin) {
+      studentButton.style.background = "transparent";
+      studentButton.style.color = "#334155";
+      adminButton.style.background = "#06152f";
+      adminButton.style.color = "#ffffff";
+    } else {
+      studentButton.style.background = "#06152f";
+      studentButton.style.color = "#ffffff";
+      adminButton.style.background = "transparent";
+      adminButton.style.color = "#334155";
+    }
   }
 
   function getSafeNextDestination() {
