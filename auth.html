@@ -267,16 +267,17 @@
   async function createStudentRecords(user, student) {
     const fullName = `${student.firstName} ${student.surname}`.trim();
 
+    /* The auth trigger creates the protected student profile.
+       Update only ordinary self-service fields here; never authorization fields. */
     const { error: profileError } = await supabaseClient
       .from("profiles")
-      .upsert({
-        id:user.id,
+      .update({
         full_name:fullName,
         email:student.email,
         phone:student.phone,
-        gender:student.gender,
-        role:"student"
-      }, { onConflict:"id" });
+        gender:student.gender
+      })
+      .eq("id",user.id);
 
     if (profileError) throw new Error("Your account was created, but your profile could not be saved. " + profileError.message);
 
