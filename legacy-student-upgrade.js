@@ -21,9 +21,9 @@ function ensurePanel(){
  <p class="text-sm text-gray-500 mt-2 leading-6">Choose the option that applies to the course you selected. Legacy discounts are verified against Funda's historical records before course access is approved.</p>
  <div class="grid sm:grid-cols-2 gap-3 mt-6" id="legacyChoices">
   <label class="border rounded-2xl p-4 cursor-pointer"><input type="radio" name="legacyType" value="first_time" class="mr-2"><b>First-time Funda student</b><span class="block text-xs text-gray-500 mt-1">I have never studied with Funda before. Standard current price.</span></label>
-  <label class="border rounded-2xl p-4 cursor-pointer"><input type="radio" name="legacyType" value="legacy_completed" class="mr-2"><b>I completed this course before</b><span class="block text-xs text-gray-500 mt-1">Legacy upgrade: 70% off after record match. Old Funda certificate required.</span></label>
-  <label class="border rounded-2xl p-4 cursor-pointer"><input type="radio" name="legacyType" value="legacy_incomplete" class="mr-2"><b>I paid for this course but did not complete it</b><span class="block text-xs text-gray-500 mt-1">Restart benefit: 50% off after verification. Old proof of payment required.</span></label>
-  <label class="border rounded-2xl p-4 cursor-pointer"><input type="radio" name="legacyType" value="returning_student" class="mr-2"><b>I studied with Funda before, but this is a different course</b><span class="block text-xs text-gray-500 mt-1">Returning student benefit: 25% off after previous-study verification.</span></label>
+  <label class="border rounded-2xl p-4 cursor-pointer"><input type="radio" name="legacyType" value="legacy_completed" class="mr-2"><b>I completed this course before</b><span class="block text-xs text-gray-500 mt-1">Legacy upgrade: 70% off after certificate verification. Old Funda certificate required. Final approval follows after payment.</span></label>
+  <label class="border rounded-2xl p-4 cursor-pointer"><input type="radio" name="legacyType" value="legacy_incomplete" class="mr-2"><b>I paid for this course but did not complete it</b><span class="block text-xs text-gray-500 mt-1">Restart benefit: 50% off after evidence verification. Old proof of payment required. Final approval follows after payment.</span></label>
+  <label class="border rounded-2xl p-4 cursor-pointer"><input type="radio" name="legacyType" value="returning_student" class="mr-2"><b>I studied with Funda before, but this is a different course</b><span class="block text-xs text-gray-500 mt-1">Returning student benefit: 25% off after previous-study verification. Final approval follows after payment.</span></label>
  </div>
  <div id="legacyExtra" class="hidden mt-5 border-t pt-5">
   <div class="grid md:grid-cols-2 gap-4">
@@ -83,7 +83,7 @@ async function check(){
       setPaymentVisible(false);
       return showResult("Your historical record was found. Please upload the required old Funda evidence so Admin can complete the final verification.",false);
     }
-    showResult(`${data.message} Your price for this application is ${money(data.payable_amount)} (${data.discount_percent}% off).`,true);
+    showResult(`${data.message} Your provisional price for this application is ${money(data.payable_amount)} (${data.discount_percent}% off). You may now pay this amount. Funda Admin will still audit your previous-study evidence and your new proof of payment before course access is approved. If the legacy claim is declined after audit, course access will remain blocked and the discounted payment must be refunded.`,true);
     setPaymentVisible(true); updateSummary();
   }else{
     if(!$("#legacyEvidence")?.files?.[0]){
@@ -138,7 +138,7 @@ function updateSummary(){
 function validate(){
  if(!state.type)return "Please tell us whether you are a first-time, legacy, incomplete legacy or returning Funda student.";
  if(state.type==="first_time")return null;
- if(!state.entitlement?.matched)return "Your legacy discount must be matched or manually approved before you make payment.";
+ if(!state.entitlement?.matched)return "Your legacy evidence must pass the system verification before the provisional discounted payment is unlocked.";
  if(!state.entitlement.approved_claim_id&&!$("#legacyEvidence")?.files?.[0]&&!state.evidencePath)return "Please upload the required previous Funda evidence.";
  if(state.type==="legacy_incomplete"&&(!$("#legacyPaymentDate").value||!$("#legacyReason").value.trim()))return "Previous payment date and reason for not completing are required.";
  return null;
