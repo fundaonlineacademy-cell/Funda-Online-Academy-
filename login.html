@@ -513,8 +513,25 @@
         return;
       }
 
+      const { data: enrolment, error: enrolmentError } = await supabaseClient
+        .from("enrollments")
+        .select("id")
+        .eq("student_id", user.id)
+        .limit(1)
+        .maybeSingle();
+
+      if (enrolmentError) {
+        throw new Error("Your enrolment status could not be checked. " + enrolmentError.message);
+      }
+
       localStorage.removeItem("funda_pending_course");
       localStorage.removeItem("enroll_after_login");
+
+      if (!enrolment) {
+        showMessage("Login successful. Taking you to course selection...", true);
+        setTimeout(() => { window.location.href = "onboarding.html"; }, 450);
+        return;
+      }
 
       showMessage("Login successful. Opening your Student Dashboard...", true);
       setTimeout(() => { window.location.href = "dashboard.html"; }, 450);
