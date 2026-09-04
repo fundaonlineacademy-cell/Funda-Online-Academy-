@@ -129,13 +129,15 @@ async function check(){
     const {data,error}=await db.rpc("evaluate_legacy_certificate_text",{p_course_id:course.id,p_id_number:id,p_extracted_text:extracted});
     if(error)throw error;
     state.verificationSummary=data||null;
+    const mark=v=>v?"✓ Matched":"✗ Not matched";
+    const breakdown=`ID number: ${mark(!!data?.id_match)}\nStudent name: ${mark(!!data?.name_match)}\nCourse: ${mark(!!data?.course_match)}`;
     if(data?.verified){
       state.entitlement={matched:true,discount_percent:70,original_amount:Number(data.original_amount||course.price||0),payable_amount:Number(data.payable_amount||0),system_verified:true};
-      showResult(`Certificate verification passed. The system matched the ID number, student name and selected course closely enough to provisionally apply the 70% Legacy Upgrade. Your provisional amount is ${money(data.payable_amount)}. You may pay this amount now. Funda Admin will still audit the original certificate and your new proof of payment before course access is approved. If the final audit fails, enrolment will be declined and the amount paid must be refunded.`,true);
+      showResult(`Certificate verification passed.\n\n${breakdown}\n\nThe 70% Legacy Upgrade has been provisionally applied. Your provisional amount is ${money(data.payable_amount)}. You may pay this amount now. Funda Admin will still audit the original certificate and your new proof of payment before course access is approved. If the final audit fails, enrolment will be declined and the amount paid must be refunded.`,true);
       setPaymentVisible(true);updateSummary();return;
     }
     state.entitlement=null;setPaymentVisible(false);
-    showResult(`${data?.message||"The certificate could not be verified automatically."} The 70% price has not been unlocked. You may submit the certificate for manual review.`,false,true);
+    showResult(`Certificate verification needs attention.\n\n${breakdown}\n\nThe 70% price has not been unlocked. Check the field marked “Not matched”, or submit the certificate for manual review.`,false,true);
     addManualButton();return;
   }
 
@@ -158,7 +160,7 @@ async function check(){
  }
 }
 function showResult(msg,ok,manual=false){
- const x=$("#legacyResult"); if(!x)return; x.textContent=msg; x.className="mt-4 rounded-xl p-4 text-sm font-semibold "+(ok?"bg-green-100 text-green-800":"bg-amber-100 text-amber-900"); if(manual)x.dataset.manual="1";
+ const x=$("#legacyResult"); if(!x)return; x.textContent=msg; x.style.whiteSpace="pre-line"; x.className="mt-4 rounded-xl p-4 text-sm font-semibold "+(ok?"bg-green-100 text-green-800":"bg-amber-100 text-amber-900"); if(manual)x.dataset.manual="1";
 }
 function addManualButton(){
  if($("#legacyManualSubmit"))return;
