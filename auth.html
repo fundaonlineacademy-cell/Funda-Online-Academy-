@@ -447,7 +447,7 @@
         const { data: enrolment } = await supabaseClient
           .from("enrollments")
           .select("id")
-          .eq("student_id",student.id)
+          .eq("student_id",user.id)
           .limit(1)
           .maybeSingle();
 
