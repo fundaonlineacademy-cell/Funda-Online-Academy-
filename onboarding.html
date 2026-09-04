@@ -1091,6 +1091,14 @@
     }
 
 
+    window.FundaEnrollmentContext = {
+      getSelectedCourse: () => selectedCourse,
+      getSupabase: () => supabaseClient,
+      getUser: () => currentUser,
+      getStudent: () => currentStudent
+    };
+
+
     /*
       ============================================================
       HTML ESCAPE
@@ -1899,6 +1907,12 @@
         );
 
 
+        setTimeout(
+          () => window.FundaLegacy?.onCourseOpened?.(),
+          0
+        );
+
+
         document.getElementById(
           "summaryCourse"
         ).textContent =
@@ -1916,7 +1930,7 @@
           "summaryPrice"
         ).textContent =
           formatMoney(
-            selectedCourse.price
+            effectiveCoursePrice()
           );
 
 
@@ -2160,6 +2174,16 @@
       }
 
 
+      const legacyValidation =
+        window.FundaLegacy?.validate?.();
+
+      if (legacyValidation) {
+
+        return legacyValidation;
+
+      }
+
+
       if (!file) {
 
         return "Please upload your proof of payment.";
@@ -2224,6 +2248,31 @@
     }
 
 
+    function effectiveCoursePrice() {
+
+      const fallback =
+        Number(selectedCourse?.price || 0);
+
+      try {
+
+        const value =
+          window.FundaLegacy?.getPayableAmount?.(
+            selectedCourse
+          );
+
+        return Number.isFinite(Number(value))
+          ? Number(value)
+          : fallback;
+
+      } catch (error) {
+
+        return fallback;
+
+      }
+
+    }
+
+
     /*
       ============================================================
       CREATE OR LOAD ENROLLMENT
@@ -2260,9 +2309,7 @@
               "pending",
 
             amount:
-              Number(
-                selectedCourse.price || 0
-              ),
+              effectiveCoursePrice(),
 
             approval_department:
               "Admissions & Finance"
@@ -2548,6 +2595,12 @@
           await ensureEnrollment();
 
 
+        const legacyClaim =
+          await window.FundaLegacy?.saveClaim?.(
+            enrollment.id
+          ) || null;
+
+
         /*
           UPLOAD PAYMENT PROOF
         */
@@ -2587,10 +2640,13 @@
             .update({
 
               amount:
-                Number(
-                  selectedCourse.price ||
-                  0
-                ),
+                effectiveCoursePrice(),
+
+              ...(
+                window.FundaLegacy?.getEnrollmentFields?.(
+                  legacyClaim
+                ) || {}
+              ),
 
               enrollment_status:
                 "pending",
@@ -2648,10 +2704,13 @@
                 enrollment.id,
 
               amount:
-                Number(
-                  selectedCourse.price ||
-                  0
-                ),
+                effectiveCoursePrice(),
+
+              ...(
+                window.FundaLegacy?.getPaymentFields?.(
+                  legacyClaim
+                ) || {}
+              ),
 
               payment_method:
                 paymentMethod,
@@ -2910,6 +2969,7 @@
     initialisePage();
 
   </script>
+  <script src="legacy-student-upgrade.js?v=20260904"></script>
 
 </body>
   </html>
