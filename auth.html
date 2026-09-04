@@ -441,7 +441,18 @@
         .eq("user_id",user.id)
         .maybeSingle();
 
-      if (student) window.location.href = "dashboard.html";
+      /* Registration is only account/profile creation. A student who has not
+         selected a course yet must continue to course selection, not dashboard. */
+      if (student) {
+        const { data: enrolment } = await supabaseClient
+          .from("enrollments")
+          .select("id")
+          .eq("student_id",student.id)
+          .limit(1)
+          .maybeSingle();
+
+        window.location.href = enrolment ? "dashboard.html" : "onboarding.html";
+      }
     } catch (error) {
       console.error("Registration page initialisation error:", error);
       showMessage(error?.message || "The Academy connection could not be initialised.");
