@@ -390,7 +390,7 @@
       if (error) {
         const lower = String(error.message || "").toLowerCase();
         if (lower.includes("already") || lower.includes("exists") || lower.includes("registered")) {
-          throw new Error("An account with this email already exists. Please sign in instead of creating another account.");
+          throw new Error("An account with this email already exists. This can include an account created during an earlier interrupted registration. Please sign in with that email; if you do not remember the password, use Forgot password.");
         }
         throw error;
       }
