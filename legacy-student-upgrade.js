@@ -198,6 +198,7 @@ function updateSummary(){
  if(state.type&&state.type!=="first_time"&&state.entitlement?.matched){
    price.innerHTML=`<span style="text-decoration:line-through;color:#94a3b8;font-size:14px">${money(course.price)}</span><br>${money(payable)} <span style="font-size:12px;color:#15803d">(${state.entitlement.discount_percent}% off)</span>`;
  }else price.textContent=money(course.price);
+ try{window.FundaPaymentIntegrity?.refresh?.();}catch(e){}
 }
 function validate(){
  if(!state.type)return "Please tell us whether you are a first-time, legacy, incomplete legacy or returning Funda student.";
