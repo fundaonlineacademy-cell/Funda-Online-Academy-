@@ -3,6 +3,28 @@
 const $=s=>document.querySelector(s), money=n=>'R'+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:2}), low=v=>String(v||'').toLowerCase(), esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
 const ranks=[{n:'Ambassador',min:0,max:10000,pay:0},{n:'Bronze',min:10000,max:25000,pay:0},{n:'Silver',min:25000,max:50000,pay:0},{n:'Gold',min:50000,max:100000,pay:5000},{n:'Platinum',min:100000,max:250000,pay:8000},{n:'Diamond',min:250000,max:500000,pay:12000},{n:'Executive',min:500000,max:1000000,pay:18000},{n:'Elite',min:1000000,max:Infinity,pay:25000}];
 const nav=[['dashboard','⌂ Dashboard'],['referrals','◎ My Referrals'],['earnings','R My Earnings'],['compensation','▣ Compensation Plan'],['payouts','▤ Payouts & Banking'],['support','◉ Marketing & Support'],['profile','♙ My Profile'],['programme','▧ Programme Rules']];
+const saBanks=[
+ {name:'Absa Bank',code:'632005'},
+ {name:'African Bank',code:'430000'},
+ {name:'Bank Zero',code:'888000'},
+ {name:'Bidvest Bank',code:'462005'},
+ {name:'Capitec Bank',code:'470010'},
+ {name:'Capitec Business',code:'450105'},
+ {name:'Discovery Bank',code:'679000'},
+ {name:'First National Bank (FNB)',code:'250655'},
+ {name:'Investec Bank',code:'580105'},
+ {name:'Nedbank',code:'198765'},
+ {name:'Rand Merchant Bank (RMB)',code:'250655'},
+ {name:'Standard Bank',code:'051001'},
+ {name:'TymeBank',code:'678910'},
+ {name:'Other South African Bank',code:''}
+];
+function installBankOptions(){
+ const s=$('#bankName'),b=$('#branchCode'),h=$('#branchHelp');if(!s||!b)return;
+ if(s.options.length<=1)s.insertAdjacentHTML('beforeend',saBanks.map(x=>'<option value="'+esc(x.name)+'" data-code="'+esc(x.code)+'">'+esc(x.name)+'</option>').join(''));
+ const apply=()=>{let o=s.selectedOptions?.[0],code=o?.dataset?.code||'';b.readOnly=!!code;b.value=code;if(h)h.textContent=code?'Universal branch code for '+s.value+': '+code:'This bank may use a branch-specific code. Enter the branch code shown on the bank statement or banking app.';if(!code)b.readOnly=false};
+ s.onchange=apply;apply();
+}
 let db,user,app,ledger=[],referrals=[],payouts=[],bank=null,resources=[],notifications=[],supportTickets=[],supportMessages=[];
 
 function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
@@ -91,17 +113,18 @@ function renderLedger(){
  $('#ledgerBody').innerHTML=ledger.length?ledger.map(x=>'<tr><td>'+fmt(x.earning_month)+'</td><td>'+esc(String(x.earning_type).replaceAll('_',' '))+'</td><td>'+money(x.qualifying_revenue)+'</td><td>'+(Number(x.commission_rate||0)*100).toFixed(x.earning_type==='commission'?0:0)+'%</td><td>'+money(x.commission_amount)+'</td><td>'+badgeStatus(x.earning_status)+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">No earnings have been recorded yet.</td></tr>';
 }
 function renderPayouts(){
+ installBankOptions();
  const paid=payouts.filter(x=>x.status==='paid').reduce((s,x)=>s+Number(x.amount||0),0),scheduled=payouts.filter(x=>['scheduled','processing'].includes(x.status)).reduce((s,x)=>s+Number(x.amount||0),0);
  $('#paidTotal').textContent=money(paid);$('#scheduledTotal').textContent=money(scheduled);
  $('#payoutBody').innerHTML=payouts.length?payouts.map(x=>'<tr><td>'+fmt(x.payment_date||x.created_at)+'</td><td>'+money(x.amount)+'</td><td>'+esc(x.payment_reference||'—')+'</td><td>'+badgeStatus(x.status)+'</td></tr>').join(''):'<tr><td colspan="4" class="empty">No payouts recorded yet.</td></tr>';
- if(bank){let tail=String(bank.account_number||'').slice(-4);$('#bankStatus').className='notice '+(bank.verification_status==='verified'?'ok':'gold');$('#bankStatus').textContent='Banking details '+String(bank.verification_status).replaceAll('_',' ')+' · '+bank.bank_name+' · Account ending •••• '+tail;$('#accountHolder').value=bank.account_holder||'';$('#bankName').value=bank.bank_name||'';$('#accountType').value=bank.account_type||'';$('#branchCode').value=bank.branch_code||'';$('#accountNumber').value=''}else{$('#bankStatus').className='notice gold';$('#bankStatus').textContent='No banking details on file. Add your payout account below.'}
+ if(bank){let tail=String(bank.account_number||'').slice(-4);$('#bankStatus').className='notice '+(bank.verification_status==='verified'?'ok':'gold');$('#bankStatus').textContent='Banking details '+String(bank.verification_status).replaceAll('_',' ')+' · '+bank.bank_name+' · Account ending •••• '+tail;$('#accountHolder').value=bank.account_holder||'';let s=$('#bankName');if(s&&!saBanks.some(x=>x.name===bank.bank_name)){let o=document.createElement('option');o.value=bank.bank_name;o.textContent=bank.bank_name;o.dataset.code=bank.branch_code||'';s.appendChild(o)}$('#bankName').value=bank.bank_name||'';$('#accountType').value=bank.account_type||'';let selected=$('#bankName')?.selectedOptions?.[0],autoCode=selected?.dataset?.code||'';$('#branchCode').readOnly=!!autoCode;$('#branchCode').value=autoCode||bank.branch_code||'';$('#accountNumber').value='';$('#bankName').dispatchEvent(new Event('change'))}else{$('#bankStatus').className='notice gold';$('#bankStatus').textContent='No banking details on file. Add your payout account below.'}
  $('#bankForm').onsubmit=saveBank;
 }
 async function saveBank(e){
  e.preventDefault();let btn=$('#saveBank'),msg=$('#bankMsg'),num=$('#accountNumber').value.trim();
  if(bank&&!num){msg.textContent='For security, re-enter the full account number when updating banking details.';return}
  btn.disabled=true;btn.textContent='Saving securely…';msg.textContent='';
- let q=await db.rpc('submit_own_ambassador_payout_details',{p_account_holder:$('#accountHolder').value.trim(),p_bank_name:$('#bankName').value.trim(),p_account_number:num,p_account_type:$('#accountType').value,p_branch_code:$('#branchCode').value.trim()});
+ if(!$('#bankName').value){msg.textContent='Please select your bank.';btn.disabled=false;btn.textContent='Save / Update Banking Details';return}if(!$('#branchCode').value.trim()){msg.textContent='Please enter the branch code for the selected bank.';btn.disabled=false;btn.textContent='Save / Update Banking Details';return}let q=await db.rpc('submit_own_ambassador_payout_details',{p_account_holder:$('#accountHolder').value.trim(),p_bank_name:$('#bankName').value,p_account_number:num,p_account_type:$('#accountType').value,p_branch_code:$('#branchCode').value.trim()});
  if(q.error){msg.textContent=q.error.message}else{msg.textContent='Banking details saved. Finance verification is now pending.';let b=await db.from('ambassador_payout_details').select('*').eq('application_id',app.id).maybeSingle();bank=b.data||null;renderPayouts()}
  btn.disabled=false;btn.textContent='Save / Update Banking Details';
 }
