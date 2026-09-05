@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<head>
+<head><meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate"><meta http-equiv="Pragma" content="no-cache"><meta http-equiv="Expires" content="0">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Funda Staff Portal</title>
@@ -106,6 +106,17 @@ function showInline(id,msg,ok){let x=document.getElementById(id);if(!x)return;x.
 async function logout(){await initClient();await db.auth.signOut();location.href='staff-portal.html'}
 document.getElementById('topLogout').onclick=logout;
 load();
+</script>
+<script>
+window.fundaProtectedPageRecheck=async function(){
+  try{
+    if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY){location.replace('login.html');return}
+    const client=window.__fundaSessionGuardClient||(window.__fundaSessionGuardClient=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}}));
+    const {data}=await client.auth.getSession();
+    if(!data?.session?.user)location.replace('login.html');
+  }catch(_){location.replace('login.html')}
+};
+window.addEventListener('pageshow',function(e){if(e.persisted)window.fundaProtectedPageRecheck()});
 </script>
 </body>
 </html>
