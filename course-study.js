@@ -32,8 +32,34 @@ async function init(){
   if(!course){show('This course could not be found.');return}
   state.course=course;
   $('sidebarCourse').textContent=course.title||'Selected Course';
+
+  // Resume at the student's next unfinished lesson for this course.
+  const {data:mods,error:me}=await db.from('course_modules').select('id,module_number').eq('course_id',courseId).order('module_number',{ascending:true});
+  if(me)throw me;
+  const moduleRows=mods||[];
+  if(moduleRows.length){
+    const mids=moduleRows.map(m=>m.id);
+    const {data:lessons,error:le}=await db.from('lessons').select('id,module_id,lesson_number').in('module_id',mids).order('lesson_number',{ascending:true});
+    if(le)throw le;
+    const lessonRows=(lessons||[]).sort((a,b)=>{
+      const am=moduleRows.find(m=>m.id===a.module_id)?.module_number||0;
+      const bm=moduleRows.find(m=>m.id===b.module_id)?.module_number||0;
+      return am-bm||Number(a.lesson_number)-Number(b.lesson_number);
+    });
+    if(lessonRows.length){
+      const ids=lessonRows.map(l=>l.id);
+      const {data:done,error:pe}=await db.from('lesson_progress').select('lesson_id,completed').eq('student_id',user.id).eq('completed',true).in('lesson_id',ids);
+      if(pe)throw pe;
+      const completed=new Set((done||[]).map(x=>String(x.lesson_id)));
+      const next=lessonRows.find(l=>!completed.has(String(l.id)))||lessonRows[lessonRows.length-1];
+      const nextModule=moduleRows.find(m=>m.id===next.module_id);
+      state.module=Number(nextModule?.module_number||1);
+      state.unit=Number(next.lesson_number||1);
+    }
+  }
+
   render();
-  document.dispatchEvent(new CustomEvent('funda:approved-course-ready',{detail:{courseId}}));
+  document.dispatchEvent(new CustomEvent('funda:approved-course-ready',{detail:{courseId,module:state.module,lesson:state.unit}}));
  }catch(e){console.error(e);show(e.message||'Unable to open the learning workspace.')}
 }
 $('logout')?.addEventListener('click',async()=>{await db.auth.signOut();location.href='login.html'});
