@@ -469,7 +469,7 @@
       }
 
       const staffRoles = ["admin", "staff"];
-      const actualRole = profile?.role || "student";
+      const actualRole = profile?.role || "student";if(actualRole==="ambassador"){await supabaseClient.auth.signOut();showMessage("This is an Ambassador account. Please use the separate Ambassador Login from the Ambassador Programme page.");button.disabled=false;button.textContent="Login";return;}
 
       if (currentRole === "admin") {
         if (!staffRoles.includes(actualRole)) {
