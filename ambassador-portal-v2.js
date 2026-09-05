@@ -12,7 +12,7 @@ function showSection(name){document.querySelectorAll('.section').forEach(x=>x.cl
 function installNav(){let html=nav.map(([k,t])=>'<button class="navbtn '+(k==='dashboard'?'on':'')+'" data-go="'+k+'">'+t+'</button>').join('');$('#sideNav').innerHTML=html;$('#mobileNav').innerHTML=html;document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showSection(b.dataset.go));$('#profileTop').onclick=()=>showSection('profile')}
 function fail(msg){$('#loading').classList.add('hide');$('#notFound').classList.remove('hide');if(msg)$('#notFound .muted').textContent=msg}
 function sum(type,statuses){return ledger.filter(x=>(!type||x.earning_type===type)&&(!statuses||statuses.includes(x.earning_status))).reduce((s,x)=>s+Number(x.commission_amount||0),0)}
-function referralLink(){if(!app?.referral_code)return '';return location.origin+'/auth.html?ref='+encodeURIComponent(app.referral_code)}
+function referralLink(){if(!app?.referral_code)return '';return location.origin+'/courses-public.html?ref='+encodeURIComponent(app.referral_code)+'#courses'}
 async function copy(text,btn){if(!text)return;try{await navigator.clipboard.writeText(text);let old=btn.textContent;btn.textContent='Copied ✓';setTimeout(()=>btn.textContent=old,1200)}catch{alert(text)}}
 
 async function init(){
