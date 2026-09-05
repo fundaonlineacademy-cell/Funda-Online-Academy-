@@ -3,7 +3,7 @@
 const $=s=>document.querySelector(s), money=n=>'R'+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:2}), low=v=>String(v||'').toLowerCase(), esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
 const ranks=[{n:'Ambassador',min:0,max:10000,pay:0},{n:'Bronze',min:10000,max:25000,pay:0},{n:'Silver',min:25000,max:50000,pay:0},{n:'Gold',min:50000,max:100000,pay:5000},{n:'Platinum',min:100000,max:250000,pay:8000},{n:'Diamond',min:250000,max:500000,pay:12000},{n:'Executive',min:500000,max:1000000,pay:18000},{n:'Elite',min:1000000,max:Infinity,pay:25000}];
 const nav=[['dashboard','▦ Dashboard'],['referrals','◎ My Referrals'],['earnings','R Earnings'],['payouts','▤ Payouts'],['profile','♙ My Profile'],['programme','▧ Programme Rules'],['support','◉ Support & Marketing']];
-let db,user,app,ledger=[],referrals=[],payouts=[],bank=null;
+let db,user,app,ledger=[],referrals=[],payouts=[],bank=null,resources=[],notifications=[],supportTickets=[],supportMessages=[];
 
 function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
 function fmt(v){if(!v)return '—';try{return new Date(v).toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'})}catch{return '—'}}
@@ -24,13 +24,17 @@ async function init(){
  let a=await db.from('ambassador_programme_applications').select('*').eq('email',user.email.toLowerCase()).maybeSingle();
  if(a.error||!a.data||a.data.status!=='approved'){await db.auth.signOut();return fail('This account is not connected to an approved Ambassador application.')}
  app=a.data;
- const [l,r,p,b]=await Promise.all([
+ const [l,r,p,b,m,n,t,sm]=await Promise.all([
    db.from('ambassador_earnings_ledger').select('*').eq('application_id',app.id).order('created_at',{ascending:false}),
    db.rpc('get_own_ambassador_referrals'),
    db.from('ambassador_payouts').select('*').eq('application_id',app.id).order('created_at',{ascending:false}),
-   db.from('ambassador_payout_details').select('*').eq('application_id',app.id).maybeSingle()
+   db.from('ambassador_payout_details').select('*').eq('application_id',app.id).maybeSingle(),
+   db.from('ambassador_marketing_resources').select('*').eq('status','active').order('created_at',{ascending:false}),
+   db.from('ambassador_notifications').select('*').eq('status','active').order('created_at',{ascending:false}),
+   db.from('ambassador_support_tickets').select('*').eq('application_id',app.id).order('created_at',{ascending:false}),
+   db.from('ambassador_support_messages').select('*').order('created_at',{ascending:true})
  ]);
- ledger=l.data||[];referrals=r.data||[];payouts=p.data||[];bank=b.data||null;
+ ledger=l.data||[];referrals=r.data||[];payouts=p.data||[];bank=b.data||null;resources=m.data||[];notifications=n.data||[];supportTickets=t.data||[];supportMessages=sm.data||[];
  $('#loading').classList.add('hide');$('#portal').classList.remove('hide');render();
 }
 
@@ -55,7 +59,7 @@ function render(){
  $('#copyCode').onclick=()=>copy(app.referral_code,$('#copyCode'));$('#copyLink').onclick=()=>copy(referralLink(),$('#copyLink'));
  if(next){let remain=Math.max(0,next.min-life),pct=Math.max(0,Math.min(100,(life-r.min)/(next.min-r.min)*100));$('#nextRank').textContent='Current rank: '+r.n+'. '+money(remain)+' more lifetime qualifying revenue to reach '+next.n+'.';$('#progressBar').style.width=pct+'%'}else{$('#nextRank').textContent='Elite rank achieved.';$('#progressBar').style.width='100%'}
  $('#monthlyTarget').textContent=r.pay?'Monthly Performance Payment eligibility at this rank: up to '+money(r.pay)+', subject to monthly performance verification.':'Monthly Performance Payments begin at Gold / Level 4.';
- renderReferrals();renderLedger();renderPayouts();renderProfile();renderAgreement();
+ renderReferrals();renderLedger();renderPayouts();renderProfile();renderAgreement();renderSupportHub();
 }
 
 function renderReferrals(){
@@ -102,6 +106,34 @@ async function acceptAgreement(){
  if(q.error||q.data!==true){m.textContent=q.error?.message||'Agreement could not be accepted.';b.disabled=false;b.textContent='Accept Agreement';return}
  app.agreement_status='accepted';app.agreement_accepted_at=new Date().toISOString();renderAgreement();$('#accountLine').textContent='Ambassador ID: '+String(app.id).slice(0,8).toUpperCase()+' · Agreement: accepted';
 }
+
+function renderSupportHub(){
+ const mr=$('#marketingResources'),nl=$('#notificationList'),tl=$('#supportTicketList');
+ if(mr)mr.innerHTML=resources.length?resources.map(x=>'<div class="earning" style="margin-bottom:8px"><b style="font-size:14px">'+esc(x.title)+'</b><span>'+esc(String(x.resource_type||'resource').toUpperCase())+'</span><p class="muted">'+esc(x.description||'')+'</p>'+(x.action_url?'<a class="btn alt" href="'+esc(x.action_url)+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">Open Resource</a>':'')+(x.file_url?'<a class="btn alt" href="'+esc(x.file_url)+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;margin-left:6px">Open File</a>':'')+'</div>').join(''):'<div class="empty">No Ambassador marketing resources are published yet.</div>';
+ if(nl)nl.innerHTML=notifications.length?notifications.map(x=>'<div class="earning" style="margin-bottom:8px"><b style="font-size:14px">'+esc(x.title)+'</b><span>'+esc(String(x.category||'programme').toUpperCase())+' · '+fmt(x.created_at)+'</span><p class="muted">'+esc(x.message)+'</p></div>').join(''):'<div class="empty">No new Ambassador notifications.</div>';
+ if(tl)tl.innerHTML=supportTickets.length?supportTickets.map(t=>'<div class="earning" style="margin-bottom:8px"><b style="font-size:14px">'+esc(t.subject)+'</b><span>'+esc(t.category)+' · '+fmt(t.created_at)+' · '+esc(String(t.status).replaceAll('_',' ').toUpperCase())+'</span><p class="muted">'+esc(t.notes||'')+'</p><button class="btn alt" data-support-view="'+t.id+'">View / Reply</button></div>').join(''):'<div class="empty">No Ambassador support tickets yet.</div>';
+ document.querySelectorAll('[data-support-view]').forEach(b=>b.onclick=()=>openSupportTicket(b.dataset.supportView));
+ if($('#newSupportTicket'))$('#newSupportTicket').onclick=openNewSupportTicket;
+}
+function supportModal(html){document.getElementById('ambSupportModal')?.remove();document.body.insertAdjacentHTML('beforeend','<div id="ambSupportModal" style="position:fixed;inset:0;background:#07172fcc;z-index:9999;display:grid;place-items:center;padding:14px"><div class="card" style="width:min(680px,96vw);max-height:92vh;overflow:auto;margin:0">'+html+'</div></div>')}
+function openNewSupportTicket(){
+ supportModal('<div class="row" style="justify-content:space-between"><h2>Log Ambassador Support Ticket</h2><button class="btn alt" id="ambSupportClose">Close</button></div><form id="ambSupportForm" class="form"><select id="ambSupportCat" class="field"><option>Referral</option><option>Commission</option><option>Achievement Bonus</option><option>Monthly Performance Payment</option><option>Payout / Banking</option><option>Marketing</option><option>Account / Profile</option><option>General</option></select><select id="ambSupportPriority" class="field"><option value="normal">Normal</option><option value="high">High</option><option value="urgent">Urgent</option></select><input id="ambSupportSubject" class="field wide" required placeholder="Subject"><textarea id="ambSupportNotes" class="field wide" required style="min-height:120px" placeholder="Explain your query"></textarea><button class="btn wide">Submit Ticket</button></form><div id="ambSupportMsg" class="muted"></div>');
+ $('#ambSupportClose').onclick=()=>$('#ambSupportModal').remove();$('#ambSupportForm').onsubmit=submitSupportTicket;
+}
+async function submitSupportTicket(e){
+ e.preventDefault();let q=await db.from('ambassador_support_tickets').insert({application_id:app.id,subject:$('#ambSupportSubject').value.trim(),category:$('#ambSupportCat').value,priority:$('#ambSupportPriority').value,notes:$('#ambSupportNotes').value.trim(),status:'open'}).select().single();
+ if(q.error){$('#ambSupportMsg').textContent=q.error.message;return}
+ $('#ambSupportModal').remove();let t=await db.from('ambassador_support_tickets').select('*').eq('application_id',app.id).order('created_at',{ascending:false});supportTickets=t.data||[];renderSupportHub();
+}
+function openSupportTicket(id){
+ let t=supportTickets.find(x=>x.id===id);if(!t)return;let msgs=supportMessages.filter(x=>x.ticket_id===id),closed=['resolved','closed'].includes(t.status);
+ supportModal('<div class="row" style="justify-content:space-between"><div><h2>'+esc(t.subject)+'</h2><p class="muted">'+esc(t.category)+' · '+fmt(t.created_at)+' · '+esc(t.status.replaceAll('_',' '))+'</p></div><button class="btn alt" id="ambSupportClose">Close</button></div><div class="notice">'+esc(t.notes)+'</div><div style="margin-top:12px">'+(msgs.length?msgs.map(m=>'<div class="earning" style="margin-bottom:8px"><span>'+(m.author_role==='ambassador'?'YOU':'FUNDA SUPPORT')+' · '+fmt(m.created_at)+'</span><p class="muted">'+esc(m.message)+'</p></div>').join(''):'<div class="empty">No replies yet.</div>')+'</div>'+(closed?'<div class="notice ok">This ticket is '+esc(t.status)+'.</div>':'<form id="ambSupportReplyForm" class="form"><textarea id="ambSupportReply" class="field wide" required style="min-height:90px" placeholder="Add a reply"></textarea><button class="btn wide">Send Reply</button></form>'));
+ $('#ambSupportClose').onclick=()=>$('#ambSupportModal').remove();if(!closed)$('#ambSupportReplyForm').onsubmit=e=>replySupport(e,id);
+}
+async function replySupport(e,id){
+ e.preventDefault();let text=$('#ambSupportReply').value.trim();if(!text)return;let q=await db.from('ambassador_support_messages').insert({ticket_id:id,author_id:user.id,author_role:'ambassador',message:text});if(q.error)return alert(q.error.message);let sm=await db.from('ambassador_support_messages').select('*').order('created_at',{ascending:true});supportMessages=sm.data||[];openSupportTicket(id);
+}
+
 $('#logout').onclick=async()=>{if(db)await db.auth.signOut();location.href='ambassador-login.html'};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
