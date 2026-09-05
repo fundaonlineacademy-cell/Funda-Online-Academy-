@@ -22,7 +22,7 @@ async function init(){
  let s=await db.auth.getSession();user=s.data.session?.user;
  if(!user)return location.replace('ambassador-login.html');
  let a=await db.from('ambassador_programme_applications').select('*').eq('email',user.email.toLowerCase()).maybeSingle();
- if(a.error||!a.data||a.data.status!=='approved'){await db.auth.signOut();return fail('This account is not connected to an approved Ambassador application.')}
+ if(a.error||!a.data||a.data.status!=='approved'||a.data.agreement_status!=='accepted'||!['introductory','active'].includes(a.data.account_status)){await db.auth.signOut();return fail('This Ambassador account has not completed agreement acceptance and activation.')}
  app=a.data;
  const [l,r,p,b,m,n,t,sm]=await Promise.all([
    db.from('ambassador_earnings_ledger').select('*').eq('application_id',app.id).order('created_at',{ascending:false}),
