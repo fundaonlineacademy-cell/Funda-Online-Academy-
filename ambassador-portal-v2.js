@@ -22,8 +22,30 @@ async function init(){
  let s=await db.auth.getSession();user=s.data.session?.user;
  if(!user)return location.replace('ambassador-login.html');
  let a=await db.from('ambassador_programme_applications').select('*').eq('email',user.email.toLowerCase()).maybeSingle();
- if(a.error||!a.data||a.data.status!=='approved'||a.data.agreement_status!=='accepted'||!['introductory','active'].includes(a.data.account_status)){await db.auth.signOut();return fail('This Ambassador account has not completed agreement acceptance and activation.')}
+ if(a.error||!a.data)return fail('No Ambassador application is connected to this account.');
  app=a.data;
+ if(app.status!=='approved'){
+   $('#loading').classList.add('hide');$('#notFound').classList.remove('hide');
+   let title=$('#notFound h2'),msg=$('#notFound .muted');
+   if(title)title.textContent=app.status==='declined'?'Ambassador application declined':app.status==='waitlisted'?'Ambassador application waitlisted':'Ambassador application under review';
+   if(msg)msg.textContent=app.status==='declined'?'Your Ambassador application was not approved. Contact Ambassador Support if you need clarification.':app.status==='waitlisted'?'Your application is on the Ambassador waitlist. You can keep using this login to check for status changes.':'Your application has been received and is still being reviewed. You can keep using this login to check your status.';
+   return;
+ }
+ if(app.agreement_status!=='accepted'){
+   $('#loading').classList.add('hide');$('#portal').classList.remove('hide');
+   $('#sideNav').innerHTML='<button class="navbtn on" data-go="programme">▧ Programme Agreement</button>';
+   $('#mobileNav').innerHTML='<button class="navbtn on" data-go="programme">▧ Programme Agreement</button>';
+   document.querySelectorAll('[data-go="programme"]').forEach(b=>b.onclick=()=>showSection('programme'));
+   $('#profileTop').onclick=()=>showSection('programme');
+   showSection('programme');renderAgreement();return;
+ }
+ if(!['introductory','active'].includes(app.account_status)){
+   let ac=await db.rpc('activate_own_ambassador_account');
+   if(ac.error||ac.data!==true)return fail(ac.error?.message||'Your Ambassador account could not be activated.');
+   a=await db.from('ambassador_programme_applications').select('*').eq('email',user.email.toLowerCase()).maybeSingle();
+   if(a.error||!a.data)return fail('Your Ambassador account could not be refreshed after activation.');
+   app=a.data;
+ }
  const [l,r,p,b,m,n,t,sm]=await Promise.all([
    db.from('ambassador_earnings_ledger').select('*').eq('application_id',app.id).order('created_at',{ascending:false}),
    db.rpc('get_own_ambassador_referrals'),
@@ -102,9 +124,13 @@ function renderAgreement(){
 }
 async function acceptAgreement(){
  let m=$('#agreementMsg');if(!$('#acceptCheck').checked){m.textContent='Please confirm that you have read and accept the agreement.';return}
- let b=$('#acceptAgreement');b.disabled=true;b.textContent='Recording acceptance…';let q=await db.rpc('accept_own_ambassador_agreement');
+ let b=$('#acceptAgreement');b.disabled=true;b.textContent='Accepting & activating…';
+ let q=await db.rpc('accept_own_ambassador_agreement');
  if(q.error||q.data!==true){m.textContent=q.error?.message||'Agreement could not be accepted.';b.disabled=false;b.textContent='Accept Agreement';return}
- app.agreement_status='accepted';app.agreement_accepted_at=new Date().toISOString();renderAgreement();$('#accountLine').textContent='Ambassador ID: '+String(app.id).slice(0,8).toUpperCase()+' · Agreement: accepted';
+ let ac=await db.rpc('activate_own_ambassador_account');
+ if(ac.error||ac.data!==true){m.textContent=ac.error?.message||'Agreement accepted, but account activation could not be completed.';b.disabled=false;b.textContent='Try Activation Again';return}
+ m.textContent='Agreement accepted. Your Ambassador account is now active.';
+ setTimeout(()=>location.reload(),700);
 }
 
 function renderSupportHub(){
