@@ -2,7 +2,7 @@
 'use strict';
 const $=s=>document.querySelector(s), money=n=>'R'+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:2}), low=v=>String(v||'').toLowerCase(), esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
 const ranks=[{n:'Ambassador',min:0,max:10000,pay:0},{n:'Bronze',min:10000,max:25000,pay:0},{n:'Silver',min:25000,max:50000,pay:0},{n:'Gold',min:50000,max:100000,pay:5000},{n:'Platinum',min:100000,max:250000,pay:8000},{n:'Diamond',min:250000,max:500000,pay:12000},{n:'Executive',min:500000,max:1000000,pay:18000},{n:'Elite',min:1000000,max:Infinity,pay:25000}];
-const nav=[['dashboard','▦ Dashboard'],['referrals','◎ My Referrals'],['earnings','R Earnings'],['payouts','▤ Payouts'],['profile','♙ My Profile'],['programme','▧ Programme Rules'],['support','◉ Support & Marketing']];
+const nav=[['dashboard','⌂ Dashboard'],['referrals','◎ My Referrals'],['earnings','R My Earnings'],['compensation','▣ Compensation Plan'],['payouts','▤ Payouts & Banking'],['support','◉ Marketing & Support'],['profile','♙ My Profile'],['programme','▧ Programme Rules']];
 let db,user,app,ledger=[],referrals=[],payouts=[],bank=null,resources=[],notifications=[],supportTickets=[],supportMessages=[];
 
 function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
@@ -66,7 +66,7 @@ function render(){
  const total=sum(null,approvedPaid), pending=sum(null,pendingHeld), commission=sum('commission',approvedPaid), bonus=sum('achievement_bonus',approvedPaid), performance=sum('monthly_performance',approvedPaid);
  const r=rank(life),idx=ranks.indexOf(r),next=ranks[idx+1];
  $('#welcome').textContent='Welcome, '+(app.full_name||'Ambassador');
- $('#rankLabel').textContent=r.n.toUpperCase()+' AMBASSADOR';
+ $('#rankLabel').textContent=r.n==='Ambassador'?'AMBASSADOR':r.n.toUpperCase()+' AMBASSADOR';
  $('#accountLine').textContent='Ambassador ID: '+String(app.id).slice(0,8).toUpperCase()+' · Agreement: '+String(app.agreement_status||'not accepted').replaceAll('_',' ');
  $('#accountBadge').textContent=String(app.account_status||'application').replaceAll('_',' ').toUpperCase();
  $('#accountBadge').className='badge '+(['active','introductory'].includes(app.account_status)?'ok':'warn');
@@ -81,7 +81,7 @@ function render(){
  $('#copyCode').onclick=()=>copy(app.referral_code,$('#copyCode'));$('#copyLink').onclick=()=>copy(referralLink(),$('#copyLink'));
  if(next){let remain=Math.max(0,next.min-life),pct=Math.max(0,Math.min(100,(life-r.min)/(next.min-r.min)*100));$('#nextRank').textContent='Current rank: '+r.n+'. '+money(remain)+' more lifetime qualifying revenue to reach '+next.n+'.';$('#progressBar').style.width=pct+'%'}else{$('#nextRank').textContent='Elite rank achieved.';$('#progressBar').style.width='100%'}
  $('#monthlyTarget').textContent=r.pay?'Monthly Performance Payment eligibility at this rank: up to '+money(r.pay)+', subject to monthly performance verification.':'Monthly Performance Payments begin at Gold / Level 4.';
- renderReferrals();renderLedger();renderPayouts();renderProfile();renderAgreement();renderSupportHub();
+ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showSection(b.dataset.go));renderReferrals();renderLedger();renderPayouts();renderProfile();renderAgreement();renderSupportHub();
 }
 
 function renderReferrals(){
