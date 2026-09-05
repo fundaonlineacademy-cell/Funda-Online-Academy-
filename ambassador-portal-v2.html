@@ -16,9 +16,31 @@
 .mobileNav{display:none}.agreement{max-height:360px;overflow:auto;border:1px solid #e1dccf;border-radius:12px;padding:14px;background:#fffdf8;font-size:12px;line-height:1.65}
 @media(max-width:900px){.shell{grid-template-columns:1fr}.side{display:none}.mobileNav{display:flex;overflow:auto;gap:7px;padding:10px 18px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:72px;z-index:40}.mobileNav .navbtn{width:auto;white-space:nowrap;border:1px solid var(--line);padding:9px 11px}.cards{grid-template-columns:repeat(2,1fr)}.split{grid-template-columns:1fr}}
 @media(max-width:560px){.topin{padding:0 12px}.topActions .label{display:none}.shell{padding:14px 12px 30px}.cards,.three,.form{grid-template-columns:1fr}.wide{grid-column:auto}.hero{padding:20px}.hero h1{font-size:25px}.code{font-size:18px}}
+</style><style>
+:root{--sidebar:#0b2b49;--sidebar2:#123b5d;--gold2:#d2a43a;--page:#f5f7fa}
+body{background:var(--page)}
+.brandWrap{display:flex;align-items:center;gap:10px}.portalLogo{width:38px;height:38px;object-fit:contain;background:#fff;border-radius:8px;padding:3px}.brandSub{font-size:8px;letter-spacing:.16em;color:#efd78e;margin-top:3px}
+.top{background:linear-gradient(90deg,#0b2b49,#173f62);box-shadow:0 2px 12px #07172f22}.topin{max-width:none;padding:0 22px}
+.shell{max-width:none;margin:0;padding:0 22px 40px 252px;display:block}.content{max-width:1320px;margin:0 auto;padding-top:22px}
+.side{position:fixed;left:0;top:72px;bottom:0;width:230px;border:0;border-radius:0;background:linear-gradient(180deg,var(--sidebar),#09233b);padding:18px 12px;z-index:35;overflow:auto;box-shadow:8px 0 24px #07172f12}.navKicker{color:#d9b85d;padding:8px 12px 14px}.navbtn{color:#dce8f2;padding:12px 13px;margin:3px 0;border-radius:9px;font-size:12px}.navbtn.on,.navbtn:hover{background:linear-gradient(90deg,#e6b94d,#f1cf78);color:#102c48}.navbtn::first-letter{font-size:14px}
+.hero{background:radial-gradient(circle at 86% 18%,#d9b85d36,transparent 25%),linear-gradient(120deg,#123955,#244f6f);border-radius:18px;padding:26px;border:1px solid #ffffff1a}
+.cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.stat,.card{border-radius:14px;box-shadow:0 4px 18px #1239550b;border-color:#dbe3ea}.stat{padding:18px}.stat b{font-size:26px}
+.card{padding:20px}.card h2{font-size:19px}.sectionHead{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.eyebrow.dark{color:#9b721c}
+.compensationSteps .earning{min-height:150px;background:linear-gradient(180deg,#fff,#fbfcfe)}.compensationSteps .earning b{font-size:25px;color:#0d3557}.compensationSteps .earning p{margin-bottom:0}
+.compHero{background:linear-gradient(135deg,#fffaf0,#fff,#edf5fb)}.compTable td:nth-child(4),.compTable td:nth-child(5),.compTable td:nth-child(6){font-weight:800;color:#173f62}
+.portalFooter{margin-left:230px;background:#fff;border-top:1px solid #dce4ea;padding:30px 28px 18px}.footerGrid{max-width:1320px;margin:auto;display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr;gap:24px}.footerBrand{display:flex;align-items:center;gap:12px}.footerBrand img{width:54px;height:54px;object-fit:contain}.footerBrand b,.footerItem b{color:#123955}.footerBrand span{display:block;font-size:11px;color:#71808d;margin-top:4px}.footerItem{display:flex;gap:10px}.footerIcon{font-size:23px;color:#c99a2e}.footerItem p{font-size:11px;line-height:1.6;color:#6c7a86;margin:5px 0 0}.footerBottom{max-width:1320px;margin:24px auto 0;padding-top:14px;border-top:1px solid #edf0f2;display:flex;justify-content:space-between;gap:12px;color:#75818c;font-size:10px}
+.mobileNav{display:none!important}
+@media(max-width:900px){
+ .topin{padding:0 12px}.portalLogo{width:34px;height:34px}.brand{font-size:13px}.brandSub{font-size:7px}
+ .side{position:static;width:auto;margin:12px;border-radius:14px;background:linear-gradient(135deg,#0b2b49,#173f62);display:block;padding:10px}.side .navKicker{display:none}#sideNav{display:flex;gap:6px;overflow:auto}.side .navbtn{width:auto;white-space:nowrap;border:1px solid #ffffff1e;padding:9px 11px}
+ .shell{padding:0 12px 28px}.content{padding-top:2px}.portalFooter{margin-left:0;padding:24px 14px}.footerGrid{grid-template-columns:1fr 1fr}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:560px){
+ .topActions .label{display:none}.shell{padding:0 10px 24px}.side{margin:10px 0}.hero{padding:20px}.cards,.three,.form{grid-template-columns:1fr}.footerGrid{grid-template-columns:1fr}.footerBottom{flex-direction:column}.sectionHead{flex-direction:column}.compTable{min-width:860px}
+}
 </style></head>
 <body>
-<header class="top"><div class="topin"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div style="font-size:8px;letter-spacing:.16em;color:#efd78e;margin-top:3px">AMBASSADOR PORTAL</div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
+<header class="top"><div class="topin"><div class="brandWrap"><img src="logo.png" alt="Funda Online Academy" class="portalLogo"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div class="brandSub">AMBASSADOR PORTAL</div></div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
 <div class="mobileNav" id="mobileNav"></div>
 <main class="shell">
 <aside class="side"><div class="navKicker">AMBASSADOR MENU</div><div id="sideNav"></div></aside>
@@ -42,6 +64,14 @@
 <section class="card"><h2>Rank & Next Achievement</h2><p id="nextRank" class="muted"></p><div class="progress"><i id="progressBar"></i></div><p id="monthlyTarget" class="muted"></p></section>
 </div>
 <section class="card"><h2>Earning Status</h2><p class="muted">Your three earning streams remain separate so you can see exactly where your earnings come from.</p><div class="three" style="margin-top:12px"><div class="earning"><b id="statusCommission">R0</b><span>DIRECT COMMISSION</span></div><div class="earning"><b id="statusBonus">R0</b><span>ACHIEVEMENT BONUSES</span></div><div class="earning"><b id="statusPerformance">R0</b><span>MONTHLY PERFORMANCE PAYMENTS</span></div></div><div id="earnSummary" class="notice" style="margin-top:12px"></div></section>
+<section class="card compensationPreview">
+  <div class="sectionHead"><div><div class="eyebrow dark">AMBASSADOR COMPENSATION PLAN</div><h2>Three ways to earn as you grow your impact</h2><p class="muted">Earnings are based on verified qualifying student revenue and programme rules.</p></div><button class="btn gold" data-go="compensation">View Full Plan</button></div>
+  <div class="three compensationSteps">
+    <div class="earning"><b>15%</b><span>DIRECT COMMISSION</span><p class="muted">Earn 15% on verified qualifying revenue from students directly attributed to your referral code.</p></div>
+    <div class="earning"><b>Up to R45,000</b><span>ACHIEVEMENT BONUSES</span><p class="muted">One-time bonuses are earned when a new cumulative revenue level is reached for the first time.</p></div>
+    <div class="earning"><b>Up to R25,000</b><span>MONTHLY PERFORMANCE</span><p class="muted">From Gold / Level 4, qualifying monthly performance payments may apply after Academy verification.</p></div>
+  </div>
+</section>
 </section>
 
 <section class="section" data-section="referrals"><div class="card"><h2>My Referrals</h2><p class="muted">For student privacy, only limited referral information is shown. Contact details, ID numbers, payment proofs, assessments and private student records are never exposed here.</p><div class="tablewrap"><table class="tbl"><thead><tr><th>Student</th><th>Course</th><th>Referral Date</th><th>Referral Status</th><th>Earning Status</th><th>Amount</th></tr></thead><tbody id="referralBody"></tbody></table></div></div></section>
@@ -52,6 +82,41 @@
 <div class="split"><section class="card"><h2>Payout & Banking Details</h2><p class="muted">Submit the account where approved Ambassador payouts should be made. Any update returns the details to Finance for verification.</p><div id="bankStatus" class="notice gold">No banking details on file.</div><form id="bankForm" class="form"><input id="accountHolder" class="field wide" required placeholder="Account holder name"><input id="bankName" class="field" required placeholder="Bank name"><select id="accountType" class="field"><option value="">Account type</option><option>Cheque / Current</option><option>Savings</option><option>Transmission</option></select><input id="accountNumber" class="field" required placeholder="Account number"><input id="branchCode" class="field" placeholder="Branch code"><button id="saveBank" class="btn wide">Save / Update Banking Details</button></form><div id="bankMsg" class="muted"></div></section>
 <section class="card"><h2>Payout Summary</h2><div class="three" style="grid-template-columns:1fr;margin-top:12px"><div class="earning"><b id="paidTotal">R0</b><span>PAID TO DATE</span></div><div class="earning"><b id="scheduledTotal">R0</b><span>SCHEDULED / PROCESSING</span></div></div><div class="notice gold" style="margin-top:12px">Earnings and payouts are different records. An earning may be approved before it appears in a completed payout.</div></section></div>
 <section class="card"><h2>Payout History</h2><div class="tablewrap"><table class="tbl"><thead><tr><th>Payment Date</th><th>Amount</th><th>Reference</th><th>Status</th></tr></thead><tbody id="payoutBody"></tbody></table></div></section>
+</section>
+
+<section class="section" data-section="compensation">
+<section class="card compHero">
+  <div class="eyebrow dark">FOUNDING BRAND AMBASSADOR PROGRAMME · 2026</div>
+  <h2>Ambassador Compensation Plan</h2>
+  <p class="muted">The programme rewards direct student referrals and verified performance. There are no downlines, recruitment commissions or team overrides.</p>
+  <div class="three" style="margin-top:14px">
+    <div class="earning"><b>15%</b><span>DIRECT COMMISSION</span><p class="muted">On successfully paid qualifying revenue from your own direct referrals.</p></div>
+    <div class="earning"><b>8 Levels</b><span>ACHIEVEMENT PATH</span><p class="muted">Move from Ambassador through Bronze, Silver, Gold, Platinum, Diamond, Executive and Elite.</p></div>
+    <div class="earning"><b>90 Days</b><span>INTRODUCTORY PERIOD</span><p class="muted">Newly activated ambassadors begin with a 90-day introductory period.</p></div>
+  </div>
+</section>
+<section class="card">
+  <h2>Levels, bonuses & monthly performance payments</h2>
+  <div class="tablewrap"><table class="tbl compTable"><thead><tr><th>Level</th><th>Rank</th><th>Cumulative Direct Qualifying Revenue</th><th>Direct Commission</th><th>One-Time Achievement Bonus</th><th>Monthly Performance Payment</th></tr></thead><tbody>
+  <tr><td>1</td><td><b>Ambassador</b></td><td>R0 – R9,999</td><td>15%</td><td>—</td><td>—</td></tr>
+  <tr><td>2</td><td><b>Bronze</b></td><td>R10,000 – R24,999</td><td>15%</td><td>R500</td><td>—</td></tr>
+  <tr><td>3</td><td><b>Silver</b></td><td>R25,000 – R49,999</td><td>15%</td><td>R1,000</td><td>—</td></tr>
+  <tr><td>4</td><td><b>Gold</b></td><td>R50,000 – R99,999</td><td>15%</td><td>R2,500</td><td>Up to R5,000</td></tr>
+  <tr><td>5</td><td><b>Platinum</b></td><td>R100,000 – R249,999</td><td>15%</td><td>R5,000</td><td>Up to R8,000</td></tr>
+  <tr><td>6</td><td><b>Diamond</b></td><td>R250,000 – R499,999</td><td>15%</td><td>R10,000</td><td>Up to R12,000</td></tr>
+  <tr><td>7</td><td><b>Executive</b></td><td>R500,000 – R999,999</td><td>15%</td><td>R20,000</td><td>Up to R18,000</td></tr>
+  <tr><td>8</td><td><b>Elite</b></td><td>R1,000,000+</td><td>15%</td><td>R45,000</td><td>Up to R25,000</td></tr>
+  </tbody></table></div>
+</section>
+<section class="card">
+  <h2>How earnings are calculated</h2>
+  <div class="three compensationSteps" style="margin-top:12px">
+    <div class="earning"><b>1</b><span>STUDENT USES YOUR LINK</span><p class="muted">The student enters through your tracked referral link and your code is retained through their enrolment journey.</p></div>
+    <div class="earning"><b>2</b><span>PAYMENT IS VERIFIED</span><p class="muted">Only successfully paid, approved and qualifying student revenue counts. Refunds, reversals, fraud and prohibited self-referrals do not qualify.</p></div>
+    <div class="earning"><b>3</b><span>EARNINGS ARE RECORDED</span><p class="muted">Commission, achievement bonuses and qualifying monthly performance payments are recorded separately for transparency.</p></div>
+  </div>
+  <div class="notice gold" style="margin-top:12px"><b>Important:</b> Monthly Performance Payments are not guaranteed salaries. They apply only when the relevant monthly conditions are met and verified by Funda Online Academy.</div>
+</section>
 </section>
 
 <section class="section" data-section="profile"><div class="split"><section class="card"><h2>My Ambassador Profile</h2><div id="profileMeta" class="notice"></div><form id="profileForm" class="form"><input id="profileName" class="field wide" disabled><input id="profileEmail" class="field wide" disabled><input id="profilePhone" class="field" placeholder="Mobile / WhatsApp"><input id="profileProvince" class="field" placeholder="Province"><input id="profileCountry" class="field" placeholder="Country"><input id="profilePlatform" class="field" placeholder="Best-performing platform"><button id="saveProfile" class="btn wide">Update My Contact Profile</button></form><div id="profileMsg" class="muted"></div></section><section class="card"><h2>Privacy & Access</h2><div class="notice ok">Your Ambassador account can only access your own Ambassador record, your own earnings, your own payouts and privacy-limited referral summaries.</div><p class="muted">Student emails, phone numbers, ID/passport numbers, addresses, payment proofs, results, certificates and private support records are not available to Ambassador accounts.</p></section></div></section>
@@ -68,5 +133,14 @@
 </div>
 </div>
 </main>
-<script src="ambassador-portal-v2.js?v=20260905-referral-course-route"></script>
+<footer class="portalFooter">
+  <div class="footerGrid">
+    <div class="footerBrand"><img src="logo.png" alt="Funda Online Academy"><div><b>FUNDA ONLINE ACADEMY</b><span>Learn Today. Build Tomorrow.</span></div></div>
+    <div class="footerItem"><div class="footerIcon">◉</div><div><b>Our Vision</b><p>To make quality, accessible education available to everyone, everywhere.</p></div></div>
+    <div class="footerItem"><div class="footerIcon">◎</div><div><b>Our Mission</b><p>To equip individuals with relevant skills and knowledge for personal growth and a brighter future.</p></div></div>
+    <div class="footerItem"><div class="footerIcon">♥</div><div><b>Our Values</b><p>Excellence · Accessibility · Integrity · Impact</p></div></div>
+  </div>
+  <div class="footerBottom"><span>© 2026 Funda Online Academy. All rights reserved.</span><span>Ambassador Portal · Learn · Grow · Achieve.</span></div>
+</footer>
+<script src="ambassador-portal-v2.js?v=20260905-admin-style-compensation"></script>
 </body></html>
