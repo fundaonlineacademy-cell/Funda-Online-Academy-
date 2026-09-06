@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="View course details, fees and learning information at Funda Online Academy.">
+<meta name="description" content="Explore professional short courses, fees, modules and learning outcomes at Funda Online Academy.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link id="canonicalLink" rel="canonical" href="https://fundaonlineacademy.co.za/course-view.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Funda Online Academy">
+<meta property="og:title" content="Course Overview | Funda Online Academy">
+<meta property="og:description" content="Explore professional short courses at Funda Online Academy.">
+<meta property="og:url" content="https://fundaonlineacademy.co.za/course-view.html">
+<meta name="twitter:card" content="summary_large_image">
 <title>Course Overview | Funda Online Academy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,7 +52,21 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 const toArray=v=>{if(Array.isArray(v))return v;if(typeof v==='string'){try{const p=JSON.parse(v);if(Array.isArray(p))return p}catch(e){}return v.split(/\r?\n/).map(x=>x.trim()).filter(Boolean)}return[]};
 const money=v=>{if(v===null||v===undefined||v==='')return'Contact us';const n=Number(v);return Number.isFinite(n)?'R'+n.toLocaleString('en-ZA',{maximumFractionDigits:2}):String(v)};
 function fail(msg){$('loading').classList.add('hidden');$('courseContent').classList.add('hidden');$('errorBox').classList.remove('hidden');$('errorMessage').textContent=msg||'Unable to load this course.'}
-function render(course,mods){$('loading').classList.add('hidden');$('errorBox').classList.add('hidden');$('courseContent').classList.remove('hidden');const title=course.title||course.name||'Untitled Course';$('courseTitle').textContent=title;$('courseDescription').textContent=course.description||course.short_description||course.summary||'Course information will be available soon.';$('courseCategory').textContent=course.category||course.course_category||'Professional Short Course';$('courseDuration').textContent=course.duration||course.course_duration||'Self-paced';$('coursePrice').textContent=money(course.price??course.amount??course.course_price);
+function setSeo(course){
+ const title=course.title||course.name||'Professional Short Course';
+ const raw=course.description||course.short_description||course.summary||'';
+ const description=String(raw).replace(/\s+/g,' ').trim().slice(0,155)||('Study '+title+' online with Funda Online Academy. View modules, duration, fees and learning outcomes.');
+ const canonical='https://fundaonlineacademy.co.za/course-view.html?id='+encodeURIComponent(course.id);
+ document.title=title+' | Funda Online Academy';
+ const desc=document.querySelector('meta[name="description"]'); if(desc)desc.content=description;
+ const canon=document.getElementById('canonicalLink'); if(canon)canon.href=canonical;
+ const set=(sel,val)=>{const el=document.querySelector(sel);if(el)el.setAttribute('content',val)};
+ set('meta[property="og:title"]',document.title); set('meta[property="og:description"]',description); set('meta[property="og:url"]',canonical);
+ const img=course.image_url||course.image||''; if(img){let og=document.querySelector('meta[property="og:image"]');if(!og){og=document.createElement('meta');og.setAttribute('property','og:image');document.head.appendChild(og)}og.content=img}
+ let ld=document.getElementById('courseStructuredData'); if(!ld){ld=document.createElement('script');ld.type='application/ld+json';ld.id='courseStructuredData';document.head.appendChild(ld)}
+ ld.textContent=JSON.stringify({'@context':'https://schema.org','@type':'Course','name':title,'description':description,'url':canonical,'provider':{'@type':'Organization','name':'Funda Online Academy','url':'https://fundaonlineacademy.co.za/'}});
+}
+function render(course,mods){setSeo(course);$('loading').classList.add('hidden');$('errorBox').classList.add('hidden');$('courseContent').classList.remove('hidden');const title=course.title||course.name||'Untitled Course';$('courseTitle').textContent=title;$('courseDescription').textContent=course.description||course.short_description||course.summary||'Course information will be available soon.';$('courseCategory').textContent=course.category||course.course_category||'Professional Short Course';$('courseDuration').textContent=course.duration||course.course_duration||'Self-paced';$('coursePrice').textContent=money(course.price??course.amount??course.course_price);
 const img=$('courseImage'),fallback=$('heroFallbackText'),src=course.image_url||course.image||'';if(src){img.onload=()=>{img.classList.remove('hidden');fallback.classList.add('hidden')};img.onerror=()=>{img.classList.add('hidden');fallback.classList.remove('hidden')};img.src=src;img.alt=title}
 const outcomes=toArray(course.learning_outcomes??course.outcomes);$('learningOutcomes').innerHTML=outcomes.length?outcomes.map(x=>`<div class="item">✓ ${esc(typeof x==='object'?(x.title||x.name||x.description||JSON.stringify(x)):x)}</div>`).join(''):'<div class="item">Learning outcomes will be published here.</div>';
 const list=(mods||[]).length?mods:toArray(course.modules).map((m,i)=>typeof m==='object'?{module_number:i+1,module_name:m.title||m.name||`Module ${i+1}`,description:m.description||m.summary||''}:{module_number:i+1,module_name:String(m),description:''});$('moduleCount').textContent=`${list.length} ${list.length===1?'module':'modules'}`;$('modules').innerHTML=list.length?list.map((m,i)=>`<div class="item module"><div class="num">${esc(m.module_number||i+1)}</div><div><strong style="color:var(--navy)">${esc(m.module_name||m.title||m.name||`Module ${i+1}`)}</strong>${m.description?`<div style="font-size:12px;margin-top:5px">${esc(m.description)}</div>`:''}</div></div>`).join(''):'<div class="item">Module information will be available here.</div>';
