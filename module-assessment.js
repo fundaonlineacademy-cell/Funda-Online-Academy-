@@ -25,6 +25,8 @@
 
   const db=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
   let state=null;
+  let currentQuestionIndex=0;
+  let answerMap={};
 
   function fail(message){
     heroTitle.textContent='Assessment unavailable';
@@ -122,41 +124,93 @@
       return;
     }
 
-    statusBox.innerHTML=`<div class="notice"><strong>Before you begin</strong><br>Answer every question and select one best answer. You need at least <strong>${escapeHtml(state.pass_percent||70)}%</strong> to pass. A maximum of <strong>${escapeHtml(state.max_attempts||3)} attempts</strong> is permitted.</div>`;
+    currentQuestionIndex=0;
+    answerMap={};
+    statusBox.innerHTML=`<div class="notice"><strong>Before you begin</strong><br>Questions are shown one at a time. Select one answer before the Next button becomes usable. You need at least <strong>${escapeHtml(state.pass_percent||70)}%</strong> to pass. A maximum of <strong>${escapeHtml(state.max_attempts||3)} attempts</strong> is permitted.</div>`;
     renderQuestions();
   }
 
   function renderQuestions(){
-    const qHtml=state.questions.map((q,index)=>{
-      const options=(q.options||[]).map(opt=>`
-        <label class="opt">
-          <input type="radio" name="q-${escapeHtml(q.id)}" value="${escapeHtml(opt.key)}" required>
-          <span><strong>${escapeHtml(opt.key)}.</strong> ${escapeHtml(opt.text)}</span>
-        </label>`).join('');
-      return `<section class="card question" data-question-id="${escapeHtml(q.id)}">
-        <div class="qhead"><div class="qnum">${index+1}</div><div class="qtext">${escapeHtml(q.question_text)}</div></div>
-        <div class="options">${options}</div>
-      </section>`;
-    }).join('');
+    if(!state?.questions?.length)return;
+    const q=state.questions[currentQuestionIndex];
+    const selected=answerMap[q.id]||'';
+    const options=(q.options||[]).map(opt=>`
+      <label class="opt ${selected===opt.key?'selected':''}">
+        <input type="radio" name="q-${escapeHtml(q.id)}" value="${escapeHtml(opt.key)}" ${selected===opt.key?'checked':''}>
+        <span><strong>${escapeHtml(opt.key)}.</strong> ${escapeHtml(opt.text)}</span>
+      </label>`).join('');
 
-    form.innerHTML=`${qHtml}<div class="submitbar"><div><strong>Attempt ${escapeHtml(state.attempt_number)} of ${escapeHtml(state.max_attempts||3)}</strong><div class="muted">Review every answer before submitting.</div></div><button id="submitAssessment" type="submit" class="btn primary">Submit Assessment</button></div>`;
+    const isFirst=currentQuestionIndex===0;
+    const isLast=currentQuestionIndex===state.questions.length-1;
+    form.innerHTML=`
+      <section class="card question" data-question-id="${escapeHtml(q.id)}">
+        <div class="qhead">
+          <div class="qnum">${currentQuestionIndex+1}</div>
+          <div class="qtext">${escapeHtml(q.question_text)}</div>
+        </div>
+        <div class="muted" style="margin-top:10px;font-weight:700">Question ${currentQuestionIndex+1} of ${state.questions.length}</div>
+        <div class="options">${options}</div>
+      </section>
+      <div class="submitbar">
+        <div>
+          <strong>Attempt ${escapeHtml(state.attempt_number)} of ${escapeHtml(state.max_attempts||3)}</strong>
+          <div class="muted">Answer this question before continuing.</div>
+        </div>
+        <div class="actions" style="margin-top:0">
+          ${isFirst?'':`<button id="prevQuestion" type="button" class="btn secondary">← Previous</button>`}
+          ${isLast
+            ? '<button id="submitAssessment" type="submit" class="btn primary">Submit Assessment</button>'
+            : '<button id="nextQuestion" type="button" class="btn primary">Next Question →</button>'}
+        </div>
+      </div>`;
     form.hidden=false;
     form.onsubmit=submit;
+
+    form.querySelectorAll(`input[name="q-${CSS.escape(String(q.id))}"]`).forEach(input=>{
+      input.addEventListener('change',()=>{
+        answerMap[q.id]=input.value;
+        form.querySelectorAll('.opt').forEach(label=>label.classList.toggle('selected',label.contains(input)&&input.checked));
+        statusBox.innerHTML=`<div class="notice"><strong>Question ${currentQuestionIndex+1} of ${state.questions.length}</strong><br>Your answer has been selected. Continue when ready.</div>`;
+      });
+    });
+
+    const prev=$('prevQuestion');
+    if(prev)prev.onclick=()=>{
+      currentQuestionIndex=Math.max(0,currentQuestionIndex-1);
+      renderQuestions();
+      scrollTo({top:0,behavior:'smooth'});
+    };
+
+    const nxt=$('nextQuestion');
+    if(nxt)nxt.onclick=()=>{
+      const chosen=form.querySelector(`input[name="q-${CSS.escape(String(q.id))}"]:checked`);
+      if(!chosen){
+        statusBox.innerHTML=`<div class="notice bad"><strong>Select an answer first</strong><br>You cannot continue to Question ${currentQuestionIndex+2} until Question ${currentQuestionIndex+1} has an answer.</div>`;
+        statusBox.scrollIntoView({behavior:'smooth',block:'center'});
+        return;
+      }
+      answerMap[q.id]=chosen.value;
+      currentQuestionIndex++;
+      statusBox.innerHTML=`<div class="notice"><strong>Assessment in progress</strong><br>Question ${currentQuestionIndex+1} of ${state.questions.length}. Select one best answer.</div>`;
+      renderQuestions();
+      scrollTo({top:0,behavior:'smooth'});
+    };
   }
 
   async function submit(event){
     event.preventDefault();
-    const answerMap={};
-    let unanswered=0;
+    const q=state.questions[currentQuestionIndex];
+    const chosen=form.querySelector(`input[name="q-${CSS.escape(String(q.id))}"]:checked`);
+    if(!chosen){
+      statusBox.innerHTML='<div class="notice bad"><strong>Select an answer first</strong><br>Please answer the final question before submitting.</div>';
+      statusBox.scrollIntoView({behavior:'smooth',block:'center'});
+      return;
+    }
+    answerMap[q.id]=chosen.value;
 
-    state.questions.forEach(q=>{
-      const chosen=form.querySelector(`input[name="q-${CSS.escape(String(q.id))}"]:checked`);
-      if(!chosen)unanswered++;
-      else answerMap[q.id]=chosen.value;
-    });
-
+    const unanswered=state.questions.filter(item=>!answerMap[item.id]).length;
     if(unanswered){
-      statusBox.innerHTML=`<div class="notice bad"><strong>Assessment incomplete</strong><br>Please answer all ${state.question_count} questions before submitting. ${unanswered} question${unanswered===1?' is':'s are'} still unanswered.</div>`;
+      statusBox.innerHTML=`<div class="notice bad"><strong>Assessment incomplete</strong><br>${unanswered} question${unanswered===1?' is':'s are'} still unanswered. Use Previous to complete every question before submitting.</div>`;
       statusBox.scrollIntoView({behavior:'smooth',block:'center'});
       return;
     }
@@ -176,7 +230,7 @@
       console.error('Assessment submission error',error);
       btn.disabled=false;
       btn.textContent='Submit Assessment';
-      statusBox.innerHTML=`<div class="notice bad"><strong>Submission not completed</strong><br>Your attempt could not be recorded. Please retry without closing the page.</div>`;
+      statusBox.innerHTML='<div class="notice bad"><strong>Submission not completed</strong><br>Your attempt could not be recorded. Please retry without closing the page.</div>';
       statusBox.scrollIntoView({behavior:'smooth',block:'center'});
       return;
     }
