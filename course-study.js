@@ -6,6 +6,7 @@ const $=id=>document.getElementById(id);
 const esc=v=>v==null?'':String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");
 const state={user:null,studentId:null,course:null,modules:[],progress:[],assessments:[],attempts:[],module:1,unit:1};
 const doneSet=()=>new Set(state.progress.filter(x=>x.completed).map(x=>String(x.lesson_id)));
+const passedAssessmentSet=()=>new Set(state.attempts.filter(x=>x.passed).map(x=>String(x.assessment_id)));
 const mod=n=>state.modules.find(x=>Number(x.module_number)===Number(n));
 const lessons=n=>(mod(n)?.lessons||[]).slice().sort((a,b)=>Number(a.lesson_number)-Number(b.lesson_number));
 const assessment=(n,t)=>{const m=mod(n);return m?state.assessments.find(a=>a.module_id===m.id&&String(a.title||'').toLowerCase().includes(t)):null};
@@ -14,7 +15,13 @@ const unlocked=n=>Number(n)===1||passed(Number(n)-1,'summative');
 function show(message,success=false){const box=$('message');if(!box)return;box.textContent=message;box.style.display='block';box.className='message'+(success?' success':'')}
 function asHtml(v){const s=String(v||'').trim();if(!s)return '';if(/<\/?[a-z][\s\S]*>/i.test(s))return s;return s.split(/\n\s*\n/).map(p=>'<p>'+esc(p).replace(/\n/g,'<br>')+'</p>').join('')}
 function section(title,value,cls=''){if(!String(value||'').trim())return '';return `<section class="card ${cls}"><h2>${esc(title)}</h2><div>${asHtml(value)}</div></section>`}
-function progressPct(){const total=state.modules.reduce((n,m)=>n+(m.lessons?.length||0),0);return total?Math.round(doneSet().size/total*100):0}
+function progressPct(){
+ const lessonTotal=state.modules.reduce((n,m)=>n+(m.lessons?.length||0),0);
+ const assessmentTotal=state.assessments.length;
+ const total=lessonTotal+assessmentTotal;
+ const completed=doneSet().size+passedAssessmentSet().size;
+ return total?Math.min(100,Math.round(completed/total*100)):0;
+}
 function renderSidebar(){
  const host=$('moduleList');if(!host)return;const done=doneSet();
  host.innerHTML=state.modules.map(m=>{
@@ -63,7 +70,11 @@ async function init(){
   const request=db.rpc('get_learning_workspace_course',{p_course_id:courseId});
   const {data,error}=await Promise.race([request,timeout]);if(error)throw error;if(!data?.ok)throw new Error(data?.message||'Unable to open this course.');
   state.studentId=data.student_id||user.id;state.course=data.course;state.modules=data.modules||[];state.progress=data.progress||[];state.assessments=data.assessments||[];state.attempts=data.attempts||[];
-  const firstOpen=state.modules.find(m=>unlocked(Number(m.module_number)))||state.modules[0];state.module=Number(firstOpen?.module_number||1);state.unit=1;
+  const openModules=state.modules.filter(m=>unlocked(Number(m.module_number))).sort((a,b)=>Number(a.module_number)-Number(b.module_number));
+  const resumeModule=openModules[openModules.length-1]||state.modules[0];
+  state.module=Number(resumeModule?.module_number||1);
+  const pendingLesson=lessons(state.module).find(l=>!doneSet().has(String(l.id)));
+  state.unit=Number(pendingLesson?.lesson_number||1);
   renderAll();
  }catch(e){console.error(e);$('course-content').innerHTML='<div class="message">Unable to load course content: '+esc(e.message||'Please try again.')+'</div>'}
 }
