@@ -92,7 +92,8 @@
     renderBadges(state);
 
     if(state.status==='locked_lessons'){
-      statusBox.innerHTML=`<div class="notice"><strong>🔒 Complete the module lessons first</strong><br>You have completed ${escapeHtml(state.completed_lessons||0)} of ${escapeHtml(state.total_lessons||0)} lessons. The formative assessment unlocks when all module lessons are complete.</div>${actionLinks()}`;
+      const label=assessmentType==='formative'?'formative':'summative';
+      statusBox.innerHTML=`<div class="notice"><strong>🔒 Complete the module lessons first</strong><br>You have completed ${escapeHtml(state.completed_lessons||0)} of ${escapeHtml(state.total_lessons||0)} lessons. The ${label} assessment unlocks when all module lessons are complete.</div>${actionLinks()}`;
       form.hidden=true;
       return;
     }
@@ -107,7 +108,7 @@
     if(state.status==='passed'){
       const extra=assessmentType==='formative'
         ? `<a class="btn primary" href="module-assessment.html?course=${encodeURIComponent(courseId)}&module=${moduleNumber}&type=summative">Proceed to Summative Assessment →</a>`
-        : '';
+        : `<a class="btn primary" href="course-study.html?id=${encodeURIComponent(courseId)}">Return to Course →</a>`;
       statusBox.innerHTML=`<div class="notice good"><strong>✅ Assessment already passed</strong><br>${escapeHtml(state.message||'Your passing result has been recorded.')} Attempts used: ${escapeHtml(state.attempts_used||1)} of ${escapeHtml(state.max_attempts||3)}.</div>${actionLinks(extra)}`;
       form.hidden=true;
       return;
@@ -247,7 +248,7 @@
     if(result.passed){
       const extra=assessmentType==='formative'
         ? `<a class="btn primary" href="module-assessment.html?course=${encodeURIComponent(courseId)}&module=${moduleNumber}&type=summative">Proceed to Summative Assessment →</a>`
-        : '';
+        : `<a class="btn primary" href="course-study.html?id=${encodeURIComponent(courseId)}">Return to Course →</a>`;
       statusBox.innerHTML=`<div class="notice good"><strong>✅ Passed — ${escapeHtml(result.percentage)}%</strong><br>You achieved the required 70% pass mark. This passing attempt is now recorded.</div>${actionLinks(extra)}`;
     }else if(result.status==='exhausted'){
       statusBox.innerHTML=`<div class="notice bad"><strong>Final attempt recorded — ${escapeHtml(result.percentage)}%</strong><br>All three permitted attempts have now been used. This assessment is finalised for Academy review.</div>${actionLinks()}`;
