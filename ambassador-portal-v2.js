@@ -94,8 +94,17 @@ async function init(){
    db.from('ambassador_support_tickets').select('*').eq('application_id',app.id).order('created_at',{ascending:false}),
    db.from('ambassador_support_messages').select('*').order('created_at',{ascending:true})
  ]);
- ledger=l.data||[];referrals=r.data||[];payouts=p.data||[];bank=b.data||null;resources=m.data||[];notifications=n.data||[];supportTickets=t.data||[];supportMessages=sm.data||[];
+ ledger=l.data||[];
+ if(r.error){
+   console.error('Ambassador referrals failed to load',r.error);
+   referrals=[];
+ }else referrals=r.data||[];
+ payouts=p.data||[];bank=b.data||null;resources=m.data||[];notifications=n.data||[];supportTickets=t.data||[];supportMessages=sm.data||[];
  $('#loading').classList.add('hide');$('#portal').classList.remove('hide');render();
+ if(r.error){
+   const box=$('#referralMobile');
+   if(box)box.innerHTML='<div class="notice bad"><b>Referral records could not be loaded.</b><br>Please refresh the page. If this continues, contact Ambassador Support.</div>';
+ }
 }
 
 function render(){
