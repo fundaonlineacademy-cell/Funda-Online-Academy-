@@ -52,6 +52,30 @@ function fail(msg){$('#loading')?.classList.add('hide');$('#notFound')?.classLis
 function sum(type,statuses){return ledger.filter(x=>(!type||x.earning_type===type)&&(!statuses||statuses.includes(x.earning_status))).reduce((s,x)=>s+Number(x.commission_amount||0),0)}
 function referralLink(){if(!app?.referral_code)return '';return location.origin+'/courses-public.html?ref='+encodeURIComponent(app.referral_code)+'#courses'}
 async function copy(text,btn){if(!text)return;try{await navigator.clipboard.writeText(text);let old=btn.textContent;btn.textContent='Copied ✓';setTimeout(()=>btn.textContent=old,1200)}catch{alert(text)}}
+async function downloadResource(resource,btn){
+ if(!resource?.file_url)return;
+ const old=btn?.textContent||'Download';
+ try{
+  if(btn){btn.disabled=true;btn.textContent='Downloading…'}
+  const res=await fetch(resource.file_url,{mode:'cors',cache:'no-store'});
+  if(!res.ok)throw new Error('File could not be downloaded');
+  const blob=await res.blob();
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=resource.original_filename||((resource.title||'funda-marketing-resource').replace(/[^a-z0-9._-]+/gi,'-')+(resource.mime_type==='image/png'?'.png':resource.mime_type==='image/jpeg'?'.jpg':resource.mime_type==='image/webp'?'.webp':resource.mime_type==='application/pdf'?'.pdf':resource.mime_type==='video/mp4'?'.mp4':''));
+  a.style.display='none';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+  if(btn)btn.textContent='Downloaded ✓';
+  setTimeout(()=>{if(btn){btn.disabled=false;btn.textContent=old}},1600);
+ }catch(err){
+  if(btn){btn.disabled=false;btn.textContent=old}
+  alert('The file could not be downloaded. Please try again.');
+ }
+}
 
 async function init(){
  installNav();
@@ -249,8 +273,9 @@ async function acceptAgreement(){
 
 function renderSupportHub(){
  const mr=$('#marketingResources'),al=$('#announcementList'),tl=$('#supportTicketList');
- if(mr)mr.innerHTML=resources.length?resources.map(x=>'<article class="resourceCard">'+(x.file_url&&/^image\//i.test(x.mime_type||'')?'<img src="'+esc(x.file_url)+'" alt="'+esc(x.title)+'" class="resourceThumb" loading="lazy">':'')+'<b>'+esc(x.title)+'</b><span class="meta">'+esc(String(x.resource_type||'resource').toUpperCase())+(x.expires_at?' · Expires '+fmt(x.expires_at):'')+'</span><p>'+esc(x.description||'')+'</p>'+(x.approved_caption?'<div class="approvedCaption"><strong>Approved caption</strong><span>'+esc(x.approved_caption)+'</span><button class="btn alt" data-copy-caption="'+esc(x.id)+'">Copy Caption</button></div>':'')+'<div class="resourceActions">'+(x.file_url?'<a class="btn" href="'+esc(x.file_url)+'" download="'+esc(x.original_filename||x.title)+'" target="_blank" rel="noopener">Download</a>':'')+(x.file_url?'<a class="btn alt" href="'+esc(x.file_url)+'" target="_blank" rel="noopener">Preview</a>':'')+(x.action_url?'<a class="btn alt" href="'+esc(x.action_url)+'" target="_blank" rel="noopener">Open Link</a>':'')+'<button class="btn alt" data-resource-ref="'+esc(x.id)+'">Copy My Referral Link</button></div></article>').join(''):'<div class="empty">No Ambassador marketing resources are published yet.</div>';
+ if(mr)mr.innerHTML=resources.length?resources.map(x=>'<article class="resourceCard">'+(x.file_url&&/^image\//i.test(x.mime_type||'')?'<img src="'+esc(x.file_url)+'" alt="'+esc(x.title)+'" class="resourceThumb" loading="lazy">':'')+'<b>'+esc(x.title)+'</b><span class="meta">'+esc(String(x.resource_type||'resource').toUpperCase())+(x.expires_at?' · Expires '+fmt(x.expires_at):'')+'</span><p>'+esc(x.description||'')+'</p>'+(x.approved_caption?'<div class="approvedCaption"><strong>Approved caption</strong><span>'+esc(x.approved_caption)+'</span><button class="btn alt" data-copy-caption="'+esc(x.id)+'">Copy Caption</button></div>':'')+'<div class="resourceActions">'+(x.file_url?'<button class="btn" type="button" data-download-resource="'+esc(x.id)+'">Download</button>':'')+(x.file_url?'<a class="btn alt" href="'+esc(x.file_url)+'" target="_blank" rel="noopener">Preview</a>':'')+(x.action_url?'<a class="btn alt" href="'+esc(x.action_url)+'" target="_blank" rel="noopener">Open Link</a>':'')+'<button class="btn alt" data-resource-ref="'+esc(x.id)+'">Copy My Referral Link</button></div></article>').join(''):'<div class="empty">No Ambassador marketing resources are published yet.</div>';
  document.querySelectorAll('[data-copy-caption]').forEach(b=>b.onclick=()=>{let x=resources.find(r=>String(r.id)===String(b.dataset.copyCaption));if(x)copy(x.approved_caption,b)});
+ document.querySelectorAll('[data-download-resource]').forEach(b=>b.onclick=()=>{let x=resources.find(r=>String(r.id)===String(b.dataset.downloadResource));if(x)downloadResource(x,b)});
  document.querySelectorAll('[data-resource-ref]').forEach(b=>b.onclick=()=>copy(referralLink(),b));
  if($('#announcementCount'))$('#announcementCount').textContent=notifications.length+' UPDATE'+(notifications.length===1?'':'S');
  if(al)al.innerHTML=notifications.length?notifications.map(x=>'<article class="announcementCard"><b>'+esc(x.title)+'</b><span class="meta">'+esc(String(x.category||'programme').toUpperCase())+' · '+fmt(x.created_at)+'</span><p>'+esc(x.message)+'</p></article>').join(''):'<div class="empty">No Ambassador announcements have been published yet.</div>';
