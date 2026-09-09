@@ -126,6 +126,12 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 .rankHeroCard{overflow:hidden}.rankNumbers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px}.rankNumbers>div{border:1px solid #dfe6eb;border-radius:13px;padding:14px;background:#f9fbfc}.rankNumbers span{display:block;font-size:8px;font-weight:900;letter-spacing:.08em;color:#71808d;line-height:1.4}.rankNumbers b{display:block;font-size:21px;color:#17324a;margin-top:6px}.rankProgressTrack{height:13px;background:#e9eef2;border-radius:99px;overflow:hidden;margin:18px 0 8px}.rankProgressTrack i{display:block;height:100%;width:0;background:linear-gradient(90deg,#d6a93f,#efd482);border-radius:inherit;transition:width .35s ease}
 .rankPath{display:grid;gap:8px;margin-top:14px}.rankStep{display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px;border:1px solid #e0e6eb;border-radius:12px;background:#fff}.rankStepIcon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#eef3f7;color:#173f62;font-weight:900;font-size:11px}.rankStep.done{background:#f8fbf9}.rankStep.current{border-color:#d8b657;background:#fffaf0}.rankStep.current .rankStepIcon{background:linear-gradient(135deg,#d9ae45,#f1d68c)}.rankStepText b{display:block;color:#17324a;font-size:12px}.rankStepText span{display:block;color:#74818d;font-size:9px;margin-top:3px}.rankStepValue{font-size:11px;font-weight:900;color:#173f62;white-space:nowrap}
 @media(max-width:600px){.rankNumbers{grid-template-columns:1fr}.rankStep{grid-template-columns:36px minmax(0,1fr)}.rankStepIcon{width:36px;height:36px}.rankStepValue{grid-column:2}}
+</style><style id="ambassador-compensation-v2">
+.compFlow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}.compFlowStep{border:1px solid #dfe6eb;border-radius:13px;padding:14px;background:#fafcfd}.compFlowStep i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#d8ac42,#f1d68b);color:#17324a;font-style:normal;font-weight:900;font-size:11px;margin-bottom:10px}.compFlowStep b{display:block;color:#17324a;font-size:12px}.compFlowStep span{display:block;color:#74818d;font-size:10px;line-height:1.45;margin-top:5px}
+.compMobile{display:none}.compRules{display:grid;grid-template-columns:1fr 1fr;gap:10px}.compHeadline .earning{min-height:142px}
+@media(max-width:800px){.compFlow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.compDesktop{display:none}.compMobile{display:grid;gap:8px;margin-top:14px}.compMobile article{border:1px solid #dfe6eb;border-radius:12px;padding:13px;background:#fff}.compMobile b{display:block;color:#17324a;font-size:13px}.compMobile span{display:block;color:#8a681c;font-size:10px;font-weight:900;margin-top:4px}.compMobile em{display:block;color:#34495b;font-size:10px;font-style:normal;font-weight:800;margin-top:8px}.compMobile small{display:block;color:#74818d;font-size:9px;line-height:1.4;margin-top:4px}.compRules{grid-template-columns:1fr}}
+@media(max-width:480px){.compFlow{grid-template-columns:1fr}}
 </style></head>
 <body>
 <header class="top"><div class="topin"><button id="sideToggle" class="menuToggle" aria-label="Open Ambassador menu">☰</button><div class="brandWrap"><img src="logo.png" alt="Funda Online Academy" class="portalLogo"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div class="brandSub">AMBASSADOR PORTAL</div></div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
@@ -254,18 +260,37 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 
 <section class="section" data-section="compensation">
 <section class="card compHero">
-  <div class="eyebrow dark">FOUNDING BRAND AMBASSADOR PROGRAMME · 2026</div>
-  <h2>Ambassador Compensation Plan</h2>
-  <p class="muted">The programme rewards direct student referrals and verified performance. There are no downlines, recruitment commissions or team overrides.</p>
-  <div class="three" style="margin-top:14px">
-    <div class="earning"><b>15%</b><span>DIRECT COMMISSION</span><p class="muted">On successfully paid qualifying revenue from your own direct referrals.</p></div>
-    <div class="earning"><b>8 Levels</b><span>ACHIEVEMENT PATH</span><p class="muted">Move from Ambassador through Bronze, Silver, Gold, Platinum, Diamond, Executive and Elite.</p></div>
-    <div class="earning"><b>90 Days</b><span>INTRODUCTORY PERIOD</span><p class="muted">Newly activated ambassadors begin with a 90-day introductory period.</p></div>
+  <div class="sectionHead"><div><div class="eyebrow dark">FOUNDING BRAND AMBASSADOR PROGRAMME · 2026</div><h2>Ambassador Compensation Plan</h2><p class="muted">A direct student-referral programme with three transparent earning methods. No downlines, recruitment commissions or team overrides.</p></div><span class="badge ok">CURRENT PLAN</span></div>
+  <div class="three compHeadline" style="margin-top:16px">
+    <div class="earning"><b>15%</b><span>DIRECT COMMISSION</span><p class="muted">On verified qualifying revenue from students directly attributed to you.</p></div>
+    <div class="earning"><b>Up to R45,000</b><span>ONE-TIME ACHIEVEMENT BONUS</span><p class="muted">Earned when a qualifying rank threshold is reached for the first time.</p></div>
+    <div class="earning"><b>Up to R25,000</b><span>MONTHLY PERFORMANCE</span><p class="muted">Available from Gold / Level 4, subject to monthly verification.</p></div>
   </div>
 </section>
+
 <section class="card">
-  <h2>Levels, bonuses & monthly performance payments</h2>
-  <div class="tablewrap"><table class="tbl compTable"><thead><tr><th>Level</th><th>Rank</th><th>Cumulative Direct Qualifying Revenue</th><th>Direct Commission</th><th>One-Time Achievement Bonus</th><th>Monthly Performance Payment</th></tr></thead><tbody>
+ <div class="sectionHead"><div><div class="eyebrow dark">HOW IT WORKS</div><h2>From referral to verified earnings</h2></div></div>
+ <div class="compFlow">
+  <div class="compFlowStep"><i>1</i><div><b>Share your tracked referral link</b><span>The student begins through your unique Ambassador referral route.</span></div></div>
+  <div class="compFlowStep"><i>2</i><div><b>Student enrolment is attributed</b><span>Funda records the eligible direct referral against your Ambassador account.</span></div></div>
+  <div class="compFlowStep"><i>3</i><div><b>Qualifying payment is verified</b><span>Only successfully paid and approved qualifying student revenue counts.</span></div></div>
+  <div class="compFlowStep"><i>4</i><div><b>Earnings are recorded separately</b><span>Commission, achievement bonuses and monthly performance payments remain auditable.</span></div></div>
+ </div>
+</section>
+
+<section class="card">
+  <div class="sectionHead"><div><div class="eyebrow dark">RANKS & REWARDS</div><h2>Levels, bonuses & monthly performance payments</h2><p class="muted">Cumulative thresholds use verified direct qualifying student revenue.</p></div><button class="textAction" data-go="rank">View My Progress →</button></div>
+  <div id="compMobile" class="compMobile">
+   <article><b>Ambassador</b><span>R0 – R9,999</span><em>15% commission</em><small>No achievement bonus · No monthly performance payment</small></article>
+   <article><b>Bronze</b><span>R10,000 – R24,999</span><em>15% commission · R500 bonus</em><small>No monthly performance payment</small></article>
+   <article><b>Silver</b><span>R25,000 – R49,999</span><em>15% commission · R1,000 bonus</em><small>No monthly performance payment</small></article>
+   <article><b>Gold</b><span>R50,000 – R99,999</span><em>15% commission · R2,500 bonus</em><small>Up to R5,000 monthly performance payment</small></article>
+   <article><b>Platinum</b><span>R100,000 – R249,999</span><em>15% commission · R5,000 bonus</em><small>Up to R8,000 monthly performance payment</small></article>
+   <article><b>Diamond</b><span>R250,000 – R499,999</span><em>15% commission · R10,000 bonus</em><small>Up to R12,000 monthly performance payment</small></article>
+   <article><b>Executive</b><span>R500,000 – R999,999</span><em>15% commission · R20,000 bonus</em><small>Up to R18,000 monthly performance payment</small></article>
+   <article><b>Elite</b><span>R1,000,000+</span><em>15% commission · R45,000 bonus</em><small>Up to R25,000 monthly performance payment</small></article>
+  </div>
+  <div class="tablewrap compDesktop"><table class="tbl compTable"><thead><tr><th>Level</th><th>Rank</th><th>Cumulative Direct Qualifying Revenue</th><th>Direct Commission</th><th>One-Time Achievement Bonus</th><th>Monthly Performance Payment</th></tr></thead><tbody>
   <tr><td>1</td><td><b>Ambassador</b></td><td>R0 – R9,999</td><td>15%</td><td>—</td><td>—</td></tr>
   <tr><td>2</td><td><b>Bronze</b></td><td>R10,000 – R24,999</td><td>15%</td><td>R500</td><td>—</td></tr>
   <tr><td>3</td><td><b>Silver</b></td><td>R25,000 – R49,999</td><td>15%</td><td>R1,000</td><td>—</td></tr>
@@ -276,14 +301,11 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
   <tr><td>8</td><td><b>Elite</b></td><td>R1,000,000+</td><td>15%</td><td>R45,000</td><td>Up to R25,000</td></tr>
   </tbody></table></div>
 </section>
+
 <section class="card">
-  <h2>How earnings are calculated</h2>
-  <div class="three compensationSteps" style="margin-top:12px">
-    <div class="earning"><b>1</b><span>STUDENT USES YOUR LINK</span><p class="muted">The student enters through your tracked referral link and your code is retained through their enrolment journey.</p></div>
-    <div class="earning"><b>2</b><span>PAYMENT IS VERIFIED</span><p class="muted">Only successfully paid, approved and qualifying student revenue counts. Refunds, reversals, fraud and prohibited self-referrals do not qualify.</p></div>
-    <div class="earning"><b>3</b><span>EARNINGS ARE RECORDED</span><p class="muted">Commission, achievement bonuses and qualifying monthly performance payments are recorded separately for transparency.</p></div>
-  </div>
-  <div class="notice gold" style="margin-top:12px"><b>Important:</b> Monthly Performance Payments are not guaranteed salaries. They apply only when the relevant monthly conditions are met and verified by Funda Online Academy.</div>
+ <div class="sectionHead"><div><div class="eyebrow dark">QUALIFYING RULES</div><h2>What counts — and what does not</h2></div></div>
+ <div class="compRules"><div class="notice ok"><b>Qualifies</b><br>Successfully paid, approved student revenue that is directly and validly attributed to your Ambassador referral code.</div><div class="notice gold"><b>Does not qualify</b><br>Refunds, reversals, chargebacks, fraud, manipulation, prohibited self-referrals or revenue that fails programme verification.</div></div>
+ <div class="notice" style="margin-top:10px"><b>Monthly Performance Payments are not salaries or guaranteed income.</b><br>They apply only when the relevant monthly conditions are met and verified by Funda Online Academy.</div>
 </section>
 </section>
 
