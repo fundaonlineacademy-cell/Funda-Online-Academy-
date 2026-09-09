@@ -77,11 +77,30 @@ async function downloadResource(resource,btn){
  }
 }
 
+async function restoreAuthUser(){
+ let lastError=null;
+ for(const wait of [0,250,650,1200]){
+  if(wait)await new Promise(r=>setTimeout(r,wait));
+  try{
+   const s=await db.auth.getSession();
+   if(s.data?.session?.user)return s.data.session.user;
+   if(s.error)lastError=s.error;
+  }catch(e){lastError=e}
+  try{
+   const g=await db.auth.getUser();
+   if(g.data?.user)return g.data.user;
+   if(g.error)lastError=g.error;
+  }catch(e){lastError=e}
+ }
+ if(lastError)console.warn('Ambassador session restore failed',lastError);
+ return null;
+}
+
 async function init(){
  installNav();
  db=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
  if(!db)return fail('The Ambassador Portal is temporarily unavailable.');
- let s=await db.auth.getSession();user=s.data.session?.user;
+ user=await restoreAuthUser();
  if(!user)return location.replace('ambassador-login.html');
  let a=await db.from('ambassador_programme_applications').select('*').eq('email',user.email.toLowerCase()).maybeSingle();
  if(a.error||!a.data)return fail('No Ambassador application is connected to this account.');
