@@ -82,9 +82,12 @@ async function loadCourseProgress(){
 
   let moduleDone=[];
   if(moduleIds.length){
+    // Module progress is supplementary. Some learner accounts can read lesson
+    // progress but not module_progress because of legacy RLS/data differences.
+    // Never fail the whole dashboard for this optional progress source.
     const {data:mp,error:mpe}=await db.from('module_progress').select('module_id,completed').eq('student_id',currentUser.id).eq('completed',true).in('module_id',moduleIds);
-    if(mpe)throw mpe;
-    moduleDone=mp||[];
+    if(mpe)console.warn('Module progress unavailable; continuing with lesson progress.',mpe);
+    else moduleDone=mp||[];
   }
 
   const doneLessonSet=new Set(lessonDone.map(x=>String(x.lesson_id)));
