@@ -5,8 +5,8 @@ const ranks=[{n:'Ambassador',min:0,max:10000,pay:0},{n:'Bronze',min:10000,max:25
 const navGroups=[
  {label:'MAIN',items:[['dashboard','⌂','My Dashboard'],['referrals','◎','My Referrals'],['earnings','R','My Earnings'],['rank','◒','Rank Progress'],['compensation','▣','Compensation Plan']]},
  {label:'FINANCE',items:[['earnings','◫','Earnings Breakdown'],['payments','▤','Payment History'],['banking','▧','My Banking']]},
- {label:'RESOURCES',items:[['support','◆','Marketing Resources'],['support','◉','Announcements'],['support','?','Help & Support'],['programme','▥','Programme Rules']]},
- {label:'ACCOUNT',items:[['dashboard','↗','My Referral Link'],['profile','♙','My Profile'],['banking','⌁','Bank Details'],['support','●','Notifications']]}
+ {label:'RESOURCES',items:[['marketing','◆','Marketing Resources'],['announcements','◉','Announcements'],['support','?','Help & Support'],['programme','▥','Programme Rules']]},
+ {label:'ACCOUNT',items:[['dashboard','↗','My Referral Link'],['profile','♙','My Profile'],['banking','⌁','Bank Details'],['announcements','●','Notifications']]}
 ];
 const saBanks=[
  {name:'Absa Bank',code:'632005'},
@@ -230,10 +230,11 @@ async function acceptAgreement(){
 }
 
 function renderSupportHub(){
- const mr=$('#marketingResources'),nl=$('#notificationList'),tl=$('#supportTicketList');
- if(mr)mr.innerHTML=resources.length?resources.map(x=>'<div class="earning" style="margin-bottom:8px"><b style="font-size:14px">'+esc(x.title)+'</b><span>'+esc(String(x.resource_type||'resource').toUpperCase())+'</span><p class="muted">'+esc(x.description||'')+'</p>'+(x.action_url?'<a class="btn alt" href="'+esc(x.action_url)+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none">Open Resource</a>':'')+(x.file_url?'<a class="btn alt" href="'+esc(x.file_url)+'" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;margin-left:6px">Open File</a>':'')+'</div>').join(''):'<div class="empty">No Ambassador marketing resources are published yet.</div>';
- if(nl)nl.innerHTML=notifications.length?notifications.map(x=>'<div class="earning" style="margin-bottom:8px"><b style="font-size:14px">'+esc(x.title)+'</b><span>'+esc(String(x.category||'programme').toUpperCase())+' · '+fmt(x.created_at)+'</span><p class="muted">'+esc(x.message)+'</p></div>').join(''):'<div class="empty">No new Ambassador notifications.</div>';
- if(tl)tl.innerHTML=supportTickets.length?supportTickets.map(t=>'<div class="earning" style="margin-bottom:8px"><b style="font-size:14px">'+esc(t.subject)+'</b><span>'+esc(t.category)+' · '+fmt(t.created_at)+' · '+esc(String(t.status).replaceAll('_',' ').toUpperCase())+'</span><p class="muted">'+esc(t.notes||'')+'</p><button class="btn alt" data-support-view="'+t.id+'">View / Reply</button></div>').join(''):'<div class="empty">No Ambassador support tickets yet.</div>';
+ const mr=$('#marketingResources'),al=$('#announcementList'),tl=$('#supportTicketList');
+ if(mr)mr.innerHTML=resources.length?resources.map(x=>'<article class="resourceCard"><b>'+esc(x.title)+'</b><span class="meta">'+esc(String(x.resource_type||'resource').toUpperCase())+'</span><p>'+esc(x.description||'')+'</p><div class="resourceActions">'+(x.action_url?'<a class="btn alt" href="'+esc(x.action_url)+'" target="_blank" rel="noopener">Open Resource</a>':'')+(x.file_url?'<a class="btn alt" href="'+esc(x.file_url)+'" target="_blank" rel="noopener">Open File</a>':'')+'</div></article>').join(''):'<div class="empty">No Ambassador marketing resources are published yet.</div>';
+ if($('#announcementCount'))$('#announcementCount').textContent=notifications.length+' UPDATE'+(notifications.length===1?'':'S');
+ if(al)al.innerHTML=notifications.length?notifications.map(x=>'<article class="announcementCard"><b>'+esc(x.title)+'</b><span class="meta">'+esc(String(x.category||'programme').toUpperCase())+' · '+fmt(x.created_at)+'</span><p>'+esc(x.message)+'</p></article>').join(''):'<div class="empty">No Ambassador announcements have been published yet.</div>';
+ if(tl)tl.innerHTML=supportTickets.length?supportTickets.map(t=>'<article class="ticketCard"><b>'+esc(t.subject)+'</b><span class="meta">'+esc(t.category)+' · '+fmt(t.created_at)+' · '+esc(String(t.status).replaceAll('_',' ').toUpperCase())+'</span><p>'+esc(t.notes||'')+'</p><button class="btn alt" data-support-view="'+t.id+'">View / Reply</button></article>').join(''):'<div class="empty">No Ambassador support tickets yet.</div>';
  document.querySelectorAll('[data-support-view]').forEach(b=>b.onclick=()=>openSupportTicket(b.dataset.supportView));
  if($('#newSupportTicket'))$('#newSupportTicket').onclick=openNewSupportTicket;
 }
