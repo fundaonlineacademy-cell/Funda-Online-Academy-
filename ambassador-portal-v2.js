@@ -3,7 +3,7 @@
 const $=s=>document.querySelector(s), money=n=>'R'+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:2}), low=v=>String(v||'').toLowerCase(), esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
 const ranks=[{n:'Ambassador',min:0,max:10000,pay:0},{n:'Bronze',min:10000,max:25000,pay:0},{n:'Silver',min:25000,max:50000,pay:0},{n:'Gold',min:50000,max:100000,pay:5000},{n:'Platinum',min:100000,max:250000,pay:8000},{n:'Diamond',min:250000,max:500000,pay:12000},{n:'Executive',min:500000,max:1000000,pay:18000},{n:'Elite',min:1000000,max:Infinity,pay:25000}];
 const navGroups=[
- {label:'MAIN',items:[['dashboard','⌂','My Dashboard'],['referrals','◎','My Referrals'],['earnings','R','My Earnings'],['dashboard','◒','Rank Progress'],['compensation','▣','Compensation Plan']]},
+ {label:'MAIN',items:[['dashboard','⌂','My Dashboard'],['referrals','◎','My Referrals'],['earnings','R','My Earnings'],['rank','◒','Rank Progress'],['compensation','▣','Compensation Plan']]},
  {label:'FINANCE',items:[['earnings','◫','Earnings Breakdown'],['payouts','▤','Payment History'],['payouts','▧','My Banking']]},
  {label:'RESOURCES',items:[['support','◆','Marketing Resources'],['support','◉','Announcements'],['support','?','Help & Support'],['programme','▥','Programme Rules']]},
  {label:'ACCOUNT',items:[['dashboard','↗','My Referral Link'],['profile','♙','My Profile'],['payouts','⌁','Bank Details'],['support','●','Notifications']]}
@@ -124,9 +124,22 @@ function render(){
  $('#copyCode').onclick=()=>copy(app.referral_code,$('#copyCode'));$('#copyLink').onclick=()=>copy(referralLink(),$('#copyLink'));
  if(next){let remain=Math.max(0,next.min-life),pct=Math.max(0,Math.min(100,(life-r.min)/(next.min-r.min)*100));$('#nextRank').textContent='Current rank: '+r.n+'. '+money(remain)+' more lifetime qualifying revenue to reach '+next.n+'.';$('#progressBar').style.width=pct+'%'}else{$('#nextRank').textContent='Elite rank achieved.';$('#progressBar').style.width='100%'}
  $('#monthlyTarget').textContent=r.pay?'Monthly Performance Payment eligibility at this rank: up to '+money(r.pay)+', subject to monthly performance verification.':'Monthly Performance Payments begin at Gold / Level 4.';
- document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showSection(b.dataset.go));const qcl=$('#quickCopyLink');if(qcl)qcl.onclick=()=>copy(referralLink(),qcl);renderReferrals();renderLedger();renderPayouts();renderProfile();renderAgreement();renderSupportHub();renderRecentActivity();
+ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showSection(b.dataset.go));const qcl=$('#quickCopyLink');if(qcl)qcl.onclick=()=>copy(referralLink(),qcl);renderReferrals();renderLedger();renderPayouts();renderProfile();renderAgreement();renderSupportHub();renderRecentActivity();renderRankProgress();
 }
 
+function renderRankProgress(){
+ const life=ledger.filter(x=>x.earning_type==='commission'&&x.earning_status!=='reversed').reduce((s,x)=>s+Number(x.qualifying_revenue||0),0);
+ const current=rank(life),idx=ranks.indexOf(current),next=ranks[idx+1];
+ if($('#rankCurrentBadge'))$('#rankCurrentBadge').textContent=current.n.toUpperCase();
+ if($('#rankLifetime'))$('#rankLifetime').textContent=money(life);
+ if($('#rankNext'))$('#rankNext').textContent=next?next.n:'Elite achieved';
+ if($('#rankRemaining'))$('#rankRemaining').textContent=next?money(Math.max(0,next.min-life)):'R0';
+ let pct=next?Math.max(0,Math.min(100,(life-current.min)/(next.min-current.min)*100)):100;
+ if($('#rankProgressFill'))$('#rankProgressFill').style.width=pct+'%';
+ if($('#rankProgressText'))$('#rankProgressText').textContent=next?money(Math.max(0,next.min-life))+' more verified lifetime qualifying revenue to reach '+next.n+'.':'You have reached the highest published Ambassador rank.';
+ const path=$('#rankPath');if(path)path.innerHTML=ranks.map((r,i)=>{let state=i<idx?'done':i===idx?'current':'';let threshold=r.min===0?'Starting rank':money(r.min)+' lifetime qualifying revenue';return '<div class="rankStep '+state+'"><div class="rankStepIcon">'+(i<idx?'✓':i===idx?'●':String(i+1))+'</div><div class="rankStepText"><b>'+esc(r.n)+'</b><span>'+threshold+'</span></div><div class="rankStepValue">'+(r.pay?'Up to '+money(r.pay)+'/month':i<3?'Rank milestone':'—')+'</div></div>'}).join('');
+ const monthly=$('#rankMonthly');if(monthly){monthly.className='notice '+(current.pay?'ok':'gold');monthly.innerHTML=current.pay?'<b>'+esc(current.n)+' eligibility: up to '+money(current.pay)+' per qualifying month.</b><br>Payment remains subject to the programme\'s monthly performance verification and other applicable rules.':'<b>Monthly Performance Payments begin at Gold / Level 4.</b><br>Your current rank is '+esc(current.n)+'. Continue building verified direct student referral revenue to progress.'}
+}
 function renderRecentActivity(){
  const box=$('#recentActivity');if(!box)return;
  const items=[];
