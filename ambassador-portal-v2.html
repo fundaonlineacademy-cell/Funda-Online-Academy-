@@ -38,12 +38,48 @@ body{background:var(--page)}
 @media(max-width:560px){
  .topActions .label{display:none}.shell{padding:0 10px 24px}.side{margin:10px 0}.hero{padding:20px}.cards,.three,.form{grid-template-columns:1fr}.footerGrid{grid-template-columns:1fr}.footerBottom{flex-direction:column}.sectionHead{flex-direction:column}.compTable{min-width:860px}
 }
+</style><style id="ambassador-backoffice-v3">
+:root{--amb-navy:#07172f;--amb-navy2:#0b2b49;--amb-gold:#e2bd62;--amb-gold2:#f2d98f;--amb-page:#f5f6f8;--amb-text:#17233b;--amb-muted:#6c7787}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#f7f8fa,#f4f1e8)}
+.top{background:linear-gradient(90deg,#07172f,#0b2b49);height:72px}
+.topin{height:72px}.menuToggle{display:none;border:1px solid #ffffff20;background:#ffffff12;color:#fff;border-radius:11px;width:44px;height:44px;font-size:24px;line-height:1;cursor:pointer}
+.side{width:280px;background:linear-gradient(180deg,#061426,#0a2744 60%,#081d33);padding:0 14px 22px;box-shadow:10px 0 35px #07172f20}
+.shell{padding-left:302px}.portalFooter{margin-left:280px}
+.sideBackOffice{padding:20px 12px 17px;border-bottom:1px solid #ffffff18;position:relative;color:#fff}
+.sideBackOffice strong{display:block;font-size:17px;letter-spacing:.02em;line-height:1.25}.sideBackOffice small{display:block;margin-top:6px;color:#e8c96f;font-size:10px;font-weight:900;letter-spacing:.19em}
+.sideClose{display:none;position:absolute;right:0;top:13px;width:38px;height:38px;border:0;border-radius:10px;background:#ffffff12;color:#fff;font-size:26px;cursor:pointer}
+.sideProfile{display:flex;gap:12px;align-items:center;padding:18px 10px 14px}.sideAvatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#e7bd54,#f4dda0);color:#102b46;font-size:19px;font-weight:900;box-shadow:0 6px 16px #0002}.sideIdentity{min-width:0}.sideIdentity b{display:block;color:#fff;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sideMeta{display:flex;align-items:center;gap:7px;margin-top:5px;color:#c7d3df;font-size:10px}.sideStatus{display:inline-flex;padding:4px 7px;border-radius:99px;font-weight:900;text-transform:uppercase;font-size:8px}.sideStatus.ok{background:#dff5e9;color:#176b50}.sideStatus.warn{background:#fff0c9;color:#80580a}
+.sideFinance{margin:0 6px 14px;padding:12px;border:1px solid #ffffff17;background:#ffffff0a;border-radius:13px;display:grid;grid-template-columns:1fr 1fr;gap:8px}.sideMoney{min-width:0}.sideMoney span{display:block;color:#9fb0c1;font-size:8px;font-weight:900;letter-spacing:.08em}.sideMoney b{display:block;color:#fff;margin-top:4px;font-size:15px}.sideMoney+ .sideMoney{border-left:1px solid #ffffff18;padding-left:10px}
+.navGroup{margin-top:8px}.navGroupLabel{padding:10px 12px 5px;color:#96a8ba;font-size:9px;font-weight:900;letter-spacing:.18em}.navbtn{display:flex;align-items:center;gap:10px;color:#dbe5ef;font-size:12px;font-weight:750;padding:11px 12px;border-radius:10px;margin:2px 0}.navIcon{width:18px;text-align:center;color:#b9c8d7}.navbtn.on,.navbtn:hover{background:linear-gradient(90deg,#e3b74b,#f2d58b);color:#102c48;box-shadow:0 5px 14px #0002}.navbtn.on .navIcon,.navbtn:hover .navIcon{color:#102c48}.sideLogout{margin-top:12px;border-top:1px solid #ffffff18;padding-top:10px}
+.sideOverlay{display:none}
+.hero h1{font-weight:800;letter-spacing:-.02em}.card h2,.stat b{letter-spacing:-.01em}
+@media(max-width:900px){
+ .menuToggle{display:grid;place-items:center;flex:0 0 auto}.topin{justify-content:flex-start}.brandWrap{min-width:0;flex:1}.topActions{margin-left:auto}
+ .side{position:fixed;inset:0 auto 0 0;top:0;width:min(86vw,360px);transform:translateX(-104%);transition:transform .24s ease;z-index:120;margin:0;border-radius:0;padding-top:0;display:block}
+ body.amb-nav-open .side{transform:translateX(0)}.sideClose{display:block}
+ .sideOverlay{display:block;position:fixed;inset:0;background:#02091399;backdrop-filter:blur(2px);z-index:110;opacity:0;pointer-events:none;transition:opacity .2s}
+ body.amb-nav-open .sideOverlay{opacity:1;pointer-events:auto}
+ #sideNav{display:block!important;overflow:visible!important}.side .navbtn{width:100%!important;white-space:normal!important;border:0!important;padding:11px 12px!important}
+ .shell{padding:14px 12px 28px}.portalFooter{margin-left:0}.mobileNav{display:none!important}
+ .content{padding-top:0}
+}
+@media(max-width:560px){
+ .topin{gap:8px}.portalLogo{width:32px;height:32px}.brand{font-size:12px}.brandSub{font-size:6px;letter-spacing:.13em}
+ .topBtn{width:42px;height:42px;padding:0;display:grid;place-items:center}.topActions{gap:6px}
+ .hero{border-radius:17px}.stat{min-height:112px;padding:15px}.stat b{font-size:28px}.stat small{font-size:9px;line-height:1.35}
+}
 </style></head>
 <body>
-<header class="top"><div class="topin"><div class="brandWrap"><img src="logo.png" alt="Funda Online Academy" class="portalLogo"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div class="brandSub">AMBASSADOR PORTAL</div></div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
+<header class="top"><div class="topin"><button id="sideToggle" class="menuToggle" aria-label="Open Ambassador menu">☰</button><div class="brandWrap"><img src="logo.png" alt="Funda Online Academy" class="portalLogo"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div class="brandSub">AMBASSADOR PORTAL</div></div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
 <div class="mobileNav" id="mobileNav"></div>
 <main class="shell">
-<aside class="side"><div class="navKicker">AMBASSADOR MENU</div><div id="sideNav"></div></aside>
+<aside class="side">
+  <div class="sideBackOffice"><strong>FUNDA ONLINE ACADEMY</strong><small>AMBASSADOR BACK OFFICE</small><button id="sideClose" class="sideClose" aria-label="Close Ambassador menu">×</button></div>
+  <div class="sideProfile"><div class="sideAvatar">A</div><div class="sideIdentity"><b id="sideName">Ambassador</b><div class="sideMeta"><span id="sideRank">Ambassador</span><span id="sideStatus" class="sideStatus ok">Active</span></div></div></div>
+  <div class="sideFinance"><div class="sideMoney"><span>APPROVED EARNINGS</span><b id="sideApproved">R0</b></div><div class="sideMoney"><span>PENDING / HELD</span><b id="sidePending">R0</b></div></div>
+  <div id="sideNav"></div>
+  <div class="sideLogout"><button class="navbtn" type="button" onclick="document.getElementById('logout').click()"><span class="navIcon">↗</span><span>Log Out</span></button></div>
+</aside><div id="sideOverlay" class="sideOverlay"></div>
 <div class="content">
 <section id="loading" class="card">Loading your secure Ambassador Dashboard…</section>
 <section id="notFound" class="card hide"><h2>Ambassador account unavailable</h2><p class="muted">Use the email address connected to your approved Ambassador application. If your application is still under review, portal access will remain unavailable.</p><a class="btn" href="ambassador-login.html" style="display:inline-block;text-decoration:none">Ambassador Login</a></section>
@@ -139,6 +175,6 @@ body{background:var(--page)}
   </div>
   <div class="footerBottom"><span>© 2026 Funda Online Academy. All rights reserved.</span><span>Ambassador Portal · Learn · Grow · Achieve.</span></div>
 </footer>
-<script src="ambassador-portal-v2.js?v=20260905-other-bank-manual"></script>
+<script src="ambassador-portal-v2.js?v=20260909-backoffice-redesign"></script>
 <script src="academy-identity.js?v=20260905-master-identity"></script>
 </body></html>
