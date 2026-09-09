@@ -19,9 +19,19 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&
 const inviteArrival=/type=invite|type=recovery|code=/i.test(location.href);
 let db,u,p,contracts=[],leave=[],training=[],reviews=[],access=[];
 async function initClient(){if(db)return;db=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}
+async function restoreStaffUser(){
+  let lastError=null;
+  for(const wait of [0,250,650,1200]){
+    if(wait)await new Promise(r=>setTimeout(r,wait));
+    try{let s=await db.auth.getSession();if(s.data?.session?.user)return s.data.session.user;if(s.error)lastError=s.error}catch(e){lastError=e}
+    try{let g=await db.auth.getUser();if(g.data?.user)return g.data.user;if(g.error)lastError=g.error}catch(e){lastError=e}
+  }
+  if(lastError)console.warn('Staff session restore failed',lastError);
+  return null;
+}
 async function load(){
   await initClient();
-  let g=await db.auth.getUser();u=g.data.user;
+  u=await restoreStaffUser();
   document.getElementById('topLogout').style.display=u?'inline-flex':'none';
   if(!u){renderLogin();return}
   let pr=await db.from('profiles').select('*').eq('id',u.id).maybeSingle();p=pr.data;
@@ -110,11 +120,14 @@ load();
 <script>
 window.fundaProtectedPageRecheck=async function(){
   try{
-    if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY){location.replace('login.html');return}
+    if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)return;
     const client=window.__fundaSessionGuardClient||(window.__fundaSessionGuardClient=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}}));
-    const {data}=await client.auth.getSession();
-    if(!data?.session?.user)location.replace('login.html');
-  }catch(_){location.replace('login.html')}
+    for(const wait of [0,250,650]){
+      if(wait)await new Promise(r=>setTimeout(r,wait));
+      const {data}=await client.auth.getSession();
+      if(data?.session?.user)return;
+    }
+  }catch(e){console.warn('Staff page session recheck failed',e)}
 };
 window.addEventListener('pageshow',function(e){if(e.persisted)window.fundaProtectedPageRecheck()});
 </script>
