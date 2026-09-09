@@ -34,7 +34,7 @@ function adminLink(){
   a.href='admin-calendar.html';
   a.dataset.fundaCalendarLink='1';
   a.textContent='◷ Executive Calendar & Tasks';
-  a.style.cssText='display:block;text-decoration:none;text-align:left;padding:11px;border-radius:9px;font-size:12px;font-weight:700;color:#34455f;background:#fff8df;border:1px solid #ead28b;margin:3px 0 7px;';
+  a.style.cssText='display:block;text-decoration:none;text-align:left;padding:11px;border-radius:9px;font-size:12px;font-weight:700;color:#e9f0f8;background:transparent;border:1px solid transparent;margin:3px 0 7px;';
   const dashboard=[...nav.querySelectorAll('button')].find(b=>/My Dashboard/i.test(b.textContent||''));
   if(dashboard&&dashboard.nextSibling)nav.insertBefore(a,dashboard.nextSibling);else if(dashboard)nav.appendChild(a);else nav.prepend(a);
   return true;
