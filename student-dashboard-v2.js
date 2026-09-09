@@ -28,6 +28,35 @@ body.sdV2{background:linear-gradient(180deg,#fffdf8 0%,#f7f8fa 46%,#fffaf0 100%)
 .sdNav .active{background:linear-gradient(90deg,#f5dd9a,#e1b84c);color:#17324a;box-shadow:0 4px 12px rgba(184,133,22,.12)}
 .sdNavIcon{width:20px;text-align:center;font-size:16px;color:#b58216}.sdLogout{color:#17324a!important;margin-top:7px}
 .sdTopMenu{display:inline-grid!important;place-items:center;width:46px;height:46px;padding:0!important;border-radius:12px!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important;font-size:24px!important;flex:0 0 auto}
+.sdDashOnly{display:none!important}
+.sdCompactWelcome{margin-bottom:18px;padding:18px 20px;border-radius:20px;background:linear-gradient(135deg,#fffdf7,#fff5dc);border:1px solid #ead8a6;box-shadow:0 5px 16px rgba(20,49,77,.05)}
+.sdCompactWelcome p{margin:0;color:#b58216;font-size:9px;letter-spacing:.18em;font-weight:900;text-transform:uppercase}.sdCompactWelcome h1{margin:5px 0 0;color:#17324a;font:900 24px/1.15 Montserrat,sans-serif}
+body.sdV2[data-sd-view="dashboard"] #studentHero,
+body.sdV2[data-sd-view="dashboard"] #coursesAndQuickAccess,
+body.sdV2[data-sd-view="dashboard"] #applicationJourney,
+body.sdV2[data-sd-view="dashboard"] #announcementsSection,
+body.sdV2[data-sd-view="dashboard"] #librarySection,
+body.sdV2[data-sd-view="dashboard"] #studentInfoAndAcademy{display:none!important}
+body.sdV2[data-sd-view="dashboard"] #compactWelcome{display:block!important}
+body.sdV2[data-sd-view="courses"] #studentHero,
+body.sdV2[data-sd-view="courses"] #statusBanner,
+body.sdV2[data-sd-view="courses"] #dashboardStats,
+body.sdV2[data-sd-view="courses"] #applicationJourney,
+body.sdV2[data-sd-view="courses"] #recentActivity,
+body.sdV2[data-sd-view="courses"] #announcementsSection,
+body.sdV2[data-sd-view="courses"] #librarySection,
+body.sdV2[data-sd-view="courses"] #studentInfoAndAcademy,
+body.sdV2[data-sd-view="courses"] #compactWelcome{display:none!important}
+body.sdV2[data-sd-view="courses"] #coursesAndQuickAccess{display:grid!important}
+body.sdV2[data-sd-view="announcements"] #studentHero,
+body.sdV2[data-sd-view="announcements"] #statusBanner,
+body.sdV2[data-sd-view="announcements"] #dashboardStats,
+body.sdV2[data-sd-view="announcements"] #coursesAndQuickAccess,
+body.sdV2[data-sd-view="announcements"] #applicationJourney,
+body.sdV2[data-sd-view="announcements"] #recentActivity,
+body.sdV2[data-sd-view="announcements"] #librarySection,
+body.sdV2[data-sd-view="announcements"] #studentInfoAndAcademy,
+body.sdV2[data-sd-view="announcements"] #compactWelcome{display:none!important}
 .sdMotto{margin-top:22px;padding:16px 10px;border-radius:15px;background:linear-gradient(135deg,#fff9e8,#f5dda0);border:1px solid #ead39b;color:#b58216;text-align:center;font:800 12px Montserrat,sans-serif}.sdMotto small{display:block;margin-top:6px;color:#7c8793;font:800 7px Inter,sans-serif;letter-spacing:.24em}body.sdV2>header{background:#06152f!important}
 body.sdV2>header nav,body.sdV2>header .mobile-scroll{display:none!important}
 .sdHeroMetrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:20px;position:relative;z-index:2}
@@ -148,6 +177,7 @@ function updateIdentity(){
  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
  set('sdName',nm);set('sdLearner',learnerId());set('sdStatus',st);set('sdPct',pct+'%');
  const av=document.getElementById('sdAvatar');if(av)av.textContent=initials(nm);
+ const cw=document.getElementById('compactWelcomeName');if(cw)cw.textContent='Welcome back, '+nm;
  const bar=document.getElementById('sdProgress');if(bar)bar.style.width=pct+'%';
  const hero=document.getElementById('sdHeroMetrics');
  if(hero)hero.innerHTML=`
@@ -160,6 +190,28 @@ function installHero(){
  const hero=document.querySelector('#dashboardContent .hero:first-child');
  if(!hero||document.getElementById('sdHeroMetrics'))return;
  const m=document.createElement('div');m.id='sdHeroMetrics';m.className='sdHeroMetrics';hero.querySelector('.relative')?.appendChild(m);
+}
+function prepareDashboardViews(){
+ const dc=document.getElementById('dashboardContent');if(!dc)return;
+ const hero=dc.querySelector('.hero:first-child');if(hero)hero.id='studentHero';
+ const stats=document.getElementById('enrolledCount')?.closest('section');if(stats)stats.id='dashboardStats';
+ const courses=document.getElementById('myCoursesSection');if(courses?.parentElement)courses.parentElement.id='coursesAndQuickAccess';
+ const journey=document.getElementById('journeyCards')?.closest('section');if(journey)journey.id='applicationJourney';
+ const recent=document.getElementById('recentActivities')?.closest('section');if(recent)recent.id='recentActivity';
+ const info=document.getElementById('profileCardButton')?.closest('section.grid');if(info)info.id='studentInfoAndAcademy';
+ if(!document.getElementById('compactWelcome')){
+  const w=document.createElement('section');w.id='compactWelcome';w.className='sdCompactWelcome sdDashOnly';
+  w.innerHTML='<p>Student Portal</p><h1 id="compactWelcomeName">Welcome back</h1>';
+  dc.prepend(w);
+ }
+}
+function dashboardView(view){
+ prepareDashboardViews();
+ document.body.dataset.sdView=view;
+ const nm=document.getElementById('welcomeName')?.textContent||('Welcome back, '+name());
+ const cw=document.getElementById('compactWelcomeName');if(cw)cw.textContent=nm;
+ document.querySelectorAll('#sdSide [data-sd-key]').forEach(x=>x.classList.toggle('active',x.dataset.sdKey===view));
+ close();window.scrollTo({top:0,behavior:'smooth'});
 }
 function install(){
  style();document.body.classList.add('sdV2');
@@ -183,12 +235,14 @@ function install(){
  document.getElementById('sdOverlay')?.addEventListener('click',close);
  document.getElementById('sdLogout')?.addEventListener('click',()=>document.getElementById('logoutButton')?.click());
  document.querySelectorAll('#sdSide a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
-  e.preventDefault();close();const target=document.querySelector(a.getAttribute('href'));
+  e.preventDefault();const key=a.dataset.sdKey;
+  if(key==='dashboard'||key==='courses'||key==='announcements')return dashboardView(key);
+  close();const target=document.querySelector(a.getAttribute('href'));
   if(target){target.classList.add('sdSectionMark');target.scrollIntoView({behavior:'smooth',block:'start'})}
   document.querySelectorAll('#sdSide a').forEach(x=>x.classList.remove('active'));a.classList.add('active');
  }));
- const first=document.querySelector('#sdSide [data-sd-key="dashboard"]');if(first)first.classList.add('active');
  document.querySelectorAll('#sdSide [data-funda-results-link],#sdSide #fundaCertificatesQuickLink').forEach(x=>x.remove());
+ prepareDashboardViews();dashboardView('dashboard');
  installHero();updateIdentity();
  let tries=0;const t=setInterval(()=>{tries++;installHero();updateIdentity();if(tries>30)clearInterval(t)},500);
  window.addEventListener('resize',()=>{if(innerWidth>=1000)close()});
