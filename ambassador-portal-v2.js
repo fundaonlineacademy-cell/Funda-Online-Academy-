@@ -6,7 +6,7 @@ const navGroups=[
  {label:'MAIN',items:[['dashboard','⌂','My Dashboard'],['referrals','◎','My Referrals'],['earnings','R','My Earnings'],['rank','◒','Rank Progress'],['compensation','▣','Compensation Plan']]},
  {label:'FINANCE',items:[['earnings','◫','Earnings Breakdown'],['payments','▤','Payment History'],['banking','▧','My Banking']]},
  {label:'RESOURCES',items:[['marketing','◆','Marketing Resources'],['announcements','◉','Announcements'],['support','?','Help & Support'],['programme','▥','Programme Rules']]},
- {label:'ACCOUNT',items:[['dashboard','↗','My Referral Link'],['profile','♙','My Profile'],['banking','⌁','Bank Details'],['announcements','●','Notifications']]}
+ {label:'ACCOUNT',items:[['referral-link','↗','My Referral Link'],['profile','♙','My Profile'],['banking','⌁','Bank Details'],['announcements','●','Notifications']]}
 ];
 const saBanks=[
  {name:'Absa Bank',code:'632005'},
@@ -124,9 +124,18 @@ function render(){
  $('#copyCode').onclick=()=>copy(app.referral_code,$('#copyCode'));$('#copyLink').onclick=()=>copy(referralLink(),$('#copyLink'));
  if(next){let remain=Math.max(0,next.min-life),pct=Math.max(0,Math.min(100,(life-r.min)/(next.min-r.min)*100));$('#nextRank').textContent='Current rank: '+r.n+'. '+money(remain)+' more lifetime qualifying revenue to reach '+next.n+'.';$('#progressBar').style.width=pct+'%'}else{$('#nextRank').textContent='Elite rank achieved.';$('#progressBar').style.width='100%'}
  $('#monthlyTarget').textContent=r.pay?'Monthly Performance Payment eligibility at this rank: up to '+money(r.pay)+', subject to monthly performance verification.':'Monthly Performance Payments begin at Gold / Level 4.';
- document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showSection(b.dataset.go));const qcl=$('#quickCopyLink');if(qcl)qcl.onclick=()=>copy(referralLink(),qcl);renderReferrals();renderLedger();renderPayouts();renderProfile();renderAgreement();renderSupportHub();renderRecentActivity();renderRankProgress();
+ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showSection(b.dataset.go));const qcl=$('#quickCopyLink');if(qcl)qcl.onclick=()=>copy(referralLink(),qcl);renderReferrals();renderLedger();renderPayouts();renderProfile();renderAgreement();renderSupportHub();renderRecentActivity();renderRankProgress();renderReferralAccount();
 }
 
+function renderReferralAccount(){
+ const code=app?.referral_code||'';
+ const url=referralLink();
+ if($('#accountReferralCode'))$('#accountReferralCode').textContent=code||'Not issued yet';
+ if($('#accountReferralUrl'))$('#accountReferralUrl').textContent=code?url:'Your tracked referral link will appear here once a code is issued.';
+ const cc=$('#accountCopyCode'),cl=$('#accountCopyLink');
+ if(cc)cc.onclick=()=>code?copy(code,cc):null;
+ if(cl)cl.onclick=()=>code?copy(url,cl):null;
+}
 function renderRankProgress(){
  const life=ledger.filter(x=>x.earning_type==='commission'&&x.earning_status!=='reversed').reduce((s,x)=>s+Number(x.qualifying_revenue||0),0);
  const current=rank(life),idx=ranks.indexOf(current),next=ranks[idx+1];
