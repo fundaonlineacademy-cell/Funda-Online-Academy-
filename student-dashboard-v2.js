@@ -1,0 +1,174 @@
+(()=>{
+'use strict';
+if(window.__fundaStudentDashboardV2)return;
+window.__fundaStudentDashboardV2=true;
+
+const CSS=`
+:root{--sd-navy:#06152f;--sd-navy2:#0b2746;--sd-gold:#d4aa42;--sd-ink:#17324a;--sd-line:#dbe3ea}
+body.sdV2{background:#f4f7fa!important;color:#111!important}
+.sdOverlay{position:fixed;inset:0;background:rgba(1,12,29,.62);z-index:74;opacity:0;pointer-events:none;transition:.18s}
+.sdOverlay.open{opacity:1;pointer-events:auto}
+.sdSide{position:fixed;left:0;top:0;bottom:0;width:292px;background:linear-gradient(180deg,#04182d 0%,#092b4d 100%);z-index:75;color:#fff;overflow-y:auto;overscroll-behavior:contain;transform:translateX(-102%);transition:.2s;box-shadow:18px 0 50px rgba(2,17,36,.22)}
+.sdSide.open{transform:none}
+.sdSideInner{padding:24px 20px 28px}
+.sdBrand{display:flex;align-items:center;gap:12px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.12)}
+.sdBrand img{width:46px;height:46px;object-fit:contain;background:#fff;border-radius:10px;padding:3px}
+.sdBrand b{display:block;font-family:Montserrat,sans-serif;font-size:16px;line-height:1.15}
+.sdBrand span{display:block;margin-top:4px;font-size:8px;letter-spacing:.19em;font-weight:800;color:#e5c971}
+.sdClose{margin-left:auto;width:42px;height:42px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(255,255,255,.08);color:#fff;font-size:25px;cursor:pointer}
+.sdIdentity{padding:22px 8px 18px;border-bottom:1px solid rgba(255,255,255,.12)}
+.sdPerson{display:flex;gap:13px;align-items:center}
+.sdAvatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#e8bd51,#f5dc8d);color:#17324a;font:800 20px Montserrat,sans-serif}
+.sdPerson b{display:block;font:800 15px Montserrat,sans-serif}.sdPerson small{display:block;color:#ced9e5;font-size:10px;margin-top:3px}
+.sdStatus{display:inline-flex;margin-top:6px;padding:4px 8px;border-radius:999px;background:#dff4e7;color:#155f3f;font-size:8px;font-weight:900;letter-spacing:.05em}
+.sdProgressMeta{display:flex;justify-content:space-between;margin-top:15px;color:#e7edf3;font-size:9px;font-weight:700}.sdTrack{height:6px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden;margin-top:6px}.sdTrack i{display:block;height:100%;background:linear-gradient(90deg,#d6a832,#f1d375);width:0}
+.sdNavGroup{margin-top:22px}.sdNavLabel{padding:0 8px;margin-bottom:8px;color:#fff;font-size:8px;letter-spacing:.16em;font-weight:900}
+.sdNav a,.sdNav button{width:100%;border:0;text-decoration:none;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;background:transparent;color:#dce6ef;font:700 11px Inter,sans-serif;cursor:pointer;text-align:left}
+.sdNav a:hover,.sdNav button:hover,.sdNav .active{background:rgba(255,255,255,.09);color:#fff}
+.sdNav .active{background:linear-gradient(90deg,#d3a435,#f0d478);color:#17324a}
+.sdNavIcon{width:18px;text-align:center;font-size:14px}.sdLogout{color:#ffdada!important;margin-top:7px}
+.sdTopMenu{display:inline-grid!important;place-items:center;width:44px;height:44px;padding:0!important;border-radius:12px!important;background:rgba(255,255,255,.09)!important;border:1px solid rgba(255,255,255,.15)!important;color:#fff!important;font-size:22px!important}
+body.sdV2>header{background:#06152f!important}
+body.sdV2>header nav,body.sdV2>header .mobile-scroll{display:none!important}
+.sdHeroMetrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:20px;position:relative;z-index:2}
+.sdHeroMetric{padding:11px 13px;border:1px solid rgba(255,255,255,.14);border-radius:13px;background:rgba(255,255,255,.08)}
+.sdHeroMetric span{display:block;font-size:7px;letter-spacing:.1em;color:#c9d8e8;font-weight:900}.sdHeroMetric b{display:block;margin-top:4px;color:#fff;font-size:11px}
+body.sdV2 #dashboardContent .hero:first-child{background:linear-gradient(125deg,#05203b 0%,#0b365b 72%,#144e72 100%)!important}
+body.sdV2 #dashboardContent h1,body.sdV2 #dashboardContent h2,body.sdV2 #dashboardContent h3{color:#17324a}
+body.sdV2 #dashboardContent .hero h1,body.sdV2 #dashboardContent .hero h2{color:#fff}
+body.sdV2 .card{box-shadow:0 4px 14px rgba(14,42,72,.06)!important;border-color:#dbe3ea!important}
+body.sdV2 .text-slate-500,body.sdV2 .text-slate-600{color:#3d4d5c!important}
+body.sdV2 #overview{max-width:1480px!important}
+.sdSectionMark{scroll-margin-top:95px}
+@media(min-width:1000px){
+ .sdSide{transform:none}.sdOverlay{display:none}body.sdV2>header{margin-left:292px}body.sdV2>main,body.sdV2>footer{margin-left:292px}
+ .sdClose{display:none}body.sdV2>header>div{max-width:none!important}
+}
+@media(max-width:999px){
+ .sdHeroMetrics{grid-template-columns:1fr 1fr}
+ body.sdV2>header .brand{display:block}
+}
+@media(max-width:560px){
+ .sdSide{width:min(88vw,320px)}
+ .sdSideInner{padding:18px 16px 24px}
+ .sdHeroMetrics{grid-template-columns:1fr 1fr}
+ body.sdV2 #overview{padding-left:12px!important;padding-right:12px!important}
+ body.sdV2 #dashboardContent .hero:first-child{padding:22px 18px!important;border-radius:22px!important}
+ body.sdV2 #welcomeName{font-size:28px!important;line-height:1.12!important}
+}
+`;
+
+const groups=[
+ {label:'MAIN',items:[
+  ['dashboard','#overview','⌂','My Dashboard'],
+  ['courses','#myCoursesSection','▣','My Courses'],
+  ['progress','#myCoursesSection','▥','My Progress'],
+  ['assessments','#myCoursesSection','✓','Assessments']
+ ]},
+ {label:'LEARNING',items:[
+  ['materials','digital-library.html','▤','Study Materials'],
+  ['resources','digital-library.html','◇','Course Resources'],
+  ['results','student-results.html','▧','Results / Academic Record'],
+  ['certificates','student-certificates.html','♕','Certificates'],
+  ['calendar','student-calendar.html','◷','My Calendar']
+ ]},
+ {label:'SUPPORT',items:[
+  ['announcements','#announcementsSection','●','Announcements'],
+  ['academic','#studentCommunicationHelpCentre','?','Academic Support'],
+  ['technical','#studentSupportSection','⌁','Technical Support / Log Ticket']
+ ]},
+ {label:'ACCOUNT',items:[
+  ['profile','profile.html','♙','My Profile'],
+  ['notifications','#announcementsSection','◉','Notifications'],
+  ['security','profile.html','◇','Security / Password']
+ ]}
+];
+
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const initials=name=>String(name||'Student').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'S';
+function style(){if(document.getElementById('studentDashboardV2Style'))return;const s=document.createElement('style');s.id='studentDashboardV2Style';s.textContent=CSS;document.head.appendChild(s)}
+function overallProgress(){
+ try{
+  const approved=(typeof enrollments!=='undefined'?enrollments:[]).filter(e=>typeof isApproved==='function'&&isApproved(e));
+  if(!approved.length)return 0;
+  const vals=approved.map(e=>Number((typeof courseProgress!=='undefined'&&courseProgress[String(e.course_id)]?.percent)||0));
+  return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+ }catch{return 0}
+}
+function learnerId(){
+ try{
+  if(typeof studentRecord!=='undefined'&&studentRecord?.learner_number)return studentRecord.learner_number;
+  if(typeof studentRecord!=='undefined'&&studentRecord?.student_number)return studentRecord.student_number;
+  if(typeof studentRecord!=='undefined'&&studentRecord?.id)return 'ID '+String(studentRecord.id).slice(0,8).toUpperCase();
+ }catch{}
+ return 'Pending';
+}
+function activeCount(){
+ try{return (typeof enrollments!=='undefined'?enrollments:[]).filter(e=>typeof isApproved==='function'&&isApproved(e)).length}catch{return 0}
+}
+function memberSince(){
+ try{
+  const d=studentRecord?.created_at||profile?.created_at||currentUser?.created_at;
+  return d?new Intl.DateTimeFormat('en-ZA',{month:'short',year:'numeric'}).format(new Date(d)):'—';
+ }catch{return '—'}
+}
+function name(){
+ try{return typeof displayName==='function'?displayName():(studentRecord?.full_name||profile?.full_name||'Student')}catch{return 'Student'}
+}
+function statusText(){
+ try{
+  const all=(typeof enrollments!=='undefined'?enrollments:[]);
+  if(all.some(e=>typeof isApproved==='function'&&isApproved(e)))return 'ACTIVE';
+  if(all.length)return 'UNDER REVIEW';
+ }catch{}
+ return 'ACTIVE';
+}
+function navHtml(){
+ return groups.map(g=>`<div class="sdNavGroup"><div class="sdNavLabel">${g.label}</div><div class="sdNav">${g.items.map(([key,href,icon,label])=>`<a data-sd-key="${key}" href="${href}"><span class="sdNavIcon">${icon}</span><span>${label}</span></a>`).join('')}</div></div>`).join('');
+}
+function open(){document.getElementById('sdSide')?.classList.add('open');document.getElementById('sdOverlay')?.classList.add('open');document.body.style.overflow=innerWidth<1000?'hidden':''}
+function close(){document.getElementById('sdSide')?.classList.remove('open');document.getElementById('sdOverlay')?.classList.remove('open');document.body.style.overflow=''}
+function updateIdentity(){
+ const nm=name(),pct=overallProgress(),st=statusText();
+ const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+ set('sdName',nm);set('sdLearner',learnerId());set('sdStatus',st);set('sdPct',pct+'%');
+ const av=document.getElementById('sdAvatar');if(av)av.textContent=initials(nm);
+ const bar=document.getElementById('sdProgress');if(bar)bar.style.width=pct+'%';
+ const hero=document.getElementById('sdHeroMetrics');
+ if(hero)hero.innerHTML=`
+  <div class="sdHeroMetric"><span>LEARNER ID</span><b>${esc(learnerId())}</b></div>
+  <div class="sdHeroMetric"><span>ENROLMENT STATUS</span><b>${esc(st)}</b></div>
+  <div class="sdHeroMetric"><span>MEMBER SINCE</span><b>${esc(memberSince())}</b></div>
+  <div class="sdHeroMetric"><span>ACTIVE ENROLMENTS</span><b>${activeCount()} COURSE${activeCount()===1?'':'S'}</b></div>`;
+}
+function installHero(){
+ const hero=document.querySelector('#dashboardContent .hero:first-child');
+ if(!hero||document.getElementById('sdHeroMetrics'))return;
+ const m=document.createElement('div');m.id='sdHeroMetrics';m.className='sdHeroMetrics';hero.querySelector('.relative')?.appendChild(m);
+}
+function install(){
+ style();document.body.classList.add('sdV2');
+ if(!document.getElementById('sdSide')){
+  document.body.insertAdjacentHTML('afterbegin',`<div id="sdOverlay" class="sdOverlay"></div><aside id="sdSide" class="sdSide" aria-label="Student portal navigation"><div class="sdSideInner"><div class="sdBrand"><img src="logo.png" alt="Funda Online Academy"><div><b>FUNDA ONLINE<br>ACADEMY</b><span>STUDENT PORTAL</span></div><button id="sdClose" class="sdClose" aria-label="Close navigation">×</button></div><div class="sdIdentity"><div class="sdPerson"><div id="sdAvatar" class="sdAvatar">S</div><div><b id="sdName">Student</b><small>Learner: <span id="sdLearner">Pending</span></small><span id="sdStatus" class="sdStatus">ACTIVE</span></div></div><div class="sdProgressMeta"><span>Overall Progress</span><b id="sdPct">0%</b></div><div class="sdTrack"><i id="sdProgress"></i></div></div><nav class="sdNavWrap">${navHtml()}<div class="sdNavGroup"><div class="sdNav"><button id="sdLogout" class="sdLogout"><span class="sdNavIcon">↪</span><span>Log Out</span></button></div></div></nav></div></aside>`);
+ }
+ const header=document.querySelector('body>header');
+ if(header&&!document.getElementById('sdMenu')){
+  const controls=header.querySelector('.flex.items-center.gap-2');
+  controls?.insertAdjacentHTML('afterbegin','<button id="sdMenu" class="sdTopMenu" aria-label="Open student navigation">☰</button>');
+ }
+ document.getElementById('sdMenu')?.addEventListener('click',open);
+ document.getElementById('sdClose')?.addEventListener('click',close);
+ document.getElementById('sdOverlay')?.addEventListener('click',close);
+ document.getElementById('sdLogout')?.addEventListener('click',()=>document.getElementById('logoutButton')?.click());
+ document.querySelectorAll('#sdSide a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault();close();const target=document.querySelector(a.getAttribute('href'));
+  if(target){target.classList.add('sdSectionMark');target.scrollIntoView({behavior:'smooth',block:'start'})}
+  document.querySelectorAll('#sdSide a').forEach(x=>x.classList.remove('active'));a.classList.add('active');
+ }));
+ const first=document.querySelector('#sdSide [data-sd-key="dashboard"]');if(first)first.classList.add('active');
+ installHero();updateIdentity();
+ let tries=0;const t=setInterval(()=>{tries++;installHero();updateIdentity();if(tries>30)clearInterval(t)},500);
+ window.addEventListener('resize',()=>{if(innerWidth>=1000)close()});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
+})();
