@@ -107,6 +107,17 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
  .dashboardSplit{display:grid;grid-template-columns:1fr}.activityItem{grid-template-columns:34px minmax(0,1fr)}.activityIcon{width:34px;height:34px}.activityAmt{grid-column:2}
  .earningsMini{grid-template-columns:1fr!important}
 }
+</style><style id="ambassador-referrals-v1">
+.referralSummary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}.miniMetric{border:1px solid #dfe6eb;background:#f9fbfc;border-radius:13px;padding:14px}.miniMetric span{display:block;color:#71808d;font-size:8px;font-weight:900;letter-spacing:.08em;line-height:1.35}.miniMetric b{display:block;color:#17324a;font-size:22px;margin-top:6px}
+.referralTools{display:flex;justify-content:space-between;gap:16px;align-items:flex-end}.referralSearch{display:flex;gap:8px}.referralSearch input,.referralSearch select{border:1px solid #d6e0e7;border-radius:10px;background:#fff;padding:10px 12px;color:#17324a;font:inherit;font-size:12px}.referralSearch input{min-width:210px}
+.referralMobile{display:none}.privacyNote{display:flex;gap:10px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-radius:11px;background:#f6f8fa;border:1px solid #e1e6ea}.privacyNote b{font-size:10px;color:#17324a;white-space:nowrap}.privacyNote span{font-size:10px;color:#75818c;line-height:1.45}
+@media(max-width:700px){
+ .referralSummary{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.miniMetric{padding:12px}.miniMetric b{font-size:20px}
+ .referralTools{display:block}.referralSearch{margin-top:12px;display:grid;grid-template-columns:1fr}.referralSearch input{min-width:0;width:100%}
+ .referralDesktop{display:none}.referralMobile{display:grid;gap:9px;margin-top:14px}
+ .refCard{border:1px solid #dfe6eb;border-radius:13px;padding:13px;background:#fff}.refCardTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.refCardTop b{font-size:13px;color:#17324a}.refCardTop small{display:block;color:#74818d;font-size:10px;margin-top:3px}.refCardAmt{font-size:14px!important;white-space:nowrap}.refCardMeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.refCardDate{font-size:9px;color:#7a8792;margin-top:9px}
+ .privacyNote{display:block}.privacyNote b,.privacyNote span{display:block;white-space:normal}.privacyNote span{margin-top:4px}
+}
 </style></head>
 <body>
 <header class="top"><div class="topin"><button id="sideToggle" class="menuToggle" aria-label="Open Ambassador menu">☰</button><div class="brandWrap"><img src="logo.png" alt="Funda Online Academy" class="portalLogo"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div class="brandSub">AMBASSADOR PORTAL</div></div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
@@ -180,7 +191,23 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 </section>
 </section>
 
-<section class="section" data-section="referrals"><div class="card"><h2>My Referrals</h2><p class="muted">For student privacy, only limited referral information is shown. Contact details, ID numbers, payment proofs, assessments and private student records are never exposed here.</p><div class="tablewrap"><table class="tbl"><thead><tr><th>Student</th><th>Course</th><th>Referral Date</th><th>Referral Status</th><th>Earning Status</th><th>Amount</th></tr></thead><tbody id="referralBody"></tbody></table></div></div></section>
+<section class="section" data-section="referrals">
+<section class="card referralsHead">
+  <div class="sectionHead"><div><div class="eyebrow dark">STUDENT REFERRALS</div><h2>My Referrals</h2><p class="muted">Track students attributed to your unique Ambassador code while protecting private student information.</p></div><button id="refCopyLink" class="btn gold">Copy Referral Link</button></div>
+  <div class="referralSummary">
+    <div class="miniMetric"><span>TOTAL RECORDED</span><b id="refTotal">0</b></div>
+    <div class="miniMetric"><span>QUALIFYING / APPROVED</span><b id="refApproved">0</b></div>
+    <div class="miniMetric"><span>PENDING</span><b id="refPending">0</b></div>
+    <div class="miniMetric"><span>RECORDED EARNINGS</span><b id="refEarnings">R0</b></div>
+  </div>
+</section>
+<section class="card">
+  <div class="referralTools"><div><h2>Referral Activity</h2><p class="muted">Only information necessary for referral tracking is displayed.</p></div><div class="referralSearch"><input id="refSearch" type="search" placeholder="Search student or course" aria-label="Search referrals"><select id="refStatus" aria-label="Filter referral status"><option value="">All statuses</option><option value="approved">Approved</option><option value="pending">Pending</option><option value="paid">Paid</option><option value="held">Held</option><option value="rejected">Rejected</option></select></div></div>
+  <div id="referralMobile" class="referralMobile"></div>
+  <div class="tablewrap referralDesktop"><table class="tbl"><thead><tr><th>Student</th><th>Course</th><th>Referral Date</th><th>Referral Status</th><th>Earning Status</th><th>Amount</th></tr></thead><tbody id="referralBody"></tbody></table></div>
+  <div class="privacyNote"><b>Student privacy protected</b><span>Contact details, ID numbers, payment proofs, assessments and private student records are never exposed to Ambassadors.</span></div>
+</section>
+</section>
 
 <section class="section" data-section="earnings"><div class="card"><h2>Earnings & Commission Ledger</h2><p class="muted">Commission is based on verified qualifying revenue. Achievement bonuses and Monthly Performance Payments are recorded separately.</p><div class="tablewrap"><table class="tbl"><thead><tr><th>Month</th><th>Earning Type</th><th>Qualifying Revenue</th><th>Rate</th><th>Amount</th><th>Status</th></tr></thead><tbody id="ledgerBody"></tbody></table></div></div></section>
 
