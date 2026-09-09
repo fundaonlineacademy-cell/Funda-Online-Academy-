@@ -159,6 +159,8 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 .announcementScope{margin-top:10px;font-size:8px;font-weight:900;letter-spacing:.08em;color:#7b8792}
 .pinnedAnnouncement{border-color:#d7b75a!important;background:#fffdf7!important}
 @media(max-width:560px){.announcementTop{display:block}.announcementTop .badge{display:inline-flex;margin-top:7px}}
+</style><style id="ambassador-programme-rules-v2">
+.agreementStatusGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.ruleGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.ruleItem{padding:14px;border:1px solid #e4e9ed;border-radius:12px;background:#fbfcfd}.ruleItem b{display:block;color:#17324a;font-size:11px;margin-bottom:5px}.ruleItem span{display:block;color:#687683;font-size:10px;line-height:1.55}@media(max-width:720px){.agreementStatusGrid,.ruleGrid{grid-template-columns:1fr 1fr}}@media(max-width:480px){.agreementStatusGrid{grid-template-columns:1fr 1fr}.ruleGrid{grid-template-columns:1fr}}
 </style></head>
 <body>
 <header class="top"><div class="topin"><button id="sideToggle" class="menuToggle" aria-label="Open Ambassador menu">☰</button><div class="brandWrap"><img src="logo.png" alt="Funda Online Academy" class="portalLogo"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div class="brandSub">AMBASSADOR PORTAL</div></div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
@@ -356,7 +358,37 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 </div>
 </section>
 
-<section class="section" data-section="programme"><section id="agreementCard" class="card"><h2>Programme Agreement & Rules</h2><p class="muted">The current programme has three earning methods: 15% Direct Commission, one-time Achievement Bonuses and qualifying Monthly Performance Payments.</p><div class="agreement"><p><b>Direct referrals:</b> 15% commission on verified qualifying revenue from your own directly attributed student referrals.</p><p><b>Achievement bonuses:</b> one-time rewards when a new qualifying rank is reached for the first time.</p><p><b>Monthly Performance Payments:</b> begin from Gold / Level 4, subject to the applicable monthly conditions and Academy verification. They are not guaranteed salaries.</p><p><b>Student privacy:</b> Ambassador status never grants access to private student accounts or protected student information.</p><p><b>Responsible promotion:</b> Ambassadors must use accurate Academy information and may not make unauthorised guarantees concerning accreditation, employment, admission, refunds, pricing or outcomes.</p><p><b>Qualifying revenue:</b> refunds, reversals, chargebacks, fraud, manipulation and prohibited self-referrals do not qualify.</p></div><div id="agreementAction" style="margin-top:12px"></div></section></section>
+<section class="section" data-section="programme">
+<section id="agreementCard" class="card"><div class="sectionHead"><div><div class="eyebrow dark">AMBASSADOR GOVERNANCE</div><h2>Programme Agreement & Rules</h2><p class="muted">Your contractual record, everyday conduct standards and the commitments Funda makes to its Ambassadors.</p></div><span class="badge ok" id="agreementStanding">GOOD STANDING</span></div>
+<div class="agreementStatusGrid"><div class="miniMetric"><span>AGREEMENT STATUS</span><b id="agreementStatusText">—</b></div><div class="miniMetric"><span>ACCEPTED</span><b id="agreementAcceptedDate">—</b></div><div class="miniMetric"><span>PROGRAMME STATUS</span><b id="programmeStatusText">—</b></div><div class="miniMetric"><span>CURRENT RECORD</span><b id="agreementVersionText">LEGACY</b></div></div>
+<div id="agreementAction" style="margin-top:14px"></div></section>
+<section class="card"><div class="sectionHead"><div><div class="eyebrow dark">EVERYDAY STANDARDS</div><h2>Ambassador House Rules</h2><p class="muted">Clear practical rules for representing Funda professionally.</p></div></div><div class="ruleGrid">
+<div class="ruleItem"><b>Promote honestly</b><span>Use accurate Academy information, current prices and approved claims.</span></div>
+<div class="ruleItem"><b>Respect prospective students</b><span>No harassment, pressure selling, threats, discrimination or deceptive tactics.</span></div>
+<div class="ruleItem"><b>Keep referrals genuine</b><span>No fabricated, duplicate, manipulated or prohibited self-referrals.</span></div>
+<div class="ruleItem"><b>Protect personal information</b><span>Never collect passwords or misuse, sell or unnecessarily retain student information.</span></div>
+<div class="ruleItem"><b>Use approved marketing</b><span>Do not misleadingly alter official posters, prices, course facts or promotional claims.</span></div>
+<div class="ruleItem"><b>No unauthorised promises</b><span>Do not guarantee admission, employment, accreditation, refunds, results, discounts or income unless officially authorised.</span></div>
+<div class="ruleItem"><b>Represent your role correctly</b><span>Do not impersonate Academy staff, management or an authorised contracting representative.</span></div>
+<div class="ruleItem"><b>Use official support channels</b><span>Report referral, payment, compliance and programme disputes through the trackable Funda channels.</span></div>
+</div></section>
+<section class="card"><div class="sectionHead"><div><div class="eyebrow dark">OUR COMMITMENT</div><h2>What You Can Expect From Funda</h2></div></div><div class="ruleGrid">
+<div class="ruleItem"><b>Respectful treatment</b><span>Professional and fair engagement with Ambassador queries and concerns.</span></div>
+<div class="ruleItem"><b>Transparent records</b><span>Clear referral, earnings and payment records subject to legitimate verification.</span></div>
+<div class="ruleItem"><b>Approved resources</b><span>Access to current Academy-approved promotional materials when available.</span></div>
+<div class="ruleItem"><b>Privacy protection</b><span>Reasonable safeguards for personal, banking and programme information.</span></div>
+<div class="ruleItem"><b>Support & disputes</b><span>A trackable mechanism to query programme decisions and request review.</span></div>
+<div class="ruleItem"><b>Legitimate payment</b><span>Approved valid earnings handled according to the applicable payment process.</span></div>
+</div></section>
+<section class="card"><div class="sectionHead"><div><div class="eyebrow dark">KEY CONTRACT PRINCIPLES</div><h2>Programme Protection & Fairness</h2></div></div><div class="agreement">
+<p><b>Referral & earnings verification:</b> Funda may verify attribution, enrolment, payment, refunds, reversals and suspected manipulation before approving programme earnings.</p>
+<p><b>Suspension:</b> Serious suspected fraud, privacy breaches, manipulation, impersonation, harassment or material misrepresentation may result in temporary protective suspension while the matter is reviewed. Suspension is not by itself a finding of wrongdoing.</p>
+<p><b>Termination:</b> Participation may end for material breach, serious misconduct, repeated non-compliance or legitimate programme/business reasons, subject to the applicable agreement and lawful rights.</p>
+<p><b>Earnings after termination:</b> Legitimately approved pre-termination earnings do not automatically disappear. Pending amounts remain subject to verification; fraudulent, reversed, refunded, duplicated or otherwise invalid amounts may be rejected or adjusted where appropriate.</p>
+<p><b>Programme changes:</b> Funda may make legitimate operational changes. Material contractual changes should be communicated and versioned rather than silently rewriting an agreement already accepted.</p>
+<p><b>Post-termination:</b> A former Ambassador must stop representing themselves as current and stop using restricted/current Ambassador-only materials. Applicable privacy, confidentiality and intellectual-property obligations continue where required.</p>
+</div><div class="notice gold" style="margin-top:12px"><b>Agreement versioning is being introduced.</b><br>Your existing accepted agreement record remains preserved. A future material agreement version must not be treated as accepted until the required acceptance process is completed.</div></section>
+</section>
 
 <section class="section" data-section="marketing">
 <section class="card"><div class="sectionHead"><div><div class="eyebrow dark">APPROVED PROMOTION</div><h2>Marketing Resources</h2><p class="muted">Use Academy-approved campaign assets, captions, course information and promotional materials when referring students.</p></div></div><div class="notice gold">Always use the current Academy-approved prices, course facts and marketing claims. Do not promise accreditation, employment, admission, refunds or outcomes unless the Academy has expressly published that claim.</div></section>
@@ -381,6 +413,6 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
   </div>
   <div class="footerBottom"><span>© 2026 Funda Online Academy. All rights reserved.</span><span>Ambassador Portal · Learn · Grow · Achieve.</span></div>
 </footer>
-<script src="ambassador-portal-v2.js?v=20260909-announcements-live2"></script>
+<script src="ambassador-portal-v2.js?v=20260909-programme-rules-v2"></script>
 <script src="academy-identity.js?v=20260905-master-identity"></script>
 </body></html>
