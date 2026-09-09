@@ -5,7 +5,7 @@ window.__fundaStudentDashboardV2=true;
 
 const CSS=`
 :root{--sd-navy:#06152f;--sd-navy2:#0b2746;--sd-gold:#d4aa42;--sd-ink:#17324a;--sd-line:#dbe3ea}
-body.sdV2{background:#f4f7fa!important;color:#111!important}
+body.sdV2{background:linear-gradient(180deg,#fffdf8 0%,#f7f8fa 46%,#fffaf0 100%)!important;color:#111!important}
 .sdOverlay{position:fixed;inset:0;background:rgba(1,12,29,.62);z-index:74;opacity:0;pointer-events:none;transition:.18s}
 .sdOverlay.open{opacity:1;pointer-events:auto}
 .sdSide{position:fixed;left:0;top:0;bottom:0;width:292px;background:linear-gradient(180deg,#04182d 0%,#092b4d 100%);z-index:75;color:#fff;overflow-y:auto;overscroll-behavior:contain;transform:translateX(-102%);transition:.2s;box-shadow:18px 0 50px rgba(2,17,36,.22)}
@@ -27,19 +27,27 @@ body.sdV2{background:#f4f7fa!important;color:#111!important}
 .sdNav a:hover,.sdNav button:hover,.sdNav .active{background:rgba(255,255,255,.09);color:#fff}
 .sdNav .active{background:linear-gradient(90deg,#d3a435,#f0d478);color:#17324a}
 .sdNavIcon{width:18px;text-align:center;font-size:14px}.sdLogout{color:#ffdada!important;margin-top:7px}
-.sdTopMenu{display:inline-grid!important;place-items:center;width:44px;height:44px;padding:0!important;border-radius:12px!important;background:rgba(255,255,255,.09)!important;border:1px solid rgba(255,255,255,.15)!important;color:#fff!important;font-size:22px!important}
+.sdTopMenu{display:inline-grid!important;place-items:center;width:46px;height:46px;padding:0!important;border-radius:12px!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important;font-size:24px!important;flex:0 0 auto}
 body.sdV2>header{background:#06152f!important}
 body.sdV2>header nav,body.sdV2>header .mobile-scroll{display:none!important}
 .sdHeroMetrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:20px;position:relative;z-index:2}
-.sdHeroMetric{padding:11px 13px;border:1px solid rgba(255,255,255,.14);border-radius:13px;background:rgba(255,255,255,.08)}
-.sdHeroMetric span{display:block;font-size:7px;letter-spacing:.1em;color:#c9d8e8;font-weight:900}.sdHeroMetric b{display:block;margin-top:4px;color:#fff;font-size:11px}
-body.sdV2 #dashboardContent .hero:first-child{background:linear-gradient(125deg,#05203b 0%,#0b365b 72%,#144e72 100%)!important}
+.sdHeroMetric{padding:12px 13px;border:1px solid #e2e7ec;border-radius:14px;background:#fff;box-shadow:0 3px 10px rgba(17,44,73,.04)}
+.sdHeroMetric span{display:block;font-size:7px;letter-spacing:.1em;color:#687684;font-weight:900}.sdHeroMetric b{display:block;margin-top:4px;color:#17324a;font-size:11px}
+body.sdV2 #dashboardContent .hero:first-child{background:linear-gradient(135deg,#fffdf7 0%,#fff8e8 56%,#f7ecd0 100%)!important;border:1px solid #ead8a6!important;box-shadow:0 10px 28px rgba(122,93,26,.08)!important}
 body.sdV2 #dashboardContent h1,body.sdV2 #dashboardContent h2,body.sdV2 #dashboardContent h3{color:#17324a}
-body.sdV2 #dashboardContent .hero h1,body.sdV2 #dashboardContent .hero h2{color:#fff}
+body.sdV2 #dashboardContent .hero h1,body.sdV2 #dashboardContent .hero h2{color:#17324a} body.sdV2 #dashboardContent .hero:first-child p{color:#273849!important} body.sdV2 #dashboardContent .hero:first-child .text-[#e4c777]{color:#b58216!important}
 body.sdV2 .card{box-shadow:0 4px 14px rgba(14,42,72,.06)!important;border-color:#dbe3ea!important}
 body.sdV2 .text-slate-500,body.sdV2 .text-slate-600{color:#3d4d5c!important}
 body.sdV2 #overview{max-width:1480px!important}
 .sdSectionMark{scroll-margin-top:95px}
+body.sdV2>header .h-\[72px\]{justify-content:flex-start!important}
+body.sdV2>header .h-\[72px\]>a{order:2}
+body.sdV2>header .h-\[72px\]>.flex.items-center.gap-2{order:1;margin-right:2px}
+body.sdV2>header #logoutButton{order:3;margin-left:auto;background:linear-gradient(135deg,#e2b64a,#f1d67d)!important;color:#17324a!important;border:0!important}
+body.sdV2>header #profileButton{display:none!important}
+body.sdV2 #dashboardContent .hero:first-child a[href="#myCoursesSection"]{background:linear-gradient(135deg,#bd8a13,#e3bc57)!important;color:#fff!important}
+body.sdV2 #dashboardContent .hero:first-child a[href="courses-public.html"]{background:#fff!important;color:#17324a!important;border:1px solid #17324a!important}
+body.sdV2 #dashboardContent .hero:first-child:after{background:rgba(212,170,66,.10)!important}
 @media(min-width:1000px){
  .sdSide{transform:none}.sdOverlay{display:none}body.sdV2>header{margin-left:292px}body.sdV2>main,body.sdV2>footer{margin-left:292px}
  .sdClose{display:none}body.sdV2>header>div{max-width:none!important}
@@ -47,6 +55,13 @@ body.sdV2 #overview{max-width:1480px!important}
 @media(max-width:999px){
  .sdHeroMetrics{grid-template-columns:1fr 1fr}
  body.sdV2>header .brand{display:block}
+ body.sdV2>header .h-\[72px\]{gap:10px!important}
+ body.sdV2>header .h-\[72px\]>a{min-width:0;gap:8px!important}
+ body.sdV2>header .h-\[72px\]>a img{display:none!important}
+ body.sdV2>header .h-\[72px\]>.flex.items-center.gap-2{margin-left:0!important}
+ body.sdV2>header #logoutButton{padding:11px 17px!important;border-radius:13px!important}
+ body.sdV2>header .brand>div:first-child{font-size:15px!important}
+ body.sdV2>header .brand>div:last-child{font-size:8px!important;letter-spacing:.20em!important}
 }
 @media(max-width:560px){
  .sdSide{width:min(88vw,320px)}
@@ -155,7 +170,14 @@ function install(){
  if(header&&!document.getElementById('sdMenu')){
   const controls=header.querySelector('.flex.items-center.gap-2');
   controls?.insertAdjacentHTML('afterbegin','<button id="sdMenu" class="sdTopMenu" aria-label="Open student navigation">☰</button>');
+  const row=header.querySelector('.h-\\[72px\\]');
+  const brandLink=row?.querySelector(':scope > a');
+  const menu=document.getElementById('sdMenu');
+  if(row&&brandLink&&menu) row.insertBefore(menu,brandLink);
  }
+ const headerRow=document.querySelector('body>header .h-\\[72px\\]');
+ const headerControls=headerRow?.querySelector('.flex.items-center.gap-2');
+ if(headerControls) headerControls.style.marginLeft='auto';
  document.getElementById('sdMenu')?.addEventListener('click',open);
  document.getElementById('sdClose')?.addEventListener('click',close);
  document.getElementById('sdOverlay')?.addEventListener('click',close);
