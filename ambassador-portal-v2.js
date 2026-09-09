@@ -99,7 +99,7 @@ async function init(){
    console.error('Ambassador referrals failed to load',r.error);
    referrals=[];
  }else referrals=r.data||[];
- payouts=p.data||[];bank=b.data||null;resources=m.data||[];notifications=n.data||[];supportTickets=t.data||[];supportMessages=sm.data||[];
+ payouts=p.data||[];bank=b.data||null;{const now=Date.now();resources=(m.data||[]).filter(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=now)&&(!x.expires_at||new Date(x.expires_at).getTime()>=now));}notifications=n.data||[];supportTickets=t.data||[];supportMessages=sm.data||[];
  $('#loading').classList.add('hide');$('#portal').classList.remove('hide');render();
  if(r.error){
    const box=$('#referralMobile');
