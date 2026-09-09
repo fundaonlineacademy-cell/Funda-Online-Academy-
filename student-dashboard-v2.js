@@ -29,15 +29,24 @@ body.sdV2{background:linear-gradient(180deg,#fffdf8 0%,#f7f8fa 46%,#fffaf0 100%)
 .sdNavIcon{width:20px;text-align:center;font-size:16px;color:#b58216}.sdLogout{color:#17324a!important;margin-top:7px}
 .sdTopMenu{display:inline-grid!important;place-items:center;width:46px;height:46px;padding:0!important;border-radius:12px!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important;font-size:24px!important;flex:0 0 auto}
 .sdDashOnly{display:none!important}
-.sdCompactWelcome{margin-bottom:18px;padding:18px 20px;border-radius:20px;background:linear-gradient(135deg,#fffdf7,#fff5dc);border:1px solid #ead8a6;box-shadow:0 5px 16px rgba(20,49,77,.05)}
+.sdCompactWelcome{margin-bottom:18px;padding:20px;border-radius:22px;background:linear-gradient(135deg,#fffdf7,#fff5dc);border:1px solid #ead8a6;box-shadow:0 5px 16px rgba(20,49,77,.05)}
 .sdCompactWelcome p{margin:0;color:#b58216;font-size:9px;letter-spacing:.18em;font-weight:900;text-transform:uppercase}.sdCompactWelcome h1{margin:5px 0 0;color:#17324a;font:900 24px/1.15 Montserrat,sans-serif}
+.sdStudentMeta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:16px}.sdStudentMeta div{background:#fff;border:1px solid #e3e7eb;border-radius:13px;padding:10px}.sdStudentMeta span{display:block;color:#778391;font-size:7px;letter-spacing:.08em;font-weight:900}.sdStudentMeta b{display:block;color:#17324a;font-size:10px;margin-top:4px}
+.sdRecentMore{display:flex;justify-content:flex-end;margin-top:12px}.sdRecentMore button{border:1px solid #d6b458;background:#fffdf7;color:#17324a;border-radius:10px;padding:9px 12px;font-size:10px;font-weight:900}
 body.sdV2[data-sd-view="dashboard"] #studentHero,
 body.sdV2[data-sd-view="dashboard"] #coursesAndQuickAccess,
 body.sdV2[data-sd-view="dashboard"] #applicationJourney,
 body.sdV2[data-sd-view="dashboard"] #announcementsSection,
 body.sdV2[data-sd-view="dashboard"] #librarySection,
-body.sdV2[data-sd-view="dashboard"] #studentInfoAndAcademy{display:none!important}
+body.sdV2[data-sd-view="dashboard"] #studentInfoAndAcademy,
+body.sdV2[data-sd-view="dashboard"] #studentCommunicationHelpCentre,
+body.sdV2[data-sd-view="dashboard"] #studentFaqSection,
+body.sdV2[data-sd-view="dashboard"] #studentAcademicSupportSection,
+body.sdV2[data-sd-view="dashboard"] #studentSupportSection{display:none!important}
 body.sdV2[data-sd-view="dashboard"] #compactWelcome{display:block!important}
+body.sdV2:not([data-sd-view="dashboard"]) #fundaStudentHouseRules,
+body.sdV2:not([data-sd-view="dashboard"]) #academy-identity{display:none!important}
+
 body.sdV2[data-sd-view="courses"] #studentHero,
 body.sdV2[data-sd-view="courses"] #statusBanner,
 body.sdV2[data-sd-view="courses"] #dashboardStats,
@@ -46,17 +55,69 @@ body.sdV2[data-sd-view="courses"] #recentActivity,
 body.sdV2[data-sd-view="courses"] #announcementsSection,
 body.sdV2[data-sd-view="courses"] #librarySection,
 body.sdV2[data-sd-view="courses"] #studentInfoAndAcademy,
-body.sdV2[data-sd-view="courses"] #compactWelcome{display:none!important}
+body.sdV2[data-sd-view="courses"] #compactWelcome,
+body.sdV2[data-sd-view="courses"] #studentCommunicationHelpCentre,
+body.sdV2[data-sd-view="courses"] #studentFaqSection,
+body.sdV2[data-sd-view="courses"] #studentAcademicSupportSection,
+body.sdV2[data-sd-view="courses"] #studentSupportSection{display:none!important}
 body.sdV2[data-sd-view="courses"] #coursesAndQuickAccess{display:grid!important}
-body.sdV2[data-sd-view="announcements"] #studentHero,
-body.sdV2[data-sd-view="announcements"] #statusBanner,
-body.sdV2[data-sd-view="announcements"] #dashboardStats,
-body.sdV2[data-sd-view="announcements"] #coursesAndQuickAccess,
-body.sdV2[data-sd-view="announcements"] #applicationJourney,
-body.sdV2[data-sd-view="announcements"] #recentActivity,
-body.sdV2[data-sd-view="announcements"] #librarySection,
-body.sdV2[data-sd-view="announcements"] #studentInfoAndAcademy,
-body.sdV2[data-sd-view="announcements"] #compactWelcome{display:none!important}
+
+body.sdV2[data-sd-view="communication"] #studentHero,
+body.sdV2[data-sd-view="communication"] #statusBanner,
+body.sdV2[data-sd-view="communication"] #dashboardStats,
+body.sdV2[data-sd-view="communication"] #coursesAndQuickAccess,
+body.sdV2[data-sd-view="communication"] #applicationJourney,
+body.sdV2[data-sd-view="communication"] #recentActivity,
+body.sdV2[data-sd-view="communication"] #librarySection,
+body.sdV2[data-sd-view="communication"] #studentInfoAndAcademy,
+body.sdV2[data-sd-view="communication"] #compactWelcome,
+body.sdV2[data-sd-view="communication"] #studentFaqSection,
+body.sdV2[data-sd-view="communication"] #studentAcademicSupportSection,
+body.sdV2[data-sd-view="communication"] #studentSupportSection{display:none!important}
+
+body.sdV2[data-sd-view="faq"] #studentHero,
+body.sdV2[data-sd-view="faq"] #statusBanner,
+body.sdV2[data-sd-view="faq"] #dashboardStats,
+body.sdV2[data-sd-view="faq"] #coursesAndQuickAccess,
+body.sdV2[data-sd-view="faq"] #applicationJourney,
+body.sdV2[data-sd-view="faq"] #recentActivity,
+body.sdV2[data-sd-view="faq"] #announcementsSection,
+body.sdV2[data-sd-view="faq"] #librarySection,
+body.sdV2[data-sd-view="faq"] #studentInfoAndAcademy,
+body.sdV2[data-sd-view="faq"] #compactWelcome,
+body.sdV2[data-sd-view="faq"] #studentCommunicationHelpCentre,
+body.sdV2[data-sd-view="faq"] #studentAcademicSupportSection,
+body.sdV2[data-sd-view="faq"] #studentSupportSection{display:none!important}
+
+body.sdV2[data-sd-view="academic"] #studentHero,
+body.sdV2[data-sd-view="academic"] #statusBanner,
+body.sdV2[data-sd-view="academic"] #dashboardStats,
+body.sdV2[data-sd-view="academic"] #coursesAndQuickAccess,
+body.sdV2[data-sd-view="academic"] #applicationJourney,
+body.sdV2[data-sd-view="academic"] #recentActivity,
+body.sdV2[data-sd-view="academic"] #announcementsSection,
+body.sdV2[data-sd-view="academic"] #librarySection,
+body.sdV2[data-sd-view="academic"] #studentInfoAndAcademy,
+body.sdV2[data-sd-view="academic"] #compactWelcome,
+body.sdV2[data-sd-view="academic"] #studentCommunicationHelpCentre,
+body.sdV2[data-sd-view="academic"] #studentFaqSection,
+body.sdV2[data-sd-view="academic"] #studentSupportSection{display:none!important}
+
+body.sdV2[data-sd-view="support"] #studentHero,
+body.sdV2[data-sd-view="support"] #statusBanner,
+body.sdV2[data-sd-view="support"] #dashboardStats,
+body.sdV2[data-sd-view="support"] #coursesAndQuickAccess,
+body.sdV2[data-sd-view="support"] #applicationJourney,
+body.sdV2[data-sd-view="support"] #recentActivity,
+body.sdV2[data-sd-view="support"] #announcementsSection,
+body.sdV2[data-sd-view="support"] #librarySection,
+body.sdV2[data-sd-view="support"] #studentInfoAndAcademy,
+body.sdV2[data-sd-view="support"] #compactWelcome,
+body.sdV2[data-sd-view="support"] #studentCommunicationHelpCentre,
+body.sdV2[data-sd-view="support"] #studentFaqSection,
+body.sdV2[data-sd-view="support"] #studentAcademicSupportSection{display:none!important}
+
+@media(max-width:700px){.sdStudentMeta{grid-template-columns:1fr 1fr}}
 .sdMotto{margin-top:22px;padding:16px 10px;border-radius:15px;background:linear-gradient(135deg,#fff9e8,#f5dda0);border:1px solid #ead39b;color:#b58216;text-align:center;font:800 12px Montserrat,sans-serif}.sdMotto small{display:block;margin-top:6px;color:#7c8793;font:800 7px Inter,sans-serif;letter-spacing:.24em}body.sdV2>header{background:#06152f!important}
 body.sdV2>header nav,body.sdV2>header .mobile-scroll{display:none!important}
 .sdHeroMetrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:20px;position:relative;z-index:2}
@@ -116,14 +177,14 @@ const groups=[
   ['certificates','student-certificates.html','♕','My Certificates'],
   ['calendar','student-calendar.html','◷','My Calendar']
  ]},
- {label:'SUPPORT',items:[
-  ['announcements','#announcementsSection','●','Announcements'],
-  ['academic','#studentCommunicationHelpCentre','?','Academic Support'],
-  ['technical','#studentSupportSection','⌁','Technical Support']
+ {label:'COMMUNICATION & SUPPORT',items:[
+  ['communication','#announcementsSection','◉','Communication'],
+  ['faq','#studentFaqSection','?','FAQs'],
+  ['academic','#studentAcademicSupportSection','⌁','Academic Support'],
+  ['support','#studentSupportSection','▣','Support System']
  ]},
  {label:'ACCOUNT',items:[
   ['profile','profile.html','♙','My Profile'],
-  ['notifications','#announcementsSection','◉','Notifications'],
   ['security','profile.html','◇','Security / Password']
  ]}
 ];
@@ -178,6 +239,9 @@ function updateIdentity(){
  set('sdName',nm);set('sdLearner',learnerId());set('sdStatus',st);set('sdPct',pct+'%');
  const av=document.getElementById('sdAvatar');if(av)av.textContent=initials(nm);
  const cw=document.getElementById('compactWelcomeName');if(cw)cw.textContent='Welcome back, '+nm;
+ const cli=document.getElementById('compactLearnerId');if(cli)cli.textContent=learnerId();
+ const cms=document.getElementById('compactMemberSince');if(cms)cms.textContent=memberSince();
+ const cs=document.getElementById('compactStatus');if(cs)cs.textContent=st;
  const bar=document.getElementById('sdProgress');if(bar)bar.style.width=pct+'%';
  const hero=document.getElementById('sdHeroMetrics');
  if(hero)hero.innerHTML=`
@@ -201,7 +265,7 @@ function prepareDashboardViews(){
  const info=document.getElementById('profileCardButton')?.closest('section.grid');if(info)info.id='studentInfoAndAcademy';
  if(!document.getElementById('compactWelcome')){
   const w=document.createElement('section');w.id='compactWelcome';w.className='sdCompactWelcome sdDashOnly';
-  w.innerHTML='<p>Student Portal</p><h1 id="compactWelcomeName">Welcome back</h1>';
+  w.innerHTML='<p>Student Portal</p><h1 id="compactWelcomeName">Welcome back</h1><div class="sdStudentMeta"><div><span>LEARNER ID</span><b id="compactLearnerId">Pending</b></div><div><span>MEMBER SINCE</span><b id="compactMemberSince">—</b></div><div><span>ACCOUNT TYPE</span><b>Student</b></div><div><span>STATUS</span><b id="compactStatus">Active</b></div></div>';
   dc.prepend(w);
  }
 }
@@ -210,8 +274,38 @@ function dashboardView(view){
  document.body.dataset.sdView=view;
  const nm=document.getElementById('welcomeName')?.textContent||('Welcome back, '+name());
  const cw=document.getElementById('compactWelcomeName');if(cw)cw.textContent=nm;
+ const cli=document.getElementById('compactLearnerId');if(cli)cli.textContent=learnerId();
+ const cms=document.getElementById('compactMemberSince');if(cms)cms.textContent=memberSince();
+ const cs=document.getElementById('compactStatus');if(cs)cs.textContent=statusText();
  document.querySelectorAll('#sdSide [data-sd-key]').forEach(x=>x.classList.toggle('active',x.dataset.sdKey===view));
  close();window.scrollTo({top:0,behavior:'smooth'});
+}
+function tightenDashboardSummary(){
+ const recent=document.getElementById('recentActivities');
+ if(recent && !recent.dataset.summaryPrepared){
+   recent.dataset.summaryPrepared='1';
+   const apply=()=>{
+     const items=[...recent.children];
+     items.forEach((el,i)=>{el.style.display=i<3?'':'none'});
+     let wrap=document.getElementById('sdRecentMore');
+     if(items.length>3 && !wrap){
+       wrap=document.createElement('div');wrap.id='sdRecentMore';wrap.className='sdRecentMore';
+       const b=document.createElement('button');b.type='button';b.textContent='View More Activity';
+       let expanded=false;b.onclick=()=>{expanded=!expanded;items.forEach((el,i)=>el.style.display=(expanded||i<3)?'':'none');b.textContent=expanded?'Show Less':'View More Activity'};
+       wrap.appendChild(b);recent.parentElement.appendChild(wrap);
+     }
+   };
+   apply();new MutationObserver(apply).observe(recent,{childList:true});
+ }
+ const action=document.getElementById('trackLatestButton');
+ if(action){
+   const approved=activeCount()>0;
+   action.textContent=approved?'Continue Learning':'Track Status';
+   if(approved)action.onclick=()=>{
+     const e=(typeof enrollments!=='undefined'?enrollments:[]).find(x=>typeof isApproved==='function'&&isApproved(x));
+     if(e?.course_id)location.href='course-study.html?id='+encodeURIComponent(e.course_id);
+   };
+ }
 }
 function install(){
  style();document.body.classList.add('sdV2');
@@ -236,15 +330,15 @@ function install(){
  document.getElementById('sdLogout')?.addEventListener('click',()=>document.getElementById('logoutButton')?.click());
  document.querySelectorAll('#sdSide a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
   e.preventDefault();const key=a.dataset.sdKey;
-  if(key==='dashboard'||key==='courses'||key==='announcements')return dashboardView(key);
+  if(['dashboard','courses','communication','faq','academic','support'].includes(key))return dashboardView(key);
   close();const target=document.querySelector(a.getAttribute('href'));
   if(target){target.classList.add('sdSectionMark');target.scrollIntoView({behavior:'smooth',block:'start'})}
   document.querySelectorAll('#sdSide a').forEach(x=>x.classList.remove('active'));a.classList.add('active');
  }));
  document.querySelectorAll('#sdSide [data-funda-results-link],#sdSide #fundaCertificatesQuickLink').forEach(x=>x.remove());
  prepareDashboardViews();dashboardView('dashboard');
- installHero();updateIdentity();
- let tries=0;const t=setInterval(()=>{tries++;installHero();updateIdentity();if(tries>30)clearInterval(t)},500);
+ installHero();updateIdentity();tightenDashboardSummary();
+ let tries=0;const t=setInterval(()=>{tries++;installHero();updateIdentity();tightenDashboardSummary();if(tries>30)clearInterval(t)},500);
  window.addEventListener('resize',()=>{if(innerWidth>=1000)close()});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
