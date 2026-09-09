@@ -36,7 +36,7 @@ function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
 function fmt(v){if(!v)return '—';try{return new Date(v).toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'})}catch{return '—'}}
 function badgeStatus(v){let s=low(v),cls=['active','approved','paid','verified','completed','introductory'].some(x=>s.includes(x))?'ok':['declined','rejected','failed','terminated','reversed','suspended'].some(x=>s.includes(x))?'bad':'warn';return '<span class="badge '+cls+'">'+esc(String(v||'pending').replaceAll('_',' ').toUpperCase())+'</span>'}
 function closeSide(){document.body.classList.remove('amb-nav-open')}
-function showSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('on',x.dataset.section===name));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('on',x.dataset.go===name));closeSide();scrollTo(0,0)}
+function showSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('on',x.dataset.section===name));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('on',x.dataset.go===name));closeSide();scrollTo({top:0,behavior:'auto'})}
 function installNav(){
  const html=navGroups.map(g=>'<div class="navGroup"><div class="navGroupLabel">'+g.label+'</div>'+g.items.map(([k,i,t],idx)=>'<button class="navbtn '+(k==='dashboard'&&g.label==='MAIN'&&idx===0?'on':'')+'" data-go="'+k+'"><span class="navIcon">'+i+'</span><span>'+t+'</span></button>').join('')+'</div>').join('');
  $('#sideNav').innerHTML=html;
@@ -48,7 +48,7 @@ function installNav(){
  if(overlay)overlay.onclick=closeSide;
  if(close)close.onclick=closeSide;
 }
-function fail(msg){$('#loading').classList.add('hide');$('#notFound').classList.remove('hide');if(msg)$('#notFound .muted').textContent=msg}
+function fail(msg){$('#loading')?.classList.add('hide');$('#notFound')?.classList.remove('hide');if(msg){const el=$('#notFound .accessLead')||$('#notFound .muted');if(el)el.textContent=msg}}
 function sum(type,statuses){return ledger.filter(x=>(!type||x.earning_type===type)&&(!statuses||statuses.includes(x.earning_status))).reduce((s,x)=>s+Number(x.commission_amount||0),0)}
 function referralLink(){if(!app?.referral_code)return '';return location.origin+'/courses-public.html?ref='+encodeURIComponent(app.referral_code)+'#courses'}
 async function copy(text,btn){if(!text)return;try{await navigator.clipboard.writeText(text);let old=btn.textContent;btn.textContent='Copied ✓';setTimeout(()=>btn.textContent=old,1200)}catch{alert(text)}}
@@ -72,7 +72,7 @@ async function init(){
  if(app.agreement_status!=='accepted'){
    $('#loading').classList.add('hide');$('#portal').classList.remove('hide');
    $('#sideNav').innerHTML='<button class="navbtn on" data-go="programme">▧ Programme Agreement</button>';
-   $('#mobileNav').innerHTML='<button class="navbtn on" data-go="programme">▧ Programme Agreement</button>';
+   if($('#mobileNav'))$('#mobileNav').innerHTML='<button class="navbtn on" data-go="programme">▧ Programme Agreement</button>';
    document.querySelectorAll('[data-go="programme"]').forEach(b=>b.onclick=()=>showSection('programme'));
    $('#profileTop').onclick=()=>showSection('programme');
    showSection('programme');renderAgreement();return;
@@ -115,7 +115,7 @@ function render(){
  if($('#sideApproved'))$('#sideApproved').textContent=money(total);
  if($('#sidePending'))$('#sidePending').textContent=money(pending);
  $('#referralCount').textContent=referrals.length;$('#totalEarned').textContent=money(total);$('#pendingEarned').textContent=money(pending);
- $('#commissionTotal').textContent=money(commission);$('#bonusTotal').textContent=money(bonus);$('#performanceTotal').textContent=money(performance);
+ if($('#commissionTotal'))$('#commissionTotal').textContent=money(commission);if($('#bonusTotal'))$('#bonusTotal').textContent=money(bonus);if($('#performanceTotal'))$('#performanceTotal').textContent=money(performance);
  $('#statusCommission').textContent=money(commission);$('#statusBonus').textContent=money(bonus);$('#statusPerformance').textContent=money(performance);
  $('#earnSummary').textContent=money(total)+' approved/paid · '+money(pending)+' pending/held · '+money(payouts.filter(x=>x.status==='paid').reduce((s,x)=>s+Number(x.amount||0),0))+' paid out to date.';
  $('#codeText').textContent=app.referral_code||'Referral code pending activation';
