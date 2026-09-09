@@ -118,6 +118,10 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
  .refCard{border:1px solid #dfe6eb;border-radius:13px;padding:13px;background:#fff}.refCardTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.refCardTop b{font-size:13px;color:#17324a}.refCardTop small{display:block;color:#74818d;font-size:10px;margin-top:3px}.refCardAmt{font-size:14px!important;white-space:nowrap}.refCardMeta{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.refCardDate{font-size:9px;color:#7a8792;margin-top:9px}
  .privacyNote{display:block}.privacyNote b,.privacyNote span{display:block;white-space:normal}.privacyNote span{margin-top:4px}
 }
+</style><style id="ambassador-earnings-v1">
+.earningsSummary{margin-top:18px}
+.earnType{font-size:12px;font-weight:800;color:#17324a;text-transform:capitalize}.earnMeta{font-size:10px;color:#74818d;margin-top:4px}.earnRate{font-size:10px;color:#7a8792;margin-top:8px}
+@media(max-width:700px){.earningsSummary{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style></head>
 <body>
 <header class="top"><div class="topin"><button id="sideToggle" class="menuToggle" aria-label="Open Ambassador menu">☰</button><div class="brandWrap"><img src="logo.png" alt="Funda Online Academy" class="portalLogo"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div class="brandSub">AMBASSADOR PORTAL</div></div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
@@ -209,7 +213,24 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 </section>
 </section>
 
-<section class="section" data-section="earnings"><div class="card"><h2>Earnings & Commission Ledger</h2><p class="muted">Commission is based on verified qualifying revenue. Achievement bonuses and Monthly Performance Payments are recorded separately.</p><div class="tablewrap"><table class="tbl"><thead><tr><th>Month</th><th>Earning Type</th><th>Qualifying Revenue</th><th>Rate</th><th>Amount</th><th>Status</th></tr></thead><tbody id="ledgerBody"></tbody></table></div></div></section>
+<section class="section" data-section="earnings">
+<section class="card">
+  <div class="sectionHead"><div><div class="eyebrow dark">AMBASSADOR FINANCE</div><h2>My Earnings</h2><p class="muted">Track your approved, pending and paid Ambassador earnings across all authorised earning types.</p></div></div>
+  <div class="referralSummary earningsSummary">
+    <div class="miniMetric"><span>APPROVED / PAID</span><b id="earnApproved">R0</b></div>
+    <div class="miniMetric"><span>PENDING / HELD</span><b id="earnPending">R0</b></div>
+    <div class="miniMetric"><span>DIRECT COMMISSION</span><b id="earnCommission">R0</b></div>
+    <div class="miniMetric"><span>BONUSES + PERFORMANCE</span><b id="earnOther">R0</b></div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="referralTools"><div><h2>Earnings Breakdown</h2><p class="muted">Each earning remains separate so you can see exactly how it was calculated and its current status.</p></div><div class="referralSearch"><input id="earnSearch" type="search" placeholder="Search earning type" aria-label="Search earnings"><select id="earnStatus" aria-label="Filter earning status"><option value="">All statuses</option><option value="approved">Approved</option><option value="paid">Paid</option><option value="pending">Pending</option><option value="held">Held</option><option value="reversed">Reversed</option></select></div></div>
+  <div id="earningsMobile" class="referralMobile"></div>
+  <div class="tablewrap referralDesktop"><table class="tbl"><thead><tr><th>Month</th><th>Earning Type</th><th>Qualifying Revenue</th><th>Rate</th><th>Amount</th><th>Status</th></tr></thead><tbody id="ledgerBody"></tbody></table></div>
+  <div class="privacyNote"><b>Transparent calculations</b><span>Approved earnings are not the same as completed payouts. Payment History records when approved amounts are actually paid by Funda Online Academy.</span></div>
+</section>
+</section>
 
 <section class="section" data-section="payouts">
 <div class="split"><section class="card"><h2>Payout & Banking Details</h2><p class="muted">Submit the account where approved Ambassador payouts should be made. Any update returns the details to Finance for verification.</p><div id="bankStatus" class="notice gold">No banking details on file.</div><form id="bankForm" class="form"><input id="accountHolder" class="field wide" required placeholder="Account holder name"><select id="bankName" class="field" required><option value="">Select bank</option></select><input id="otherBankName" class="field hide" placeholder="Enter bank name"><select id="accountType" class="field"><option value="">Account type</option><option>Cheque / Current</option><option>Savings</option><option>Transmission</option></select><input id="accountNumber" class="field" required inputmode="numeric" autocomplete="off" placeholder="Account number"><input id="branchCode" class="field" readonly inputmode="numeric" placeholder="Branch code auto-fills"><div id="branchHelp" class="muted wide">Select your bank and the standard universal branch code will appear automatically.</div><button id="saveBank" class="btn wide">Save / Update Banking Details</button></form><div id="bankMsg" class="muted"></div></section>
