@@ -31,12 +31,14 @@ body.sdV2{background:linear-gradient(180deg,#fffdf8 0%,#f7f8fa 46%,#fffaf0 100%)
 .sdViewHidden{display:none!important}
 .sdViewTitle{display:none;margin:0 0 16px;padding:18px 20px;border-radius:18px;background:#fffdf7;border:1px solid #ead8a6;color:#17324a;box-shadow:0 5px 16px rgba(20,49,77,.05)}
 .sdViewTitle strong{display:block;font:900 20px Montserrat,sans-serif}.sdViewTitle span{display:block;margin-top:5px;font-size:11px;color:#637180}
+body.sdV2[data-student-view="dashboard"] #studentDashboardHero,
 body.sdV2[data-student-view="dashboard"] #myCoursesSection,
 body.sdV2[data-student-view="dashboard"] #announcementsSection,
 body.sdV2[data-student-view="dashboard"] #librarySection{display:none!important}
 body.sdV2[data-student-view="dashboard"] #studentFullDetailsGrid{display:none!important}
 body.sdV2[data-student-view="dashboard"] #applicationJourneySection{display:none!important}
 body.sdV2[data-student-view="dashboard"] #dashboardQuickAccess{display:none!important}
+body.sdV2[data-student-view="dashboard"] #studentFullDetailsGrid{display:none!important}
 body.sdV2[data-student-view="courses"] #studentDashboardHero,
 body.sdV2[data-student-view="courses"] #statusBanner,
 body.sdV2[data-student-view="courses"] #studentStatsSection,
