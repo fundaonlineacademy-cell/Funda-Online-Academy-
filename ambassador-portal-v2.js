@@ -2,7 +2,12 @@
 'use strict';
 const $=s=>document.querySelector(s), money=n=>'R'+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:2}), low=v=>String(v||'').toLowerCase(), esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
 const ranks=[{n:'Ambassador',min:0,max:10000,pay:0},{n:'Bronze',min:10000,max:25000,pay:0},{n:'Silver',min:25000,max:50000,pay:0},{n:'Gold',min:50000,max:100000,pay:5000},{n:'Platinum',min:100000,max:250000,pay:8000},{n:'Diamond',min:250000,max:500000,pay:12000},{n:'Executive',min:500000,max:1000000,pay:18000},{n:'Elite',min:1000000,max:Infinity,pay:25000}];
-const nav=[['dashboard','⌂ Dashboard'],['referrals','◎ My Referrals'],['earnings','R My Earnings'],['compensation','▣ Compensation Plan'],['payouts','▤ Payouts & Banking'],['support','◉ Marketing & Support'],['profile','♙ My Profile'],['programme','▧ Programme Rules']];
+const navGroups=[
+ {label:'MAIN',items:[['dashboard','⌂','My Dashboard'],['referrals','◎','My Referrals'],['earnings','R','My Earnings'],['dashboard','◒','Rank Progress'],['compensation','▣','Compensation Plan']]},
+ {label:'FINANCE',items:[['earnings','◫','Earnings Breakdown'],['payouts','▤','Payment History'],['payouts','▧','My Banking']]},
+ {label:'RESOURCES',items:[['support','◆','Marketing Resources'],['support','◉','Announcements'],['support','?','Help & Support'],['programme','▥','Programme Rules']]},
+ {label:'ACCOUNT',items:[['dashboard','↗','My Referral Link'],['profile','♙','My Profile'],['payouts','⌁','Bank Details'],['support','●','Notifications']]}
+];
 const saBanks=[
  {name:'Absa Bank',code:'632005'},
  {name:'African Bank',code:'430000'},
@@ -30,8 +35,19 @@ let db,user,app,ledger=[],referrals=[],payouts=[],bank=null,resources=[],notific
 function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
 function fmt(v){if(!v)return '—';try{return new Date(v).toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'})}catch{return '—'}}
 function badgeStatus(v){let s=low(v),cls=['active','approved','paid','verified','completed','introductory'].some(x=>s.includes(x))?'ok':['declined','rejected','failed','terminated','reversed','suspended'].some(x=>s.includes(x))?'bad':'warn';return '<span class="badge '+cls+'">'+esc(String(v||'pending').replaceAll('_',' ').toUpperCase())+'</span>'}
-function showSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('on',x.dataset.section===name));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('on',x.dataset.go===name));scrollTo(0,0)}
-function installNav(){let html=nav.map(([k,t])=>'<button class="navbtn '+(k==='dashboard'?'on':'')+'" data-go="'+k+'">'+t+'</button>').join('');$('#sideNav').innerHTML=html;$('#mobileNav').innerHTML=html;document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showSection(b.dataset.go));$('#profileTop').onclick=()=>showSection('profile')}
+function closeSide(){document.body.classList.remove('amb-nav-open')}
+function showSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('on',x.dataset.section===name));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('on',x.dataset.go===name));closeSide();scrollTo(0,0)}
+function installNav(){
+ const html=navGroups.map(g=>'<div class="navGroup"><div class="navGroupLabel">'+g.label+'</div>'+g.items.map(([k,i,t],idx)=>'<button class="navbtn '+(k==='dashboard'&&g.label==='MAIN'&&idx===0?'on':'')+'" data-go="'+k+'"><span class="navIcon">'+i+'</span><span>'+t+'</span></button>').join('')+'</div>').join('');
+ $('#sideNav').innerHTML=html;
+ if($('#mobileNav'))$('#mobileNav').innerHTML='';
+ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showSection(b.dataset.go));
+ if($('#profileTop'))$('#profileTop').onclick=()=>showSection('profile');
+ const toggle=$('#sideToggle'),overlay=$('#sideOverlay'),close=$('#sideClose');
+ if(toggle)toggle.onclick=()=>document.body.classList.toggle('amb-nav-open');
+ if(overlay)overlay.onclick=closeSide;
+ if(close)close.onclick=closeSide;
+}
 function fail(msg){$('#loading').classList.add('hide');$('#notFound').classList.remove('hide');if(msg)$('#notFound .muted').textContent=msg}
 function sum(type,statuses){return ledger.filter(x=>(!type||x.earning_type===type)&&(!statuses||statuses.includes(x.earning_status))).reduce((s,x)=>s+Number(x.commission_amount||0),0)}
 function referralLink(){if(!app?.referral_code)return '';return location.origin+'/courses-public.html?ref='+encodeURIComponent(app.referral_code)+'#courses'}
@@ -93,6 +109,11 @@ function render(){
  $('#accountBadge').textContent=String(app.account_status||'application').replaceAll('_',' ').toUpperCase();
  $('#accountBadge').className='badge '+(['active','introductory'].includes(app.account_status)?'ok':'warn');
  $('#earningBadge').textContent=pending>0?'EARNINGS AWAITING ACTION':'EARNINGS UP TO DATE';
+ if($('#sideName'))$('#sideName').textContent=app.full_name||'Ambassador';
+ if($('#sideRank'))$('#sideRank').textContent=r.n;
+ if($('#sideStatus')){$('#sideStatus').textContent=String(app.account_status||'application').replaceAll('_',' ');$('#sideStatus').className='sideStatus '+(['active','introductory'].includes(app.account_status)?'ok':'warn')}
+ if($('#sideApproved'))$('#sideApproved').textContent=money(total);
+ if($('#sidePending'))$('#sidePending').textContent=money(pending);
  $('#referralCount').textContent=referrals.length;$('#totalEarned').textContent=money(total);$('#pendingEarned').textContent=money(pending);
  $('#commissionTotal').textContent=money(commission);$('#bonusTotal').textContent=money(bonus);$('#performanceTotal').textContent=money(performance);
  $('#statusCommission').textContent=money(commission);$('#statusBonus').textContent=money(bonus);$('#statusPerformance').textContent=money(performance);
