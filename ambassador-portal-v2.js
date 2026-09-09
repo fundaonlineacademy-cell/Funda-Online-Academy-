@@ -4,9 +4,9 @@ const $=s=>document.querySelector(s), money=n=>'R'+Number(n||0).toLocaleString('
 const ranks=[{n:'Ambassador',min:0,max:10000,pay:0},{n:'Bronze',min:10000,max:25000,pay:0},{n:'Silver',min:25000,max:50000,pay:0},{n:'Gold',min:50000,max:100000,pay:5000},{n:'Platinum',min:100000,max:250000,pay:8000},{n:'Diamond',min:250000,max:500000,pay:12000},{n:'Executive',min:500000,max:1000000,pay:18000},{n:'Elite',min:1000000,max:Infinity,pay:25000}];
 const navGroups=[
  {label:'MAIN',items:[['dashboard','⌂','My Dashboard'],['referrals','◎','My Referrals'],['earnings','R','My Earnings'],['rank','◒','Rank Progress'],['compensation','▣','Compensation Plan']]},
- {label:'FINANCE',items:[['earnings','◫','Earnings Breakdown'],['payouts','▤','Payment History'],['payouts','▧','My Banking']]},
+ {label:'FINANCE',items:[['earnings','◫','Earnings Breakdown'],['payments','▤','Payment History'],['banking','▧','My Banking']]},
  {label:'RESOURCES',items:[['support','◆','Marketing Resources'],['support','◉','Announcements'],['support','?','Help & Support'],['programme','▥','Programme Rules']]},
- {label:'ACCOUNT',items:[['dashboard','↗','My Referral Link'],['profile','♙','My Profile'],['payouts','⌁','Bank Details'],['support','●','Notifications']]}
+ {label:'ACCOUNT',items:[['dashboard','↗','My Referral Link'],['profile','♙','My Profile'],['banking','⌁','Bank Details'],['support','●','Notifications']]}
 ];
 const saBanks=[
  {name:'Absa Bank',code:'632005'},
@@ -184,9 +184,13 @@ function renderLedger(){
 function renderPayouts(){
  installBankOptions();
  const paid=payouts.filter(x=>x.status==='paid').reduce((s,x)=>s+Number(x.amount||0),0),scheduled=payouts.filter(x=>['scheduled','processing'].includes(x.status)).reduce((s,x)=>s+Number(x.amount||0),0);
- $('#paidTotal').textContent=money(paid);$('#scheduledTotal').textContent=money(scheduled);
- $('#payoutBody').innerHTML=payouts.length?payouts.map(x=>'<tr><td>'+fmt(x.payment_date||x.created_at)+'</td><td>'+money(x.amount)+'</td><td>'+esc(x.payment_reference||'—')+'</td><td>'+badgeStatus(x.status)+'</td></tr>').join(''):'<tr><td colspan="4" class="empty">No payouts recorded yet.</td></tr>';
- if(bank){let tail=String(bank.account_number||'').slice(-4);$('#bankStatus').className='notice '+(bank.verification_status==='verified'?'ok':'gold');$('#bankStatus').textContent='Banking details '+String(bank.verification_status).replaceAll('_',' ')+' · '+bank.bank_name+' · Account ending •••• '+tail;$('#accountHolder').value=bank.account_holder||'';let s=$('#bankName'),known=saBanks.some(x=>x.name===bank.bank_name&&x.name!=='Other South African Bank');$('#bankName').value=known?bank.bank_name:'Other South African Bank';$('#accountType').value=bank.account_type||'';$('#bankName').dispatchEvent(new Event('change'));if(!known&&$('#otherBankName'))$('#otherBankName').value=bank.bank_name||'';let selected=$('#bankName')?.selectedOptions?.[0],autoCode=selected?.dataset?.code||'';$('#branchCode').readOnly=!!autoCode&&known;$('#branchCode').value=autoCode||bank.branch_code||'';$('#accountNumber').value=''}else{$('#bankStatus').className='notice gold';$('#bankStatus').textContent='No banking details on file. Add your payout account below.'}
+ if($('#paidTotal'))$('#paidTotal').textContent=money(paid);if($('#scheduledTotal'))$('#scheduledTotal').textContent=money(scheduled);
+ if($('#paymentCount'))$('#paymentCount').textContent=payouts.length;
+ const latest=[...payouts].sort((a,b)=>new Date(b.payment_date||b.created_at||0)-new Date(a.payment_date||a.created_at||0))[0];
+ if($('#latestPayment'))$('#latestPayment').textContent=latest?money(latest.amount):'—';
+ if($('#payoutBody'))$('#payoutBody').innerHTML=payouts.length?payouts.map(x=>'<tr><td>'+fmt(x.payment_date||x.created_at)+'</td><td>'+money(x.amount)+'</td><td>'+esc(x.payment_reference||'—')+'</td><td>'+badgeStatus(x.status)+'</td></tr>').join(''):'<tr><td colspan="4" class="empty">No payments recorded yet.</td></tr>';
+ const mobile=$('#payoutMobile');if(mobile)mobile.innerHTML=payouts.length?payouts.map(x=>'<article class="refCard"><div class="refCardTop"><div><b>'+fmt(x.payment_date||x.created_at)+'</b><div class="paymentRef">'+esc(x.payment_reference||'No payment reference')+'</div></div><b class="refCardAmt">'+money(x.amount)+'</b></div><div class="refCardMeta">'+badgeStatus(x.status)+'</div></article>').join(''):'<div class="empty">No payments recorded yet.</div>';
+ if(bank){let tail=String(bank.account_number||'').slice(-4);$('#bankStatus').className='notice '+(bank.verification_status==='verified'?'ok':'gold');$('#bankStatus').textContent='Banking details '+String(bank.verification_status).replaceAll('_',' ')+' · '+bank.bank_name+' · Account ending •••• '+tail;$('#accountHolder').value=bank.account_holder||'';let bs=$('#bankName'),known=saBanks.some(x=>x.name===bank.bank_name&&x.name!=='Other South African Bank');$('#bankName').value=known?bank.bank_name:'Other South African Bank';$('#accountType').value=bank.account_type||'';$('#bankName').dispatchEvent(new Event('change'));if(!known&&$('#otherBankName'))$('#otherBankName').value=bank.bank_name||'';let selected=$('#bankName')?.selectedOptions?.[0],autoCode=selected?.dataset?.code||'';$('#branchCode').readOnly=!!autoCode&&known;$('#branchCode').value=autoCode||bank.branch_code||'';$('#accountNumber').value=''}else{$('#bankStatus').className='notice gold';$('#bankStatus').textContent='No banking details on file. Add your payment account below.'}
  $('#bankForm').onsubmit=saveBank;
 }
 async function saveBank(e){
