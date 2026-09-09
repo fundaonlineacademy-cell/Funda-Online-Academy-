@@ -581,6 +581,13 @@
   document.addEventListener("DOMContentLoaded", () => {
     try {
       initialiseSupabase();
+      try{
+        const saved=localStorage.getItem("funda_existing_enrol_email");
+        if(saved && document.getElementById("email")){
+          document.getElementById("email").value=saved;
+          localStorage.removeItem("funda_existing_enrol_email");
+        }
+      }catch(_){};
       /* Intentionally do not auto-redirect an existing session.
          Visiting Login must always leave the login form available so a user
          can deliberately sign in or switch accounts. Portal pages still
