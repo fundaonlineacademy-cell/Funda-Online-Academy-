@@ -94,6 +94,19 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
  .accessState{padding:24px 20px;border-radius:18px}.accessIcon{width:48px;height:48px;border-radius:14px}
  .accessState h2{font-size:24px}.accessLead{font-size:15px}.accessActions{display:grid;grid-template-columns:1fr}.accessActions .btn{width:100%}
 }
+</style><style id="ambassador-dashboard-v4">
+.dashboardHero{padding:24px 26px}.heroTopline{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.heroStatus{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.dashboardMetrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}.dashboardMetrics .stat{position:relative;padding:18px 16px;min-height:118px}.statIcon{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#eef4f8;color:#173f62;font-weight:900;font-size:12px;margin-bottom:11px}.dashboardMetrics .stat b{font-size:25px}.dashboardMetrics .stat small{line-height:1.4}
+.quickGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}.quickAction{border:1px solid #dbe4ea;background:#fbfcfd;border-radius:13px;padding:14px;text-align:left;cursor:pointer;color:#17324a;min-height:100px}.quickAction:hover{border-color:#d7b45a;background:#fffaf0}.quickAction>span{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#edf3f7;color:#173f62;font-weight:900;margin-bottom:10px}.quickAction b{display:block;font-size:13px}.quickAction small{display:block;color:#74818d;font-size:10px;line-height:1.35;margin-top:4px}
+.textAction{border:0;background:transparent;color:#8a681c;font-weight:900;font-size:11px;cursor:pointer;padding:6px}.rankBar{height:12px;margin:14px 0 10px}.earningsMini .earning{background:#fff}.activityList{display:grid;gap:9px;margin-top:12px}.activityItem{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:11px;align-items:center;padding:11px 12px;border:1px solid #e3e8ec;border-radius:12px;background:#fbfcfd}.activityIcon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#eef4f8;color:#173f62;font-weight:900}.activityText b{display:block;font-size:12px;color:#17324a}.activityText span{display:block;font-size:10px;color:#76828d;line-height:1.35;margin-top:2px}.activityAmt{font-size:12px;font-weight:900;color:#173f62;white-space:nowrap}.compactComp{margin-bottom:6px}
+@media(max-width:1000px){.dashboardMetrics,.quickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){
+ .dashboardHero{padding:20px}.heroTopline{display:block}.heroStatus{justify-content:flex-start;margin-top:12px}
+ .dashboardMetrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.dashboardMetrics .stat{min-height:108px;padding:14px}.dashboardMetrics .stat b{font-size:23px}.dashboardMetrics .stat small{font-size:8px}
+ .quickGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.quickAction{min-height:96px;padding:12px}.quickAction b{font-size:12px}
+ .dashboardSplit{display:grid;grid-template-columns:1fr}.activityItem{grid-template-columns:34px minmax(0,1fr)}.activityIcon{width:34px;height:34px}.activityAmt{grid-column:2}
+ .earningsMini{grid-template-columns:1fr!important}
+}
 </style></head>
 <body>
 <header class="top"><div class="topin"><button id="sideToggle" class="menuToggle" aria-label="Open Ambassador menu">☰</button><div class="brandWrap"><img src="logo.png" alt="Funda Online Academy" class="portalLogo"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div class="brandSub">AMBASSADOR PORTAL</div></div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
@@ -126,26 +139,43 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 
 <div id="portal" class="hide">
 <section class="section on" data-section="dashboard">
-<div class="hero"><div class="eyebrow" id="rankLabel">AMBASSADOR</div><h1 id="welcome">Welcome</h1><p class="muted" id="accountLine"></p><div class="row" style="margin-top:12px"><span id="accountBadge" class="badge ok">ACTIVE</span><span id="earningBadge" class="badge warn">EARNINGS STATUS</span></div></div>
-<div class="cards">
-<div class="stat"><b id="referralCount">0</b><small>RECORDED REFERRALS</small></div>
-<div class="stat"><b id="totalEarned">R0</b><small>TOTAL APPROVED / PAID EARNINGS</small></div>
-<div class="stat"><b id="pendingEarned">R0</b><small>PENDING / HELD EARNINGS</small></div>
-<div class="stat"><b id="commissionTotal">R0</b><small>DIRECT COMMISSION</small></div>
-<div class="stat"><b id="bonusTotal">R0</b><small>ACHIEVEMENT BONUSES</small></div>
-<div class="stat"><b id="performanceTotal">R0</b><small>MONTHLY PERFORMANCE PAYMENTS</small></div>
+<section class="hero dashboardHero">
+  <div class="heroTopline"><div><div class="eyebrow" id="rankLabel">AMBASSADOR</div><h1 id="welcome">Welcome</h1><p class="muted" id="accountLine"></p></div><div class="heroStatus"><span id="accountBadge" class="badge ok">ACTIVE</span><span id="earningBadge" class="badge warn">EARNINGS STATUS</span></div></div>
+</section>
+
+<div class="dashboardMetrics">
+  <div class="stat"><span class="statIcon">◎</span><b id="referralCount">0</b><small>RECORDED REFERRALS</small></div>
+  <div class="stat"><span class="statIcon">R</span><b id="totalEarned">R0</b><small>APPROVED / PAID EARNINGS</small></div>
+  <div class="stat"><span class="statIcon">◷</span><b id="pendingEarned">R0</b><small>PENDING / HELD</small></div>
+  <div class="stat"><span class="statIcon">%</span><b id="commissionTotal">R0</b><small>DIRECT COMMISSION</small></div>
 </div>
-<div class="split">
-<section class="card"><h2>Your Referral Code</h2><p class="muted">Share your unique code or referral link. Student attribution is recorded by the Academy system.</p><div class="codebox"><div id="codeText" class="code">Not issued yet</div><div class="row" style="margin-top:12px"><button id="copyCode" class="btn gold">Copy Code</button><button id="copyLink" class="btn alt">Copy Referral Link</button></div><p id="referralLinkText" class="muted" style="word-break:break-all"></p></div></section>
-<section class="card"><h2>Rank & Next Achievement</h2><p id="nextRank" class="muted"></p><div class="progress"><i id="progressBar"></i></div><p id="monthlyTarget" class="muted"></p></section>
+
+<section class="card quickPanel">
+  <div class="sectionHead"><div><div class="eyebrow dark">QUICK ACTIONS</div><h2>Ambassador essentials</h2></div></div>
+  <div class="quickGrid">
+    <button class="quickAction" data-go="referrals"><span>◎</span><b>View Referrals</b><small>Check attributed students</small></button>
+    <button class="quickAction" data-go="earnings"><span>R</span><b>View Earnings</b><small>See your earnings ledger</small></button>
+    <button class="quickAction" id="quickCopyLink"><span>↗</span><b>Copy Referral Link</b><small>Share your tracked link</small></button>
+    <button class="quickAction" data-go="support"><span>?</span><b>Get Support</b><small>Log or track a query</small></button>
+  </div>
+</section>
+
+<div class="split dashboardSplit">
+<section class="card"><div class="sectionHead"><div><div class="eyebrow dark">YOUR REFERRAL LINK</div><h2>Invite students</h2></div></div><p class="muted">Use your unique tracked code or link so eligible student enrolments can be attributed correctly.</p><div class="codebox"><div id="codeText" class="code">Not issued yet</div><div class="row" style="margin-top:12px"><button id="copyCode" class="btn gold">Copy Code</button><button id="copyLink" class="btn alt">Copy Referral Link</button></div><p id="referralLinkText" class="muted" style="word-break:break-all"></p></div></section>
+<section class="card"><div class="sectionHead"><div><div class="eyebrow dark">RANK PROGRESS</div><h2>Next achievement</h2></div><button class="textAction" data-go="compensation">View plan →</button></div><p id="nextRank" class="muted"></p><div class="progress rankBar"><i id="progressBar"></i></div><p id="monthlyTarget" class="muted"></p></section>
 </div>
-<section class="card"><h2>Earning Status</h2><p class="muted">Your three earning streams remain separate so you can see exactly where your earnings come from.</p><div class="three" style="margin-top:12px"><div class="earning"><b id="statusCommission">R0</b><span>DIRECT COMMISSION</span></div><div class="earning"><b id="statusBonus">R0</b><span>ACHIEVEMENT BONUSES</span></div><div class="earning"><b id="statusPerformance">R0</b><span>MONTHLY PERFORMANCE PAYMENTS</span></div></div><div id="earnSummary" class="notice" style="margin-top:12px"></div></section>
-<section class="card compensationPreview">
-  <div class="sectionHead"><div><div class="eyebrow dark">AMBASSADOR COMPENSATION PLAN</div><h2>Three ways to earn as you grow your impact</h2><p class="muted">Earnings are based on verified qualifying student revenue and programme rules.</p></div><button class="btn gold" data-go="compensation">View Full Plan</button></div>
+
+<section class="card"><div class="sectionHead"><div><div class="eyebrow dark">EARNINGS OVERVIEW</div><h2>Where your earnings come from</h2></div><button class="textAction" data-go="earnings">Open ledger →</button></div>
+<div class="three earningsMini" style="margin-top:12px"><div class="earning"><b id="statusCommission">R0</b><span>DIRECT COMMISSION</span></div><div class="earning"><b id="statusBonus">R0</b><span>ACHIEVEMENT BONUSES</span></div><div class="earning"><b id="statusPerformance">R0</b><span>MONTHLY PERFORMANCE</span></div></div><div id="earnSummary" class="notice" style="margin-top:12px"></div></section>
+
+<section class="card"><div class="sectionHead"><div><div class="eyebrow dark">RECENT ACTIVITY</div><h2>Your latest Ambassador activity</h2></div></div><div id="recentActivity" class="activityList"><div class="empty">No recent activity yet.</div></div></section>
+
+<section class="card compensationPreview compactComp">
+  <div class="sectionHead"><div><div class="eyebrow dark">AMBASSADOR COMPENSATION PLAN</div><h2>Three approved earning streams</h2><p class="muted">Direct referrals only. No downlines, recruitment commissions or team overrides.</p></div><button class="btn gold" data-go="compensation">View Full Plan</button></div>
   <div class="three compensationSteps">
-    <div class="earning"><b>15%</b><span>DIRECT COMMISSION</span><p class="muted">Earn 15% on verified qualifying revenue from students directly attributed to your referral code.</p></div>
-    <div class="earning"><b>Up to R45,000</b><span>ACHIEVEMENT BONUSES</span><p class="muted">One-time bonuses are earned when a new cumulative revenue level is reached for the first time.</p></div>
-    <div class="earning"><b>Up to R25,000</b><span>MONTHLY PERFORMANCE</span><p class="muted">From Gold / Level 4, qualifying monthly performance payments may apply after Academy verification.</p></div>
+    <div class="earning"><b>15%</b><span>DIRECT COMMISSION</span><p class="muted">On verified qualifying revenue from your own directly attributed students.</p></div>
+    <div class="earning"><b>Up to R45,000</b><span>ACHIEVEMENT BONUSES</span><p class="muted">One-time bonuses as approved cumulative revenue levels are reached.</p></div>
+    <div class="earning"><b>Up to R25,000</b><span>MONTHLY PERFORMANCE</span><p class="muted">Available from Gold / Level 4 subject to monthly verification and programme rules.</p></div>
   </div>
 </section>
 </section>
