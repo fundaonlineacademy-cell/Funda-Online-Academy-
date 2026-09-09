@@ -172,8 +172,8 @@ const groups=[
   ['assessments','#myCoursesSection','✓','Assessments']
  ]},
  {label:'LEARNING',items:[
-  ['materials','digital-library.html','▤','Study Materials'],
-  ['resources','digital-library.html','◇','Course Resources'],
+  ['materials','#studentStudyMaterialsSection','▤','Study Materials'],
+  ['resources','digital-library.html','◇','Digital Library'],
   ['results','student-results.html','▧','My Results'],
   ['certificates','student-certificates.html','♕','My Certificates'],
   ['calendar','student-calendar.html','◷','My Calendar']
