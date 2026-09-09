@@ -14,8 +14,26 @@ const moduleDone=id=>state.progress.some(p=>String(p.module_id)===String(id)&&p.
 function aState(a,done){const ats=state.attempts.filter(x=>String(x.assessment_id)===String(a.id)),passed=ats.some(x=>x.passed===true);if(passed)return{label:'Passed',cls:'done',msg:'Completed successfully. Your passing result is recorded.',open:true};if(!done)return{label:'Locked',cls:'',msg:'Complete all lessons in this module to unlock this assessment.',open:false};if(typeOf(a)==='summative'){const f=state.assessments.find(x=>String(x.module_id)===String(a.module_id)&&typeOf(x)==='formative');if(f&&!state.attempts.some(x=>String(x.assessment_id)===String(f.id)&&x.passed===true))return{label:'Locked',cls:'',msg:'Pass the module formative assessment first.',open:false}}if(ats.length>=3)return{label:'Finalised',cls:'done',msg:'All permitted attempts have been used.',open:false};return{label:ats.length?'Ready to retry':'Ready',cls:'ready',msg:ats.length?'Review the module and continue when ready.':'Module completed. You may start this assessment.',open:true}}
 function card(a,m,done){const st=aState(a,done),type=typeOf(a),href=`module-assessment.html?course=${encodeURIComponent(m.course_id)}&module=${m.module_number}&type=${type}`;return `<article class="saCard ${st.open?'':'locked'}"><h4>${type==='formative'?'Formative Assessment':'Summative Assessment'}</h4><span class="saBadge ${st.cls}">${esc(st.label)}</span><p>${esc(st.msg)}</p><a class="saBtn ${st.open?'':'disabled'}" ${st.open?`href="${href}"`:'aria-disabled="true"'}>${st.open?'Open Assessment':'🔒 Locked'}</a></article>`}
 function render(){const root=mount();let h=`<div class="saHead"><div class="saK">STUDENT ASSESSMENTS</div><h2>My Assessments</h2><p>Assessments are organised by course and module. Complete the module first to unlock its assessment. Where both types apply, pass the formative assessment before the summative assessment opens.</p></div>`;if(!state.courses.length)h+=`<div class="saCourse"><div class="saEmpty">No assessments are available yet. They will appear after your course enrolment is approved.</div></div>`;state.courses.forEach(c=>{h+=`<div class="saCourse"><div class="saCourseHead"><h3>${esc(c.title)}</h3></div>`;state.modules.filter(m=>String(m.course_id)===String(c.id)).forEach(m=>{const list=state.assessments.filter(a=>String(a.module_id)===String(m.id));if(!list.length)return;const done=moduleDone(m.id);list.sort((a,b)=>typeOf(a)==='formative'?-1:typeOf(b)==='formative'?1:0);h+=`<div class="saModule"><div class="saModuleTitle"><b>Module ${m.module_number} · ${esc(m.module_name)}</b><span>${done?'Module complete':'Module in progress · assessments locked'}</span></div><div class="saGrid">${list.map(a=>card(a,m,done)).join('')}</div></div>`});h+='</div>'});root.innerHTML=h}
-function show(){const dc=document.getElementById('dashboardContent');if(dc)[...dc.children].forEach(x=>{if(x.id!=='studentAssessmentsCentre')x.style.display='none'});const r=mount();r.hidden=false;r.style.display='block';document.querySelectorAll('#sdSide [data-sd-key]').forEach(x=>x.classList.toggle('active',x.dataset.sdKey==='assessments'));window.scrollTo({top:0,behavior:'smooth'})}
-function wire(){const a=document.querySelector('#sdSide [data-sd-key="assessments"]');if(!a)return false;if(a.dataset.assessmentCentreWired)return true;a.dataset.assessmentCentreWired='1';a.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();show()},{capture:true});return true}
-function boot(){css();mount();load();let n=0,t=setInterval(()=>{n++;if(wire()||n>30)clearInterval(t)},300)}
+function show(){
+ const dc=document.getElementById('dashboardContent');
+ if(dc)[...dc.children].forEach(x=>{if(x.id!=='studentAssessmentsCentre')x.style.setProperty('display','none','important')});
+ const r=mount();r.hidden=false;r.style.setProperty('display','block','important');
+ document.body.dataset.sdView='assessments';
+ document.querySelectorAll('#sdSide [data-sd-key]').forEach(x=>x.classList.toggle('active',x.dataset.sdKey==='assessments'));
+ if(!r.innerHTML.trim())render();
+ window.scrollTo({top:0,behavior:'smooth'})
+}
+function wire(){
+ const a=document.querySelector('#sdSide [data-sd-key="assessments"]');if(!a)return false;
+ if(a.dataset.assessmentCentreWired)return true;
+ a.dataset.assessmentCentreWired='1';
+ a.onclick=function(e){e.preventDefault();e.stopPropagation();show();return false};
+ return true
+}
+function boot(){
+ css();mount();load();
+ let n=0,t=setInterval(()=>{n++;if(wire()||n>60)clearInterval(t)},250);
+ document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest('#sdSide [data-sd-key="assessments"]');if(a){e.preventDefault();e.stopPropagation();show()}},true)
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
