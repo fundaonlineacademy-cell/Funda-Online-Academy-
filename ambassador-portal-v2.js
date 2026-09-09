@@ -153,7 +153,20 @@ function renderReferrals(){
  if(search)search.oninput=paint;if(status)status.onchange=paint;paint();
 }
 function renderLedger(){
- $('#ledgerBody').innerHTML=ledger.length?ledger.map(x=>'<tr><td>'+fmt(x.earning_month)+'</td><td>'+esc(String(x.earning_type).replaceAll('_',' '))+'</td><td>'+money(x.qualifying_revenue)+'</td><td>'+(Number(x.commission_rate||0)*100).toFixed(x.earning_type==='commission'?0:0)+'%</td><td>'+money(x.commission_amount)+'</td><td>'+badgeStatus(x.earning_status)+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">No earnings have been recorded yet.</td></tr>';
+ const approvedStatuses=['approved','paid'], pendingStatuses=['pending','held'];
+ const approved=sum(null,approvedStatuses), pending=sum(null,pendingStatuses), commission=sum('commission',approvedStatuses), other=sum('achievement_bonus',approvedStatuses)+sum('monthly_performance',approvedStatuses);
+ if($('#earnApproved'))$('#earnApproved').textContent=money(approved);
+ if($('#earnPending'))$('#earnPending').textContent=money(pending);
+ if($('#earnCommission'))$('#earnCommission').textContent=money(commission);
+ if($('#earnOther'))$('#earnOther').textContent=money(other);
+ const search=$('#earnSearch'),status=$('#earnStatus');
+ const paint=()=>{
+   const q=low(search?.value||''),st=low(status?.value||'');
+   const rows=ledger.filter(x=>(!q||low(x.earning_type).replaceAll('_',' ').includes(q))&&(!st||low(x.earning_status).includes(st)));
+   $('#ledgerBody').innerHTML=rows.length?rows.map(x=>'<tr><td>'+fmt(x.earning_month)+'</td><td>'+esc(String(x.earning_type).replaceAll('_',' '))+'</td><td>'+money(x.qualifying_revenue)+'</td><td>'+(Number(x.commission_rate||0)*100).toFixed(0)+'%</td><td>'+money(x.commission_amount)+'</td><td>'+badgeStatus(x.earning_status)+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">'+(ledger.length?'No earnings match this filter.':'No earnings have been recorded yet.')+'</td></tr>';
+   const mobile=$('#earningsMobile');if(mobile)mobile.innerHTML=rows.length?rows.map(x=>'<article class="refCard"><div class="refCardTop"><div><div class="earnType">'+esc(String(x.earning_type||'earning').replaceAll('_',' '))+'</div><div class="earnMeta">'+fmt(x.earning_month)+' · Qualifying revenue '+money(x.qualifying_revenue)+'</div></div><b class="refCardAmt">'+money(x.commission_amount)+'</b></div><div class="refCardMeta">'+badgeStatus(x.earning_status)+'</div><div class="earnRate">Rate: '+(Number(x.commission_rate||0)*100).toFixed(0)+'%</div></article>').join(''):'<div class="empty">'+(ledger.length?'No earnings match this filter.':'No earnings have been recorded yet.')+'</div>';
+ };
+ if(search)search.oninput=paint;if(status)status.onchange=paint;paint();
 }
 function renderPayouts(){
  installBankOptions();
