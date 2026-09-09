@@ -77,6 +77,23 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
  .sideLogout{display:block!important;padding-bottom:max(24px,env(safe-area-inset-bottom))}
  body.amb-nav-open{overflow:hidden}
 }
+</style><style id="ambassador-access-state-v1">
+.accessState{max-width:760px;margin:28px auto 14px;background:#fff;border:1px solid #d9e2ea;border-radius:20px;padding:34px;box-shadow:0 12px 34px #0b2b4910;position:relative;overflow:hidden}
+.accessState:before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:linear-gradient(90deg,#d9ad45,#f0d485)}
+.accessIcon{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:#fff3cf;color:#7a5710;font-size:26px;font-weight:900;margin-bottom:18px}
+.accessKicker{font-size:10px;letter-spacing:.18em;font-weight:900;color:#a17a22;margin-bottom:8px}
+.accessState h2{font-size:30px;line-height:1.12;margin:0;color:#17324a;letter-spacing:-.02em}
+.accessLead{font-size:16px;line-height:1.55;color:#5d6b78;margin:12px 0 20px;max-width:620px}
+.accessInfo{border:1px solid #e2e7ec;background:#f8fafc;border-radius:14px;padding:16px 18px;display:grid;gap:5px}
+.accessInfo strong{color:#17324a;font-size:13px}.accessInfo span{font-size:13px;line-height:1.55;color:#65727f}
+.accessActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.accessActions .btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;min-height:44px}
+.accessPrimary{background:#173f62!important}.accessSecondary{background:#fff!important}
+.accessSupport{font-size:12px;line-height:1.55;color:#7a8793;margin:15px 0 0}
+@media(max-width:900px){.accessState{margin:18px 0 10px;padding:26px 22px}.accessState h2{font-size:26px}}
+@media(max-width:560px){
+ .accessState{padding:24px 20px;border-radius:18px}.accessIcon{width:48px;height:48px;border-radius:14px}
+ .accessState h2{font-size:24px}.accessLead{font-size:15px}.accessActions{display:grid;grid-template-columns:1fr}.accessActions .btn{width:100%}
+}
 </style></head>
 <body>
 <header class="top"><div class="topin"><button id="sideToggle" class="menuToggle" aria-label="Open Ambassador menu">☰</button><div class="brandWrap"><img src="logo.png" alt="Funda Online Academy" class="portalLogo"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div class="brandSub">AMBASSADOR PORTAL</div></div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
@@ -91,7 +108,21 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 </aside><div id="sideOverlay" class="sideOverlay"></div>
 <div class="content">
 <section id="loading" class="card">Loading your secure Ambassador Dashboard…</section>
-<section id="notFound" class="card hide"><h2>Ambassador account unavailable</h2><p class="muted">Use the email address connected to your approved Ambassador application. If your application is still under review, portal access will remain unavailable.</p><a class="btn" href="ambassador-login.html" style="display:inline-block;text-decoration:none">Ambassador Login</a></section>
+<section id="notFound" class="accessState hide">
+  <div class="accessIcon">!</div>
+  <div class="accessKicker">AMBASSADOR ACCESS</div>
+  <h2>Ambassador account not linked</h2>
+  <p class="accessLead">You are signed in, but this login is not connected to an Ambassador application.</p>
+  <div class="accessInfo">
+    <strong>What to do</strong>
+    <span>Sign in with the email address used on your Ambassador application. If your application is still under review, access will remain unavailable until approval.</span>
+  </div>
+  <div class="accessActions">
+    <a class="btn accessPrimary" href="ambassador-login.html">Go to Ambassador Login</a>
+    <a class="btn alt accessSecondary" href="index.html">Back to Academy Website</a>
+  </div>
+  <p class="accessSupport">Still need help? Use the Academy support channel so the Ambassador application email can be checked securely.</p>
+</section>
 
 <div id="portal" class="hide">
 <section class="section on" data-section="dashboard">
