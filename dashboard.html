@@ -63,35 +63,44 @@ async function loadCourseProgress(){
   if(!ids.length)return;
 
   const {data:mods,error:me}=await db.from('course_modules').select('id,course_id,module_number').in('course_id',ids);
-  if(me)throw me;
+  if(me){console.warn('Course modules unavailable; continuing without progress.',me);return}
   const moduleRows=mods||[];
   const moduleIds=moduleRows.map(m=>m.id);
   if(!moduleIds.length)return;
 
-  const {data:lessons,error:le}=await db.from('lessons').select('id,module_id').in('module_id',moduleIds);
-  if(le)throw le;
-  const lessonRows=lessons||[];
-  const lessonIds=lessonRows.map(l=>l.id);
-
-  let lessonDone=[];
-  if(lessonIds.length){
-    const {data:pr,error:pe}=await db.from('lesson_progress').select('lesson_id,completed').eq('student_id',currentUser.id).eq('completed',true).in('lesson_id',lessonIds);
-    if(pe)throw pe;
-    lessonDone=pr||[];
+  // Fetch lessons in small batches. Passing hundreds of UUIDs in one .in()
+  // request can exceed mobile/browser/API URL limits and return HTTP 400.
+  let lessonRows=[];
+  for(let i=0;i<moduleIds.length;i+=40){
+    const batch=moduleIds.slice(i,i+40);
+    const {data,error}=await db.from('lessons').select('id,module_id').in('module_id',batch);
+    if(error){console.warn('Lesson progress source unavailable for one batch.',error);continue}
+    lessonRows.push(...(data||[]));
   }
+
+  // Read only this learner's progress, then intersect locally. This avoids
+  // sending thousands of lesson UUIDs back to PostgREST in the query string.
+  let lessonDone=[];
+  const {data:pr,error:pe}=await db.from('lesson_progress')
+    .select('lesson_id,completed')
+    .eq('student_id',currentUser.id)
+    .eq('completed',true);
+  if(pe)console.warn('Lesson progress unavailable; continuing with zero recorded lesson progress.',pe);
+  else lessonDone=pr||[];
 
   let moduleDone=[];
-  if(moduleIds.length){
-    // Module progress is supplementary. Some learner accounts can read lesson
-    // progress but not module_progress because of legacy RLS/data differences.
-    // Never fail the whole dashboard for this optional progress source.
-    const {data:mp,error:mpe}=await db.from('module_progress').select('module_id,completed').eq('student_id',currentUser.id).eq('completed',true).in('module_id',moduleIds);
-    if(mpe)console.warn('Module progress unavailable; continuing with lesson progress.',mpe);
-    else moduleDone=mp||[];
-  }
+  const {data:mp,error:mpe}=await db.from('module_progress')
+    .select('module_id,completed')
+    .eq('student_id',currentUser.id)
+    .eq('completed',true);
+  if(mpe)console.warn('Module progress unavailable; continuing with lesson progress only.',mpe);
+  else moduleDone=mp||[];
 
-  const doneLessonSet=new Set(lessonDone.map(x=>String(x.lesson_id)));
-  const doneModuleSet=new Set(moduleDone.map(x=>String(x.module_id)));
+  const validLessonIds=new Set(lessonRows.map(x=>String(x.id)));
+  const validModuleIds=new Set(moduleIds.map(String));
+  const doneLessonSet=new Set(lessonDone.filter(x=>validLessonIds.has(String(x.lesson_id))).map(x=>String(x.lesson_id)));
+  const doneModuleSet=new Set(moduleDone.filter(x=>validModuleIds.has(String(x.module_id))).map(x=>String(x.module_id)));
+
   const modulesByCourse={};
   moduleRows.forEach(m=>{
     const cid=String(m.course_id);
