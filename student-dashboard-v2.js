@@ -8,27 +8,27 @@ const CSS=`
 body.sdV2{background:linear-gradient(180deg,#fffdf8 0%,#f7f8fa 46%,#fffaf0 100%)!important;color:#111!important}
 .sdOverlay{position:fixed;inset:0;background:rgba(1,12,29,.62);z-index:74;opacity:0;pointer-events:none;transition:.18s}
 .sdOverlay.open{opacity:1;pointer-events:auto}
-.sdSide{position:fixed;left:0;top:0;bottom:0;width:292px;background:linear-gradient(180deg,#04182d 0%,#092b4d 100%);z-index:75;color:#fff;overflow-y:auto;overscroll-behavior:contain;transform:translateX(-102%);transition:.2s;box-shadow:18px 0 50px rgba(2,17,36,.22)}
+.sdSide{position:fixed;left:0;top:0;bottom:0;width:292px;background:linear-gradient(180deg,#fffdf7 0%,#fffaf0 58%,#fffdf8 100%);z-index:75;color:#17324a;overflow-y:auto;overscroll-behavior:contain;transform:translateX(-102%);transition:.2s;box-shadow:18px 0 50px rgba(2,17,36,.22);border-right:1px solid #ead9ad}
 .sdSide.open{transform:none}
 .sdSideInner{padding:24px 20px 28px}
-.sdBrand{display:flex;align-items:center;gap:12px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.12)}
-.sdBrand img{width:46px;height:46px;object-fit:contain;background:#fff;border-radius:10px;padding:3px}
-.sdBrand b{display:block;font-family:Montserrat,sans-serif;font-size:16px;line-height:1.15}
-.sdBrand span{display:block;margin-top:4px;font-size:8px;letter-spacing:.19em;font-weight:800;color:#e5c971}
-.sdClose{margin-left:auto;width:42px;height:42px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(255,255,255,.08);color:#fff;font-size:25px;cursor:pointer}
-.sdIdentity{padding:22px 8px 18px;border-bottom:1px solid rgba(255,255,255,.12)}
+.sdBrand{display:flex;align-items:center;gap:12px;padding-bottom:20px;border-bottom:1px solid #ead9ad}
+.sdBrand img{display:none}
+.sdBrand b{display:block;font-family:Montserrat,sans-serif;font-size:18px;line-height:1.15;color:#17324a}
+.sdBrand span{display:block;margin-top:4px;font-size:9px;letter-spacing:.19em;font-weight:900;color:#b58216}
+.sdClose{margin-left:auto;width:42px;height:42px;border:1px solid #e4d29d;border-radius:12px;background:#fff;color:#17324a;font-size:25px;cursor:pointer}
+.sdIdentity{padding:22px 8px 18px;border-bottom:1px solid #ead9ad}
 .sdPerson{display:flex;gap:13px;align-items:center}
 .sdAvatar{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#e8bd51,#f5dc8d);color:#17324a;font:800 20px Montserrat,sans-serif}
-.sdPerson b{display:block;font:800 15px Montserrat,sans-serif}.sdPerson small{display:block;color:#ced9e5;font-size:10px;margin-top:3px}
+.sdPerson b{display:block;font:800 15px Montserrat,sans-serif}.sdPerson small{display:block;color:#677585;font-size:10px;margin-top:3px}
 .sdStatus{display:inline-flex;margin-top:6px;padding:4px 8px;border-radius:999px;background:#dff4e7;color:#155f3f;font-size:8px;font-weight:900;letter-spacing:.05em}
-.sdProgressMeta{display:flex;justify-content:space-between;margin-top:15px;color:#e7edf3;font-size:9px;font-weight:700}.sdTrack{height:6px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden;margin-top:6px}.sdTrack i{display:block;height:100%;background:linear-gradient(90deg,#d6a832,#f1d375);width:0}
-.sdNavGroup{margin-top:22px}.sdNavLabel{padding:0 8px;margin-bottom:8px;color:#fff;font-size:8px;letter-spacing:.16em;font-weight:900}
-.sdNav a,.sdNav button{width:100%;border:0;text-decoration:none;display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:11px;background:transparent;color:#dce6ef;font:700 11px Inter,sans-serif;cursor:pointer;text-align:left}
-.sdNav a:hover,.sdNav button:hover,.sdNav .active{background:rgba(255,255,255,.09);color:#fff}
-.sdNav .active{background:linear-gradient(90deg,#d3a435,#f0d478);color:#17324a}
-.sdNavIcon{width:18px;text-align:center;font-size:14px}.sdLogout{color:#ffdada!important;margin-top:7px}
+.sdProgressMeta{display:flex;justify-content:space-between;margin-top:15px;color:#17324a;font-size:9px;font-weight:800}.sdTrack{height:6px;border-radius:999px;background:#eadfca;overflow:hidden;margin-top:6px}.sdTrack i{display:block;height:100%;background:linear-gradient(90deg,#c58d0c,#e2bc55);width:0}
+.sdNavGroup{margin-top:22px}.sdNavLabel{padding:0 8px;margin-bottom:8px;color:#b58216;font-size:9px;letter-spacing:.18em;font-weight:900;display:flex;align-items:center;gap:10px}.sdNavLabel:after{content:"";height:1px;flex:1;background:#e0bd60}
+.sdNav a,.sdNav button{width:100%;border:0;text-decoration:none;display:flex;align-items:center;gap:12px;padding:12px 12px;border-radius:12px;background:transparent;color:#17324a;font:800 12px Inter,sans-serif;cursor:pointer;text-align:left}
+.sdNav a:hover,.sdNav button:hover{background:#fff6dc;color:#17324a}
+.sdNav .active{background:linear-gradient(90deg,#f5dd9a,#e1b84c);color:#17324a;box-shadow:0 4px 12px rgba(184,133,22,.12)}
+.sdNavIcon{width:20px;text-align:center;font-size:16px;color:#b58216}.sdLogout{color:#17324a!important;margin-top:7px}
 .sdTopMenu{display:inline-grid!important;place-items:center;width:46px;height:46px;padding:0!important;border-radius:12px!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important;font-size:24px!important;flex:0 0 auto}
-body.sdV2>header{background:#06152f!important}
+.sdMotto{margin-top:22px;padding:16px 10px;border-radius:15px;background:linear-gradient(135deg,#fff9e8,#f5dda0);border:1px solid #ead39b;color:#b58216;text-align:center;font:800 12px Montserrat,sans-serif}.sdMotto small{display:block;margin-top:6px;color:#7c8793;font:800 7px Inter,sans-serif;letter-spacing:.24em}body.sdV2>header{background:#06152f!important}
 body.sdV2>header nav,body.sdV2>header .mobile-scroll{display:none!important}
 .sdHeroMetrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:20px;position:relative;z-index:2}
 .sdHeroMetric{padding:12px 13px;border:1px solid #e2e7ec;border-radius:14px;background:#fff;box-shadow:0 3px 10px rgba(17,44,73,.04)}
@@ -83,14 +83,14 @@ const groups=[
  {label:'LEARNING',items:[
   ['materials','digital-library.html','▤','Study Materials'],
   ['resources','digital-library.html','◇','Course Resources'],
-  ['results','student-results.html','▧','Results / Academic Record'],
-  ['certificates','student-certificates.html','♕','Certificates'],
+  ['results','student-results.html','▧','My Results'],
+  ['certificates','student-certificates.html','♕','My Certificates'],
   ['calendar','student-calendar.html','◷','My Calendar']
  ]},
  {label:'SUPPORT',items:[
   ['announcements','#announcementsSection','●','Announcements'],
   ['academic','#studentCommunicationHelpCentre','?','Academic Support'],
-  ['technical','#studentSupportSection','⌁','Technical Support / Log Ticket']
+  ['technical','#studentSupportSection','⌁','Technical Support']
  ]},
  {label:'ACCOUNT',items:[
   ['profile','profile.html','♙','My Profile'],
@@ -164,7 +164,7 @@ function installHero(){
 function install(){
  style();document.body.classList.add('sdV2');
  if(!document.getElementById('sdSide')){
-  document.body.insertAdjacentHTML('afterbegin',`<div id="sdOverlay" class="sdOverlay"></div><aside id="sdSide" class="sdSide" aria-label="Student portal navigation"><div class="sdSideInner"><div class="sdBrand"><img src="logo.png" alt="Funda Online Academy"><div><b>FUNDA ONLINE<br>ACADEMY</b><span>STUDENT PORTAL</span></div><button id="sdClose" class="sdClose" aria-label="Close navigation">×</button></div><div class="sdIdentity"><div class="sdPerson"><div id="sdAvatar" class="sdAvatar">S</div><div><b id="sdName">Student</b><small>Learner: <span id="sdLearner">Pending</span></small><span id="sdStatus" class="sdStatus">ACTIVE</span></div></div><div class="sdProgressMeta"><span>Overall Progress</span><b id="sdPct">0%</b></div><div class="sdTrack"><i id="sdProgress"></i></div></div><nav class="sdNavWrap">${navHtml()}<div class="sdNavGroup"><div class="sdNav"><button id="sdLogout" class="sdLogout"><span class="sdNavIcon">↪</span><span>Log Out</span></button></div></div></nav></div></aside>`);
+  document.body.insertAdjacentHTML('afterbegin',`<div id="sdOverlay" class="sdOverlay"></div><aside id="sdSide" class="sdSide" aria-label="Student portal navigation"><div class="sdSideInner"><div class="sdBrand"><img src="logo.png" alt="Funda Online Academy"><div><b>FUNDA ONLINE<br>ACADEMY</b><span>STUDENT PORTAL</span></div><button id="sdClose" class="sdClose" aria-label="Close navigation">×</button></div><div class="sdIdentity"><div class="sdPerson"><div id="sdAvatar" class="sdAvatar">S</div><div><b id="sdName">Student</b><small>Learner: <span id="sdLearner">Pending</span></small><span id="sdStatus" class="sdStatus">ACTIVE</span></div></div><div class="sdProgressMeta"><span>Overall Progress</span><b id="sdPct">0%</b></div><div class="sdTrack"><i id="sdProgress"></i></div></div><nav class="sdNavWrap">${navHtml()}<div class="sdNavGroup"><div class="sdNav"><button id="sdLogout" class="sdLogout"><span class="sdNavIcon">↪</span><span>Log Out</span></button></div></div></nav><div class="sdMotto">Learn&nbsp;&nbsp;•&nbsp;&nbsp;Grow&nbsp;&nbsp;•&nbsp;&nbsp;Achieve<small>FUNDA ONLINE ACADEMY</small></div></div></aside>`);
  }
  const header=document.querySelector('body>header');
  if(header&&!document.getElementById('sdMenu')){
@@ -188,6 +188,7 @@ function install(){
   document.querySelectorAll('#sdSide a').forEach(x=>x.classList.remove('active'));a.classList.add('active');
  }));
  const first=document.querySelector('#sdSide [data-sd-key="dashboard"]');if(first)first.classList.add('active');
+ document.querySelectorAll('#sdSide [data-funda-results-link],#sdSide #fundaCertificatesQuickLink').forEach(x=>x.remove());
  installHero();updateIdentity();
  let tries=0;const t=setInterval(()=>{tries++;installHero();updateIdentity();if(tries>30)clearInterval(t)},500);
  window.addEventListener('resize',()=>{if(innerWidth>=1000)close()});
