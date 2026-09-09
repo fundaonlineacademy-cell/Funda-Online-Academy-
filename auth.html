@@ -391,7 +391,8 @@
       if (error) {
         const lower = String(error.message || "").toLowerCase();
         if (lower.includes("already") || lower.includes("exists") || lower.includes("registered")) {
-          throw new Error("An account with this email already exists. This can include an account created during an earlier interrupted registration. Please sign in with that email; if you do not remember the password, use Forgot password.");
+          try { localStorage.setItem("funda_existing_enrol_email", email); } catch (_) {}
+          throw new Error("This email already belongs to a Funda Online Academy account. Do not create a second account. Staff members and Ambassadors may enrol as students using their existing login. Please sign in with this email and continue to Course Enrolment.");
         }
         throw error;
       }
@@ -400,7 +401,8 @@
 
       /* Supabase may intentionally return an obfuscated user for an existing email. */
       if (Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-        throw new Error("An account with this email already exists. Please sign in instead of creating another account.");
+        try { localStorage.setItem("funda_existing_enrol_email", email); } catch (_) {}
+        throw new Error("This email already belongs to a Funda Online Academy account. Please use the existing login to enrol in a course; your Staff or Ambassador access will remain separate.");
       }
 
       if (!data.session) {
@@ -421,6 +423,18 @@
     } catch (error) {
       console.error("Registration error:", error);
       showMessage(error?.message || "Something went wrong while creating your account. Please try again.");
+      const msg=String(error?.message||"").toLowerCase();
+      if(msg.includes("already belongs") || msg.includes("existing login")){
+        let helper=document.getElementById("existingAccountEnrolHelper");
+        if(!helper){
+          helper=document.createElement("a");
+          helper.id="existingAccountEnrolHelper";
+          helper.href="login.html?next=onboarding.html";
+          helper.textContent="Sign In With Existing Account → Continue to Course Enrolment";
+          helper.style.cssText="display:block;margin-top:14px;padding:14px 16px;border-radius:12px;background:#21384d;color:white;text-decoration:none;font-weight:800;text-align:center";
+          form.appendChild(helper);
+        }
+      }
     } finally {
       button.disabled = false;
       button.textContent = "Create Student Account";
