@@ -61,6 +61,8 @@ body.sdV2[data-sd-view="courses"] #studentFaqSection,
 body.sdV2[data-sd-view="courses"] #studentAcademicSupportSection,
 body.sdV2[data-sd-view="courses"] #studentSupportSection{display:none!important}
 body.sdV2[data-sd-view="courses"] #coursesAndQuickAccess{display:grid!important}
+body.sdV2[data-sd-view="courses"] #coursesAndQuickAccess>section:not(#myCoursesSection){display:none!important}
+body.sdV2[data-sd-view="courses"] #coursesAndQuickAccess{grid-template-columns:1fr!important}
 
 body.sdV2[data-sd-view="communication"] #studentHero,
 body.sdV2[data-sd-view="communication"] #statusBanner,
