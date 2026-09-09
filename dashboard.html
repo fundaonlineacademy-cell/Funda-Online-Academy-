@@ -53,7 +53,8 @@ function isApproved(e){return ['approved','active','enrolled','completed'].inclu
 function displayName(){return profile?.full_name||studentRecord?.full_name||currentUser?.user_metadata?.full_name||currentUser?.email?.split('@')[0]||'Student'}
 function formatDate(v){if(!v)return '';try{return new Intl.DateTimeFormat('en-ZA',{day:'numeric',month:'short',year:'numeric'}).format(new Date(v))}catch{return ''}}
 function money(v){const n=Number(v);return Number.isFinite(n)?'R'+n.toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:2}):''}
-async function loadBase(){const {data:{user},error}=await db.auth.getUser();if(error||!user){location.href='login.html?next=dashboard.html';return false}currentUser=user;const [pr,sr]=await Promise.all([db.from('profiles').select('*').eq('id',user.id).maybeSingle(),db.from('students').select('*').eq('user_id',user.id).maybeSingle()]);profile=pr.data||null;studentRecord=sr.data||null;return true}
+async function restoreStudentUser(){let lastError=null;for(const wait of [0,250,650,1200]){if(wait)await new Promise(r=>setTimeout(r,wait));try{const s=await db.auth.getSession();if(s.data?.session?.user)return s.data.session.user;if(s.error)lastError=s.error}catch(e){lastError=e}try{const g=await db.auth.getUser();if(g.data?.user)return g.data.user;if(g.error)lastError=g.error}catch(e){lastError=e}}if(lastError)console.warn('Student session restore failed',lastError);return null}
+async function loadBase(){const user=await restoreStudentUser();if(!user){location.href='login.html?next=dashboard.html';return false}currentUser=user;const [pr,sr]=await Promise.all([db.from('profiles').select('*').eq('id',user.id).maybeSingle(),db.from('students').select('*').eq('user_id',user.id).maybeSingle()]);profile=pr.data||null;studentRecord=sr.data||null;return true}
 async function loadEnrollments(){const {data,error}=await db.from('enrollments').select('*,courses(*)').eq('student_id',currentUser.id).order('enrolled_at',{ascending:false});if(error)throw error;enrollments=data||[];if(!enrollments.length){location.replace('onboarding.html');return false}const ids=enrollments.map(e=>e.id);payments=[];if(ids.length){const r=await db.from('payments').select('*').in('enrolment_id',ids).order('created_at',{ascending:false});if(!r.error)payments=r.data||[]}return true}
 async function loadCourseProgress(){
   courseProgress={};
@@ -159,11 +160,14 @@ $('logoutButton').addEventListener('click',logout);$('quickTicketButton').addEve
 <script>
 window.fundaProtectedPageRecheck=async function(){
   try{
-    if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY){location.replace('login.html?next=dashboard.html');return}
+    if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)return;
     const client=window.__fundaSessionGuardClient||(window.__fundaSessionGuardClient=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}}));
-    const {data}=await client.auth.getSession();
-    if(!data?.session?.user)location.replace('login.html?next=dashboard.html');
-  }catch(_){location.replace('login.html?next=dashboard.html')}
+    for(const wait of [0,250,650]){
+      if(wait)await new Promise(r=>setTimeout(r,wait));
+      const {data}=await client.auth.getSession();
+      if(data?.session?.user)return;
+    }
+  }catch(e){console.warn('Student page session recheck failed',e)}
 };
 window.addEventListener('pageshow',function(e){if(e.persisted)window.fundaProtectedPageRecheck()});
 </script>
