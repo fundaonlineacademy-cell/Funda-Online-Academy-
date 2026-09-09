@@ -12,7 +12,32 @@ function messageHtml(m,rm){let rec=rm.get(m.id),read=!!rec?.read_at;return `<art
 function renderMessages(){let box=document.getElementById('announcementsList');if(!box)return;let rm=receiptMap();if(!state.messages.length){box.innerHTML='<div class="sccMessage"><h3>No new announcements</h3><p>Important Academy updates will appear here when published.</p></div>';return}box.innerHTML=state.messages.map(m=>messageHtml(m,rm)).join('');box.querySelectorAll('[data-mark-read]').forEach(b=>b.onclick=()=>markRead(b.dataset.markRead))}
 function safetyFaq(){return state.faqs.find(f=>/security|scam|phish/i.test(`${f.category||''} ${f.question||''}`))}
 function officialActions(){let s=state.settings||{},a=[];if(s.general_email)a.push(`<a class="sccBtn alt" href="mailto:${encodeURIComponent(s.general_email)}">Email Academy</a>`);if(s.whatsapp||s.general_phone){let n=String(s.whatsapp||s.general_phone).replace(/\D/g,'');if(n)a.push(`<a class="sccBtn" target="_blank" rel="noopener" href="https://wa.me/${encodeURIComponent(n)}">WhatsApp Support</a>`)}return a.join('')}
-function mountHelp(){if(document.getElementById('studentCommunicationHelpCentre'))return;let anchor=document.getElementById('announcementsSection');if(!anchor)return;let rm=receiptMap(),unread=state.receipts.filter(r=>!r.read_at).length,safe=safetyFaq(),wrap=document.createElement('section');wrap.id='studentCommunicationHelpCentre';wrap.className='sccWrap';wrap.innerHTML=`<div class="sccGrid"><div class="sccCard"><div class="sccK">COMMUNICATION & GUIDANCE</div><h2>Communication & Help Centre</h2><div class="sccIntro">Your official Academy messages, frequently asked questions and safety guidance in one place.</div><div class="sccStats"><div class="sccStat"><b>${unread}</b><span>Unread messages</span></div><div class="sccStat"><b>${state.faqs.length}</b><span>Active FAQs</span></div><div class="sccStat"><b>${state.departments.length}</b><span>Support departments</span></div></div>${safe?`<div class="sccSafety"><b>🛡️ STAY SAFE</b><p><strong>${esc(safe.question)}</strong><br>${esc(safe.answer)}</p></div>`:''}<div class="sccFaqs">${state.faqs.map(f=>`<details class="sccFaq"><summary>${esc(f.question)}</summary><p>${esc(f.answer)}</p></details>`).join('')}</div></div><div class="sccCard"><div class="sccK">CONTACT THE RIGHT TEAM</div><h2>Academy Support Directory</h2><div class="sccIntro">Choose the department that best matches your query and include the information they need to assist you.</div><div class="sccActions">${officialActions()}</div>${state.departments.map(d=>`<article class="sccDept"><h3>${esc(d.department_name)}</h3><p>${esc(d.description)}</p><p><b>Contact this team for:</b> ${esc(d.when_to_contact)}<br><b>Please include:</b> ${esc(d.what_to_include)}</p><div class="sccContact">${esc(d.contact_email||'')}${d.contact_phone?' · '+esc(d.contact_phone):''}</div></article>`).join('')}</div></div>`;anchor.insertAdjacentElement('afterend',wrap)}
+function mountHelp(){
+  let anchor=document.getElementById('announcementsSection');if(!anchor)return;
+  const rm=receiptMap(),unread=state.receipts.filter(r=>!r.read_at).length,safe=safetyFaq();
+
+  document.getElementById('studentCommunicationHelpCentre')?.remove();
+  document.getElementById('studentFaqSection')?.remove();
+  document.getElementById('studentAcademicSupportSection')?.remove();
+
+  const comm=document.createElement('section');
+  comm.id='studentCommunicationHelpCentre';
+  comm.className='sccWrap';
+  comm.innerHTML=`<div class="sccCard"><div class="sccK">STUDENT COMMUNICATION</div><h2>Communication Centre</h2><div class="sccIntro">Official Academy messages, notices and updates for your learner account.</div><div class="sccStats"><div class="sccStat"><b>${unread}</b><span>Unread messages</span></div><div class="sccStat"><b>${state.messages.length}</b><span>Published messages</span></div><div class="sccStat"><b>${state.receipts.length}</b><span>Tracked deliveries</span></div></div>${safe?`<div class="sccSafety"><b>🛡️ STAY SAFE</b><p><strong>${esc(safe.question)}</strong><br>${esc(safe.answer)}</p></div>`:''}</div>`;
+  anchor.insertAdjacentElement('afterend',comm);
+
+  const faq=document.createElement('section');
+  faq.id='studentFaqSection';
+  faq.className='sccWrap';
+  faq.innerHTML=`<div class="sccCard"><div class="sccK">FREQUENTLY ASKED QUESTIONS</div><h2>Student FAQs</h2><div class="sccIntro">Quick answers to common questions about enrolment, payments, learning, assessments, certificates and platform use.</div><div class="sccFaqs">${state.faqs.map(f=>`<details class="sccFaq"><summary>${esc(f.question)}</summary><p>${esc(f.answer)}</p></details>`).join('')||'<div class="sccIntro">No FAQs are currently published.</div>'}</div></div>`;
+  comm.insertAdjacentElement('afterend',faq);
+
+  const support=document.createElement('section');
+  support.id='studentAcademicSupportSection';
+  support.className='sccWrap';
+  support.innerHTML=`<div class="sccCard"><div class="sccK">KNOW WHO TO CONTACT</div><h2>Academic & Student Support Directory</h2><div class="sccIntro">Choose the department that matches your query. Each department explains what it handles, when to contact it, what information to include and the official contact details.</div><div class="sccActions">${officialActions()}</div>${state.departments.map(d=>`<article class="sccDept"><h3>${esc(d.department_name)}</h3><p>${esc(d.description)}</p><p><b>Department tasks / contact this team for:</b> ${esc(d.when_to_contact)}</p><p><b>Suggested subject / information to include:</b> ${esc(d.what_to_include)}</p><div class="sccContact">${esc(d.contact_email||'')}${d.contact_phone?' · '+esc(d.contact_phone):''}</div></article>`).join('')||'<div class="sccIntro">Support department information is not available yet.</div>'}</div>`;
+  faq.insertAdjacentElement('afterend',support);
+}
 async function markRead(id){let rec=state.receipts.find(r=>r.communication_id===id);if(!rec)return;let q=await db.from('communication_recipients').update({read_at:new Date().toISOString()}).eq('communication_id',id).eq('student_id',user.id);if(q.error)return alert('Could not update message status: '+q.error.message);await refresh()}
 async function refresh(){if(busy)return;busy=true;try{if(!await load())return;renderMessages();document.getElementById('studentCommunicationHelpCentre')?.remove();mountHelp()}finally{busy=false}}
 async function init(){style();for(let i=0;i<30;i++){if(document.getElementById('announcementsSection'))break;await new Promise(r=>setTimeout(r,300))}await refresh()}
