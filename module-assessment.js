@@ -16,7 +16,7 @@
   const assessmentType=(params.get('type')||'formative').trim().toLowerCase();
 
   const validUuid=value=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
-  const escapeHtml=value=>String(value??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
+  const escapeHtml=value=>String(value??'').replace(/[&<>'\"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[ch]));
 
   if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY){
     fail('Assessment services could not be initialised.');
@@ -127,8 +127,41 @@
 
     currentQuestionIndex=0;
     answerMap={};
-    statusBox.innerHTML=`<div class="notice"><strong>Before you begin</strong><br>Questions are shown one at a time. Select one answer before the Next button becomes usable. You need at least <strong>${escapeHtml(state.pass_percent||70)}%</strong> to pass. A maximum of <strong>${escapeHtml(state.max_attempts||3)} attempts</strong> is permitted.</div>`;
-    renderQuestions();
+    form.hidden=true;
+    form.innerHTML='';
+
+    const typeLabel=assessmentType==='formative'?'Formative Assessment':'Summative Assessment';
+    const questionCount=state.question_count||state.questions.length;
+    const passPercent=state.pass_percent||70;
+    const maxAttempts=state.max_attempts||3;
+    const attemptNumber=state.attempt_number||1;
+    const suppliedInstructions=String(state.instructions||'').trim();
+
+    statusBox.innerHTML=`
+      <div class="notice">
+        <strong>Assessment Instructions</strong><br><br>
+        <strong>Module:</strong> ${escapeHtml(state.module_number||moduleNumber)}<br>
+        <strong>Assessment:</strong> ${escapeHtml(typeLabel)}<br>
+        <strong>Questions:</strong> ${escapeHtml(questionCount)}<br>
+        <strong>Pass requirement:</strong> ${escapeHtml(passPercent)}%<br>
+        <strong>Attempts:</strong> Maximum ${escapeHtml(maxAttempts)}<br>
+        <strong>Current attempt:</strong> ${escapeHtml(attemptNumber)} of ${escapeHtml(maxAttempts)}
+        ${suppliedInstructions?`<br><br>${escapeHtml(suppliedInstructions)}`:''}
+        <br><br><strong>Before you begin</strong><br>
+        Questions are shown one at a time. Select one answer before the Next button becomes usable. Review your answer carefully before moving forward. Your assessment will only begin when you select <strong>Start Assessment</strong> below.
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="startAssessment" type="button">Start Assessment</button>
+        <a class="btn secondary" href="course-study.html?id=${encodeURIComponent(courseId)}">Return to Course</a>
+      </div>`;
+
+    const startButton=$('startAssessment');
+    if(startButton)startButton.onclick=()=>{
+      startButton.disabled=true;
+      statusBox.innerHTML=`<div class="notice"><strong>Assessment in progress</strong><br>Attempt ${escapeHtml(attemptNumber)} of ${escapeHtml(maxAttempts)}. Question 1 of ${escapeHtml(questionCount)}. Select one best answer.</div>`;
+      renderQuestions();
+      scrollTo({top:0,behavior:'smooth'});
+    };
   }
 
   function renderQuestions(){
