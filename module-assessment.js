@@ -16,7 +16,7 @@
   const assessmentType=(params.get('type')||'formative').trim().toLowerCase();
 
   const validUuid=value=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
-  const escapeHtml=value=>String(value??'').replace(/[&<>'\"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[ch]));
+  const escapeHtml=value=>String(value??'').replace(/[&<>'\u0022]/g,ch=>ch==='&'?'&amp;':ch==='<'?'&lt;':ch==='>'?'&gt;':ch===String.fromCharCode(39)?'&#39;':'&quot;');
 
   if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY){
     fail('Assessment services could not be initialised.');
