@@ -275,8 +275,14 @@ async function saveProfile(e){
 }
 function renderAgreement(){
  const a=$('#agreementAction');
- if(app.agreement_status==='accepted'){a.innerHTML='<div class="notice ok"><b>Agreement accepted ✓</b><br>Accepted on '+fmt(app.agreement_accepted_at)+'.</div>';return}
- a.innerHTML='<label class="row"><input id="acceptCheck" type="checkbox"> <span class="muted">I have read and accept the current Funda Brand Ambassador Programme rules.</span></label><button id="acceptAgreement" class="btn gold" style="margin-top:10px">Accept Agreement</button><div id="agreementMsg" class="muted"></div>';
+ if($('#agreementStatusText'))$('#agreementStatusText').textContent=String(app.agreement_status||'not accepted').replaceAll('_',' ').toUpperCase();
+ if($('#agreementAcceptedDate'))$('#agreementAcceptedDate').textContent=app.agreement_accepted_at?fmt(app.agreement_accepted_at):'NOT YET';
+ if($('#programmeStatusText'))$('#programmeStatusText').textContent=String(app.account_status||'application').replaceAll('_',' ').toUpperCase();
+ if($('#agreementVersionText'))$('#agreementVersionText').textContent='LEGACY RECORD';
+ if($('#agreementStanding')){$('#agreementStanding').textContent=['active','introductory'].includes(app.account_status)?'GOOD STANDING':String(app.account_status||'REVIEW').replaceAll('_',' ').toUpperCase();$('#agreementStanding').className='badge '+(['active','introductory'].includes(app.account_status)?'ok':'warn')}
+ if(app.agreement_status==='accepted'){a.innerHTML='<div class="notice ok"><b>Agreement accepted ✓</b><br>Your existing acceptance record is preserved. Accepted on '+fmt(app.agreement_accepted_at)+'.</div><p class="muted" style="margin-top:10px">The Academy is introducing formal agreement versioning. A future material version will require its own recorded acceptance where applicable; it will not overwrite this historical acceptance.</p>';return}
+ a.innerHTML='<div class="notice gold"><b>Agreement acceptance required</b><br>Read the programme rules below before accepting the current agreement.</div><label class="row" style="margin-top:12px"><input id="acceptCheck" type="checkbox"> <span class="muted">I confirm that I have read, understood and agree to the current Funda Brand Ambassador Programme rules.</span></label><button id="acceptAgreement" class="btn gold" style="margin-top:10px" disabled>Accept Agreement</button><div id="agreementMsg" class="muted"></div>';
+ $('#acceptCheck').onchange=e=>$('#acceptAgreement').disabled=!e.target.checked;
  $('#acceptAgreement').onclick=acceptAgreement;
 }
 async function acceptAgreement(){
