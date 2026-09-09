@@ -3,7 +3,7 @@
   'use strict';
   function addLink(){
     if(document.getElementById('fundaCertificatesQuickLink')) return;
-    const library=document.querySelector('a[href="digital-library.html"]');
+    const library=[...document.querySelectorAll('a[href="digital-library.html"]')].find(a=>!a.closest('#sdSide'));
     if(!library) return;
     const a=document.createElement('a');
     a.id='fundaCertificatesQuickLink';
