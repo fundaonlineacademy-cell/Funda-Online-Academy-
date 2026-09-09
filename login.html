@@ -469,7 +469,7 @@
       }
 
       const staffRoles = ["admin", "staff"];
-      const actualRole = profile?.role || "student";if(actualRole==="ambassador"){await supabaseClient.auth.signOut();showMessage("This is an Ambassador account. Please use the separate Ambassador Login from the Ambassador Programme page.");button.disabled=false;button.textContent="Login";return;}
+      const actualRole = profile?.role || "student";
 
       if (currentRole === "admin") {
         if (!staffRoles.includes(actualRole)) {
@@ -491,17 +491,17 @@
         return;
       }
 
-      if (staffRoles.includes(actualRole)) {
-        await supabaseClient.auth.signOut();
-        showMessage("This is a staff account. Please choose Staff / Admin above.");
-        return;
-      }
-
+      /* A single Academy identity may hold more than one functional role.
+         Staff/admin/ambassador accounts are allowed to enter the learner journey
+         without changing or weakening their primary portal role. */
       const student = await getStudentRecord(user.id);
 
       if (!student) {
-        showMessage("Login successful. Let's complete your student setup.", true);
-        setTimeout(() => { window.location.href = "onboarding.html"; }, 450);
+        const roleLabel = actualRole === "staff" || actualRole === "admin"
+          ? "staff"
+          : actualRole === "ambassador" ? "ambassador" : "student";
+        showMessage(`Login successful. Your ${roleLabel} account will remain unchanged while we create a separate learner record for your course application.`, true);
+        setTimeout(() => { window.location.href = "onboarding.html"; }, 650);
         return;
       }
 
