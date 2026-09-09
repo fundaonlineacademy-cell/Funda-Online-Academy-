@@ -133,7 +133,7 @@ async function init(){
    db.from('ambassador_payouts').select('*').eq('application_id',app.id).order('created_at',{ascending:false}),
    db.from('ambassador_payout_details').select('*').eq('application_id',app.id).maybeSingle(),
    db.from('ambassador_marketing_resources').select('*').eq('status','active').order('created_at',{ascending:false}),
-   db.from('ambassador_notifications').select('*').eq('status','active').order('created_at',{ascending:false}),
+   db.rpc('get_own_ambassador_announcements'),
    db.from('ambassador_support_tickets').select('*').eq('application_id',app.id).order('created_at',{ascending:false}),
    db.from('ambassador_support_messages').select('*').order('created_at',{ascending:true})
  ]);
@@ -142,7 +142,7 @@ async function init(){
    console.error('Ambassador referrals failed to load',r.error);
    referrals=[];
  }else referrals=r.data||[];
- payouts=p.data||[];bank=b.data||null;{const now=Date.now();resources=(m.data||[]).filter(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=now)&&(!x.expires_at||new Date(x.expires_at).getTime()>=now));}notifications=n.data||[];supportTickets=t.data||[];supportMessages=sm.data||[];
+ payouts=p.data||[];bank=b.data||null;{const now=Date.now();resources=(m.data||[]).filter(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=now)&&(!x.expires_at||new Date(x.expires_at).getTime()>=now));}if(n.error)console.error('Ambassador announcements failed to load',n.error);notifications=n.data||[];supportTickets=t.data||[];supportMessages=sm.data||[];
  $('#loading').classList.add('hide');$('#portal').classList.remove('hide');render();
  if(r.error){
    const box=$('#referralMobile');
