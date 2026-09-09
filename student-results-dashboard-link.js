@@ -2,7 +2,7 @@
 (()=>{
   'use strict';
   const add=()=>{
-    const library=[...document.querySelectorAll('a[href="digital-library.html"]')].find(a=>a.closest('aside'));
+    const library=[...document.querySelectorAll('a[href="digital-library.html"]')].find(a=>a.closest('aside') && !a.closest('#sdSide'));
     if(!library || document.querySelector('[data-funda-results-link]')) return;
     const a=document.createElement('a');
     a.href='student-results.html';
