@@ -532,34 +532,98 @@ function createModuleKey(
 
 async function getLoggedInUser() {
 
-  const result =
-    await withTimeout(
-      db.auth.getUser()
+  let lastError = null;
+
+  for (const wait of [0, 250, 650, 1200]) {
+
+    if (wait) {
+      await new Promise(
+        resolve =>
+          setTimeout(resolve, wait)
+      );
+    }
+
+    try {
+
+      const sessionResult =
+        await withTimeout(
+          db.auth.getSession()
+        );
+
+      const sessionUser =
+        sessionResult?.data?.session?.user;
+
+      if (sessionUser) {
+
+        console.log(
+          "AUTH USER:",
+          sessionUser.id,
+          sessionUser.email
+        );
+
+        return sessionUser;
+
+      }
+
+      if (sessionResult?.error) {
+        lastError =
+          sessionResult.error;
+      }
+
+    } catch (error) {
+
+      lastError = error;
+
+    }
+
+    try {
+
+      const userResult =
+        await withTimeout(
+          db.auth.getUser()
+        );
+
+      const authUser =
+        userResult?.data?.user;
+
+      if (authUser) {
+
+        console.log(
+          "AUTH USER:",
+          authUser.id,
+          authUser.email
+        );
+
+        return authUser;
+
+      }
+
+      if (userResult?.error) {
+        lastError =
+          userResult.error;
+      }
+
+    } catch (error) {
+
+      lastError = error;
+
+    }
+
+  }
+
+  if (lastError) {
+
+    console.warn(
+      "Student session restore failed:",
+      lastError
     );
 
-  if (result.error) {
-    throw result.error;
   }
 
-  const user =
-    result?.data?.user;
+  window.location.href =
+    "login.html";
 
-  if (!user) {
-
-    window.location.href =
-      "login.html";
-
-    return null;
-
-  }
-
-  console.log(
-    "AUTH USER:",
-    user.id,
-    user.email
-  );
-
-  return user;
+  return null;
 
 }
 
