@@ -2444,7 +2444,14 @@
               effectiveCoursePrice(),
 
             approval_department:
-              "Admissions & Finance"
+              "Admissions & Finance",
+
+            student_category:
+              ["staff","admin"].includes(String(currentProfile?.role||"").toLowerCase())
+                ? "staff"
+                : String(currentProfile?.role||"").toLowerCase()==="ambassador"
+                  ? "ambassador"
+                  : "student"
 
           })
           .select(
@@ -2857,6 +2864,13 @@
 
               status:
                 "submitted",
+
+              student_category:
+                ["staff","admin"].includes(String(currentProfile?.role||"").toLowerCase())
+                  ? "staff"
+                  : String(currentProfile?.role||"").toLowerCase()==="ambassador"
+                    ? "ambassador"
+                    : "student",
 
               proof_url:
                 proofPath,
@@ -3318,6 +3332,14 @@
             "Student"
           }. Choose the course you would like to study.`;
 
+        const primaryRole=String(currentProfile?.role||"student").toLowerCase();
+        if(["staff","admin","ambassador"].includes(primaryRole)){
+          const roleName=primaryRole==="ambassador"?"Ambassador":"Staff";
+          const note=document.createElement("div");
+          note.className="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm leading-6 text-amber-950";
+          note.innerHTML=`<strong>${roleName} learner application:</strong> Your existing ${roleName.toLowerCase()} account remains unchanged. This course application is recorded separately as a learner application and follows the normal Admissions & Finance process. You cannot approve, verify, discount or review your own enrolment or payment.`;
+          document.querySelector("main section.max-w-4xl")?.appendChild(note);
+        }
 
         await loadCourses();
 
