@@ -20,6 +20,9 @@ function show(){
  const r=mount();r.hidden=false;r.style.setProperty('display','block','important');
  document.body.dataset.sdView='assessments';
  document.querySelectorAll('#sdSide [data-sd-key]').forEach(x=>x.classList.toggle('active',x.dataset.sdKey==='assessments'));
+ document.getElementById('sdSide')?.classList.remove('open');
+ document.getElementById('sdOverlay')?.classList.remove('open');
+ document.body.style.overflow='';
  if(!r.innerHTML.trim())render();
  window.scrollTo({top:0,behavior:'smooth'})
 }
