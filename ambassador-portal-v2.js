@@ -124,9 +124,18 @@ function render(){
  $('#copyCode').onclick=()=>copy(app.referral_code,$('#copyCode'));$('#copyLink').onclick=()=>copy(referralLink(),$('#copyLink'));
  if(next){let remain=Math.max(0,next.min-life),pct=Math.max(0,Math.min(100,(life-r.min)/(next.min-r.min)*100));$('#nextRank').textContent='Current rank: '+r.n+'. '+money(remain)+' more lifetime qualifying revenue to reach '+next.n+'.';$('#progressBar').style.width=pct+'%'}else{$('#nextRank').textContent='Elite rank achieved.';$('#progressBar').style.width='100%'}
  $('#monthlyTarget').textContent=r.pay?'Monthly Performance Payment eligibility at this rank: up to '+money(r.pay)+', subject to monthly performance verification.':'Monthly Performance Payments begin at Gold / Level 4.';
- document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showSection(b.dataset.go));renderReferrals();renderLedger();renderPayouts();renderProfile();renderAgreement();renderSupportHub();
+ document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showSection(b.dataset.go));const qcl=$('#quickCopyLink');if(qcl)qcl.onclick=()=>copy(referralLink(),qcl);renderReferrals();renderLedger();renderPayouts();renderProfile();renderAgreement();renderSupportHub();renderRecentActivity();
 }
 
+function renderRecentActivity(){
+ const box=$('#recentActivity');if(!box)return;
+ const items=[];
+ referrals.slice(0,3).forEach(x=>items.push({date:x.referral_date,icon:'◎',title:'Referral recorded',detail:(x.student_display||'Student')+' · '+(x.course_title||'Course'),amount:x.earning_amount?money(x.earning_amount):''}));
+ ledger.slice(0,3).forEach(x=>items.push({date:x.created_at||x.earning_month,icon:'R',title:String(x.earning_type||'earning').replaceAll('_',' '),detail:String(x.earning_status||'pending').replaceAll('_',' '),amount:money(x.commission_amount)}));
+ payouts.slice(0,2).forEach(x=>items.push({date:x.payment_date||x.created_at,icon:'▤',title:'Payment '+String(x.status||'recorded').replaceAll('_',' '),detail:x.payment_reference||'Ambassador payout',amount:money(x.amount)}));
+ items.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+ box.innerHTML=items.length?items.slice(0,5).map(x=>'<div class="activityItem"><div class="activityIcon">'+esc(x.icon)+'</div><div class="activityText"><b>'+esc(x.title)+'</b><span>'+esc(x.detail)+' · '+fmt(x.date)+'</span></div><div class="activityAmt">'+esc(x.amount)+'</div></div>').join(''):'<div class="empty">No recent Ambassador activity yet.</div>';
+}
 function renderReferrals(){
  $('#referralBody').innerHTML=referrals.length?referrals.map(x=>'<tr><td>'+esc(x.student_display)+'</td><td>'+esc(x.course_title)+'</td><td>'+fmt(x.referral_date)+'</td><td>'+badgeStatus(x.referral_status)+'</td><td>'+badgeStatus(x.earning_status)+'</td><td>'+money(x.earning_amount)+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">No referrals have been attributed to your code yet.</td></tr>';
 }
