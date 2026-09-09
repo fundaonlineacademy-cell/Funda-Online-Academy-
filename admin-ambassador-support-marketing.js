@@ -39,7 +39,7 @@ function wireMarketing(){
   }catch(err){msg.textContent='Could not save resource: '+String(err.message||err)}
  }
  $('#asmSaveDraft').onclick=()=>saveResource('draft');$('#asmPublishResource').onclick=()=>saveResource('active');
- $('#asmNoticeForm').onsubmit=async e=>{e.preventDefault();let q=await db.from('ambassador_notifications').insert({application_id:$('#asmNoticeTarget').value||null,title:$('#asmNoticeTitle').value.trim(),message:$('#asmNoticeMessage').value.trim(),category:$('#asmNoticeCategory').value,status:'active'});if(q.error)return alert(q.error.message);return refreshMarketing()};
+ $('#asmNoticeForm').onsubmit=async e=>{e.preventDefault();let q=await db.from('ambassador_notifications').insert({application_id:$('#asmNoticeTarget').value||null,title:$('#asmNoticeTitle').value.trim(),message:$('#asmNoticeMessage').value.trim(),category:$('#asmNoticeCategory').value,status:'active',created_by:user?.id||null});if(q.error)return alert(q.error.message);return refreshMarketing()};
  root.onclick=async e=>{
   let pub=e.target.closest('[data-publish-resource]'),arc=e.target.closest('[data-archive-resource]');
   if(pub){let q=await db.from('ambassador_marketing_resources').update({status:'active',approved_by:user?.id||null,approved_at:new Date().toISOString(),updated_at:new Date().toISOString()}).eq('id',pub.dataset.publishResource);if(q.error)return alert(q.error.message);return refreshMarketing()}
