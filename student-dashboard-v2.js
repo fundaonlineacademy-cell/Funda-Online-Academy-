@@ -60,9 +60,8 @@ body.sdV2[data-sd-view="courses"] #studentCommunicationHelpCentre,
 body.sdV2[data-sd-view="courses"] #studentFaqSection,
 body.sdV2[data-sd-view="courses"] #studentAcademicSupportSection,
 body.sdV2[data-sd-view="courses"] #studentSupportSection{display:none!important}
-body.sdV2[data-sd-view="courses"] #coursesAndQuickAccess{display:grid!important}
-body.sdV2[data-sd-view="courses"] #coursesAndQuickAccess>section:not(#myCoursesSection){display:none!important}
-body.sdV2[data-sd-view="courses"] #coursesAndQuickAccess{grid-template-columns:1fr!important}
+body.sdV2[data-sd-view="courses"] #coursesAndQuickAccess{display:grid!important;grid-template-columns:1fr!important}
+body.sdV2[data-sd-view="courses"] #studentQuickAccess{display:none!important}
 
 body.sdV2[data-sd-view="communication"] #studentHero,
 body.sdV2[data-sd-view="communication"] #statusBanner,
@@ -261,7 +260,11 @@ function prepareDashboardViews(){
  const dc=document.getElementById('dashboardContent');if(!dc)return;
  const hero=dc.querySelector('.hero:first-child');if(hero)hero.id='studentHero';
  const stats=document.getElementById('enrolledCount')?.closest('section');if(stats)stats.id='dashboardStats';
- const courses=document.getElementById('myCoursesSection');if(courses?.parentElement)courses.parentElement.id='coursesAndQuickAccess';
+ const courses=document.getElementById('myCoursesSection');
+ if(courses?.parentElement){
+   courses.parentElement.id='coursesAndQuickAccess';
+   const quick=courses.parentElement.querySelector(':scope > aside');if(quick)quick.id='studentQuickAccess';
+ }
  const journey=document.getElementById('journeyCards')?.closest('section');if(journey)journey.id='applicationJourney';
  const recent=document.getElementById('recentActivities')?.closest('section');if(recent)recent.id='recentActivity';
  const info=document.getElementById('profileCardButton')?.closest('section.grid');if(info)info.id='studentInfoAndAcademy';
