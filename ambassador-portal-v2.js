@@ -137,7 +137,20 @@ function renderRecentActivity(){
  box.innerHTML=items.length?items.slice(0,5).map(x=>'<div class="activityItem"><div class="activityIcon">'+esc(x.icon)+'</div><div class="activityText"><b>'+esc(x.title)+'</b><span>'+esc(x.detail)+' · '+fmt(x.date)+'</span></div><div class="activityAmt">'+esc(x.amount)+'</div></div>').join(''):'<div class="empty">No recent Ambassador activity yet.</div>';
 }
 function renderReferrals(){
- $('#referralBody').innerHTML=referrals.length?referrals.map(x=>'<tr><td>'+esc(x.student_display)+'</td><td>'+esc(x.course_title)+'</td><td>'+fmt(x.referral_date)+'</td><td>'+badgeStatus(x.referral_status)+'</td><td>'+badgeStatus(x.earning_status)+'</td><td>'+money(x.earning_amount)+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">No referrals have been attributed to your code yet.</td></tr>';
+ const total=referrals.length;
+ const approved=referrals.filter(x=>['approved','verified','paid','qualifying'].some(v=>low(x.referral_status).includes(v)||low(x.earning_status).includes(v))).length;
+ const pending=referrals.filter(x=>['pending','held','review'].some(v=>low(x.referral_status).includes(v)||low(x.earning_status).includes(v))).length;
+ const earned=referrals.reduce((n,x)=>n+Number(x.earning_amount||0),0);
+ if($('#refTotal'))$('#refTotal').textContent=total;if($('#refApproved'))$('#refApproved').textContent=approved;if($('#refPending'))$('#refPending').textContent=pending;if($('#refEarnings'))$('#refEarnings').textContent=money(earned);
+ const search=$('#refSearch'),status=$('#refStatus'),copyBtn=$('#refCopyLink');
+ if(copyBtn)copyBtn.onclick=()=>copy(referralLink(),copyBtn);
+ const paint=()=>{
+   const q=low(search?.value||''),st=low(status?.value||'');
+   const rows=referrals.filter(x=>(!q||low(x.student_display).includes(q)||low(x.course_title).includes(q))&&(!st||low(x.referral_status).includes(st)||low(x.earning_status).includes(st)));
+   $('#referralBody').innerHTML=rows.length?rows.map(x=>'<tr><td>'+esc(x.student_display)+'</td><td>'+esc(x.course_title)+'</td><td>'+fmt(x.referral_date)+'</td><td>'+badgeStatus(x.referral_status)+'</td><td>'+badgeStatus(x.earning_status)+'</td><td>'+money(x.earning_amount)+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">'+(referrals.length?'No referrals match this filter.':'No referrals have been attributed to your code yet.')+'</td></tr>';
+   const mobile=$('#referralMobile');if(mobile)mobile.innerHTML=rows.length?rows.map(x=>'<article class="refCard"><div class="refCardTop"><div><b>'+esc(x.student_display||'Student')+'</b><small>'+esc(x.course_title||'Course')+'</small></div><b class="refCardAmt">'+money(x.earning_amount)+'</b></div><div class="refCardMeta">'+badgeStatus(x.referral_status)+badgeStatus(x.earning_status)+'</div><div class="refCardDate">Referral recorded · '+fmt(x.referral_date)+'</div></article>').join(''):'<div class="empty">'+(referrals.length?'No referrals match this filter.':'No referrals have been attributed to your code yet.')+'</div>';
+ };
+ if(search)search.oninput=paint;if(status)status.onchange=paint;paint();
 }
 function renderLedger(){
  $('#ledgerBody').innerHTML=ledger.length?ledger.map(x=>'<tr><td>'+fmt(x.earning_month)+'</td><td>'+esc(String(x.earning_type).replaceAll('_',' '))+'</td><td>'+money(x.qualifying_revenue)+'</td><td>'+(Number(x.commission_rate||0)*100).toFixed(x.earning_type==='commission'?0:0)+'%</td><td>'+money(x.commission_amount)+'</td><td>'+badgeStatus(x.earning_status)+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">No earnings have been recorded yet.</td></tr>';
