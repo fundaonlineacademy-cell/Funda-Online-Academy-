@@ -29,11 +29,21 @@ body.sdV2{background:linear-gradient(180deg,#fffdf8 0%,#f7f8fa 46%,#fffaf0 100%)
 .sdNavIcon{width:20px;text-align:center;font-size:16px;color:#b58216}.sdLogout{color:#17324a!important;margin-top:7px}
 .sdTopMenu{display:inline-grid!important;place-items:center;width:46px;height:46px;padding:0!important;border-radius:12px!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important;font-size:24px!important;flex:0 0 auto}
 .sdDashOnly{display:none!important}
-.sdCompactWelcome{margin-bottom:18px;padding:20px;border-radius:22px;background:linear-gradient(135deg,#fffdf7,#fff5dc);border:1px solid #ead8a6;box-shadow:0 5px 16px rgba(20,49,77,.05)}
-.sdCompactWelcome p{margin:0;color:#b58216;font-size:9px;letter-spacing:.18em;font-weight:900;text-transform:uppercase}.sdCompactWelcome h1{margin:5px 0 0;color:#17324a;font:900 24px/1.15 Montserrat,sans-serif}
-.sdStudentMeta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:16px}.sdStudentMeta div{background:#fff;border:1px solid #e3e7eb;border-radius:13px;padding:10px}.sdStudentMeta span{display:block;color:#778391;font-size:7px;letter-spacing:.08em;font-weight:900}.sdStudentMeta b{display:block;color:#17324a;font-size:10px;margin-top:4px}
+.sdCompactWelcome{margin-bottom:18px;padding:22px;border-radius:22px;background:linear-gradient(135deg,#fffdf7,#fff5dc);border:1px solid #ead8a6;box-shadow:0 5px 16px rgba(20,49,77,.05)}
+.sdCompactWelcome .sdWelcomeKicker{margin:0;color:#a87812;font-size:11px;letter-spacing:.18em;font-weight:900;text-transform:uppercase}.sdCompactWelcome h1{margin:7px 0 0;color:#17324a;font:900 28px/1.15 Montserrat,sans-serif}.sdWelcomeMessage{max-width:850px;margin:14px 0 0;color:#202d39;font-size:15px;line-height:1.7;font-weight:600}.sdCeoSign{margin-top:10px;color:#815f13;font-size:12px;font-weight:900}
+.sdStudentMeta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:18px}.sdStudentMeta div{background:#fff;border:1px solid #e3e7eb;border-radius:13px;padding:11px}.sdStudentMeta span{display:block;color:#4f5e6c;font-size:10px;letter-spacing:.08em;font-weight:900}.sdStudentMeta b{display:block;color:#17324a;font-size:13px;margin-top:5px}
 .sdRecentMore{display:flex;justify-content:flex-end;margin-top:12px}.sdRecentMore button{border:1px solid #d6b458;background:#fffdf7;color:#17324a;border-radius:10px;padding:9px 12px;font-size:10px;font-weight:900}
-body.sdV2[data-sd-view="dashboard"] #compactWelcome{display:none!important}
+body.sdV2[data-sd-view="dashboard"] #studentHero,
+body.sdV2[data-sd-view="dashboard"] #coursesAndQuickAccess,
+body.sdV2[data-sd-view="dashboard"] #applicationJourney,
+body.sdV2[data-sd-view="dashboard"] #announcementsSection,
+body.sdV2[data-sd-view="dashboard"] #librarySection,
+body.sdV2[data-sd-view="dashboard"] #studentInfoAndAcademy,
+body.sdV2[data-sd-view="dashboard"] #studentCommunicationHelpCentre,
+body.sdV2[data-sd-view="dashboard"] #studentFaqSection,
+body.sdV2[data-sd-view="dashboard"] #studentAcademicSupportSection,
+body.sdV2[data-sd-view="dashboard"] #studentSupportSection{display:none!important}
+body.sdV2[data-sd-view="dashboard"] #compactWelcome{display:block!important}
 body.sdV2:not([data-sd-view="dashboard"]) #fundaStudentHouseRules,
 body.sdV2:not([data-sd-view="dashboard"]) #academy-identity{display:none!important}
 
@@ -259,7 +269,7 @@ function prepareDashboardViews(){
  const info=document.getElementById('profileCardButton')?.closest('section.grid');if(info)info.id='studentInfoAndAcademy';
  if(!document.getElementById('compactWelcome')){
   const w=document.createElement('section');w.id='compactWelcome';w.className='sdCompactWelcome sdDashOnly';
-  w.innerHTML='<p>Student Portal</p><h1 id="compactWelcomeName">Welcome back</h1><div class="sdStudentMeta"><div><span>LEARNER ID</span><b id="compactLearnerId">Pending</b></div><div><span>MEMBER SINCE</span><b id="compactMemberSince">—</b></div><div><span>ACCOUNT TYPE</span><b>Student</b></div><div><span>STATUS</span><b id="compactStatus">Active</b></div></div>';
+  w.innerHTML='<p class="sdWelcomeKicker">A Message from the CEO</p><h1 id="compactWelcomeName">Welcome back</h1><div class="sdWelcomeMessage">Keep going. Every lesson you complete, every assessment you prepare for and every skill you practise moves you closer to your goals. Study with purpose, stay disciplined and use what you learn to build a future you are proud of.</div><div class="sdCeoSign">— Chief Executive Officer · Funda Online Academy</div><div class="sdStudentMeta"><div><span>LEARNER ID</span><b id="compactLearnerId">Pending</b></div><div><span>MEMBER SINCE</span><b id="compactMemberSince">—</b></div><div><span>ACCOUNT TYPE</span><b>Student</b></div><div><span>STATUS</span><b id="compactStatus">Active</b></div></div>';
   dc.prepend(w);
  }
 }
@@ -295,10 +305,10 @@ function tightenDashboardSummary(){
  if(action){
    const approved=activeCount()>0;
    action.textContent=approved?'Continue Learning':'Track Status';
-   if(approved)action.onclick=()=>{
+   action.onclick=approved?()=>{
      const e=(typeof enrollments!=='undefined'?enrollments:[]).find(x=>typeof isApproved==='function'&&isApproved(x));
      if(e?.course_id)location.href='course-study.html?id='+encodeURIComponent(e.course_id);
-   };
+   }:null;
  }
 }
 function install(){
