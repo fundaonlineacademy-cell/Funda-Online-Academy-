@@ -21,6 +21,8 @@ async function boot(){
    if(!file&&!external)return alert('Upload a Library file or provide an external resource URL.');
    const title=(document.getElementById('fTitle')?.value||'resource').trim();
    let filePath=null,coverPath=null;
+   const beforeIds=new Set((typeof R!=='undefined'&&Array.isArray(R)?R:[]).map(x=>String(x.id)));
+   const editingId=(typeof editing!=='undefined'&&editing)?String(editing):null;
    try{
      if(file){
        const ext=(file.name.split('.').pop()||'bin').toLowerCase(),safe=title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,55)||'resource';
@@ -42,8 +44,16 @@ async function boot(){
      await oldSave();
      if(filePath||coverPath){
        await wait();
-       const q=await db.from('library_resources').select('id').eq('title',title).order('updated_at',{ascending:false}).limit(1).maybeSingle();
-       if(q.data?.id){const patch={};if(filePath){patch.file_path=filePath;patch.file_url=null}if(coverPath)patch.cover_path=coverPath;await db.from('library_resources').update(patch).eq('id',q.data.id)}
+       let resourceId=editingId;
+       if(!resourceId&&typeof R!=='undefined'&&Array.isArray(R)){
+         const created=R.find(x=>x?.id&&!beforeIds.has(String(x.id)));
+         resourceId=created?.id?String(created.id):null;
+       }
+       if(!resourceId){
+         const q=await db.from('library_resources').select('id').eq('title',title).eq('created_by',typeof U!=='undefined'&&U?.id?U.id:null).order('created_at',{ascending:false}).limit(1).maybeSingle();
+         resourceId=q.data?.id||null;
+       }
+       if(resourceId){const patch={};if(filePath){patch.file_path=filePath;patch.file_url=null}if(coverPath)patch.cover_path=coverPath;const p=await db.from('library_resources').update(patch).eq('id',resourceId);if(p.error)throw p.error}
      }
    }catch(e){alert('Upload failed: '+(e?.message||e));}
  };
