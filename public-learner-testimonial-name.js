@@ -67,3 +67,57 @@
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
 })();
+
+// Funda Online Academy transparent logo — homepage header and login brand placements only.
+(()=>{
+  const path=(location.pathname||'/').toLowerCase();
+  const isHome=path==='/'||path.endsWith('/index.html');
+  const isLogin=path.endsWith('/login.html');
+  if(!isHome&&!isLogin)return;
+
+  async function loadTransparentLogo(){
+    try{
+      const files=[0,1,2,3,4].map(i=>`funda-logo-transparent-${i}.b64`);
+      const parts=await Promise.all(files.map(async file=>{
+        const response=await fetch(file,{cache:'force-cache'});
+        if(!response.ok)throw new Error(`Logo asset ${file} failed`);
+        return (await response.text()).trim();
+      }));
+      return `data:image/png;base64,${parts.join('')}`;
+    }catch(err){
+      console.warn('Funda transparent logo could not be loaded',err);
+      return null;
+    }
+  }
+
+  async function applyTransparentLogo(){
+    const src=await loadTransparentLogo();
+    if(!src)return;
+
+    if(isHome){
+      const logo=document.querySelector('header img[alt="Funda Online Academy"]');
+      if(logo){
+        logo.src=src;
+        logo.style.width='48px';
+        logo.style.height='48px';
+        logo.style.objectFit='contain';
+        logo.style.background='transparent';
+      }
+      return;
+    }
+
+    if(isLogin){
+      const logos=[...document.querySelectorAll('img[alt="Funda Online Academy"]')];
+      logos.forEach(logo=>{
+        logo.src=src;
+        logo.style.width='64px';
+        logo.style.height='64px';
+        logo.style.objectFit='contain';
+        logo.style.background='transparent';
+      });
+    }
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyTransparentLogo,{once:true});
+  else applyTransparentLogo();
+})();
