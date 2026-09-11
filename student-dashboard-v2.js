@@ -113,9 +113,9 @@ body.sdV2>header nav,body.sdV2>header .mobile-scroll{display:none!important}
 .sdHeroMetrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:20px;position:relative;z-index:2}
 .sdHeroMetric{padding:12px 13px;border:1px solid #e2e7ec;border-radius:14px;background:#fff;box-shadow:0 3px 10px rgba(17,44,73,.04)}
 .sdHeroMetric span{display:block;font-size:7px;letter-spacing:.1em;color:#687684;font-weight:900}.sdHeroMetric b{display:block;margin-top:4px;color:#17324a;font-size:11px}
-body.sdV2 #dashboardContent .hero:first-child{background:linear-gradient(135deg,#fffdf7 0%,#fff8e8 56%,#f7ecd0 100%)!important;border:1px solid #ead8a6!important;box-shadow:0 10px 28px rgba(122,93,26,.08)!important}
+body.sdV2 #studentHero{background:linear-gradient(135deg,#fffdf7 0%,#fff8e8 56%,#f7ecd0 100%)!important;border:1px solid #ead8a6!important;box-shadow:0 10px 28px rgba(122,93,26,.08)!important}
 body.sdV2 #dashboardContent h1,body.sdV2 #dashboardContent h2,body.sdV2 #dashboardContent h3{color:#17324a}
-body.sdV2 #dashboardContent .hero h1,body.sdV2 #dashboardContent .hero h2{color:#17324a} body.sdV2 #dashboardContent .hero:first-child p{color:#273849!important} body.sdV2 #dashboardContent .hero:first-child .text-[#e4c777]{color:#b58216!important}
+body.sdV2 #dashboardContent .hero h1,body.sdV2 #dashboardContent .hero h2{color:#17324a} body.sdV2 #studentHero p{color:#273849!important} body.sdV2 #studentHero .text-[#e4c777]{color:#b58216!important}
 body.sdV2 .card{box-shadow:0 4px 14px rgba(14,42,72,.06)!important;border-color:#dbe3ea!important}
 body.sdV2 .text-slate-500,body.sdV2 .text-slate-600{color:#3d4d5c!important}
 body.sdV2 #overview{max-width:1480px!important}
@@ -125,9 +125,9 @@ body.sdV2>header .h-\[72px\]>a{order:2}
 body.sdV2>header .h-\[72px\]>.flex.items-center.gap-2{order:1;margin-right:2px}
 body.sdV2>header #logoutButton{order:3;margin-left:auto;background:linear-gradient(135deg,#e2b64a,#f1d67d)!important;color:#17324a!important;border:0!important}
 body.sdV2>header #profileButton{display:none!important}
-body.sdV2 #dashboardContent .hero:first-child a[href="#myCoursesSection"]{background:linear-gradient(135deg,#bd8a13,#e3bc57)!important;color:#fff!important}
-body.sdV2 #dashboardContent .hero:first-child a[href="courses-public.html"]{background:#fff!important;color:#17324a!important;border:1px solid #17324a!important}
-body.sdV2 #dashboardContent .hero:first-child:after{background:rgba(212,170,66,.10)!important}
+body.sdV2 #studentHero a[href="#myCoursesSection"]{background:linear-gradient(135deg,#bd8a13,#e3bc57)!important;color:#fff!important}
+body.sdV2 #studentHero a[href="courses-public.html"]{background:#fff!important;color:#17324a!important;border:1px solid #17324a!important}
+body.sdV2 #studentHero:after{background:rgba(212,170,66,.10)!important}
 @media(min-width:1000px){
  .sdSide{transform:none}.sdOverlay{display:none}body.sdV2>header{margin-left:292px}body.sdV2>main,body.sdV2>footer{margin-left:292px}
  .sdClose{display:none}body.sdV2>header>div{max-width:none!important}
@@ -148,7 +148,7 @@ body.sdV2 #dashboardContent .hero:first-child:after{background:rgba(212,170,66,.
  .sdSideInner{padding:18px 16px 24px}
  .sdHeroMetrics{grid-template-columns:1fr 1fr}
  body.sdV2 #overview{padding-left:12px!important;padding-right:12px!important}
- body.sdV2 #dashboardContent .hero:first-child{padding:22px 18px!important;border-radius:22px!important}
+ body.sdV2 #studentHero{padding:22px 18px!important;border-radius:22px!important}
  body.sdV2 #welcomeName{font-size:28px!important;line-height:1.12!important}
 }
 `;
@@ -241,7 +241,7 @@ function updateIdentity(){
   <div class="sdHeroMetric"><span>ACTIVE ENROLMENTS</span><b>${activeCount()} COURSE${activeCount()===1?'':'S'}</b></div>`;
 }
 function installHero(){
- const hero=document.querySelector('#dashboardContent .hero:first-child');
+ const hero=document.getElementById('studentHero');
  if(!hero||document.getElementById('sdHeroMetrics'))return;
  const m=document.createElement('div');m.id='sdHeroMetrics';m.className='sdHeroMetrics';hero.querySelector('.relative')?.appendChild(m);
 }
