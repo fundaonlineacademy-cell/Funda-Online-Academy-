@@ -1,14 +1,116 @@
 (()=>{
-if(!/ambassadors\.html$/i.test(location.pathname)||window.__fundaAmbassadorV2)return;window.__fundaAmbassadorV2=true;
-const $=s=>document.querySelector(s),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const ranks=[['1','Ambassador','R0–R9,999','—','—'],['2','Bronze','R10,000–R24,999','R500','—'],['3','Silver','R25,000–R49,999','R1,000','—'],['4','Gold','R50,000–R99,999','R2,500','Up to R5,000'],['5','Platinum','R100,000–R249,999','R5,000','Up to R8,000'],['6','Diamond','R250,000–R499,999','R10,000','Up to R12,000'],['7','Executive','R500,000–R999,999','R20,000','Up to R18,000'],['8','Elite','R1,000,000+','R45,000','Up to R25,000']];
-function field(id,label,type='text',req=false,extra=''){return `<label class="v2f"><span>${label}${req?' *':''}</span><input id="${id}" type="${type}" ${req?'required':''} ${extra}></label>`}
-function install(){const old=$('#apply');if(!old)return;const style=document.createElement('style');style.textContent=`.v2box{background:#fff;border:1px solid #dfd7c4;border-radius:20px;padding:22px;box-shadow:0 12px 30px #21384d12}.v2grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v2f{display:grid;gap:6px}.v2f span,.v2label{font-size:11px;font-weight:800;color:#21384d}.v2f input,.v2f select,.v2f textarea{width:100%;border:1px solid #d6d1c4;border-radius:12px;padding:12px;background:#fff;outline:none}.v2f input:focus,.v2f select:focus,.v2f textarea:focus{border-color:#c99a2e;box-shadow:0 0 0 3px #c99a2e1f}.v2wide{grid-column:1/-1}.v2platform{border:1px solid #e4ddce;border-radius:14px;padding:12px;background:#fffdf8}.v2table{width:100%;border-collapse:collapse;font-size:11px}.v2table th,.v2table td{padding:10px;border-bottom:1px solid #eee7d8;text-align:left}.v2table th{background:#21384d;color:#fff}.v2note{font-size:11px;line-height:1.65;color:#5d6a77}.v2status{display:none;border-radius:12px;padding:12px;font-size:12px}.v2status.ok{display:block;background:#eaf6ef;color:#186648}.v2status.err{display:block;background:#fff0f0;color:#9b2525}@media(max-width:700px){.v2grid{grid-template-columns:1fr}.v2wide{grid-column:auto}.v2table{min-width:680px}}`;document.head.appendChild(style);
-const rankSection=document.createElement('section');rankSection.className='max-w-7xl mx-auto px-5 sm:px-6 py-12';rankSection.innerHTML=`<div class="text-center max-w-3xl mx-auto"><div class="text-[10px] font-extrabold tracking-[.18em] text-[#a87818]">FOUNDING BRAND AMBASSADOR PROGRAMME · 2026</div><h2 class="mt-2 text-3xl font-extrabold text-[#21384d]">15% direct commission. Eight achievement levels.</h2><p class="mt-3 text-sm text-slate-600">The first intake is limited to 25 active ambassadors. There are no downlines, recruitment commissions or team overrides.</p></div><div class="v2box mt-7 overflow-auto"><table class="v2table"><thead><tr><th>Level</th><th>Rank</th><th>Direct qualifying revenue (cumulative)</th><th>Commission</th><th>One-time achievement bonus</th><th>Monthly performance payment</th></tr></thead><tbody>${ranks.map(r=>`<tr><td><b>${r[0]}</b></td><td><b>${r[1]}</b></td><td>${r[2]}</td><td><b>15%</b></td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('')}</tbody></table><div class="v2note mt-4"><b>How it works:</b> 15% commission is earned on successfully paid direct student referrals. Achievement bonuses are paid once only when a new level is reached. Monthly performance payments begin at Level 4 and are not guaranteed salaries; they are earned only when the applicable monthly performance conditions are met and verified by Funda. Only verified student payments qualify. There are no downlines, recruitment commissions or team overrides.</div><div class="v2note mt-3"><b>15% DIRECT COMMISSION · ACHIEVEMENT BONUSES UP TO R45,000 · MONTHLY PERFORMANCE PAYMENTS UP TO R25,000</b></div></div>`;old.before(rankSection);
-old.innerHTML=`<div class="max-w-6xl mx-auto px-5 sm:px-6 py-12"><div class="grid lg:grid-cols-[.72fr_1.28fr] gap-8"><div><div class="text-[10px] font-extrabold tracking-[.18em] text-[#a87818]">APPLY TO BECOME AN AMBASSADOR</div><h2 class="mt-2 text-3xl font-extrabold text-[#21384d]">Join the founding intake.</h2><p class="mt-4 text-sm leading-7 text-slate-600">We assess audience relevance, genuine engagement, content quality, professionalism and consistency. Follower count is only one part of the review.</p><div class="mt-5 rounded-2xl bg-[#fff4dc] border border-[#e1c878] p-4 v2note"><b>Application process:</b> Application Submitted → Under Review → Approved / Waitlisted / Declined → Agreement Accepted → Account Activated → Referral Code Issued → 90-Day Introductory Period.</div></div><form id="ambV2Form" class="v2box v2grid">${field('v2Name','Full legal name','text',true)}${field('v2Email','Email address','email',true)}${field('v2Phone','Mobile / WhatsApp','tel',true)}${field('v2Pass','Create Ambassador password','password',true,'minlength="8"')}${field('v2Pass2','Confirm Ambassador password','password',true,'minlength="8"')}${field('v2Dob','Date of birth','date',true)}${field('v2Province','Province','text',true)}${field('v2Country','Country','text',true,'value="South Africa"')}<div class="v2wide"><div class="v2label mb-2">Social media platforms *</div><div id="v2Platforms" class="grid gap-2"></div><button type="button" id="v2AddPlatform" class="btn mt-2 border bg-white text-[#21384d]">+ Add another platform</button></div>${field('v2ContentType','Type of content / niche','text',true)}${field('v2BestPlatform','Best-performing platform','text',true)}<label class="v2f v2wide"><span>Describe your main audience *</span><textarea id="v2Audience" required rows="3"></textarea></label>${field('v2AudienceAge','Main audience age group')}${field('v2Locations','Main audience locations / countries')}<label class="v2f v2wide"><span>Previous promotions or brand partnerships</span><textarea id="v2Previous" rows="2"></textarea></label><label class="v2f v2wide"><span>Why do you want to represent Funda? *</span><textarea id="v2Why" required rows="3"></textarea></label><label class="v2f v2wide"><span>How would you promote Funda courses? *</span><textarea id="v2Plan" required rows="3"></textarea></label>${field('v2Estimate','Approx. students you believe you could refer per month','number',false,'min="0"')}${field('v2Links','2–3 content links (separate with commas)')}<label class="v2wide rounded-xl border bg-[#fffdf7] p-4 text-xs leading-6 text-slate-600"><input id="v2Consent" type="checkbox" required> I consent to Funda Online Academy using the information submitted to assess and respond to my Brand Ambassador application. I understand that applying does not guarantee approval. *</label><button id="v2Submit" type="submit" class="btn btnPrimary v2wide">Submit Brand Ambassador Application</button><div id="v2Status" class="v2status v2wide"></div></form></div></div>`;
-addPlatform();$('#v2AddPlatform').onclick=addPlatform;$('#ambV2Form').onsubmit=submit;
+if(!/ambassadors\.html$/i.test(location.pathname)||window.__fundaCreatorPartnerApplication)return;
+window.__fundaCreatorPartnerApplication=true;
+const $=s=>document.querySelector(s);
+
+function install(){
+  const apply=$('#apply');
+  if(!apply)return;
+
+  const style=document.createElement('style');
+  style.textContent=`
+    .cpbox{background:#fff;border:1px solid #d8d0bd;border-radius:22px;padding:24px;box-shadow:0 12px 30px rgba(33,56,77,.08)}
+    .cpgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+    .cpf{display:grid;gap:7px}.cpf span,.cplabel{font-size:14px;font-weight:800;color:#21384d}
+    .cpf input,.cpf select,.cpf textarea{width:100%;border:1px solid #cfc8b9;border-radius:13px;padding:13px 14px;background:#fff;color:#111827;outline:none;font-size:15px}
+    .cpf input:focus,.cpf select:focus,.cpf textarea:focus{border-color:#c99a2e;box-shadow:0 0 0 3px rgba(201,154,46,.14)}
+    .cpwide{grid-column:1/-1}.cpnote{font-size:14px;line-height:1.7;color:#111827}
+    .cpstatus{display:none;border-radius:12px;padding:13px;font-size:14px;line-height:1.55}
+    .cpstatus.ok{display:block;background:#eaf6ef;color:#12543b}.cpstatus.err{display:block;background:#fff0f0;color:#8b1f1f}
+    .cpconsent{display:flex;align-items:flex-start;gap:10px;border:1px solid #e0d7c3;background:#fffdf7;border-radius:13px;padding:14px;color:#111827;font-size:13px;line-height:1.55}
+    .cpconsent input{margin-top:3px;flex:0 0 auto}
+    .cpactions{display:flex;gap:10px;flex-wrap:wrap}.cpsecondary{background:#fff;border:1px solid #cfc8b9;color:#21384d}
+    @media(max-width:700px){.cpgrid{grid-template-columns:1fr}.cpwide{grid-column:auto}.cpbox{padding:20px}}
+  `;
+  document.head.appendChild(style);
+
+  apply.innerHTML=`
+    <div class="max-w-5xl mx-auto px-5 sm:px-6 py-12">
+      <div id="cpIntro" class="cpbox text-center max-w-3xl mx-auto">
+        <div class="text-[10px] font-extrabold tracking-[.18em] text-[#a87818]">CREATOR PARTNER APPLICATION</div>
+        <h2 class="mt-2 text-3xl font-extrabold text-[#21384d]">Interested in partnering with Funda?</h2>
+        <p class="mt-4 cpnote">Start a short application. We only ask for the essential information needed to review your creator profile and audience fit.</p>
+        <div class="mt-5 rounded-2xl bg-[#fff4dc] border border-[#e1c878] p-4 cpnote text-left"><b>Application process:</b> Start Application → Submit Application → Funda Review → Approved / Declined → Partnership Agreement → Account Activation.</div>
+        <button id="cpStart" type="button" class="btn btnPrimary mt-6">Start Application</button>
+      </div>
+      <div id="cpFormWrap" class="hidden max-w-3xl mx-auto">
+        <div class="mb-5">
+          <div class="text-[10px] font-extrabold tracking-[.18em] text-[#a87818]">CREATOR PARTNER APPLICATION</div>
+          <h2 class="mt-2 text-3xl font-extrabold text-[#21384d]">Tell us the essentials.</h2>
+          <p class="mt-3 cpnote">This should only take a few minutes.</p>
+        </div>
+        <form id="cpForm" class="cpbox cpgrid">
+          <label class="cpf"><span>Full name *</span><input id="cpName" required autocomplete="name"></label>
+          <label class="cpf"><span>Email address *</span><input id="cpEmail" type="email" required autocomplete="email"></label>
+          <label class="cpf"><span>Mobile / WhatsApp *</span><input id="cpPhone" type="tel" required autocomplete="tel"></label>
+          <label class="cpf"><span>Primary social platform *</span><select id="cpPlatform" required><option value="">Choose platform</option><option>TikTok</option><option>Instagram</option><option>Facebook</option><option>YouTube</option><option>LinkedIn</option><option>X</option><option>Blog / Website</option><option>Other</option></select></label>
+          <label class="cpf cpwide"><span>Creator profile link or username *</span><input id="cpProfile" required placeholder="Profile URL or @username"></label>
+          <label class="cpf"><span>Content niche / topic *</span><input id="cpNiche" required placeholder="e.g. Careers, business, lifestyle"></label>
+          <label class="cpf"><span>Approx. followers <small>(optional)</small></span><input id="cpFollowers" type="number" min="0" inputmode="numeric"></label>
+          <label class="cpf cpwide"><span>Briefly describe your audience *</span><textarea id="cpAudience" required rows="3" placeholder="Who follows you and what are they interested in?"></textarea></label>
+          <label class="cpconsent cpwide"><input id="cpConsent" type="checkbox" required><span>I consent to Funda Online Academy using these details to assess and respond to my Creator Partner application. I understand that submitting an application does not guarantee approval.</span></label>
+          <div class="cpactions cpwide"><button id="cpSubmit" type="submit" class="btn btnPrimary">Submit Application</button><button id="cpBack" type="button" class="btn cpsecondary">Back</button></div>
+          <div id="cpStatus" class="cpstatus cpwide"></div>
+        </form>
+      </div>
+    </div>`;
+
+  $('#cpStart').addEventListener('click',()=>{
+    $('#cpIntro').classList.add('hidden');
+    $('#cpFormWrap').classList.remove('hidden');
+    $('#cpFormWrap').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  $('#cpBack').addEventListener('click',()=>{
+    $('#cpFormWrap').classList.add('hidden');
+    $('#cpIntro').classList.remove('hidden');
+    apply.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+  $('#cpForm').addEventListener('submit',submit);
 }
-function addPlatform(){const box=$('#v2Platforms');if(!box)return;const n=box.children.length+1,d=document.createElement('div');d.className='v2platform v2grid';d.innerHTML=`<label class="v2f"><span>Platform ${n}</span><select data-k="platform" required><option value="">Choose platform</option><option>TikTok</option><option>Facebook</option><option>Instagram</option><option>YouTube</option><option>X</option><option>LinkedIn</option><option>Other</option></select></label><label class="v2f"><span>Username / handle</span><input data-k="handle" required></label><label class="v2f"><span>Direct profile URL</span><input data-k="url" type="url"></label><label class="v2f"><span>Followers / subscribers</span><input data-k="followers" type="number" min="0"></label><label class="v2f"><span>Approx. average views</span><input data-k="views" type="number" min="0"></label><label class="v2f"><span>Approx. average likes / comments</span><input data-k="engagement"></label><label class="v2f"><span>Posting frequency</span><input data-k="frequency" placeholder="e.g. 4 posts per week"></label>${n>1?'<button type="button" class="btn border bg-white text-[#8f3737] self-end" data-remove>Remove</button>':''}`;box.appendChild(d);d.querySelector('[data-remove]')?.addEventListener('click',()=>d.remove())}
-async function submit(e){e.preventDefault();const status=$('#v2Status'),btn=$('#v2Submit');status.className='v2status';btn.disabled=true;btn.textContent='Submitting...';try{const db=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);if(!db)throw Error('Application service is unavailable.');const platforms=[...document.querySelectorAll('.v2platform')].map(d=>Object.fromEntries([...d.querySelectorAll('[data-k]')].map(x=>[x.dataset.k,x.type==='number'?(x.value?Number(x.value):null):x.value.trim()])));const links=$('#v2Links').value.split(',').map(x=>x.trim()).filter(Boolean).slice(0,3);const payload={full_name:$('#v2Name').value.trim(),email:$('#v2Email').value.trim().toLowerCase(),phone:$('#v2Phone').value.trim(),date_of_birth:$('#v2Dob').value,province:$('#v2Province').value.trim(),country:$('#v2Country').value.trim(),platforms,content_type:$('#v2ContentType').value.trim(),audience_description:$('#v2Audience').value.trim(),audience_age_group:$('#v2AudienceAge').value.trim(),audience_locations:$('#v2Locations').value.trim(),best_platform:$('#v2BestPlatform').value.trim(),previous_promotions:$('#v2Previous').value.trim(),why_funda:$('#v2Why').value.trim(),promotion_plan:$('#v2Plan').value.trim(),estimated_students_monthly:$('#v2Estimate').value?Number($('#v2Estimate').value):null,content_links:links,consent:$('#v2Consent').checked};if(!payload.consent)throw Error('Please provide consent before submitting.');const p=$('#v2Pass').value,p2=$('#v2Pass2').value;if(p.length<8)throw Error('Please create a password with at least 8 characters.');if(p!==p2)throw Error('The passwords do not match.');const result=await db.functions.invoke('submit-ambassador-application',{body:{application:payload,credential:p}});if(result.error)throw result.error;if(result.data?.error)throw Error(result.data.error);e.target.reset();$('#v2Platforms').innerHTML='';addPlatform();status.className='v2status ok';status.textContent='Application submitted successfully. Your Ambassador login has been created. Use Ambassador Login to check your status.'}catch(err){status.className='v2status err';status.textContent=/duplicate/i.test(err.message||'')?'An application already exists for this email address.':(err.message||'We could not submit your application. Please try again.')}finally{btn.disabled=false;btn.textContent='Submit Brand Ambassador Application'}}
+
+async function submit(e){
+  e.preventDefault();
+  const status=$('#cpStatus'),btn=$('#cpSubmit');
+  status.className='cpstatus';
+  btn.disabled=true;
+  btn.textContent='Submitting...';
+  try{
+    const db=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+    if(!db)throw Error('Application service is unavailable. Please try again.');
+
+    const platform=$('#cpPlatform').value;
+    const profile=$('#cpProfile').value.trim();
+    const isUrl=/^https?:\/\//i.test(profile);
+    const followers=$('#cpFollowers').value?Number($('#cpFollowers').value):null;
+    const payload={
+      full_name:$('#cpName').value.trim(),
+      email:$('#cpEmail').value.trim().toLowerCase(),
+      phone:$('#cpPhone').value.trim(),
+      platforms:[{platform,handle:isUrl?'':profile,url:isUrl?profile:'',followers}],
+      content_type:$('#cpNiche').value.trim(),
+      audience_description:$('#cpAudience').value.trim(),
+      best_platform:platform,
+      content_links:[],
+      consent:$('#cpConsent').checked
+    };
+
+    if(!payload.consent)throw Error('Please provide consent before submitting.');
+    const result=await db.functions.invoke('submit-ambassador-application',{body:{application:payload}});
+    if(result.error)throw result.error;
+    if(result.data?.error)throw Error(result.data.error);
+
+    e.target.reset();
+    status.className='cpstatus ok';
+    status.textContent='Application submitted successfully. Funda will review your Creator Partner application and contact you using the details provided.';
+  }catch(err){
+    const msg=err?.message||'We could not submit your application. Please try again.';
+    status.className='cpstatus err';
+    status.textContent=/already exists|duplicate/i.test(msg)?'A Creator Partner application already exists for this email address.':msg;
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Submit Application';
+  }
+}
+
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();
