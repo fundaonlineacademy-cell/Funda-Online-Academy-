@@ -53,6 +53,11 @@ body.sdV2[data-sd-view="dashboard"] #compactWelcome,
 body.sdV2[data-sd-view="dashboard"] #studentHero{display:block!important}
 body.sdV2:not([data-sd-view="dashboard"]) #fundaStudentHouseRules,
 body.sdV2:not([data-sd-view="dashboard"]) #academy-identity{display:none!important}
+body.sdV2:not([data-sd-view="career"]) #studentCareerTabIntro,
+body.sdV2:not([data-sd-view="career"]) #studentCareerSupport,
+body.sdV2:not([data-sd-view="career"]) #studentEmployerOpportunities,
+body.sdV2:not([data-sd-view="career"]) #studentEmploymentReadiness{display:none!important}
+body.sdV2:not([data-sd-view="support"]) #studentConsultationSection{display:none!important}
 
 body.sdV2[data-sd-view="courses"] #studentHero,
 body.sdV2[data-sd-view="courses"] #statusBanner,
@@ -69,6 +74,29 @@ body.sdV2[data-sd-view="courses"] #studentAcademicSupportSection,
 body.sdV2[data-sd-view="courses"] #studentSupportSection{display:none!important}
 body.sdV2[data-sd-view="courses"] #coursesAndQuickAccess{display:grid!important;grid-template-columns:1fr!important}
 body.sdV2[data-sd-view="courses"] #studentQuickAccess{display:none!important}
+
+body.sdV2[data-sd-view="career"] #compactWelcome,
+body.sdV2[data-sd-view="career"] #studentHero,
+body.sdV2[data-sd-view="career"] #statusBanner,
+body.sdV2[data-sd-view="career"] #dashboardStats,
+body.sdV2[data-sd-view="career"] #coursesAndQuickAccess,
+body.sdV2[data-sd-view="career"] #applicationJourney,
+body.sdV2[data-sd-view="career"] #recentActivity,
+body.sdV2[data-sd-view="career"] #announcementsSection,
+body.sdV2[data-sd-view="career"] #librarySection,
+body.sdV2[data-sd-view="career"] #studentInfoAndAcademy,
+body.sdV2[data-sd-view="career"] #fundaStudentHouseRules,
+body.sdV2[data-sd-view="career"] #studentCommunicationHelpCentre,
+body.sdV2[data-sd-view="career"] #studentFaqSection,
+body.sdV2[data-sd-view="career"] #studentAcademicSupportSection,
+body.sdV2[data-sd-view="career"] #studentSupportSection,
+body.sdV2[data-sd-view="career"] #studentConsultationSection,
+body.sdV2[data-sd-view="career"] #studentAssessmentsCentre,
+body.sdV2[data-sd-view="career"] #studentStudyMaterialsSection{display:none!important}
+body.sdV2[data-sd-view="career"] #studentCareerTabIntro,
+body.sdV2[data-sd-view="career"] #studentCareerSupport,
+body.sdV2[data-sd-view="career"] #studentEmployerOpportunities,
+body.sdV2[data-sd-view="career"] #studentEmploymentReadiness{display:block!important}
 
 body.sdV2[data-sd-view="communication"] #studentHero,
 body.sdV2[data-sd-view="communication"] #statusBanner,
@@ -176,8 +204,11 @@ const groups=[
   ['materials','#studentStudyMaterialsSection','▤','Study Materials'],
   ['resources','digital-library.html','◇','Digital Library'],
   ['results','student-results.html','▧','My Results'],
-  ['certificates','student-certificates.html','♕','My Certificates'],
-  ['calendar','student-calendar.html','◷','My Calendar']
+ ['certificates','student-certificates.html','♕','My Certificates'],
+ ['calendar','student-calendar.html','◷','My Calendar']
+ ]},
+ {label:'CAREER & WORKPLACE',items:[
+  ['career','#studentCareerTabIntro','◆','Career & Workplace Support']
  ]},
  {label:'COMMUNICATION & SUPPORT',items:[
   ['communication','#announcementsSection','◉','Communication'],
@@ -333,7 +364,7 @@ function install(){
  document.getElementById('sdLogout')?.addEventListener('click',()=>document.getElementById('logoutButton')?.click());
  document.querySelectorAll('#sdSide a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
   e.preventDefault();const key=a.dataset.sdKey;
-  if(['dashboard','courses','communication','faq','academic','support'].includes(key))return dashboardView(key);
+  if(['dashboard','courses','career','communication','faq','academic','support'].includes(key))return dashboardView(key);
   close();const target=document.querySelector(a.getAttribute('href'));
   if(target){target.classList.add('sdSectionMark');target.scrollIntoView({behavior:'smooth',block:'start'})}
   document.querySelectorAll('#sdSide a').forEach(x=>x.classList.remove('active'));a.classList.add('active');
