@@ -3,6 +3,27 @@ if(!/ambassadors\.html$/i.test(location.pathname)||window.__fundaCreatorPartnerA
 window.__fundaCreatorPartnerApplication=true;
 const $=s=>document.querySelector(s);
 
+function platformRow(index){
+  const row=document.createElement('div');
+  row.className='cpplatform cpwide';
+  row.innerHTML=`
+    <div class="cpplatformHead"><b>Social platform ${index}</b>${index>1?'<button type="button" class="cpremove">Remove</button>':''}</div>
+    <div class="cpgrid">
+      <label class="cpf"><span>Platform *</span><select data-k="platform" required><option value="">Choose platform</option><option>TikTok</option><option>Instagram</option><option>Facebook</option><option>YouTube</option><option>LinkedIn</option><option>X</option><option>Blog / Website</option><option>Other</option></select></label>
+      <label class="cpf"><span>Profile link or username *</span><input data-k="profile" required placeholder="https://... or @username"></label>
+      <label class="cpf cpwide"><span>Approx. followers <small>(optional)</small></span><input data-k="followers" type="number" min="0" inputmode="numeric"></label>
+    </div>`;
+  row.querySelector('.cpremove')?.addEventListener('click',()=>row.remove());
+  return row;
+}
+
+function addPlatform(){
+  const box=$('#cpPlatforms');
+  if(!box)return;
+  const index=box.querySelectorAll('.cpplatform').length+1;
+  box.appendChild(platformRow(index));
+}
+
 function install(){
   const apply=$('#apply');
   if(!apply)return;
@@ -20,7 +41,8 @@ function install(){
     .cpconsent{display:flex;align-items:flex-start;gap:10px;border:1px solid #e0d7c3;background:#fffdf7;border-radius:13px;padding:14px;color:#111827;font-size:13px;line-height:1.55}
     .cpconsent input{margin-top:3px;flex:0 0 auto}
     .cpactions{display:flex;gap:10px;flex-wrap:wrap}.cpsecondary{background:#fff;border:1px solid #cfc8b9;color:#21384d}
-    @media(max-width:700px){.cpgrid{grid-template-columns:1fr}.cpwide{grid-column:auto}.cpbox{padding:20px}}
+    .cpplatforms{display:grid;gap:12px}.cpplatform{border:1px solid #e0d7c3;background:#fffdf7;border-radius:16px;padding:14px}.cpplatformHead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;color:#21384d;font-size:14px}.cpremove{border:0;background:transparent;color:#9b2525;font-weight:800;cursor:pointer;padding:4px 0}.cpadd{border:1px solid #cfc8b9;background:#fff;color:#21384d}
+    @media(max-width:700px){.cpgrid{grid-template-columns:1fr}.cpwide{grid-column:auto}.cpbox{padding:20px}.cpplatform .cpwide{grid-column:auto}}
   `;
   document.head.appendChild(style);
 
@@ -37,16 +59,20 @@ function install(){
         <div class="mb-5">
           <div class="text-[10px] font-extrabold tracking-[.18em] text-[#a87818]">CREATOR PARTNER APPLICATION</div>
           <h2 class="mt-2 text-3xl font-extrabold text-[#21384d]">Tell us the essentials.</h2>
-          <p class="mt-3 cpnote">This should only take a few minutes.</p>
+          <p class="mt-3 cpnote">Create your login details and add the social profiles you want us to review.</p>
         </div>
         <form id="cpForm" class="cpbox cpgrid">
           <label class="cpf"><span>Full name *</span><input id="cpName" required autocomplete="name"></label>
           <label class="cpf"><span>Email address *</span><input id="cpEmail" type="email" required autocomplete="email"></label>
-          <label class="cpf"><span>Mobile / WhatsApp *</span><input id="cpPhone" type="tel" required autocomplete="tel"></label>
-          <label class="cpf"><span>Primary social platform *</span><select id="cpPlatform" required><option value="">Choose platform</option><option>TikTok</option><option>Instagram</option><option>Facebook</option><option>YouTube</option><option>LinkedIn</option><option>X</option><option>Blog / Website</option><option>Other</option></select></label>
-          <label class="cpf cpwide"><span>Creator profile link or username *</span><input id="cpProfile" required placeholder="Profile URL or @username"></label>
-          <label class="cpf"><span>Content niche / topic *</span><input id="cpNiche" required placeholder="e.g. Careers, business, lifestyle"></label>
-          <label class="cpf"><span>Approx. followers <small>(optional)</small></span><input id="cpFollowers" type="number" min="0" inputmode="numeric"></label>
+          <label class="cpf cpwide"><span>Mobile / WhatsApp *</span><input id="cpPhone" type="tel" required autocomplete="tel"></label>
+          <label class="cpf"><span>Create password *</span><input id="cpPassword" type="password" required minlength="8" autocomplete="new-password"></label>
+          <label class="cpf"><span>Confirm password *</span><input id="cpPassword2" type="password" required minlength="8" autocomplete="new-password"></label>
+          <div class="cpwide">
+            <div class="cplabel mb-2">Social platforms *</div>
+            <div id="cpPlatforms" class="cpplatforms"></div>
+            <button id="cpAddPlatform" type="button" class="btn cpadd mt-3">+ Add another platform</button>
+          </div>
+          <label class="cpf cpwide"><span>Content niche / topic *</span><input id="cpNiche" required placeholder="e.g. Careers, business, lifestyle"></label>
           <label class="cpf cpwide"><span>Briefly describe your audience *</span><textarea id="cpAudience" required rows="3" placeholder="Who follows you and what are they interested in?"></textarea></label>
           <label class="cpconsent cpwide"><input id="cpConsent" type="checkbox" required><span>I consent to Funda Online Academy using these details to assess and respond to my Creator Partner application. I understand that submitting an application does not guarantee approval.</span></label>
           <div class="cpactions cpwide"><button id="cpSubmit" type="submit" class="btn btnPrimary">Submit Application</button><button id="cpBack" type="button" class="btn cpsecondary">Back</button></div>
@@ -55,6 +81,8 @@ function install(){
       </div>
     </div>`;
 
+  addPlatform();
+  $('#cpAddPlatform').addEventListener('click',addPlatform);
   $('#cpStart').addEventListener('click',()=>{
     $('#cpIntro').classList.add('hidden');
     $('#cpFormWrap').classList.remove('hidden');
@@ -78,30 +106,44 @@ async function submit(e){
     const db=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
     if(!db)throw Error('Application service is unavailable. Please try again.');
 
-    const platform=$('#cpPlatform').value;
-    const profile=$('#cpProfile').value.trim();
-    const isUrl=/^https?:\/\//i.test(profile);
-    const followers=$('#cpFollowers').value?Number($('#cpFollowers').value):null;
+    const password=$('#cpPassword').value;
+    const password2=$('#cpPassword2').value;
+    if(password.length<8)throw Error('Please create a password with at least 8 characters.');
+    if(password!==password2)throw Error('The passwords do not match.');
+
+    const platforms=[...document.querySelectorAll('.cpplatform')].map(row=>{
+      const platform=row.querySelector('[data-k="platform"]').value;
+      const profile=row.querySelector('[data-k="profile"]').value.trim();
+      const followersEl=row.querySelector('[data-k="followers"]');
+      const isUrl=/^https?:\/\//i.test(profile);
+      return {platform,handle:isUrl?'':profile,url:isUrl?profile:'',followers:followersEl.value?Number(followersEl.value):null};
+    });
+
+    if(!platforms.length)throw Error('Please add at least one social platform.');
+    if(platforms.some(p=>!p.platform||(!p.handle&&!p.url)))throw Error('Please complete the platform and profile link or username for each social profile.');
+
     const payload={
       full_name:$('#cpName').value.trim(),
       email:$('#cpEmail').value.trim().toLowerCase(),
       phone:$('#cpPhone').value.trim(),
-      platforms:[{platform,handle:isUrl?'':profile,url:isUrl?profile:'',followers}],
+      platforms,
       content_type:$('#cpNiche').value.trim(),
       audience_description:$('#cpAudience').value.trim(),
-      best_platform:platform,
-      content_links:[],
+      best_platform:platforms[0].platform,
+      content_links:platforms.map(p=>p.url).filter(Boolean).slice(0,3),
       consent:$('#cpConsent').checked
     };
 
     if(!payload.consent)throw Error('Please provide consent before submitting.');
-    const result=await db.functions.invoke('submit-ambassador-application',{body:{application:payload}});
+    const result=await db.functions.invoke('submit-ambassador-application',{body:{application:payload,credential:password}});
     if(result.error)throw result.error;
     if(result.data?.error)throw Error(result.data.error);
 
     e.target.reset();
+    $('#cpPlatforms').innerHTML='';
+    addPlatform();
     status.className='cpstatus ok';
-    status.textContent='Application submitted successfully. Funda will review your Creator Partner application and contact you using the details provided.';
+    status.textContent='Application submitted successfully. Your Creator Partner login has been created. Funda will review your application and contact you using the details provided.';
   }catch(err){
     const msg=err?.message||'We could not submit your application. Please try again.';
     status.className='cpstatus err';
