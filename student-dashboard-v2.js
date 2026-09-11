@@ -33,17 +33,7 @@ body.sdV2{background:linear-gradient(180deg,#fffdf8 0%,#f7f8fa 46%,#fffaf0 100%)
 .sdCompactWelcome p{margin:0;color:#b58216;font-size:9px;letter-spacing:.18em;font-weight:900;text-transform:uppercase}.sdCompactWelcome h1{margin:5px 0 0;color:#17324a;font:900 24px/1.15 Montserrat,sans-serif}
 .sdStudentMeta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:16px}.sdStudentMeta div{background:#fff;border:1px solid #e3e7eb;border-radius:13px;padding:10px}.sdStudentMeta span{display:block;color:#778391;font-size:7px;letter-spacing:.08em;font-weight:900}.sdStudentMeta b{display:block;color:#17324a;font-size:10px;margin-top:4px}
 .sdRecentMore{display:flex;justify-content:flex-end;margin-top:12px}.sdRecentMore button{border:1px solid #d6b458;background:#fffdf7;color:#17324a;border-radius:10px;padding:9px 12px;font-size:10px;font-weight:900}
-body.sdV2[data-sd-view="dashboard"] #studentHero,
-body.sdV2[data-sd-view="dashboard"] #coursesAndQuickAccess,
-body.sdV2[data-sd-view="dashboard"] #applicationJourney,
-body.sdV2[data-sd-view="dashboard"] #announcementsSection,
-body.sdV2[data-sd-view="dashboard"] #librarySection,
-body.sdV2[data-sd-view="dashboard"] #studentInfoAndAcademy,
-body.sdV2[data-sd-view="dashboard"] #studentCommunicationHelpCentre,
-body.sdV2[data-sd-view="dashboard"] #studentFaqSection,
-body.sdV2[data-sd-view="dashboard"] #studentAcademicSupportSection,
-body.sdV2[data-sd-view="dashboard"] #studentSupportSection{display:none!important}
-body.sdV2[data-sd-view="dashboard"] #compactWelcome{display:block!important}
+body.sdV2[data-sd-view="dashboard"] #compactWelcome{display:none!important}
 body.sdV2:not([data-sd-view="dashboard"]) #fundaStudentHouseRules,
 body.sdV2:not([data-sd-view="dashboard"]) #academy-identity{display:none!important}
 
@@ -117,7 +107,6 @@ body.sdV2[data-sd-view="support"] #compactWelcome,
 body.sdV2[data-sd-view="support"] #studentCommunicationHelpCentre,
 body.sdV2[data-sd-view="support"] #studentFaqSection,
 body.sdV2[data-sd-view="support"] #studentAcademicSupportSection{display:none!important}
-
 @media(max-width:700px){.sdStudentMeta{grid-template-columns:1fr 1fr}}
 .sdMotto{margin-top:22px;padding:16px 10px;border-radius:15px;background:linear-gradient(135deg,#fff9e8,#f5dda0);border:1px solid #ead39b;color:#b58216;text-align:center;font:800 12px Montserrat,sans-serif}.sdMotto small{display:block;margin-top:6px;color:#7c8793;font:800 7px Inter,sans-serif;letter-spacing:.24em}body.sdV2>header{background:#06152f!important}
 body.sdV2>header nav,body.sdV2>header .mobile-scroll{display:none!important}
