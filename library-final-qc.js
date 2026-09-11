@@ -1,5 +1,6 @@
 (()=>{
 if(!/digital-library\.html$/i.test(location.pathname))return;
+if(!window.__fundaLibraryShellLoader){window.__fundaLibraryShellLoader=true;const shell=document.createElement('script');shell.src='digital-library-student-shell.js?v=20260911-shell-v2-'+Date.now();document.head.appendChild(shell)}
 const db=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);if(!db)return;
 let user=null,bookmarks=[],activity=[],busyBookmark=false;
 const readingRows=()=>activity.filter(x=>x.activity_type!=='downloaded');
