@@ -28,8 +28,39 @@
 <section id="loadingState" class="card rounded-3xl p-12 text-center"><div class="spinner mx-auto"></div><h2 class="mt-5 text-xl font-extrabold text-[#071D49]">Preparing your student dashboard...</h2><p class="mt-2 text-sm text-slate-500">Loading your applications, payment status and Academy information.</p></section>
 <section id="errorState" class="hidden card rounded-3xl p-10 text-center"><div class="text-5xl">⚠️</div><h2 class="mt-4 text-2xl font-extrabold text-red-600">Unable to load dashboard</h2><p id="errorMessage" class="mt-2 text-sm text-slate-600"></p><button id="retryButton" class="mt-6 px-6 py-3 rounded-xl bg-[#071D49] text-white font-bold">Try Again</button></section>
 <div id="dashboardContent" class="hidden">
-<section class="hero rounded-[28px] text-white p-6 sm:p-8 lg:p-10 shadow-xl mb-6" data-student-ceo-message><div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-7"><div class="max-w-3xl"><p class="text-[11px] uppercase tracking-[.18em] font-bold text-[#e4c777]">A Message from the CEO</p><h1 id="welcomeName" class="mt-2 text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight">Welcome back</h1><p class="mt-4 text-sm sm:text-base text-blue-100 leading-7 max-w-2xl">Keep going. Every lesson you complete, every assessment you prepare for and every skill you practise moves you closer to your goals. Study with purpose, stay disciplined and use what you learn to build a future you are proud of.</p><p class="mt-4 text-xs font-extrabold tracking-wide text-[#b58216]">— Chief Executive Officer · Funda Online Academy</p></div><div class="flex flex-col sm:flex-row gap-3"><a href="#myCoursesSection" class="inline-flex justify-center px-5 py-3 rounded-xl bg-white text-[#071D49] font-extrabold">My Courses</a><a href="courses-public.html" class="inline-flex justify-center px-5 py-3 rounded-xl border border-white/25 bg-white/10 text-white font-bold">Browse More Courses</a></div></div></section>
-<section id="statusBanner" class="card rounded-3xl p-5 sm:p-6 mb-6 border-l-4 border-amber-400"><div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5"><div class="flex gap-4"><div id="statusIcon" class="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl shrink-0">⏳</div><div><div class="flex flex-wrap gap-2 items-center"><h2 id="statusHeading" class="text-lg sm:text-xl font-extrabold text-[#071D49]">Application status</h2><span id="statusBadge" class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-[11px] font-extrabold">PENDING</span></div><p id="statusMessage" class="mt-2 text-sm text-slate-600 max-w-3xl"></p></div></div><button id="trackLatestButton" class="shrink-0 px-5 py-3 rounded-xl bg-[#071D49] text-white font-bold">Track Latest Application</button></div></section>
+<section id="compactWelcome" class="sdCompactWelcome sdDashOnly" aria-labelledby="welcomeName">
+  <p class="sdWelcomeKicker">Student Dashboard</p>
+  <h1 id="welcomeName">Welcome back</h1>
+  <p class="sdWelcomeMessage">We are pleased to welcome you to your learning space. Continue your academic journey with focus, confidence and purpose.</p>
+</section>
+<section id="studentHero" class="hero sdStudentCeoMessage rounded-[28px] p-6 sm:p-8 lg:p-10 shadow-xl mb-6" data-student-ceo-message aria-labelledby="studentCeoHeading">
+  <div class="relative z-10">
+    <p class="sdCeoKicker">A Message from the Chief Executive Officer</p>
+    <h2 id="studentCeoHeading">Let purpose, discipline and integrity define your journey.</h2>
+    <div class="sdCeoBody">
+      <p>Dear Student,</p>
+      <p>Your decision to pursue education is a declaration that your present circumstances will not define the limits of your future. At Funda Online Academy, we recognise that lasting progress is built through discipline, courage and consistent effort.</p>
+      <p>Approach every lesson with seriousness, every assessment with integrity and every challenge with determination. Knowledge becomes valuable when it is understood, practised and applied. Do not measure your journey by how quickly others advance; measure it by the competence, confidence and character you develop through your own work.</p>
+      <p>There may be demanding moments, but difficulty is not a signal to withdraw. It is an invitation to grow. Remain committed, ask for support when it is needed and take full responsibility for the opportunity before you.</p>
+      <p>You are not here merely to complete a course. You are here to expand your possibilities, strengthen your professional character and prepare yourself to contribute meaningfully wherever opportunity finds you. The future you want is being shaped by the standards you uphold and the work you are willing to do today.</p>
+      <p class="sdCeoCharge">Move forward with purpose. Funda Online Academy is honoured to walk this journey with you.</p>
+    </div>
+    <p class="sdCeoSign">— Chief Executive Officer<span>Funda Online Academy</span></p>
+  </div>
+</section>
+<section id="statusBanner" class="card rounded-3xl p-5 sm:p-6 mb-6 border-l-4 border-amber-400">
+  <p class="sdStatusKicker">Learner Status</p>
+  <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+    <div class="flex gap-4"><div id="statusIcon" class="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl shrink-0">⏳</div><div><div class="flex flex-wrap gap-2 items-center"><h2 id="statusHeading" class="text-lg sm:text-xl font-extrabold text-[#071D49]">Application status</h2><span id="statusBadge" class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-[11px] font-extrabold">PENDING</span></div><p id="statusMessage" class="mt-2 text-sm text-slate-600 max-w-3xl"></p></div></div>
+    <button id="trackLatestButton" class="shrink-0 px-5 py-3 rounded-xl bg-[#071D49] text-white font-bold">Track Status</button>
+  </div>
+  <div class="sdStudentMeta" aria-label="Learner account details">
+    <div><span>Learner ID</span><b id="compactLearnerId">Pending</b></div>
+    <div><span>Member Since</span><b id="compactMemberSince">—</b></div>
+    <div><span>Account Type</span><b>Student</b></div>
+    <div><span>Current Status</span><b id="compactStatus">Active</b></div>
+  </div>
+</section>
 <section class="mb-6"><p class="text-[11px] uppercase tracking-[.17em] font-bold text-[#B58216]">Your Overview</p><h2 class="mt-1 text-xl sm:text-2xl font-extrabold text-[#071D49]">Achievements & Stats</h2><div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mt-4"><div class="card rounded-2xl p-4 sm:p-5"><div class="text-xl">🎓</div><p class="mt-3 text-[11px] text-slate-500 font-semibold">My Courses</p><p id="enrolledCount" class="text-2xl sm:text-3xl font-extrabold text-[#071D49]">0</p></div><div class="card rounded-2xl p-4 sm:p-5"><div class="text-xl">📝</div><p class="mt-3 text-[11px] text-slate-500 font-semibold">Pending Review</p><p id="pendingCount" class="text-2xl sm:text-3xl font-extrabold text-[#B58216]">0</p></div><div class="card rounded-2xl p-4 sm:p-5"><div class="text-xl">✅</div><p class="mt-3 text-[11px] text-slate-500 font-semibold">Approved</p><p id="approvedCount" class="text-2xl sm:text-3xl font-extrabold text-emerald-600">0</p></div><div class="card rounded-2xl p-4 sm:p-5"><div class="text-xl">💳</div><p class="mt-3 text-[11px] text-slate-500 font-semibold">Payments Verified</p><p id="verifiedPaymentCount" class="text-2xl sm:text-3xl font-extrabold text-violet-600">0</p></div></div></section>
 <div class="grid lg:grid-cols-[minmax(0,1.7fr)_minmax(280px,.7fr)] gap-6 mb-6">
 <section id="myCoursesSection" class="card rounded-3xl p-5 sm:p-6"><div class="flex items-end justify-between gap-4"><div><p class="text-[11px] uppercase tracking-[.17em] font-bold text-[#B58216]">Learning Journey</p><h2 class="mt-1 text-xl sm:text-2xl font-extrabold text-[#071D49]">My Courses</h2><p class="mt-1 text-sm text-slate-500">Every submitted course remains visible here while it is reviewed.</p></div><a href="courses-public.html" class="text-xs sm:text-sm font-bold text-[#2767C6]">Browse →</a></div><div id="myCourses" class="mt-6 space-y-4"></div><div id="noCourses" class="hidden text-center py-12"><div class="text-5xl">📚</div><h3 class="mt-4 text-lg font-extrabold text-[#071D49]">No courses yet</h3><p class="mt-2 text-sm text-slate-500">Choose a course from the Academy catalogue when you are ready.</p><a href="courses-public.html" class="inline-flex mt-5 px-5 py-3 rounded-xl bg-[#071D49] text-white font-bold">Explore Courses</a></div></section>
@@ -191,5 +222,5 @@ window.addEventListener('pageshow',function(e){if(e.persisted)window.fundaProtec
 <script src="academy-identity.js?v=20260905-master-identity"></script>
 <script src="student-assessments-centre.js?v=20260909-assessments-close-menu-v3"></script>
 <script src="student-study-materials.js?v=20260909-course-materials-v1"></script>
-<script src="student-dashboard-v2.js?v=20260911-dashboard-summary-v3"></script>
+<script src="student-dashboard-v2.js?v=20260911-dashboard-home-order-v4"></script>
 </body></html>
