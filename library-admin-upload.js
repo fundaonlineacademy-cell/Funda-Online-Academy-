@@ -2,6 +2,8 @@
 if(!/library-admin\.html$/i.test(location.pathname))return;
 const wait=()=>new Promise(r=>setTimeout(r,60));
 const el=id=>document.getElementById(id);
+const canonicalType=v=>({ebook:'E-book','e-book':'E-book',textbook:'Textbook','study_guide':'Study Guide','study guide':'Study Guide',handbook:'Handbook',template:'Template & Tool','template & tool':'Template & Tool',reference:'Reference','reference material':'Reference','practical guide':'Practical Guide','training_manual':'Training Manual','training manual':'Training Manual',legislation:'Legislation','standards & legislation':'Standards & Legislation','supplementary reading':'Supplementary Reading','module resource':'Module Resource'}[String(v||'').toLowerCase()]||v||'E-book');
+function standardizeTypeSelect(){const s=el('fType');if(!s)return;const keep=canonicalType(s.value);const vals=['E-book','Textbook','Study Guide','Handbook','Template & Tool','Practical Guide','Training Manual','Reference','Legislation','Standards & Legislation','Supplementary Reading','Module Resource'];s.innerHTML=vals.map(v=>`<option value="${v}">${v}</option>`).join('');s.value=vals.includes(keep)?keep:'E-book'}
 function addUploadUI(){
  const url=el('fUrl'),cover=el('fCover');
  if(!url||el('fFileUpload'))return;
@@ -22,12 +24,12 @@ function addGovernanceUI(){
 }
 function setSelectValue(id,value,label){const s=el(id);if(!s)return;if(value&&!Array.from(s.options).some(o=>o.value===value)){const o=document.createElement('option');o.value=value;o.textContent=label||value.replaceAll('_',' ');s.appendChild(o)}s.value=value||''}
 function resetGovernance(){addGovernanceUI();setSelectValue('fSourceType','');setSelectValue('fRights','');setSelectValue('fQuality','pending_review');if(el('fVerified'))el('fVerified').checked=false;if(el('fReviewNotes'))el('fReviewNotes').value=''}
-function populateGovernance(id){addGovernanceUI();const x=(typeof R!=='undefined'&&Array.isArray(R))?R.find(r=>String(r.id)===String(id)):null;if(!x)return;setSelectValue('fSourceType',x.source_type||'');setSelectValue('fRights',x.rights_status||'');setSelectValue('fQuality',x.quality_status||'pending_review');if(el('fVerified'))el('fVerified').checked=!!x.source_verified_at;if(el('fReviewNotes'))el('fReviewNotes').value=x.review_notes||''}
+function populateGovernance(id){addGovernanceUI();const x=(typeof R!=='undefined'&&Array.isArray(R))?R.find(r=>String(r.id)===String(id)):null;if(!x)return;setSelectValue('fSourceType',x.source_type||'');setSelectValue('fRights',x.rights_status||'');setSelectValue('fQuality',x.quality_status||'pending_review');if(el('fVerified'))el('fVerified').checked=!!x.source_verified_at;if(el('fReviewNotes'))el('fReviewNotes').value=x.review_notes||'';if(el('fType'))el('fType').value=canonicalType(x.resource_type)}
 async function boot(){
- addUploadUI();addGovernanceUI();
+ standardizeTypeSelect();addUploadUI();addGovernanceUI();
  const oldOpen=window.openForm,oldEdit=window.edit,oldSave=window.save;
- if(typeof oldOpen==='function')window.openForm=function(){oldOpen();setTimeout(()=>{addUploadUI();resetGovernance();let f=el('fFileUpload'),c=el('fCoverUpload');if(f)f.value='';if(c)c.value=''},0)};
- if(typeof oldEdit==='function')window.edit=function(id){oldEdit(id);setTimeout(()=>{addUploadUI();populateGovernance(id)},0)};
+ if(typeof oldOpen==='function')window.openForm=function(){oldOpen();setTimeout(()=>{standardizeTypeSelect();if(el('fType'))el('fType').value='E-book';addUploadUI();resetGovernance();let f=el('fFileUpload'),c=el('fCoverUpload');if(f)f.value='';if(c)c.value=''},0)};
+ if(typeof oldEdit==='function')window.edit=function(id){oldEdit(id);setTimeout(()=>{standardizeTypeSelect();addUploadUI();populateGovernance(id)},0)};
  if(typeof oldSave!=='function')return;
  window.save=async function(){
    const db=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
@@ -36,6 +38,7 @@ async function boot(){
    const access=el('fAccess')?.value||'all_students',course=el('fCourse')?.value||null;
    const sourceType=el('fSourceType')?.value||'',rights=el('fRights')?.value||'',quality=el('fQuality')?.value||'pending_review',verified=!!el('fVerified')?.checked,reviewNotes=(el('fReviewNotes')?.value||'').trim()||null;
    const requestedStatus=el('fStatus')?.value||'draft';
+   standardizeTypeSelect();
    if(!title||!category)return alert('Title and category are required.');
    if(!file&&!external)return alert('Upload a Library file or provide an external resource URL.');
    if(access==='course_only'&&!course)return alert('Choose the course for this restricted resource.');
@@ -74,7 +77,7 @@ async function boot(){
      }
      if(!resourceId)return;
      const now=new Date().toISOString();
-     const patch={source_type:sourceType,rights_status:rights,quality_status:quality,source_verified_at:verified?now:null,reviewed_at:quality==='approved'?now:null,review_notes:reviewNotes,updated_at:now};
+     const patch={resource_type:canonicalType(el('fType')?.value),source_type:sourceType,rights_status:rights,quality_status:quality,source_verified_at:verified?now:null,reviewed_at:quality==='approved'?now:null,review_notes:reviewNotes,updated_at:now};
      if(filePath){patch.file_path=filePath;patch.file_url=null}
      if(coverPath)patch.cover_path=coverPath;
      if(stageNew){patch.publication_status='published';patch.is_active=true}
