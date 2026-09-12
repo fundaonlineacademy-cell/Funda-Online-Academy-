@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Use the Funda Online Academy map to find courses, student services, employer partnerships, ambassador pages, staff portals, support and policies.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://fundaonlineacademy.co.za/academy-map.html">
+  <title>Academy Map | Funda Online Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#071d49;
+      --navy-soft:#284b66;
+      --gold:#c99a2e;
+      --gold-soft:#f6e6ad;
+      --cream:#fff9eb;
+      --blue-soft:#eef5fb;
+      --ink:#142b43;
+      --muted:#405367;
+      --line:#d5dee7;
+      --white:#fff;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:92px}
+    body{margin:0;background:linear-gradient(180deg,#f3f7fa 0%,#fffaf0 55%,#f7f0e9 100%);color:var(--ink);font-family:Inter,Arial,sans-serif;font-size:16px;line-height:1.65}
+    h1,h2,h3,.brand,.main-nav{font-family:Montserrat,Arial,sans-serif}
+    a{color:inherit}
+    .skip-link{position:fixed;left:14px;top:-70px;z-index:1000;background:#fff;color:var(--navy);padding:10px 14px;border-radius:10px;font-weight:800;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+    .skip-link:focus{top:14px}
+    .site-header{position:sticky;top:0;z-index:100;background:var(--navy-soft);border-bottom:1px solid #d6bf73;box-shadow:0 5px 18px rgba(7,29,73,.16)}
+    .nav-wrap{max-width:1240px;min-height:76px;margin:auto;padding:11px 20px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+    .brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:#fff;line-height:1.05;flex:none}
+    .brand img{width:48px;height:48px;object-fit:contain;border-radius:12px;background:#fff}
+    .brand strong{display:block;font-size:18px;letter-spacing:.01em}
+    .brand small{display:block;margin-top:6px;color:#fff;font-size:10px;font-weight:800;letter-spacing:.27em}
+    .main-nav{display:flex;align-items:center;gap:21px;color:#fff;font-size:13px;font-weight:700}
+    .main-nav a{text-decoration:none;white-space:nowrap}
+    .main-nav a:hover,.main-nav a:focus-visible{color:#f3d778}
+    .main-nav .active{color:#f3d778;text-decoration:underline;text-underline-offset:7px;text-decoration-thickness:2px}
+    .auth-links{display:flex;gap:9px;flex:none}
+    .auth-links a,.mobile-auth a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:9px 14px;border-radius:11px;text-decoration:none;font-size:13px;font-weight:800}
+    .login-link{border:1px solid rgba(255,255,255,.75);color:#fff}
+    .create-link{border:1px solid var(--gold);background:var(--gold);color:var(--navy)}
+    .menu-button{display:none;width:46px;height:46px;border:1px solid #e3c66d;border-radius:13px;background:#f7df92;color:var(--navy);font-size:24px;font-weight:900;cursor:pointer}
+    .mobile-menu{display:none;max-width:1240px;margin:auto;padding:0 16px 15px}
+    .mobile-menu.open{display:block}
+    .mobile-menu-inner{padding:9px;border:1px solid rgba(227,198,109,.55);border-radius:17px;background:#f6f9fc}
+    .mobile-menu a{display:block;padding:11px 13px;border-radius:10px;color:var(--navy);text-decoration:none;font-weight:800}
+    .mobile-menu a[aria-current="page"]{background:#fff1c5}
+    .mobile-auth{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;padding-top:9px;border-top:1px solid var(--line)}
+    .mobile-auth .login-link{border-color:var(--navy);color:var(--navy)}
+    .hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#071d49 0%,#0e3d78 62%,#285a7a 100%);color:#fff}
+    .hero:after{content:"";position:absolute;width:430px;height:430px;right:-190px;top:-250px;border-radius:50%;background:rgba(255,255,255,.07)}
+    .hero-inner{position:relative;z-index:1;max-width:1180px;margin:auto;padding:66px 22px 62px}
+    .breadcrumb{margin:0;color:#f3d778;font-size:13px;font-weight:800}
+    .hero h1{max-width:850px;margin:13px 0 0;color:#fff;font-size:clamp(38px,6vw,64px);line-height:1.08;letter-spacing:-.03em}
+    .hero-copy{max-width:820px;margin:20px 0 0;color:#f2f6fb;font-size:18px;line-height:1.75;font-weight:600}
+    .hero-actions{display:flex;flex-wrap:wrap;gap:11px;margin-top:28px}
+    .button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:11px 17px;border-radius:12px;text-decoration:none;font-weight:900}
+    .button.primary{background:var(--gold);color:var(--navy)}
+    .button.secondary{border:1px solid rgba(255,255,255,.65);background:rgba(255,255,255,.08);color:#fff}
+    .legend{max-width:1180px;margin:-24px auto 0;padding:0 22px;position:relative;z-index:3}
+    .legend-inner{display:flex;align-items:center;gap:13px;flex-wrap:wrap;padding:16px 18px;border:1px solid #d9c889;border-radius:17px;background:#fff;box-shadow:0 12px 34px rgba(20,43,67,.10)}
+    .legend strong{color:var(--navy)}
+    .badge{display:inline-flex;align-items:center;min-height:27px;padding:4px 9px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+    .badge.public{background:#e2f4e9;color:#145c38}
+    .badge.student{background:#e7f0ff;color:#174f91}
+    .badge.team{background:#fff0c9;color:#765300}
+    .page{max-width:1180px;margin:auto;padding:54px 22px 70px}
+    .section{margin-top:55px}
+    .section:first-child{margin-top:0}
+    .eyebrow{margin:0;color:#895f09;font-size:12px;font-weight:900;letter-spacing:.16em;text-transform:uppercase}
+    .section h2{margin:6px 0 0;color:var(--navy);font-size:clamp(27px,4vw,38px);line-height:1.2}
+    .section-intro{max-width:820px;margin:12px 0 0;color:var(--muted);font-size:16px;font-weight:600}
+    .audience-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:23px}
+    .audience-card{display:block;min-height:158px;padding:19px;border:1px solid var(--line);border-radius:18px;background:#fff;text-decoration:none;box-shadow:0 6px 19px rgba(20,43,67,.06);transition:.18s ease}
+    .audience-card:hover,.audience-card:focus-visible{transform:translateY(-3px);border-color:#c9a94a;box-shadow:0 12px 28px rgba(20,43,67,.11)}
+    .audience-icon{display:grid;place-items:center;width:39px;height:39px;border-radius:11px;background:var(--navy);color:#fff;font-weight:900}
+    .audience-card strong{display:block;margin-top:13px;color:var(--navy);font-size:15px}
+    .audience-card span{display:block;margin-top:5px;color:var(--muted);font-size:13px;line-height:1.5;font-weight:600}
+    .search-panel{margin-top:26px;padding:22px;border:1px solid #d8c27c;border-radius:20px;background:var(--cream)}
+    .search-panel label{display:block;color:var(--navy);font-weight:900}
+    .search-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:9px;margin-top:9px}
+    .search-row input{width:100%;min-height:50px;padding:12px 15px;border:1px solid #aebdca;border-radius:12px;background:#fff;color:var(--ink);font:600 16px Inter,Arial,sans-serif;outline:none}
+    .search-row input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,154,46,.18)}
+    .search-row button{min-height:50px;padding:11px 16px;border:0;border-radius:12px;background:var(--navy);color:#fff;font-weight:900;cursor:pointer}
+    .search-status{margin:8px 0 0;color:var(--muted);font-size:13px;font-weight:700}
+    .journey{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px;margin-top:25px;counter-reset:journey}
+    .journey-step{position:relative;padding:20px 17px;border:1px solid var(--line);border-radius:18px;background:#fff;counter-increment:journey}
+    .journey-step:before{content:counter(journey);display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:var(--gold);color:var(--navy);font-weight:900}
+    .journey-step:not(:last-child):after{content:"›";position:absolute;right:-12px;top:44%;z-index:2;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:20px;font-weight:900}
+    .journey-step h3{margin:13px 0 0;color:var(--navy);font-size:15px;line-height:1.4}
+    .journey-step p{margin:7px 0 0;color:var(--muted);font-size:13px;line-height:1.55;font-weight:600}
+    .journey-step a{display:inline-block;margin-top:10px;color:#0a4c91;font-size:13px;font-weight:900;text-underline-offset:3px}
+    .map-groups{display:grid;gap:22px;margin-top:26px}
+    .map-group{scroll-margin-top:96px;padding:26px;border:1px solid var(--line);border-radius:23px;background:#fff;box-shadow:0 7px 23px rgba(20,43,67,.06)}
+    .map-group-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding-bottom:19px;border-bottom:1px solid var(--line)}
+    .map-group h3{margin:0;color:var(--navy);font-size:23px;line-height:1.3}
+    .map-group-head p{max-width:730px;margin:7px 0 0;color:var(--muted);font-weight:600}
+    .destination-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:19px}
+    .destination{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;min-height:119px;padding:16px;border:1px solid #d9e2ea;border-radius:16px;background:#fbfdff}
+    .destination.hidden{display:none}
+    .destination a{color:var(--navy);font-family:Montserrat,Arial,sans-serif;font-size:15px;font-weight:900;text-decoration-thickness:1.5px;text-underline-offset:4px}
+    .destination p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.55;font-weight:600}
+    .map-group.no-matches{display:none}
+    .callout{margin-top:27px;padding:22px;border:1px solid #d9bd65;border-radius:19px;background:linear-gradient(135deg,#fff4cf,#fffaf0)}
+    .callout h3{margin:0;color:var(--navy);font-size:19px}
+    .callout p{margin:8px 0 0;color:var(--ink);font-weight:600}
+    .callout a{color:#074c8c;font-weight:900}
+    .help-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:23px}
+    .help-card{padding:19px;border:1px solid var(--line);border-radius:17px;background:#fff}
+    .help-card strong{display:block;color:var(--navy)}
+    .help-card p{margin:7px 0 12px;color:var(--muted);font-size:13px;font-weight:600}
+    .help-card a{color:#0a4c91;font-weight:900;text-underline-offset:3px}
+    .empty-search{display:none;margin-top:20px;padding:22px;border:1px solid #d6b75a;border-radius:17px;background:#fff7dc;color:var(--navy);font-weight:800}
+    .empty-search.show{display:block}
+    footer{background:#041533;color:#fff}
+    .footer-inner{max-width:1180px;margin:auto;padding:34px 22px;display:flex;justify-content:space-between;align-items:flex-start;gap:26px}
+    .footer-brand{font-family:Montserrat,Arial,sans-serif;font-weight:900}
+    .footer-brand span{color:#e3c470}
+    .footer-copy{margin-top:7px;color:#e5eef8;font-size:13px}
+    .footer-links{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:12px 20px}
+    .footer-links a{color:#edf4fb;font-size:13px;font-weight:700}
+    @media(max-width:1120px){.main-nav,.auth-links{display:none}.menu-button{display:grid;place-items:center}.audience-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.journey{grid-template-columns:repeat(3,minmax(0,1fr))}.journey-step:nth-child(3):after{display:none}.journey-step:nth-child(4){grid-column:1/2}}
+    @media(max-width:760px){body{font-size:15px}.nav-wrap{min-height:70px;padding:10px 16px}.brand img{width:46px;height:46px}.brand strong{font-size:16px}.brand small{font-size:9px}.hero-inner{padding:48px 18px 54px}.hero-copy{font-size:16px}.legend{padding:0 16px}.page{padding:46px 16px 58px}.audience-grid,.destination-grid,.help-grid{grid-template-columns:1fr}.audience-card{min-height:auto}.journey{grid-template-columns:1fr}.journey-step{min-height:auto}.journey-step:not(:last-child):after{content:"↓";left:calc(50% - 12px);right:auto;top:auto;bottom:-13px}.journey-step:nth-child(3):after{display:grid}.journey-step:nth-child(4){grid-column:auto}.map-group{padding:20px 16px}.map-group-head{display:block}.map-group-head .badge{margin-top:12px}.destination{min-height:auto}.search-row{grid-template-columns:1fr}.footer-inner{flex-direction:column}.footer-links{justify-content:flex-start}}
+    @media(max-width:410px){.brand strong{font-size:14px}.brand small{letter-spacing:.2em}.brand img{width:42px;height:42px}.menu-button{width:43px;height:43px}.hero h1{font-size:35px}.hero-actions .button{width:100%}.mobile-auth{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to Academy map</a>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="index.html" aria-label="Funda Online Academy home">
+        <img src="logo.png" alt="Funda Online Academy logo">
+        <span><strong>FUNDA ONLINE</strong><small>ACADEMY</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Public navigation">
+        <a href="index.html">Home</a>
+        <a href="courses-public.html">Courses</a>
+        <a class="active" href="academy-map.html" aria-current="page">Academy Map</a>
+        <a href="employers.html">For Employers</a>
+        <a href="ambassadors.html">Ambassadors</a>
+      </nav>
+      <div class="auth-links">
+        <a class="login-link" href="login.html">Login</a>
+        <a class="create-link" href="auth.html">Create Account</a>
+      </div>
+      <button id="mapMenuButton" class="menu-button" type="button" aria-controls="mapMobileMenu" aria-expanded="false" aria-label="Open navigation menu">☰</button>
+    </div>
+    <nav id="mapMobileMenu" class="mobile-menu" aria-label="Mobile navigation">
+      <div class="mobile-menu-inner">
+        <a href="index.html">Home</a>
+        <a href="courses-public.html">Courses</a>
+        <a href="courses-public.html#how-it-works">How It Works</a>
+        <a href="academy-map.html" aria-current="page">Academy Map</a>
+        <a href="courses-public.html#faq">FAQs</a>
+        <a href="employers.html">For Employers</a>
+        <a href="ambassadors.html">Ambassadors</a>
+        <a href="courses-public.html#contact">Contact</a>
+        <div class="mobile-auth">
+          <a class="login-link" href="login.html">Login</a>
+          <a class="create-link" href="auth.html">Create Account</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="hero-inner">
+        <p class="breadcrumb">Home &nbsp;›&nbsp; Academy Map</p>
+        <h1>Find every Academy area from one clear map.</h1>
+        <p class="hero-copy">Choose who you are, understand what each area is for, and open the correct page without searching through unrelated sections. Public pages are open to everyone; learner and team areas require the correct secure account.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#choose-path">Choose your path</a>
+          <a class="button secondary" href="#all-destinations">View all destinations</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="legend" aria-label="Access level guide">
+      <div class="legend-inner">
+        <strong>Access guide:</strong>
+        <span class="badge public">Public</span><span>Open to everyone</span>
+        <span class="badge student">Student login</span><span>Registered learners</span>
+        <span class="badge team">Team access</span><span>Authorised staff only</span>
+      </div>
+    </div>
+
+    <div class="page">
+      <section id="choose-path" class="section">
+        <p class="eyebrow">Choose your path</p>
+        <h2>Who are you visiting as?</h2>
+        <p class="section-intro">Select the option that describes you. The page will move directly to the destinations designed for that visitor.</p>
+        <div class="audience-grid">
+          <a class="audience-card" href="#prospective-students"><span class="audience-icon">01</span><strong>New or Returning Student</strong><span>Browse courses, understand enrolment, create an account or sign in.</span></a>
+          <a class="audience-card" href="#registered-students"><span class="audience-icon">02</span><strong>Registered Learner</strong><span>Reach learning, results, certificates, support and account services.</span></a>
+          <a class="audience-card" href="#employers"><span class="audience-icon">03</span><strong>Employer or Organisation</strong><span>Explore partnerships, workplace opportunities and document checks.</span></a>
+          <a class="audience-card" href="#ambassadors"><span class="audience-icon">04</span><strong>Ambassador or Creator</strong><span>Understand the programme, apply to partner or enter the portal.</span></a>
+          <a class="audience-card" href="#academy-team"><span class="audience-icon">05</span><strong>Academy Team</strong><span>Open secure staff or administration workspaces.</span></a>
+        </div>
+
+        <div class="search-panel">
+          <label for="mapSearch">Search the Academy map</label>
+          <div class="search-row">
+            <input id="mapSearch" type="search" placeholder="Try: results, password, employer, support or certificate" autocomplete="off">
+            <button id="clearMapSearch" type="button">Clear search</button>
+          </div>
+          <p id="mapSearchStatus" class="search-status" aria-live="polite">Showing all Academy destinations.</p>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="student-journey-title">
+        <p class="eyebrow">Student journey</p>
+        <h2 id="student-journey-title">From first visit to active learning</h2>
+        <p class="section-intro">If you are joining the Academy for the first time, follow these steps in order. You can browse before registering.</p>
+        <div class="journey">
+          <article class="journey-step"><h3>Start at Home</h3><p>Understand the Academy and its learning approach.</p><a href="index.html">Open Home</a></article>
+          <article class="journey-step"><h3>Browse Courses</h3><p>Compare available courses, fees and study information.</p><a href="courses-public.html">Browse Courses</a></article>
+          <article class="journey-step"><h3>Review a Course</h3><p>Select <strong>View Course</strong> to read its modules and outcomes.</p><a href="courses-public.html#courses">Choose a course</a></article>
+          <article class="journey-step"><h3>Create Your Account</h3><p>Register securely when you are ready to enrol.</p><a href="auth.html">Create Account</a></article>
+          <article class="journey-step"><h3>Enrol and Track</h3><p>Complete enrolment, submit the required information and follow your status in the Dashboard.</p><a href="login.html">Student Login</a></article>
+        </div>
+      </section>
+
+      <section id="all-destinations" class="section">
+        <p class="eyebrow">Full Academy directory</p>
+        <h2>Every destination, explained</h2>
+        <p class="section-intro">Each link below states its purpose and access level. Secure pages will ask you to sign in if your session is not active.</p>
+
+        <div class="map-groups">
+          <section id="prospective-students" class="map-group" data-map-group>
+            <div class="map-group-head"><div><h3>New and Returning Students</h3><p>Public information for exploring the Academy, choosing a course and beginning or resuming your journey.</p></div><span class="badge public">Public</span></div>
+            <div class="destination-grid">
+              <article class="destination" data-map-item data-search="home academy overview introduction"><div><a href="index.html">Academy Home</a><p>A public overview of Funda Online Academy, its learning approach and featured courses.</p></div></article>
+              <article class="destination" data-map-item data-search="courses catalogue fees modules programmes browse compare"><div><a href="courses-public.html">Course Catalogue</a><p>Browse and compare available programmes, fees and study details without logging in.</p></div></article>
+              <article class="destination" data-map-item data-search="how it works enrolment enrollment process approval payment"><div><a href="courses-public.html#how-it-works">How It Works</a><p>Understand the route from browsing and registration to review, approval and learning access.</p></div></article>
+              <article class="destination" data-map-item data-search="faq frequently asked questions accreditation nsfas payment quality"><div><a href="courses-public.html#faq">Frequently Asked Questions</a><p>Read clear answers about accounts, enrolment, payments, learning quality and student support.</p></div></article>
+              <article class="destination" data-map-item data-search="create register registration signup account new student"><div><a href="auth.html">Create Student Account</a><p>Create the secure learner account required when you are ready to enrol.</p></div></article>
+              <article class="destination" data-map-item data-search="login sign in returning student account"><div><a href="login.html">Student Login</a><p>Sign in to continue enrolment, check your application or return to learning.</p></div></article>
+              <article class="destination" data-map-item data-search="contact whatsapp enquiry support course information"><div><a href="courses-public.html#contact">Public Contact and WhatsApp</a><p>Ask a general course, enrolment or Academy question before or after registration.</p></div></article>
+              <article class="destination" data-map-item data-search="policies legal privacy refund terms rules"><div><a href="policies.html">Policies and Legal</a><p>Review important Academy terms, privacy information and learner responsibilities.</p></div></article>
+            </div>
+          </section>
+
+          <section id="registered-students" class="map-group" data-map-group>
+            <div class="map-group-head"><div><h3>Registered Learner Area</h3><p>Your secure academic journey. Open the Student Dashboard menu to reach Orientation and the internal tabs listed below.</p></div><span class="badge student">Student login</span></div>
+            <div class="destination-grid">
+              <article class="destination" data-map-item data-search="dashboard welcome learner status account activity house rules academy identity"><div><a href="dashboard.html">My Dashboard</a><p>Your welcome, learner status, account activity, House Rules and permanent Academy Identity.</p></div></article>
+              <article class="destination" data-map-item data-search="orientation guide benefits navigation how to use dashboard"><div><a href="dashboard.html">Orientation</a><p>After opening the Dashboard, choose <strong>Menu → Orientation</strong> for the full learner guide and benefits.</p></div></article>
+              <article class="destination" data-map-item data-search="my courses learning progress assessments study materials modules"><div><a href="dashboard.html">Courses, Progress and Assessments</a><p>Use the Dashboard menu to enter approved courses, follow progress, complete assessments and find study materials.</p></div></article>
+              <article class="destination" data-map-item data-search="digital library books resources reading learning materials"><div><a href="digital-library.html">Digital Library</a><p>Open additional Academy learning resources connected to your approved learner access.</p></div></article>
+              <article class="destination" data-map-item data-search="results marks grades assessment academic record"><div><a href="student-results.html">My Results</a><p>View assessment results after they have been recorded or published.</p></div></article>
+              <article class="destination" data-map-item data-search="certificates certificate completion award download"><div><a href="student-certificates.html">My Certificates</a><p>Access eligible completion documents after all required conditions have been met.</p></div></article>
+              <article class="destination" data-map-item data-search="calendar dates deadlines consultation reminders"><div><a href="student-calendar.html">My Calendar</a><p>Check Academy dates, consultations, deadlines and reminders.</p></div></article>
+              <article class="destination" data-map-item data-search="career workplace cv guidance exposure employer opportunities readiness"><div><a href="dashboard.html">Career and Workplace Support</a><p>Choose this tab from the Dashboard menu for career preparation and eligible Academy-managed opportunity services.</p></div></article>
+              <article class="destination" data-map-item data-search="communication messages announcements unread notices inbox"><div><a href="dashboard.html">Communication Centre</a><p>Use <strong>Menu → Communication</strong> to read and trace official Academy messages by read status.</p></div></article>
+              <article class="destination" data-map-item data-search="academic support technical ticket help screenshot query faq"><div><a href="dashboard.html">Academic and Technical Support</a><p>Use the Dashboard support tabs to find the correct department or submit and track a formal support ticket.</p></div></article>
+              <article class="destination" data-map-item data-search="profile personal information details account"><div><a href="profile.html">My Profile</a><p>Review and maintain personal learner information connected to your Academy account.</p></div></article>
+              <article class="destination" data-map-item data-search="security password reset protect account change password"><div><a href="security.html">Security and Password</a><p>Manage password access and review practical guidance for protecting your account.</p></div></article>
+            </div>
+            <div class="callout"><h3>Important learner navigation</h3><p>Orientation, Communication, Career Support and the Support System are separate tabs inside the Student Dashboard. Sign in, open <strong>Menu</strong>, then choose the named tab.</p></div>
+          </section>
+
+          <section id="employers" class="map-group" data-map-group>
+            <div class="map-group-head"><div><h3>Employers and Organisations</h3><p>Public pathways for partnership enquiries, workplace collaboration and academic-document checks.</p></div><span class="badge public">Public</span></div>
+            <div class="destination-grid">
+              <article class="destination" data-map-item data-search="employer organisation industry partner recruitment workplace"><div><a href="employers.html">Employer and Industry Hub</a><p>Understand how organisations can engage with the Academy around skills and opportunity.</p></div></article>
+              <article class="destination" data-map-item data-search="partner organisation workplace exposure recruitment enquiry"><div><a href="employers.html#partner">Partner With Funda</a><p>Submit an authorised organisation enquiry about recruitment, exposure or skills collaboration.</p></div></article>
+              <article class="destination" data-map-item data-search="verify certificate employer document check validation"><div><a href="employers.html#verify">Verify a Certificate</a><p>Check the exact certificate number shown on a learner's Funda certificate.</p></div></article>
+              <article class="destination" data-map-item data-search="verify academic document transcript statement results certificate code"><div><a href="verify.html">Verify an Academic Document</a><p>Check a certificate or Statement of Results number without accessing private student records.</p></div></article>
+            </div>
+          </section>
+
+          <section id="ambassadors" class="map-group" data-map-group>
+            <div class="map-group-head"><div><h3>Ambassadors and Creators</h3><p>Programme information and secure access for approved Funda creator partners.</p></div><span class="badge public">Public entry</span></div>
+            <div class="destination-grid">
+              <article class="destination" data-map-item data-search="ambassador creator influencer programme partnership"><div><a href="ambassadors.html">Ambassador Programme</a><p>Learn who the programme is for, how partnerships work and what Funda expects.</p></div></article>
+              <article class="destination" data-map-item data-search="ambassador apply application creator partner"><div><a href="ambassadors.html#apply">Ambassador Application</a><p>Open the application area when partnership applications are available.</p></div></article>
+              <article class="destination" data-map-item data-search="ambassador login portal referral bank notifications"><div><a href="ambassador-login.html">Ambassador Login</a><p>Secure sign-in for approved ambassadors with an activated portal account.</p></div></article>
+            </div>
+          </section>
+
+          <section id="academy-team" class="map-group" data-map-group>
+            <div class="map-group-head"><div><h3>Academy Team</h3><p>Restricted operational workspaces. Access depends on an authorised role and active Academy credentials.</p></div><span class="badge team">Team access</span></div>
+            <div class="destination-grid">
+              <article class="destination" data-map-item data-search="staff employee team portal workspace"><div><a href="staff-portal.html">Staff Portal</a><p>Secure staff workspace for authorised Academy team members.</p></div></article>
+              <article class="destination" data-map-item data-search="admin dashboard command centre management operations"><div><a href="admin-v2.html">Admin Command Centre</a><p>Restricted administration area for authorised Academy leadership and operational roles.</p></div></article>
+              <article class="destination" data-map-item data-search="team login credentials access"><div><a href="login.html">Secure Login</a><p>Use the Academy credentials assigned to your role. Learner accounts do not unlock team areas.</p></div></article>
+            </div>
+          </section>
+        </div>
+        <div id="emptyMapSearch" class="empty-search">No destination matches that search. Try a simpler word such as “course”, “support”, “results”, “employer” or “password”.</div>
+      </section>
+
+      <section class="section" aria-labelledby="quick-help-title">
+        <p class="eyebrow">Not sure where to go?</p>
+        <h2 id="quick-help-title">Use the need, not the department name</h2>
+        <div class="help-grid">
+          <article class="help-card"><strong>I want to study</strong><p>Compare course fees, outcomes and modules first.</p><a href="courses-public.html">Go to Courses</a></article>
+          <article class="help-card"><strong>I already applied</strong><p>Sign in and check the current application or payment status.</p><a href="dashboard.html">Go to Dashboard</a></article>
+          <article class="help-card"><strong>I need learner support</strong><p>Sign in, open Menu, then choose Academic Support or Support System.</p><a href="dashboard.html">Open Student Support</a></article>
+          <article class="help-card"><strong>I forgot my password</strong><p>Open Login and choose the password-reset option.</p><a href="login.html">Go to Login</a></article>
+          <article class="help-card"><strong>I need to verify a document</strong><p>Use the public verification page and the exact document number.</p><a href="verify.html">Verify a Document</a></article>
+          <article class="help-card"><strong>I represent an organisation</strong><p>Use the Employer Hub for partnership and workplace enquiries.</p><a href="employers.html">Go to Employer Hub</a></article>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div><div class="footer-brand">FUNDA ONLINE <span>ACADEMY</span></div><div class="footer-copy">A clear route to learning, support and Academy services.</div></div>
+      <nav class="footer-links" aria-label="Footer navigation"><a href="index.html">Home</a><a href="courses-public.html">Courses</a><a href="academy-map.html">Academy Map</a><a href="login.html">Login</a><a href="auth.html">Create Account</a><a href="policies.html">Policies and Legal</a></nav>
+    </div>
+  </footer>
+
+  <script>
+    const mapMenuButton=document.getElementById('mapMenuButton');
+    const mapMobileMenu=document.getElementById('mapMobileMenu');
+    if(mapMenuButton&&mapMobileMenu){
+      mapMenuButton.addEventListener('click',()=>{
+        const opening=!mapMobileMenu.classList.contains('open');
+        mapMobileMenu.classList.toggle('open');
+        mapMenuButton.setAttribute('aria-expanded',String(opening));
+        mapMenuButton.textContent=opening?'×':'☰';
+      });
+      mapMobileMenu.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{
+        mapMobileMenu.classList.remove('open');
+        mapMenuButton.setAttribute('aria-expanded','false');
+        mapMenuButton.textContent='☰';
+      }));
+    }
+
+    const mapSearch=document.getElementById('mapSearch');
+    const clearMapSearch=document.getElementById('clearMapSearch');
+    const mapSearchStatus=document.getElementById('mapSearchStatus');
+    const emptyMapSearch=document.getElementById('emptyMapSearch');
+    const mapItems=[...document.querySelectorAll('[data-map-item]')];
+    const mapGroups=[...document.querySelectorAll('[data-map-group]')];
+    function filterMap(){
+      const query=(mapSearch.value||'').trim().toLowerCase();
+      let visible=0;
+      mapItems.forEach(item=>{
+        const text=((item.dataset.search||'')+' '+item.textContent).toLowerCase();
+        const match=!query||text.includes(query);
+        item.classList.toggle('hidden',!match);
+        if(match)visible++;
+      });
+      mapGroups.forEach(group=>group.classList.toggle('no-matches',!group.querySelector('[data-map-item]:not(.hidden)')));
+      emptyMapSearch.classList.toggle('show',Boolean(query)&&visible===0);
+      mapSearchStatus.textContent=query?`${visible} destination${visible===1?'':'s'} found for “${mapSearch.value.trim()}”.`:'Showing all Academy destinations.';
+    }
+    mapSearch.addEventListener('input',filterMap);
+    clearMapSearch.addEventListener('click',()=>{mapSearch.value='';filterMap();mapSearch.focus()});
+  </script>
+</body>
+</html>

@@ -17,6 +17,7 @@ const ambassadorReferral = document.createElement('script'); ambassadorReferral.
 const textContrast = document.createElement('script'); textContrast.src = 'funda-text-contrast.js?v=20260901-black-text'; document.head.appendChild(textContrast);
 
 if (/(^|\/)(index|courses-public|course-view|employers|ambassadors|login)\.html$/i.test(window.location.pathname) || /\/$/.test(window.location.pathname)) {
+  const academyMapPublic=document.createElement('script'); academyMapPublic.src='public-academy-map-link.js?v='+Date.now(); document.head.appendChild(academyMapPublic);
   const employerPublic=document.createElement('script'); employerPublic.src='public-employer-link.js?v='+Date.now(); document.head.appendChild(employerPublic);
   const ambassadorPublic=document.createElement('script'); ambassadorPublic.src='public-ambassador-link.js?v='+Date.now(); document.head.appendChild(ambassadorPublic);
   const learnerTestimonial=document.createElement('script'); learnerTestimonial.src='public-learner-testimonial-name.js?v='+Date.now(); document.head.appendChild(learnerTestimonial);
