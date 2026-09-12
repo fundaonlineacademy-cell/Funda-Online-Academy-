@@ -14,6 +14,7 @@ const identityUi = document.createElement('script'); identityUi.src = 'academy-i
 const publicMarketing = document.createElement('script'); publicMarketing.src = 'marketing-public-tracking.js?v=' + Date.now(); document.head.appendChild(publicMarketing);
 const createAccountRoute = document.createElement('script'); createAccountRoute.src = 'create-account-route-fix.js?v=' + Date.now(); document.head.appendChild(createAccountRoute);
 const ambassadorReferral = document.createElement('script'); ambassadorReferral.src = 'ambassador-referral-tracking.js?v=' + Date.now(); document.head.appendChild(ambassadorReferral);
+const typographyUi = document.createElement('script'); typographyUi.src = 'funda-typography.js?v=20260912-responsive-readability'; document.head.appendChild(typographyUi);
 const textContrast = document.createElement('script'); textContrast.src = 'funda-text-contrast.js?v=20260901-black-text'; document.head.appendChild(textContrast);
 
 if (/(^|\/)(index|courses-public|course-view|employers|ambassadors|login)\.html$/i.test(window.location.pathname) || /\/$/.test(window.location.pathname)) {

@@ -123,10 +123,29 @@
       box-shadow:0 0 0 4px rgba(24,79,159,.11);
     }
 
-    .role-btn{transition:.2s ease}
     .role-btn{
-      color:#475569;
+      display:flex;
+      min-width:0;
+      align-items:center;
+      justify-content:center;
+      gap:.55rem;
+      white-space:nowrap;
+      color:#334155 !important;
       background:transparent;
+      transition:.2s ease;
+    }
+    .role-btn .role-icon{
+      width:18px;
+      height:18px;
+      flex:0 0 18px;
+      color:currentColor;
+    }
+    .role-btn .role-label{
+      display:inline-block;
+      min-width:0;
+      color:inherit !important;
+      opacity:1 !important;
+      visibility:visible !important;
     }
     .role-btn.active{
       background:#06152f;
@@ -134,8 +153,10 @@
       border-color:#06152f;
       box-shadow:0 8px 24px rgba(6,21,47,.15);
     }
-    .role-btn.active .role-icon{color:#e2bd61}
+    .role-btn.active .role-icon{color:#e2bd61 !important}
+    .role-btn.active .role-label{color:#fff !important}
     .role-btn:not(.active){color:#334155 !important}
+    .role-btn:not(.active) .role-label{color:#334155 !important}
     .role-btn:not(.active):hover{background:#fff;color:#06152f !important}
 
     .message{display:none}
@@ -270,8 +291,14 @@
       </div>
 
       <div class="grid grid-cols-2 gap-2 mt-7 p-1.5 rounded-xl bg-[#f1f4f8]">
-        <button id="btn-student" type="button" class="role-btn active rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold" style="background:#06152f;color:#ffffff;"><span class="role-icon" aria-hidden="true">🎓</span> Student</button>
-        <button id="btn-admin" type="button" class="role-btn rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold text-slate-600" style="background:transparent;color:#334155;"><span class="role-icon" aria-hidden="true">▣</span> Staff / Admin</button>
+        <button id="btn-student" type="button" class="role-btn active rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold" style="background:#06152f;color:#ffffff;" aria-pressed="true">
+          <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 10 10-5 10 5-10 5L2 10Z"></path><path d="M6 12v5c3 2 9 2 12 0v-5"></path></svg>
+          <span class="role-label">Student</span>
+        </button>
+        <button id="btn-admin" type="button" class="role-btn rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold text-slate-600" style="background:transparent;color:#334155;" aria-pressed="false">
+          <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path><path d="m9 12 2 2 4-4"></path></svg>
+          <span class="role-label">Staff / Admin</span>
+        </button>
       </div>
 
       <div id="message" class="message mt-5 rounded-xl p-4 text-sm font-semibold"></div>
@@ -382,6 +409,8 @@
     adminButton.classList.toggle("active", isAdmin);
     studentButton.classList.toggle("text-slate-600", isAdmin);
     adminButton.classList.toggle("text-slate-600", !isAdmin);
+    studentButton.setAttribute("aria-pressed", String(!isAdmin));
+    adminButton.setAttribute("aria-pressed", String(isAdmin));
 
     // Force contrast directly so the selected label can never inherit dark text.
     if (isAdmin) {
