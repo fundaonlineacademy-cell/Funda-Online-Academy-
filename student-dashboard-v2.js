@@ -253,7 +253,7 @@ const groups=[
  ]},
  {label:'ACCOUNT',items:[
   ['profile','profile.html','♙','My Profile'],
-  ['security','profile.html','◇','Security / Password']
+  ['security','security.html','◇','Security / Password']
  ]}
 ];
 
