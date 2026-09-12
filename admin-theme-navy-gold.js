@@ -17,14 +17,20 @@
     --funda-line:#ddd7ca;
   }
   body{background:linear-gradient(135deg,#f7f4ec 0%,#fbfaf7 52%,#edf2f7 100%)!important;color:var(--funda-ink)!important}
-  .side{background:radial-gradient(circle at 15% 7%,rgba(212,175,88,.16),transparent 27%),linear-gradient(165deg,var(--funda-navy-950) 0%,var(--funda-navy-900) 54%,var(--funda-navy-800) 100%)!important;border-right:1px solid rgba(212,175,88,.24)!important;box-shadow:12px 0 34px rgba(3,16,31,.17)!important}
-  .brand{background:transparent!important;color:#fff!important;border-bottom:1px solid rgba(255,255,255,.11)!important}
-  .brand small{color:var(--funda-gold)!important}
-  .sideLabel{color:#b8c4d5!important}
-  #directDeptLabel{color:var(--funda-gold-soft)!important}
-  .nav button{color:#dbe4f0!important;border-left:3px solid transparent!important}
-  .nav button:hover{background:rgba(255,255,255,.07)!important;color:#fff!important;border-left-color:rgba(212,175,88,.55)!important}
-  .nav button.on{background:linear-gradient(135deg,var(--funda-gold) 0%,var(--funda-gold-soft) 100%)!important;color:var(--funda-navy-900)!important;border-left-color:#fff4cb!important;box-shadow:0 8px 22px rgba(212,175,88,.22)!important}
+  .app{grid-template-columns:292px minmax(0,1fr)!important}
+  .side{width:292px!important;padding:24px 20px 28px!important;background:linear-gradient(180deg,#fffdf7 0%,#fffaf0 58%,#fffdf8 100%)!important;border-right:1px solid #ead9ad!important;box-shadow:18px 0 50px rgba(2,17,36,.18)!important;color:#17324a!important;scrollbar-color:#d4aa42 #f8f0dc}
+  .brand{padding:0 8px 20px!important;background:transparent!important;color:#17324a!important;border-bottom:1px solid #ead9ad!important;font-size:18px!important;line-height:1.18!important}
+  .brand small{margin-top:6px!important;color:#8a5f09!important;font-size:10px!important;line-height:1.45!important;letter-spacing:.18em!important}
+  .sideLabel{padding:18px 8px 6px!important;color:#8a5f09!important;font-size:10px!important;font-weight:900!important;letter-spacing:.16em!important}
+  #directDeptLabel{color:#8a5f09!important}
+  .nav{display:grid!important;gap:5px!important;margin-top:18px!important}
+  .nav button{min-height:46px!important;padding:12px 13px!important;border:0!important;border-radius:12px!important;background:transparent!important;color:#17324a!important;font-size:13px!important;font-weight:800!important;line-height:1.35!important}
+  .nav button:hover{background:#fff3cf!important;color:#17324a!important}
+  .nav button.on{background:linear-gradient(90deg,#f5dd9a 0%,#e1b84c 100%)!important;color:#17324a!important;box-shadow:0 5px 15px rgba(184,133,22,.16)!important}
+  .nav button:focus-visible{outline:3px solid #d4aa42!important;outline-offset:2px!important}
+  html body .side .brand.funda-strong-text.funda-strong-text{color:#17324a!important}
+  html body .side .brand small.funda-strong-text.funda-strong-text,
+  html body .side .sideLabel.funda-strong-text.funda-strong-text{color:#8a5f09!important}
   .top{background:radial-gradient(circle at 12% 0%,rgba(212,175,88,.14),transparent 28%),linear-gradient(100deg,var(--funda-navy-950) 0%,var(--funda-navy-900) 48%,var(--funda-navy-800) 100%)!important;border-bottom:1px solid rgba(212,175,88,.22)!important;box-shadow:0 8px 26px rgba(3,16,31,.22)!important}
   .top input{background:rgba(255,255,255,.08)!important;border:1px solid rgba(234,215,157,.30)!important;color:#fff!important}
   .top input:focus{outline:none!important;border-color:var(--funda-gold)!important;box-shadow:0 0 0 3px rgba(212,175,88,.14)!important}
@@ -59,7 +65,7 @@
   .metric{border-top:3px solid var(--funda-gold)!important}
   .badge:not(.green):not(.amber):not(.red){background:var(--funda-gold-pale)!important;color:#735718!important}
   @media(max-width:820px){
-    .side{box-shadow:14px 0 34px rgba(3,16,31,.30)!important}
+    .side{width:min(88vw,320px)!important;padding:21px 17px 26px!important;box-shadow:18px 0 45px rgba(3,16,31,.26)!important}
     .top{background:linear-gradient(110deg,var(--funda-navy-950),var(--funda-navy-800))!important}
   }
   `;
