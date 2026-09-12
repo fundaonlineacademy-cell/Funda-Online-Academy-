@@ -134,6 +134,7 @@ body.sdV2[data-sd-view="communication"] #dashboardStats,
 body.sdV2[data-sd-view="communication"] #coursesAndQuickAccess,
 body.sdV2[data-sd-view="communication"] #applicationJourney,
 body.sdV2[data-sd-view="communication"] #recentActivity,
+body.sdV2[data-sd-view="communication"] #announcementsSection,
 body.sdV2[data-sd-view="communication"] #librarySection,
 body.sdV2[data-sd-view="communication"] #studentInfoAndAcademy,
 body.sdV2[data-sd-view="communication"] #compactWelcome,
@@ -245,7 +246,7 @@ const groups=[
   ['career','#studentCareerTabIntro','◆','Career & Workplace Support']
  ]},
  {label:'COMMUNICATION & SUPPORT',items:[
-  ['communication','#announcementsSection','◉','Communication'],
+  ['communication','#studentCommunicationHelpCentre','◉','Communication'],
   ['faq','#studentFaqSection','?','FAQs'],
   ['academic','#studentAcademicSupportSection','⌁','Academic Support'],
   ['support','#studentSupportSection','▣','Support System']
