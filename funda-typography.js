@@ -68,6 +68,7 @@
       .brand strong,
       nav,
       nav a,
+      nav a:not(.brand),
       nav button,
       .nav,
       .nav a,
