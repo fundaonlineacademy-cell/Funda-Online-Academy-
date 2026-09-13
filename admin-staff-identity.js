@@ -19,6 +19,10 @@
 
   let identity=null;
   let client=null;
+  let loadingIdentity=false;
+  let dashboardRefreshAt=0;
+  let dashboardGateTimer=null;
+  let lastDashboardNode=null;
 
   function installStyles(){
     if($('adminStaffIdentityStyles'))return;
@@ -99,11 +103,38 @@
         padding:8px 9px;border-radius:8px;background:#fff7df;
         color:#6f5315!important;font-weight:800!important;line-height:1.4;
       }
+      .content{position:relative}
+      .adminLiveGate{
+        display:none;align-items:center;gap:13px;
+        margin:0 0 18px;padding:18px 20px;border:1px solid #d8c47f;border-radius:15px;
+        background:#fffaf0;color:#17324a;
+        box-shadow:0 8px 24px rgba(20,40,70,.08);
+        font:800 12px/1.45 Inter,Arial,sans-serif;
+      }
+      .adminLiveGateSpinner{
+        width:20px;height:20px;flex:0 0 auto;border-radius:50%;
+        border:3px solid #eadba9;border-top-color:#17324a;
+        animation:adminLiveSpin .72s linear infinite;
+      }
+      .adminLiveGateError{
+        display:grid;place-items:center;flex:0 0 auto;
+        width:26px;height:26px;border-radius:50%;
+        background:#fff0cf;color:#8b5b00;font-weight:900;
+      }
+      .adminLiveRetry{
+        margin-left:auto;padding:8px 12px;border:0;border-radius:8px;
+        background:#17324a;color:#fff;font:800 10px Inter,Arial,sans-serif;
+        cursor:pointer;
+      }
+      html.adminAwaitingLiveData .adminLiveGate{display:flex}
+      html.adminAwaitingLiveData #view{visibility:hidden}
+      @keyframes adminLiveSpin{to{transform:rotate(360deg)}}
       @media(max-width:820px){
         html body .top{padding-right:8px!important}
         html body .top #who .safeTop{gap:6px!important}
         #safeChevron{width:29px!important;height:34px!important}
         .adminStaffIdentity{padding:18px 8px 16px}
+        .adminLiveGate{margin:0 0 14px;padding:15px 16px;font-size:11px}
       }
     `;
     document.head.appendChild(style);
@@ -114,14 +145,20 @@
   }
 
   function reportingLine(position,leaders,currentId){
-    if(isChiefExecutive(position))return 'Academy Governance';
+    if(isChiefExecutive(position))return {
+      label:'EXECUTIVE AUTHORITY',
+      value:'Independent · Founder, CEO & Academy Governor'
+    };
     const chief=(leaders||[]).find(person=>
       person.id!==currentId&&isChiefExecutive(person.job_title)
     );
-    if(!chief)return 'Chief Executive Officer';
+    if(!chief)return {label:'REPORTS TO',value:'Chief Executive Officer'};
     const chiefName=text(chief.full_name);
     const chiefPosition=text(chief.job_title)||'Chief Executive Officer';
-    return chiefName?`${chiefName} · ${chiefPosition}`:chiefPosition;
+    return {
+      label:'REPORTS TO',
+      value:chiefName?`${chiefName} · ${chiefPosition}`:chiefPosition
+    };
   }
 
   function renderSidebar(){
@@ -138,7 +175,7 @@
       card.setAttribute('aria-label','Signed-in staff member');
       side.insertBefore(card,nav);
     }
-    const renderKey=[identity.name,identity.position,identity.department,identity.reportsTo].join('|');
+    const renderKey=[identity.name,identity.position,identity.department,identity.reportLabel,identity.reportsTo].join('|');
     if(card.dataset.renderKey===renderKey)return;
     card.dataset.renderKey=renderKey;
     card.innerHTML=`
@@ -151,7 +188,7 @@
         </div>
       </div>
       <div class="adminStaffReports">
-        <span>REPORTS TO</span>
+        <span>${esc(identity.reportLabel)}</span>
         <strong>${esc(identity.reportsTo)}</strong>
       </div>`;
   }
@@ -192,13 +229,16 @@
     const menu=$('safeMenu');
     const signout=$('safeSignout');
     if(!menu||!signout)return;
+    const menuName=menu.querySelector('b');
+    if(menuName&&menuName.textContent!==identity.name)menuName.textContent=identity.name;
     let report=menu.querySelector('.adminStaffMenuReport');
     if(!report){
       report=document.createElement('span');
       report.className='adminStaffMenuReport';
       menu.insertBefore(report,signout);
     }
-    const reportText=`Reports to: ${identity.reportsTo}`;
+    const prefix=identity.reportLabel==='REPORTS TO'?'Reports to':'Executive authority';
+    const reportText=`${prefix}: ${identity.reportsTo}`;
     if(report.textContent!==reportText)report.textContent=reportText;
   }
 
@@ -206,6 +246,140 @@
     improveChevron();
     renderSidebar();
     enhanceAccountMenu();
+  }
+
+  function dashboardButton(){
+    return [...document.querySelectorAll('#nav button')].find(button=>
+      /my dashboard/i.test(text(button.textContent))
+    )||null;
+  }
+
+  function dashboardActive(){
+    const button=dashboardButton();
+    return Boolean(button&&(
+      button.classList.contains('active')||
+      button.classList.contains('on')||
+      button.getAttribute('aria-current')==='page'
+    ));
+  }
+
+  function liveGate(){
+    let gate=$('adminLiveGate');
+    const view=$('view');
+    if(gate||!view?.parentElement)return gate;
+    gate=document.createElement('div');
+    gate.id='adminLiveGate';
+    gate.className='adminLiveGate';
+    gate.setAttribute('role','status');
+    gate.setAttribute('aria-live','polite');
+    gate.innerHTML='<span class="adminLiveGateSpinner" aria-hidden="true"></span><span>Refreshing live Academy data…</span>';
+    view.parentElement.insertBefore(gate,view);
+    return gate;
+  }
+
+  function stopLiveGate(){
+    document.documentElement.classList.remove('adminAwaitingLiveData');
+    if(dashboardGateTimer){
+      clearTimeout(dashboardGateTimer);
+      dashboardGateTimer=null;
+    }
+  }
+
+  function showLiveError(){
+    if(!dashboardActive()){
+      stopLiveGate();
+      return;
+    }
+    const gate=liveGate();
+    if(!gate)return;
+    dashboardGateTimer=null;
+    gate.innerHTML='<span class="adminLiveGateError" aria-hidden="true">!</span><span>Live Academy data could not refresh. Check your connection and try again.</span><button class="adminLiveRetry" id="adminLiveRetry" type="button">Retry</button>';
+    $('adminLiveRetry').onclick=()=>refreshDashboard(true);
+  }
+
+  function startLiveGate(){
+    if(!dashboardActive())return;
+    const gate=liveGate();
+    if(gate)gate.innerHTML='<span class="adminLiveGateSpinner" aria-hidden="true"></span><span>Refreshing live Academy data…</span>';
+    document.documentElement.classList.add('adminAwaitingLiveData');
+    if(dashboardGateTimer)clearTimeout(dashboardGateTimer);
+    dashboardGateTimer=setTimeout(showLiveError,8000);
+  }
+
+  function stampLiveDashboard(){
+    const dashboard=document.querySelector('#view .execSafe');
+    if(!dashboard)return false;
+    stopLiveGate();
+    if(dashboard===lastDashboardNode)return true;
+    lastDashboardNode=dashboard;
+    const badge=[...dashboard.querySelectorAll('.badge')].find(item=>
+      /live operations/i.test(text(item.textContent))
+    );
+    if(badge){
+      const timestamp=new Intl.DateTimeFormat(undefined,{
+        hour:'2-digit',minute:'2-digit',second:'2-digit'
+      }).format(new Date());
+      badge.textContent=`LIVE · Updated ${timestamp}`;
+      badge.setAttribute('aria-label',`Live Academy data updated at ${timestamp}`);
+    }
+    setTimeout(()=>window.FundaAdminNotifications?.refresh?.(),100);
+    return true;
+  }
+
+  function inspectDashboard(){
+    if(!dashboardActive()){
+      stopLiveGate();
+      return;
+    }
+    if(!stampLiveDashboard()&&!document.documentElement.classList.contains('adminAwaitingLiveData')){
+      startLiveGate();
+    }
+  }
+
+  function refreshDashboard(force=false){
+    if(document.hidden||!dashboardActive())return;
+    const now=Date.now();
+    if(!force&&now-dashboardRefreshAt<2500)return;
+    dashboardRefreshAt=now;
+    startLiveGate();
+    const button=dashboardButton();
+    if(button){
+      button.dispatchEvent(new MouseEvent('click',{
+        bubbles:true,cancelable:true,view:window
+      }));
+    }
+    setTimeout(inspectDashboard,150);
+    setTimeout(()=>window.FundaAdminNotifications?.refresh?.(),400);
+  }
+
+  function installLiveRefresh(){
+    liveGate();
+    let inspectionQueued=false;
+    const queueInspection=()=>{
+      if(inspectionQueued)return;
+      inspectionQueued=true;
+      requestAnimationFrame(()=>{
+        inspectionQueued=false;
+        inspectDashboard();
+      });
+    };
+    new MutationObserver(queueInspection).observe(document.body,{childList:true,subtree:true});
+    document.addEventListener('click',event=>{
+      const button=event.target.closest('#nav button');
+      if(!button)return;
+      if(/my dashboard/i.test(text(button.textContent)))startLiveGate();
+      else stopLiveGate();
+    },true);
+    const foreground=()=>{
+      if(!document.hidden)refreshDashboard();
+    };
+    window.addEventListener('pageshow',foreground);
+    window.addEventListener('focus',foreground);
+    document.addEventListener('visibilitychange',foreground);
+    setInterval(foreground,30000);
+    window.FundaAdminDashboard={refresh:()=>refreshDashboard(true)};
+    setTimeout(()=>refreshDashboard(true),120);
+    setTimeout(queueInspection,1100);
   }
 
   async function getClient(){
@@ -221,6 +395,8 @@
   }
 
   async function loadIdentity(){
+    if(loadingIdentity)return;
+    loadingIdentity=true;
     try{
       const db=await getClient();
       if(!db)return;
@@ -237,6 +413,8 @@
         db.from('staff_records').select('profile_id,job_title,department,employment_status').eq('profile_id',user.id).maybeSingle(),
         db.from('profiles').select('id,full_name,job_title,department,role').eq('role','admin')
       ]);
+      const identityFailure=[profileResult,staffResult,leadersResult].find(result=>result.error);
+      if(identityFailure)throw identityFailure.error;
       const profile=profileResult.data||{};
       const staff=staffResult.data||{};
       const metadata=user.user_metadata||{};
@@ -245,21 +423,26 @@
       const email=text(profile.email)||text(user.email);
       const fallbackName=email?email.split('@')[0].replace(/[._-]+/g,' '):'Staff Member';
       const name=text(profile.full_name)||text(metadata.full_name)||fallbackName;
+      const reporting=reportingLine(position,leadersResult.data||[],user.id);
       identity={
         name,
         position,
         department,
-        reportsTo:reportingLine(position,leadersResult.data||[],user.id)
+        reportLabel:reporting.label,
+        reportsTo:reporting.value
       };
       enhance();
     }catch(error){
       console.error('Admin staff identity could not load',error);
+    }finally{
+      loadingIdentity=false;
     }
   }
 
   function start(){
     installStyles();
     enhance();
+    installLiveRefresh();
     let queued=false;
     new MutationObserver(()=>{
       if(queued)return;
@@ -267,6 +450,14 @@
       requestAnimationFrame(()=>{queued=false;enhance()});
     }).observe(document.body,{childList:true,subtree:true});
     loadIdentity();
+    window.addEventListener('pageshow',loadIdentity);
+    window.addEventListener('focus',loadIdentity);
+    document.addEventListener('visibilitychange',()=>{
+      if(!document.hidden)loadIdentity();
+    });
+    setInterval(()=>{
+      if(!document.hidden)loadIdentity();
+    },30000);
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
