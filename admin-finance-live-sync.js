@@ -23,7 +23,8 @@ function patchExecutive(x){const tuition=n(x.approved_tuition),verified=n(x.veri
 }
 async function sync(){if(busy||(!dashboardVisible()&&!financeVisible()))return;busy=true;try{const x=await snapshot();if(!x)return;window.FundaFinanceSnapshot=x;window.FundaExecutiveSnapshot=x;if(dashboardVisible())patchExecutive(x);if(financeVisible())patchFinanceCopy(x)}catch(e){console.error('Executive live sync',e)}finally{busy=false}}
 function schedule(ms=250){clearTimeout(timer);timer=setTimeout(sync,ms)}
-document.addEventListener('click',e=>{const b=e.target.closest?.('#nav button,.nav button');if(!b)return;schedule(350);if(/finance/i.test(b.textContent||'')){setTimeout(sync,900);setTimeout(sync,1600)}if(/dashboard/i.test(b.textContent||'')){setTimeout(sync,800);setTimeout(sync,1500)}},true);
-window.addEventListener('focus',sync);document.addEventListener('visibilitychange',()=>{if(!document.hidden)sync()});
-setInterval(sync,30000);setTimeout(sync,1400);
+window.FundaAdminManualSync=sync;
+document.addEventListener('funda:admin-manual-refresh',()=>schedule(120));
+// Initial data is fresh when the Admin portal opens. Further refreshes are manual.
+setTimeout(sync,1400);
 })();
