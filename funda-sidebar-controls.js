@@ -33,6 +33,24 @@
   if(!config)return;
 
   document.documentElement.dataset.fundaSidebarPage=config.key;
+
+  // Desktop portal typography only. Mobile keeps its existing font rules unchanged.
+  if(['admin','student','ambassador'].includes(config.key)){
+    const hasManrope=[...document.querySelectorAll('link[rel="stylesheet"]')]
+      .some(link=>/fonts\.googleapis\.com\/css2.*family=Manrope/i.test(link.href));
+    if(!hasManrope){
+      const preconnect=document.createElement('link');
+      preconnect.rel='preconnect';
+      preconnect.href='https://fonts.googleapis.com';
+      document.head.appendChild(preconnect);
+
+      const font=document.createElement('link');
+      font.rel='stylesheet';
+      font.href='https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap';
+      document.head.appendChild(font);
+    }
+  }
+
   const storageKey=`funda:${config.key}:sidebar`;
   const desktop=()=>window.innerWidth>=config.minWidth;
   const readState=()=>{
@@ -45,10 +63,17 @@
   const style=document.createElement('style');
   style.id='fundaSidebarControlStyles';
   style.textContent=`
+    :root{--funda-desktop-heading-font:"Manrope","Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
     [data-funda-sidebar-control]{cursor:pointer}
     [data-funda-sidebar-control]:focus-visible{outline:3px solid #d4aa42!important;outline-offset:3px!important}
 
     @media (min-width:821px){
+      html[data-funda-sidebar-page="admin"] h1,
+      html[data-funda-sidebar-page="admin"] h2,
+      html[data-funda-sidebar-page="admin"] h3,
+      html[data-funda-sidebar-page="admin"] .nav button{
+        font-family:var(--funda-desktop-heading-font)!important;
+      }
       html[data-funda-sidebar-page="admin"] #menu{
         display:grid!important;place-items:center;width:42px;height:42px;padding:0!important;
       }
@@ -62,6 +87,14 @@
     }
 
     @media (min-width:1000px){
+      html[data-funda-sidebar-page="student"] h1,
+      html[data-funda-sidebar-page="student"] h2,
+      html[data-funda-sidebar-page="student"] h3,
+      html[data-funda-sidebar-page="student"] header nav a,
+      html[data-funda-sidebar-page="student"] .sdNav a,
+      html[data-funda-sidebar-page="student"] .sdNav button{
+        font-family:var(--funda-desktop-heading-font)!important;
+      }
       html[data-funda-sidebar-page="student"] #sdMenu{display:inline-grid!important}
       html[data-funda-sidebar-page="student"] .sdSide,
       html[data-funda-sidebar-page="student"] body.sdV2>header,
@@ -92,6 +125,12 @@
     }
 
     @media (min-width:901px){
+      html[data-funda-sidebar-page="ambassador"] h1,
+      html[data-funda-sidebar-page="ambassador"] h2,
+      html[data-funda-sidebar-page="ambassador"] h3,
+      html[data-funda-sidebar-page="ambassador"] .navbtn{
+        font-family:var(--funda-desktop-heading-font)!important;
+      }
       html[data-funda-sidebar-page="ambassador"] #sideToggle{display:grid!important;place-items:center}
       html[data-funda-sidebar-page="ambassador"] .side,
       html[data-funda-sidebar-page="ambassador"] .shell,
