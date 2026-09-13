@@ -6,6 +6,204 @@ window.SUPABASE_ANON_KEY =
 
 window.FUNDA_ADMIN_EMAIL = "";
 
+// Keep one Supabase auth client per browser page. Several Academy features load
+// together on the dashboards; sharing the client prevents competing token
+// refreshes from making a valid session briefly look signed out.
+(() => {
+  'use strict';
+  if (window.__fundaSharedAuthInstalled || !window.supabase?.createClient) return;
+  window.__fundaSharedAuthInstalled = true;
+
+  const originalCreateClient = window.supabase.createClient.bind(window.supabase);
+  let sharedClient = window.__fundaSharedSupabaseClient || null;
+  const restoreInFlight = new WeakMap();
+  const rawAuthMethods = new WeakMap();
+  const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const messageOf = error => String(error?.message || error?.name || error || '').toLowerCase();
+  const isMissingSession = error => {
+    const message = messageOf(error);
+    return !error ||
+      error?.name === 'AuthSessionMissingError' ||
+      message.includes('auth session missing') ||
+      message.includes('session_not_found') ||
+      message.includes('refresh token not found') ||
+      message.includes('invalid refresh token');
+  };
+
+  window.supabase.createClient = (url, key, options = {}) => {
+    if (url !== window.SUPABASE_URL || key !== window.SUPABASE_ANON_KEY) {
+      return originalCreateClient(url, key, options);
+    }
+    if (sharedClient) return sharedClient;
+    const authOptions = {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      ...(options.auth || {})
+    };
+    sharedClient = originalCreateClient(url, key, {...options, auth: authOptions});
+    const rawGetSession = sharedClient.auth.getSession.bind(sharedClient.auth);
+    const rawGetUser = sharedClient.auth.getUser.bind(sharedClient.auth);
+    rawAuthMethods.set(sharedClient, {getSession: rawGetSession, getUser: rawGetUser});
+
+    try {
+    let lastKnownSession = null;
+    sharedClient.auth.onAuthStateChange((event, session) => {
+      if (session?.user) lastKnownSession = session;
+      if (event === 'SIGNED_OUT') lastKnownSession = null;
+    });
+
+    // Existing pages use getSession/getUser directly. Give those calls a short,
+    // bounded recovery window so one refresh race or network interruption does
+    // not become a false logout.
+    sharedClient.auth.getSession = async (...args) => {
+      let lastResult = {data: {session: null}, error: null};
+      let cleanMissing = 0;
+      for (const delay of [0, 180, 450]) {
+        if (delay) await pause(delay);
+        try {
+          const result = await rawGetSession(...args);
+          lastResult = result;
+          if (result.data?.session?.user) {
+            lastKnownSession = result.data.session;
+            return result;
+          }
+          if (!result.error || isMissingSession(result.error)) cleanMissing += 1;
+          else cleanMissing = 0;
+          if (cleanMissing >= 2) {
+            lastKnownSession = null;
+            return result;
+          }
+        } catch (error) {
+          cleanMissing = 0;
+          lastResult = {data: {session: null}, error};
+        }
+      }
+      return lastKnownSession
+        ? {data: {session: lastKnownSession}, error: null}
+        : lastResult;
+    };
+
+    sharedClient.auth.getUser = async (...args) => {
+      let lastResult = {data: {user: null}, error: null};
+      let cleanMissing = 0;
+      for (const delay of [0, 180, 450]) {
+        if (delay) await pause(delay);
+        try {
+          const result = await rawGetUser(...args);
+          lastResult = result;
+          if (result.data?.user) return result;
+          if (!result.error || isMissingSession(result.error)) cleanMissing += 1;
+          else cleanMissing = 0;
+          if (cleanMissing >= 2) {
+            lastKnownSession = null;
+            return result;
+          }
+        } catch (error) {
+          cleanMissing = 0;
+          lastResult = {data: {user: null}, error};
+        }
+      }
+      if (!lastKnownSession) {
+        try {
+          const sessionResult = await rawGetSession();
+          if (sessionResult.data?.session?.user) lastKnownSession = sessionResult.data.session;
+        } catch (_) {}
+      }
+      return lastKnownSession?.user
+        ? {data: {user: lastKnownSession.user}, error: null}
+        : lastResult;
+    };
+    } catch (error) {
+      console.warn('The shared session recovery layer could not be installed; standard authentication remains available.', error);
+    }
+
+    window.__fundaSharedSupabaseClient = sharedClient;
+    window.__fundaSessionClient = sharedClient;
+    return sharedClient;
+  };
+
+  async function restore(client, options = {}) {
+    if (!client?.auth) {
+      return {session: null, user: null, error: new Error('Authentication service unavailable'), confirmedSignedOut: false};
+    }
+    if (restoreInFlight.has(client)) return restoreInFlight.get(client);
+
+    const operation = (async () => {
+      const waits = Array.isArray(options.waits) ? options.waits : [0, 250, 700, 1400];
+      let cleanMissingChecks = 0;
+      let lastTransientError = null;
+      const raw = rawAuthMethods.get(client);
+      const getSession = raw?.getSession || client.auth.getSession.bind(client.auth);
+      const getUser = raw?.getUser || client.auth.getUser.bind(client.auth);
+
+      for (const delay of waits) {
+        if (delay) await pause(delay);
+        let cleanMissing = true;
+        let session = null;
+
+        try {
+          const sessionResult = await getSession();
+          session = sessionResult.data?.session || null;
+          if (session?.user) {
+            return {session, user: session.user, error: null, confirmedSignedOut: false};
+          }
+          if (sessionResult.error && !isMissingSession(sessionResult.error)) {
+            cleanMissing = false;
+            lastTransientError = sessionResult.error;
+          }
+        } catch (error) {
+          if (!isMissingSession(error)) {
+            cleanMissing = false;
+            lastTransientError = error;
+          }
+        }
+
+        try {
+          const userResult = await getUser();
+          if (userResult.data?.user) {
+            return {session, user: userResult.data.user, error: null, confirmedSignedOut: false};
+          }
+          if (userResult.error && !isMissingSession(userResult.error)) {
+            cleanMissing = false;
+            lastTransientError = userResult.error;
+          }
+        } catch (error) {
+          if (!isMissingSession(error)) {
+            cleanMissing = false;
+            lastTransientError = error;
+          }
+        }
+
+        cleanMissingChecks = cleanMissing ? cleanMissingChecks + 1 : 0;
+        if (cleanMissingChecks >= 2) {
+          return {session: null, user: null, error: null, confirmedSignedOut: true};
+        }
+      }
+
+      return {
+        session: null,
+        user: null,
+        error: lastTransientError || new Error('The secure session could not be verified.'),
+        confirmedSignedOut: false
+      };
+    })();
+
+    restoreInFlight.set(client, operation);
+    try {
+      return await operation;
+    } finally {
+      restoreInFlight.delete(client);
+    }
+  }
+
+  window.FundaAuth = Object.freeze({restore, isMissingSession});
+})();
+
+const sessionManager = document.createElement('script');
+sessionManager.src = 'funda-session-manager.js?v=20260913-session-v1';
+document.head.appendChild(sessionManager);
+
 // Profile-photo experiment retired. Set this before any legacy cached copy of
 // profile-photo-upload.js can run so the original Admin/Student header remains.
 window.__fundaProfilePhotoUpload = true;

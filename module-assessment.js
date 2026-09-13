@@ -57,11 +57,15 @@
       return;
     }
 
-    const {data:{user},error:userError}=await db.auth.getUser();
-    if(userError||!user){
-      fail('Your session has expired. Sign in again from the student dashboard.');
+    const restored=window.FundaAuth?.restore
+      ?await window.FundaAuth.restore(db)
+      :await db.auth.getUser().then(result=>({user:result.data?.user||null,error:result.error||null,confirmedSignedOut:!result.error&&!result.data?.user}));
+    if(!restored.user){
+      if(restored.confirmedSignedOut)fail('Your session has ended. Sign in again from the student dashboard.');
+      else fail('The secure connection could not be confirmed. You have not been signed out and your answers on this page remain here. Check your connection and try again.');
       return;
     }
+    const user=restored.user;
 
     const {data,error}=await db.rpc('get_module_assessment_state',{
       p_course_id:courseId,

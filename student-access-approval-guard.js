@@ -16,7 +16,15 @@
  }
  async function check(){
   const db=await client();if(!db)return;
-  const {data:{session}}=await db.auth.getSession();if(!session){if(protectedPages.has(path))location.replace('login.html');return;}
+  const restored=window.FundaAuth?.restore
+   ?await window.FundaAuth.restore(db)
+   :await db.auth.getSession().then(result=>({session:result.data?.session||null,user:result.data?.session?.user||null,error:result.error||null,confirmedSignedOut:!result.error&&!result.data?.session}));
+  if(!restored.user){
+   if(restored.confirmedSignedOut&&protectedPages.has(path))location.replace('login.html?reason=expired&next='+encodeURIComponent(path)+'&portal=student');
+   else if(restored.error)console.warn('Student access check paused until the connection returns',restored.error);
+   return;
+  }
+  const session=restored.session||{user:restored.user};
   const {data,error}=await db.from('enrollments').select('id,status,enrollment_status,course_id').eq('student_id',session.user.id);
   if(error){if(protectedPages.has(path))deny();return;}
   const hasApproved=(data||[]).some(approved);

@@ -78,6 +78,12 @@ async function downloadResource(resource,btn){
 }
 
 async function restoreAuthUser(){
+ if(window.FundaAuth?.restore){
+  const restored=await window.FundaAuth.restore(db);
+  if(restored.user)return restored.user;
+  if(!restored.confirmedSignedOut)throw new Error('The secure connection could not be confirmed. You have not been signed out. Check your connection and try again.');
+  return null;
+ }
  let lastError=null;
  for(const wait of [0,250,650,1200]){
   if(wait)await new Promise(r=>setTimeout(r,wait));
@@ -101,7 +107,7 @@ async function init(){
  db=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
  if(!db)return fail('The Ambassador Portal is temporarily unavailable.');
  user=await restoreAuthUser();
- if(!user)return location.replace('ambassador-login.html');
+ if(!user)return location.replace('ambassador-login.html?reason=expired&next=ambassador-portal-v2.html&portal=ambassador');
  let a=await db.from('ambassador_programme_applications').select('*').eq('email',user.email.toLowerCase()).maybeSingle();
  if(a.error||!a.data)return fail('No Ambassador application is connected to this account.');
  app=a.data;
@@ -331,6 +337,10 @@ async function replySupport(e,id){
  e.preventDefault();let text=$('#ambSupportReply').value.trim();if(!text)return;let q=await db.from('ambassador_support_messages').insert({ticket_id:id,author_id:user.id,author_role:'ambassador',message:text});if(q.error)return alert(q.error.message);let sm=await db.from('ambassador_support_messages').select('*').order('created_at',{ascending:true});supportMessages=sm.data||[];openSupportTicket(id);
 }
 
-$('#logout').onclick=async()=>{if(db)await db.auth.signOut();location.href='ambassador-login.html'};
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+$('#logout').onclick=async()=>{if(db)await db.auth.signOut({scope:'local'});location.href='ambassador-login.html'};
+const startPortal=()=>init().catch(error=>{
+ console.warn('Ambassador Portal session check failed',error);
+ fail(error?.message||'The Ambassador Portal could not confirm the connection. Please try again.');
+});
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startPortal);else startPortal();
 })();

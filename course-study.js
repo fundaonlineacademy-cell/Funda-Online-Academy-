@@ -65,7 +65,15 @@ async function init(){
  try{
   const courseId=new URLSearchParams(location.search).get('id')||new URLSearchParams(location.search).get('course');
   if(!courseId){show('No course was selected.');return}
-  const {data:{user},error:ae}=await db.auth.getUser();if(ae||!user){location.replace('login.html?next='+encodeURIComponent(location.pathname+location.search));return}state.user=user;
+  const restored=window.FundaAuth?.restore
+    ?await window.FundaAuth.restore(db)
+    :await db.auth.getUser().then(result=>({user:result.data?.user||null,error:result.error||null,confirmedSignedOut:!result.error&&!result.data?.user}));
+  if(!restored.user){
+    if(restored.confirmedSignedOut)location.replace('login.html?reason=expired&next='+encodeURIComponent(location.pathname+location.search)+'&portal=student');
+    else show('The secure connection could not be confirmed. You have not been signed out. Check your connection and refresh this page.');
+    return;
+  }
+  const user=restored.user;state.user=user;
   const timeout=new Promise((_,rej)=>setTimeout(()=>rej(new Error('Course loading timed out. Please retry.')),15000));
   const request=db.rpc('get_learning_workspace_course',{p_course_id:courseId});
   const {data,error}=await Promise.race([request,timeout]);if(error)throw error;if(!data?.ok)throw new Error(data?.message||'Unable to open this course.');
@@ -78,5 +86,5 @@ async function init(){
   renderAll();
  }catch(e){console.error(e);$('course-content').innerHTML='<div class="message">Unable to load course content: '+esc(e.message||'Please try again.')+'</div>'}
 }
-$('logout')?.addEventListener('click',async()=>{await db.auth.signOut();location.href='login.html'});
+$('logout')?.addEventListener('click',async()=>{await db.auth.signOut({scope:'local'});location.href='login.html'});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
