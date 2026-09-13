@@ -47,7 +47,7 @@ body.sdV2{background:linear-gradient(180deg,#fffdf8 0%,#f7f8fa 46%,#fffaf0 100%)
 .sdOrientationSplit{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(280px,.78fr);gap:18px;margin-top:18px}.sdOrientationSplit>.sdOrientationSection{margin-top:0}.sdOrientationBenefits{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:18px}.sdOrientationBenefit{display:flex;gap:11px;padding:14px;border:1px solid #dbe3ea;border-radius:15px;background:#fbfdff}.sdOrientationBenefitIcon{width:34px;height:34px;display:grid;place-items:center;flex:0 0 auto;border-radius:10px;background:#fff3ce;color:#7d5500;font-size:16px;font-weight:900}.sdOrientationBenefit strong{display:block;color:#17324a;font-size:14px}.sdOrientationBenefit span{display:block;margin-top:4px;color:#293847;font-size:12px;line-height:1.5;font-weight:600}
 .sdOrientationChecklist{background:linear-gradient(145deg,#fffaf0,#fff);border-color:#e5ca84}.sdOrientationChecklist ul{margin:17px 0 0;padding:0;list-style:none}.sdOrientationChecklist li{position:relative;margin-top:11px;padding-left:25px;color:#1f3040;font-size:13px;line-height:1.55;font-weight:700}.sdOrientationChecklist li:before{content:"✓";position:absolute;left:0;top:0;color:#8a5f09;font-weight:900}
 .sdOrientationGroups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:20px}.sdOrientationGroup{padding:18px;border:1px solid #dbe3ea;border-radius:17px;background:#fbfdff}.sdOrientationGroup h3{margin:0;color:#8a5f09!important;font:900 13px/1.3 Montserrat,sans-serif;letter-spacing:.08em}.sdOrientationGroup ul{margin:13px 0 0;padding:0;list-style:none}.sdOrientationGroup li+li{margin-top:10px;padding-top:10px;border-top:1px solid #e4eaf0}.sdOrientationGroup strong{display:block;color:#17324a;font-size:13px}.sdOrientationGroup span{display:block;margin-top:3px;color:#293847;font-size:12px;line-height:1.5;font-weight:600}.sdOrientationGroupWide{grid-column:1/-1}
-.sdOrientationAction{display:flex;align-items:center;justify-content:space-between;gap:22px;margin-top:18px;padding:23px 25px;border-radius:22px;background:#071d49;border:1px solid rgba(201,154,46,.58);color:#fff}.sdOrientationAction h2{margin:0;color:#fff!important;font:900 21px/1.3 Montserrat,sans-serif}.sdOrientationAction p{max-width:680px;margin:7px 0 0;color:#edf4ff;font-size:14px;line-height:1.6}.sdOrientationButtons{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:9px}.sdOrientationButtons button{min-height:44px;padding:11px 14px;border-radius:11px;border:1px solid #e4c777;background:#e4c777;color:#17324a;font:900 12px Inter,sans-serif;cursor:pointer}.sdOrientationButtons button:nth-child(2){background:#fff;color:#17324a;border-color:#fff}.sdOrientationButtons button:nth-child(3){background:transparent;color:#fff;border-color:rgba(255,255,255,.65)}
+.sdOrientationAction{display:flex;align-items:center;justify-content:space-between;gap:22px;margin-top:18px;padding:23px 25px;border-radius:22px;background:#071d49;border:1px solid rgba(201,154,46,.58);color:#fff}.sdOrientationAction h2{margin:0;color:#fff!important;font:900 21px/1.3 Montserrat,sans-serif}.sdOrientationAction p{max-width:680px;margin:7px 0 0;color:#edf4ff;font-size:14px;line-height:1.6}.sdOrientationButtons{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:9px}.sdOrientationButtons button{min-height:44px;padding:11px 14px;border-radius:11px;border:1px solid #e4c777;background:#e4c777;color:#17324a;font:900 12px Inter,sans-serif;cursor:pointer}.sdOrientationButtons button:nth-child(2){background:#fff;color:#17324a;border-color:#fff}.sdOrientationButtons button:nth-child(4){background:transparent;color:#fff;border-color:rgba(255,255,255,.65)}
 body.sdV2:not([data-sd-view="orientation"]) #studentOrientation{display:none!important}
 body.sdV2[data-sd-view="orientation"] #compactWelcome,
 body.sdV2[data-sd-view="orientation"] #studentHero,
@@ -242,6 +242,9 @@ const groups=[
  ['certificates','student-certificates.html','♕','My Certificates'],
  ['calendar','student-calendar.html','◷','My Calendar']
  ]},
+ {label:'PAYMENTS',items:[
+  ['payments','#studentPaymentsSection','R','Payments & Balance']
+ ]},
  {label:'CAREER & WORKPLACE',items:[
   ['career','#studentCareerTabIntro','◆','Career & Workplace Support']
  ]},
@@ -347,6 +350,7 @@ function dashboardView(view){
  const cms=document.getElementById('compactMemberSince');if(cms)cms.textContent=memberSince();
  const cs=document.getElementById('compactStatus');if(cs)cs.textContent=statusText();
  document.querySelectorAll('#sdSide [data-sd-key]').forEach(x=>x.classList.toggle('active',x.dataset.sdKey===view));
+ if(view==='payments')window.FundaStudentPayments?.show?.();
  close();window.scrollTo({top:0,behavior:'smooth'});
 }
 function tightenDashboardSummary(){
@@ -399,7 +403,7 @@ function install(){
  document.getElementById('sdLogout')?.addEventListener('click',()=>document.getElementById('logoutButton')?.click());
  document.querySelectorAll('#sdSide a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
   e.preventDefault();const key=a.dataset.sdKey;
-  if(['dashboard','orientation','courses','career','communication','faq','academic','support'].includes(key))return dashboardView(key);
+  if(['dashboard','orientation','courses','payments','career','communication','faq','academic','support'].includes(key))return dashboardView(key);
   close();const target=document.querySelector(a.getAttribute('href'));
   if(target){target.classList.add('sdSectionMark');target.scrollIntoView({behavior:'smooth',block:'start'})}
   document.querySelectorAll('#sdSide a').forEach(x=>x.classList.remove('active'));a.classList.add('active');

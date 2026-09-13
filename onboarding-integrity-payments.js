@@ -124,7 +124,7 @@
         <div id="paymentSchedule" class="mt-3 text-sm text-gray-600 leading-6"></div>
       </div>
       <div class="grid md:grid-cols-2 gap-5">
-        <div><label for="amountPaidNow" class="block text-sm font-bold text-gray-700 mb-2">Amount Paid Now *</label><input id="amountPaidNow" type="number" min="0" step="0.01" required class="w-full rounded-xl border border-gray-200 px-4 py-3" placeholder="0.00"></div>
+        <div><label for="amountPaidNow" class="block text-sm font-bold text-gray-700 mb-2">Amount Paid Now *</label><input id="amountPaidNow" type="number" min="0" step="0.01" required readonly aria-readonly="true" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-black text-[#03133d]" placeholder="0.00"></div>
         <div><label class="block text-sm font-bold text-gray-700 mb-2">Minimum Due Now</label><div id="minimumDueNow" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-black text-[#03133d]">—</div></div>
       </div>`;
     method.closest('.grid').insertBefore(block,method.parentElement);
@@ -142,12 +142,14 @@
     const status=document.getElementById('bankDetailsStatus'),rows=document.getElementById('bankDetailsRows');
     if(!status||!rows)return;
     try{
-      const {data,error}=await supabaseClient.from('academy_payment_settings').select('bank_name,account_name,account_number,branch_code,account_type,payment_reference_instruction,is_active').eq('is_active',true).maybeSingle();
+      const {data,error}=await supabaseClient.from('academy_payment_settings').select('id,bank_name,account_name,account_number,branch_code,account_type,payment_reference_instruction,is_active').eq('is_active',true).order('id');
       if(error)throw error;
-      if(!data||!data.bank_name||!data.account_number){status.textContent='Official banking details have not yet been published. Do not make a payment until the Academy banking details are shown here.';status.className='text-sm text-red-700 font-semibold leading-6 mt-2';return;}
-      status.textContent='Use the banking details below for EFT / bank transfer or bank deposit:';
-      const items=[['Bank',data.bank_name],['Account name',data.account_name],['Account number',data.account_number],['Branch code',data.branch_code],['Account type',data.account_type],['Reference',data.payment_reference_instruction||'Use your South African ID number']].filter(x=>x[1]);
-      rows.innerHTML=items.map(([k,v])=>`<div class="rounded-xl bg-white border border-blue-100 p-3"><span class="text-xs text-gray-500">${k}</span><div class="font-black text-[#03133d] mt-1">${String(v).replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]))}</div></div>`).join('');
+      const banks=(data||[]).filter(bank=>bank.bank_name&&bank.account_number);
+      if(!banks.length){status.textContent='Official banking details have not yet been published. Do not make a payment until the Academy banking details are shown here.';status.className='text-sm text-red-700 font-semibold leading-6 mt-2';return;}
+      status.textContent=banks.length>1?'Choose either official Academy account below for EFT / bank transfer or bank deposit:':'Use the official Academy account below for EFT / bank transfer or bank deposit:';
+      const safe=value=>String(value??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));
+      rows.className='mt-4 grid gap-4 text-sm';
+      rows.innerHTML=banks.map(bank=>`<section class="rounded-2xl bg-white border border-blue-100 p-4"><div class="font-black text-[#03133d] text-base">${safe(bank.bank_name)}</div><div class="mt-3 grid sm:grid-cols-2 gap-3">${[['Account name',bank.account_name||'Funda Online Academy'],['Account number',bank.account_number],['Branch code',bank.branch_code],['Account type',bank.account_type]].filter(item=>item[1]).map(([key,value])=>`<div><span class="text-xs text-gray-500">${key}</span><div class="font-black text-[#03133d] mt-1">${safe(value)}</div></div>`).join('')}</div></section>`).join('')+`<section class="rounded-2xl border border-amber-200 bg-amber-50 p-4"><span class="text-xs uppercase tracking-widest font-black text-amber-700">Payment reference</span><div class="font-black text-[#03133d] mt-1">${safe(banks[0].payment_reference_instruction||'Use your South African ID number')}</div></section>`;
       rows.classList.remove('hidden');
     }catch(e){status.textContent='Banking details could not be loaded. Do not make payment until the official details are displayed.';status.className='text-sm text-red-700 font-semibold leading-6 mt-2';}
   }
@@ -160,7 +162,7 @@
     }catch(e){return base}
   }
 
-  function updatePaymentPlanUI(forceAmount=false){
+  function updatePaymentPlanUI(){
     const select=document.getElementById('paymentPlanChoice');
     if(!select||!selectedCourse)return;
     const fee=effectiveFee();
@@ -169,17 +171,17 @@
     select.innerHTML='<option value="">Select payment option</option><option value="full">Pay full course fee — '+money(plan.fee)+'</option>';
     if(plan.installments>1)select.innerHTML+=`<option value="installments">Pay in ${plan.installments} instalments — first payment ${money(parts[0])}</option>`;
     select.value=plan.installments>1?'installments':'full';
-    updateScheduleDisplay(forceAmount);
+    updateScheduleDisplay();
   }
 
-  function updateScheduleDisplay(forceAmount=false){
+  function updateScheduleDisplay(){
     const select=document.getElementById('paymentPlanChoice'),schedule=document.getElementById('paymentSchedule'),minimum=document.getElementById('minimumDueNow'),amount=document.getElementById('amountPaidNow');
     if(!select||!selectedCourse)return;
     const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration),parts=paymentParts(plan.fee,plan.installments);
     const full=select.value==='full'||plan.installments===1;
     const due=full?plan.fee:parts[0];
     minimum.textContent=money(due);
-    if(amount&&(forceAmount||!amount.value))amount.value=due.toFixed(2);
+    if(amount){amount.readOnly=true;amount.setAttribute('aria-readonly','true');amount.value=due.toFixed(2);}
     schedule.innerHTML=full?`Full payment of <strong>${money(plan.fee)}</strong> is due now.`:`Your course qualifies for <strong>${plan.installments} instalments</strong>: ${parts.map((p,i)=>`Payment ${i+1}: ${money(p)}`).join(' · ')}. The first instalment is required with this application.`;
   }
 
@@ -198,8 +200,7 @@
     const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration),parts=paymentParts(plan.fee,plan.installments),required=choice==='full'?plan.fee:parts[0];
     const paid=Number(document.getElementById('amountPaidNow')?.value||0);
     if(!Number.isFinite(paid)||paid<=0)return 'Please enter the amount you paid.';
-    if(paid+0.009<required)return `The minimum amount due now is ${money(required)}.`;
-    if(paid>plan.fee+0.009)return 'The amount paid cannot be more than the course fee.';
+    if(Math.round(paid*100)!==Math.round(required*100))return choice==='full'?`Full payment must be exactly ${money(required)}.`:`The required first instalment is exactly ${money(required)}. Choose full payment if you want to settle the entire course fee now.`;
     const ref=document.getElementById('paymentReference')?.value.trim();
     if(!ref)return 'Payment reference is required so Finance can match your payment.';
     return null;
@@ -224,8 +225,6 @@
       const amountPaid=Number(document.getElementById('amountPaidNow').value);
       const planChoice=document.getElementById('paymentPlanChoice').value;
       const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration);
-      const parts=paymentParts(plan.fee,plan.installments);
-      const note=`Payment reference: ${paymentReference}; Payment option: ${planChoice==='full'?'Full payment':plan.installments+' instalments'}; Amount paid now: ${money(amountPaid)}; Course fee: ${money(plan.fee)}; Schedule: ${parts.map((p,i)=>`#${i+1} ${money(p)}`).join(', ')}`;
       const {error:enrollmentError}=await supabaseClient.from('enrollments').update({
         amount:plan.fee,
         ...(window.FundaLegacy?.getEnrollmentFields?.(legacyClaim)||{}),
@@ -233,10 +232,14 @@
         approval_department:'Admissions & Finance',review_notes:null,rejection_reason:null
       }).eq('id',enrollment.id);
       if(enrollmentError)throw new Error('Unable to submit your enrollment application: '+enrollmentError.message);
-      const {error:paymentError}=await supabaseClient.from('payments').insert({
-        student_id:currentStudent.id,enrolment_id:enrollment.id,amount:amountPaid,
-        ...(window.FundaLegacy?.getPaymentFields?.(legacyClaim)||{}),
-        payment_method:paymentMethod,status:'submitted',proof_url:proofPath,submitted_at:submittedAt,notes:note
+      const {error:paymentError}=await supabaseClient.rpc('submit_student_payment',{
+        p_enrolment_id:enrollment.id,
+        p_amount:amountPaid,
+        p_payment_method:paymentMethod,
+        p_payment_reference:paymentReference,
+        p_proof_path:proofPath,
+        p_payment_option:planChoice==='full'?'full_balance':'next_instalment',
+        p_submission_source:'registration'
       });
       if(paymentError)throw new Error('Your application was saved, but the payment record could not be created: '+paymentError.message);
       showMessage(`Your enrollment for ${selectedCourse.title} has been submitted successfully. Your payment of ${money(amountPaid)} is awaiting verification by Admissions & Finance.`,true);
@@ -246,7 +249,7 @@
   }
 
   window.FundaPaymentIntegrity={
-    refresh:()=>updatePaymentPlanUI(true),
+    refresh:updatePaymentPlanUI,
     effectiveFee
   };
 

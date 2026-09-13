@@ -823,12 +823,8 @@
                     EFT / Bank Transfer
                   </option>
 
-                  <option value="Cash Deposit">
-                    Cash Deposit
-                  </option>
-
-                  <option value="Other">
-                    Other
+                  <option value="Bank Deposit">
+                    Bank Deposit
                   </option>
 
                 </select>
@@ -844,14 +840,17 @@
                   for="paymentReference"
                   class="block text-sm font-bold text-gray-700 mb-2"
                 >
-                  Payment Reference
+                  Payment Reference *
                 </label>
 
                 <input
                   id="paymentReference"
                   type="text"
+                  required
+                  minlength="2"
+                  maxlength="80"
                   class="w-full rounded-xl border border-gray-200 px-4 py-3"
-                  placeholder="Optional payment reference"
+                  placeholder="Use your South African ID number"
                 >
 
               </div>
@@ -2363,6 +2362,16 @@
 
       }
 
+      if (
+        document.getElementById(
+          "paymentReference"
+        ).value.trim().length < 2
+      ) {
+
+        return "Please enter the payment reference used at the bank.";
+
+      }
+
 
       if (
         !document.getElementById(
@@ -2840,50 +2849,25 @@
         const {
           error: paymentError
         } =
-          await supabaseClient
-            .from("payments")
-            .insert({
-
-              student_id:
-                currentStudent.id,
-
-              enrolment_id:
+          await supabaseClient.rpc(
+            "submit_student_payment",
+            {
+              p_enrolment_id:
                 enrollment.id,
-
-              amount:
+              p_amount:
                 effectiveCoursePrice(),
-
-              ...(
-                window.FundaLegacy?.getPaymentFields?.(
-                  legacyClaim
-                ) || {}
-              ),
-
-              payment_method:
+              p_payment_method:
                 paymentMethod,
-
-              status:
-                "submitted",
-
-              student_category:
-                ["staff","admin"].includes(String(currentProfile?.role||"").toLowerCase())
-                  ? "staff"
-                  : String(currentProfile?.role||"").toLowerCase()==="ambassador"
-                    ? "ambassador"
-                    : "student",
-
-              proof_url:
+              p_payment_reference:
+                paymentReference,
+              p_proof_path:
                 proofPath,
-
-              submitted_at:
-                submittedAt,
-
-              notes:
-                paymentReference
-                  ? `Payment reference: ${paymentReference}`
-                  : null
-
-            });
+              p_payment_option:
+                "full_balance",
+              p_submission_source:
+                "registration"
+            }
+          );
 
 
         if (paymentError) {
