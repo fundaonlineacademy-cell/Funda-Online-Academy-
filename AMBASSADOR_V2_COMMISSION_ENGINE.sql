@@ -36,5 +36,5 @@ begin
  if v_added then begin perform public.refresh_ambassador_v2_rewards(v_app,date_trunc('month',current_date)::date);exception when undefined_function then null;end;end if;
  return v_added;
 end $$;
-revoke all on function public.credit_ambassador_v2_verified_payment(uuid) from public;grant execute on function public.credit_ambassador_v2_verified_payment(uuid) to authenticated;
+revoke all on function public.credit_ambassador_v2_verified_payment(uuid) from public, anon, authenticated;grant execute on function public.credit_ambassador_v2_verified_payment(uuid) to service_role;
 comment on function public.credit_ambassador_v2_verified_payment(uuid) is 'Credits one 15% Ambassador V2 commission for an attributed verified payment and refreshes rank rewards.';

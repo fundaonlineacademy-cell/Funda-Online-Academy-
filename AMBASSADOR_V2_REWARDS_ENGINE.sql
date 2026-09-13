@@ -21,9 +21,9 @@ declare
  target numeric:=0; monthly_pay numeric:=0; bonus_delta numeric:=0; month_start date:=date_trunc('month',p_month)::date;
 begin
  select coalesce(sum(qualifying_revenue),0) into life from public.ambassador_earnings_ledger
- where application_id=p_application_id and earning_type='commission' and earning_status in ('approved','paid','pending','held');
+ where application_id=p_application_id and earning_type='commission' and earning_status in ('approved','paid');
  select coalesce(sum(qualifying_revenue),0) into mon from public.ambassador_earnings_ledger
- where application_id=p_application_id and earning_type='commission' and earning_status in ('approved','paid','pending','held') and earning_month=month_start;
+ where application_id=p_application_id and earning_type='commission' and earning_status in ('approved','paid') and earning_month=month_start;
 
  if life>=1000000 then rank_name:='Elite'; bonus_value:=45000; target:=0; monthly_pay:=25000;
  elsif life>=500000 then rank_name:='Executive'; bonus_value:=20000; target:=0; monthly_pay:=18000;
@@ -49,6 +49,6 @@ begin
 end $$;
 
 revoke all on function public.refresh_ambassador_v2_rewards(uuid,date) from public;
-grant execute on function public.refresh_ambassador_v2_rewards(uuid,date) to authenticated;
+grant execute on function public.refresh_ambassador_v2_rewards(uuid,date) to service_role;
 
 comment on function public.refresh_ambassador_v2_rewards(uuid,date) is 'Calculates lifetime rank, incremental achievement bonus, and qualifying monthly performance payment for Ambassador V2.';

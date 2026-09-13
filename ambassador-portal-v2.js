@@ -3,7 +3,7 @@
 const $=s=>document.querySelector(s), money=n=>'R'+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:2}), low=v=>String(v||'').toLowerCase(), esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
 const ranks=[{n:'Ambassador',min:0,max:10000,pay:0},{n:'Bronze',min:10000,max:25000,pay:0},{n:'Silver',min:25000,max:50000,pay:0},{n:'Gold',min:50000,max:100000,pay:5000},{n:'Platinum',min:100000,max:250000,pay:8000},{n:'Diamond',min:250000,max:500000,pay:12000},{n:'Executive',min:500000,max:1000000,pay:18000},{n:'Elite',min:1000000,max:Infinity,pay:25000}];
 const navGroups=[
- {label:'MAIN',items:[['dashboard','⌂','My Dashboard'],['referrals','◎','My Referrals'],['earnings','R','My Earnings'],['rank','◒','Rank Progress'],['compensation','▣','Compensation Plan']]},
+ {label:'MAIN',items:[['dashboard','⌂','My Dashboard'],['guide','◈','Programme Guide'],['referrals','◎','My Referrals'],['earnings','R','My Earnings'],['rank','◒','Rank Progress'],['compensation','▣','Compensation Plan']]},
  {label:'FINANCE',items:[['earnings','◫','Earnings Breakdown'],['payments','▤','Payment History'],['banking','▧','My Banking']]},
  {label:'RESOURCES',items:[['marketing','◆','Marketing Resources'],['announcements','◉','Announcements'],['support','?','Help & Support'],['programme','▥','Programme Rules']]},
  {label:'ACCOUNT',items:[['referral-link','↗','My Referral Link'],['profile','♙','My Profile'],['banking','⌁','Bank Details'],['announcements','●','Notifications']]}
@@ -50,6 +50,8 @@ function installNav(){
 }
 function fail(msg){$('#loading')?.classList.add('hide');$('#notFound')?.classList.remove('hide');if(msg){const el=$('#notFound .accessLead')||$('#notFound .muted');if(el)el.textContent=msg}}
 function sum(type,statuses){return ledger.filter(x=>(!type||x.earning_type===type)&&(!statuses||statuses.includes(x.earning_status))).reduce((s,x)=>s+Number(x.commission_amount||0),0)}
+function confirmedLedger(){return ledger.filter(x=>['approved','paid'].includes(low(x.earning_status)))}
+function awaitingReferralCount(){return referrals.filter(x=>!['confirmed','disqualified'].includes(low(x.earning_status))).length}
 function referralLink(){if(!app?.referral_code)return '';return location.origin+'/courses-public.html?ref='+encodeURIComponent(app.referral_code)+'#courses'}
 async function copy(text,btn){if(!text)return;try{await navigator.clipboard.writeText(text);let old=btn.textContent;btn.textContent='Copied ✓';setTimeout(()=>btn.textContent=old,1200)}catch{alert(text)}}
 async function downloadResource(resource,btn){
@@ -108,7 +110,10 @@ async function init(){
  if(!db)return fail('The Ambassador Portal is temporarily unavailable.');
  user=await restoreAuthUser();
  if(!user)return location.replace('ambassador-login.html?reason=expired&next=ambassador-portal-v2.html&portal=ambassador');
- let a=await db.from('ambassador_programme_applications').select('*').eq('email',user.email.toLowerCase()).maybeSingle();
+ const binding=await db.rpc('bind_own_ambassador_account');
+ if(binding.error)return fail('Your Ambassador account could not be securely linked. Please refresh or contact Ambassador Support.');
+ const appColumns='id,auth_user_id,full_name,email,phone,province,country,best_platform,status,agreement_status,agreement_accepted_at,account_status,referral_code,introductory_started_at,introductory_ends_at,updated_at';
+ let a=await db.from('ambassador_programme_applications').select(appColumns).eq('auth_user_id',user.id).maybeSingle();
  if(a.error||!a.data)return fail('No Ambassador application is connected to this account.');
  app=a.data;
  if(app.status!=='approved'){
@@ -129,26 +134,28 @@ async function init(){
  if(!['introductory','active'].includes(app.account_status)){
    let ac=await db.rpc('activate_own_ambassador_account');
    if(ac.error||ac.data!==true)return fail(ac.error?.message||'Your Ambassador account could not be activated.');
-   a=await db.from('ambassador_programme_applications').select('*').eq('email',user.email.toLowerCase()).maybeSingle();
+   a=await db.from('ambassador_programme_applications').select(appColumns).eq('auth_user_id',user.id).maybeSingle();
    if(a.error||!a.data)return fail('Your Ambassador account could not be refreshed after activation.');
    app=a.data;
  }
- const [l,r,p,b,m,n,t,sm]=await Promise.all([
-   db.from('ambassador_earnings_ledger').select('*').eq('application_id',app.id).order('created_at',{ascending:false}),
+ const [l,r,p,b,m,n,t]=await Promise.all([
+   db.from('ambassador_earnings_ledger').select('id,application_id,enrolment_id,payment_id,qualifying_revenue,commission_rate,commission_amount,earning_type,earning_status,earning_month,notes,created_at').eq('application_id',app.id).in('earning_status',['approved','paid']).order('created_at',{ascending:false}),
    db.rpc('get_own_ambassador_referrals'),
-   db.from('ambassador_payouts').select('*').eq('application_id',app.id).order('created_at',{ascending:false}),
-   db.from('ambassador_payout_details').select('*').eq('application_id',app.id).maybeSingle(),
-   db.from('ambassador_marketing_resources').select('*').eq('status','active').order('created_at',{ascending:false}),
+   db.from('ambassador_payouts').select('id,application_id,amount,payment_reference,payment_date,status,notes,created_at').eq('application_id',app.id).order('created_at',{ascending:false}),
+   db.rpc('get_own_ambassador_payout_details'),
+   db.from('ambassador_marketing_resources').select('id,title,description,resource_type,file_url,original_filename,mime_type,approved_caption,action_url,status,starts_at,expires_at,created_at').eq('status','active').order('created_at',{ascending:false}),
    db.rpc('get_own_ambassador_announcements'),
-   db.from('ambassador_support_tickets').select('*').eq('application_id',app.id).order('created_at',{ascending:false}),
-   db.from('ambassador_support_messages').select('*').order('created_at',{ascending:true})
+   db.from('ambassador_support_tickets').select('id,application_id,subject,category,priority,notes,status,created_at,updated_at').eq('application_id',app.id).order('created_at',{ascending:false})
  ]);
+ if(l.error||p.error||b.error||t.error)return fail('Your secure Ambassador records could not be loaded. Please refresh the page.');
  ledger=l.data||[];
  if(r.error){
    console.error('Ambassador referrals failed to load',r.error);
    referrals=[];
  }else referrals=r.data||[];
- payouts=p.data||[];bank=b.data||null;{const now=Date.now();resources=(m.data||[]).filter(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=now)&&(!x.expires_at||new Date(x.expires_at).getTime()>=now));}if(n.error)console.error('Ambassador announcements failed to load',n.error);notifications=n.data||[];supportTickets=t.data||[];supportMessages=sm.data||[];
+ payouts=p.data||[];bank=b.data?.[0]||null;{const now=Date.now();resources=(m.data||[]).filter(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=now)&&(!x.expires_at||new Date(x.expires_at).getTime()>=now));}if(n.error)console.error('Ambassador announcements failed to load',n.error);notifications=n.data||[];supportTickets=t.data||[];
+ const ticketIds=supportTickets.map(x=>x.id);
+ if(ticketIds.length){const sm=await db.from('ambassador_support_messages').select('id,ticket_id,author_id,author_role,message,created_at').in('ticket_id',ticketIds).order('created_at',{ascending:true});if(sm.error)console.error('Ambassador support replies failed to load',sm.error);supportMessages=sm.data||[]}else supportMessages=[];
  $('#loading').classList.add('hide');$('#portal').classList.remove('hide');render();
  if(r.error){
    const box=$('#referralMobile');
@@ -157,25 +164,26 @@ async function init(){
 }
 
 function render(){
- const life=ledger.filter(x=>x.earning_type==='commission'&&x.earning_status!=='reversed').reduce((s,x)=>s+Number(x.qualifying_revenue||0),0);
- const approvedPaid=['approved','paid'], pendingHeld=['pending','held'];
- const total=sum(null,approvedPaid), pending=sum(null,pendingHeld), commission=sum('commission',approvedPaid), bonus=sum('achievement_bonus',approvedPaid), performance=sum('monthly_performance',approvedPaid);
+ ledger=confirmedLedger();
+ const life=ledger.filter(x=>x.earning_type==='commission').reduce((s,x)=>s+Number(x.qualifying_revenue||0),0);
+ const approvedPaid=['approved','paid'], awaiting=awaitingReferralCount();
+ const total=sum(null,approvedPaid), commission=sum('commission',approvedPaid), bonus=sum('achievement_bonus',approvedPaid), performance=sum('monthly_performance',approvedPaid);
  const r=rank(life),idx=ranks.indexOf(r),next=ranks[idx+1];
  $('#welcome').textContent='Welcome, '+(app.full_name||'Ambassador');
  $('#rankLabel').textContent=r.n==='Ambassador'?'AMBASSADOR':r.n.toUpperCase()+' AMBASSADOR';
  $('#accountLine').textContent='Ambassador ID: '+String(app.id).slice(0,8).toUpperCase()+' · Agreement: '+String(app.agreement_status||'not accepted').replaceAll('_',' ');
  $('#accountBadge').textContent=String(app.account_status||'application').replaceAll('_',' ').toUpperCase();
  $('#accountBadge').className='badge '+(['active','introductory'].includes(app.account_status)?'ok':'warn');
- $('#earningBadge').textContent=pending>0?'EARNINGS AWAITING ACTION':'EARNINGS UP TO DATE';
+ $('#earningBadge').textContent=awaiting>0?'REFERRALS AWAITING APPROVAL':'EARNINGS VERIFIED';
  if($('#sideName'))$('#sideName').textContent=app.full_name||'Ambassador';
  if($('#sideRank'))$('#sideRank').textContent=r.n;
  if($('#sideStatus')){$('#sideStatus').textContent=String(app.account_status||'application').replaceAll('_',' ');$('#sideStatus').className='sideStatus '+(['active','introductory'].includes(app.account_status)?'ok':'warn')}
  if($('#sideApproved'))$('#sideApproved').textContent=money(total);
- if($('#sidePending'))$('#sidePending').textContent=money(pending);
- $('#referralCount').textContent=referrals.length;$('#totalEarned').textContent=money(total);$('#pendingEarned').textContent=money(pending);
+ if($('#sidePending'))$('#sidePending').textContent=awaiting;
+ $('#referralCount').textContent=referrals.filter(x=>low(x.earning_status)!=='disqualified').length;$('#totalEarned').textContent=money(total);$('#pendingEarned').textContent=awaiting;
  if($('#commissionTotal'))$('#commissionTotal').textContent=money(commission);if($('#bonusTotal'))$('#bonusTotal').textContent=money(bonus);if($('#performanceTotal'))$('#performanceTotal').textContent=money(performance);
  $('#statusCommission').textContent=money(commission);$('#statusBonus').textContent=money(bonus);$('#statusPerformance').textContent=money(performance);
- $('#earnSummary').textContent=money(total)+' approved/paid · '+money(pending)+' pending/held · '+money(payouts.filter(x=>x.status==='paid').reduce((s,x)=>s+Number(x.amount||0),0))+' paid out to date.';
+ $('#earnSummary').textContent=money(total)+' confirmed earnings · '+money(payouts.filter(x=>x.status==='paid').reduce((s,x)=>s+Number(x.amount||0),0))+' paid out to date. Unconfirmed referrals never appear as money in your earnings ledger.';
  $('#codeText').textContent=app.referral_code||'Referral code pending activation';
  $('#referralLinkText').textContent=referralLink()||'Your referral link will appear once your code is issued.';
  $('#copyCode').disabled=!app.referral_code;$('#copyLink').disabled=!app.referral_code;
@@ -195,7 +203,7 @@ function renderReferralAccount(){
  if(cl)cl.onclick=()=>code?copy(url,cl):null;
 }
 function renderRankProgress(){
- const life=ledger.filter(x=>x.earning_type==='commission'&&x.earning_status!=='reversed').reduce((s,x)=>s+Number(x.qualifying_revenue||0),0);
+ const life=confirmedLedger().filter(x=>x.earning_type==='commission').reduce((s,x)=>s+Number(x.qualifying_revenue||0),0);
  const current=rank(life),idx=ranks.indexOf(current),next=ranks[idx+1];
  if($('#rankCurrentBadge'))$('#rankCurrentBadge').textContent=current.n.toUpperCase();
  if($('#rankLifetime'))$('#rankLifetime').textContent=money(life);
@@ -210,16 +218,16 @@ function renderRankProgress(){
 function renderRecentActivity(){
  const box=$('#recentActivity');if(!box)return;
  const items=[];
- referrals.slice(0,3).forEach(x=>items.push({date:x.referral_date,icon:'◎',title:'Referral recorded',detail:(x.student_display||'Student')+' · '+(x.course_title||'Course'),amount:x.earning_amount?money(x.earning_amount):''}));
- ledger.slice(0,3).forEach(x=>items.push({date:x.created_at||x.earning_month,icon:'R',title:String(x.earning_type||'earning').replaceAll('_',' '),detail:String(x.earning_status||'pending').replaceAll('_',' '),amount:money(x.commission_amount)}));
+ referrals.slice(0,3).forEach(x=>items.push({date:x.referral_date,icon:'◎',title:'Referral recorded',detail:(x.student_display||'Student')+' · '+(x.course_title||'Course'),amount:low(x.earning_status)==='confirmed'?money(x.earning_amount):''}));
+ confirmedLedger().slice(0,3).forEach(x=>items.push({date:x.created_at||x.earning_month,icon:'R',title:String(x.earning_type||'earning').replaceAll('_',' '),detail:String(x.earning_status||'approved').replaceAll('_',' '),amount:money(x.commission_amount)}));
  payouts.slice(0,2).forEach(x=>items.push({date:x.payment_date||x.created_at,icon:'▤',title:'Payment '+String(x.status||'recorded').replaceAll('_',' '),detail:x.payment_reference||'Ambassador payout',amount:money(x.amount)}));
  items.sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
  box.innerHTML=items.length?items.slice(0,5).map(x=>'<div class="activityItem"><div class="activityIcon">'+esc(x.icon)+'</div><div class="activityText"><b>'+esc(x.title)+'</b><span>'+esc(x.detail)+' · '+fmt(x.date)+'</span></div><div class="activityAmt">'+esc(x.amount)+'</div></div>').join(''):'<div class="empty">No recent Ambassador activity yet.</div>';
 }
 function renderReferrals(){
  const total=referrals.length;
- const approved=referrals.filter(x=>['approved','verified','paid','qualifying'].some(v=>low(x.referral_status).includes(v)||low(x.earning_status).includes(v))).length;
- const pending=referrals.filter(x=>['pending','held','review'].some(v=>low(x.referral_status).includes(v)||low(x.earning_status).includes(v))).length;
+ const approved=referrals.filter(x=>low(x.earning_status)==='confirmed').length;
+ const pending=awaitingReferralCount();
  const earned=referrals.reduce((n,x)=>n+Number(x.earning_amount||0),0);
  if($('#refTotal'))$('#refTotal').textContent=total;if($('#refApproved'))$('#refApproved').textContent=approved;if($('#refPending'))$('#refPending').textContent=pending;if($('#refEarnings'))$('#refEarnings').textContent=money(earned);
  const search=$('#refSearch'),status=$('#refStatus'),copyBtn=$('#refCopyLink');
@@ -233,16 +241,16 @@ function renderReferrals(){
  if(search)search.oninput=paint;if(status)status.onchange=paint;paint();
 }
 function renderLedger(){
- const approvedStatuses=['approved','paid'], pendingStatuses=['pending','held'];
- const approved=sum(null,approvedStatuses), pending=sum(null,pendingStatuses), commission=sum('commission',approvedStatuses), other=sum('achievement_bonus',approvedStatuses)+sum('monthly_performance',approvedStatuses);
+ const approvedStatuses=['approved','paid'];
+ const approved=sum(null,approvedStatuses), paidOut=payouts.filter(x=>x.status==='paid').reduce((s,x)=>s+Number(x.amount||0),0), commission=sum('commission',approvedStatuses), other=sum('achievement_bonus',approvedStatuses)+sum('monthly_performance',approvedStatuses);
  if($('#earnApproved'))$('#earnApproved').textContent=money(approved);
- if($('#earnPending'))$('#earnPending').textContent=money(pending);
+ if($('#earnPaidOut'))$('#earnPaidOut').textContent=money(paidOut);
  if($('#earnCommission'))$('#earnCommission').textContent=money(commission);
  if($('#earnOther'))$('#earnOther').textContent=money(other);
  const search=$('#earnSearch'),status=$('#earnStatus');
  const paint=()=>{
    const q=low(search?.value||''),st=low(status?.value||'');
-   const rows=ledger.filter(x=>(!q||low(x.earning_type).replaceAll('_',' ').includes(q))&&(!st||low(x.earning_status).includes(st)));
+   const rows=confirmedLedger().filter(x=>(!q||low(x.earning_type).replaceAll('_',' ').includes(q))&&(!st||low(x.earning_status).includes(st)));
    $('#ledgerBody').innerHTML=rows.length?rows.map(x=>'<tr><td>'+fmt(x.earning_month)+'</td><td>'+esc(String(x.earning_type).replaceAll('_',' '))+'</td><td>'+money(x.qualifying_revenue)+'</td><td>'+(Number(x.commission_rate||0)*100).toFixed(0)+'%</td><td>'+money(x.commission_amount)+'</td><td>'+badgeStatus(x.earning_status)+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">'+(ledger.length?'No earnings match this filter.':'No earnings have been recorded yet.')+'</td></tr>';
    const mobile=$('#earningsMobile');if(mobile)mobile.innerHTML=rows.length?rows.map(x=>'<article class="refCard"><div class="refCardTop"><div><div class="earnType">'+esc(String(x.earning_type||'earning').replaceAll('_',' '))+'</div><div class="earnMeta">'+fmt(x.earning_month)+' · Qualifying revenue '+money(x.qualifying_revenue)+'</div></div><b class="refCardAmt">'+money(x.commission_amount)+'</b></div><div class="refCardMeta">'+badgeStatus(x.earning_status)+'</div><div class="earnRate">Rate: '+(Number(x.commission_rate||0)*100).toFixed(0)+'%</div></article>').join(''):'<div class="empty">'+(ledger.length?'No earnings match this filter.':'No earnings have been recorded yet.')+'</div>';
  };
@@ -257,7 +265,7 @@ function renderPayouts(){
  if($('#latestPayment'))$('#latestPayment').textContent=latest?money(latest.amount):'—';
  if($('#payoutBody'))$('#payoutBody').innerHTML=payouts.length?payouts.map(x=>'<tr><td>'+fmt(x.payment_date||x.created_at)+'</td><td>'+money(x.amount)+'</td><td>'+esc(x.payment_reference||'—')+'</td><td>'+badgeStatus(x.status)+'</td></tr>').join(''):'<tr><td colspan="4" class="empty">No payments recorded yet.</td></tr>';
  const mobile=$('#payoutMobile');if(mobile)mobile.innerHTML=payouts.length?payouts.map(x=>'<article class="refCard"><div class="refCardTop"><div><b>'+fmt(x.payment_date||x.created_at)+'</b><div class="paymentRef">'+esc(x.payment_reference||'No payment reference')+'</div></div><b class="refCardAmt">'+money(x.amount)+'</b></div><div class="refCardMeta">'+badgeStatus(x.status)+'</div></article>').join(''):'<div class="empty">No payments recorded yet.</div>';
- if(bank){let tail=String(bank.account_number||'').slice(-4);$('#bankStatus').className='notice '+(bank.verification_status==='verified'?'ok':'gold');$('#bankStatus').textContent='Banking details '+String(bank.verification_status).replaceAll('_',' ')+' · '+bank.bank_name+' · Account ending •••• '+tail;$('#accountHolder').value=bank.account_holder||'';let bs=$('#bankName'),known=saBanks.some(x=>x.name===bank.bank_name&&x.name!=='Other South African Bank');$('#bankName').value=known?bank.bank_name:'Other South African Bank';$('#accountType').value=bank.account_type||'';$('#bankName').dispatchEvent(new Event('change'));if(!known&&$('#otherBankName'))$('#otherBankName').value=bank.bank_name||'';let selected=$('#bankName')?.selectedOptions?.[0],autoCode=selected?.dataset?.code||'';$('#branchCode').readOnly=!!autoCode&&known;$('#branchCode').value=autoCode||bank.branch_code||'';$('#accountNumber').value=''}else{$('#bankStatus').className='notice gold';$('#bankStatus').textContent='No banking details on file. Add your payment account below.'}
+ if(bank){let tail=String(bank.account_last4||'');$('#bankStatus').className='notice '+(bank.verification_status==='verified'?'ok':'gold');$('#bankStatus').textContent='Banking details '+String(bank.verification_status).replaceAll('_',' ')+' · '+bank.bank_name+' · Account ending •••• '+tail;$('#accountHolder').value=bank.account_holder||'';let bs=$('#bankName'),known=saBanks.some(x=>x.name===bank.bank_name&&x.name!=='Other South African Bank');$('#bankName').value=known?bank.bank_name:'Other South African Bank';$('#accountType').value=bank.account_type||'';$('#bankName').dispatchEvent(new Event('change'));if(!known&&$('#otherBankName'))$('#otherBankName').value=bank.bank_name||'';let selected=$('#bankName')?.selectedOptions?.[0],autoCode=selected?.dataset?.code||'';$('#branchCode').readOnly=!!autoCode&&known;$('#branchCode').value=autoCode||bank.branch_code||'';$('#accountNumber').value=''}else{$('#bankStatus').className='notice gold';$('#bankStatus').textContent='No banking details on file. Add your payment account below.'}
  $('#bankForm').onsubmit=saveBank;
 }
 async function saveBank(e){
@@ -265,7 +273,7 @@ async function saveBank(e){
  if(bank&&!num){msg.textContent='For security, re-enter the full account number when updating banking details.';return}
  btn.disabled=true;btn.textContent='Saving securely…';msg.textContent='';
  if(!$('#bankName').value){msg.textContent='Please select your bank.';btn.disabled=false;btn.textContent='Save / Update Banking Details';return}let selectedBank=$('#bankName').value,bankName=selectedBank==='Other South African Bank'?($('#otherBankName')?.value.trim()||''):selectedBank;if(selectedBank==='Other South African Bank'&&!bankName){msg.textContent='Please enter the bank name.';btn.disabled=false;btn.textContent='Save / Update Banking Details';return}if(!$('#branchCode').value.trim()){msg.textContent='Please enter the branch code for the selected bank.';btn.disabled=false;btn.textContent='Save / Update Banking Details';return}let q=await db.rpc('submit_own_ambassador_payout_details',{p_account_holder:$('#accountHolder').value.trim(),p_bank_name:bankName,p_account_number:num,p_account_type:$('#accountType').value,p_branch_code:$('#branchCode').value.trim()});
- if(q.error){msg.textContent=q.error.message}else{msg.textContent='Banking details saved. Finance verification is now pending.';let b=await db.from('ambassador_payout_details').select('*').eq('application_id',app.id).maybeSingle();bank=b.data||null;renderPayouts()}
+ if(q.error){msg.textContent=q.error.message}else{msg.textContent='Banking details saved. Finance verification is now pending.';let b=await db.rpc('get_own_ambassador_payout_details');bank=b.data?.[0]||null;renderPayouts()}
  btn.disabled=false;btn.textContent='Save / Update Banking Details';
 }
 function renderProfile(){
@@ -326,7 +334,7 @@ function openNewSupportTicket(){
 async function submitSupportTicket(e){
  e.preventDefault();let q=await db.from('ambassador_support_tickets').insert({application_id:app.id,subject:$('#ambSupportSubject').value.trim(),category:$('#ambSupportCat').value,priority:$('#ambSupportPriority').value,notes:$('#ambSupportNotes').value.trim(),status:'open'}).select().single();
  if(q.error){$('#ambSupportMsg').textContent=q.error.message;return}
- $('#ambSupportModal').remove();let t=await db.from('ambassador_support_tickets').select('*').eq('application_id',app.id).order('created_at',{ascending:false});supportTickets=t.data||[];renderSupportHub();
+ $('#ambSupportModal').remove();let t=await db.from('ambassador_support_tickets').select('id,application_id,subject,category,priority,notes,status,created_at,updated_at').eq('application_id',app.id).order('created_at',{ascending:false});supportTickets=t.data||[];renderSupportHub();
 }
 function openSupportTicket(id){
  let t=supportTickets.find(x=>x.id===id);if(!t)return;let msgs=supportMessages.filter(x=>x.ticket_id===id),closed=['resolved','closed'].includes(t.status);
@@ -334,7 +342,7 @@ function openSupportTicket(id){
  $('#ambSupportClose').onclick=()=>$('#ambSupportModal').remove();if(!closed)$('#ambSupportReplyForm').onsubmit=e=>replySupport(e,id);
 }
 async function replySupport(e,id){
- e.preventDefault();let text=$('#ambSupportReply').value.trim();if(!text)return;let q=await db.from('ambassador_support_messages').insert({ticket_id:id,author_id:user.id,author_role:'ambassador',message:text});if(q.error)return alert(q.error.message);let sm=await db.from('ambassador_support_messages').select('*').order('created_at',{ascending:true});supportMessages=sm.data||[];openSupportTicket(id);
+ e.preventDefault();let text=$('#ambSupportReply').value.trim();if(!text)return;let q=await db.from('ambassador_support_messages').insert({ticket_id:id,author_id:user.id,author_role:'ambassador',message:text});if(q.error)return alert(q.error.message);let sm=await db.from('ambassador_support_messages').select('id,ticket_id,author_id,author_role,message,created_at').eq('ticket_id',id).order('created_at',{ascending:true});supportMessages=supportMessages.filter(x=>x.ticket_id!==id).concat(sm.data||[]);openSupportTicket(id);
 }
 
 $('#logout').onclick=async()=>{if(db)await db.auth.signOut({scope:'local'});location.href='ambassador-login.html'};

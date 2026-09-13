@@ -43,7 +43,7 @@ function renderCompensation(apply){
     <div class="text-center max-w-3xl mx-auto">
       <div class="text-[10px] font-extrabold tracking-[.18em] text-[#a87818]">CREATOR PARTNER COMPENSATION PLAN · 2026</div>
       <h2 class="mt-2 text-3xl font-extrabold text-[#21384d]">15% direct commission. Eight achievement levels.</h2>
-      <p class="mt-3 text-sm leading-6 text-black">Approved Creator Partners earn on verified direct student referrals and can progress through achievement levels as qualifying referral revenue grows.</p>
+      <p class="mt-3 text-sm leading-6 text-black">Approved Creator Partners earn only after a direct referral's student enrolment and payment have both been confirmed by Funda Online Academy.</p>
     </div>
     <div class="cpcompbox mt-7">
       <div class="cpcompScroll">
@@ -52,7 +52,7 @@ function renderCompensation(apply){
           <tbody>${ranks.map(r=>`<tr><td><b>${r[0]}</b></td><td><b>${r[1]}</b></td><td>${r[2]}</td><td><b>15%</b></td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('')}</tbody>
         </table>
       </div>
-      <div class="cpcompnote"><b>How it works:</b> 15% commission is earned on successfully paid direct student referrals. Achievement bonuses are paid once when a new level is reached. Monthly performance payments begin at Level 4 and are earned only when the applicable monthly performance conditions are met and verified by Funda Online Academy. Only verified student payments qualify. There are no downlines, recruitment commissions or team overrides.</div>
+      <div class="cpcompnote"><b>How it works:</b> A referral is recorded first and remains R0 until Finance verifies the received payment and Administration approves the student enrolment. The 15% direct commission is confirmed only after both checks pass. Achievement bonuses are paid once when a new level is reached. Monthly performance payments begin at Level 4 and are earned only when the applicable monthly conditions are verified by Funda Online Academy. There are no downlines, recruitment commissions or team overrides.</div>
       <div class="cpcompnote cpcompstrong">15% DIRECT COMMISSION · ACHIEVEMENT BONUSES UP TO R45,000 · MONTHLY PERFORMANCE PAYMENTS UP TO R25,000</div>
     </div>`;
   apply.before(section);

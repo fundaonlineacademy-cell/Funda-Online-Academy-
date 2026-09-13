@@ -161,6 +161,11 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 @media(max-width:560px){.announcementTop{display:block}.announcementTop .badge{display:inline-flex;margin-top:7px}}
 </style><style id="ambassador-programme-rules-v2">
 .agreementStatusGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.ruleGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.ruleItem{padding:14px;border:1px solid #e4e9ed;border-radius:12px;background:#fbfcfd}.ruleItem b{display:block;color:#17324a;font-size:11px;margin-bottom:5px}.ruleItem span{display:block;color:#687683;font-size:10px;line-height:1.55}@media(max-width:720px){.agreementStatusGrid,.ruleGrid{grid-template-columns:1fr 1fr}}@media(max-width:480px){.agreementStatusGrid{grid-template-columns:1fr 1fr}.ruleGrid{grid-template-columns:1fr}}
+</style><style id="ambassador-programme-guide-v1">
+.guideHero{background:linear-gradient(135deg,#0c2d4b,#244f6f);color:#fff;overflow:hidden;position:relative}.guideHero:after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-80px;top:-120px;background:#e3bd6250}.guideHero h2{color:#fff;font-size:28px}.guideHero .muted{color:#e0e9f0;max-width:760px}.guideSteps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-top:16px}.guideStep{border:1px solid #dfe6eb;border-radius:14px;padding:16px;background:#fff;min-height:170px}.guideStep i{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#ddb34c,#f1d68c);color:#17324a;font-style:normal;font-weight:900}.guideStep b{display:block;color:#17324a;font-size:14px;margin-top:13px}.guideStep p{color:#667583;font-size:12px;line-height:1.55;margin:7px 0 0}.guideTruth{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:14px}.guideExample{background:#fff9e8;border-color:#ead18c}.guideEquation{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:13px}.guideEquation span{padding:9px 11px;border:1px solid #e7d6a5;background:#fff;border-radius:10px;color:#17324a;font-weight:800;font-size:12px}.guideMap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:13px}.guideMap button{border:1px solid #dce4ea;background:#fafcfd;border-radius:12px;padding:13px;text-align:left;color:#17324a;cursor:pointer}.guideMap button:hover{border-color:#d4ac4a;background:#fffaf0}.guideMap b{display:block;font-size:12px}.guideMap span{display:block;color:#71808d;font-size:10px;line-height:1.4;margin-top:4px}
+@media(min-width:901px){.navbtn{font-size:14px}.muted{font-size:14px}.tbl{font-size:13px}.tbl th{font-size:11px}.stat small,.sideMoney span{font-size:10px}.ruleItem b{font-size:13px}.ruleItem span{font-size:12px}.resourceCard p,.announcementCard p,.ticketCard p{font-size:13px}}
+@media(max-width:900px){.guideSteps{grid-template-columns:repeat(2,minmax(0,1fr))}.guideMap{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.guideHero h2{font-size:24px}.guideSteps,.guideTruth,.guideMap{grid-template-columns:1fr}.guideStep{min-height:0}.guideStep p{font-size:13px}}
 </style></head>
 <body>
 <header class="top"><div class="topin"><button id="sideToggle" class="menuToggle" aria-label="Open Ambassador menu">☰</button><div class="brandWrap"><img src="logo.png" alt="Funda Online Academy" class="portalLogo"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div class="brandSub">AMBASSADOR PORTAL</div></div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
@@ -169,7 +174,7 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 <aside class="side">
   <div class="sideBackOffice"><strong>FUNDA ONLINE ACADEMY</strong><small>AMBASSADOR BACK OFFICE</small><button id="sideClose" class="sideClose" aria-label="Close Ambassador menu">×</button></div>
   <div class="sideProfile"><div class="sideAvatar">A</div><div class="sideIdentity"><b id="sideName">Ambassador</b><div class="sideMeta"><span id="sideRank">Ambassador</span><span id="sideStatus" class="sideStatus ok">Active</span></div></div></div>
-  <div class="sideFinance"><div class="sideMoney"><span>APPROVED EARNINGS</span><b id="sideApproved">R0</b></div><div class="sideMoney"><span>PENDING / HELD</span><b id="sidePending">R0</b></div></div>
+  <div class="sideFinance"><div class="sideMoney"><span>CONFIRMED EARNINGS</span><b id="sideApproved">R0</b></div><div class="sideMoney"><span>AWAITING APPROVAL</span><b id="sidePending">0</b></div></div>
   <div id="sideNav"></div>
   <div class="sideLogout"><button class="navbtn" type="button" onclick="document.getElementById('logout').click()"><span class="navIcon">↗</span><span>Log Out</span></button></div>
 </aside><div id="sideOverlay" class="sideOverlay"></div>
@@ -198,9 +203,9 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 </section>
 
 <div class="dashboardMetrics">
-  <div class="stat"><span class="statIcon">◎</span><b id="referralCount">0</b><small>RECORDED REFERRALS</small></div>
+  <div class="stat"><span class="statIcon">◎</span><b id="referralCount">0</b><small>ELIGIBLE RECORDED REFERRALS</small></div>
   <div class="stat"><span class="statIcon">R</span><b id="totalEarned">R0</b><small>APPROVED / PAID EARNINGS</small></div>
-  <div class="stat"><span class="statIcon">◷</span><b id="pendingEarned">R0</b><small>PENDING / HELD</small></div>
+  <div class="stat"><span class="statIcon">◷</span><b id="pendingEarned">0</b><small>REFERRALS AWAITING APPROVAL</small></div>
   <div class="stat"><span class="statIcon">%</span><b id="commissionTotal">R0</b><small>DIRECT COMMISSION</small></div>
 </div>
 
@@ -234,18 +239,68 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 </section>
 </section>
 
+<section class="section" data-section="guide">
+<section class="card guideHero">
+  <div class="eyebrow">START HERE · AMBASSADOR PROGRAMME</div>
+  <h2>How your Ambassador account works</h2>
+  <p class="muted">A clear guide from sharing your referral link to receiving a confirmed payment. Your dashboard never treats an unverified referral as earned money.</p>
+</section>
+
+<section class="card">
+  <div class="sectionHead"><div><div class="eyebrow dark">STEP BY STEP</div><h2>From referral to confirmed earnings</h2><p class="muted">Every commission follows the same controlled approval path.</p></div><span class="badge ok">DIRECT REFERRALS ONLY</span></div>
+  <div class="guideSteps">
+    <article class="guideStep"><i>1</i><b>Share your unique link</b><p>Copy your personal Ambassador referral link and share it with a prospective student. This is how attribution begins.</p></article>
+    <article class="guideStep"><i>2</i><b>Referral is recorded</b><p>The student is linked to your code. A recorded referral is not yet an earning and displays R0 while checks are incomplete.</p></article>
+    <article class="guideStep"><i>3</i><b>Student enrols</b><p>The student selects a course and submits the required enrolment information through the Academy system.</p></article>
+    <article class="guideStep"><i>4</i><b>Payment is verified</b><p>Finance confirms that the payment was genuinely received. Submitted, unpaid, failed or rejected payments do not qualify.</p></article>
+    <article class="guideStep"><i>5</i><b>Enrolment is approved</b><p>An administrator approves the student enrolment. Both this approval and payment verification are compulsory.</p></article>
+    <article class="guideStep"><i>6</i><b>15% commission appears</b><p>Only after both approvals pass does the 15% direct commission enter My Earnings as approved. Finance records the later payout separately.</p></article>
+  </div>
+</section>
+
+<section class="card guideExample">
+  <div class="sectionHead"><div><div class="eyebrow dark">INSTALLMENT EXAMPLE</div><h2>How Bookkeeping commission is calculated</h2><p class="muted">Each instalment earns commission only after that specific payment and its enrolment are confirmed.</p></div><span class="badge warn">15% OF RECEIVED REVENUE</span></div>
+  <div class="guideEquation"><span>Verified R1,300 × 15% = <b>R195</b></span><span>Verified R2,600 × 15% = <b>R390</b></span><span>All R3,900 verified = <b>R585 total</b></span></div>
+  <p class="muted">If only the first R1,300 instalment is verified, only R195 is confirmed. The unpaid R2,600 does not appear as an earning.</p>
+</section>
+
+<section class="card">
+  <div class="sectionHead"><div><div class="eyebrow dark">CLEAR STATUS MEANINGS</div><h2>What you will see</h2></div></div>
+  <div class="guideTruth">
+    <div class="notice gold"><b>Not yet earned</b><br>The referral exists, but payment verification or enrolment approval is still outstanding. It remains R0.</div>
+    <div class="notice ok"><b>Approved / paid earning</b><br>All checks passed. Approved means confirmed by the Academy; paid means Finance has completed the separate payout record.</div>
+    <div class="notice bad"><b>Disqualified or reversed</b><br>Self-referrals, duplicates, fraud, refunds, chargebacks and reversed payments do not qualify and are excluded from totals.</div>
+    <div class="notice"><b>Your privacy boundary</b><br>You see only your own account and privacy-limited referral summaries—not student contact details, documents, payment proofs or private records.</div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="sectionHead"><div><div class="eyebrow dark">WHERE TO GO</div><h2>Ambassador portal map</h2></div></div>
+  <div class="guideMap">
+    <button data-go="referrals"><b>My Referrals</b><span>See attributed students and approval progress.</span></button>
+    <button data-go="earnings"><b>My Earnings</b><span>See only confirmed approved or paid earnings.</span></button>
+    <button data-go="payments"><b>Payment History</b><span>See payouts recorded by Academy Finance.</span></button>
+    <button data-go="banking"><b>My Banking</b><span>Submit or update the account used for payouts.</span></button>
+    <button data-go="rank"><b>Rank Progress</b><span>Track confirmed lifetime qualifying revenue.</span></button>
+    <button data-go="marketing"><b>Marketing Resources</b><span>Use approved Academy content and captions.</span></button>
+    <button data-go="programme"><b>Programme Rules</b><span>Read conduct, verification and agreement rules.</span></button>
+    <button data-go="support"><b>Help & Support</b><span>Log a traceable account-specific query.</span></button>
+  </div>
+</section>
+</section>
+
 <section class="section" data-section="referrals">
 <section class="card referralsHead">
   <div class="sectionHead"><div><div class="eyebrow dark">STUDENT REFERRALS</div><h2>My Referrals</h2><p class="muted">Track students attributed to your unique Ambassador code while protecting private student information.</p></div><button id="refCopyLink" class="btn gold">Copy Referral Link</button></div>
   <div class="referralSummary">
     <div class="miniMetric"><span>TOTAL RECORDED</span><b id="refTotal">0</b></div>
-    <div class="miniMetric"><span>QUALIFYING / APPROVED</span><b id="refApproved">0</b></div>
-    <div class="miniMetric"><span>PENDING</span><b id="refPending">0</b></div>
-    <div class="miniMetric"><span>RECORDED EARNINGS</span><b id="refEarnings">R0</b></div>
+    <div class="miniMetric"><span>REFERRALS WITH CONFIRMED EARNINGS</span><b id="refApproved">0</b></div>
+    <div class="miniMetric"><span>AWAITING BOTH APPROVALS</span><b id="refPending">0</b></div>
+    <div class="miniMetric"><span>CONFIRMED EARNINGS</span><b id="refEarnings">R0</b></div>
   </div>
 </section>
 <section class="card">
-  <div class="referralTools"><div><h2>Referral Activity</h2><p class="muted">Only information necessary for referral tracking is displayed.</p></div><div class="referralSearch"><input id="refSearch" type="search" placeholder="Search student or course" aria-label="Search referrals"><select id="refStatus" aria-label="Filter referral status"><option value="">All statuses</option><option value="approved">Approved</option><option value="pending">Pending</option><option value="paid">Paid</option><option value="held">Held</option><option value="rejected">Rejected</option></select></div></div>
+  <div class="referralTools"><div><h2>Referral Activity</h2><p class="muted">A referral remains R0 until both the payment and student enrolment are approved.</p></div><div class="referralSearch"><input id="refSearch" type="search" placeholder="Search student or course" aria-label="Search referrals"><select id="refStatus" aria-label="Filter referral status"><option value="">All statuses</option><option value="confirmed">Confirmed</option><option value="student_approved">Student approved</option><option value="enrolment_pending">Enrolment pending</option><option value="not_yet_earned">Not yet earned</option><option value="disqualified">Disqualified</option></select></div></div>
   <div id="referralMobile" class="referralMobile"></div>
   <div class="tablewrap referralDesktop"><table class="tbl"><thead><tr><th>Student</th><th>Course</th><th>Referral Date</th><th>Referral Status</th><th>Earning Status</th><th>Amount</th></tr></thead><tbody id="referralBody"></tbody></table></div>
   <div class="privacyNote"><b>Student privacy protected</b><span>Contact details, ID numbers, payment proofs, assessments and private student records are never exposed to Ambassadors.</span></div>
@@ -254,17 +309,17 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 
 <section class="section" data-section="earnings">
 <section class="card">
-  <div class="sectionHead"><div><div class="eyebrow dark">AMBASSADOR FINANCE</div><h2>My Earnings</h2><p class="muted">Track your approved, pending and paid Ambassador earnings across all authorised earning types.</p></div></div>
+  <div class="sectionHead"><div><div class="eyebrow dark">AMBASSADOR FINANCE</div><h2>My Earnings</h2><p class="muted">Only Academy-confirmed approved or paid earnings appear here. An unverified referral never displays as earned money.</p></div><button class="btn alt" data-go="guide">How earnings work</button></div>
   <div class="referralSummary earningsSummary">
     <div class="miniMetric"><span>APPROVED / PAID</span><b id="earnApproved">R0</b></div>
-    <div class="miniMetric"><span>PENDING / HELD</span><b id="earnPending">R0</b></div>
+    <div class="miniMetric"><span>PAID OUT TO DATE</span><b id="earnPaidOut">R0</b></div>
     <div class="miniMetric"><span>DIRECT COMMISSION</span><b id="earnCommission">R0</b></div>
     <div class="miniMetric"><span>BONUSES + PERFORMANCE</span><b id="earnOther">R0</b></div>
   </div>
 </section>
 
 <section class="card">
-  <div class="referralTools"><div><h2>Earnings Breakdown</h2><p class="muted">Each earning remains separate so you can see exactly how it was calculated and its current status.</p></div><div class="referralSearch"><input id="earnSearch" type="search" placeholder="Search earning type" aria-label="Search earnings"><select id="earnStatus" aria-label="Filter earning status"><option value="">All statuses</option><option value="approved">Approved</option><option value="paid">Paid</option><option value="pending">Pending</option><option value="held">Held</option><option value="reversed">Reversed</option></select></div></div>
+  <div class="referralTools"><div><h2>Earnings Breakdown</h2><p class="muted">Every row below has passed the Academy's confirmation rules. Approved earnings and completed payouts remain separate records.</p></div><div class="referralSearch"><input id="earnSearch" type="search" placeholder="Search earning type" aria-label="Search earnings"><select id="earnStatus" aria-label="Filter earning status"><option value="">All confirmed statuses</option><option value="approved">Approved</option><option value="paid">Paid</option></select></div></div>
   <div id="earningsMobile" class="referralMobile"></div>
   <div class="tablewrap referralDesktop"><table class="tbl"><thead><tr><th>Month</th><th>Earning Type</th><th>Qualifying Revenue</th><th>Rate</th><th>Amount</th><th>Status</th></tr></thead><tbody id="ledgerBody"></tbody></table></div>
   <div class="privacyNote"><b>Transparent calculations</b><span>Approved earnings are not the same as completed payouts. Payment History records when approved amounts are actually paid by Funda Online Academy.</span></div>
@@ -413,7 +468,7 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
   </div>
   <div class="footerBottom"><span>© 2026 Funda Online Academy. All rights reserved.</span><span>Ambassador Portal · Learn · Grow · Achieve.</span></div>
 </footer>
-<script src="ambassador-portal-v2.js?v=20260913-session-v1"></script>
+<script src="ambassador-portal-v2.js?v=20260913-verified-earnings-v1"></script>
 <script src="academy-identity.js?v=20260905-master-identity"></script>
 <script src="funda-sidebar-controls.js?v=20260912-collapsible-portals"></script>
 </body></html>

@@ -25,7 +25,7 @@ create index if not exists ambassador_programme_applications_status_idx on publi
 
 create table if not exists public.ambassador_earnings_ledger (
   id uuid primary key default gen_random_uuid(), application_id uuid not null references public.ambassador_programme_applications(id) on delete cascade,
-  enrolment_id uuid, payment_id uuid, qualifying_revenue numeric(12,2) not null default 0, commission_rate numeric(5,4) not null default 0.20,
+  enrolment_id uuid, payment_id uuid, qualifying_revenue numeric(12,2) not null default 0, commission_rate numeric(5,4) not null default 0.15,
   commission_amount numeric(12,2) not null default 0, earning_type text not null default 'commission' check (earning_type in ('commission','achievement_bonus','monthly_performance')),
   earning_status text not null default 'pending' check (earning_status in ('pending','approved','paid','reversed','held')),
   earning_month date not null default date_trunc('month', current_date)::date, notes text, created_at timestamptz not null default now(), updated_at timestamptz not null default now()
