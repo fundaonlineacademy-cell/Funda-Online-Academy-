@@ -257,6 +257,9 @@ const groups=[
  {label:'ACCOUNT',items:[
   ['profile','profile.html','♙','My Profile'],
   ['security','security.html','◇','Security / Password']
+ ]},
+ {label:'YOUR VOICE',items:[
+  ['voice','#studentVoiceSection','✦','Your Voice']
  ]}
 ];
 
@@ -351,6 +354,7 @@ function dashboardView(view){
  const cs=document.getElementById('compactStatus');if(cs)cs.textContent=statusText();
  document.querySelectorAll('#sdSide [data-sd-key]').forEach(x=>x.classList.toggle('active',x.dataset.sdKey===view));
  if(view==='payments')window.FundaStudentPayments?.show?.();
+ if(view==='voice')window.FundaStudentVoice?.show?.();
  close();window.scrollTo({top:0,behavior:'smooth'});
 }
 function tightenDashboardSummary(){
@@ -403,7 +407,7 @@ function install(){
  document.getElementById('sdLogout')?.addEventListener('click',()=>document.getElementById('logoutButton')?.click());
  document.querySelectorAll('#sdSide a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
   e.preventDefault();const key=a.dataset.sdKey;
-  if(['dashboard','orientation','courses','payments','career','communication','faq','academic','support'].includes(key))return dashboardView(key);
+  if(['dashboard','orientation','courses','payments','career','communication','faq','academic','support','voice'].includes(key))return dashboardView(key);
   close();const target=document.querySelector(a.getAttribute('href'));
   if(target){target.classList.add('sdSectionMark');target.scrollIntoView({behavior:'smooth',block:'start'})}
   document.querySelectorAll('#sdSide a').forEach(x=>x.classList.remove('active'));a.classList.add('active');

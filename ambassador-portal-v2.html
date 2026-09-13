@@ -285,6 +285,7 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
     <button data-go="marketing"><b>Marketing Resources</b><span>Use approved Academy content and captions.</span></button>
     <button data-go="programme"><b>Programme Rules</b><span>Read conduct, verification and agreement rules.</span></button>
     <button data-go="support"><b>Help & Support</b><span>Log a traceable account-specific query.</span></button>
+    <button data-go="voice"><b>Your Voice</b><span>Send and track a suggestion, complaint or compliment.</span></button>
   </div>
 </section>
 </section>
@@ -459,6 +460,30 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 <section class="card"><div class="sectionHead"><div><h2>My Support Tickets</h2><p class="muted">Open a ticket to read replies or continue the conversation.</p></div></div><div id="supportTicketList" class="ticketList"></div></section>
 </section>
 
+<section class="section" data-section="voice" id="ambassadorVoiceSection" aria-labelledby="avHeading">
+ <section class="card avHero"><div class="eyebrow">AMBASSADOR VOICE · LEADERSHIP THAT LISTENS</div><h2 id="avHeading">Your experience helps us lead better.</h2><p>Use this secure space to suggest an improvement, raise a complaint or recognise something Funda Online Academy has done well. Your original message remains recorded and is routed to the responsible department.</p></section>
+ <div class="avPurposeGrid">
+  <article class="card avPurpose"><i>01</i><b>Suggestion</b><span>Recommend a practical improvement to the programme, platform or Academy service.</span></article>
+  <article class="card avPurpose"><i>02</i><b>Complaint</b><span>Raise a concern clearly so it can be reviewed, answered and resolved fairly.</span></article>
+  <article class="card avPurpose"><i>03</i><b>Compliment</b><span>Recognise excellent support, communication, resources or service.</span></article>
+ </div>
+ <div class="avLayout">
+  <section class="card"><div class="eyebrow dark">SEND YOUR MESSAGE</div><h2>Speak to the Academy</h2><p class="muted avLead">Your name and Ambassador account are attached securely. This is a private, traceable record—not an anonymous public form.</p>
+   <form id="avForm" class="avForm">
+    <fieldset class="avField avWide"><legend>Type of submission</legend><div class="avTypes"><label><input type="radio" name="avType" value="suggestion" checked><span>Suggestion</span></label><label><input type="radio" name="avType" value="complaint"><span>Complaint</span></label><label><input type="radio" name="avType" value="compliment"><span>Compliment</span></label></div></fieldset>
+    <label class="avField avWide">Service area<select id="avArea" required><option value="">Choose the area this is about</option><option value="ambassador_programme">Referrals, earnings or Ambassador Programme</option><option value="finance_payments">Payouts, banking or Finance</option><option value="technical_platform">Website, login or technical platform</option><option value="marketing_communication">Marketing resources or communication</option><option value="privacy_conduct">Privacy, conduct or governance</option><option value="general">General feedback or leadership</option></select></label>
+    <label class="avField avWide">Subject<input id="avSubject" required minlength="5" maxlength="160" placeholder="A short, clear summary"></label>
+    <label class="avField avWide">Your message<textarea id="avBody" required minlength="20" maxlength="5000" placeholder="Explain what happened, what worked well, or what you suggest."></textarea></label>
+    <label class="avField avWide">What outcome would be helpful? <small>(optional)</small><textarea id="avOutcome" maxlength="1500" class="avOutcome" placeholder="For example: a response, a review, a correction or consideration of your idea."></textarea></label>
+    <label id="avConfidentialWrap" class="avConfidential avWide avHidden"><input id="avConfidential" type="checkbox"><span><b>Confidential management review</b><br>Use this only for a sensitive complaint. It will go to Management &amp; Governance.</span></label>
+    <button id="avSubmit" class="btn avWide" type="submit">Submit to Funda Online Academy</button><p id="avMessage" class="avMessage avWide" role="status" aria-live="polite"></p>
+   </form>
+  </section>
+  <aside class="card"><div class="eyebrow dark">WHAT HAPPENS NEXT</div><h2>A clear and fair process</h2><div class="avSteps"><div><i>1</i><span><b>Received securely</b><small>A reference number is issued immediately.</small></span></div><div><i>2</i><span><b>Routed correctly</b><small>The selected service area determines the responsible department.</small></span></div><div><i>3</i><span><b>Reviewed responsibly</b><small>Administration can prioritise or refer the matter without changing your words.</small></span></div><div><i>4</i><span><b>Response recorded</b><small>The official response and status remain visible in this tab.</small></span></div></div><div class="notice gold avNotice"><b>Your Voice is separate from Help &amp; Support.</b><br>Use Help &amp; Support for an urgent account, referral, earnings or payout problem requiring direct assistance.</div></aside>
+ </div>
+ <section class="card avHistory"><div class="sectionHead"><div><div class="eyebrow dark">YOUR PRIVATE RECORD</div><h2>My submissions</h2><p class="muted">Only records sent from this Ambassador account are shown here.</p></div><button id="avRefresh" class="btn alt" type="button">Refresh status</button></div><div id="avList" class="avList"><div class="empty">Open this tab to load your submission history.</div></div></section>
+</section>
+
 </div>
 </div>
 </main>
@@ -468,7 +493,8 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
   </div>
   <div class="footerBottom"><span>© 2026 Funda Online Academy. All rights reserved.</span><span>Ambassador Portal · Learn · Grow · Achieve.</span></div>
 </footer>
-<script src="ambassador-portal-v2.js?v=20260913-verified-earnings-v1"></script>
+<script src="ambassador-portal-v2.js?v=20260913-your-voice-v2"></script>
+<script src="ambassador-your-voice.js?v=20260913-your-voice-v1"></script>
 <script src="academy-identity.js?v=20260905-master-identity"></script>
 <script src="funda-sidebar-controls.js?v=20260912-collapsible-portals"></script>
 </body></html>

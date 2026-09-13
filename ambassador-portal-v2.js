@@ -6,7 +6,8 @@ const navGroups=[
  {label:'MAIN',items:[['dashboard','⌂','My Dashboard'],['guide','◈','Programme Guide'],['referrals','◎','My Referrals'],['earnings','R','My Earnings'],['rank','◒','Rank Progress'],['compensation','▣','Compensation Plan']]},
  {label:'FINANCE',items:[['earnings','◫','Earnings Breakdown'],['payments','▤','Payment History'],['banking','▧','My Banking']]},
  {label:'RESOURCES',items:[['marketing','◆','Marketing Resources'],['announcements','◉','Announcements'],['support','?','Help & Support'],['programme','▥','Programme Rules']]},
- {label:'ACCOUNT',items:[['referral-link','↗','My Referral Link'],['profile','♙','My Profile'],['banking','⌁','Bank Details'],['announcements','●','Notifications']]}
+ {label:'ACCOUNT',items:[['referral-link','↗','My Referral Link'],['profile','♙','My Profile'],['banking','⌁','Bank Details'],['announcements','●','Notifications']]},
+ {label:'YOUR VOICE',items:[['voice','✦','Your Voice']]}
 ];
 const saBanks=[
  {name:'Absa Bank',code:'632005'},
@@ -36,7 +37,7 @@ function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
 function fmt(v){if(!v)return '—';try{return new Date(v).toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'})}catch{return '—'}}
 function badgeStatus(v){let s=low(v),cls=['active','approved','paid','verified','completed','introductory'].some(x=>s.includes(x))?'ok':['declined','rejected','failed','terminated','reversed','suspended'].some(x=>s.includes(x))?'bad':'warn';return '<span class="badge '+cls+'">'+esc(String(v||'pending').replaceAll('_',' ').toUpperCase())+'</span>'}
 function closeSide(){document.body.classList.remove('amb-nav-open')}
-function showSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('on',x.dataset.section===name));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('on',x.dataset.go===name));closeSide();scrollTo({top:0,behavior:'auto'})}
+function showSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('on',x.dataset.section===name));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('on',x.dataset.go===name));if(name==='voice')window.FundaAmbassadorVoice?.show?.();closeSide();scrollTo({top:0,behavior:'auto'})}
 function installNav(){
  const html=navGroups.map(g=>'<div class="navGroup"><div class="navGroupLabel">'+g.label+'</div>'+g.items.map(([k,i,t],idx)=>'<button class="navbtn '+(k==='dashboard'&&g.label==='MAIN'&&idx===0?'on':'')+'" data-go="'+k+'"><span class="navIcon">'+i+'</span><span>'+t+'</span></button>').join('')+'</div>').join('');
  $('#sideNav').innerHTML=html;
