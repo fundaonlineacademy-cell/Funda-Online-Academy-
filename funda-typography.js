@@ -1,5 +1,6 @@
 // FUNDA ONLINE ACADEMY — RESPONSIVE TYPOGRAPHY FOUNDATION
-// Keeps existing layouts intact while providing one dependable reading font.
+// Mobile keeps the existing Academy typography. Desktop uses Manrope for
+// headings/navigation and Inter for normal interface/body text across the system.
 (()=>{
   'use strict';
   if(window.__fundaTypography)return;
@@ -12,8 +13,9 @@
   const isAdmin=/\/admin-v2\.html$/i.test(page);
   if(isAdmin)document.documentElement.classList.add('funda-admin-typography');
 
-  const hasInter=[...document.querySelectorAll('link[rel="stylesheet"]')]
-    .some(link=>/fonts\.googleapis\.com\/css2.*family=Inter/i.test(link.href));
+  const stylesheets=[...document.querySelectorAll('link[rel="stylesheet"]')];
+  const hasInter=stylesheets.some(link=>/fonts\.googleapis\.com\/css2.*family=Inter/i.test(link.href));
+  const hasManrope=stylesheets.some(link=>/fonts\.googleapis\.com\/css2.*family=Manrope/i.test(link.href));
 
   if(!hasInter){
     const preconnect=document.createElement('link');
@@ -27,11 +29,19 @@
     document.head.appendChild(font);
   }
 
+  if(!hasManrope){
+    const font=document.createElement('link');
+    font.rel='stylesheet';
+    font.href='https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap';
+    document.head.appendChild(font);
+  }
+
   const style=document.createElement('style');
   style.id='fundaTypographyFoundation';
   style.textContent=`
     :root{
       --funda-ui-font:"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --funda-desktop-heading-font:"Manrope","Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     }
 
     html{
@@ -41,12 +51,38 @@
       text-rendering:optimizeLegibility;
     }
 
+    /* Preserve the existing mobile typography exactly as it is today. */
     body,button,input,select,textarea,option{
       font-family:var(--funda-ui-font)!important;
     }
 
     nav a:not(.brand){
       font-family:var(--funda-ui-font)!important;
+    }
+
+    /* Desktop / PC typography across the Academy system only. */
+    @media (min-width:901px){
+      h1,h2,h3,h4,h5,h6,
+      .brand,
+      .brand b,
+      .brand strong,
+      nav,
+      nav a,
+      nav button,
+      .nav,
+      .nav a,
+      .nav button,
+      .navbtn,
+      .sdNav a,
+      .sdNav button,
+      .side nav a,
+      .side nav button,
+      .sidebar nav a,
+      .sidebar nav button,
+      .sideBackOffice strong,
+      .sdBrand b{
+        font-family:var(--funda-desktop-heading-font)!important;
+      }
     }
 
     /* The Admin desktop was using Arial and operational copy as small as 8px.
