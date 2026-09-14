@@ -1,4 +1,18 @@
 (()=>{"use strict";
+function installStudentSerifTrial(){
+ if(document.getElementById("fundaStudentSerifTrial"))return;
+ if(!document.getElementById("dashboardContent")&&!/Student Dashboard/i.test(document.title))return;
+ const style=document.createElement("style");
+ style.id="fundaStudentSerifTrial";
+ style.textContent=`
+body,body.sdV2{font-family:"Times New Roman",Times,Georgia,serif!important}
+body.sdV2 :where(h1,h2,h3,h4,h5,h6,.brand,nav,p,a,button,input,select,textarea,label,li,span,strong,b,small,div,section,article,aside,td,th){font-family:"Times New Roman",Times,Georgia,serif!important}
+body.sdV2 :where(h1,h2,h3,h4,h5,h6,.brand){font-weight:700!important}
+body.sdV2 :where(button,nav,.sdNav a,.sdNav button){font-weight:600!important}
+`;
+ document.head.appendChild(style);
+}
+installStudentSerifTrial();
 const RULES=[
 ["Truthful information","Provide accurate personal, identity, course and payment information. False or altered documents may be investigated and the application may be declined."],
 ["Your account is personal","Do not share your login details or allow another person to study, submit work or complete assessments using your account."],
