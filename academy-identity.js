@@ -256,32 +256,28 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   const path=location.pathname.toLowerCase();
   if(!(path==='/'||path.endsWith('/index.html')||path.endsWith('index.html')))return;
 
-  function trialDesktopTypeface(){
-    if(document.getElementById('funda-home-jakarta-font'))return;
+  function trialHomepageBodyTypeface(){
+    if(document.getElementById('funda-home-source-sans-font'))return;
 
     const link=document.createElement('link');
-    link.id='funda-home-jakarta-font';
+    link.id='funda-home-source-sans-font';
     link.rel='stylesheet';
-    link.href='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap';
+    link.href='https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap';
     document.head.appendChild(link);
 
     const style=document.createElement('style');
-    style.id='funda-home-jakarta-style';
+    style.id='funda-home-source-sans-style';
     style.textContent=`
-      @media(min-width:1024px){
-        .funda-home-header .brand,
-        .funda-home-header nav,
-        main h1,
-        main h2,
-        main h3,
-        main .learning-tab,
-        main a.rounded-xl{
-          font-family:'Plus Jakarta Sans',Inter,sans-serif!important;
-        }
-      }
+      main{font-family:'Source Sans 3',Inter,sans-serif!important}
+      main h1,main h2,main h3,main .learning-tab,main a.rounded-xl{font-family:'Source Sans 3',Inter,sans-serif!important}
+      main h1{font-weight:700!important}
+      main h2,main h3{font-weight:700!important}
+      main .learning-tab{font-weight:600!important}
+      main a.rounded-xl{font-weight:600!important}
+      main strong{font-weight:600!important}
     `;
     document.head.appendChild(style);
   }
 
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',trialDesktopTypeface);else trialDesktopTypeface();
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',trialHomepageBodyTypeface);else trialHomepageBodyTypeface();
 })();
