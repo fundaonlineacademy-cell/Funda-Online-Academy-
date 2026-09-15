@@ -22,6 +22,9 @@ function style(){
     body{font-size:16px;line-height:1.62}
     body h1,body h2,body h3,body h4{font-family:'Source Sans 3',Inter,sans-serif!important;font-weight:700!important}
     header,header *,header nav,header .brand,header button,header a{font-family:'Montserrat',sans-serif!important}
+    .csmpHeaderActionsWrap{margin-left:auto;display:flex;align-items:center;gap:10px;flex:0 0 auto}
+    .csmpHeaderActionsWrap #mobileMenuButton{flex:0 0 auto}
+    header a[data-legacy-students-link="1"]{white-space:nowrap}
     .csmpWrap{display:grid!important;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:stretch}
     .csmpBtn{border:0;border-radius:12px;padding:0 16px;background:#071d49;color:#fff;font-weight:700;font-size:15px;min-height:48px;cursor:pointer}
     .csmpStatus{margin-top:8px;font-size:14px;color:#52647a;font-weight:600;min-height:18px}
@@ -30,6 +33,7 @@ function style(){
     .csmpSortRow #sortCourses{margin-left:0!important;margin-right:auto!important}
     .csmpHeroBadge{line-height:1.35}
     .csmpHeroStats{max-width:330px!important}
+    .csmpHeroPanel{display:none}
     .csmpProgrammeSection{padding:28px 16px;background:#fff;border-top:1px solid #e5edf6;border-bottom:1px solid #e5edf6}
     .csmpProgrammeDetails{max-width:1280px;margin:0 auto;border:1px solid #e2d3a8;border-radius:22px;background:linear-gradient(135deg,#fffaf0,#f5f9ff);overflow:hidden;box-shadow:0 8px 22px rgba(31,64,101,.05)}
     .csmpProgrammeSummary{list-style:none;cursor:pointer;padding:20px 22px}
@@ -44,6 +48,27 @@ function style(){
     .csmpProgrammeBody{border-top:1px solid #eadfbf;padding:24px 0 8px;background:#fff}
     .csmpProgrammeBody>div{padding-top:0!important;padding-bottom:18px!important}
     .csmpProgrammeBody p.leading-7{text-align:justify;text-justify:inter-word}
+    .csmpProgrammeMore{max-width:1280px;margin:0 auto;padding:0 28px 22px;text-align:right}
+    .csmpProgrammeMore a{display:inline-flex;align-items:center;justify-content:center;border-radius:12px;background:#21384d;color:#fff;text-decoration:none;padding:11px 15px;font-size:13px;font-weight:700}
+    @media(min-width:1024px){
+      .csmpHeroOuter{display:grid!important;grid-template-columns:minmax(0,1.18fr) minmax(310px,.82fr);gap:54px;align-items:center}
+      .csmpHeroContent{max-width:none!important}
+      .csmpHeroContent>p{max-width:760px!important;font-size:16px!important;line-height:1.8!important}
+      .csmpHeroContent .hero-title{max-width:790px;font-size:3.2rem!important;line-height:1.06!important;letter-spacing:-.025em}
+      .csmpHeroPanel{display:block;border:1px solid rgba(201,154,46,.32);border-radius:24px;background:rgba(255,250,240,.8);box-shadow:0 16px 40px rgba(33,56,77,.08);padding:24px}
+      .csmpHeroPanelKicker{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8a6412}
+      .csmpHeroPanel h2{margin:6px 0 15px;font-size:22px!important;line-height:1.25;color:#21384d}
+      .csmpHeroFact{display:grid;grid-template-columns:34px minmax(0,1fr);gap:11px;padding:12px 0;border-top:1px solid rgba(70,103,127,.14)}
+      .csmpHeroFact:first-of-type{border-top:0}
+      .csmpHeroFactIcon{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#fff4dc;border:1px solid #e0cb8d;font-size:14px}
+      .csmpHeroFact strong{display:block;color:#21384d;font-size:14px;line-height:1.35}
+      .csmpHeroFact span:last-child{display:block;margin-top:2px;color:#5b6976;font-size:13px;line-height:1.5}
+    }
+    @media(max-width:1100px) and (min-width:768px){
+      .csmpHeaderActionsWrap{gap:7px}
+      .csmpHeaderActionsWrap>div{gap:7px!important}
+      .csmpHeaderActionsWrap>div a{padding-left:11px!important;padding-right:11px!important;font-size:12px!important}
+    }
     @media(max-width:767px){
       body{font-size:16px!important;line-height:1.62!important}
       body>section .text-xs{font-size:.84rem!important;line-height:1.35rem!important}
@@ -69,21 +94,72 @@ function style(){
       .csmpProgrammeActionText{display:none}
       .csmpProgrammeBody{padding-top:18px}
       .csmpProgrammeBody p.leading-7{text-align:left}
+      .csmpProgrammeMore{padding:0 18px 18px;text-align:left}
+      .csmpProgrammeMore a{width:100%}
       body.csmpSearching #pcvCat,body.csmpSearching #fcsaIntro{display:none!important}
     }
   `;
 }
 
+function polishHeaderActions(){
+  const button=$('mobileMenuButton');
+  if(!button)return;
+  const row=button.parentElement?.classList.contains('csmpHeaderActionsWrap')?button.parentElement:button.parentElement;
+  if(!row)return;
+
+  let wrap=button.closest('.csmpHeaderActionsWrap');
+  if(!wrap){
+    const originalRow=button.parentElement;
+    const login=originalRow.querySelector('a[href="login.html"]');
+    const actions=login?.parentElement;
+    wrap=document.createElement('div');
+    wrap.className='csmpHeaderActionsWrap';
+    originalRow.insertBefore(wrap,actions||button);
+    if(actions)wrap.appendChild(actions);
+    wrap.appendChild(button);
+  }
+
+  const login=wrap.querySelector('a[href="login.html"]');
+  const actions=login?.parentElement;
+  if(actions){
+    let legacy=actions.querySelector('a[data-legacy-students-link="1"]');
+    if(!legacy){
+      legacy=document.createElement('a');
+      legacy.href='legacy-students.html';
+      legacy.dataset.legacyStudentsLink='1';
+      legacy.textContent='Legacy Students';
+      legacy.className=login.className;
+    }
+    const ambassador=actions.querySelector('a[data-ambassador-link="1"]');
+    actions.insertBefore(legacy,ambassador||login);
+  }
+
+  const menu=$('mobileMenu')?.firstElementChild;
+  if(menu&&!menu.querySelector('a[data-legacy-students-link="1"]')){
+    const link=document.createElement('a');
+    link.href='legacy-students.html';
+    link.dataset.legacyStudentsLink='1';
+    link.textContent='Legacy Students';
+    link.className='block px-3 py-2.5 font-semibold';
+    const contact=[...menu.querySelectorAll('a')].find(a=>(a.textContent||'').trim()==='Contact');
+    if(contact)menu.insertBefore(link,contact);else menu.appendChild(link);
+  }
+}
+
 function polishHero(){
   const hero=document.querySelector('.hero');
-  if(!hero||hero.dataset.csmpPolished)return;
-  hero.dataset.csmpPolished='1';
+  if(!hero)return;
+  const outer=hero.firstElementChild;
+  const content=outer?.firstElementChild;
+  if(!outer||!content)return;
+  outer.classList.add('csmpHeroOuter');
+  content.classList.add('csmpHeroContent');
 
   const badge=hero.querySelector('.inline-flex');
   if(badge)badge.classList.add('csmpHeroBadge');
 
   const description=[...hero.querySelectorAll('p')].find(p=>/browse freely before creating an account/i.test(p.textContent||''));
-  if(description)description.textContent='Browse freely before creating an account. Compare practical programmes, course fees and study options designed to help you build practical, career-relevant skills.';
+  if(description)description.textContent='Browse freely before creating an account. Compare practical programmes, course fees and study options, then choose learning that aligns with your interests, development goals and the practical skills you want to build.';
 
   const browse=hero.querySelector('a[href="#courses"]');
   if(browse?.parentElement)browse.parentElement.classList.add('csmpHeroActions');
@@ -94,6 +170,20 @@ function polishHero(){
     courseCount.parentElement.remove();
     stats.classList.remove('grid-cols-3');
     stats.classList.add('grid-cols-2','csmpHeroStats');
+  }
+
+  if(!outer.querySelector('.csmpHeroPanel')){
+    const panel=document.createElement('aside');
+    panel.className='csmpHeroPanel';
+    panel.setAttribute('aria-label','What to expect from Funda Online Academy');
+    panel.innerHTML=`
+      <div class="csmpHeroPanelKicker">Study with clarity</div>
+      <h2>Know what to expect before you enrol.</h2>
+      <div class="csmpHeroFact"><span class="csmpHeroFactIcon" aria-hidden="true">✓</span><div><strong>100% Online Learning</strong><span>Study and access Academy services online without attending a physical campus.</span></div></div>
+      <div class="csmpHeroFact"><span class="csmpHeroFactIcon" aria-hidden="true">◷</span><div><strong>24/7 Platform Access</strong><span>Access the website and available learning services at any time.</span></div></div>
+      <div class="csmpHeroFact"><span class="csmpHeroFactIcon" aria-hidden="true">⌕</span><div><strong>Browse Before Registration</strong><span>Review course information, fees and study details before creating an account.</span></div></div>
+      <div class="csmpHeroFact"><span class="csmpHeroFactIcon" aria-hidden="true">◇</span><div><strong>Clear Course Information</strong><span>Course requirements and certification information are presented before enrolment.</span></div></div>`;
+    outer.appendChild(panel);
   }
 }
 
@@ -118,25 +208,12 @@ function orderPublicSections(){
   const programme=$('no-student-left-behind');
   const employer=$('employerPublicPromo');
   const ambassador=$('ambassadorCoursesPromo');
-
   if(!how)return;
-
   let anchor=how;
-  if(faq){
-    if(anchor.nextElementSibling!==faq)anchor.insertAdjacentElement('afterend',faq);
-    anchor=faq;
-  }
-  if(programme){
-    if(anchor.nextElementSibling!==programme)anchor.insertAdjacentElement('afterend',programme);
-    anchor=programme;
-  }
-  if(employer){
-    if(anchor.nextElementSibling!==employer)anchor.insertAdjacentElement('afterend',employer);
-    anchor=employer;
-  }
-  if(ambassador){
-    if(anchor.nextElementSibling!==ambassador)anchor.insertAdjacentElement('afterend',ambassador);
-  }
+  if(faq){if(anchor.nextElementSibling!==faq)anchor.insertAdjacentElement('afterend',faq);anchor=faq}
+  if(programme){if(anchor.nextElementSibling!==programme)anchor.insertAdjacentElement('afterend',programme);anchor=programme}
+  if(employer){if(anchor.nextElementSibling!==employer)anchor.insertAdjacentElement('afterend',employer);anchor=employer}
+  if(ambassador){if(anchor.nextElementSibling!==ambassador)anchor.insertAdjacentElement('afterend',ambassador)}
 }
 
 function compactProgramme(){
@@ -151,10 +228,14 @@ function compactProgramme(){
   details.className='csmpProgrammeDetails';
   const summary=document.createElement('summary');
   summary.className='csmpProgrammeSummary';
-  summary.innerHTML=`<div class="csmpProgrammeSummaryInner"><div><span class="csmpProgrammeKicker">Funda Student Programme</span><h2 class="csmpProgrammeTitle">No Student Left Behind</h2><p class="csmpProgrammeLead">A dedicated pathway for eligible former students who may wish to return, complete or upgrade their learning with Funda Online Academy.</p></div><span class="csmpProgrammeAction"><span class="csmpProgrammeActionText">Explore programme</span><span class="csmpProgrammePlus" aria-hidden="true">+</span></span></div>`;
+  summary.innerHTML=`<div class="csmpProgrammeSummaryInner"><div><span class="csmpProgrammeKicker">Legacy Student Programme</span><h2 class="csmpProgrammeTitle">No Student Left Behind</h2><p class="csmpProgrammeLead">A dedicated pathway for eligible former students who may wish to return, complete or upgrade their learning with Funda Online Academy.</p></div><span class="csmpProgrammeAction"><span class="csmpProgrammeActionText">Explore programme</span><span class="csmpProgrammePlus" aria-hidden="true">+</span></span></div>`;
   const body=document.createElement('div');
   body.className='csmpProgrammeBody';
   body.appendChild(original);
+  const more=document.createElement('div');
+  more.className='csmpProgrammeMore';
+  more.innerHTML='<a href="legacy-students.html">View the full Legacy Student Programme →</a>';
+  body.appendChild(more);
   details.append(summary,body);
   section.replaceChildren(details);
 }
@@ -171,12 +252,13 @@ function mount(){
   const input=$('courseSearch'),count=$('courseResultCount'),grid=$('courseGrid');
   if(!input||!count||!grid)return false;
   style();
+  polishHeaderActions();
+  polishHero();
   polishResultRow();
   orderPublicSections();
-  if($('csmpSearchBtn'))return true;
-  polishHero();
   compactProgramme();
   professionalCopy();
+  if($('csmpSearchBtn'))return true;
 
   const wrap=input.parentElement;
   wrap.classList.add('csmpWrap');
@@ -205,9 +287,9 @@ function mount(){
       if(jump){
         input.blur();
         const target=(Number((count.textContent||'').replace(/[^0-9]/g,''))===0?$('noSearchResults'):grid);
-        target?.scrollIntoView({behavior:'smooth',block:'start'});
+        target?.scrollIntoView({behavior:'smooth',block:'start'})
       }
-    },80);
+    },80)
   }
   input.addEventListener('input',()=>setTimeout(update,40));
   input.addEventListener('search',()=>run(false));
@@ -218,20 +300,21 @@ function mount(){
   return true;
 }
 
-function keepSectionOrder(){
-  orderPublicSections();
-  setTimeout(orderPublicSections,700);
-  setTimeout(orderPublicSections,1700);
-  setTimeout(orderPublicSections,2800);
+function keepLayout(){
+  [500,1200,2200,3400].forEach(ms=>setTimeout(()=>{
+    polishHeaderActions();
+    polishHero();
+    orderPublicSections();
+  },ms));
 }
 
 let tries=0;
 function boot(){
   if(mount()){
-    keepSectionOrder();
+    keepLayout();
     return;
   }
-  if(++tries<80)setTimeout(boot,250);
+  if(++tries<80)setTimeout(boot,250)
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
