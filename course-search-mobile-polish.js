@@ -112,11 +112,31 @@ function polishResultRow(){
   sort.style.marginRight='auto';
 }
 
-function orderProgrammeAfterHowItWorks(){
-  const programme=$('no-student-left-behind');
+function orderPublicSections(){
   const how=$('how-it-works');
-  if(!programme||!how)return;
-  if(how.nextElementSibling!==programme)how.insertAdjacentElement('afterend',programme);
+  const faq=$('faq');
+  const programme=$('no-student-left-behind');
+  const employer=$('employerPublicPromo');
+  const ambassador=$('ambassadorCoursesPromo');
+
+  if(!how)return;
+
+  let anchor=how;
+  if(faq){
+    if(anchor.nextElementSibling!==faq)anchor.insertAdjacentElement('afterend',faq);
+    anchor=faq;
+  }
+  if(programme){
+    if(anchor.nextElementSibling!==programme)anchor.insertAdjacentElement('afterend',programme);
+    anchor=programme;
+  }
+  if(employer){
+    if(anchor.nextElementSibling!==employer)anchor.insertAdjacentElement('afterend',employer);
+    anchor=employer;
+  }
+  if(ambassador){
+    if(anchor.nextElementSibling!==ambassador)anchor.insertAdjacentElement('afterend',ambassador);
+  }
 }
 
 function compactProgramme(){
@@ -152,7 +172,7 @@ function mount(){
   if(!input||!count||!grid)return false;
   style();
   polishResultRow();
-  orderProgrammeAfterHowItWorks();
+  orderPublicSections();
   if($('csmpSearchBtn'))return true;
   polishHero();
   compactProgramme();
@@ -198,7 +218,20 @@ function mount(){
   return true;
 }
 
+function keepSectionOrder(){
+  orderPublicSections();
+  setTimeout(orderPublicSections,700);
+  setTimeout(orderPublicSections,1700);
+  setTimeout(orderPublicSections,2800);
+}
+
 let tries=0;
-function boot(){if(mount())return;if(++tries<80)setTimeout(boot,250)}
+function boot(){
+  if(mount()){
+    keepSectionOrder();
+    return;
+  }
+  if(++tries<80)setTimeout(boot,250);
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
