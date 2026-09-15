@@ -251,3 +251,37 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refinePublicHero);else refinePublicHero();
 })();
+
+(()=>{
+  const path=location.pathname.toLowerCase();
+  if(!(path==='/'||path.endsWith('/index.html')||path.endsWith('index.html')))return;
+
+  function trialDesktopTypeface(){
+    if(document.getElementById('funda-home-jakarta-font'))return;
+
+    const link=document.createElement('link');
+    link.id='funda-home-jakarta-font';
+    link.rel='stylesheet';
+    link.href='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap';
+    document.head.appendChild(link);
+
+    const style=document.createElement('style');
+    style.id='funda-home-jakarta-style';
+    style.textContent=`
+      @media(min-width:1024px){
+        .funda-home-header .brand,
+        .funda-home-header nav,
+        main h1,
+        main h2,
+        main h3,
+        main .learning-tab,
+        main a.rounded-xl{
+          font-family:'Plus Jakarta Sans',Inter,sans-serif!important;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',trialDesktopTypeface);else trialDesktopTypeface();
+})();
