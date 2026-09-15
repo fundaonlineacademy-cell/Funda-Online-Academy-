@@ -221,11 +221,19 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     const grid=hero&&hero.firstElementChild;
     const intro=grid&&grid.firstElementChild;
     const title=intro&&intro.querySelector('h1');
+    const catalogue=grid&&grid.children[1];
+    const catalogueHead=catalogue&&catalogue.firstElementChild;
+    const catalogueKicker=catalogueHead&&catalogueHead.querySelector('p');
+    const popularTitle=catalogueHead&&catalogueHead.querySelector('h2');
+    const introCopy=title&&title.nextElementSibling;
     if(!hero||!grid||!intro||!title)return;
 
     grid.classList.add('funda-home-hero-grid');
     intro.classList.add('funda-home-hero-intro');
-    title.textContent='Build Practical Skills for the Real World';
+    title.textContent='Learn Practical Skills. Build a Stronger Future.';
+    if(catalogueKicker&&catalogueKicker.textContent.trim()==='ACADEMY CATALOGUE')catalogueKicker.remove();
+    if(popularTitle)popularTitle.classList.add('funda-home-popular-title');
+    if(introCopy)introCopy.classList.add('funda-home-hero-copy');
 
     const style=document.createElement('style');
     style.id='funda-home-hero-refine';
@@ -233,7 +241,9 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       @media(min-width:1024px){
         .funda-home-hero-grid{align-items:start!important}
         .funda-home-hero-intro{justify-content:flex-start!important;padding-top:12px!important}
-        .funda-home-hero-intro h1{max-width:560px}
+        .funda-home-hero-intro h1{max-width:540px!important;font-size:44px!important;line-height:1.08!important;letter-spacing:-.025em!important}
+        .funda-home-hero-copy{font-size:15px!important;line-height:1.7!important;max-width:520px!important}
+        .funda-home-popular-title{font-size:22px!important;line-height:1.2!important;margin-top:0!important}
       }
     `;
     document.head.appendChild(style);
