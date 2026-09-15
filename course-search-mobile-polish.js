@@ -14,10 +14,9 @@ function loadFont(){
 }
 
 function style(){
-  if($('csmpStyle'))return;
   loadFont();
-  const s=document.createElement('style');
-  s.id='csmpStyle';
+  let s=$('csmpStyle');
+  if(!s){s=document.createElement('style');s.id='csmpStyle';document.head.appendChild(s)}
   s.textContent=`
     body,button,input,select,textarea{font-family:'Source Sans 3',Inter,sans-serif!important}
     body{font-size:16px;line-height:1.62}
@@ -28,6 +27,7 @@ function style(){
     .csmpStatus{margin-top:8px;font-size:14px;color:#52647a;font-weight:600;min-height:18px}
     .csmpStatus strong{color:#071d49}
     .csmpSortRow{justify-content:flex-start!important}
+    .csmpSortRow #sortCourses{margin-left:0!important;margin-right:auto!important}
     .csmpHeroBadge{line-height:1.35}
     .csmpHeroStats{max-width:330px!important}
     .csmpProgrammeSection{padding:28px 16px;background:#fff;border-top:1px solid #e5edf6;border-bottom:1px solid #e5edf6}
@@ -72,7 +72,6 @@ function style(){
       body.csmpSearching #pcvCat,body.csmpSearching #fcsaIntro{display:none!important}
     }
   `;
-  document.head.appendChild(s);
 }
 
 function polishHero(){
@@ -100,11 +99,17 @@ function polishHero(){
 
 function polishResultRow(){
   const count=$('courseResultCount');
-  if(!count)return;
+  const sort=$('sortCourses');
+  if(!count||!sort)return;
   const label=count.parentElement;
   const row=label?.parentElement;
   if(label)label.style.display='none';
-  if(row)row.classList.add('csmpSortRow');
+  if(row){
+    row.classList.add('csmpSortRow');
+    row.style.justifyContent='flex-start';
+  }
+  sort.style.marginLeft='0';
+  sort.style.marginRight='auto';
 }
 
 function compactProgramme(){
@@ -138,10 +143,10 @@ function professionalCopy(){
 function mount(){
   const input=$('courseSearch'),count=$('courseResultCount'),grid=$('courseGrid');
   if(!input||!count||!grid)return false;
-  if($('csmpSearchBtn'))return true;
   style();
-  polishHero();
   polishResultRow();
+  if($('csmpSearchBtn'))return true;
+  polishHero();
   compactProgramme();
   professionalCopy();
 
