@@ -100,14 +100,14 @@
             </div>
 
             <nav class="funda-home-footer-nav" aria-label="Footer navigation">
-              <h2>Explore</h2>
               <div class="funda-home-footer-linkgroups">
-                <div class="funda-home-footer-linkgroup">
+                <div class="funda-home-footer-linkgroup funda-home-footer-linkgroup-primary">
+                  <h2>Explore</h2>
                   <a href="courses-public.html">Courses</a>
                   <a href="academy-map.html">Academy Map</a>
                   <a href="employers.html">Employers &amp; Industry</a>
                 </div>
-                <div class="funda-home-footer-linkgroup">
+                <div class="funda-home-footer-linkgroup funda-home-footer-linkgroup-secondary">
                   <a href="ambassadors.html">Ambassadors</a>
                   <a href="login.html">Student Login</a>
                   <a href="register.html">Register</a>
@@ -154,16 +154,16 @@
       .funda-home-footer-brand p{max-width:440px;margin:17px 0 14px;font-size:14px;line-height:1.7;color:#d7e2f0}
       .funda-home-online-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(239,215,142,.45);border-radius:999px;background:rgba(255,255,255,.06);padding:8px 12px;font-size:12px;font-weight:600;color:#f2dfaa}
       .funda-home-online-badge span{font-size:9px;color:#c99a2e}
-      .funda-home-footer h2{margin:0 0 14px;font-family:'Source Sans 3',Inter,sans-serif!important;font-size:15px;line-height:1.2;font-weight:700;color:#fff}
+      .funda-home-footer h2{margin:0;font-family:'Source Sans 3',Inter,sans-serif!important;font-size:15px;line-height:1.45;font-weight:700;color:#fff}
       .funda-home-footer-nav{display:block}
       .funda-home-footer-linkgroups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px;align-items:start}
       .funda-home-footer-linkgroup{display:grid;grid-auto-rows:minmax(22px,auto);align-content:start;align-items:start;gap:8px;margin:0;padding:0}
-      .funda-home-footer-linkgroup a{display:flex;align-items:flex-start;min-height:22px;margin:0;padding:0}
+      .funda-home-footer-linkgroup h2,.funda-home-footer-linkgroup a{display:flex;align-items:flex-start;min-height:22px;margin:0;padding:0}
       .funda-home-footer a{color:#dbe6f3;text-decoration:none;font-size:14px;line-height:1.45;transition:color .18s ease}
       .funda-home-footer a:hover{color:#efd78e}
       .funda-home-footer a:focus-visible{outline:3px solid rgba(201,154,46,.55);outline-offset:3px;border-radius:4px}
       .funda-home-footer-contact{display:grid;gap:14px}
-      .funda-home-footer-contact h2{margin-bottom:1px}
+      .funda-home-footer-contact h2{margin:0 0 1px}
       .funda-home-contact-item{display:grid;gap:3px}
       .funda-home-contact-label{font-size:11px;line-height:1.35;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#efd78e}
       .funda-home-contact-location>span:last-child{font-size:14px;line-height:1.45;color:#dbe6f3}
@@ -193,7 +193,7 @@
         .funda-home-footer-shell{padding:34px 16px 20px}
         .funda-home-footer-grid{grid-template-columns:1fr;gap:30px}
         .funda-home-footer-brand{grid-column:auto}
-        .funda-home-footer-linkgroups{column-gap:18px}
+        .funda-home-footer-linkgroups{gap:10px 18px}
         .funda-home-footer a{font-size:15px}
         .funda-home-footer-bottom{flex-direction:column;gap:6px;margin-top:26px}
         #fundaSubscribe{width:calc(100% - 32px)!important;margin:24px auto!important;padding:22px 18px!important}
