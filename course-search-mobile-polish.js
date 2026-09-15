@@ -27,7 +27,7 @@ function style(){
     .csmpBtn{border:0;border-radius:12px;padding:0 16px;background:#071d49;color:#fff;font-weight:700;font-size:15px;min-height:48px;cursor:pointer}
     .csmpStatus{margin-top:8px;font-size:14px;color:#52647a;font-weight:600;min-height:18px}
     .csmpStatus strong{color:#071d49}
-    .csmpSortRow{justify-content:flex-end!important}
+    .csmpSortRow{justify-content:flex-start!important}
     .csmpHeroBadge{line-height:1.35}
     .csmpHeroStats{max-width:330px!important}
     .csmpProgrammeSection{padding:28px 16px;background:#fff;border-top:1px solid #e5edf6;border-bottom:1px solid #e5edf6}
