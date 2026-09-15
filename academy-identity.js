@@ -225,6 +225,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     const catalogueHead=catalogue&&catalogue.firstElementChild;
     const catalogueKicker=catalogueHead&&catalogueHead.querySelector('p');
     const popularTitle=catalogueHead&&catalogueHead.querySelector('h2');
+    const viewAll=catalogueHead&&catalogueHead.querySelector('a[href="courses-public.html"]');
     const introCopy=title&&title.nextElementSibling;
     if(!hero||!grid||!intro||!title)return;
 
@@ -233,11 +234,14 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     title.textContent='Learn Practical Skills. Build a Stronger Future.';
     if(catalogueKicker&&catalogueKicker.textContent.trim()==='ACADEMY CATALOGUE')catalogueKicker.remove();
     if(popularTitle)popularTitle.classList.add('funda-home-popular-title');
+    if(viewAll)viewAll.classList.add('funda-home-view-all');
     if(introCopy)introCopy.classList.add('funda-home-hero-copy');
 
     const style=document.createElement('style');
     style.id='funda-home-hero-refine';
     style.textContent=`
+      .funda-home-view-all{border:1px solid rgba(239,215,142,.62)!important;border-radius:999px!important;background:rgba(255,255,255,.08)!important;padding:9px 13px!important;color:#f3dda0!important;text-decoration:none!important;box-shadow:0 4px 14px rgba(0,0,0,.08);transition:background-color .18s ease,border-color .18s ease,box-shadow .18s ease}
+      .funda-home-view-all:hover,.funda-home-view-all:focus-visible{background:rgba(255,255,255,.14)!important;border-color:rgba(239,215,142,.9)!important;box-shadow:0 6px 18px rgba(0,0,0,.12)}
       @media(min-width:1024px){
         .funda-home-hero-grid{align-items:start!important}
         .funda-home-hero-intro{justify-content:flex-start!important;padding-top:12px!important}
