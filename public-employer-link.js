@@ -76,6 +76,126 @@
     document.head.appendChild(style);
   }
 
+  function polishHomepageFooter(){
+    if(!isHome)return;
+    const footer=document.querySelector('body > footer')||document.querySelector('footer');
+    if(!footer)return;
+
+    if(!footer.dataset.fundaHomeFooter){
+      footer.dataset.fundaHomeFooter='1';
+      footer.className='funda-home-footer';
+      footer.innerHTML=`
+        <div class="funda-home-footer-shell">
+          <div class="funda-home-footer-grid">
+            <div class="funda-home-footer-brand">
+              <div class="funda-home-footer-brandrow">
+                <img src="logo.png" alt="Funda Online Academy" class="funda-home-footer-logo">
+                <div>
+                  <div class="funda-home-footer-name">FUNDA ONLINE ACADEMY</div>
+                  <div class="funda-home-footer-motto">LEARN. GROW. ACHIEVE.</div>
+                </div>
+              </div>
+              <p>Practical, flexible online learning designed to help people build useful knowledge, skills and confidence.</p>
+              <div class="funda-home-online-badge" aria-label="Funda Online Academy is one hundred percent online"><span aria-hidden="true">●</span> 100% Online</div>
+            </div>
+
+            <nav class="funda-home-footer-nav" aria-label="Footer navigation">
+              <h2>Explore</h2>
+              <a href="courses-public.html">Courses</a>
+              <a href="academy-map.html">Academy Map</a>
+              <a href="employers.html">Employers &amp; Industry</a>
+              <a href="ambassadors.html">Ambassadors</a>
+              <a href="login.html">Student Login</a>
+              <a href="register.html">Register</a>
+              <a href="policies.html">Policies &amp; Legal</a>
+            </nav>
+
+            <div class="funda-home-footer-contact">
+              <h2>Contact the Academy</h2>
+              <div class="funda-home-contact-item">
+                <span class="funda-home-contact-label">General Enquiries</span>
+                <a href="mailto:infor@fundaonlineacademy.co.za">infor@fundaonlineacademy.co.za</a>
+              </div>
+              <div class="funda-home-contact-item">
+                <span class="funda-home-contact-label">WhatsApp</span>
+                <a href="https://wa.me/27699608590?text=Hello%20Funda%20Online%20Academy%2C%20I%20would%20like%20to%20make%20a%20general%20enquiry." target="_blank" rel="noopener noreferrer">069 960 8590</a>
+              </div>
+              <div class="funda-home-contact-item funda-home-contact-location">
+                <span class="funda-home-contact-label">Learning Location</span>
+                <span>100% Online</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="funda-home-footer-bottom">
+            <span>© ${new Date().getFullYear()} Funda Online Academy. All rights reserved.</span>
+            <span>Learn. Grow. Achieve.</span>
+          </div>
+        </div>`;
+    }
+
+    if(document.getElementById('funda-home-footer-polish'))return;
+    const style=document.createElement('style');
+    style.id='funda-home-footer-polish';
+    style.textContent=`
+      .funda-home-footer{background:#06152f;color:#fff;border-top:1px solid rgba(201,154,46,.35);font-family:'Source Sans 3',Inter,sans-serif!important}
+      .funda-home-footer-shell{max-width:1280px;margin:0 auto;padding:42px 20px 22px}
+      .funda-home-footer-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(180px,.65fr) minmax(250px,1fr);gap:48px;align-items:start}
+      .funda-home-footer-brandrow{display:flex;align-items:center;gap:13px}
+      .funda-home-footer-logo{width:46px;height:46px;object-fit:contain;background:#fff;border-radius:11px;padding:4px}
+      .funda-home-footer-name{font-size:17px;line-height:1.15;font-weight:700;letter-spacing:-.01em;color:#fff}
+      .funda-home-footer-motto{margin-top:5px;font-size:11px;line-height:1.2;font-weight:600;letter-spacing:.15em;color:#efd78e}
+      .funda-home-footer-brand p{max-width:440px;margin:17px 0 14px;font-size:14px;line-height:1.7;color:#d7e2f0}
+      .funda-home-online-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(239,215,142,.45);border-radius:999px;background:rgba(255,255,255,.06);padding:8px 12px;font-size:12px;font-weight:600;color:#f2dfaa}
+      .funda-home-online-badge span{font-size:9px;color:#c99a2e}
+      .funda-home-footer h2{margin:0 0 14px;font-family:'Source Sans 3',Inter,sans-serif!important;font-size:15px;line-height:1.2;font-weight:700;color:#fff}
+      .funda-home-footer-nav{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+      .funda-home-footer a{color:#dbe6f3;text-decoration:none;font-size:14px;line-height:1.45;transition:color .18s ease}
+      .funda-home-footer a:hover{color:#efd78e}
+      .funda-home-footer a:focus-visible{outline:3px solid rgba(201,154,46,.55);outline-offset:3px;border-radius:4px}
+      .funda-home-footer-contact{display:grid;gap:14px}
+      .funda-home-footer-contact h2{margin-bottom:1px}
+      .funda-home-contact-item{display:grid;gap:3px}
+      .funda-home-contact-label{font-size:11px;line-height:1.35;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#efd78e}
+      .funda-home-contact-location>span:last-child{font-size:14px;line-height:1.45;color:#dbe6f3}
+      .funda-home-footer-bottom{display:flex;justify-content:space-between;gap:20px;margin-top:34px;padding-top:18px;border-top:1px solid rgba(255,255,255,.13);font-size:12px;line-height:1.5;color:#aebfd3}
+
+      #fundaSubscribe{
+        width:calc(100% - 40px)!important;
+        max-width:1280px!important;
+        margin:32px auto!important;
+        padding:26px 28px!important;
+        font-family:'Source Sans 3',Inter,sans-serif!important;
+      }
+      #fundaSubscribe h3{font-family:'Source Sans 3',Inter,sans-serif!important;font-size:23px!important;line-height:1.2!important;font-weight:700!important;margin-bottom:7px!important}
+      #fundaSubscribe>p{font-size:15px!important;line-height:1.65!important;margin-bottom:17px!important;color:#d9e3ef!important}
+      #fundaSubscribe .fundaSubForm{gap:10px!important}
+      #fundaSubscribe .fundaSubForm input{min-height:44px!important;padding:11px 12px!important;font-family:'Source Sans 3',Inter,sans-serif!important;font-size:14px!important}
+      #fundaSubscribe .fundaSubForm button{min-height:44px!important;padding:11px 17px!important;font-family:'Source Sans 3',Inter,sans-serif!important;font-size:14px!important;font-weight:700!important}
+      #fundaSubscribe .fundaSubConsent{margin-top:12px!important;font-size:12px!important;line-height:1.55!important}
+      #fundaSubscribe .fundaSubConsent input{margin-top:2px}
+      #fundaSubscribe .fundaSubMsg{margin-top:10px!important;font-size:12px!important;line-height:1.5!important}
+
+      @media(max-width:820px){
+        .funda-home-footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+        .funda-home-footer-brand{grid-column:1/-1}
+      }
+      @media(max-width:560px){
+        .funda-home-footer-shell{padding:34px 16px 20px}
+        .funda-home-footer-grid{grid-template-columns:1fr;gap:30px}
+        .funda-home-footer-brand{grid-column:auto}
+        .funda-home-footer-nav{gap:10px}
+        .funda-home-footer a{font-size:15px}
+        .funda-home-footer-bottom{flex-direction:column;gap:6px;margin-top:28px}
+        #fundaSubscribe{width:calc(100% - 32px)!important;margin:24px auto!important;padding:22px 18px!important}
+        #fundaSubscribe h3{font-size:21px!important}
+        #fundaSubscribe>p{font-size:14px!important}
+        #fundaSubscribe .fundaSubConsent{font-size:12px!important}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   function addLinks(){
     document.querySelectorAll('header a').forEach(a=>{
       const t=(a.textContent||'').trim().toLowerCase();
@@ -85,6 +205,7 @@
 
     refineHomepageBusiness();
     polishHomepageIdentity();
+    polishHomepageFooter();
 
     if(/courses-public\.html$/.test(path)&&!document.getElementById('employerPublicPromo')){
       const faq=document.getElementById('faq');
