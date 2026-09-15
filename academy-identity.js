@@ -210,3 +210,34 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',strengthenDesktopHeader);else strengthenDesktopHeader();
 })();
+
+(()=>{
+  const path=location.pathname.toLowerCase();
+  if(!(path==='/'||path.endsWith('/index.html')||path.endsWith('index.html')))return;
+
+  function refinePublicHero(){
+    if(document.getElementById('funda-home-hero-refine'))return;
+    const hero=document.querySelector('main .hero');
+    const grid=hero&&hero.firstElementChild;
+    const intro=grid&&grid.firstElementChild;
+    const title=intro&&intro.querySelector('h1');
+    if(!hero||!grid||!intro||!title)return;
+
+    grid.classList.add('funda-home-hero-grid');
+    intro.classList.add('funda-home-hero-intro');
+    title.textContent='Build Practical Skills for the Real World';
+
+    const style=document.createElement('style');
+    style.id='funda-home-hero-refine';
+    style.textContent=`
+      @media(min-width:1024px){
+        .funda-home-hero-grid{align-items:start!important}
+        .funda-home-hero-intro{justify-content:flex-start!important;padding-top:12px!important}
+        .funda-home-hero-intro h1{max-width:560px}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',refinePublicHero);else refinePublicHero();
+})();
