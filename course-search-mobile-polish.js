@@ -251,6 +251,49 @@ function professionalCopy(){
   }
 }
 
+function faqCard(key,question,answer){
+  const d=document.createElement('details');
+  d.dataset.csmpFaq=key;
+  d.className='border bg-white rounded-xl p-4 shadow-sm';
+  d.innerHTML=`<summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">${question}<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">${answer}</p>`;
+  return d;
+}
+
+function polishFaq(){
+  const faq=$('faq');
+  const grid=faq?.querySelector('.mt-8.grid');
+  if(!grid)return;
+
+  const cards=[...grid.querySelectorAll('details')];
+  const office=cards.find(d=>/where are your offices/i.test(d.querySelector('summary')?.textContent||''));
+  if(office){
+    office.dataset.csmpFaq='location';
+    office.innerHTML=`<summary class="cursor-pointer flex justify-between gap-3 font-semibold text-sm text-[#071D49]">Where is Funda Online Academy based, and do you have a physical campus?<span class="faq-arrow text-[#C99A2E]">＋</span></summary><p class="mt-3 text-sm text-slate-600 leading-6">Funda Online Academy is a South African online learning institution that operates 100% online. We do not operate a walk-in campus or public-facing student office. Registration, learning, assessments, student support and Academy services are delivered online, allowing students to study without travelling to a physical campus.</p><p class="mt-3 text-sm text-slate-600 leading-6">We understand that students may want reassurance before registering or making payment. Prospective students are welcome to verify the Academy through our official website, email or WhatsApp contact details before enrolling. Once enrolled, students also receive access to the appropriate support channels within the student environment.</p>`;
+  }
+
+  const current=[...grid.querySelectorAll('details')];
+  const registered=current.find(d=>/registered business/i.test(d.querySelector('summary')?.textContent||''));
+  let anchor=registered||office||current[0];
+
+  const additions=[
+    ['official','How can I confirm that I am dealing with the official Funda Online Academy?','Use our official website <strong>fundaonlineacademy.co.za</strong>, email <strong>infor@fundaonlineacademy.co.za</strong>, or WhatsApp <strong>069 960 8590</strong>. If you receive a payment request or message that you are unsure about, confirm it through one of these official channels before making payment or sharing personal information.'],
+    ['data','Do I need internet or mobile data to study?','Yes. Because Funda Online Academy operates fully online, you will need an internet connection through mobile data or Wi-Fi to access the website, your Student Dashboard, course lessons, assessments, learning materials and online support services. Data usage will vary depending on the learning activity and resources being accessed. We recommend a stable internet connection when completing assessments, uploading documents or accessing larger learning materials.'],
+    ['device','What device can I use to study?','Most Academy services can be accessed using an internet-connected smartphone, tablet, laptop or desktop computer with a modern web browser. A laptop, desktop or larger screen may be more comfortable for longer lessons, assessments and document uploads. Keep your browser updated and use a stable internet connection where possible.'],
+    ['international','Can I study with Funda Online Academy if I live outside South Africa?','Funda Online Academy is designed for online access and is working to support learners beyond South Africa. International enrolment may be available for selected courses and payment arrangements. If you live outside South Africa, contact the Academy through an official channel before making payment so that course availability, payment options, certification information and any country-specific requirements can be confirmed.']
+  ];
+
+  additions.forEach(([key,question,answer])=>{
+    let existing=grid.querySelector(`[data-csmp-faq="${key}"]`);
+    if(!existing)existing=faqCard(key,question,answer);
+    if(anchor){
+      if(anchor.nextElementSibling!==existing)anchor.insertAdjacentElement('afterend',existing);
+    }else if(!existing.isConnected){
+      grid.appendChild(existing);
+    }
+    anchor=existing;
+  });
+}
+
 function mount(){
   const input=$('courseSearch'),count=$('courseResultCount'),grid=$('courseGrid');
   if(!input||!count||!grid)return false;
@@ -261,6 +304,7 @@ function mount(){
   orderPublicSections();
   compactProgramme();
   professionalCopy();
+  polishFaq();
   if($('csmpSearchBtn'))return true;
 
   const wrap=input.parentElement;
@@ -308,6 +352,7 @@ function keepLayout(){
     polishHeaderActions();
     polishHero();
     orderPublicSections();
+    polishFaq();
   },ms));
 }
 
