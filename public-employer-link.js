@@ -42,6 +42,40 @@
     }
   }
 
+  function polishHomepageIdentity(){
+    if(!isHome||document.getElementById('funda-home-identity-polish'))return;
+    const style=document.createElement('style');
+    style.id='funda-home-identity-polish';
+    style.textContent=`
+      #academy-identity{
+        width:calc(100% - 40px);
+        max-width:1280px;
+        margin:32px auto!important;
+        font-family:'Source Sans 3',Inter,sans-serif!important;
+      }
+      #academy-identity .funda-identity-head h2,
+      #academy-identity .funda-identity-card h3{
+        font-family:'Source Sans 3',Inter,sans-serif!important;
+        font-weight:700!important;
+      }
+      #academy-identity .funda-identity-head h2{font-size:26px!important;line-height:1.2!important}
+      #academy-identity .funda-identity-kicker{font-size:11px!important;font-weight:700!important;color:#e0c36f!important}
+      #academy-identity .funda-identity-motto{font-size:14px!important;font-weight:600!important}
+      #academy-identity .funda-identity-card h3{font-size:18px!important;margin-bottom:9px!important}
+      #academy-identity .funda-identity-card p{font-size:15px!important;line-height:1.72!important;color:#374151!important}
+      #academy-identity .funda-identity-card{padding:21px!important}
+      @media(max-width:700px){
+        #academy-identity{width:calc(100% - 32px);margin:24px auto!important}
+        #academy-identity .funda-identity-head{padding:21px!important}
+        #academy-identity .funda-identity-head h2{font-size:22px!important}
+        #academy-identity .funda-identity-body{padding:16px!important}
+        #academy-identity .funda-identity-card{padding:18px!important}
+        #academy-identity .funda-identity-card p{font-size:15px!important;line-height:1.7!important}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   function addLinks(){
     document.querySelectorAll('header a').forEach(a=>{
       const t=(a.textContent||'').trim().toLowerCase();
@@ -50,6 +84,7 @@
     });
 
     refineHomepageBusiness();
+    polishHomepageIdentity();
 
     if(/courses-public\.html$/.test(path)&&!document.getElementById('employerPublicPromo')){
       const faq=document.getElementById('faq');
