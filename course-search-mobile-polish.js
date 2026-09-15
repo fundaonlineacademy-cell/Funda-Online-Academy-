@@ -112,6 +112,13 @@ function polishResultRow(){
   sort.style.marginRight='auto';
 }
 
+function orderProgrammeAfterHowItWorks(){
+  const programme=$('no-student-left-behind');
+  const how=$('how-it-works');
+  if(!programme||!how)return;
+  if(how.nextElementSibling!==programme)how.insertAdjacentElement('afterend',programme);
+}
+
 function compactProgramme(){
   const section=$('no-student-left-behind');
   if(!section||section.dataset.csmpCompact)return;
@@ -145,6 +152,7 @@ function mount(){
   if(!input||!count||!grid)return false;
   style();
   polishResultRow();
+  orderProgrammeAfterHowItWorks();
   if($('csmpSearchBtn'))return true;
   polishHero();
   compactProgramme();
