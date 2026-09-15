@@ -89,3 +89,78 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installCeoAmbassadorMessage);else installCeoAmbassadorMessage();
 })();
+
+(()=>{
+  const path=location.pathname.toLowerCase();
+  if(!(path==='/'||path.endsWith('/index.html')||path.endsWith('index.html')))return;
+
+  function polishPublicHeader(){
+    const header=document.querySelector('body > header');
+    const nav=header&&header.querySelector('nav');
+    const row=nav&&nav.firstElementChild;
+    if(!header||!nav||!row||document.getElementById('funda-home-header-polish'))return;
+
+    header.classList.add('funda-home-header');
+    row.classList.add('funda-home-header-row');
+
+    const brandLink=row.querySelector('a[href="index.html"]')||row.querySelector('a');
+    if(brandLink)brandLink.classList.add('funda-home-brand');
+
+    const desktopGroups=[...row.children].filter(el=>el.tagName==='DIV'&&el.classList.contains('hidden')&&el.classList.contains('md:flex'));
+    if(desktopGroups[0]){
+      desktopGroups[0].classList.add('funda-home-primary-nav');
+      desktopGroups[0].querySelectorAll(':scope > a').forEach(a=>a.style.margin='0');
+    }
+    if(desktopGroups[1])desktopGroups[1].classList.add('funda-home-account-nav');
+
+    const menuButton=document.getElementById('homeMobileMenuButton');
+    if(menuButton)menuButton.classList.add('funda-home-menu-button');
+    const mobileMenu=document.getElementById('homeMobileMenu');
+    if(mobileMenu)mobileMenu.classList.add('funda-home-mobile-menu');
+
+    const style=document.createElement('style');
+    style.id='funda-home-header-polish';
+    style.textContent=`
+      .funda-home-header{border-bottom-color:#dfe5ec!important;background:rgba(255,255,255,.98)!important;box-shadow:0 3px 16px rgba(6,21,47,.055);backdrop-filter:saturate(130%) blur(8px)}
+      .funda-home-header-row{min-height:78px;height:auto!important;padding-top:7px;padding-bottom:7px}
+      .funda-home-brand{flex:1 1 0;min-width:max-content;gap:12px!important;text-decoration:none!important}
+      .funda-home-brand .brand>div:first-child{font-size:17px!important;line-height:1!important;letter-spacing:-.015em;font-weight:800!important;color:#06152f!important}
+      .funda-home-brand .brand>div:last-child{margin-top:5px!important;font-size:10px!important;line-height:1!important;letter-spacing:.22em!important;font-weight:700!important;color:#8a6412!important}
+      .funda-home-primary-nav{flex:0 1 auto;gap:24px!important;font-size:14px!important;line-height:1!important;font-weight:600!important;color:#334155!important;white-space:nowrap}
+      .funda-home-primary-nav>a{position:relative;display:inline-flex;align-items:center;min-height:44px;padding:0 2px!important;margin:0!important;color:#334155!important;text-decoration:none!important;transition:color .18s ease}
+      .funda-home-primary-nav>a:after{content:'';position:absolute;left:2px;right:2px;bottom:5px;height:2px;border-radius:999px;background:#c99a2e;transform:scaleX(0);transform-origin:center;transition:transform .18s ease}
+      .funda-home-primary-nav>a:hover,.funda-home-primary-nav>a:focus-visible{color:#06152f!important}
+      .funda-home-primary-nav>a:hover:after,.funda-home-primary-nav>a:focus-visible:after{transform:scaleX(1)}
+      .funda-home-account-nav{flex:1 1 0;justify-content:flex-end;gap:8px!important;white-space:nowrap}
+      .funda-home-account-nav>a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;font-size:14px!important;line-height:1!important;font-weight:700!important;text-decoration:none!important;transition:background-color .18s ease,color .18s ease,border-color .18s ease,box-shadow .18s ease}
+      .funda-home-account-nav>a:first-child{padding:0 14px!important;border-radius:10px}
+      .funda-home-account-nav>a:first-child:hover{background:#f1f5f9}
+      .funda-home-account-nav>a:last-child{padding:0 18px!important;border-radius:11px!important;box-shadow:0 5px 14px rgba(6,21,47,.12)}
+      .funda-home-account-nav>a:last-child:hover{background:#0b2f70!important;box-shadow:0 7px 18px rgba(6,21,47,.18)}
+      .funda-home-menu-button{width:44px!important;height:44px!important;min-width:44px;display:flex;align-items:center;justify-content:center;border-color:#d8e0e8!important;background:#f8fafc!important;transition:background-color .18s ease,border-color .18s ease}
+      .funda-home-menu-button:hover{background:#f1f5f9!important;border-color:#cbd5e1!important}
+      .funda-home-mobile-menu a{min-height:44px;display:flex!important;align-items:center;font-size:15px!important;line-height:1.25!important}
+      .funda-home-mobile-menu .grid a{justify-content:center;font-size:14px!important}
+      .funda-home-header a:focus-visible,.funda-home-header button:focus-visible{outline:3px solid rgba(201,154,46,.45)!important;outline-offset:3px!important}
+      @media(min-width:768px) and (max-width:1023px){
+        .funda-home-primary-nav{gap:16px!important;font-size:13px!important}
+        .funda-home-account-nav>a{font-size:13px!important}
+        .funda-home-account-nav>a:first-child{padding:0 10px!important}
+        .funda-home-account-nav>a:last-child{padding:0 14px!important}
+        .funda-home-brand .brand>div:first-child{font-size:16px!important}
+      }
+      @media(max-width:767px){
+        .funda-home-header-row{min-height:72px;padding-top:6px;padding-bottom:6px}
+        .funda-home-brand{gap:11px!important}
+        .funda-home-brand .brand>div:first-child{font-size:16px!important}
+        .funda-home-brand .brand>div:last-child{font-size:9.5px!important;letter-spacing:.2em!important}
+      }
+      @media(prefers-reduced-motion:reduce){
+        .funda-home-primary-nav>a,.funda-home-primary-nav>a:after,.funda-home-account-nav>a,.funda-home-menu-button{transition:none!important}
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',polishPublicHeader);else polishPublicHeader();
+})();
