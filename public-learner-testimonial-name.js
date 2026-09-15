@@ -121,3 +121,29 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyTransparentLogo,{once:true});
   else applyTransparentLogo();
 })();
+
+// Public homepage academic message attribution only.
+(()=>{
+  const path=(location.pathname||'/').toLowerCase();
+  if(!(path==='/'||path.endsWith('/index.html')))return;
+
+  function updateAcademicMessageAttribution(){
+    const section=document.getElementById('ceo-message');
+    if(!section)return;
+
+    const heading=section.querySelector('h2');
+    const headingWrap=heading&&heading.parentElement;
+    if(headingWrap){
+      [...headingWrap.querySelectorAll('p')].forEach(p=>{
+        if(p.textContent.trim().toUpperCase()==='A MESSAGE FROM THE CEO')p.remove();
+      });
+      if(heading)heading.style.marginTop='0';
+    }
+
+    const signature=[...section.querySelectorAll('p')].find(p=>p.textContent.trim()==='— Chief Executive Officer');
+    if(signature)signature.textContent='— Head of Academics';
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',updateAcademicMessageAttribution,{once:true});
+  else updateAcademicMessageAttribution();
+})();
