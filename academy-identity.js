@@ -103,6 +103,12 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     header.classList.add('funda-home-header');
     row.classList.add('funda-home-header-row');
 
+    header.querySelectorAll('a').forEach(a=>{
+      const label=a.textContent.trim();
+      if(label==='For Business')a.textContent='Business';
+      if(label==='For Employers')a.textContent='Employers';
+    });
+
     const brandLink=row.querySelector('a[href="index.html"]')||row.querySelector('a');
     if(brandLink)brandLink.classList.add('funda-home-brand');
 
