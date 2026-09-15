@@ -126,8 +126,8 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       .funda-home-brand{flex:1 1 0;min-width:max-content;gap:12px!important;text-decoration:none!important}
       .funda-home-brand .brand>div:first-child{font-size:17px!important;line-height:1!important;letter-spacing:-.015em;font-weight:800!important;color:#06152f!important}
       .funda-home-brand .brand>div:last-child{margin-top:5px!important;font-size:10px!important;line-height:1!important;letter-spacing:.22em!important;font-weight:700!important;color:#8a6412!important}
-      .funda-home-primary-nav{flex:0 1 auto;gap:24px!important;font-size:14px!important;line-height:1!important;font-weight:600!important;color:#334155!important;white-space:nowrap}
-      .funda-home-primary-nav>a{position:relative;display:inline-flex;align-items:center;min-height:44px;padding:0 2px!important;margin:0!important;color:#334155!important;text-decoration:none!important;transition:color .18s ease}
+      .funda-home-primary-nav{flex:0 1 auto;gap:24px!important;font-size:14px!important;line-height:1!important;font-weight:700!important;color:#1e293b!important;white-space:nowrap}
+      .funda-home-primary-nav>a{position:relative;display:inline-flex;align-items:center;min-height:44px;padding:0 2px!important;margin:0!important;color:#1e293b!important;text-decoration:none!important;transition:color .18s ease}
       .funda-home-primary-nav>a:after{content:'';position:absolute;left:2px;right:2px;bottom:5px;height:2px;border-radius:999px;background:#c99a2e;transform:scaleX(0);transform-origin:center;transition:transform .18s ease}
       .funda-home-primary-nav>a:hover,.funda-home-primary-nav>a:focus-visible{color:#06152f!important}
       .funda-home-primary-nav>a:hover:after,.funda-home-primary-nav>a:focus-visible:after{transform:scaleX(1)}
@@ -137,7 +137,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
       .funda-home-account-nav>a:first-child:hover{background:#f1f5f9}
       .funda-home-account-nav>a:last-child{padding:0 18px!important;border-radius:11px!important;box-shadow:0 5px 14px rgba(6,21,47,.12)}
       .funda-home-account-nav>a:last-child:hover{background:#0b2f70!important;box-shadow:0 7px 18px rgba(6,21,47,.18)}
-      .funda-home-menu-button{width:44px!important;height:44px!important;min-width:44px;display:flex;align-items:center;justify-content:center;border-color:#d8e0e8!important;background:#f8fafc!important;transition:background-color .18s ease,border-color .18s ease}
+      .funda-home-menu-button{width:44px!important;height:44px!important;min-width:44px;align-items:center;justify-content:center;border-color:#d8e0e8!important;background:#f8fafc!important;transition:background-color .18s ease,border-color .18s ease}
       .funda-home-menu-button:hover{background:#f1f5f9!important;border-color:#cbd5e1!important}
       .funda-home-mobile-menu a{min-height:44px;display:flex!important;align-items:center;font-size:15px!important;line-height:1.25!important}
       .funda-home-mobile-menu .grid a{justify-content:center;font-size:14px!important}
@@ -154,6 +154,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
         .funda-home-brand{gap:11px!important}
         .funda-home-brand .brand>div:first-child{font-size:16px!important}
         .funda-home-brand .brand>div:last-child{font-size:9.5px!important;letter-spacing:.2em!important}
+        .funda-home-menu-button{display:flex!important}
       }
       @media(prefers-reduced-motion:reduce){
         .funda-home-primary-nav>a,.funda-home-primary-nav>a:after,.funda-home-account-nav>a,.funda-home-menu-button{transition:none!important}
