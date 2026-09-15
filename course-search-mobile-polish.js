@@ -243,6 +243,9 @@ function compactProgramme(){
 function professionalCopy(){
   const how=$('how-it-works');
   if(how){
+    const heading=how.querySelector('h2');
+    const kicker=heading?.previousElementSibling;
+    if(kicker)kicker.textContent='Get Started';
     const p=[...how.querySelectorAll('p')].find(x=>/see the course first/i.test(x.textContent||''));
     if(p)p.textContent='Review the course information first. Register when you are ready, then begin learning once your enrolment has been approved.';
   }
