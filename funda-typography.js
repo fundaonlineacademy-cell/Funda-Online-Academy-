@@ -3,7 +3,7 @@
 // Existing page-specific sizing, spacing, colours and readability rules remain unchanged.
 (()=>{
   'use strict';
-  if(window.__fundaTypography)return;
+  if(window.__fundaTypography && document.getElementById('fundaTypographyFoundation'))return;
   window.__fundaTypography=true;
 
   const page=window.location.pathname;
