@@ -16,11 +16,11 @@ function mount(){
 }
 
 function loadUnifiedView(){
-  if(document.querySelector('script[data-funda-course-unified-v4]'))return;
+  if(document.querySelector('script[data-funda-course-unified-v5]'))return;
   const script=document.createElement('script');
-  script.dataset.fundaCourseUnifiedV4='1';
+  script.dataset.fundaCourseUnifiedV5='1';
   script.async=false;
-  script.src='course-view-unified-public.js?v=20260916-unified-v4';
+  script.src='course-view-unified-public.js?v=20260916-unified-v5';
   document.head.appendChild(script);
 }
 
