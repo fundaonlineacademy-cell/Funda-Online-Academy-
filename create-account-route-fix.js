@@ -1,30 +1,11 @@
 (()=>{
 if(window.__fundaCreateAccountRouteFix)return;window.__fundaCreateAccountRouteFix=true;
-function rememberRequestedCourse(){
- try{
-  const next=new URLSearchParams(location.search).get('next');
-  if(!next)return;
-  const requested=new URL(next,location.href);
-  let course='';
-  if(/onboarding\.html$/i.test(requested.pathname))course=requested.searchParams.get('course')||'';
-  if(/course-view\.html$/i.test(requested.pathname))course=requested.searchParams.get('id')||'';
-  course=String(course).trim();
-  if(course)localStorage.setItem('funda_pending_course',JSON.stringify({id:course,source:'requested-route',saved_at:new Date().toISOString()}));
- }catch(e){}
-}
 function rewrite(root=document){
  root.querySelectorAll?.('a[href]').forEach(a=>{
   const raw=a.getAttribute('href')||'';
   if(/^auth\.html(?:\?|#|$)/i.test(raw)){
-   try{
-    const source=new URL(raw,location.href);
-    const target=new URL('create-account.html',location.href);
-    source.searchParams.forEach((value,key)=>target.searchParams.append(key,value));
-    target.hash=source.hash;
-    a.setAttribute('href',target.pathname.split('/').pop()+target.search+target.hash);
-   }catch(e){
-    a.setAttribute('href','create-account.html');
-   }
+   const u=new URL(raw,location.href);const next=u.searchParams.get('next');
+   a.setAttribute('href',`create-account.html${next?`?next=${encodeURIComponent(next)}`:''}`);
   }
  });
 }
@@ -43,7 +24,6 @@ function clarifyLoginAccountLabel(root=document){
  });
 }
 function boot(){
- rememberRequestedCourse();
  rewrite();
  clarifyLoginAccountLabel();
  new MutationObserver(m=>m.forEach(x=>x.addedNodes.forEach(n=>{

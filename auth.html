@@ -8,114 +8,216 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js?v=20260916-create-account-v2"></script>
+  <script src="supabase-config.js?v=20260827"></script>
 
   <style>
-    :root{--navy:#06152f;--navy2:#0a214d;--blue:#184f9f;--gold:#d3aa49;--ink:#10213f;--font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+    :root{
+      --navy:#06152f;
+      --navy2:#0a214d;
+      --blue:#184f9f;
+      --gold:#d3aa49;
+      --ink:#10213f;
+    }
     *{box-sizing:border-box}
     html,body{margin:0;min-height:100%}
-    body{font-family:var(--font);background:#06152f;color:var(--ink)}
-    h1,h2,h3,.brand,button,input,select{font-family:var(--font)}
-    .brand-panel{background:radial-gradient(circle at 15% 12%,rgba(211,170,73,.10),transparent 27%),radial-gradient(circle at 88% 78%,rgba(24,79,159,.18),transparent 28%),linear-gradient(145deg,#020817 0%,#06152f 52%,#0a214d 100%)}
+    body{font-family:"Inter",sans-serif;background:#06152f;color:var(--ink)}
+    h1,h2,h3,.brand{font-family:"Montserrat",sans-serif}
+
+    .brand-panel{
+      background:
+        radial-gradient(circle at 15% 12%,rgba(211,170,73,.10),transparent 27%),
+        radial-gradient(circle at 88% 78%,rgba(24,79,159,.18),transparent 28%),
+        linear-gradient(145deg,#020817 0%,#06152f 52%,#0a214d 100%);
+    }
     .form-panel{background:linear-gradient(145deg,#09162d 0%,#0d2143 100%)}
     .form-card{box-shadow:0 28px 80px rgba(0,0,0,.35)}
-    .input-field{width:100%;border:1px solid #d5dce8;background:#f8fafc;color:#0f172a;border-radius:12px;padding:13px 14px;font-size:15px;transition:.2s ease}
-    .input-field:focus{outline:none;border-color:#184f9f;background:#fff;box-shadow:0 0 0 4px rgba(24,79,159,.11)}
-    .terms-box{max-height:210px;overflow:auto;background:#f8fafc;border:1px solid #dbe2ec;border-radius:14px;padding:16px}
-    .message{display:none}.message.show{display:block}.message.error{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239}.message.success{background:#ecfdf3;border:1px solid #bbf7d0;color:#166534}
-    .spinner{width:18px;height:18px;display:inline-block;vertical-align:-3px;margin-right:8px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
-    .password-wrap{position:relative}.password-wrap .input-field{padding-right:72px}.password-toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#184f9f;font-weight:800;font-size:12px;padding:7px;cursor:pointer}
+
+    .input-field{
+      width:100%;
+      border:1px solid #d5dce8;
+      background:#f8fafc;
+      color:#0f172a;
+      border-radius:12px;
+      padding:13px 14px;
+      font-size:15px;
+      transition:.2s ease;
+    }
+    .input-field:focus{
+      outline:none;
+      border-color:#184f9f;
+      background:#fff;
+      box-shadow:0 0 0 4px rgba(24,79,159,.11);
+    }
+
+    .terms-box{
+      max-height:210px;
+      overflow:auto;
+      background:#f8fafc;
+      border:1px solid #dbe2ec;
+      border-radius:14px;
+      padding:16px;
+    }
+
+    .message{display:none}
+    .message.show{display:block}
+    .message.error{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239}
+    .message.success{background:#ecfdf3;border:1px solid #bbf7d0;color:#166534}
+
+    .spinner{
+      width:18px;height:18px;display:inline-block;vertical-align:-3px;margin-right:8px;
+      border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
     @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
+
 <body>
 <main class="min-h-screen grid lg:grid-cols-[.92fr_1.08fr]">
-  <section class="brand-panel order-2 lg:order-1 text-white px-6 sm:px-10 lg:px-14 xl:px-18 py-10 lg:py-12 flex flex-col justify-between lg:min-h-screen">
+
+  <section class="brand-panel text-white px-6 sm:px-10 lg:px-14 xl:px-18 py-8 lg:py-12 flex flex-col justify-between min-h-[420px] lg:min-h-screen">
     <div>
       <a href="index.html" class="inline-flex items-center gap-4 bg-white rounded-2xl px-4 py-3 shadow-2xl">
         <img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 sm:w-16 sm:h-16 object-contain" onerror="this.style.display='none'">
-        <div class="brand leading-none"><div class="text-lg sm:text-xl font-extrabold text-[#06152f]">FUNDA ONLINE</div><div class="mt-1.5 text-[10px] font-extrabold tracking-[.28em] text-[#b88622]">ACADEMY</div></div>
+        <div class="brand leading-none">
+          <div class="text-lg sm:text-xl font-extrabold text-[#06152f]">FUNDA ONLINE</div>
+          <div class="mt-1.5 text-[10px] font-extrabold tracking-[.28em] text-[#b88622]">ACADEMY</div>
+        </div>
       </a>
 
-      <div class="mt-10 lg:mt-20 max-w-xl">
-        <div class="inline-flex rounded-full border border-white/10 bg-white/[.05] px-4 py-2 text-[11px] font-bold tracking-[.16em] text-[#e6c778]">YOUR JOURNEY STARTS HERE</div>
-        <h1 class="mt-5 text-4xl sm:text-5xl font-extrabold leading-[1.06] tracking-tight">Build your future<br><span class="text-[#e2bd61]">one skill at a time.</span></h1>
-        <p class="mt-6 text-sm sm:text-base leading-7 text-slate-200">Create your student account first. After that, continue to your selected course or choose a course, complete the detailed enrolment process and submit the required information for Academy review.</p>
+      <div class="mt-12 lg:mt-20 max-w-xl">
+        <div class="inline-flex rounded-full border border-white/10 bg-white/[.05] px-4 py-2 text-[11px] font-bold tracking-[.16em] text-[#e6c778]">
+          YOUR JOURNEY STARTS HERE
+        </div>
+
+        <h1 class="mt-5 text-4xl sm:text-5xl font-extrabold leading-[1.06] tracking-tight">
+          Build your future<br><span class="text-[#e2bd61]">one skill at a time.</span>
+        </h1>
+
+        <p class="mt-6 text-sm sm:text-base leading-7 text-slate-200">
+          Create your student account first. After that, you can choose a course, complete the detailed enrollment process and submit the required information for Academy review.
+        </p>
 
         <div class="mt-8 space-y-3">
-          <div class="flex gap-3 items-start rounded-2xl border border-white/10 bg-white/[.05] p-4"><div class="text-[#e2bd61] font-bold">01</div><div><p class="text-sm font-bold">Create your secure account</p><p class="mt-1 text-xs leading-5 text-slate-300">Basic account details only — the full course application comes next.</p></div></div>
-          <div class="flex gap-3 items-start rounded-2xl border border-white/10 bg-white/[.05] p-4"><div class="text-[#e2bd61] font-bold">02</div><div><p class="text-sm font-bold">Choose and apply for your course</p><p class="mt-1 text-xs leading-5 text-slate-300">If you already chose a course, we keep that journey intact.</p></div></div>
-          <div class="flex gap-3 items-start rounded-2xl border border-white/10 bg-white/[.05] p-4"><div class="text-[#e2bd61] font-bold">03</div><div><p class="text-sm font-bold">Track approval from your dashboard</p><p class="mt-1 text-xs leading-5 text-slate-300">Your dashboard keeps you informed while your application is reviewed.</p></div></div>
+          <div class="flex gap-3 items-start rounded-2xl border border-white/10 bg-white/[.05] p-4">
+            <div class="text-[#e2bd61] font-bold">01</div>
+            <div><p class="text-sm font-bold">Create your secure account</p><p class="mt-1 text-xs leading-5 text-slate-300">Basic details only — the full course application comes next.</p></div>
+          </div>
+          <div class="flex gap-3 items-start rounded-2xl border border-white/10 bg-white/[.05] p-4">
+            <div class="text-[#e2bd61] font-bold">02</div>
+            <div><p class="text-sm font-bold">Choose and apply for your course</p><p class="mt-1 text-xs leading-5 text-slate-300">Complete the detailed enrollment and payment information.</p></div>
+          </div>
+          <div class="flex gap-3 items-start rounded-2xl border border-white/10 bg-white/[.05] p-4">
+            <div class="text-[#e2bd61] font-bold">03</div>
+            <div><p class="text-sm font-bold">Track approval from your dashboard</p><p class="mt-1 text-xs leading-5 text-slate-300">Your dashboard keeps you informed while your application is reviewed.</p></div>
+          </div>
         </div>
       </div>
     </div>
+
     <div class="mt-10 text-[11px] text-slate-400">© 2026 Funda Online Academy · Practical learning for real opportunity.</div>
   </section>
 
-  <section class="form-panel order-1 lg:order-2 px-5 sm:px-8 lg:px-10 py-8 lg:py-12 flex justify-center">
+  <section class="form-panel px-5 sm:px-8 lg:px-10 py-8 lg:py-12 flex justify-center">
     <div class="form-card w-full max-w-[660px] bg-white rounded-[28px] p-6 sm:p-8 lg:p-9 h-fit border border-white">
       <div class="text-center">
-        <div class="lg:hidden flex justify-center mb-5"><img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 object-contain" onerror="this.style.display='none'"></div>
+        <div class="lg:hidden flex justify-center mb-5">
+          <img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
+        </div>
         <p class="text-[11px] font-extrabold tracking-[.18em] text-[#b88622] uppercase">Student Registration</p>
         <h2 class="mt-2 text-3xl sm:text-[34px] font-extrabold text-[#06152f]">Create your account</h2>
-        <p class="mt-2 text-sm text-slate-500">Enter your basic details. Your full course application follows after account creation.</p>
+        <p class="mt-2 text-sm text-slate-500">Enter your basic details. Your full course application will follow after account creation.</p>
       </div>
 
-      <div id="message" class="message mt-5 rounded-xl p-4 text-sm font-semibold" role="status" aria-live="polite" aria-atomic="true"></div>
+      <div id="message" class="message mt-5 rounded-xl p-4 text-sm font-semibold"></div>
 
       <form id="registerForm" class="mt-7" novalidate>
         <div class="grid sm:grid-cols-2 gap-5">
-          <div><label for="first_name" class="block text-sm font-bold text-[#06152f]">Name <span class="text-red-500">*</span></label><input id="first_name" type="text" autocomplete="given-name" maxlength="100" placeholder="Your name" class="input-field mt-2" required></div>
-          <div><label for="surname" class="block text-sm font-bold text-[#06152f]">Surname <span class="text-red-500">*</span></label><input id="surname" type="text" autocomplete="family-name" maxlength="100" placeholder="Your surname" class="input-field mt-2" required></div>
+          <div>
+            <label for="first_name" class="block text-sm font-bold text-[#06152f]">Name <span class="text-red-500">*</span></label>
+            <input id="first_name" type="text" autocomplete="given-name" placeholder="Your name" class="input-field mt-2" required>
+          </div>
+          <div>
+            <label for="surname" class="block text-sm font-bold text-[#06152f]">Surname <span class="text-red-500">*</span></label>
+            <input id="surname" type="text" autocomplete="family-name" placeholder="Your surname" class="input-field mt-2" required>
+          </div>
         </div>
 
         <div class="grid sm:grid-cols-2 gap-5 mt-5">
-          <div><label for="gender" class="block text-sm font-bold text-[#06152f]">Gender <span class="text-red-500">*</span></label><select id="gender" class="input-field mt-2" required><option value="">Select gender</option><option value="Male">Male</option><option value="Female">Female</option><option value="Prefer not to say">Prefer not to say</option></select></div>
-          <div><label for="phone" class="block text-sm font-bold text-[#06152f]">Phone / WhatsApp <span class="text-red-500">*</span></label><input id="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="30" placeholder="e.g. 078 123 4567" class="input-field mt-2" required></div>
+          <div>
+            <label for="gender" class="block text-sm font-bold text-[#06152f]">Gender <span class="text-red-500">*</span></label>
+            <select id="gender" class="input-field mt-2" required>
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Prefer not to say">Prefer not to say</option>
+            </select>
+          </div>
+          <div>
+            <label for="phone" class="block text-sm font-bold text-[#06152f]">Phone / WhatsApp <span class="text-red-500">*</span></label>
+            <input id="phone" type="tel" autocomplete="tel" placeholder="e.g. 078 123 4567" class="input-field mt-2" required>
+          </div>
         </div>
 
         <div class="grid sm:grid-cols-2 gap-5 mt-5">
-          <div><label for="email" class="block text-sm font-bold text-[#06152f]">Email address <span class="text-red-500">*</span></label><input id="email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="you@example.com" class="input-field mt-2" required></div>
-          <div><label for="confirm_email" class="block text-sm font-bold text-[#06152f]">Confirm email <span class="text-red-500">*</span></label><input id="confirm_email" type="email" autocomplete="email" inputmode="email" maxlength="254" placeholder="Re-enter email" class="input-field mt-2" required></div>
+          <div>
+            <label for="email" class="block text-sm font-bold text-[#06152f]">Email address <span class="text-red-500">*</span></label>
+            <input id="email" type="email" autocomplete="email" placeholder="you@example.com" class="input-field mt-2" required>
+          </div>
+          <div>
+            <label for="confirm_email" class="block text-sm font-bold text-[#06152f]">Confirm email <span class="text-red-500">*</span></label>
+            <input id="confirm_email" type="email" autocomplete="email" placeholder="Re-enter email" class="input-field mt-2" required>
+          </div>
         </div>
 
         <div class="grid sm:grid-cols-2 gap-5 mt-5">
           <div>
             <label for="password" class="block text-sm font-bold text-[#06152f]">Password <span class="text-red-500">*</span></label>
-            <div class="password-wrap mt-2"><input id="password" type="password" autocomplete="new-password" minlength="6" maxlength="128" aria-describedby="passwordHelp" placeholder="Minimum 6 characters" class="input-field" required><button class="password-toggle" type="button" data-password-target="password" aria-label="Show password">Show</button></div>
-            <p id="passwordHelp" class="mt-1 text-xs text-slate-500">Use at least 6 characters. Do not reuse a password from another service.</p>
+            <input id="password" type="password" autocomplete="new-password" placeholder="Minimum 6 characters" class="input-field mt-2" required>
           </div>
           <div>
             <label for="confirm_password" class="block text-sm font-bold text-[#06152f]">Confirm password <span class="text-red-500">*</span></label>
-            <div class="password-wrap mt-2"><input id="confirm_password" type="password" autocomplete="new-password" minlength="6" maxlength="128" placeholder="Re-enter password" class="input-field" required><button class="password-toggle" type="button" data-password-target="confirm_password" aria-label="Show confirmed password">Show</button></div>
+            <input id="confirm_password" type="password" autocomplete="new-password" placeholder="Re-enter password" class="input-field mt-2" required>
           </div>
         </div>
 
         <div class="mt-7">
-          <div class="flex items-center justify-between gap-3 mb-3"><h3 class="font-extrabold text-[#06152f]">Student Terms & Privacy</h3><span class="text-[10px] font-bold tracking-wider text-[#b88622]">FOA TERMS v1.0</span></div>
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <h3 class="font-extrabold text-[#06152f]">Student Terms & Privacy</h3>
+            <span class="text-[10px] font-bold tracking-wider text-[#b88622]">FOA TERMS v1.0</span>
+          </div>
+
           <div class="terms-box text-sm leading-6 text-slate-600">
             <p>By creating a Funda Online Academy student account, you confirm that the information you provide is accurate and belongs to you.</p>
             <p class="mt-3">Your account is personal. Keep your password secure and do not allow another person to use your student access.</p>
-            <p class="mt-3">Creating an account does not automatically grant access to paid course content. Course access may depend on completion of enrolment, payment verification and Academy approval.</p>
-            <p class="mt-3">The Academy may use your information for account administration, enrolment processing, student communication and delivery of educational services.</p>
+            <p class="mt-3">Creating an account does not automatically grant access to paid course content. Course access may depend on completion of enrollment, payment verification and Academy approval.</p>
+            <p class="mt-3">The Academy may use your information for account administration, enrollment processing, student communication and delivery of educational services.</p>
             <p class="mt-3">Personal information will be handled in line with applicable South African privacy requirements, including POPIA where applicable.</p>
           </div>
           <p class="mt-3 text-xs text-slate-500">Read the full <a href="policies.html" target="_blank" rel="noopener" class="font-bold text-[#184f9f] underline">Student Terms, Privacy, Payment and Refund Policies</a>.</p>
-          <label class="flex items-start gap-3 mt-4 cursor-pointer"><input id="terms" type="checkbox" required class="mt-1 w-5 h-5 accent-[#184f9f] shrink-0"><span class="text-sm leading-6 text-slate-700">I have read and accept the Student Terms and privacy information. <span class="text-red-500">*</span></span></label>
+
+          <label class="flex items-start gap-3 mt-4 cursor-pointer">
+            <input id="terms" type="checkbox" class="mt-1 w-5 h-5 accent-[#184f9f] shrink-0">
+            <span class="text-sm leading-6 text-slate-700">I have read and accept the Student Terms and privacy information. <span class="text-red-500">*</span></span>
+          </label>
         </div>
 
-        <button id="registerButton" type="submit" class="w-full mt-7 rounded-xl bg-[#06152f] hover:bg-[#0b2b61] text-white py-4 font-extrabold transition shadow-lg shadow-slate-300 disabled:opacity-60 disabled:cursor-not-allowed">Create Student Account</button>
+        <button id="registerButton" type="submit" class="w-full mt-7 rounded-xl bg-[#06152f] hover:bg-[#0b2b61] text-white py-4 font-extrabold transition shadow-lg shadow-slate-300 disabled:opacity-60 disabled:cursor-not-allowed">
+          Create Student Account
+        </button>
 
         <div class="mt-6 pt-5 border-t border-slate-200 text-center">
-          <p class="text-sm text-slate-500">Already have a Funda account?</p>
-          <a id="existingAccountLogin" href="login.html" class="inline-flex mt-2 font-extrabold text-[#184f9f] hover:underline">Sign in with your existing account →</a>
-          <p class="mt-2 text-xs leading-5 text-slate-500">Staff members and Ambassadors should use their existing Academy login. Do not create a duplicate account.</p>
+          <p class="text-sm text-slate-500">Already registered?</p>
+          <a href="login.html" class="inline-flex mt-2 font-extrabold text-[#184f9f] hover:underline">Sign in to your student portal →</a>
         </div>
-        <div class="mt-5 flex items-center justify-center gap-2 text-[11px] text-slate-400"><span aria-hidden="true">🔒</span><span>Secure registration · Your information is protected</span></div>
+
+        <div class="mt-5 flex items-center justify-center gap-2 text-[11px] text-slate-400">
+          <span>🔒</span><span>Secure registration · Your information is protected</span>
+        </div>
       </form>
     </div>
   </section>
@@ -129,156 +231,129 @@
   const form = document.getElementById("registerForm");
   const button = document.getElementById("registerButton");
 
-  function safeNext() {
-    const raw = new URLSearchParams(window.location.search).get("next");
-    if (!raw) return "onboarding.html";
-    const value = String(raw).trim();
-    return /^[a-zA-Z0-9._\-]+\.html(?:\?[a-zA-Z0-9%&=_\-.]*)?(?:#[a-zA-Z0-9_\-.]*)?$/.test(value)
-      ? value
-      : "onboarding.html";
-  }
-
-  function referralCode() {
-    return String(new URLSearchParams(window.location.search).get("ref") || "").trim().replace(/[^A-Za-z0-9_-]/g, "").slice(0, 40);
-  }
-
-  function destinationUrl() {
-    const url = new URL(safeNext(), window.location.href);
-    const ref = referralCode();
-    if (ref && !url.searchParams.get("ref")) url.searchParams.set("ref", ref);
-    return url.href;
-  }
-
-  function loginUrl() {
-    const url = new URL("login.html", window.location.href);
-    url.searchParams.set("next", safeNext());
-    const ref = referralCode();
-    if (ref) url.searchParams.set("ref", ref);
-    return url.href;
-  }
-
   function showMessage(text, success = false) {
     const box = document.getElementById("message");
     box.textContent = text;
     box.classList.remove("error", "success", "show");
     box.classList.add(success ? "success" : "error", "show");
-    box.setAttribute("role", success ? "status" : "alert");
     box.scrollIntoView({ behavior:"smooth", block:"nearest" });
   }
 
-  function addRecoveryLink(text = "Continue to Course Enrolment →") {
-    let helper = document.getElementById("registrationRecoveryLink");
-    if (!helper) {
-      helper = document.createElement("a");
-      helper.id = "registrationRecoveryLink";
-      helper.style.cssText = "display:block;margin-top:14px;padding:14px 16px;border-radius:12px;background:#21384d;color:white;text-decoration:none;font-weight:800;text-align:center";
-      form.appendChild(helper);
-    }
-    helper.href = destinationUrl();
-    helper.textContent = text;
+  function cleanName(value) {
+    return String(value || "").trim().replace(/\s+/g," ");
   }
 
-  function cleanName(value) { return String(value || "").trim().replace(/\s+/g," "); }
-  function validEmail(value) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value); }
-  function validPhone(value) { const digits=String(value || "").replace(/\D/g,""); return digits.length >= 9 && digits.length <= 15; }
+  function validEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+  }
+
+  function validPhone(value) {
+    return String(value || "").replace(/\D/g,"").length >= 9;
+  }
 
   function initialiseSupabase() {
-    if (!window.supabase) throw new Error("supabase-library");
-    if (!window.SUPABASE_URL) throw new Error("supabase-url");
-    if (!window.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY === "YOUR_LEGACY_ANON_KEY_GOES_HERE") throw new Error("supabase-key");
-    supabaseClient = window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } });
+    if (!window.supabase) throw new Error("The Supabase library could not be loaded.");
+    if (!window.SUPABASE_URL) throw new Error("The Academy Supabase URL is missing.");
+    if (!window.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY === "YOUR_LEGACY_ANON_KEY_GOES_HERE") {
+      throw new Error("The Academy Supabase public key is missing or invalid.");
+    }
+
+    supabaseClient = window.supabase.createClient(
+      window.SUPABASE_URL,
+      window.SUPABASE_ANON_KEY,
+      { auth:{ persistSession:true, autoRefreshToken:true, detectSessionInUrl:true } }
+    );
   }
 
   async function createStudentRecords(user, student) {
     const fullName = `${student.firstName} ${student.surname}`.trim();
 
-    const profileResult = await supabaseClient.from("profiles").update({ full_name:fullName, email:student.email, phone:student.phone, gender:student.gender }).eq("id",user.id);
-    if (profileResult.error) {
-      console.error("Student profile update failed:", profileResult.error);
-      throw new Error("student-setup");
-    }
+    /* The auth trigger creates the protected student profile.
+       Update only ordinary self-service fields here; never authorization fields. */
+    const { error: profileError } = await supabaseClient
+      .from("profiles")
+      .update({
+        full_name:fullName,
+        email:student.email,
+        phone:student.phone,
+        gender:student.gender
+      })
+      .eq("id",user.id);
 
-    const lookup = await supabaseClient.from("students").select("id").eq("user_id",user.id).maybeSingle();
-    if (lookup.error) {
-      console.error("Student record lookup failed:", lookup.error);
-      throw new Error("student-setup");
-    }
+    if (profileError) throw new Error("Your account was created, but your profile could not be saved. " + profileError.message);
 
-    let studentId = lookup.data?.id || null;
+    const { data: existingStudent, error: lookupError } = await supabaseClient
+      .from("students")
+      .select("id")
+      .eq("user_id",user.id)
+      .maybeSingle();
+
+    if (lookupError) throw new Error("Your account was created, but your student record could not be checked. " + lookupError.message);
+
+    let studentId = existingStudent?.id || null;
+
     if (studentId) {
-      const updated = await supabaseClient.from("students").update({ full_name:fullName, gender:student.gender, email:student.email, mobile_whatsapp:student.phone }).eq("id",studentId);
-      if (updated.error) {
-        console.error("Student record update failed:", updated.error);
-        throw new Error("student-setup");
-      }
+      const { error } = await supabaseClient
+        .from("students")
+        .update({
+          full_name:fullName,
+          gender:student.gender,
+          email:student.email,
+          mobile_whatsapp:student.phone
+        })
+        .eq("id",studentId);
+      if (error) throw new Error("Your student record could not be updated. " + error.message);
     } else {
-      const created = await supabaseClient.from("students").insert({ user_id:user.id, full_name:fullName, gender:student.gender, email:student.email, mobile_whatsapp:student.phone }).select("id").single();
-      if (created.error) {
-        console.error("Student record creation failed:", created.error);
-        throw new Error("student-setup");
-      }
-      studentId = created.data.id;
+      const { data: created, error } = await supabaseClient
+        .from("students")
+        .insert({
+          user_id:user.id,
+          full_name:fullName,
+          gender:student.gender,
+          email:student.email,
+          mobile_whatsapp:student.phone
+        })
+        .select("id")
+        .single();
+      if (error) throw new Error("Your student record could not be created. " + error.message);
+      studentId = created.id;
     }
 
-    const policyLookup = await supabaseClient.from("policy_acceptances").select("id").eq("user_id",user.id).eq("policy_version",POLICY_VERSION).maybeSingle();
-    if (policyLookup.error) {
-      console.error("Policy acceptance lookup failed:", policyLookup.error);
-      throw new Error("policy-record");
-    }
+    const { data: existingPolicy, error: policyLookupError } = await supabaseClient
+      .from("policy_acceptances")
+      .select("id")
+      .eq("user_id",user.id)
+      .eq("policy_version",POLICY_VERSION)
+      .maybeSingle();
 
-    if (!policyLookup.data && studentId) {
-      const policy = await supabaseClient.from("policy_acceptances").insert({
-        student_id:studentId,
-        user_id:user.id,
-        policy_version:POLICY_VERSION,
-        policies_accepted:true,
-        declaration_accepted:true,
-        declaration_text:DECLARATION_TEXT,
-        accepted_at:student.acceptedAt || new Date().toISOString()
-      });
-      if (policy.error) {
-        console.error("Policy acceptance record failed:", policy.error);
-        throw new Error("policy-record");
+    if (policyLookupError) console.warn("Policy lookup warning:", policyLookupError);
+
+    if (!existingPolicy && studentId) {
+      const { error: policyError } = await supabaseClient
+        .from("policy_acceptances")
+        .insert({
+          student_id:studentId,
+          user_id:user.id,
+          policy_version:POLICY_VERSION,
+          policies_accepted:true,
+          declaration_accepted:true,
+          declaration_text:DECLARATION_TEXT,
+          accepted_at:new Date().toISOString()
+        });
+
+      if (policyError) {
+        console.warn("Policy acceptance could not be recorded:", policyError);
       }
     }
   }
-
-  async function routeSignedInUser(user) {
-    const requested = new URLSearchParams(window.location.search).get("next");
-    if (requested && safeNext() !== "onboarding.html") {
-      window.location.replace(destinationUrl());
-      return;
-    }
-    if (requested && /^onboarding\.html(?:\?|#|$)/i.test(safeNext())) {
-      window.location.replace(destinationUrl());
-      return;
-    }
-
-    const enrolment = await supabaseClient.from("enrollments").select("id").eq("student_id",user.id).limit(1).maybeSingle();
-    if (enrolment.error) {
-      console.error("Existing enrolment check failed:", enrolment.error);
-      window.location.replace(destinationUrl());
-      return;
-    }
-    window.location.replace(enrolment.data ? new URL("dashboard.html",window.location.href).href : destinationUrl());
-  }
-
-  document.querySelectorAll("[data-password-target]").forEach(toggle => {
-    toggle.addEventListener("click", () => {
-      const input = document.getElementById(toggle.dataset.passwordTarget);
-      if (!input) return;
-      const showing = input.type === "text";
-      input.type = showing ? "password" : "text";
-      toggle.textContent = showing ? "Show" : "Hide";
-      toggle.setAttribute("aria-label", showing ? "Show password" : "Hide password");
-    });
-  });
-
-  document.getElementById("existingAccountLogin").href = loginUrl();
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!supabaseClient) return showMessage("The Academy connection is not ready. Please refresh the page and try again.");
+
+    if (!supabaseClient) {
+      showMessage("The Academy connection is not ready. Please refresh the page and try again.");
+      return;
+    }
 
     const firstName = cleanName(document.getElementById("first_name").value);
     const surname = cleanName(document.getElementById("surname").value);
@@ -301,32 +376,15 @@
 
     button.disabled = true;
     button.innerHTML = '<span class="spinner"></span>Creating your account...';
-    let accountCreated = false;
 
     try {
-      const acceptedAt = new Date().toISOString();
-      const redirectTo = new URL("login.html", window.location.href);
-      redirectTo.searchParams.set("next", safeNext());
-      const ref = referralCode();
-      if (ref) redirectTo.searchParams.set("ref", ref);
-
+      const redirectTo = new URL("login.html", window.location.href).href;
       const { data, error } = await supabaseClient.auth.signUp({
         email,
         password,
         options:{
-          emailRedirectTo:redirectTo.href,
-          data:{
-            first_name:firstName,
-            surname,
-            full_name:`${firstName} ${surname}`,
-            gender,
-            phone,
-            role:"student",
-            policy_version:POLICY_VERSION,
-            policies_accepted:true,
-            declaration_accepted:true,
-            policy_accepted_at:acceptedAt
-          }
+          emailRedirectTo:redirectTo,
+          data:{ first_name:firstName, surname, full_name:`${firstName} ${surname}`, gender, phone, role:"student" }
         }
       });
 
@@ -334,46 +392,48 @@
         const lower = String(error.message || "").toLowerCase();
         if (lower.includes("already") || lower.includes("exists") || lower.includes("registered")) {
           try { localStorage.setItem("funda_existing_enrol_email", email); } catch (_) {}
-          showMessage("This email already belongs to a Funda Online Academy account. Do not create a second account. Sign in with the existing account and continue your course journey.");
-          addRecoveryLink("Sign In With Existing Account →");
-          document.getElementById("registrationRecoveryLink").href = loginUrl();
-          return;
+          throw new Error("This email already belongs to a Funda Online Academy account. Do not create a second account. Staff members and Ambassadors may enrol as students using their existing login. Please sign in with this email and continue to Course Enrolment.");
         }
-        console.error("Account creation failed:", error);
-        throw new Error("signup-failed");
+        throw error;
       }
 
-      if (!data?.user) throw new Error("signup-failed");
+      if (!data?.user) throw new Error("The account could not be created. Please try again.");
 
+      /* Supabase may intentionally return an obfuscated user for an existing email. */
       if (Array.isArray(data.user.identities) && data.user.identities.length === 0) {
         try { localStorage.setItem("funda_existing_enrol_email", email); } catch (_) {}
-        showMessage("This email already belongs to a Funda Online Academy account. Please use the existing login instead of creating a duplicate account.");
-        addRecoveryLink("Sign In With Existing Account →");
-        document.getElementById("registrationRecoveryLink").href = loginUrl();
-        return;
+        throw new Error("This email already belongs to a Funda Online Academy account. Please use the existing login to enrol in a course; your Staff or Ambassador access will remain separate.");
       }
 
-      accountCreated = true;
-
       if (!data.session) {
-        showMessage("Your account has been created and is waiting for email confirmation. Check your email, confirm the account if requested, then sign in with the same email to continue your course journey.", true);
-        setTimeout(() => { window.location.href = loginUrl(); }, 4000);
+        showMessage("Your account was created, but Supabase is currently requesting email confirmation. Please contact the Academy if you cannot sign in immediately.", true);
+        setTimeout(() => { window.location.href = "login.html"; }, 2500);
         return;
       }
 
       button.innerHTML = '<span class="spinner"></span>Preparing your student profile...';
-      await createStudentRecords(data.user,{ firstName,surname,gender,phone,email,acceptedAt });
+      await createStudentRecords(data.user,{ firstName,surname,gender,phone,email });
 
-      showMessage("Your student account has been created successfully. Continuing your course journey...", true);
-      setTimeout(() => { window.location.href = destinationUrl(); }, 800);
+      localStorage.removeItem("funda_pending_course");
+      localStorage.removeItem("enroll_after_login");
+
+      showMessage("Your student account has been created successfully. Taking you to course selection...", true);
+      setTimeout(() => { window.location.href = "onboarding.html"; }, 900);
 
     } catch (error) {
       console.error("Registration error:", error);
-      if (accountCreated) {
-        showMessage("Your account was created, but the student setup could not finish on this page. Continue with the same account so the Academy can complete your learner setup. Do not create another account.");
-        addRecoveryLink();
-      } else {
-        showMessage("We could not create your account right now. Please check your connection and try again. If the problem continues, contact Academy support.");
+      showMessage(error?.message || "Something went wrong while creating your account. Please try again.");
+      const msg=String(error?.message||"").toLowerCase();
+      if(msg.includes("already belongs") || msg.includes("existing login")){
+        let helper=document.getElementById("existingAccountEnrolHelper");
+        if(!helper){
+          helper=document.createElement("a");
+          helper.id="existingAccountEnrolHelper";
+          helper.href="login.html?next=onboarding.html";
+          helper.textContent="Sign In With Existing Account → Continue to Course Enrolment";
+          helper.style.cssText="display:block;margin-top:14px;padding:14px 16px;border-radius:12px;background:#21384d;color:white;text-decoration:none;font-weight:800;text-align:center";
+          form.appendChild(helper);
+        }
       }
     } finally {
       button.disabled = false;
@@ -384,20 +444,33 @@
   document.addEventListener("DOMContentLoaded", async () => {
     try {
       initialiseSupabase();
-      document.getElementById("existingAccountLogin").href = loginUrl();
 
-      const { data, error } = await supabaseClient.auth.getSession();
-      if (error) console.warn("Registration session check warning:", error);
+      /* An already signed-in student should not accidentally create another account. */
+      const { data } = await supabaseClient.auth.getSession();
       const user = data?.session?.user;
       if (!user) return;
 
-      /* Never sign out an existing Academy account just because Create Account
-         was selected. Existing Student, Staff and Ambassador accounts continue
-         with the same identity; onboarding creates a learner record when needed. */
-      await routeSignedInUser(user);
+      const { data: student } = await supabaseClient
+        .from("students")
+        .select("id")
+        .eq("user_id",user.id)
+        .maybeSingle();
+
+      /* Registration is only account/profile creation. A student who has not
+         selected a course yet must continue to course selection, not dashboard. */
+      if (student) {
+        const { data: enrolment } = await supabaseClient
+          .from("enrollments")
+          .select("id")
+          .eq("student_id",user.id)
+          .limit(1)
+          .maybeSingle();
+
+        window.location.href = enrolment ? "dashboard.html" : "onboarding.html";
+      }
     } catch (error) {
       console.error("Registration page initialisation error:", error);
-      showMessage("The Academy connection could not be initialised. Please refresh the page and try again.");
+      showMessage(error?.message || "The Academy connection could not be initialised.");
     }
   });
 </script>
