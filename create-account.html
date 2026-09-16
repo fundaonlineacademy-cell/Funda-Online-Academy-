@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js?v=20260916-create-account-fresh-session-v1"></script>
+<script src="supabase-config.js?v=20260916-create-account-fresh-session-v2"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(155deg,#eceeea,#f4eee6 58%,#f4e3e8);color:#243750}
@@ -45,7 +45,8 @@ h1{font-size:22px;margin:0 0 8px;color:#21384d}p{margin:0;color:#566675;line-hei
       /* Create Account is intentionally a fresh-registration action. Clear only
          the active local authentication session. Do not clear the selected
          course, ambassador referral, or other registration journey state. */
-      await client.auth.signOut({scope:'local'});
+      const {error}=await client.auth.signOut({scope:'local'});
+      if(error)throw error;
     }
   }catch(error){
     console.warn('Fresh registration session reset warning:',error);
