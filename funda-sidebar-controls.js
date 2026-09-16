@@ -34,23 +34,6 @@
 
   document.documentElement.dataset.fundaSidebarPage=config.key;
 
-  // Desktop portal typography only. Mobile keeps its existing font rules unchanged.
-  if(['admin','student','ambassador'].includes(config.key)){
-    const hasManrope=[...document.querySelectorAll('link[rel="stylesheet"]')]
-      .some(link=>/fonts\.googleapis\.com\/css2.*family=Manrope/i.test(link.href));
-    if(!hasManrope){
-      const preconnect=document.createElement('link');
-      preconnect.rel='preconnect';
-      preconnect.href='https://fonts.googleapis.com';
-      document.head.appendChild(preconnect);
-
-      const font=document.createElement('link');
-      font.rel='stylesheet';
-      font.href='https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap';
-      document.head.appendChild(font);
-    }
-  }
-
   const storageKey=`funda:${config.key}:sidebar`;
   const desktop=()=>window.innerWidth>=config.minWidth;
   const readState=()=>{
@@ -63,7 +46,7 @@
   const style=document.createElement('style');
   style.id='fundaSidebarControlStyles';
   style.textContent=`
-    :root{--funda-desktop-heading-font:"Manrope","Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+    :root{--funda-desktop-heading-font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
     [data-funda-sidebar-control]{cursor:pointer}
     [data-funda-sidebar-control]:focus-visible{outline:3px solid #d4aa42!important;outline-offset:3px!important}
 
