@@ -9,6 +9,23 @@ function rewrite(root=document){
   }
  });
 }
-function boot(){rewrite();new MutationObserver(m=>m.forEach(x=>x.addedNodes.forEach(n=>{if(n.nodeType===1){if(n.matches?.('a[href]'))rewrite(n.parentElement||document);else rewrite(n)}}))).observe(document.documentElement,{childList:true,subtree:true})}
+function clarifyLoginAccountLabel(root=document){
+ if(!/(^|\/)login\.html$/i.test(location.pathname))return;
+ root.querySelectorAll?.('a').forEach(a=>{
+  const spans=[...a.querySelectorAll('span')];
+  const label=spans.find(span=>/^New to Funda\?\s*Create Student Account$/i.test((span.textContent||'').replace(/\s+/g,' ').trim()));
+  if(label)label.textContent='New to Funda Online Academy? Create Student Account';
+ });
+}
+function boot(){
+ rewrite();
+ clarifyLoginAccountLabel();
+ new MutationObserver(m=>m.forEach(x=>x.addedNodes.forEach(n=>{
+  if(n.nodeType===1){
+   if(n.matches?.('a[href]'))rewrite(n.parentElement||document);else rewrite(n);
+   clarifyLoginAccountLabel(n.parentElement||document);
+  }
+ }))).observe(document.documentElement,{childList:true,subtree:true});
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
