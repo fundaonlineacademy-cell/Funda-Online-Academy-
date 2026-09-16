@@ -8,7 +8,7 @@ html{background:#21384d}
 body{background:radial-gradient(circle at 8% 8%,rgba(70,103,127,.10),transparent 25rem),radial-gradient(circle at 94% 16%,rgba(184,95,125,.12),transparent 28rem),linear-gradient(155deg,#eceeea 0%,#f4eee6 52%,#f4e3e8 100%)!important;background-attachment:fixed!important;color:var(--funda-text)!important;min-height:100vh}
 body:before{display:none!important}
 header{background:linear-gradient(100deg,#21384d,#2d4b63)!important;border-color:rgba(201,154,46,.34)!important;box-shadow:0 8px 24px rgba(33,56,77,.16)!important}
-header .brand div:first-child{color:#f7f2e7!important}header a[href='courses-public.html']{color:#fff4dc!important}header a[href='login.html']{background:linear-gradient(135deg,#d5aa43,#e2bd62)!important;color:#21384d!important;box-shadow:0 8px 22px rgba(201,154,46,.18)!important}
+header .brand,header .brand span,header .brand strong,header .brand b{color:#fff!important}header a[href='courses-public.html']{color:#fff4dc!important}header a[href='login.html']{background:linear-gradient(135deg,#d5aa43,#e2bd62)!important;color:#21384d!important;box-shadow:0 8px 22px rgba(201,154,46,.18)!important}
 main{position:relative}
 #loading,#errorBox{background:linear-gradient(145deg,#fff6e4,#f6ece7)!important;border-color:rgba(201,154,46,.30)!important;color:#243750!important}
 #courseContent>div>section{background:linear-gradient(150deg,#fff6e4 0%,#f8f5ef 62%,#f5e5e9 125%)!important;border-color:rgba(70,103,127,.22)!important;box-shadow:0 18px 48px rgba(48,70,88,.13)!important}
@@ -28,14 +28,12 @@ body .rpoIntro,body .bahero,body .copHero,body [class*='PremiumIntro']{box-shado
 body .rpoSection,body .basec,body .copSection{border-color:rgba(70,103,127,.20)!important;background:linear-gradient(150deg,#fff6e4,#f8f5ef 72%,#f5e5e9 130%)!important;color:#243750!important}
 body .cpcard,body .bacard,body .cpoutcome,body .baoutcome,body .cpapply div,body .baapply div,body .cpmodule,body .bamodule{background:linear-gradient(145deg,#fff6e4,#f8f5ef 74%,#f5e5e9 135%)!important;border-color:rgba(70,103,127,.20)!important;color:#243750!important}
 body .cpinclude,body .bainclude{background:#fff0d5!important;border-color:rgba(201,154,46,.25)!important;color:#243750!important}
-/* Public-course-value surfaces */
 body .pcvDisclosure,body .pcvMetric,body .pcvValue,body .pcvModule,body .pcvRetailPromise{background:linear-gradient(145deg,#fff6e4,#f8f5ef 78%,#f5e5e9 135%)!important;border-color:rgba(70,103,127,.22)!important;box-shadow:0 10px 26px rgba(48,70,88,.08)!important;color:#243750!important}
 body .pcvDisclosure p,body .pcvValue p,body .pcvModule p,body .pcvRetailIntro p,body .pcvLead,body .pcvFeeNote{color:#495968!important;opacity:1!important}
 body .pcvDisclosure b,body .pcvMetric strong,body .pcvValue h3,body .pcvModule h3,body .pcvRetailIntro h2,body .pcvSection h2{color:#21384d!important}
 body .pcvMetric span{color:#566675!important}
 body .pcvFlagship{background:linear-gradient(135deg,#2d4b63,#46677f 72%,#8f5369 135%)!important;box-shadow:0 16px 38px rgba(48,70,88,.16)!important}
 body .pcvFlagship h2,body .pcvFlagship p,body .pcvFlagship .pcvAudience div{color:#f8f4eb!important}
-/* General 25-course premium framework */
 body .acpo,body .acpoCard,body .acpoMod{background:linear-gradient(145deg,#fff6e4,#f8f5ef 76%,#f5e5e9 135%)!important;border-color:rgba(70,103,127,.22)!important;color:#243750!important;box-shadow:0 10px 28px rgba(48,70,88,.08)!important}
 body .acpoHero{background:linear-gradient(135deg,#2d4b63,#46677f 72%,#8f5369 135%)!important;box-shadow:0 16px 38px rgba(48,70,88,.16)!important}
 body .acpoDark{background:linear-gradient(145deg,#efe9df,#f4e4e8)!important;border:1px solid rgba(70,103,127,.20)!important;color:#243750!important}
