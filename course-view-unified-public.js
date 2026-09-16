@@ -1,16 +1,16 @@
 (()=>{
 'use strict';
-if(!/course-view\.html$/i.test(location.pathname)||window.__fundaUnifiedCourseViewV2)return;
-window.__fundaUnifiedCourseViewV2=true;
+if(!/course-view\.html$/i.test(location.pathname)||window.__fundaUnifiedCourseViewV3)return;
+window.__fundaUnifiedCourseViewV3=true;
 const $=id=>document.getElementById(id);
 const HERO_IDS=new Set(['acpoHero','bkPremiumIntro','oaPremiumIntro','cpPremiumIntro','baHero','baPremiumIntro','rpoPremiumIntro','copPremiumIntro','retailPremiumIntro']);
 
 function installStyle(){
-  if($('fundaUnifiedCourseViewStyleV2'))return;
+  if($('fundaUnifiedCourseViewStyleV3'))return;
   const s=document.createElement('style');
-  s.id='fundaUnifiedCourseViewStyleV2';
+  s.id='fundaUnifiedCourseViewStyleV3';
   s.textContent=`
-    header .brand,header .brand *,body.fundaCourseOverviewBrand header .brand,body.fundaCourseOverviewBrand header .brand *{color:#fff!important}
+    header .brand,header .brand *{color:#fff!important}
     #courseContent{align-items:start!important}
     #courseContent>section.panel{grid-column:1!important;grid-row:1!important;min-width:0!important;height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;display:block!important}
     #courseContent>section.panel>.body{height:auto!important;min-height:0!important;max-height:none!important;overflow:visible!important;display:block!important}
@@ -20,10 +20,19 @@ function installStyle(){
 
     .pcvMetrics{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-rows:max-content!important;align-items:start!important;gap:12px!important;margin:18px 0 24px!important}
     .pcvMetric{height:auto!important;min-height:0!important;padding:14px 16px!important;align-self:start!important;display:flex!important;flex-direction:column!important;justify-content:center!important}
-    .pcvMetric strong{font-size:21px!important;line-height:1.18!important}
-    .pcvMetric span{font-size:11px!important;line-height:1.35!important;margin-top:3px!important}
 
-    .fundaCourseAccordion{display:block!important;visibility:visible!important;opacity:1!important;height:auto!important;min-height:0!important;max-height:none!important;margin:14px 0!important;padding:0!important;border:1px solid rgba(70,103,127,.22)!important;border-radius:18px!important;background:linear-gradient(145deg,#fff8ec,#f8f5ef 78%,#f7e9ee 135%)!important;box-shadow:0 7px 20px rgba(48,70,88,.06)!important;overflow:hidden!important;color:#21384d!important}
+    .fundaCourseAccordion,
+    .fundaCourseHeroAccordion,
+    .fundaCourseHeroAccordion.acpoHero,
+    .fundaCourseHeroAccordion.bahero,
+    .fundaCourseHeroAccordion.bkhero,
+    .fundaCourseHeroAccordion.oahero,
+    .fundaCourseHeroAccordion.retailHero{
+      display:block!important;visibility:visible!important;opacity:1!important;height:auto!important;min-height:0!important;max-height:none!important;
+      margin:14px 0!important;padding:0!important;border:1px solid rgba(70,103,127,.22)!important;border-radius:18px!important;
+      background:linear-gradient(145deg,#fff8ec,#f8f5ef 78%,#f7e9ee 135%)!important;color:#21384d!important;
+      box-shadow:0 7px 20px rgba(48,70,88,.06)!important;overflow:hidden!important;
+    }
     .fundaCourseAccordionBtn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;border:0;background:transparent!important;text-align:left;color:#21384d!important;cursor:pointer;font:inherit}
     .fundaCourseAccordionText{min-width:0}
     .fundaCourseAccordionKicker{display:block;margin-bottom:4px;font-size:10px;line-height:1.2;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8a6412!important}
@@ -32,12 +41,41 @@ function installStyle(){
     .fundaCourseAccordion[data-open='1'] .fundaCourseAccordionPlus{transform:rotate(45deg)}
     .fundaCourseAccordionBody{display:none;padding:0 18px 18px;color:#43566f!important;background:transparent!important}
     .fundaCourseAccordion[data-open='1'] .fundaCourseAccordionBody{display:block}
-    .fundaCourseAccordionBody>h2:first-of-type{display:none!important}
+
+    .fundaCourseAccordionBody,.fundaCourseAccordionBody *{text-shadow:none!important}
+    .fundaCourseAccordionBody p,.fundaCourseAccordionBody span,.fundaCourseAccordionBody li,
+    .fundaCourseAccordionBody .acpop,.fundaCourseAccordionBody .bkintro,.fundaCourseAccordionBody .oaintro,.fundaCourseAccordionBody .baintro,.fundaCourseAccordionBody .retailLead{color:#43566f!important}
+    .fundaCourseAccordionBody h2,.fundaCourseAccordionBody h3,.fundaCourseAccordionBody h4,.fundaCourseAccordionBody strong,.fundaCourseAccordionBody b{color:#21384d!important}
     .fundaCourseAccordionBody>.pcvKicker:first-child,.fundaCourseAccordionBody>.acpol:first-child,.fundaCourseAccordionBody>.bklabel:first-child,.fundaCourseAccordionBody>.oalabel:first-child,.fundaCourseAccordionBody>.balabel:first-child,.fundaCourseAccordionBody>.retailEyebrow:first-child{display:none!important}
-    .fundaCourseAccordionBody p,.fundaCourseAccordionBody .acpop,.fundaCourseAccordionBody .bkintro,.fundaCourseAccordionBody .oaintro,.fundaCourseAccordionBody .baintro,.fundaCourseAccordionBody .retailLead{color:#43566f!important}
-    .fundaCourseAccordionBody h2,.fundaCourseAccordionBody h3,.fundaCourseAccordionBody strong,.fundaCourseAccordionBody b{color:#21384d!important}
-    .fundaCourseAccordionBody .acpoStats div,.fundaCourseAccordionBody .baglance div,.fundaCourseAccordionBody .bkglance div,.fundaCourseAccordionBody .oaglance div{background:#fff!important;border:1px solid #dce5ef!important;color:#21384d!important}
-    .fundaCourseAccordionBody .acpoStats span,.fundaCourseAccordionBody .baglance span,.fundaCourseAccordionBody .bkglance span,.fundaCourseAccordionBody .oaglance span{color:#5b6d82!important}
+    .fundaCourseAccordionBody>h2:first-of-type{display:none!important}
+
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody>div:first-child{background:transparent!important;color:#21384d!important;padding:4px 0 0!important;box-shadow:none!important}
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody h2:first-of-type,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .acpol:first-child,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .bklabel:first-child,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .oalabel:first-child,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .balabel:first-child,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .retailEyebrow:first-child{display:none!important}
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .acpoStats,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .baglance,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .bkglance,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .oaglance,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .retailStats{display:grid!important;gap:10px!important}
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .acpoStats div,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .baglance div,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .bkglance div,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .oaglance div,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .retailStats div{background:#fff!important;border:1px solid #dce5ef!important;color:#21384d!important;box-shadow:none!important}
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .acpoStats strong,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .baglance strong,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .bkglance strong,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .oaglance strong,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .retailStats strong{color:#21384d!important}
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .acpoStats span,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .baglance span,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .bkglance span,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .oaglance span,
+    .fundaCourseHeroAccordion .fundaCourseAccordionBody .retailStats span{color:#5b6d82!important}
 
     @media(min-width:821px){
       #courseContent{grid-template-columns:minmax(0,1fr) 310px!important;gap:26px!important}
@@ -64,22 +102,11 @@ function installStyle(){
 
 function mainBody(){
   const content=$('courseContent');
-  if(!content)return null;
-  const panel=[...content.children].find(el=>el.matches?.('section.panel'))||content.querySelector('section.panel');
+  const panel=content&&([ ...content.children ].find(el=>el.matches?.('section.panel'))||content.querySelector('section.panel'));
   return panel?.querySelector('.body')||null;
 }
 
-function repairBaseTitle(){
-  const title=$('courseTitle');
-  if(!title)return;
-  const current=(title.textContent||'').trim();
-  if(current&&current.toLowerCase()!=='course')return;
-  const fromDocument=(document.title||'').replace(/\s*\|\s*Funda Online Academy.*$/i,'').trim();
-  if(fromDocument&&!/^Course(?: Overview)?$/i.test(fromDocument))title.textContent=fromDocument;
-}
-
 function restoreBase(){
-  repairBaseTitle();
   const content=$('courseContent'),title=$('courseTitle');
   if(!content||!title)return false;
   const text=(title.textContent||'').trim();
@@ -101,16 +128,14 @@ function collectOrphans(){
   const content=$('courseContent'),body=mainBody();
   if(!content||!body)return;
   [...content.children].forEach(el=>{
-    if(el.matches?.('section.panel')||el.tagName==='ASIDE')return;
-    if(el.id==='loading'||el.id==='errorBox')return;
+    if(el.matches?.('section.panel')||el.tagName==='ASIDE'||el.id==='loading'||el.id==='errorBox')return;
     if(el.tagName==='SECTION'||el.id)body.appendChild(el);
   });
 }
 
 function premiumExists(){
   const body=mainBody();
-  if(!body)return false;
-  return [...HERO_IDS].some(id=>!!body.querySelector('#'+id));
+  return !!body&&[...HERO_IDS].some(id=>body.querySelector('#'+id));
 }
 
 function hideDuplicates(){
@@ -136,16 +161,10 @@ function isAbout(section){
 function labelFor(section){
   const id=section.id||'';
   if(HERO_IDS.has(id)){
-    const heroText=id==='acpoHero'
-      ? section.querySelector('.acpop')?.textContent?.trim()
-      : section.querySelector('h2')?.textContent?.trim();
+    const heroText=id==='acpoHero'?section.querySelector('.acpop')?.textContent?.trim():section.querySelector('h2')?.textContent?.trim();
     return {title:heroText||'Course information',kicker:'Course Information'};
   }
-  const map={
-    pcvInvestment:['What Your Course Investment Includes','Professional learning experience'],
-    pcvCompletion:['Assessment, Award & Workplace Relevance','Completion & application'],
-    careerSupportOverview:['Career & Workplace Support','Career support']
-  };
+  const map={pcvInvestment:['What Your Course Investment Includes','Professional learning experience'],pcvCompletion:['Assessment, Award & Workplace Relevance','Completion & application'],careerSupportOverview:['Career & Workplace Support','Career support']};
   if(map[id])return {title:map[id][0],kicker:map[id][1]};
   const h2=section.querySelector(':scope > h2')||section.querySelector('h2');
   const title=(h2?.textContent||'').trim()||'Course Information';
@@ -155,9 +174,11 @@ function labelFor(section){
 
 function accordion(section){
   if(!section||section.dataset.fundaUnifiedAccordion||section.classList.contains('fundaCourseDuplicate')||isAbout(section))return;
+  const hero=HERO_IDS.has(section.id||'');
   section.dataset.fundaUnifiedAccordion='1';
   section.dataset.open='0';
   section.classList.add('fundaCourseAccordion');
+  if(hero)section.classList.add('fundaCourseHeroAccordion');
   section.style.removeProperty('display');
   section.style.removeProperty('height');
   section.style.removeProperty('min-height');
@@ -186,29 +207,12 @@ function accordion(section){
 function standardiseSections(){
   const body=mainBody();
   if(!body)return;
-  [...body.querySelectorAll(':scope > section,:scope > .section')].forEach(section=>accordion(section));
+  [...body.querySelectorAll(':scope > section,:scope > .section')].forEach(accordion);
 }
 
-function polish(){
-  installStyle();
-  if(!restoreBase())return;
-  collectOrphans();
-  hideDuplicates();
-  standardiseSections();
-}
-
+function polish(){installStyle();if(!restoreBase())return;collectOrphans();hideDuplicates();standardiseSections();}
 let passes=0;
-function run(){
-  polish();
-  if(++passes<9)setTimeout(run,400);
-}
+function run(){polish();if(++passes<10)setTimeout(run,400)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
-
-setTimeout(()=>{
-  const content=$('courseContent');
-  if(!content)return;
-  const observer=new MutationObserver(()=>polish());
-  observer.observe(content,{childList:true,subtree:true});
-  setTimeout(()=>observer.disconnect(),4500);
-},600);
+setTimeout(()=>{const content=$('courseContent');if(!content)return;const observer=new MutationObserver(()=>polish());observer.observe(content,{childList:true,subtree:true});setTimeout(()=>observer.disconnect(),4500)},600);
 })();
