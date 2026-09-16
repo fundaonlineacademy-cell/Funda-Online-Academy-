@@ -4,6 +4,8 @@
  const TERMS_VERSION='2026-08-30';
  const ACCOUNT_POLICY_VERSION='FOA Terms v1.0';
  const ACCOUNT_DECLARATION='I confirm that the information I supplied when creating my Funda Online Academy student account is true and correct to the best of my knowledge. I have read and accepted the Academy student terms and privacy information.';
+ window.__fundaAccountPolicyRequired=false;
+ window.__fundaAccountPolicyReady=false;
 
  function addTerms(){
   const declaration=document.getElementById('declaration'); if(!declaration||document.getElementById('fundaTermsPanel'))return;
@@ -17,6 +19,7 @@
  }
 
  function validation(){
+   if(window.__fundaAccountPolicyRequired&&!window.__fundaAccountPolicyReady)return 'Your account setup is still being finalised. Please wait a moment and try again. If this message continues, refresh the page before submitting.';
    if(!document.getElementById('declaration')?.checked)return 'Please accept the required declaration.';
    if(!document.getElementById('termsAcceptance')?.checked)return 'Please read and accept the enrolment, payment, cancellation and refund terms.';
    if(!document.getElementById('bankAcceptance')?.checked)return 'Please confirm that you checked the official banking details and payment amount.';
@@ -72,14 +75,15 @@
     if(!user)return;
     const meta=user.user_metadata||{};
     if(meta.policy_version!==ACCOUNT_POLICY_VERSION||meta.policies_accepted!==true||!meta.policy_accepted_at)return;
+    window.__fundaAccountPolicyRequired=true;
 
     const student=await client.from('students').select('id').eq('user_id',user.id).maybeSingle();
-    if(student.error){console.warn('Policy recovery student lookup warning:',student.error);return;}
-    if(!student.data?.id){if(attempt<8)setTimeout(()=>repairAccountPolicyAcceptance(attempt+1),700);return;}
+    if(student.error){console.warn('Policy recovery student lookup warning:',student.error);if(attempt<20)setTimeout(()=>repairAccountPolicyAcceptance(attempt+1),800);return;}
+    if(!student.data?.id){if(attempt<20)setTimeout(()=>repairAccountPolicyAcceptance(attempt+1),800);return;}
 
     const existing=await client.from('policy_acceptances').select('id').eq('user_id',user.id).eq('policy_version',ACCOUNT_POLICY_VERSION).maybeSingle();
-    if(existing.error){console.warn('Policy recovery lookup warning:',existing.error);return;}
-    if(existing.data)return;
+    if(existing.error){console.warn('Policy recovery lookup warning:',existing.error);if(attempt<20)setTimeout(()=>repairAccountPolicyAcceptance(attempt+1),800);return;}
+    if(existing.data){window.__fundaAccountPolicyReady=true;return;}
 
     const saved=await client.from('policy_acceptances').insert({
       student_id:student.data.id,
@@ -90,8 +94,9 @@
       declaration_text:ACCOUNT_DECLARATION,
       accepted_at:meta.policy_accepted_at
     });
-    if(saved.error)console.warn('Policy recovery save warning:',saved.error);
-  }catch(error){console.warn('Account policy recovery warning:',error);}
+    if(saved.error){console.warn('Policy recovery save warning:',saved.error);if(attempt<20)setTimeout(()=>repairAccountPolicyAcceptance(attempt+1),800);return;}
+    window.__fundaAccountPolicyReady=true;
+  }catch(error){console.warn('Account policy recovery warning:',error);if(attempt<20)setTimeout(()=>repairAccountPolicyAcceptance(attempt+1),800);}
  }
 
  function init(){addTerms();protectSubmit();restoreRequestedCourse();}
