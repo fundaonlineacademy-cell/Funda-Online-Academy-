@@ -7,9 +7,10 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Funda Admin Command Center</title>
+  <script src="funda-typography.js?v=20260916-systemwide-v1"></script>
 </head>
 <body>
-  <div style="font-family:Arial,sans-serif;padding:24px;color:#07172f">Loading Funda Admin Command Center…</div>
+  <div style="font-family:'Source Sans 3','Segoe UI',Arial,sans-serif;padding:24px;color:#07172f">Loading Funda Admin Command Center…</div>
   <script>
   (async()=>{
     try{
@@ -22,7 +23,7 @@
       if(h.includes(oldAuth))h=h.replace(oldAuth,stableAuth);
       h=h.replace(
         '</body>',
-        '<script src="funda-typography.js?v=20260912-responsive-readability"><\/script>'+
+        '<script src="funda-typography.js?v=20260916-systemwide-v1"><\/script>'+
         '<script src="funda-sidebar-controls.js?v=20260913-desktop-manrope-v1"><\/script>'+
         '<script src="admin-manual-refresh.js?v=20260913-manual-refresh-v1"><\/script>'+
         '<script src="admin-finance-separation.js?v=20260901-finance-split"><\/script>'+
@@ -45,7 +46,7 @@
       document.write(h);
       document.close();
     }catch(e){
-      document.body.innerHTML='<div style="font-family:Arial,sans-serif;padding:24px;color:#9b2525"><h2>Admin could not load</h2><p>'+String(e.message||e)+'</p><button onclick="location.reload()">Try Again</button></div>';
+      document.body.innerHTML='<div style="font-family:\'Source Sans 3\',\'Segoe UI\',Arial,sans-serif;padding:24px;color:#9b2525"><h2>Admin could not load</h2><p>'+String(e.message||e)+'</p><button onclick="location.reload()">Try Again</button></div>';
     }
   })();
   </script>
