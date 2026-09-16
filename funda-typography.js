@@ -37,8 +37,8 @@
   style.id='fundaTypographyFoundation';
   style.textContent=`
     :root{
-      --funda-ui-font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-      --funda-desktop-heading-font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --funda-ui-font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important;
+      --funda-desktop-heading-font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important;
     }
 
     html{
