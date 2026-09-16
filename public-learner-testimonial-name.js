@@ -119,3 +119,42 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyTransparentLogo,{once:true});
   else applyTransparentLogo();
 })();
+
+// Homepage footer contrast guard. The footer has a dark navy surface and must never
+// inherit a stale black contrast decision made before its shared stylesheet settles.
+(()=>{
+  const path=(location.pathname||'/').toLowerCase();
+  if(!(path==='/'||path.endsWith('/index.html')))return;
+
+  function installFooterGuard(){
+    if(document.getElementById('funda-home-footer-contrast-guard'))return;
+    const style=document.createElement('style');
+    style.id='funda-home-footer-contrast-guard';
+    style.textContent=`
+      html body footer.funda-home-footer{color:#ffffff!important}
+      html body footer.funda-home-footer .funda-home-footer-name,
+      html body footer.funda-home-footer h2{color:#ffffff!important}
+      html body footer.funda-home-footer .funda-home-footer-motto,
+      html body footer.funda-home-footer .funda-home-contact-label{color:#efd78e!important}
+      html body footer.funda-home-footer p,
+      html body footer.funda-home-footer a,
+      html body footer.funda-home-footer .funda-home-contact-location>span:last-child{color:#dbe6f3!important}
+      html body footer.funda-home-footer .funda-home-online-badge{color:#f2dfaa!important}
+      html body footer.funda-home-footer .funda-home-footer-bottom{color:#aebfd3!important}
+    `;
+    document.head.appendChild(style);
+  }
+
+  function clearStaleContrast(){
+    const footer=document.querySelector('footer.funda-home-footer');
+    if(!footer)return;
+    footer.querySelectorAll('.funda-strong-text').forEach(el=>{
+      el.classList.remove('funda-strong-text');
+      el.style.removeProperty('--funda-strong-color');
+    });
+  }
+
+  function run(){installFooterGuard();clearStaleContrast()}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
+  [250,800,1800].forEach(delay=>setTimeout(run,delay));
+})();
