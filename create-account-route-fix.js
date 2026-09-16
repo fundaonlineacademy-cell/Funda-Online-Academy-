@@ -4,8 +4,15 @@ function rewrite(root=document){
  root.querySelectorAll?.('a[href]').forEach(a=>{
   const raw=a.getAttribute('href')||'';
   if(/^auth\.html(?:\?|#|$)/i.test(raw)){
-   const u=new URL(raw,location.href);const next=u.searchParams.get('next');
-   a.setAttribute('href',`create-account.html${next?`?next=${encodeURIComponent(next)}`:''}`);
+   try{
+    const source=new URL(raw,location.href);
+    const target=new URL('create-account.html',location.href);
+    source.searchParams.forEach((value,key)=>target.searchParams.append(key,value));
+    target.hash=source.hash;
+    a.setAttribute('href',target.pathname.split('/').pop()+target.search+target.hash);
+   }catch(e){
+    a.setAttribute('href','create-account.html');
+   }
   }
  });
 }
