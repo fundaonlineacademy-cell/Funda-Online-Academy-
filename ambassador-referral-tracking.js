@@ -10,7 +10,8 @@ async function record(code){if(!code)return;let c=client();if(!c)return;try{awai
 async function claim(){let code=validStored();if(!code||localStorage.getItem(CLAIM_KEY)==='1')return;let c=client();if(!c)return;try{let s=await c.auth.getSession();if(!s.data.session?.user)return;let page=location.pathname+location.search,q=await c.rpc('claim_ambassador_v2_referral',{p_code:code,p_source_page:page});if(q.error){q=await c.rpc('claim_ambassador_referral',{p_code:code,p_source_page:page})}if(q.data===true)localStorage.setItem(CLAIM_KEY,'1')}catch(e){}}
 function decorate(code){if(!code)return;document.querySelectorAll('a[href]').forEach(a=>{try{let u=new URL(a.getAttribute('href'),location.href);if(u.origin!==location.origin)return;if(!/(courses-public|course-view|auth|login|onboarding)\.html$/i.test(u.pathname))return;if(!u.searchParams.get('ref'))u.searchParams.set('ref',code);a.href=u.pathname+u.search+u.hash}catch(e){}})}
 async function run(){let code=capture();decorate(code);if(code)await record(code);await claim();setTimeout(()=>{decorate(validStored());claim()},1800);setTimeout(()=>{decorate(validStored());claim()},5000)}
-function loadPortalAuditFixes(){if(!/ambassador-portal-v2\.html$/i.test(location.pathname)||document.getElementById('ambassadorPortalAuditFixes'))return;const s=document.createElement('script');s.id='ambassadorPortalAuditFixes';s.src='ambassador-portal-audit-fixes.js?v='+Date.now();document.head.appendChild(s)}
-loadPortalAuditFixes();
+function loadPortalFix(file,id){if(!/ambassador-portal-v2\.html$/i.test(location.pathname)||document.getElementById(id))return;const s=document.createElement('script');s.id=id;s.src=file+'?v='+Date.now();document.head.appendChild(s)}
+loadPortalFix('ambassador-portal-audit-fixes.js','ambassadorPortalAuditFixes');
+loadPortalFix('ambassador-bank-display-sync.js','ambassadorBankDisplaySync');
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(run,500));else setTimeout(run,500);
 })();
