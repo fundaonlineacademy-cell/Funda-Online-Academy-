@@ -11,11 +11,11 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js?v=20260913-session-v1"></script>
+  <script src="supabase-config.js?v=20260916-login-audit-v1"></script>
 
   <style>
     :root{
@@ -24,19 +24,15 @@
       --blue:#184f9f;
       --gold:#d3aa49;
       --gold-soft:#ead79f;
-      --cream:#f6f3ec;
       --ink:#10213f;
       --muted:#667085;
+      --font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     }
 
     *{box-sizing:border-box}
     html,body{margin:0;min-height:100%}
-    body{
-      font-family:"Inter",sans-serif;
-      background:var(--navy);
-      color:var(--ink);
-    }
-    h1,h2,h3,.brand{font-family:"Montserrat",sans-serif}
+    body{font-family:var(--font);background:var(--navy);color:var(--ink)}
+    h1,h2,h3,.brand,button,input{font-family:var(--font)}
 
     .brand-panel{
       position:relative;
@@ -46,7 +42,6 @@
         radial-gradient(circle at 86% 80%,rgba(24,79,159,.24),transparent 32%),
         linear-gradient(145deg,#020817 0%,#06152f 50%,#0a214d 100%);
     }
-
     .brand-panel::after{
       content:"";
       position:absolute;
@@ -58,51 +53,14 @@
         linear-gradient(90deg,rgba(255,255,255,.024) 1px,transparent 1px);
       background-size:44px 44px;
     }
+    .auth-panel{background:linear-gradient(145deg,#09162d 0%,#0d2143 100%)}
+    .auth-card{box-shadow:0 28px 80px rgba(0,0,0,.35)}
 
-    .auth-panel{
-      background:linear-gradient(145deg,#09162d 0%,#0d2143 100%);
-    }
-
-    .auth-card{
-      box-shadow:0 28px 80px rgba(0,0,0,.35);
-    }
-
-    .promo-image{
-      position:relative;
-      overflow:hidden;
-      border-radius:20px;
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:0 16px 40px rgba(0,0,0,.22);
-      min-height:165px;
-    }
-
-    .promo-image img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-    }
-
-    .promo-image::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(to top,rgba(2,8,23,.78),rgba(2,8,23,.08) 58%,transparent);
-    }
-
-    .promo-caption{
-      position:absolute;
-      z-index:2;
-      left:16px;
-      right:16px;
-      bottom:14px;
-    }
-
-    .proof-card{
-      background:rgba(255,255,255,.97);
-      color:#10213f;
-      border:1px solid rgba(255,255,255,.65);
-      box-shadow:0 18px 44px rgba(0,0,0,.22);
+    .value-card{
+      border:1px solid rgba(255,255,255,.1);
+      background:rgba(255,255,255,.055);
+      border-radius:18px;
+      padding:18px;
     }
 
     .input-field{
@@ -115,7 +73,6 @@
       font-size:15px;
       transition:.2s ease;
     }
-
     .input-field:focus{
       outline:none;
       border-color:#184f9f;
@@ -130,47 +87,23 @@
       justify-content:center;
       gap:.55rem;
       white-space:nowrap;
-      color:#334155 !important;
+      color:#334155!important;
       background:transparent;
       transition:.2s ease;
     }
-    .role-btn .role-icon{
-      width:18px;
-      height:18px;
-      flex:0 0 18px;
-      color:currentColor;
-    }
-    .role-btn .role-label{
-      display:inline-block;
-      min-width:0;
-      color:inherit !important;
-      opacity:1 !important;
-      visibility:visible !important;
-    }
-    .role-btn.active{
-      background:#06152f;
-      color:#fff !important;
-      border-color:#06152f;
-      box-shadow:0 8px 24px rgba(6,21,47,.15);
-    }
-    .role-btn.active .role-icon{color:#e2bd61 !important}
-    .role-btn.active .role-label{color:#fff !important}
-    .role-btn:not(.active){color:#334155 !important}
-    .role-btn:not(.active) .role-label{color:#334155 !important}
-    .role-btn:not(.active):hover{background:#fff;color:#06152f !important}
+    .role-btn .role-icon{width:18px;height:18px;flex:0 0 18px;color:currentColor}
+    .role-btn .role-label{display:inline-block;min-width:0;color:inherit!important;opacity:1!important;visibility:visible!important}
+    .role-btn.active{background:#06152f;color:#fff!important;border-color:#06152f;box-shadow:0 8px 24px rgba(6,21,47,.15)}
+    .role-btn.active .role-icon{color:#e2bd61!important}
+    .role-btn.active .role-label{color:#fff!important}
+    .role-btn:not(.active){color:#334155!important}
+    .role-btn:not(.active) .role-label{color:#334155!important}
+    .role-btn:not(.active):hover{background:#fff;color:#06152f!important}
 
     .message{display:none}
     .message.show{display:block}
-    .message.error{
-      background:#fff1f2;
-      border:1px solid #fecdd3;
-      color:#9f1239;
-    }
-    .message.success{
-      background:#ecfdf3;
-      border:1px solid #bbf7d0;
-      color:#166534;
-    }
+    .message.error{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239}
+    .message.success{background:#ecfdf3;border:1px solid #bbf7d0;color:#166534}
 
     .spinner{
       width:18px;
@@ -183,16 +116,12 @@
       border-radius:50%;
       animation:spin .8s linear infinite;
     }
-
     @keyframes spin{to{transform:rotate(360deg)}}
 
     @media(max-width:1023px){
       .brand-panel,.auth-panel{min-height:auto}
-      .brand-panel{padding-bottom:34px}
-    }
-
-    @media(max-width:639px){
-      .promo-image{min-height:145px}
+      .auth-panel{min-height:100svh}
+      .brand-panel{padding-top:34px;padding-bottom:34px}
     }
   </style>
 </head>
@@ -200,97 +129,21 @@
 <body>
 <main class="min-h-screen grid lg:grid-cols-[1.08fr_.92fr]">
 
-  <!-- =========================================================
-       PROMOTIONAL / BRAND SIDE
-       Desktop: book-style left panel
-       Mobile: remains visible above login rather than disappearing
-  ========================================================== -->
-  <section class="brand-panel text-white px-6 sm:px-10 lg:px-14 xl:px-16 py-8 lg:py-10 flex flex-col justify-between min-h-[620px] lg:min-h-screen">
-    <div class="relative z-10">
-      <a href="index.html" class="inline-flex items-center gap-4 bg-white rounded-2xl px-4 py-3 shadow-2xl">
-        <img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 sm:w-16 sm:h-16 object-contain" onerror="this.style.display='none'">
-        <div class="brand leading-none">
-          <div class="text-lg sm:text-xl font-extrabold text-[#06152f]">FUNDA ONLINE</div>
-          <div class="mt-1.5 text-[10px] font-extrabold tracking-[.28em] text-[#b88622]">ACADEMY</div>
-        </div>
-      </a>
-
-      <div class="mt-9 lg:mt-12 max-w-2xl">
-        <div class="inline-flex items-center rounded-full border border-white/10 bg-white/[.05] px-4 py-2 text-[11px] sm:text-xs font-bold tracking-[.16em] text-[#e6c778]">
-          PRACTICAL • FLEXIBLE • CAREER-FOCUSED
-        </div>
-
-        <h1 class="mt-5 text-4xl sm:text-5xl xl:text-[54px] font-extrabold leading-[1.03] tracking-tight">
-          Master Skills That<br>
-          <span class="text-[#e2bd61]">Get You Hired.</span>
-        </h1>
-
-        <p class="mt-5 max-w-xl text-sm sm:text-base leading-7 text-slate-200">
-          Learn practical skills, build confidence and move toward real career opportunities with affordable online learning designed around your future.
-        </p>
-
-        <div class="grid grid-cols-2 gap-3 mt-7">
-          <div class="promo-image h-[175px] sm:h-[205px]">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=85" alt="Students learning together">
-            <div class="promo-caption">
-              <p class="text-[10px] sm:text-xs uppercase tracking-[.18em] text-[#e9d28d] font-bold">Learn together</p>
-              <p class="text-sm sm:text-base font-extrabold text-white mt-1">Build practical confidence</p>
-            </div>
-          </div>
-
-          <div class="promo-image h-[175px] sm:h-[205px]">
-            <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=900&q=85" alt="Students studying online">
-            <div class="promo-caption">
-              <p class="text-[10px] sm:text-xs uppercase tracking-[.18em] text-[#e9d28d] font-bold">Learn anywhere</p>
-              <p class="text-sm sm:text-base font-extrabold text-white mt-1">Study at your own pace</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid sm:grid-cols-[1.25fr_.75fr] gap-3 mt-3">
-          <div class="proof-card rounded-2xl p-4 sm:p-5">
-            <div class="flex items-center justify-between gap-3">
-              <div>
-                <p class="text-[10px] font-extrabold tracking-[.18em] uppercase text-[#b88622]">Learner experience</p>
-                <div class="mt-2 text-[#d09a26] tracking-wide text-sm">★★★★★</div>
-              </div>
-              <div class="w-10 h-10 rounded-full bg-[#06152f] text-white flex items-center justify-center font-extrabold">AN</div>
-            </div>
-            <p class="mt-3 text-sm leading-6 font-semibold text-[#263854]">“Flexible, practical and easy to follow — exactly what online learning should feel like.”</p>
-            <p class="mt-2 text-[10px] text-slate-500 font-bold uppercase tracking-wide">Apelele Ngilan</p>
-          </div>
-
-          <div class="rounded-2xl border border-white/10 bg-white/[.055] p-4 sm:p-5 flex flex-col justify-center">
-            <div class="text-[#e2bd61] text-lg">✦</div>
-            <p class="mt-2 text-sm font-extrabold text-white">Your future is worth investing in.</p>
-            <p class="mt-2 text-xs leading-5 text-slate-300">Career-focused learning without premium-price barriers.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="relative z-10 mt-7 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-400">
-      <span>© 2026 Funda Online Academy · Learn. Grow. Succeed.</span>
-      <span class="text-[#d7bd78]">Affordable learning. Premium experience.</span>
-    </div>
-  </section>
-
-  <!-- =========================================================
-       LOGIN SIDE
-  ========================================================== -->
-  <section class="auth-panel px-5 sm:px-8 lg:px-10 py-8 lg:py-12 flex items-center justify-center min-h-screen">
+  <!-- Login comes first on mobile; desktop keeps the branded two-panel layout. -->
+  <section class="auth-panel order-1 lg:order-2 px-5 sm:px-8 lg:px-10 py-8 lg:py-12 flex items-center justify-center min-h-screen">
     <div class="auth-card w-full max-w-[500px] bg-white rounded-[28px] p-6 sm:p-8 lg:p-9 border border-white">
-
       <div class="text-center">
-        <div class="lg:hidden flex justify-center mb-5">
-          <img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
+        <div class="flex justify-center mb-5 lg:hidden">
+          <a href="index.html" aria-label="Funda Online Academy home">
+            <img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 object-contain" onerror="this.style.display='none'">
+          </a>
         </div>
-        <p class="text-[11px] font-extrabold tracking-[.18em] text-[#b88622] uppercase">Welcome back</p>
-        <h2 class="mt-2 text-3xl sm:text-[34px] font-extrabold text-[#06152f]">Sign in to your portal</h2>
-        <p class="mt-2 text-sm text-slate-500">Choose your access type and use the details you registered with.</p>
+        <p class="text-[11px] font-extrabold tracking-[.18em] text-[#8a6412] uppercase">Welcome back</p>
+        <h1 class="mt-2 text-3xl sm:text-[34px] font-extrabold text-[#06152f]">Sign in to your portal</h1>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Choose your access type and sign in with the account details registered with Funda Online Academy.</p>
       </div>
 
-      <div class="grid grid-cols-2 gap-2 mt-7 p-1.5 rounded-xl bg-[#f1f4f8]">
+      <div class="grid grid-cols-2 gap-2 mt-7 p-1.5 rounded-xl bg-[#f1f4f8]" role="group" aria-label="Choose portal access type">
         <button id="btn-student" type="button" class="role-btn active rounded-lg border border-transparent px-3 py-2.5 text-sm font-bold" style="background:#06152f;color:#ffffff;" aria-pressed="true">
           <svg class="role-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 10 10-5 10 5-10 5L2 10Z"></path><path d="M6 12v5c3 2 9 2 12 0v-5"></path></svg>
           <span class="role-label">Student</span>
@@ -301,12 +154,12 @@
         </button>
       </div>
 
-      <div id="message" class="message mt-5 rounded-xl p-4 text-sm font-semibold"></div>
+      <div id="message" class="message mt-5 rounded-xl p-4 text-sm font-semibold" aria-live="polite" aria-atomic="true"></div>
 
       <form id="loginForm" class="mt-6" novalidate>
         <div>
           <label for="email" class="block text-sm font-bold text-[#06152f]">Email address</label>
-          <input id="email" type="email" autocomplete="email" placeholder="you@example.com" class="input-field mt-2" required>
+          <input id="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" class="input-field mt-2" required>
         </div>
 
         <div class="mt-5">
@@ -317,41 +170,96 @@
           <input id="password" type="password" autocomplete="current-password" placeholder="Enter your password" class="input-field mt-2" required>
         </div>
 
-        <div id="admin-extra" class="hidden mt-5">
-          <label for="staff_code" class="block text-sm font-bold text-[#06152f]">Staff access code</label>
-          <input id="staff_code" type="password" autocomplete="off" placeholder="Enter staff access code" class="input-field mt-2">
-          <p class="mt-1.5 text-xs text-slate-500">Required only where a staff access code has been assigned.</p>
-        </div>
+        <p id="staffAccessNote" class="hidden mt-4 rounded-xl border border-blue-100 bg-blue-50 p-3 text-xs leading-5 text-slate-700">
+          Staff and administrator access is verified against the role assigned to your authenticated Academy account.
+        </p>
 
         <button id="loginBtn" type="submit" class="w-full mt-7 rounded-xl bg-[#06152f] hover:bg-[#0b2b61] text-white py-4 font-extrabold transition shadow-lg shadow-slate-300 disabled:opacity-60 disabled:cursor-not-allowed">
           Sign In Securely
         </button>
       </form>
 
-      <div class="mt-6 flex items-center gap-3">
+      <div class="mt-6 flex items-center gap-3" aria-hidden="true">
         <div class="h-px bg-slate-200 flex-1"></div>
         <span class="text-[10px] font-bold tracking-[.16em] text-slate-400 uppercase">or</span>
         <div class="h-px bg-slate-200 flex-1"></div>
       </div>
 
       <div class="mt-5 grid gap-3">
-        <a href="auth.html" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-[#184f9f] bg-white text-[#184f9f] py-3.5 font-extrabold text-sm hover:bg-blue-50 transition">
-          ◉ New to Funda? Create Student Account
+        <a href="create-account.html" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-[#184f9f] bg-white text-[#184f9f] py-3.5 px-4 font-extrabold text-sm text-center hover:bg-blue-50 transition">
+          New to Funda Online Academy? Create Student Account
         </a>
-
-        <a href="courses-public.html" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-[#f7f9fc] text-[#06152f] py-3.5 font-extrabold text-sm hover:border-[#184f9f] transition">
-          ◫ Browse Courses — No Login Needed
+        <a href="ambassador-login.html" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-[#c99a2e] bg-[#fffaf0] text-[#06152f] py-3.5 px-4 font-extrabold text-sm text-center hover:bg-[#fff4dc] transition">
+          Ambassador Portal Login
+        </a>
+        <a href="courses-public.html" class="w-full inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-[#f7f9fc] text-[#06152f] py-3.5 px-4 font-extrabold text-sm text-center hover:border-[#184f9f] transition">
+          Browse Courses — No Login Needed
         </a>
       </div>
 
-      <p class="mt-3 text-center text-[11px] leading-5 text-slate-400">
-        Want to see what we teach before registering? Explore the Academy course catalogue freely.
+      <p class="mt-4 text-center text-[11px] leading-5 text-slate-500">
+        You can explore the Academy course catalogue before creating an account.
       </p>
 
-      <div class="mt-5 flex items-center justify-center gap-2 text-[11px] text-slate-400">
-        <span>🔒</span>
+      <div class="mt-5 flex items-center justify-center gap-2 text-[11px] text-slate-500">
+        <span aria-hidden="true">🔒</span>
         <span>Secure login · Your account information is protected</span>
       </div>
+    </div>
+  </section>
+
+  <section class="brand-panel order-2 lg:order-1 text-white px-6 sm:px-10 lg:px-14 xl:px-16 py-8 lg:py-10 flex flex-col justify-between lg:min-h-screen">
+    <div class="relative z-10">
+      <a href="index.html" class="inline-flex items-center gap-4 bg-white rounded-2xl px-4 py-3 shadow-2xl">
+        <img src="logo.png" alt="Funda Online Academy" class="w-14 h-14 sm:w-16 sm:h-16 object-contain" onerror="this.style.display='none'">
+        <div class="brand leading-none">
+          <div class="text-lg sm:text-xl font-extrabold text-[#06152f]">FUNDA ONLINE</div>
+          <div class="mt-1.5 text-[10px] font-extrabold tracking-[.28em] text-[#8a6412]">ACADEMY</div>
+        </div>
+      </a>
+
+      <div class="mt-9 lg:mt-12 max-w-2xl">
+        <div class="inline-flex items-center rounded-full border border-white/10 bg-white/[.05] px-4 py-2 text-[11px] sm:text-xs font-bold tracking-[.16em] text-[#e6c778]">
+          PRACTICAL • FLEXIBLE • CAREER-FOCUSED
+        </div>
+
+        <h2 class="mt-5 text-4xl sm:text-5xl xl:text-[54px] font-extrabold leading-[1.03] tracking-tight">
+          Build Practical Skills for<br>
+          <span class="text-[#e2bd61]">Work, Growth and Opportunity.</span>
+        </h2>
+
+        <p class="mt-5 max-w-xl text-sm sm:text-base leading-7 text-slate-200">
+          Learn practical, career-focused skills through flexible online courses designed to help you build knowledge, confidence and real-world capability.
+        </p>
+
+        <div class="grid sm:grid-cols-3 gap-3 mt-7">
+          <div class="value-card">
+            <div class="text-[#e2bd61] text-lg" aria-hidden="true">✦</div>
+            <p class="mt-2 text-sm font-extrabold text-white">Practical learning</p>
+            <p class="mt-2 text-xs leading-5 text-slate-300">Build knowledge you can apply beyond the classroom.</p>
+          </div>
+          <div class="value-card">
+            <div class="text-[#e2bd61] text-lg" aria-hidden="true">◫</div>
+            <p class="mt-2 text-sm font-extrabold text-white">Flexible access</p>
+            <p class="mt-2 text-xs leading-5 text-slate-300">Study online while following a clear learning journey.</p>
+          </div>
+          <div class="value-card">
+            <div class="text-[#e2bd61] text-lg" aria-hidden="true">✓</div>
+            <p class="mt-2 text-sm font-extrabold text-white">Structured progress</p>
+            <p class="mt-2 text-xs leading-5 text-slate-300">Move forward with assessments, tracking and support.</p>
+          </div>
+        </div>
+
+        <div class="mt-5 rounded-2xl border border-[#d3aa49]/35 bg-white/[.055] p-5">
+          <p class="text-[10px] font-extrabold tracking-[.18em] uppercase text-[#e6c778]">Academy promise</p>
+          <p class="mt-2 text-base leading-7 font-bold text-white">Education should strengthen what you know, what you can do and how confidently you move forward.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative z-10 mt-7 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-300">
+      <span>© 2026 Funda Online Academy · Learn. Grow. Achieve.</span>
+      <span class="text-[#d7bd78]">Practical learning. Clear progress.</span>
     </div>
   </section>
 </main>
@@ -364,38 +272,32 @@
   const loginButton = document.getElementById("loginBtn");
   const studentButton = document.getElementById("btn-student");
   const adminButton = document.getElementById("btn-admin");
-  const adminExtra = document.getElementById("admin-extra");
+  const staffAccessNote = document.getElementById("staffAccessNote");
 
   function showMessage(text, success = false) {
     const box = document.getElementById("message");
     box.textContent = text;
     box.classList.remove("error", "success", "show");
     box.classList.add(success ? "success" : "error", "show");
+    box.setAttribute("role", success ? "status" : "alert");
   }
 
   function clearMessage() {
     const box = document.getElementById("message");
     box.textContent = "";
     box.classList.remove("error", "success", "show");
+    box.removeAttribute("role");
   }
 
   function initialiseSupabase() {
-    if (!window.supabase) throw new Error("The Supabase library could not be loaded.");
-    if (!window.SUPABASE_URL) throw new Error("The Academy Supabase URL is missing.");
-    if (!window.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY === "YOUR_LEGACY_ANON_KEY_GOES_HERE") {
-      throw new Error("The Academy Supabase public key is missing or invalid.");
-    }
+    if (!window.supabase) throw new Error("library");
+    if (!window.SUPABASE_URL) throw new Error("configuration");
+    if (!window.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY === "YOUR_LEGACY_ANON_KEY_GOES_HERE") throw new Error("configuration");
 
     supabaseClient = window.supabase.createClient(
       window.SUPABASE_URL,
       window.SUPABASE_ANON_KEY,
-      {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
-        }
-      }
+      {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
     );
   }
 
@@ -404,7 +306,7 @@
     clearMessage();
 
     const isAdmin = role === "admin";
-    adminExtra.classList.toggle("hidden", !isAdmin);
+    staffAccessNote.classList.toggle("hidden", !isAdmin);
     studentButton.classList.toggle("active", !isAdmin);
     adminButton.classList.toggle("active", isAdmin);
     studentButton.classList.toggle("text-slate-600", isAdmin);
@@ -412,7 +314,6 @@
     studentButton.setAttribute("aria-pressed", String(!isAdmin));
     adminButton.setAttribute("aria-pressed", String(isAdmin));
 
-    // Force contrast directly so the selected label can never inherit dark text.
     if (isAdmin) {
       studentButton.style.background = "transparent";
       studentButton.style.color = "#334155";
@@ -427,19 +328,12 @@
   }
 
   function getSafeNextDestination() {
-    const params = new URLSearchParams(window.location.search);
-    const next = params.get("next");
+    const next = new URLSearchParams(window.location.search).get("next");
     if (!next) return null;
-
     try {
       const decoded = decodeURIComponent(next);
-      if (/^[a-zA-Z0-9._\-]+\.html(?:\?[a-zA-Z0-9%&=_\-.]*)?$/.test(decoded)) {
-        return decoded;
-      }
-    } catch (error) {
-      console.warn("Ignored invalid next destination.", error);
-    }
-
+      if (/^[a-zA-Z0-9._\-]+\.html(?:\?[a-zA-Z0-9%&=_\-.]*)?$/.test(decoded)) return decoded;
+    } catch (_) {}
     return null;
   }
 
@@ -449,8 +343,7 @@
       .select("id, user_id")
       .eq("user_id", userId)
       .maybeSingle();
-
-    if (error) throw new Error("Your student record could not be loaded. " + error.message);
+    if (error) throw new Error("student-record");
     return data;
   }
 
@@ -465,13 +358,11 @@
 
     const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("password").value;
-    const staffCode = document.getElementById("staff_code").value.trim();
 
     if (!email || !email.includes("@")) {
       showMessage("Please enter a valid email address.");
       return;
     }
-
     if (!password) {
       showMessage("Please enter your password.");
       return;
@@ -483,19 +374,16 @@
     try {
       const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      if (!data?.user) throw new Error("Login was unsuccessful. Please try again.");
+      if (!data?.user) throw new Error("login-failed");
 
       const user = data.user;
-
       const { data: profile, error: profileError } = await supabaseClient
         .from("profiles")
-        .select("role, staff_code")
+        .select("role")
         .eq("id", user.id)
         .maybeSingle();
 
-      if (profileError) {
-        throw new Error("Your account was authenticated, but your profile could not be loaded. " + profileError.message);
-      }
+      if (profileError) throw new Error("profile-load");
 
       const staffRoles = ["admin", "staff"];
       const actualRole = profile?.role || "student";
@@ -507,12 +395,6 @@
           return;
         }
 
-        if (profile?.staff_code && profile.staff_code !== staffCode) {
-          await supabaseClient.auth.signOut();
-          showMessage("Invalid Staff Access Code.");
-          return;
-        }
-
         const destination = actualRole === "admin" ? "admin-v2.html" : "staff-portal.html";
         const portalName = actualRole === "admin" ? "Admin Command Center" : "Staff Workspace";
         showMessage(`Login successful. Opening the ${portalName}...`, true);
@@ -520,11 +402,7 @@
         return;
       }
 
-      /* A single Academy identity may hold more than one functional role.
-         Staff/admin/ambassador accounts are allowed to enter the learner journey
-         without changing or weakening their primary portal role. */
       const student = await getStudentRecord(user.id);
-
       if (!student) {
         const roleLabel = actualRole === "staff" || actualRole === "admin"
           ? "staff"
@@ -535,7 +413,6 @@
       }
 
       const next = getSafeNextDestination();
-
       if (next) {
         showMessage("Login successful. Returning you to your requested page...", true);
         setTimeout(() => { window.location.href = next; }, 450);
@@ -549,9 +426,7 @@
         .limit(1)
         .maybeSingle();
 
-      if (enrolmentError) {
-        throw new Error("Your enrolment status could not be checked. " + enrolmentError.message);
-      }
+      if (enrolmentError) throw new Error("enrolment-check");
 
       localStorage.removeItem("funda_pending_course");
       localStorage.removeItem("enroll_after_login");
@@ -567,14 +442,16 @@
 
     } catch (error) {
       console.error("Login error:", error);
-      const text = String(error?.message || "Unable to log in. Please check your email and password.");
+      const text = String(error?.message || "").toLowerCase();
 
-      if (text.toLowerCase().includes("invalid login credentials")) {
+      if (text.includes("invalid login credentials")) {
         showMessage("The email address or password is incorrect. Please check your details and try again.");
-      } else if (text.toLowerCase().includes("email not confirmed")) {
+      } else if (text.includes("email not confirmed")) {
         showMessage("This account is waiting for email confirmation. Please contact the Academy if this message continues.");
+      } else if (["profile-load","student-record","enrolment-check"].includes(text)) {
+        showMessage("Your account was signed in, but the Academy could not load all required account information. Please try again. If the problem continues, contact Academy support.");
       } else {
-        showMessage(text);
+        showMessage("Unable to sign in right now. Please check your details and try again.");
       }
     } finally {
       loginButton.disabled = false;
@@ -584,7 +461,6 @@
 
   async function resetPassword() {
     clearMessage();
-
     const email = document.getElementById("email").value.trim().toLowerCase();
     if (!email || !email.includes("@")) {
       showMessage("Enter your registered email address first, then choose Forgot password.");
@@ -595,10 +471,10 @@
       const redirectTo = new URL("reset-password.html", window.location.href).href;
       const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
       if (error) throw error;
-      showMessage("Password reset instructions have been sent to your email.", true);
+      showMessage("If an account exists for that email address, password reset instructions will be sent to it.", true);
     } catch (error) {
       console.error("Password reset error:", error);
-      showMessage(error?.message || "Unable to send password reset instructions.");
+      showMessage("Password reset could not be started right now. Please try again later.");
     }
   }
 
@@ -610,20 +486,18 @@
   document.addEventListener("DOMContentLoaded", () => {
     try {
       initialiseSupabase();
-      try{
-        const saved=localStorage.getItem("funda_existing_enrol_email");
-        if(saved && document.getElementById("email")){
-          document.getElementById("email").value=saved;
+      try {
+        const saved = localStorage.getItem("funda_existing_enrol_email");
+        if (saved && document.getElementById("email")) {
+          document.getElementById("email").value = saved;
           localStorage.removeItem("funda_existing_enrol_email");
         }
-      }catch(_){};
-      /* Intentionally do not auto-redirect an existing session.
-         Visiting Login must always leave the login form available so a user
-         can deliberately sign in or switch accounts. Portal pages still
-         enforce their own authenticated role guards. */
+      } catch (_) {}
+      /* Do not auto-redirect an existing session. Visiting Login must remain
+         available so a user can deliberately sign in or switch accounts. */
     } catch (error) {
       console.error("Login page initialisation error:", error);
-      showMessage(error?.message || "The Academy connection could not be initialised.");
+      showMessage("The Academy connection could not be initialised. Please refresh the page and try again.");
     }
   });
 </script>
