@@ -10,6 +10,17 @@ function addNav(){
   if(/ambassadors\.html$/.test(path))return;
   const header=document.querySelector('header');if(!header)return;
 
+  const isHome=/index\.html$/.test(path)||path.endsWith('/');
+  if(isHome){
+    const desktop=header.querySelector('.funda-home-primary-nav a[href="ambassadors.html"]');
+    const mobile=header.querySelector('#homeMobileMenu a[href="ambassadors.html"]');
+    if(desktop||mobile){
+      header.querySelectorAll('a[data-ambassador-login-link="1"]').forEach(a=>a.remove());
+      [desktop,mobile].filter(Boolean).forEach(a=>a.dataset.ambassadorLink='1');
+      return;
+    }
+  }
+
   if(/courses-public\.html$/.test(path)){
     const course=header.querySelector('a[href="#courses"]');
     const primary=course?.parentElement;
