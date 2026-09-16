@@ -9,7 +9,8 @@
   <title>Academy Map | Funda Online Academy</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700;800&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  <script src="funda-typography.js?v=20260913-desktop-system-v2"></script>
   <style>
     :root{
       --navy:#071d49;
@@ -124,6 +125,7 @@
     .footer-copy{margin-top:7px;color:#e5eef8;font-size:13px}
     .footer-links{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:12px 20px}
     .footer-links a{color:#edf4fb;font-size:13px;font-weight:700}
+    @media(min-width:901px){.destination a,.footer-brand{font-family:Manrope,Inter,Arial,sans-serif}}
     @media(max-width:1120px){.main-nav,.auth-links{display:none}.menu-button{display:grid;place-items:center}.audience-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.journey{grid-template-columns:repeat(3,minmax(0,1fr))}.journey-step:nth-child(3):after{display:none}.journey-step:nth-child(4){grid-column:1/2}}
     @media(max-width:760px){body{font-size:15px}.nav-wrap{min-height:70px;padding:10px 16px}.brand img{width:46px;height:46px}.brand strong{font-size:16px}.brand small{font-size:9px}.hero-inner{padding:48px 18px 54px}.hero-copy{font-size:16px}.legend{padding:0 16px}.page{padding:46px 16px 58px}.audience-grid,.destination-grid,.help-grid{grid-template-columns:1fr}.audience-card{min-height:auto}.journey{grid-template-columns:1fr}.journey-step{min-height:auto}.journey-step:not(:last-child):after{content:"↓";left:calc(50% - 12px);right:auto;top:auto;bottom:-13px}.journey-step:nth-child(3):after{display:grid}.journey-step:nth-child(4){grid-column:auto}.map-group{padding:20px 16px}.map-group-head{display:block}.map-group-head .badge{margin-top:12px}.destination{min-height:auto}.search-row{grid-template-columns:1fr}.footer-inner{flex-direction:column}.footer-links{justify-content:flex-start}}
     @media(max-width:410px){.brand strong{font-size:14px}.brand small{letter-spacing:.2em}.brand img{width:42px;height:42px}.menu-button{width:43px;height:43px}.hero h1{font-size:35px}.hero-actions .button{width:100%}.mobile-auth{grid-template-columns:1fr}}
