@@ -4,8 +4,13 @@ function rewrite(root=document){
  root.querySelectorAll?.('a[href]').forEach(a=>{
   const raw=a.getAttribute('href')||'';
   if(/^auth\.html(?:\?|#|$)/i.test(raw)){
-   const u=new URL(raw,location.href);const next=u.searchParams.get('next');
-   a.setAttribute('href',`create-account.html${next?`?next=${encodeURIComponent(next)}`:''}`);
+   const u=new URL(raw,location.href);
+   const target=new URL('create-account.html',location.href);
+   const next=u.searchParams.get('next');
+   const ref=u.searchParams.get('ref')||new URLSearchParams(location.search).get('ref');
+   if(next)target.searchParams.set('next',next);
+   if(ref)target.searchParams.set('ref',String(ref).trim().toUpperCase().replace(/[^A-Z0-9_-]/g,'').slice(0,40));
+   a.setAttribute('href',target.pathname+target.search+u.hash);
   }
  });
 }
