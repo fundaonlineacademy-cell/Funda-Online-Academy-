@@ -50,11 +50,11 @@
     return true;
   }
   function improve(el){
-    if(!eligible(el)||el.classList.contains('funda-strong-text'))return;
+    if(!eligible(el))return;
     const css=getComputedStyle(el),fg=parseColor(css.color),bg=surfaceFor(el),weight=parseInt(css.fontWeight,10)||400;
     if(!fg||fg.a<.5)return;
     const ordinaryReadingText=readingTags.has(el.tagName)||weight<700;
-    if(!ordinaryReadingText&&contrast(fg,bg)>=TARGET)return;
+    if(!ordinaryReadingText&&contrast(fg,bg)>=TARGET&&!el.classList.contains('funda-strong-text'))return;
     el.style.setProperty('--funda-strong-color',strongColor(bg));
     el.classList.add('funda-strong-text');
   }
@@ -68,8 +68,18 @@
   const schedule=root=>{clearTimeout(timer);timer=setTimeout(()=>scan(root?.nodeType===1?root:document.body),80)};
   const boot=()=>{
     scan();
-    const observer=new MutationObserver(records=>{const added=records.find(r=>r.addedNodes?.length)?.target;schedule(added||document.body)});
+    const observer=new MutationObserver(records=>{
+      const stylesheetChanged=records.some(r=>r.type==='childList'&&[...r.addedNodes].some(n=>n.nodeType===1&&(n.tagName==='STYLE'||n.tagName==='LINK')));
+      if(stylesheetChanged){schedule(document.body);return;}
+      const changed=records.find(r=>r.type==='attributes')?.target;
+      const addedTarget=records.find(r=>r.addedNodes?.length)?.target;
+      schedule(changed||addedTarget||document.body);
+    });
     observer.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['class','hidden']});
+    // Several Academy pages apply their final surface colours from shared scripts.
+    // Recheck after those scripts settle so text never remains black on a dark surface
+    // (or white on a light surface) because of an earlier scan.
+    [250,800,1800].forEach(delay=>setTimeout(()=>scan(document.body),delay));
   };
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
