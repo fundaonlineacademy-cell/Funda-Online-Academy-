@@ -115,19 +115,32 @@ async function submit(e){
 
     if(!payload.consent)throw Error('Please provide application-data consent before submitting.');
 
-    const current=await db.auth.getUser();
-    const currentEmail=String(current.data?.user?.email||'').toLowerCase();
-    if(current.data?.user&&currentEmail!==email)throw Error('You are currently signed in with a different Academy email. Please use that email or sign out before applying.');
+    let current=await db.auth.getUser();
+    let currentUser=current.data?.user||null;
+    const currentEmail=String(currentUser?.email||'').toLowerCase();
+    if(currentUser&&currentEmail!==email)throw Error('You are currently signed in with a different Academy email. Please use that email or sign out before applying.');
 
-    if(!current.data?.user){
+    if(!currentUser){
       const signup=await db.auth.signUp({
         email,
         password,
         options:{data:{full_name:fullName,phone,account_type:'ambassador_applicant'}}
       });
       if(signup.error)throw signup.error;
-      if(!signup.data?.user)throw Error('We could not create your Creator Partner login. Please try again.');
+      if(!signup.data?.user)throw Error('We could not create your Ambassador application login. Please try again.');
+      currentUser=signup.data.session?.user||null;
+      if(!currentUser){
+        const sessionCheck=await db.auth.getSession();
+        currentUser=sessionCheck.data?.session?.user||null;
+      }
+      if(!currentUser){
+        throw Error('Your Ambassador application login was created, but the account must be confirmed before the signed application can be submitted. Confirm the account, sign in through Ambassador Login, then return to this application page to submit.');
+      }
     }
+
+    if(String(currentUser.email||'').toLowerCase()!==email)throw Error('The signed-in Academy account does not match the email entered on this application.');
+    const sessionCheck=await db.auth.getSession();
+    if(!sessionCheck.data?.session?.access_token)throw Error('Your secure Ambassador application session could not be verified. Please sign in through Ambassador Login and try again.');
 
     const result=await db.functions.invoke('submit-ambassador-application',{body:{application:payload}});
     if(result.error)throw result.error;
@@ -142,7 +155,13 @@ async function submit(e){
   }catch(err){
     const msg=err?.message||'We could not submit your application. Please try again.';
     status.className='cpstatus err';
-    status.textContent=/already exists|duplicate/i.test(msg)?'A Creator Partner application already exists for this email address.':msg;
+    if(/user already registered|already been registered|email.*registered/i.test(msg)){
+      status.textContent='An Academy login already exists for this email address. Sign in through Ambassador Login with that password, then return here to submit the Ambassador application.';
+    }else if(/application already exists|duplicate.*ambassador/i.test(msg)){
+      status.textContent='An Ambassador application already exists for this email address.';
+    }else{
+      status.textContent=msg;
+    }
   }finally{
     btn.disabled=!agreement;
     btn.textContent=agreement?'Submit Application':'Agreement Unavailable';
