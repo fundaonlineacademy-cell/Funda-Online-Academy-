@@ -12,6 +12,10 @@
 <div class="card"><div class="spinner"></div><h1>Preparing registration</h1><p>Opening a fresh student registration form for you.</p></div>
 <script>
 (async()=>{
+ const cleanRef=v=>String(v||'').trim().toUpperCase().replace(/[^A-Z0-9_-]/g,'').slice(0,40);
+ const params=new URLSearchParams(location.search);
+ const ref=cleanRef(params.get('ref'));
+ const next=params.get('next');
  try{
   if(window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){
    const client=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
@@ -19,7 +23,11 @@
   }
  }catch(e){console.warn('Registration session reset:',e)}
  try{localStorage.removeItem('funda_pending_course');localStorage.removeItem('enroll_after_login')}catch(e){}
- location.replace('auth.html?new=1');
+ const target=new URL('auth.html',location.href);
+ target.searchParams.set('new','1');
+ if(ref)target.searchParams.set('ref',ref);
+ if(next)target.searchParams.set('next',next);
+ location.replace(target.pathname+target.search);
 })();
 </script>
 </body>
