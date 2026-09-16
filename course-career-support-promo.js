@@ -15,6 +15,20 @@ function mount(){
   if(anchor&&anchor.parentElement===body)anchor.insertAdjacentElement('afterend',section);else body.appendChild(section);
 }
 
+function removeDuplicateGenericCurriculum(){
+  const duplicate=document.getElementById('acpoCurriculum');
+  if(!duplicate)return;
+  const modules=document.getElementById('modules');
+  const moduleSection=modules?.closest('.section');
+  duplicate.classList.add('fundaCourseDuplicate');
+  duplicate.style.setProperty('display','none','important');
+  if(moduleSection){
+    moduleSection.classList.remove('fundaCourseDuplicate');
+    moduleSection.style.setProperty('display','block','important');
+  }
+  document.querySelectorAll('a[href="#acpoCurriculum"]').forEach(link=>link.setAttribute('href','#modules'));
+}
+
 function loadUnifiedView(){
   if(document.querySelector('script[data-funda-course-unified-v5]'))return;
   const script=document.createElement('script');
@@ -26,11 +40,12 @@ function loadUnifiedView(){
 
 function start(){
   loadUnifiedView();
-  mount();
-  setTimeout(mount,900);
-  setTimeout(mount,1800);
-  setTimeout(mount,3200);
+  [0,300,900,1800,3200,5500,8000,10500].forEach(ms=>setTimeout(()=>{
+    mount();
+    removeDuplicateGenericCurriculum();
+  },ms));
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
+document.addEventListener('funda:course-view-ready',()=>setTimeout(removeDuplicateGenericCurriculum,50));
 })();
