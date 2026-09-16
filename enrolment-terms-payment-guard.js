@@ -1,6 +1,6 @@
 (()=>{
  if(window.__fundaEnrolmentTerms)return;window.__fundaEnrolmentTerms=true;
- const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[c]));
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
  const TERMS_VERSION='2026-08-30';
  const ACCOUNT_POLICY_VERSION='FOA Terms v1.0';
  const ACCOUNT_DECLARATION='I confirm that the information I supplied when creating my Funda Online Academy student account is true and correct to the best of my knowledge. I have read and accepted the Academy student terms and privacy information.';
@@ -53,6 +53,7 @@
       const selected=document.getElementById('selectedCourseName')?.textContent?.trim();
       if(selected&&selected!=='—'){
         window.__fundaRequestedCourseRestored=true;
+        try{localStorage.removeItem('funda_pending_course');localStorage.removeItem('enroll_after_login');}catch(_){}
         document.getElementById('continueBar')?.scrollIntoView({behavior:'smooth',block:'nearest'});
         return;
       }
