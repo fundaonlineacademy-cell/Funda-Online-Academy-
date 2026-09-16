@@ -1,5 +1,17 @@
 (()=>{
 if(window.__fundaCreateAccountRouteFix)return;window.__fundaCreateAccountRouteFix=true;
+function rememberRequestedCourse(){
+ try{
+  const next=new URLSearchParams(location.search).get('next');
+  if(!next)return;
+  const requested=new URL(next,location.href);
+  let course='';
+  if(/onboarding\.html$/i.test(requested.pathname))course=requested.searchParams.get('course')||'';
+  if(/course-view\.html$/i.test(requested.pathname))course=requested.searchParams.get('id')||'';
+  course=String(course).trim();
+  if(course)localStorage.setItem('funda_pending_course',JSON.stringify({id:course,source:'requested-route',saved_at:new Date().toISOString()}));
+ }catch(e){}
+}
 function rewrite(root=document){
  root.querySelectorAll?.('a[href]').forEach(a=>{
   const raw=a.getAttribute('href')||'';
@@ -31,6 +43,7 @@ function clarifyLoginAccountLabel(root=document){
  });
 }
 function boot(){
+ rememberRequestedCourse();
  rewrite();
  clarifyLoginAccountLabel();
  new MutationObserver(m=>m.forEach(x=>x.addedNodes.forEach(n=>{
