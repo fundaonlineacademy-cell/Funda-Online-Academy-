@@ -35,6 +35,9 @@ function installStyle(){
     .fundaCourseAccordionBodyV4>.pcvKicker:first-child,.fundaCourseAccordionBodyV4>.acpol:first-child,.fundaCourseAccordionBodyV4>.bklabel:first-child,.fundaCourseAccordionBodyV4>.oalabel:first-child,.fundaCourseAccordionBodyV4>.balabel:first-child,.fundaCourseAccordionBodyV4>.retailEyebrow:first-child{display:none!important}
     .fundaCourseAccordionBodyV4>h2:first-of-type{display:none!important}
     .fundaCourseAccordionBodyV4 .acpoActions,.fundaCourseAccordionBodyV4 .baactions,.fundaCourseAccordionBodyV4 .bkactions,.fundaCourseAccordionBodyV4 .oaactions,.fundaCourseAccordionBodyV4 .cpactions,.fundaCourseAccordionBodyV4 .retailActions{display:none!important}
+    .fundaCourseAboutReadable{color:${COPY}!important}
+    .fundaCourseAboutReadable p,.fundaCourseAboutReadable li,.fundaCourseAboutReadable dd,.fundaCourseAboutReadable dt,.fundaCourseAboutReadable blockquote,.fundaCourseAboutReadable small{color:${COPY}!important;opacity:1!important;text-shadow:none!important}
+    .fundaCourseAboutReadable h1,.fundaCourseAboutReadable h2,.fundaCourseAboutReadable h3,.fundaCourseAboutReadable h4,.fundaCourseAboutReadable h5,.fundaCourseAboutReadable h6,.fundaCourseAboutReadable strong,.fundaCourseAboutReadable b{color:${INK}!important;opacity:1!important;text-shadow:none!important}
     .pcvMetrics{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-auto-rows:max-content!important;align-items:start!important;gap:12px!important;margin:18px 0 24px!important}
     .pcvMetric{height:auto!important;min-height:0!important;padding:14px 16px!important;align-self:start!important}
     @media(min-width:821px){#courseContent{grid-template-columns:minmax(0,1fr) 310px!important;gap:26px!important}#courseContent>section.panel>.body{padding:24px!important}#courseContent>aside .aside{position:sticky!important;top:92px!important;padding:20px!important}}
@@ -119,6 +122,26 @@ function labelFor(section){
   return {title,kicker};
 }
 
+function normaliseAboutVisual(section){
+  if(!section||section.classList.contains('fundaCourseDuplicate'))return;
+  section.classList.add('fundaCourseAboutReadable');
+  important(section,'color',INK);
+  section.querySelectorAll('p,li,dd,dt,blockquote,small').forEach(el=>{
+    if(el.closest('a,button'))return;
+    important(el,'color',COPY);important(el,'opacity','1');important(el,'text-shadow','none');
+  });
+  section.querySelectorAll('h1,h2,h3,h4,h5,h6,strong,b').forEach(el=>{
+    if(el.closest('a,button'))return;
+    important(el,'color',INK);important(el,'opacity','1');important(el,'text-shadow','none');
+  });
+}
+
+function normaliseAboutSections(){
+  const body=mainBody();
+  if(!body)return;
+  [...body.querySelectorAll(':scope > section,:scope > .section')].filter(isAbout).forEach(normaliseAboutVisual);
+}
+
 function normaliseAccordionVisual(section){
   if(!section)return;
   section.classList.add('fundaCourseAccordionV4');
@@ -173,6 +196,7 @@ function polish(){
   if(!restoreBase())return;
   collectOrphans();
   hideDuplicates();
+  normaliseAboutSections();
   standardiseSections();
   enforceBrand();
 }
