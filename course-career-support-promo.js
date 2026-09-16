@@ -15,19 +15,19 @@ function mount(){
   if(anchor&&anchor.parentElement===body)anchor.insertAdjacentElement('afterend',section);else body.appendChild(section);
 }
 
-function loadCompact(){
-  if(document.querySelector('script[data-funda-course-compact]'))return;
-  const compact=document.createElement('script');
-  compact.dataset.fundaCourseCompact='1';
-  compact.src='course-view-compact-layout.js?v=20260916-refresh-v1';
-  document.head.appendChild(compact);
+function loadUnifiedView(){
+  if(document.querySelector('script[data-funda-course-unified]'))return;
+  const script=document.createElement('script');
+  script.dataset.fundaCourseUnified='1';
+  script.src='course-view-unified-public.js?v=20260916-unified-v1';
+  document.head.appendChild(script);
 }
 
 function start(){
-  loadCompact();
+  loadUnifiedView();
   mount();
-  setTimeout(mount,1200);
-  setTimeout(mount,2400);
+  setTimeout(mount,900);
+  setTimeout(mount,1800);
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
