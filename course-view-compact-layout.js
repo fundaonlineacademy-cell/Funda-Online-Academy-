@@ -9,7 +9,8 @@ function installStyle(){
   const s=document.createElement('style');
   s.id='fundaCourseCompactLayoutStyle';
   s.textContent=`
-    header .brand,header .brand span,header .brand *{color:#fff!important}
+    header .brand,header .brand>span,header .brand>span>span,header .brand span,header .brand strong,header .brand b{color:#fff!important}
+    body.fundaCourseOverviewBrand header .brand,body.fundaCourseOverviewBrand header .brand *{color:#fff!important}
     #courseContent{align-items:start!important}
     #courseContent>section.panel{min-width:0!important;grid-column:1!important}
     #courseContent>aside{min-width:0!important;grid-column:2!important;grid-row:1!important;align-self:start!important}
@@ -48,14 +49,17 @@ function installStyle(){
       .pcvValueGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
     }
     @media(max-width:820px){
-      #courseContent{grid-template-columns:1fr!important}
+      #courseContent{grid-template-columns:1fr!important;gap:18px!important}
       #courseContent>section.panel,#courseContent>aside{grid-column:1!important;grid-row:auto!important}
-      #courseContent>aside .aside{position:static!important}
+      #courseContent>section.panel{display:block!important}
+      #courseContent>aside,body.acpoReady #courseContent>aside{display:block!important}
+      #courseContent>aside .aside{position:static!important;margin-top:0!important}
       .pcvMetrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
       .pcvMetric{padding:13px 14px!important}
       .cvclSummary{padding:15px 16px}
       .cvclTitle{font-size:17px}
       .cvclBody{padding:0 16px 16px}
+      main.shell{padding-top:16px!important;padding-bottom:28px!important}
     }
   `;
   document.head.appendChild(s);
@@ -66,6 +70,18 @@ function primaryBody(){
   if(!content)return null;
   const main=[...content.children].find(el=>el.matches?.('section.panel'))||content.querySelector('section.panel');
   return main?.querySelector('.body')||null;
+}
+
+function ensureRenderedCourseVisible(){
+  const content=$('courseContent'),title=$('courseTitle'),error=$('errorBox'),loading=$('loading');
+  if(!content||!title)return;
+  const text=(title.textContent||'').trim();
+  const hasCourse=text&&text.toLowerCase()!=='course';
+  const errorVisible=error&&!error.classList.contains('hidden');
+  if(hasCourse&&!errorVisible){
+    content.classList.remove('hidden');
+    loading?.classList.add('hidden');
+  }
 }
 
 function repairGridOrphans(){
@@ -149,6 +165,7 @@ function compactHeavySections(){
 
 function polish(){
   installStyle();
+  ensureRenderedCourseVisible();
   repairGridOrphans();
   compactHeavySections();
 }
@@ -156,14 +173,14 @@ function polish(){
 let passes=0;
 function run(){
   polish();
-  if(++passes<10)setTimeout(run,500);
+  if(++passes<14)setTimeout(run,500);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 setTimeout(()=>{
   const content=$('courseContent');
   if(!content)return;
   const observer=new MutationObserver(()=>polish());
-  observer.observe(content,{childList:true,subtree:true});
-  setTimeout(()=>observer.disconnect(),12000);
+  observer.observe(content,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  setTimeout(()=>observer.disconnect(),15000);
 },1200);
 })();
