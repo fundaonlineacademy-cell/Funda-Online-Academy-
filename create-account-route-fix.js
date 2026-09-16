@@ -12,9 +12,15 @@ function rewrite(root=document){
 function clarifyLoginAccountLabel(root=document){
  if(!/(^|\/)login\.html$/i.test(location.pathname))return;
  root.querySelectorAll?.('a').forEach(a=>{
-  const spans=[...a.querySelectorAll('span')];
-  const label=spans.find(span=>/^New to Funda\?\s*Create Student Account$/i.test((span.textContent||'').replace(/\s+/g,' ').trim()));
-  if(label)label.textContent='New to Funda Online Academy? Create Student Account';
+  const text=(a.textContent||'').replace(/\s+/g,' ').trim();
+  if(!/New to Funda\?\s*Create Student Account/i.test(text))return;
+  const walker=document.createTreeWalker(a,NodeFilter.SHOW_TEXT);
+  let node;
+  while((node=walker.nextNode())){
+   if(/New to Funda\?\s*Create Student Account/i.test(node.nodeValue||'')){
+    node.nodeValue=(node.nodeValue||'').replace(/New to Funda\?\s*Create Student Account/i,'New to Funda Online Academy? Create Student Account');
+   }
+  }
  });
 }
 function boot(){
