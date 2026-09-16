@@ -16,10 +16,11 @@ function mount(){
 }
 
 function loadUnifiedView(){
-  if(document.querySelector('script[data-funda-course-unified]'))return;
+  if(document.querySelector('script[data-funda-course-unified-v4]'))return;
   const script=document.createElement('script');
-  script.dataset.fundaCourseUnified='1';
-  script.src='course-view-unified-public.js?v=20260916-unified-v3';
+  script.dataset.fundaCourseUnifiedV4='1';
+  script.async=false;
+  script.src='course-view-unified-public.js?v=20260916-unified-v4';
   document.head.appendChild(script);
 }
 
@@ -28,6 +29,7 @@ function start(){
   mount();
   setTimeout(mount,900);
   setTimeout(mount,1800);
+  setTimeout(mount,3200);
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
