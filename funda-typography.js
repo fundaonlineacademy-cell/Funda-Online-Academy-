@@ -1,6 +1,6 @@
-// FUNDA ONLINE ACADEMY — RESPONSIVE TYPOGRAPHY FOUNDATION
-// Mobile keeps the existing Academy typography. Desktop uses Manrope for
-// headings/navigation and Inter for normal interface/body text across the system.
+// FUNDA ONLINE ACADEMY — APPROVED TYPOGRAPHY FOUNDATION
+// Source Sans 3 is the approved Academy typeface across public and portal interfaces.
+// Existing page-specific sizing, spacing and readability rules remain unchanged.
 (()=>{
   'use strict';
   if(window.__fundaTypography)return;
@@ -14,25 +14,20 @@
   if(isAdmin)document.documentElement.classList.add('funda-admin-typography');
 
   const stylesheets=[...document.querySelectorAll('link[rel="stylesheet"]')];
-  const hasInter=stylesheets.some(link=>/fonts\.googleapis\.com\/css2.*family=Inter/i.test(link.href));
-  const hasManrope=stylesheets.some(link=>/fonts\.googleapis\.com\/css2.*family=Manrope/i.test(link.href));
+  const hasSourceSans=stylesheets.some(link=>/fonts\.googleapis\.com\/css2.*family=Source(?:\+|%20)Sans(?:\+|%20)3/i.test(link.href));
 
-  if(!hasInter){
-    const preconnect=document.createElement('link');
-    preconnect.rel='preconnect';
-    preconnect.href='https://fonts.googleapis.com';
-    document.head.appendChild(preconnect);
+  if(!hasSourceSans){
+    const hasGooglePreconnect=[...document.querySelectorAll('link[rel="preconnect"]')].some(link=>/fonts\.googleapis\.com/i.test(link.href));
+    if(!hasGooglePreconnect){
+      const preconnect=document.createElement('link');
+      preconnect.rel='preconnect';
+      preconnect.href='https://fonts.googleapis.com';
+      document.head.appendChild(preconnect);
+    }
 
     const font=document.createElement('link');
     font.rel='stylesheet';
-    font.href='https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap';
-    document.head.appendChild(font);
-  }
-
-  if(!hasManrope){
-    const font=document.createElement('link');
-    font.rel='stylesheet';
-    font.href='https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap';
+    font.href='https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800;900&display=swap';
     document.head.appendChild(font);
   }
 
@@ -40,8 +35,8 @@
   style.id='fundaTypographyFoundation';
   style.textContent=`
     :root{
-      --funda-ui-font:"Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-      --funda-desktop-heading-font:"Manrope","Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --funda-ui-font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      --funda-desktop-heading-font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     }
 
     html{
@@ -51,43 +46,37 @@
       text-rendering:optimizeLegibility;
     }
 
-    /* Preserve the existing mobile typography exactly as it is today. */
+    /* Approved Academy typeface across interface text and controls. */
     body,button,input,select,textarea,option{
       font-family:var(--funda-ui-font)!important;
     }
 
-    nav a:not(.brand){
-      font-family:var(--funda-ui-font)!important;
-    }
-
-    /* Desktop / PC typography across the Academy system only. */
-    @media (min-width:901px){
-      h1,h2,h3,h4,h5,h6,
-      .brand,
-      .brand b,
-      .brand strong,
-      nav,
-      nav a,
-      nav a:not(.brand),
-      nav button,
-      .nav,
-      .nav a,
-      .nav button,
-      .navbtn,
-      .sdNav a,
-      .sdNav button,
-      .side nav a,
-      .side nav button,
-      .sidebar nav a,
-      .sidebar nav button,
-      .sideBackOffice strong,
-      .sdBrand b{
-        font-family:var(--funda-desktop-heading-font)!important;
-      }
+    h1,h2,h3,h4,h5,h6,
+    .brand,
+    .brand b,
+    .brand strong,
+    nav,
+    nav a,
+    nav button,
+    .nav,
+    .nav a,
+    .nav button,
+    .navbtn,
+    .sdNav a,
+    .sdNav button,
+    .side nav a,
+    .side nav button,
+    .sidebar nav a,
+    .sidebar nav button,
+    .sideBackOffice strong,
+    .sdBrand b,
+    .destination a,
+    .footer-brand{
+      font-family:var(--funda-desktop-heading-font)!important;
     }
 
     /* The Admin desktop was using Arial and operational copy as small as 8px.
-       Increase only its desktop reading text so mobile spacing is unchanged. */
+       Keep the existing readability corrections while using the approved font. */
     html.funda-admin-typography{
       --m:#475569;
       --funda-muted:#475569;
