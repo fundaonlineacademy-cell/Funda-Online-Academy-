@@ -50,6 +50,29 @@
     [data-funda-sidebar-control]{cursor:pointer}
     [data-funda-sidebar-control]:focus-visible{outline:3px solid #d4aa42!important;outline-offset:3px!important}
 
+    html[data-funda-sidebar-page="admin"] .fundaAdminLogoutWrap{
+      margin:18px 0 4px;padding:13px 5px 0;border-top:1px solid #ead9ad;
+    }
+    html[data-funda-sidebar-page="admin"] .fundaAdminLogout{
+      display:flex;align-items:center;gap:9px;width:100%;min-height:42px;
+      border:1px solid #dfc477;border-radius:9px;padding:10px 11px;
+      background:#fff8e5;color:#17324a;text-align:left;
+      font-family:var(--funda-desktop-heading-font);font-size:12px;font-weight:800;
+      cursor:pointer;transition:background .16s ease,border-color .16s ease,transform .16s ease;
+    }
+    html[data-funda-sidebar-page="admin"] .fundaAdminLogout:hover{
+      background:#fff1c7;border-color:#cda642;
+    }
+    html[data-funda-sidebar-page="admin"] .fundaAdminLogout:active{transform:translateY(1px)}
+    html[data-funda-sidebar-page="admin"] .fundaAdminLogout:focus-visible{
+      outline:3px solid #d4aa42;outline-offset:2px;
+    }
+    html[data-funda-sidebar-page="admin"] .fundaAdminLogout:disabled{opacity:.65;cursor:wait}
+    html[data-funda-sidebar-page="admin"] .fundaAdminLogoutIcon{
+      display:grid;place-items:center;flex:0 0 auto;width:22px;height:22px;
+      border-radius:7px;background:#17324a;color:#f6d56d;font-size:13px;line-height:1;
+    }
+
     @media (min-width:821px){
       html[data-funda-sidebar-page="admin"] h1,
       html[data-funda-sidebar-page="admin"] h2,
@@ -185,6 +208,60 @@
     });
   }
 
+  async function signOutAdmin(){
+    const button=document.querySelector('[data-funda-admin-logout]');
+    if(!window.confirm('Are you sure you want to log out?'))return;
+    if(button){
+      button.disabled=true;
+      button.setAttribute('aria-busy','true');
+      const label=button.querySelector('.fundaAdminLogoutLabel');
+      if(label)label.textContent='Logging out…';
+    }
+    try{
+      const client=window.__fundaSharedSupabaseClient||window.__fundaSessionClient||(
+        window.supabase?.createClient&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY
+          ? window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY)
+          : null
+      );
+      if(client?.auth){
+        const result=await client.auth.signOut();
+        if(result?.error)throw result.error;
+        window.location.replace('login.html');
+        return;
+      }
+      const existing=document.getElementById('safeSignout');
+      if(existing){
+        existing.click();
+        return;
+      }
+      throw new Error('The secure sign-out service is not available yet.');
+    }catch(error){
+      console.error('Admin sidebar logout failed',error);
+      if(button){
+        button.disabled=false;
+        button.removeAttribute('aria-busy');
+        const label=button.querySelector('.fundaAdminLogoutLabel');
+        if(label)label.textContent='Log out';
+      }
+      window.alert('Log out could not be completed. Please try again.');
+    }
+  }
+
+  function ensureAdminLogout(){
+    if(config.key!=='admin')return;
+    const nav=document.querySelector('#nav');
+    if(!nav)return;
+    let wrap=document.getElementById('fundaAdminLogoutWrap');
+    if(!wrap){
+      wrap=document.createElement('div');
+      wrap.id='fundaAdminLogoutWrap';
+      wrap.className='fundaAdminLogoutWrap';
+      wrap.innerHTML='<button class="fundaAdminLogout" type="button" data-funda-admin-logout><span class="fundaAdminLogoutIcon" aria-hidden="true">↪</span><span class="fundaAdminLogoutLabel">Log out</span></button>';
+      wrap.querySelector('[data-funda-admin-logout]').addEventListener('click',signOutAdmin);
+    }
+    if(nav.nextElementSibling!==wrap)nav.insertAdjacentElement('afterend',wrap);
+  }
+
   function apply(collapsed,persist=false){
     const useCollapsed=desktop()&&collapsed;
     document.documentElement.classList.toggle(config.collapsedClass,useCollapsed);
@@ -212,6 +289,7 @@
 
   function refresh(){
     if(!document.querySelector(config.button)||!document.querySelector(config.panel))return false;
+    ensureAdminLogout();
     apply(readState());
     return true;
   }
@@ -242,7 +320,10 @@
     let timer;
     new MutationObserver(()=>{
       clearTimeout(timer);
-      timer=setTimeout(()=>apply(readState()),40);
+      timer=setTimeout(()=>{
+        ensureAdminLogout();
+        apply(readState());
+      },40);
     }).observe(document.body,{childList:true,subtree:true});
   }
 
