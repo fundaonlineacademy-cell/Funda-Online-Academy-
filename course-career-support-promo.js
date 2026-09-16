@@ -19,7 +19,7 @@ function loadUnifiedView(){
   if(document.querySelector('script[data-funda-course-unified]'))return;
   const script=document.createElement('script');
   script.dataset.fundaCourseUnified='1';
-  script.src='course-view-unified-public.js?v=20260916-unified-v1';
+  script.src='course-view-unified-public.js?v=20260916-unified-v2';
   document.head.appendChild(script);
 }
 
