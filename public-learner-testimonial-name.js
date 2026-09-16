@@ -21,7 +21,6 @@
     const scope=root||document;
     const elements=[...scope.querySelectorAll('*')];
 
-    // Handles both a normal text node and wording split across nested spans.
     const labels=elements.filter(el=>isPlaceholder(el.textContent)&&![...el.children].some(ch=>isPlaceholder(ch.textContent)));
     for(const label of labels){
       const card=findCard(label);
@@ -39,7 +38,6 @@
       }
     }
 
-    // Independent avatar repair in case the name was already changed first.
     for(const el of elements){
       const txt=norm(el.textContent);
       if(!/LEARNER\s+EXPERIENCE/i.test(txt)||!/APHELELE\s+NGILANA/i.test(txt)||!/FLEXIBLE,?\s+PRACTICAL\s+AND\s+EASY\s+TO\s+FOLLOW/i.test(txt))continue;
@@ -120,30 +118,4 @@
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',applyTransparentLogo,{once:true});
   else applyTransparentLogo();
-})();
-
-// Public homepage academic message attribution only.
-(()=>{
-  const path=(location.pathname||'/').toLowerCase();
-  if(!(path==='/'||path.endsWith('/index.html')))return;
-
-  function updateAcademicMessageAttribution(){
-    const section=document.getElementById('ceo-message');
-    if(!section)return;
-
-    const heading=section.querySelector('h2');
-    const headingWrap=heading&&heading.parentElement;
-    if(headingWrap){
-      [...headingWrap.querySelectorAll('p')].forEach(p=>{
-        if(p.textContent.trim().toUpperCase()==='A MESSAGE FROM THE CEO')p.remove();
-      });
-      if(heading)heading.style.marginTop='0';
-    }
-
-    const signature=[...section.querySelectorAll('p')].find(p=>p.textContent.trim()==='— Chief Executive Officer');
-    if(signature)signature.textContent='— Head of Academics';
-  }
-
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',updateAcademicMessageAttribution,{once:true});
-  else updateAcademicMessageAttribution();
 })();
