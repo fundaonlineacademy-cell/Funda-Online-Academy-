@@ -25,13 +25,32 @@
     const panel=[...content.children].find(el=>el.matches?.('section.panel'))||content.querySelector('section.panel');
     if(panel){
       panel.style.setProperty('display','block','important');
-      panel.style.removeProperty('visibility');
-      panel.style.removeProperty('opacity');
-      panel.style.removeProperty('height');
-      panel.style.removeProperty('min-height');
-      panel.style.removeProperty('max-height');
-      panel.style.removeProperty('overflow');
+      panel.style.setProperty('height','auto','important');
+      panel.style.setProperty('min-height','0','important');
+      panel.style.setProperty('max-height','none','important');
+      panel.style.setProperty('overflow','visible','important');
+      panel.style.setProperty('visibility','visible','important');
+      panel.style.setProperty('opacity','1','important');
+      const body=panel.querySelector('.body');
+      if(body){
+        body.style.setProperty('display','block','important');
+        body.style.setProperty('height','auto','important');
+        body.style.setProperty('min-height','0','important');
+        body.style.setProperty('max-height','none','important');
+        body.style.setProperty('visibility','visible','important');
+        body.style.setProperty('opacity','1','important');
+      }
     }
+
+    document.querySelectorAll('#courseContent .cvclAccordion').forEach(section=>{
+      section.style.setProperty('display','block','important');
+      section.style.setProperty('height','auto','important');
+      section.style.setProperty('min-height','0','important');
+      section.style.setProperty('max-height','none','important');
+      section.style.setProperty('visibility','visible','important');
+      section.style.setProperty('opacity','1','important');
+      section.style.setProperty('position','relative','important');
+    });
 
     const genericOut=document.getElementById('learningOutcomes')?.closest('.section');
     const genericMods=document.getElementById('modules')?.closest('.section');
