@@ -5,8 +5,17 @@ window.__fundaDashboardTabNavigation=true;
 const targets={overview:'overview',courses:'myCoursesSection',announcements:'announcementsSection',library:'librarySection'};
 function go(id){const el=document.getElementById(id);if(!el)return;const header=document.querySelector('header');const offset=(header?.getBoundingClientRect().height||0)+12;const top=el.getBoundingClientRect().top+window.scrollY-offset;window.scrollTo({top:Math.max(0,top),behavior:'smooth'});try{history.replaceState(null,'','#'+id)}catch(_){}}
 function alignAcademicMessage(){
-  const kicker=document.querySelector('[data-student-ceo-message] .sdCeoKicker');
+  const message=document.querySelector('[data-student-ceo-message]');
+  if(!message)return;
+  const kicker=message.querySelector('.sdCeoKicker');
   if(kicker)kicker.textContent='A Message from the Head of Academics';
+  const sign=message.querySelector('.sdCeoSign');
+  if(sign){
+    const academy=sign.querySelector('span');
+    const first=sign.firstChild;
+    if(first&&first.nodeType===Node.TEXT_NODE)first.nodeValue='— Head of Academics';
+    else sign.insertBefore(document.createTextNode('— Head of Academics'),academy||sign.firstChild);
+  }
 }
 function bind(){alignAcademicMessage();document.querySelectorAll('header a[href^="#"]').forEach(a=>{const id=(a.getAttribute('href')||'').slice(1);if(!Object.values(targets).includes(id))return;a.addEventListener('click',e=>{e.preventDefault();go(id)},{passive:false})});
 // Also make the main My Courses hero shortcut use the same reliable offset navigation.
