@@ -1,13 +1,14 @@
 (()=>{
 'use strict';
-if(!/course-view\.html$/i.test(location.pathname)||window.__fundaUnifiedCourseView)return;
-window.__fundaUnifiedCourseView=true;
+if(!/course-view\.html$/i.test(location.pathname)||window.__fundaUnifiedCourseViewV2)return;
+window.__fundaUnifiedCourseViewV2=true;
 const $=id=>document.getElementById(id);
+const HERO_IDS=new Set(['acpoHero','bkPremiumIntro','oaPremiumIntro','cpPremiumIntro','baHero','baPremiumIntro','rpoPremiumIntro','copPremiumIntro','retailPremiumIntro']);
 
 function installStyle(){
-  if($('fundaUnifiedCourseViewStyle'))return;
+  if($('fundaUnifiedCourseViewStyleV2'))return;
   const s=document.createElement('style');
-  s.id='fundaUnifiedCourseViewStyle';
+  s.id='fundaUnifiedCourseViewStyleV2';
   s.textContent=`
     header .brand,header .brand *,body.fundaCourseOverviewBrand header .brand,body.fundaCourseOverviewBrand header .brand *{color:#fff!important}
     #courseContent{align-items:start!important}
@@ -22,17 +23,21 @@ function installStyle(){
     .pcvMetric strong{font-size:21px!important;line-height:1.18!important}
     .pcvMetric span{font-size:11px!important;line-height:1.35!important;margin-top:3px!important}
 
-    .fundaCourseAccordion{display:block!important;visibility:visible!important;opacity:1!important;height:auto!important;min-height:0!important;max-height:none!important;margin:14px 0!important;padding:0!important;border:1px solid rgba(70,103,127,.22)!important;border-radius:18px!important;background:linear-gradient(145deg,#fff6e4,#f8f5ef 78%,#f5e5e9 135%)!important;box-shadow:0 7px 20px rgba(48,70,88,.06)!important;overflow:hidden!important}
-    .fundaCourseAccordionBtn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;border:0;background:transparent;text-align:left;color:#21384d;cursor:pointer;font:inherit}
+    .fundaCourseAccordion{display:block!important;visibility:visible!important;opacity:1!important;height:auto!important;min-height:0!important;max-height:none!important;margin:14px 0!important;padding:0!important;border:1px solid rgba(70,103,127,.22)!important;border-radius:18px!important;background:linear-gradient(145deg,#fff8ec,#f8f5ef 78%,#f7e9ee 135%)!important;box-shadow:0 7px 20px rgba(48,70,88,.06)!important;overflow:hidden!important;color:#21384d!important}
+    .fundaCourseAccordionBtn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 18px;border:0;background:transparent!important;text-align:left;color:#21384d!important;cursor:pointer;font:inherit}
     .fundaCourseAccordionText{min-width:0}
-    .fundaCourseAccordionKicker{display:block;margin-bottom:4px;font-size:10px;line-height:1.2;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8a6412}
-    .fundaCourseAccordionTitle{display:block;font-family:'Source Sans 3',Inter,sans-serif;font-size:18px;line-height:1.25;font-weight:700;color:#21384d}
+    .fundaCourseAccordionKicker{display:block;margin-bottom:4px;font-size:10px;line-height:1.2;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#8a6412!important}
+    .fundaCourseAccordionTitle{display:block;font-family:'Source Sans 3',Inter,sans-serif;font-size:18px;line-height:1.28;font-weight:700;color:#21384d!important}
     .fundaCourseAccordionPlus{width:34px;height:34px;flex:0 0 34px;border:1px solid #d8c17c;border-radius:999px;background:#fff8e8;color:#21384d;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1;transition:transform .18s ease}
     .fundaCourseAccordion[data-open='1'] .fundaCourseAccordionPlus{transform:rotate(45deg)}
-    .fundaCourseAccordionBody{display:none;padding:0 18px 18px}
+    .fundaCourseAccordionBody{display:none;padding:0 18px 18px;color:#43566f!important;background:transparent!important}
     .fundaCourseAccordion[data-open='1'] .fundaCourseAccordionBody{display:block}
     .fundaCourseAccordionBody>h2:first-of-type{display:none!important}
-    .fundaCourseAccordionBody>.pcvKicker:first-child,.fundaCourseAccordionBody>.acpol:first-child,.fundaCourseAccordionBody>.bklabel:first-child,.fundaCourseAccordionBody>.oalabel:first-child,.fundaCourseAccordionBody>.retailEyebrow:first-child{display:none!important}
+    .fundaCourseAccordionBody>.pcvKicker:first-child,.fundaCourseAccordionBody>.acpol:first-child,.fundaCourseAccordionBody>.bklabel:first-child,.fundaCourseAccordionBody>.oalabel:first-child,.fundaCourseAccordionBody>.balabel:first-child,.fundaCourseAccordionBody>.retailEyebrow:first-child{display:none!important}
+    .fundaCourseAccordionBody p,.fundaCourseAccordionBody .acpop,.fundaCourseAccordionBody .bkintro,.fundaCourseAccordionBody .oaintro,.fundaCourseAccordionBody .baintro,.fundaCourseAccordionBody .retailLead{color:#43566f!important}
+    .fundaCourseAccordionBody h2,.fundaCourseAccordionBody h3,.fundaCourseAccordionBody strong,.fundaCourseAccordionBody b{color:#21384d!important}
+    .fundaCourseAccordionBody .acpoStats div,.fundaCourseAccordionBody .baglance div,.fundaCourseAccordionBody .bkglance div,.fundaCourseAccordionBody .oaglance div{background:#fff!important;border:1px solid #dce5ef!important;color:#21384d!important}
+    .fundaCourseAccordionBody .acpoStats span,.fundaCourseAccordionBody .baglance span,.fundaCourseAccordionBody .bkglance span,.fundaCourseAccordionBody .oaglance span{color:#5b6d82!important}
 
     @media(min-width:821px){
       #courseContent{grid-template-columns:minmax(0,1fr) 310px!important;gap:26px!important}
@@ -43,7 +48,7 @@ function installStyle(){
       #courseContent{grid-template-columns:1fr!important;gap:18px!important}
       #courseContent>section.panel,#courseContent>aside{grid-column:1!important;grid-row:auto!important}
       #courseContent>section.panel>.body{padding:18px 15px!important}
-      #courseContent>aside,body.acpoReady #courseContent>aside,body.bookkeepingPremiumReady #courseContent>aside,body.officePremiumReady #courseContent>aside{display:block!important}
+      #courseContent>aside,body.acpoReady #courseContent>aside,body.bookkeepingPremiumReady #courseContent>aside,body.officePremiumReady #courseContent>aside,body.baPremiumReady #courseContent>aside{display:block!important}
       #courseContent>aside .aside{position:static!important;margin:0!important}
       .pcvMetrics{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
       .pcvMetric{padding:12px 13px!important}
@@ -64,7 +69,17 @@ function mainBody(){
   return panel?.querySelector('.body')||null;
 }
 
+function repairBaseTitle(){
+  const title=$('courseTitle');
+  if(!title)return;
+  const current=(title.textContent||'').trim();
+  if(current&&current.toLowerCase()!=='course')return;
+  const fromDocument=(document.title||'').replace(/\s*\|\s*Funda Online Academy.*$/i,'').trim();
+  if(fromDocument&&!/^Course(?: Overview)?$/i.test(fromDocument))title.textContent=fromDocument;
+}
+
 function restoreBase(){
+  repairBaseTitle();
   const content=$('courseContent'),title=$('courseTitle');
   if(!content||!title)return false;
   const text=(title.textContent||'').trim();
@@ -95,20 +110,16 @@ function collectOrphans(){
 function premiumExists(){
   const body=mainBody();
   if(!body)return false;
-  return !!body.querySelector('#acpoHero,#bkPremiumIntro,#oaPremiumIntro,#cpPremiumIntro,#baPremiumIntro,#rpoPremiumIntro,#copPremiumIntro,#retailPremiumIntro');
+  return [...HERO_IDS].some(id=>!!body.querySelector('#'+id));
 }
 
 function hideDuplicates(){
   const body=mainBody();
   if(!body)return;
-  const premium=premiumExists();
-  if(premium){
-    const genericAbout=$('pcvAbout');
-    if(genericAbout)genericAbout.classList.add('fundaCourseDuplicate');
-    const baseOut=$('learningOutcomes')?.closest('.section');
-    const baseMods=$('modules')?.closest('.section');
-    if(baseOut)baseOut.classList.add('fundaCourseDuplicate');
-    if(baseMods)baseMods.classList.add('fundaCourseDuplicate');
+  if(premiumExists()){
+    $('pcvAbout')?.classList.add('fundaCourseDuplicate');
+    $('learningOutcomes')?.closest('.section')?.classList.add('fundaCourseDuplicate');
+    $('modules')?.closest('.section')?.classList.add('fundaCourseDuplicate');
   }
   body.querySelectorAll(':scope > section').forEach(section=>{
     const id=section.id||'';
@@ -117,31 +128,33 @@ function hideDuplicates(){
   if($('pcvClass')&&$('acpoClassification'))$('pcvClass').classList.add('fundaCourseDuplicate');
 }
 
+function isAbout(section){
+  const id=section.id||'';
+  return /(^|_)(About)$/i.test(id)||/(pcvAbout|acpoAbout|bkAbout|oaAbout|cpAbout|baAbout|rpoAbout|copAbout)/i.test(id);
+}
+
 function labelFor(section){
   const id=section.id||'';
-  const h2=section.querySelector(':scope > h2')||section.querySelector('h2');
-  const title=(h2?.textContent||'').trim();
-  const kicker=section.querySelector(':scope > .pcvKicker,:scope > .acpol,:scope > .bklabel,:scope > .oalabel,:scope > .retailEyebrow')?.textContent?.trim()||'Course information';
-  if(title)return {title,kicker};
+  if(HERO_IDS.has(id)){
+    const heroText=id==='acpoHero'
+      ? section.querySelector('.acpop')?.textContent?.trim()
+      : section.querySelector('h2')?.textContent?.trim();
+    return {title:heroText||'Course information',kicker:'Course Information'};
+  }
   const map={
     pcvInvestment:['What Your Course Investment Includes','Professional learning experience'],
     pcvCompletion:['Assessment, Award & Workplace Relevance','Completion & application'],
     careerSupportOverview:['Career & Workplace Support','Career support']
   };
   if(map[id])return {title:map[id][0],kicker:map[id][1]};
-  return {title:'Course Information',kicker};
-}
-
-function shouldStayOpen(section){
-  const id=section.id||'';
-  if(/(PremiumIntro|acpoHero|retailPremiumIntro)$/i.test(id))return true;
-  if(/(^|_)(About)$/i.test(id)||/(pcvAbout|acpoAbout|bkAbout|oaAbout|cpAbout|baAbout|rpoAbout|copAbout)/i.test(id))return true;
-  if(section.classList.contains('fundaCourseDuplicate'))return true;
-  return false;
+  const h2=section.querySelector(':scope > h2')||section.querySelector('h2');
+  const title=(h2?.textContent||'').trim()||'Course Information';
+  const kicker=section.querySelector(':scope > .pcvKicker,:scope > .acpol,:scope > .bklabel,:scope > .oalabel,:scope > .balabel,:scope > .retailEyebrow')?.textContent?.trim()||'Course information';
+  return {title,kicker};
 }
 
 function accordion(section){
-  if(!section||section.dataset.fundaUnifiedAccordion||shouldStayOpen(section))return;
+  if(!section||section.dataset.fundaUnifiedAccordion||section.classList.contains('fundaCourseDuplicate')||isAbout(section))return;
   section.dataset.fundaUnifiedAccordion='1';
   section.dataset.open='0';
   section.classList.add('fundaCourseAccordion');
@@ -149,6 +162,8 @@ function accordion(section){
   section.style.removeProperty('height');
   section.style.removeProperty('min-height');
   section.style.removeProperty('max-height');
+  section.style.removeProperty('background');
+  section.style.removeProperty('color');
   const meta=labelFor(section);
   const body=document.createElement('div');
   body.className='fundaCourseAccordionBody';
@@ -171,10 +186,7 @@ function accordion(section){
 function standardiseSections(){
   const body=mainBody();
   if(!body)return;
-  const sections=[...body.querySelectorAll(':scope > section')];
-  sections.forEach(section=>accordion(section));
-  const baseSections=[...body.querySelectorAll(':scope > .section')];
-  baseSections.forEach(section=>accordion(section));
+  [...body.querySelectorAll(':scope > section,:scope > .section')].forEach(section=>accordion(section));
 }
 
 function polish(){
@@ -188,7 +200,7 @@ function polish(){
 let passes=0;
 function run(){
   polish();
-  if(++passes<10)setTimeout(run,450);
+  if(++passes<9)setTimeout(run,400);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 
@@ -197,6 +209,6 @@ setTimeout(()=>{
   if(!content)return;
   const observer=new MutationObserver(()=>polish());
   observer.observe(content,{childList:true,subtree:true});
-  setTimeout(()=>observer.disconnect(),5500);
-},700);
+  setTimeout(()=>observer.disconnect(),4500);
+},600);
 })();
