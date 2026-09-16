@@ -29,6 +29,23 @@ function removeDuplicateGenericCurriculum(){
   document.querySelectorAll('a[href="#acpoCurriculum"]').forEach(link=>link.setAttribute('href','#modules'));
 }
 
+function clarifyPublicCourseActions(){
+  const content=document.getElementById('courseContent');
+  if(!content)return;
+  const primary=document.getElementById('enrollBtn');
+  if(primary){
+    primary.textContent='Student Login';
+    primary.setAttribute('aria-label','Student Login');
+  }
+  content.querySelectorAll('a,button').forEach(el=>{
+    const text=(el.textContent||'').replace(/\s+/g,' ').trim();
+    if(/^(?:start|begin)\s+(?:enrolment|enrollment)$/i.test(text)||/^(?:enrol|enroll)\s+now$/i.test(text)){
+      el.textContent='Student Login';
+      el.setAttribute('aria-label','Student Login');
+    }
+  });
+}
+
 function loadUnifiedView(){
   if(document.querySelector('script[data-funda-course-unified-v5]'))return;
   const script=document.createElement('script');
@@ -43,9 +60,13 @@ function start(){
   [0,300,900,1800,3200,5500,8000,10500].forEach(ms=>setTimeout(()=>{
     mount();
     removeDuplicateGenericCurriculum();
+    clarifyPublicCourseActions();
   },ms));
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});else start();
-document.addEventListener('funda:course-view-ready',()=>setTimeout(removeDuplicateGenericCurriculum,50));
+document.addEventListener('funda:course-view-ready',()=>setTimeout(()=>{
+  removeDuplicateGenericCurriculum();
+  clarifyPublicCourseActions();
+},50));
 })();
