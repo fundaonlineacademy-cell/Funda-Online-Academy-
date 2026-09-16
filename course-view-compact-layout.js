@@ -12,7 +12,8 @@ function installStyle(){
     header .brand,header .brand>span,header .brand>span>span,header .brand span,header .brand strong,header .brand b{color:#fff!important}
     body.fundaCourseOverviewBrand header .brand,body.fundaCourseOverviewBrand header .brand *{color:#fff!important}
     #courseContent{align-items:start!important}
-    #courseContent>section.panel{min-width:0!important;grid-column:1!important}
+    #courseContent>section.panel{min-width:0!important;grid-column:1!important;height:auto!important;min-height:0!important}
+    #courseContent>section.panel>.body{height:auto!important;min-height:0!important}
     #courseContent>aside{min-width:0!important;grid-column:2!important;grid-row:1!important;align-self:start!important}
     #courseContent>aside .aside{height:auto!important;min-height:0!important}
 
@@ -22,7 +23,7 @@ function installStyle(){
     .pcvMetric span{font-size:11px!important;line-height:1.35!important;margin-top:3px!important}
 
     .cvclHiddenDuplicate{display:none!important}
-    .cvclAccordion{margin:16px 0!important;padding:0!important;border:1px solid rgba(70,103,127,.22)!important;border-radius:18px!important;background:linear-gradient(145deg,#fff6e4,#f8f5ef 78%,#f5e5e9 135%)!important;box-shadow:0 8px 22px rgba(48,70,88,.07)!important;overflow:hidden!important}
+    .cvclAccordion{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;height:auto!important;min-height:0!important;max-height:none!important;margin:16px 0!important;padding:0!important;border:1px solid rgba(70,103,127,.22)!important;border-radius:18px!important;background:linear-gradient(145deg,#fff6e4,#f8f5ef 78%,#f5e5e9 135%)!important;box-shadow:0 8px 22px rgba(48,70,88,.07)!important;overflow:hidden!important}
     .cvclSummary{width:100%;display:flex;align-items:center;justify-content:space-between;gap:18px;padding:17px 18px;border:0;background:transparent;color:#21384d;text-align:left;cursor:pointer;font:inherit}
     .cvclSummaryText{min-width:0}
     .cvclKicker{display:block;margin-bottom:4px;font-size:10px;line-height:1.25;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#8a6412}
@@ -31,9 +32,9 @@ function installStyle(){
     .cvclAccordion[data-open='1'] .cvclPlus{transform:rotate(45deg)}
     .cvclBody{display:none;padding:0 18px 18px}
     .cvclAccordion[data-open='1'] .cvclBody{display:block}
-    .cvclBody>.pcvKicker:first-child,.cvclBody>.acpol:first-child{display:none!important}
+    .cvclBody>.pcvKicker:first-child,.cvclBody>.acpol:first-child,.cvclBody>.bklabel:first-child,.cvclBody>.oalabel:first-child{display:none!important}
     .cvclBody>h2:first-of-type{display:none!important}
-    .cvclAccordion .pcvValueGrid,.cvclAccordion .acpoGrid,.cvclAccordion .acpoFlow,.cvclAccordion .acpoMods{margin-top:4px!important}
+    .cvclAccordion .pcvValueGrid,.cvclAccordion .acpoGrid,.cvclAccordion .acpoFlow,.cvclAccordion .acpoMods,.cvclAccordion .bkgrid2,.cvclAccordion .bkoutcomes,.cvclAccordion .bkflow,.cvclAccordion .bkmetrics,.cvclAccordion .bkapply,.cvclAccordion .oagrid,.cvclAccordion .oaoutcomes,.cvclAccordion .oaflow,.cvclAccordion .oametrics,.cvclAccordion .oaapply{margin-top:4px!important}
 
     #pcvAbout{margin-top:18px!important}
     #pcvAbout .pcvLead{max-width:900px!important}
@@ -42,6 +43,9 @@ function installStyle(){
     #careerSupportOverview.cvclAccordion>h2{display:none!important}
     #careerSupportOverview.cvclAccordion>p{display:none!important}
 
+    @media(max-width:1023px){
+      #courseContent>aside{display:block!important}
+    }
     @media(min-width:821px){
       #courseContent{grid-template-columns:minmax(0,1fr) 300px!important;gap:26px!important}
       #courseContent>section.panel>.body{padding:24px!important}
@@ -51,7 +55,8 @@ function installStyle(){
     @media(max-width:820px){
       #courseContent{grid-template-columns:1fr!important;gap:18px!important}
       #courseContent>section.panel,#courseContent>aside{grid-column:1!important;grid-row:auto!important}
-      #courseContent>section.panel{display:block!important}
+      #courseContent>section.panel{display:block!important;height:auto!important;min-height:0!important}
+      #courseContent>section.panel>.body{display:block!important;height:auto!important;min-height:0!important;padding:20px 16px!important}
       #courseContent>aside,body.acpoReady #courseContent>aside{display:block!important}
       #courseContent>aside .aside{position:static!important;margin-top:0!important}
       .pcvMetrics{grid-template-columns:repeat(2,minmax(0,1fr))!important}
@@ -111,12 +116,15 @@ function repairGridOrphans(){
 
 function accordion(section,label,kicker){
   if(!section||section.dataset.cvclAccordion)return;
+  section.style.removeProperty('display');
+  section.style.removeProperty('visibility');
+  section.style.removeProperty('opacity');
   section.dataset.cvclAccordion='1';
   section.dataset.open='0';
   section.classList.add('cvclAccordion');
 
   const inferredHeading=section.querySelector(':scope > h2')||section.querySelector('h2');
-  const inferredKicker=section.querySelector(':scope > .pcvKicker,:scope > .acpol');
+  const inferredKicker=section.querySelector(':scope > .pcvKicker,:scope > .acpol,:scope > .bklabel,:scope > .oalabel');
   const title=label||inferredHeading?.textContent?.trim()||'Course information';
   const small=kicker||inferredKicker?.textContent?.trim()||'Course details';
 
@@ -163,24 +171,50 @@ function compactHeavySections(){
   ].forEach(([id,title,kicker])=>accordion($(id),title,kicker));
 }
 
+function compactNamedPremiumSections(){
+  const body=primaryBody();
+  if(!body)return;
+  const premium=[...body.querySelectorAll(':scope > section')].filter(section=>{
+    const id=section.id||'';
+    return /^(bk|oa|cp|ba|rpo|cop)/i.test(id);
+  });
+  if(!premium.length)return;
+
+  const genericAbout=$('pcvAbout');
+  if(genericAbout)genericAbout.classList.add('cvclHiddenDuplicate');
+
+  premium.forEach(section=>{
+    const id=section.id||'';
+    if(/PremiumIntro$/i.test(id))return;
+    if(/Fee$/i.test(id)){
+      section.classList.add('cvclHiddenDuplicate');
+      return;
+    }
+    const heading=section.querySelector(':scope > h2')?.textContent?.trim()||'Course information';
+    const kicker=section.querySelector(':scope > .bklabel,:scope > .oalabel,:scope > .acpol,:scope > .pcvKicker')?.textContent?.trim()||'Course details';
+    accordion(section,heading,kicker);
+  });
+}
+
 function polish(){
   installStyle();
   ensureRenderedCourseVisible();
   repairGridOrphans();
   compactHeavySections();
+  compactNamedPremiumSections();
 }
 
 let passes=0;
 function run(){
   polish();
-  if(++passes<14)setTimeout(run,500);
+  if(++passes<18)setTimeout(run,450);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 setTimeout(()=>{
   const content=$('courseContent');
   if(!content)return;
   const observer=new MutationObserver(()=>polish());
-  observer.observe(content,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
-  setTimeout(()=>observer.disconnect(),15000);
+  observer.observe(content,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+  setTimeout(()=>observer.disconnect(),18000);
 },1200);
 })();
