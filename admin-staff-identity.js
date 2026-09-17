@@ -147,7 +147,7 @@
   function reportingLine(position,leaders,currentId){
     if(isChiefExecutive(position))return {
       label:'EXECUTIVE AUTHORITY',
-      value:'Independent · Founder, CEO & Academy Governor'
+      value:'Head of Academics'
     };
     const chief=(leaders||[]).find(person=>
       person.id!==currentId&&isChiefExecutive(person.job_title)
@@ -376,7 +376,6 @@
     window.addEventListener('pageshow',foreground);
     window.addEventListener('focus',foreground);
     document.addEventListener('visibilitychange',foreground);
-    setInterval(foreground,30000);
     window.FundaAdminDashboard={refresh:()=>refreshDashboard(true)};
     setTimeout(()=>refreshDashboard(true),120);
     setTimeout(queueInspection,1100);
@@ -455,9 +454,6 @@
     document.addEventListener('visibilitychange',()=>{
       if(!document.hidden)loadIdentity();
     });
-    setInterval(()=>{
-      if(!document.hidden)loadIdentity();
-    },30000);
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
