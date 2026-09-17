@@ -116,7 +116,9 @@ function run(){
 }
 
 function loadPortalFix(file,id){if(!/ambassador-portal-v2\.html$/i.test(location.pathname)||document.getElementById(id))return;const s=document.createElement('script');s.id=id;s.src=file+'?v='+Date.now();document.head.appendChild(s)}
+function loadPublicCourseFaq(){if(!/(^|\/)courses-public\.html$/i.test(location.pathname)||document.querySelector('script[data-funda-public-enrollment-faq]'))return;const s=document.createElement('script');s.src='courses-public-enrollment-faq.js?v=20260917-enroll-anytime-v1';s.async=true;s.dataset.fundaPublicEnrollmentFaq='1';document.head.appendChild(s)}
 loadPortalFix('ambassador-portal-audit-fixes.js','ambassadorPortalAuditFixes');
 loadPortalFix('ambassador-bank-display-sync.js','ambassadorBankDisplaySync');
+loadPublicCourseFaq();
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
