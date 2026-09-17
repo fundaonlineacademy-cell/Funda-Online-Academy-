@@ -7,6 +7,15 @@
   const money=n=>Number(n||0).toLocaleString('en-ZA',{style:'currency',currency:'ZAR',maximumFractionDigits:2});
   const digits=v=>String(v||'').replace(/\D/g,'');
 
+  function ensureCourseBrowser(){
+    if(document.querySelector('script[data-funda-course-browser-fresh]'))return;
+    const script=document.createElement('script');
+    script.src='onboarding-course-browser.js?v='+Date.now();
+    script.async=false;
+    script.dataset.fundaCourseBrowserFresh='1';
+    document.head.appendChild(script);
+  }
+
   function ageOn(date){
     const today=new Date();
     let age=today.getFullYear()-date.getFullYear();
@@ -254,6 +263,7 @@
   };
 
   function boot(){
+    ensureCourseBrowser();
     ensureIdentityUI();injectPaymentUI();
     const originalOpen=window.openDetailsStep||openDetailsStep;
     if(typeof originalOpen==='function'){
