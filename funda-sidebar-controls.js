@@ -32,6 +32,17 @@
   const config=settings[page];
   if(!config)return;
 
+  if(config.key==='student'||config.key==='library'){
+    let fontLink=document.querySelector('link[data-funda-source-sans-trial]');
+    if(!fontLink){
+      fontLink=document.createElement('link');
+      fontLink.rel='stylesheet';
+      fontLink.href='https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800;900&display=swap';
+      fontLink.dataset.fundaSourceSansTrial='true';
+      document.head.appendChild(fontLink);
+    }
+  }
+
   document.documentElement.dataset.fundaSidebarPage=config.key;
 
   const storageKey=`funda:${config.key}:sidebar`;
@@ -47,6 +58,12 @@
   style.id='fundaSidebarControlStyles';
   style.textContent=`
     :root{--funda-desktop-heading-font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+    html[data-funda-sidebar-page="student"] body,
+    html[data-funda-sidebar-page="student"] body *,
+    html[data-funda-sidebar-page="library"] body,
+    html[data-funda-sidebar-page="library"] body *{
+      font-family:var(--funda-desktop-heading-font)!important;
+    }
     [data-funda-sidebar-control]{cursor:pointer}
     [data-funda-sidebar-control]:focus-visible{outline:3px solid #d4aa42!important;outline-offset:3px!important}
 
