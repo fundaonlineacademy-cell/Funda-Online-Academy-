@@ -10,6 +10,7 @@
   if(!isHome&&!isCourse&&!isAmbassador)return;
 
   const clean=value=>String(value||'').replace(/\s+/g,' ').trim();
+  const startedAt=Date.now();
 
   function addStyles(){
     if(document.getElementById('fundaEnrollmentAnytimeStyles'))return;
@@ -103,6 +104,10 @@
       if(section){section.appendChild(makeFaqItem());return;}
     }
 
+    // Give the existing course-overview enhancements time to add their own FAQ
+    // section first. If none appears, create one after the page has settled.
+    if(Date.now()-startedAt<3800)return;
+
     const body=document.getElementById('courseDescription')?.parentElement||content.querySelector('.body');
     if(!body)return;
     const section=document.createElement('section');
@@ -148,6 +153,6 @@
     observer.observe(document.documentElement,{childList:true,subtree:true});
   }
 
-  [350,900,1800,3200].forEach(delay=>setTimeout(run,delay));
+  [350,900,1800,3200,4200,6000].forEach(delay=>setTimeout(run,delay));
   setTimeout(()=>observer.disconnect(),12000);
 })();
