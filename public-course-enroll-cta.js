@@ -44,11 +44,9 @@ function enhanceHomepage(){
     article.className=original.className+' flex flex-col';
     article.setAttribute('data-funda-enroll-cta','1');
 
-    const body=document.createElement('a');
-    body.href=href;
+    const body=document.createElement('div');
     body.className='block flex-1';
     body.innerHTML=original.innerHTML;
-    body.setAttribute('aria-label','View course details');
 
     const actions=document.createElement('div');
     actions.className='grid grid-cols-2 gap-2 mt-3';
