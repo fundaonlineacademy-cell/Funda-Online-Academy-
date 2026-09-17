@@ -1,0 +1,59 @@
+name: FOA Change Control Guard
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  scope-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate FOA scope and protected changes
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          BASE_REF: ${{ github.base_ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git diff --name-only "origin/${BASE_REF}...HEAD" > /tmp/foa-changed-files.txt
+          echo "Changed files:"
+          cat /tmp/foa-changed-files.txt
+
+          body="${PR_BODY:-}"
+
+          for heading in "## Owner request" "## In scope" "## Out of scope" "## Behaviour deliberately preserved" "## Regression checks performed"; do
+            if ! grep -Fqi "$heading" <<< "$body"; then
+              echo "::error::Missing required FOA PR section: $heading"
+              exit 1
+            fi
+          done
+
+          protected_regex='^(supabase-config\.js|ambassador-referral-tracking\.js|login\.html|auth\.html|create-account\.html|onboarding\.html|dashboard\.html|admin-v2\.html|staff-portal\.html|ambassador-portal-v2\.html|ambassadors\.html|courses-public\.html|course-view\.html|.*\.sql)$'
+
+          if grep -Eq "$protected_regex" /tmp/foa-changed-files.txt; then
+            if ! grep -Eqi 'OWNER-APPROVED-PROTECTED-CHANGE:[[:space:]]*yes' <<< "$body"; then
+              echo "::error::This PR changes a protected FOA surface. The PR must explicitly record OWNER-APPROVED-PROTECTED-CHANGE: yes when the owner request actually requires it."
+              exit 1
+            fi
+          fi
+
+          runtime_count=$(awk '!/^(AGENTS\.md|FOA_APPROVED_STATE\.md|FOA_CHANGE_CONTROL\.md|\.github\/)/ && NF {count++} END {print count+0}' /tmp/foa-changed-files.txt)
+
+          if [ "$runtime_count" -gt 12 ]; then
+            if ! grep -Eqi 'OWNER-APPROVED-BROAD-CHANGE:[[:space:]]*yes' <<< "$body"; then
+              echo "::error::This PR changes more than 12 runtime/data files. Split the work or explicitly record owner approval for a broad change."
+              exit 1
+            fi
+          fi
+
+          echo "FOA change-control scope checks passed."
