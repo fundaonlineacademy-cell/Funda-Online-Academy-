@@ -217,10 +217,12 @@ const textContrast = document.createElement('script'); textContrast.src = 'funda
 
 if (/login\.html$/i.test(window.location.pathname)) {
   const loginLayoutRestore=document.createElement('script');loginLayoutRestore.src='login-layout-order-restore.js?v=20260917-approved-order-v1';document.head.appendChild(loginLayoutRestore);
+  const staffAccessCode=document.createElement('script');staffAccessCode.src='staff-access-code-login.js?v=20260917-separated-v1';document.head.appendChild(staffAccessCode);
 }
 
 if (/courses-public\.html$/i.test(window.location.pathname)) {
   const courseControlsRestore=document.createElement('script');courseControlsRestore.src='courses-public-controls-restore.js?v=20260917-approved-controls-v1';document.head.appendChild(courseControlsRestore);
+  const courseFaqLoader=document.createElement('script');courseFaqLoader.src='courses-public-faq-loader.js?v=20260917-separated-v1';document.head.appendChild(courseFaqLoader);
 }
 
 if (/(^|\/)(index|courses-public|course-view|employers|ambassadors|login)\.html$/i.test(window.location.pathname) || /\/$/.test(window.location.pathname)) {
