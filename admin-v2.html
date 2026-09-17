@@ -12,23 +12,6 @@
 <body>
   <div style="font-family:'Source Sans 3','Segoe UI',Arial,sans-serif;padding:24px;color:#07172f">Loading Funda Admin Command Center…</div>
   <script>
-  // Keep the Admin dashboard live, but avoid the disruptive 30-second redraw.
-  // This targets only the dashboard's automatic refresh timer; notifications,
-  // identity checks and manual refresh controls keep their existing behaviour.
-  (()=>{
-    const nativeSetInterval=window.setInterval.bind(window);
-    const dashboardRefreshMs=10*60*1000;
-    window.setInterval=(handler,delay,...args)=>{
-      let effectiveDelay=delay;
-      if(Number(delay)===30000&&typeof handler==='function'){
-        let source='';
-        try{source=Function.prototype.toString.call(handler)}catch(_){}
-        if(/refreshDashboard/.test(source))effectiveDelay=dashboardRefreshMs;
-      }
-      return nativeSetInterval(handler,effectiveDelay,...args);
-    };
-  })();
-
   (async()=>{
     try{
       const r=await fetch('admin-v2-core.html?v=20260903-results-auto-pdf',{cache:'no-store'});
@@ -43,6 +26,7 @@
         '<script src="funda-typography.js?v=20260916-systemwide-v1"><\/script>'+
         '<script src="funda-sidebar-controls.js?v=20260916-source-sans-v2"><\/script>'+
         '<script src="admin-manual-refresh.js?v=20260913-manual-refresh-v1"><\/script>'+
+        '<script src="admin-auto-refresh-10min.js?v=20260917-v1"><\/script>'+
         '<script src="admin-finance-separation.js?v=20260901-finance-split"><\/script>'+
         '<script src="profile-photo-upload.js?v=20260901-profile-photo"><\/script>'+
         '<script src="admin-document-vault.js?v=20260902-folder-filing"><\/script>'+
