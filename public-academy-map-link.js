@@ -6,6 +6,14 @@
   const path=location.pathname.toLowerCase();
   if(!/(^|\/)(index|courses-public|course-view|employers|ambassadors|login)\.html$/.test(path)&&!path.endsWith('/'))return;
 
+  if(!window.__fundaEnrollmentAnytimeMessage&&!document.querySelector('script[data-funda-enrollment-anytime]')){
+    const script=document.createElement('script');
+    script.src='public-enrollment-anytime-message.js?v=20260917-enroll-anytime-v1';
+    script.async=true;
+    script.dataset.fundaEnrollmentAnytime='1';
+    document.head.appendChild(script);
+  }
+
   function hasMapLink(container){
     return Boolean(container?.querySelector('a[href="academy-map.html"]'));
   }
