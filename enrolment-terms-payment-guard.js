@@ -44,3 +44,13 @@
  s.dataset.fundaRegistrationFlow='1';
  document.head.appendChild(s);
 })();
+
+(()=>{
+ if(!/\/onboarding\.html$/i.test(location.pathname))return;
+ if(window.__fundaOnboardingDraftPersistence||document.querySelector('script[data-funda-onboarding-draft]'))return;
+ const s=document.createElement('script');
+ s.src='onboarding-draft-persistence.js?v=20260917-draft-v1-'+Date.now();
+ s.async=true;
+ s.dataset.fundaOnboardingDraft='1';
+ document.head.appendChild(s);
+})();
