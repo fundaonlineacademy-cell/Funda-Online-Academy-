@@ -34,7 +34,7 @@ function loadPublicCourseEnrollCta(){
  if(document.getElementById('fundaPublicCourseEnrollCta'))return;
  const s=document.createElement('script');
  s.id='fundaPublicCourseEnrollCta';
- s.src='public-course-enroll-cta.js?v=20260917-v1';
+ s.src='public-course-enroll-cta.js?v=20260917-v2';
  document.head.appendChild(s);
 }
 function boot(){
