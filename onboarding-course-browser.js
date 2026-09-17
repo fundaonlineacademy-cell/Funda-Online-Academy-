@@ -1,5 +1,5 @@
 (()=>{
-  const VERSION='20260917-course-browser-v3';
+  const VERSION='20260917-course-browser-v4';
   if(window.FundaOnboardingCourseBrowser?.version===VERSION)return;
 
   const PAGE_SIZE=10;
@@ -23,10 +23,10 @@
   }
 
   function ensureSelectionControls(){
-    const continue=byId("continueButton");
-    if(!continue||byId("courseClearSelection"))return;
+    const continueButtonEl=byId("continueButton");
+    if(!continueButtonEl||byId("courseClearSelection"))return;
 
-    const parent=continue.parentElement;
+    const parent=continueButtonEl.parentElement;
     if(!parent)return;
 
     const actions=document.createElement("div");
@@ -40,9 +40,9 @@
     clear.textContent="Clear selection";
     clear.addEventListener("click",clearSelection);
 
-    parent.insertBefore(actions,continue);
+    parent.insertBefore(actions,continueButtonEl);
     actions.appendChild(clear);
-    actions.appendChild(continue);
+    actions.appendChild(continueButtonEl);
   }
 
   function ensureBrowserUi(){
