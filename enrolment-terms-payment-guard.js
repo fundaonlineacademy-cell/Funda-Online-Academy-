@@ -1,6 +1,6 @@
 (()=>{
  if(window.__fundaEnrolmentTerms)return;window.__fundaEnrolmentTerms=true;
- const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[c]));
  const TERMS_VERSION='2026-08-30';
  function addTerms(){
   const declaration=document.getElementById('declaration'); if(!declaration||document.getElementById('fundaTermsPanel'))return;
@@ -25,4 +25,14 @@
  function init(){addTerms();protectSubmit();}
  const obs=new MutationObserver(init);obs.observe(document.documentElement,{childList:true,subtree:true});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+
+(()=>{
+ if(!/\/onboarding\.html$/i.test(location.pathname))return;
+ if(window.__fundaOnboardingRegistrationFlow||document.querySelector('script[data-funda-registration-flow]'))return;
+ const s=document.createElement('script');
+ s.src='onboarding-registration-flow.js?v=20260917-registration-flow-v1';
+ s.async=true;
+ s.dataset.fundaRegistrationFlow='1';
+ document.head.appendChild(s);
 })();
