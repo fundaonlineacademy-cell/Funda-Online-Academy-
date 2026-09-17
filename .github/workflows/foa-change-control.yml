@@ -47,8 +47,7 @@ jobs:
             fi
           fi
 
-          runtime_count=$(grep -Ev '^(AGENTS\.md|FOA_APPROVED_STATE\.md|FOA_CHANGE_CONTROL\.md|\.github/)' /tmp/foa-changed-files.txt | sed '/^$/d' | wc -l | tr -d ' ')
-          runtime_count=${runtime_count:-0}
+          runtime_count=$(awk '!/^(AGENTS\.md|FOA_APPROVED_STATE\.md|FOA_CHANGE_CONTROL\.md|\.github\/)/ && NF {count++} END {print count+0}' /tmp/foa-changed-files.txt)
 
           if [ "$runtime_count" -gt 12 ]; then
             if ! grep -Eqi 'OWNER-APPROVED-BROAD-CHANGE:[[:space:]]*yes' <<< "$body"; then
