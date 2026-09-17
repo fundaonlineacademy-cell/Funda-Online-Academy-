@@ -54,3 +54,13 @@
  s.dataset.fundaOnboardingDraft='1';
  document.head.appendChild(s);
 })();
+
+(()=>{
+ if(!/\/onboarding\.html$/i.test(location.pathname))return;
+ if(window.__fundaOnboardingSubmissionConfirmation||document.querySelector('script[data-funda-submission-confirmation]'))return;
+ const s=document.createElement('script');
+ s.src='onboarding-submission-confirmation.js?v=20260917-submission-confirmation-v1-'+Date.now();
+ s.async=true;
+ s.dataset.fundaSubmissionConfirmation='1';
+ document.head.appendChild(s);
+})();
