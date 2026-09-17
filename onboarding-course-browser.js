@@ -1,5 +1,6 @@
 (()=>{
-  if(window.FundaOnboardingCourseBrowser)return;
+  const VERSION='20260917-course-browser-v3';
+  if(window.FundaOnboardingCourseBrowser?.version===VERSION)return;
 
   const PAGE_SIZE=10;
   let currentPage=1;
@@ -290,6 +291,7 @@
   renderCourses=renderBrowserCourses;
 
   window.FundaOnboardingCourseBrowser={
+    version:VERSION,
     render:renderBrowserCourses,
     openDescription,
     closeDescription,
