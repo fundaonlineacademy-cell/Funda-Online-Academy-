@@ -227,3 +227,15 @@ function onCourseOpened(){ensurePanel(); state.type="";state.entitlement=null;st
 window.FundaLegacy={ensurePanel,onCourseOpened,getPayableAmount,validate,saveClaim,getEnrollmentFields:fields,getPaymentFields:fields};
 document.addEventListener("DOMContentLoaded",ensurePanel);
 })();
+
+// Course-selection browsing is isolated from the legacy enrolment logic above.
+// Load it only on the onboarding page so the existing registration/payment flow stays unchanged.
+(()=>{
+  if(!/\/onboarding\.html$/i.test(location.pathname))return;
+  if(window.FundaOnboardingCourseBrowser||document.querySelector('script[data-funda-course-browser]'))return;
+  const s=document.createElement('script');
+  s.src='onboarding-course-browser.js?v=20260917-course-browser-v1';
+  s.async=true;
+  s.dataset.fundaCourseBrowser='1';
+  document.head.appendChild(s);
+})();
