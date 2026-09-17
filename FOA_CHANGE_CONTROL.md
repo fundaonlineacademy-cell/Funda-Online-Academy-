@@ -38,6 +38,8 @@ Do not add another observer/timer/override merely because an existing override i
 
 The following changes require explicit scope confirmation in the PR/task notes:
 
+- The final owner-approved Home page (`index.html`). It must not be changed unless Aziwe Futhe explicitly reopens the Home page.
+- Shared/global scripts that execute on or can alter the Home page. These may change for other approved work only when the Home-page final state is regression-checked and deliberately preserved.
 - `supabase-config.js` or any global loader.
 - Login/authentication/role routing.
 - Supabase schema/RLS/RPC/storage/auth/production-data changes.
@@ -65,6 +67,7 @@ When database work is required:
 When a UI fix is requested:
 
 - Preserve existing approved structure, wording, colour, spacing, controls, navigation, and responsive ordering unless they are part of the request.
+- The Home page is a final approved surface. Do not redesign, restyle, reorder, add, remove or rewrite Home-page content or behaviour unless the owner explicitly reopens it.
 - Test both desktop and mobile when responsive behaviour is touched.
 - Do not replace a page-specific fix with a global CSS/JS change unless the owner asked for a global change.
 - Do not expand a trial design choice to other portals/pages.
@@ -100,6 +103,9 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Earnings/banking/programme views are not altered by unrelated work.
 
 ### Public site
+- Final approved Home-page design, wording, navigation, course-card controls, contact details and responsive behaviour remain unchanged unless explicitly reopened by the owner.
+- Home-page course cards keep non-clickable bodies with separate **View Course** and **Enroll Now** actions.
+- The General Enquiries address remains `info@fundaonlineacademy.co.za`.
 - Courses page keeps approved controls/layout.
 - Course overview and registration links work.
 - Enrol-anytime messaging/FAQ remains present where approved.
