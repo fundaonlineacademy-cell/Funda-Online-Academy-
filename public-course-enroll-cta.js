@@ -39,7 +39,6 @@ function enhanceCatalogue(){
 function enhanceHomepage(){
   if(!((/(^|\/)index\.html$/i.test(location.pathname))||/\/$/.test(location.pathname)))return;
   document.querySelectorAll('#courses > a.course-card[href*="course-view.html"]').forEach(original=>{
-    if(original.dataset.fundaEnrollCta==='1')return;
     const href=original.getAttribute('href')||'';
     const article=document.createElement('article');
     article.className=original.className+' flex flex-col';
@@ -52,7 +51,7 @@ function enhanceHomepage(){
     body.setAttribute('aria-label','View course details');
 
     const actions=document.createElement('div');
-    actions.className='grid grid-cols-2 gap-2 px-3 pb-3 pt-1';
+    actions.className='grid grid-cols-2 gap-2 mt-3';
     actions.setAttribute('data-funda-course-actions','1');
 
     const view=document.createElement('a');
