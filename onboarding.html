@@ -1279,10 +1279,6 @@
 
     async function loadProfileAndStudent() {
 
-      /*
-        PROFILE
-      */
-
       const {
         data: profile,
         error: profileError
@@ -1308,10 +1304,6 @@
 
       currentProfile = profile;
 
-
-      /*
-        IF PROFILE DOES NOT EXIST
-      */
 
       if (!currentProfile) {
 
@@ -1361,10 +1353,6 @@
       }
 
 
-      /*
-        STUDENT
-      */
-
       const {
         data: student,
         error: studentError
@@ -1411,10 +1399,6 @@
 
       currentStudent = student;
 
-
-      /*
-        CREATE STUDENT RECORD IF NEEDED
-      */
 
       if (!currentStudent) {
 
@@ -1485,10 +1469,6 @@
 
       }
 
-
-      /*
-        POPULATE FORM
-      */
 
       document.getElementById("fullName").value =
         currentStudent.full_name ||
@@ -1573,12 +1553,6 @@
     }
 
 
-    /*
-      ============================================================
-      LOAD COURSES
-      ============================================================
-    */
-
     async function loadCourses() {
 
       let result =
@@ -1601,10 +1575,6 @@
             ascending: true
           });
 
-
-      /*
-        FALLBACK FOR DIFFERENT SCHEMA
-      */
 
       if (
         result.error &&
@@ -1666,12 +1636,6 @@
 
     }
 
-
-    /*
-      ============================================================
-      RENDER COURSES
-      ============================================================
-    */
 
     function renderCourses() {
 
@@ -1786,12 +1750,6 @@
     }
 
 
-    /*
-      ============================================================
-      SELECT COURSE
-      ============================================================
-    */
-
     window.selectCourse =
       function(courseId) {
 
@@ -1838,12 +1796,6 @@
 
       };
 
-
-    /*
-      ============================================================
-      EXISTING ENROLLMENT
-      ============================================================
-    */
 
     async function getExistingEnrollment() {
 
@@ -1903,12 +1855,6 @@
     }
 
 
-    /*
-      ============================================================
-      SHOW STEP 2
-      ============================================================
-    */
-
     async function openDetailsStep() {
 
       if (!selectedCourse) {
@@ -1930,10 +1876,6 @@
         existingEnrollment =
           await getExistingEnrollment();
 
-
-        /*
-          ALREADY SUBMITTED
-        */
 
         if (
           existingEnrollment &&
@@ -2023,12 +1965,6 @@
     }
 
 
-    /*
-      ============================================================
-      BACK TO COURSE SELECTION
-      ============================================================
-    */
-
     function backToCourses() {
 
       hideMessage();
@@ -2072,12 +2008,6 @@
 
     }
 
-
-    /*
-      ============================================================
-      FORM VALUES
-      ============================================================
-    */
 
     function getFormValues() {
 
@@ -2177,12 +2107,6 @@
 
     }
 
-
-    /*
-      ============================================================
-      VALIDATE
-      ============================================================
-    */
 
     function validateApplication(
       values,
@@ -2414,12 +2338,6 @@
     }
 
 
-    /*
-      ============================================================
-      CREATE OR LOAD ENROLLMENT
-      ============================================================
-    */
-
     async function ensureEnrollment() {
 
       if (existingEnrollment) {
@@ -2498,12 +2416,6 @@
     }
 
 
-    /*
-      ============================================================
-      UPDATE STUDENT
-      ============================================================
-    */
-
     async function updateStudent(
       values
     ) {
@@ -2560,10 +2472,6 @@
         data;
 
 
-      /*
-        SYNCHRONISE PROFILE
-      */
-
       const {
         error: profileError
       } =
@@ -2596,12 +2504,6 @@
           );
 
 
-      /*
-        Profile sync should not stop enrollment
-        if the profiles table does not contain
-        one of these optional fields.
-      */
-
       if (profileError) {
 
         console.warn(
@@ -2613,12 +2515,6 @@
 
     }
 
-
-    /*
-      ============================================================
-      UPLOAD PROOF OF PAYMENT
-      ============================================================
-    */
 
     async function uploadProofOfPayment(
       file,
@@ -2675,12 +2571,6 @@
     }
 
 
-    /*
-      ============================================================
-      SUBMIT APPLICATION
-      ============================================================
-    */
-
     async function submitApplication() {
 
       hideMessage();
@@ -2734,18 +2624,10 @@
 
       try {
 
-        /*
-          SAVE STUDENT
-        */
-
         await updateStudent(
           values
         );
 
-
-        /*
-          CREATE ENROLLMENT
-        */
 
         const enrollment =
           await ensureEnrollment();
@@ -2756,10 +2638,6 @@
             enrollment.id
           ) || null;
 
-
-        /*
-          UPLOAD PAYMENT PROOF
-        */
 
         const proofPath =
           await uploadProofOfPayment(
@@ -2783,10 +2661,6 @@
             "paymentReference"
           ).value.trim();
 
-
-        /*
-          UPDATE ENROLLMENT
-        */
 
         const {
           error: enrollmentError
@@ -2842,10 +2716,6 @@
         }
 
 
-        /*
-          PAYMENT RECORD
-        */
-
         const {
           error: paymentError
         } =
@@ -2880,10 +2750,6 @@
         }
 
 
-        /*
-          SUCCESS
-        */
-
         showMessage(
           `Your enrollment for ${selectedCourse.title} has been submitted successfully. Your registration and proof of payment are now awaiting approval from Admissions & Finance.`,
           true
@@ -2893,10 +2759,6 @@
         submitButton.textContent =
           "Application Submitted ✓";
 
-
-        /*
-          GO TO DASHBOARD
-        */
 
         setTimeout(
           () => {
@@ -2936,12 +2798,6 @@
     }
 
 
-    /*
-      ============================================================
-      LOGOUT
-      ============================================================
-    */
-
     async function logout() {
 
       try {
@@ -2963,12 +2819,6 @@
 
     }
 
-
-    /*
-      ============================================================
-      SOUTH AFRICAN ID -> DATE OF BIRTH
-      ============================================================
-    */
 
     function setIdentityMode() {
 
@@ -3080,11 +2930,6 @@
 
       if (!validDates.length) return null;
 
-      /*
-        A Funda learner must be at least 16.
-        If the 2000-century interpretation is too young,
-        use the valid 1900-century interpretation instead.
-      */
       const sixteenYearsAgo =
         new Date(
           now.getFullYear() - 16,
@@ -3279,12 +3124,6 @@
       new Date().getFullYear();
 
 
-    /*
-      ============================================================
-      INITIALISE PAGE
-      ============================================================
-    */
-
     async function initialisePage() {
 
       try {
@@ -3371,7 +3210,8 @@
     initialisePage();
 
   </script>
-  <script src="legacy-student-upgrade.js?v=20260904"></script>
+  <script src="onboarding-course-browser.js?v=20260917-course-browser-stable-v4"></script>
+  <script src="legacy-student-upgrade.js?v=20260917-course-browser-stable-v4"></script>
 
 <script src="ambassador-referral-tracking.js?v=20260905-referral-route-fix"></script>
 </body>
