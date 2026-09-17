@@ -28,9 +28,19 @@ function clarifyLoginAccountLabel(root=document){
   }
  });
 }
+function loadPublicCourseEnrollCta(){
+ const path=location.pathname;
+ if(!((/(^|\/)(index|courses-public)\.html$/i.test(path))||/\/$/.test(path)))return;
+ if(document.getElementById('fundaPublicCourseEnrollCta'))return;
+ const s=document.createElement('script');
+ s.id='fundaPublicCourseEnrollCta';
+ s.src='public-course-enroll-cta.js?v=20260917-v1';
+ document.head.appendChild(s);
+}
 function boot(){
  rewrite();
  clarifyLoginAccountLabel();
+ loadPublicCourseEnrollCta();
  new MutationObserver(m=>m.forEach(x=>x.addedNodes.forEach(n=>{
   if(n.nodeType===1){
    if(n.matches?.('a[href]'))rewrite(n.parentElement||document);else rewrite(n);
