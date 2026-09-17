@@ -21,8 +21,35 @@
     return Math.max(1,Math.ceil(list.length/PAGE_SIZE));
   }
 
+  function ensureSelectionControls(){
+    const continue=byId("continueButton");
+    if(!continue||byId("courseClearSelection"))return;
+
+    const parent=continue.parentElement;
+    if(!parent)return;
+
+    const actions=document.createElement("div");
+    actions.id="courseSelectionActions";
+    actions.className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end";
+
+    const clear=document.createElement("button");
+    clear.id="courseClearSelection";
+    clear.type="button";
+    clear.className="rounded-xl border border-gray-300 bg-white px-5 py-3.5 font-extrabold text-gray-700 hover:bg-gray-50";
+    clear.textContent="Clear selection";
+    clear.addEventListener("click",clearSelection);
+
+    parent.insertBefore(actions,continue);
+    actions.appendChild(clear);
+    actions.appendChild(continue);
+  }
+
   function ensureBrowserUi(){
-    if(!coursesContainer||byId("courseBrowserTools"))return;
+    if(!coursesContainer)return;
+
+    ensureSelectionControls();
+
+    if(byId("courseBrowserTools"))return;
 
     const tools=document.createElement("div");
     tools.id="courseBrowserTools";
@@ -100,6 +127,16 @@
     currentPage=next;
     renderCourses();
     document.getElementById("courseBrowserTools")?.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+
+  function clearSelection(){
+    selectedCourse=null;
+    const name=byId("selectedCourseName");
+    const meta=byId("selectedCourseMeta");
+    if(name)name.textContent="—";
+    if(meta)meta.textContent="—";
+    continueBar?.classList.add("hidden-section");
+    renderCourses();
   }
 
   function ensureDescriptionModal(){
@@ -188,6 +225,9 @@
       const selected=selectedCourse&&String(selectedCourse.id)===String(course.id);
       const fallback="Practical, career-focused online learning.";
       const description=String(course.description||fallback).trim();
+      const selectionAction=selected
+        ? `window.FundaOnboardingCourseBrowser.clearSelection()`
+        : `selectCourse('${escapeHtml(course.id)}')`;
       return `
         <article class="course-card ${selected?"selected border-blue-600":"border-transparent"} flex h-full w-full flex-col overflow-hidden rounded-2xl border-2 bg-white text-left">
           <div class="h-40 shrink-0 overflow-hidden bg-slate-100">
@@ -203,8 +243,8 @@
               <span class="text-xs font-bold text-gray-500">⏱ ${escapeHtml(course.duration||"Flexible")}</span>
               <span class="text-sm font-black text-blue-600">${formatMoney(course.price)}</span>
             </div>
-            <button type="button" onclick="selectCourse('${escapeHtml(course.id)}')" class="mt-4 w-full rounded-xl ${selected?"bg-blue-50 text-blue-700 ring-1 ring-blue-200":"bg-slate-50 text-[#03133d] hover:bg-blue-50 hover:text-blue-700"} px-4 py-3 text-sm font-extrabold">
-              ${selected?"✓ Selected":"Select this course"}
+            <button type="button" onclick="${selectionAction}" class="mt-4 w-full rounded-xl ${selected?"bg-blue-50 text-blue-700 ring-1 ring-blue-200":"bg-slate-50 text-[#03133d] hover:bg-blue-50 hover:text-blue-700"} px-4 py-3 text-sm font-extrabold">
+              ${selected?"Clear selection":"Select this course"}
             </button>
           </div>
         </article>`;
@@ -252,7 +292,8 @@
   window.FundaOnboardingCourseBrowser={
     render:renderBrowserCourses,
     openDescription,
-    closeDescription
+    closeDescription,
+    clearSelection
   };
 
   if(document.readyState==="loading"){
