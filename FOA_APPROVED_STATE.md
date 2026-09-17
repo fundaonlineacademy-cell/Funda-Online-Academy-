@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
-Last established: 17 September 2026 (South Africa time)
-Baseline commit: `5a81c946a84b5f9112e831e1e1362fbfc863b853`
+Last established: 18 September 2026 (South Africa time)
+Baseline commit: `8be986865f5f670339968faeac0bd9822e50525b`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -14,6 +14,18 @@ This file exists to prevent regressions and the reintroduction of previously cor
 - If a new owner decision supersedes an item below, update this file in the same controlled change.
 
 ## Protected current decisions
+
+### Home page — FINAL OWNER-APPROVED STATE
+
+The Home page (`index.html`) is owner-approved as the final public Home-page structure and design as of 18 September 2026.
+
+- Do not redesign, restyle, reorder, add, remove, rename or rewrite Home-page sections, navigation, CTAs, course-card controls, Academy Identity, Head of Academics message, footer, contact details, typography, colours, spacing or responsive structure unless Aziwe Futhe explicitly reopens the Home page for change.
+- The approved Home-page course-card behaviour is: the card body/image/title/price is not a navigation target; **View Course** opens the course overview; **Enroll Now** opens Student account creation and preserves an Ambassador referral code when present.
+- The approved General Enquiries address is `info@fundaonlineacademy.co.za`; do not restore the retired `infor@fundaonlineacademy.co.za` typo.
+- Existing Home-page navigation destinations and public pathways must remain intact unless explicitly changed by the owner.
+- Shared/global scripts that execute on the Home page must preserve the approved Home-page render and behaviour. A change to such a script is not permission to alter the Home page indirectly.
+- Do not reintroduce legacy, retired, superseded or duplicate Home-page content from older commits, cached implementations or prior overrides.
+- A direct change to `index.html` requires an explicit Home-page owner approval marker in the pull request. Routine work on other pages must leave the Home page untouched.
 
 ### Login / authentication
 
@@ -76,6 +88,7 @@ These are known cleanup targets, not permission to alter them during unrelated t
 
 Add future protected decisions here in concise form, with the date and the owner request that established them. Do not remove older entries merely because code was refactored; mark them as superseded only when the owner explicitly changes the decision.
 
+- **2026-09-18:** Home page approved by Aziwe Futhe as the final public Home-page design and structure. No further Home-page changes are permitted unless the owner explicitly reopens it. Protect direct and indirect Home-page behaviour from regressions and do not restore legacy/retired content.
 - **2026-09-17:** Protect the approved mobile login order and public Courses-page control presentation from regression.
 - **2026-09-17:** Keep the Source Sans 3 change limited to the Student Dashboard and Student Library trial until the owner decides whether to expand it.
 - **2026-09-17:** Introduce a strict no-surprise-change protocol: change only what the owner requested and preserve unrelated approved behaviour.
