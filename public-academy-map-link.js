@@ -8,7 +8,7 @@
 
   if(!window.__fundaEnrollmentAnytimeMessage&&!document.querySelector('script[data-funda-enrollment-anytime]')){
     const script=document.createElement('script');
-    script.src='public-enrollment-anytime-message.js?v=20260917-enroll-anytime-v1';
+    script.src='public-enrollment-anytime-message.js?v=20260917-enroll-anytime-v2';
     script.async=true;
     script.dataset.fundaEnrollmentAnytime='1';
     document.head.appendChild(script);
