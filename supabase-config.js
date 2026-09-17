@@ -215,6 +215,14 @@ const ambassadorReferral = document.createElement('script'); ambassadorReferral.
 const typographyUi = document.createElement('script'); typographyUi.src = 'funda-typography.js?v=20260916-systemwide-v1'; document.head.appendChild(typographyUi);
 const textContrast = document.createElement('script'); textContrast.src = 'funda-text-contrast.js?v=20260901-black-text'; document.head.appendChild(textContrast);
 
+if (/login\.html$/i.test(window.location.pathname)) {
+  const loginLayoutRestore=document.createElement('script');loginLayoutRestore.src='login-layout-order-restore.js?v=20260917-approved-order-v1';document.head.appendChild(loginLayoutRestore);
+}
+
+if (/courses-public\.html$/i.test(window.location.pathname)) {
+  const courseControlsRestore=document.createElement('script');courseControlsRestore.src='courses-public-controls-restore.js?v=20260917-approved-controls-v1';document.head.appendChild(courseControlsRestore);
+}
+
 if (/(^|\/)(index|courses-public|course-view|employers|ambassadors|login)\.html$/i.test(window.location.pathname) || /\/$/.test(window.location.pathname)) {
   const academyMapPublic=document.createElement('script'); academyMapPublic.src='public-academy-map-link.js?v='+Date.now(); document.head.appendChild(academyMapPublic);
   const employerPublic=document.createElement('script'); employerPublic.src='public-employer-link.js?v='+Date.now(); document.head.appendChild(employerPublic);
