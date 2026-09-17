@@ -1,6 +1,6 @@
 (()=>{
  if(window.__fundaEnrolmentTerms)return;window.__fundaEnrolmentTerms=true;
- const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[c]));
+ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
  const TERMS_VERSION='2026-08-30';
  function addTerms(){
   const declaration=document.getElementById('declaration'); if(!declaration||document.getElementById('fundaTermsPanel'))return;
