@@ -55,6 +55,7 @@ $("mobileMenuButton").onclick=()=>$("mobileMenu").classList.toggle("hidden");cou
 <script src="course-search-mobile-polish.js?v=20260905"></script>
 <script src="ambassador-referral-tracking.js?v=20260905-referral-route-fix"></script>
 <script src="academy-identity.js?v=20260905-master-identity"></script>
+<script src="courses-public-enrollment-faq.js?v=20260918-every-day-v1"></script>
 <script>
 (()=>{const button=document.getElementById('mobileMenuButton'),menu=document.getElementById('mobileMenu');if(!button||!menu)return;const close=()=>{menu.classList.add('hidden');button.setAttribute('aria-expanded','false');button.textContent='☰'};button.addEventListener('click',()=>{const open=!menu.classList.contains('hidden');button.setAttribute('aria-expanded',String(open));button.textContent=open?'×':'☰'});menu.querySelectorAll('a').forEach(link=>link.addEventListener('click',close))})();
 </script>
