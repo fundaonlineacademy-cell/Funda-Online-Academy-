@@ -17,6 +17,7 @@
 - [ ] No trial UI choice was expanded without explicit approval.
 - [ ] The final approved Home page remains unchanged unless the owner explicitly reopened it.
 - [ ] The final approved Browse Courses page remains unchanged unless the owner explicitly reopened it.
+- [ ] The final approved Login section remains unchanged unless the owner explicitly reopened it.
 - [ ] Approved Academy Map public/private destination routing remains intact unless explicitly changed.
 
 ## Protected change authorization
@@ -34,6 +35,12 @@ OWNER-APPROVED-BROWSE-COURSES-CHANGE: no
 
 <!-- Use `yes` when a changed file can execute on or affect Browse Courses and its final approved render/behaviour was regression-checked. -->
 BROWSE-COURSES-REGRESSION-CHECKED: no
+
+<!-- Use `yes` only when Aziwe Futhe explicitly reopens the final Login/authentication section. -->
+OWNER-APPROVED-LOGIN-CHANGE: no
+
+<!-- Use `yes` when a changed file can execute on or affect Login/authentication and Student, Staff/Admin, Ambassador and recovery paths were regression-checked. -->
+LOGIN-REGRESSION-CHECKED: no
 
 <!-- Use `yes` only when the owner explicitly asked for a broad/cross-portal change. -->
 OWNER-APPROVED-BROAD-CHANGE: no
@@ -53,6 +60,7 @@ OWNER-APPROVED-BROAD-CHANGE: no
 - [ ] Supabase/RLS/data safety checked where applicable
 - [ ] Final approved Home-page design/behaviour preserved where applicable
 - [ ] Final approved Browse Courses design/behaviour preserved where applicable
+- [ ] Final approved Login/authentication design, fields, recovery and destinations preserved where applicable
 - [ ] Academy Map approved destination routing preserved where applicable
 - [ ] Student/Admin/Ambassador portal boundaries preserved where applicable
 
