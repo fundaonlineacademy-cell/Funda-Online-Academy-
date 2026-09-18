@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 18 September 2026 (South Africa time)
-Baseline commit: `353fee3ac327b826479990b8c7d3f0cdbf39d0e1`
+Baseline commit: `6b4cb49a42a3f89077464db82dc63ba4f975d5e8`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -27,12 +27,23 @@ The Home page (`index.html`) is owner-approved as the final public Home-page str
 - Do not reintroduce legacy, retired, superseded or duplicate Home-page content from older commits, cached implementations or prior overrides.
 - A direct change to `index.html` requires an explicit Home-page owner approval marker in the pull request. Routine work on other pages must leave the Home page untouched.
 
-### Login / authentication
+### Login / authentication — FINAL OWNER-APPROVED STATE
 
-- On mobile/tablet layouts up to 1023px, the login page must keep the established order: **brand panel first, authentication panel second**.
-- Staff/Admin access must require normal authentication plus the assigned **Staff Access Code**.
-- Staff/Admin role verification must remain enforced; a normal Student account must not gain Staff/Admin access through the staff route.
-- Successful Admin login routes to the Admin Command Center; successful Staff login routes to the Staff Workspace.
+The Login section is owner-approved as the final Academy authentication structure as of 18 September 2026.
+
+- Funda Online Academy has three approved portal entry journeys only: **Student**, **Staff / Admin**, and **Ambassador**. Do not introduce a fourth portal or alternate login route unless Aziwe Futhe explicitly approves it.
+- `login.html` is the approved shared login for **Student** and **Staff / Admin** access.
+- `ambassador-login.html` is the approved Ambassador / Ambassador-applicant login.
+- Student login must continue to use the registered Academy email and password and route the learner according to the existing approved Student journey.
+- Staff/Admin access is strict: the user must provide the registered Academy **email**, **password**, and assigned **Staff Access Code**. Staff/Admin role verification must remain enforced; a normal Student or Ambassador account must not gain Staff/Admin access through this route.
+- Successful Admin login routes to the **Admin Command Center**; successful Staff login routes to the **Staff Workspace**.
+- Ambassador sign-in must keep the existing application-status gate. Pending, waitlisted or declined applicants remain in the approved status-only journey; approved/activated Ambassadors retain the existing portal journey.
+- **Forgot password** is an approved part of the Login standard. Recovery requires access to the registered email address, uses Supabase recovery, opens the approved `reset-password.html` flow, requires **New Password + Confirm New Password**, and returns the user to the correct login entry after the update.
+- The approved Login navigation remains: **Create Student Account** → `create-account.html`; **Ambassador Portal Login** → `ambassador-login.html`; **Browse Courses — No Login Needed** → `courses-public.html`.
+- On mobile/tablet layouts up to 1023px, the shared Login must keep the established order: **brand panel first, authentication panel second**.
+- The approved Login design, wording, fields, role controls, destinations, recovery behaviour and security requirements must not be redesigned, weakened, bypassed or replaced unless the owner explicitly reopens the Login section.
+- Legacy authentication implementations must not be restored. The old full `auth.html` registration implementation, old `auth.js` login/reset logic, and malformed duplicate `reset-password. html` are retired and must not be used as authoritative sources.
+- Shared/global scripts that can alter Login/authentication must preserve this final state and require Login regression confirmation when changed.
 
 ### Browse Courses — FINAL OWNER-APPROVED STATE
 
@@ -98,6 +109,7 @@ These are known cleanup targets, not permission to alter them during unrelated t
 
 Add future protected decisions here in concise form, with the date and the owner request that established them. Do not remove older entries merely because code was refactored; mark them as superseded only when the owner explicitly changes the decision.
 
+- **2026-09-18:** Login section approved by Aziwe Futhe as the final Academy authentication standard: Student, Staff/Admin and Ambassador are the only approved portal entry journeys; Staff/Admin requires email + password + Staff Access Code; approved recovery and navigation destinations are protected; legacy auth/reset implementations are retired.
 - **2026-09-18:** Browse Courses approved by Aziwe Futhe as the final public course-catalogue design, structure, FAQ/contact presentation and tested navigation standard. No further Browse Courses changes are permitted unless the owner explicitly reopens it; approved Academy Map destination routing must not be silently changed.
 - **2026-09-18:** Home page approved by Aziwe Futhe as the final public Home-page design and structure. No further Home-page changes are permitted unless the owner explicitly reopens it. Protect direct and indirect Home-page behaviour from regressions and do not restore legacy/retired content.
 - **2026-09-17:** Protect the approved mobile login order and public Courses-page control presentation from regression.

@@ -43,6 +43,8 @@ The following changes require explicit scope confirmation in the PR/task notes:
 - The final owner-approved Browse Courses page (`courses-public.html`). It must not be changed unless Aziwe Futhe explicitly reopens Browse Courses.
 - Shared/global scripts that execute on or can alter Browse Courses. These may change for other approved work only when the Browse Courses final state is regression-checked and deliberately preserved.
 - Academy Map destination routing is protected. Public/private destinations must keep their approved role-appropriate login or public route unless the owner explicitly requests a routing change.
+- The final owner-approved Login section is protected: `login.html`, `ambassador-login.html`, `reset-password.html`, Staff Access Code enforcement, approved role routing and password-recovery destinations must not change unless Aziwe Futhe explicitly reopens Login.
+- Legacy login/reset implementations must not be restored as active surfaces. Compatibility redirects may point only to the current approved route.
 - `supabase-config.js` or any global loader.
 - Login/authentication/role routing.
 - Supabase schema/RLS/RPC/storage/auth/production-data changes.
@@ -72,6 +74,7 @@ When a UI fix is requested:
 - Preserve existing approved structure, wording, colour, spacing, controls, navigation, and responsive ordering unless they are part of the request.
 - The Home page is a final approved surface. Do not redesign, restyle, reorder, add, remove or rewrite Home-page content or behaviour unless the owner explicitly reopens it.
 - Browse Courses is a final approved surface. Preserve its course cards, filters, FAQs, WhatsApp-focused contact area, navigation, typography, spacing and responsive structure unless the owner explicitly reopens it.
+- Login is a final approved surface. Preserve the Student / Staff-Admin selector, strict Staff Access Code requirement, Ambassador Login separation, Forgot Password flow, approved destinations and responsive ordering unless the owner explicitly reopens it.
 - Test both desktop and mobile when responsive behaviour is touched.
 - Do not replace a page-specific fix with a global CSS/JS change unless the owner asked for a global change.
 - Do not expand a trial design choice to other portals/pages.
@@ -81,10 +84,15 @@ When a UI fix is requested:
 Run the subset relevant to the change, and for protected/global changes run all adjacent checks:
 
 ### Authentication
-- Student login remains Student-only.
-- Staff/Admin login keeps role checks and Staff Access Code protection.
+- Student login remains Student-only and uses the approved shared Login.
+- Staff/Admin login keeps role checks and requires email + password + assigned Staff Access Code.
+- Ambassador login remains separate and keeps its application-status gate.
+- Forgot Password sends recovery to the registered email and uses the approved reset-password flow.
+- Password recovery returns to the correct login entry after a successful update.
+- Create Student Account, Ambassador Portal Login and Browse Courses links keep their approved destinations.
 - Correct role redirects remain intact.
-- No login route exposes another portal.
+- No login route exposes another portal or introduces an unapproved fourth portal.
+- Retired `auth.js` / duplicate reset implementations remain absent from active use.
 
 ### Student
 - Dashboard loads.
