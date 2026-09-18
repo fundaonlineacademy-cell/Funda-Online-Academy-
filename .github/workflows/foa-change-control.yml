@@ -106,6 +106,13 @@ jobs:
             fi
           fi
 
+          if git diff -U0 "origin/${BASE_REF}...HEAD" -- onboarding.html onboarding-registration-flow.js onboarding-draft-persistence.js | grep -Eq '(fullName|mobile|gender|identityDocumentType|idNumber|passportNumber|dateOfBirth|nationality|address|city|province|postalCode|employmentStatus|highestEducation|whereHeard|emergencyName|emergencyPhone|validateRegistrationDetails|registrationBack|registrationContinue|loadProfileAndStudent|updateStudent)'; then
+            if ! grep -Eqi 'OWNER-APPROVED-ENROLLMENT-STEP3-CHANGE:[[:space:]]*yes' <<< "$body"; then
+              echo "::error::Enrollment Step 3 — Student Registration is owner-approved as final. A change to Step 3 fields, validation, profile loading/saving or navigation requires explicit OWNER-APPROVED-ENROLLMENT-STEP3-CHANGE: yes."
+              exit 1
+            fi
+          fi
+
           homepage_runtime_regex='^(index\.html|supabase-config\.js|academy-identity\.js|marketing-public-tracking\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js|public-course-enroll-cta\.js)$'
 
           if grep -Eq "$homepage_runtime_regex" /tmp/foa-changed-files.txt; then
@@ -165,6 +172,15 @@ jobs:
           if grep -Eq "$enrollment_step2_runtime_regex" /tmp/foa-changed-files.txt; then
             if ! grep -Eqi 'ENROLLMENT-STEP2-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
               echo "::error::This PR touches a file that can affect final approved Enrollment Step 2. Record ENROLLMENT-STEP2-REGRESSION-CHECKED: yes only after checking Student Type options, evidence/ID rules, 70/50/25 provisional-discount verification, manual fallback, Back/Continue and draft restoration."
+              exit 1
+            fi
+          fi
+
+          enrollment_step3_runtime_regex='^(onboarding\.html|onboarding-registration-flow\.js|onboarding-draft-persistence\.js|supabase-config\.js)$'
+
+          if grep -Eq "$enrollment_step3_runtime_regex" /tmp/foa-changed-files.txt; then
+            if ! grep -Eqi 'ENROLLMENT-STEP3-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
+              echo "::error::This PR touches a file that can affect final approved Enrollment Step 3. Record ENROLLMENT-STEP3-REGRESSION-CHECKED: yes only after checking profile prefill, required fields, SA ID/passport validation, read-only email, Student/profile save, Back/Continue and draft persistence."
               exit 1
             fi
           fi
