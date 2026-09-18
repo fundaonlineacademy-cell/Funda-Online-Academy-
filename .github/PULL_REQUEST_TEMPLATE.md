@@ -21,6 +21,7 @@
 - [ ] The final approved Login section remains unchanged unless the owner explicitly reopened it.
 - [ ] The final approved Ambassador system remains unchanged unless the owner explicitly reopened it.
 - [ ] The final approved Create Student Account journey remains unchanged unless the owner explicitly reopened it.
+- [ ] The final approved Enrollment Step 1 — Choose Your Course remains unchanged unless the owner explicitly reopened it.
 - [ ] Approved Academy Map public/private destination routing remains intact unless explicitly changed.
 
 ## Protected change authorization
@@ -57,6 +58,12 @@ OWNER-APPROVED-CREATE-ACCOUNT-CHANGE: no
 <!-- Use `yes` when a changed file can execute on or affect Student registration and the approved Create Student Account journey was regression-checked. -->
 CREATE-ACCOUNT-REGRESSION-CHECKED: no
 
+<!-- Use `yes` only when Aziwe Futhe explicitly reopens final Enrollment Step 1 — Choose Your Course. -->
+OWNER-APPROVED-ENROLLMENT-STEP1-CHANGE: no
+
+<!-- Use `yes` when a changed file can execute on or affect Enrollment Step 1 and the approved course-browser behaviour was regression-checked. -->
+ENROLLMENT-STEP1-REGRESSION-CHECKED: no
+
 <!-- Use `yes` only when the owner explicitly asked for a broad/cross-portal change. -->
 OWNER-APPROVED-BROAD-CHANGE: no
 
@@ -79,6 +86,7 @@ OWNER-APPROVED-BROAD-CHANGE: no
 - [ ] Final approved Login/authentication design, fields, recovery and destinations preserved where applicable
 - [ ] Final approved Ambassador programme/application/login/portal/referral/privacy/earnings/support behaviour preserved where applicable
 - [ ] Final approved Create Student Account fields, Terms/Privacy, password rule, registration/referral and onboarding handoff preserved where applicable
+- [ ] Final approved Enrollment Step 1 active courses, 10-per-page pagination, responsive cards, search, Select/Clear and Continue preserved where applicable
 - [ ] Academy Map approved destination routing preserved where applicable
 - [ ] Student/Admin/Ambassador portal boundaries preserved where applicable
 
