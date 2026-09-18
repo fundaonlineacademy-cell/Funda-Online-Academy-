@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 18 September 2026 (South Africa time)
-Baseline commit: `d0c9f86a4957944977f5e4ef7ca0f3dff9daaf87`
+Baseline commit: `ef2c3386b53cd3af2e791a38db23ae60fa58f273`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -62,6 +62,22 @@ The Create Student Account journey is owner-approved as the final Student regist
 - The approved registration form must remain usable on desktop and mobile and must not loop between `create-account.html` and `auth.html`.
 - Do not redesign, restyle, reorder, add, remove, rename or weaken registration fields, validation, Terms & Privacy, password security, logo presentation, referral handoff, profile creation or post-registration routing unless Aziwe Futhe explicitly reopens Create Student Account.
 - Shared/global scripts that can alter registration, referral attribution, account creation or onboarding handoff must preserve this final state and require Create Student Account regression confirmation when changed.
+
+### Enrollment Step 1 — Choose Your Course — FINAL OWNER-APPROVED STATE
+
+Enrollment Step 1 on `onboarding.html` is owner-approved as the final **Choose Your Course** structure and behaviour as of 18 September 2026. This approval applies to Step 1 only; later enrollment steps remain subject to separate owner review and approval.
+
+- The approved course source is the Academy's active course catalogue. At the approval checkpoint there are **35 active courses**, and Step 1 must continue to surface all active courses rather than silently omitting eligible catalogue entries.
+- The approved browser shows **up to 10 courses per page**. Pagination must retain **Previous** and **Next** controls and accurate page/range status.
+- Course cards use the approved responsive layout: up to **3 cards across on desktop**, fewer columns on smaller screens, while the 10-course page size remains unchanged.
+- The approved search allows the learner to search the available course catalogue and clear the search without losing the integrity of the catalogue.
+- Each approved course card retains its Academy branding/presentation and the current course information/actions, including course title, description preview / **View more**, duration, price, image/fallback presentation and **Select this course**.
+- A selected course must remain visibly identifiable. The learner must be able to **Clear selection** and choose another course before continuing.
+- **Continue** must use the learner's current selected course and must not silently continue with a different or stale selection.
+- Step 1 must remain usable with the existing draft/progress behaviour so a valid course choice can be carried into the next enrollment stage without corrupting another learner's or another course's state.
+- Search, pagination, selection, Clear Selection, View more, Continue, responsive card layout, branding, typography and Step 1 navigation are part of this final approved standard.
+- Do not redesign, restyle, reorder, remove, rename, weaken or replace Step 1 behaviour unless Aziwe Futhe explicitly reopens Enrollment Step 1.
+- Changes to later enrollment stages are **not** permission to disturb Step 1. Any shared `onboarding.html` or onboarding-script change must regression-check this approved Step 1 before merge.
 
 ### Browse Courses — FINAL OWNER-APPROVED STATE
 
@@ -145,6 +161,7 @@ These are known cleanup targets, not permission to alter them during unrelated t
 
 Add future protected decisions here in concise form, with the date and the owner request that established them. Do not remove older entries merely because code was refactored; mark them as superseded only when the owner explicitly changes the decision.
 
+- **2026-09-18:** Enrollment Step 1 — Choose Your Course approved by Aziwe Futhe as final: all active courses surfaced (35 at approval checkpoint), 10-per-page pagination, responsive course cards, search, View more, Select/Clear Selection, Continue, branding and typography are protected; Steps 2–5 remain separately reviewable.
 - **2026-09-18:** Create Student Account approved by Aziwe Futhe as the final Student registration standard: required profile details, Student Terms & Privacy acceptance, 8+ character strong-password rule, official transparent FOA logo, optional immediate course selection, secure Student-profile creation and permanent eligible Ambassador attribution are protected from unapproved change.
 - **2026-09-18:** Cleanup safety rule added after the Create Student Account regression: “legacy” never means “safe to remove.” Every retirement/redirect must first prove the dependency is unused or fully migrated, including indirect callers, then pass the adjacent end-to-end journey without loops or dead ends.
 - **2026-09-18:** Entire Ambassador system approved by Aziwe Futhe as the final Ambassador programme/portal standard: public programme, application/agreement, review/status, activation, login/recovery/logout, permanent account-creation referral attribution, privacy-limited referral summaries, confirmed earnings, ranks/compensation, banking, tickets/Your Voice, resources and dashboard behaviour are protected from unapproved change.
