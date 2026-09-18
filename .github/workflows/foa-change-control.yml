@@ -38,7 +38,7 @@ jobs:
             fi
           done
 
-          protected_regex='^(index\.html|academy-map\.html|supabase-config\.js|ambassador-referral-tracking\.js|login\.html|auth\.html|create-account\.html|onboarding\.html|dashboard\.html|admin-v2\.html|staff-portal\.html|ambassador-portal-v2\.html|ambassadors\.html|courses-public\.html|course-view\.html|.*\.sql)
+          protected_regex='^(index\.html|academy-map\.html|supabase-config\.js|ambassador-referral-tracking\.js|login\.html|auth\.html|create-account\.html|onboarding\.html|dashboard\.html|admin-v2\.html|staff-portal\.html|ambassador-portal-v2\.html|ambassadors\.html|courses-public\.html|course-view\.html|.*\.sql)$'
 
           if grep -Eq "$protected_regex" /tmp/foa-changed-files.txt; then
             if ! grep -Eqi 'OWNER-APPROVED-PROTECTED-CHANGE:[[:space:]]*yes' <<< "$body"; then
@@ -70,91 +70,11 @@ jobs:
             fi
           fi
 
-          browse_courses_runtime_regex='^(courses-public\.html|supabase-config\.js|courses-public-faq-loader\.js|courses-public-enrollment-faq\.js|course-career-skill-areas\.js|course-search-mobile-polish\.js|ambassador-referral-tracking\.js|academy-identity\.js|create-account-route-fix\.js|public-course-enroll-cta\.js|courses-public-controls-restore\.js|courses-public-brand-theme\.js|public-course-value\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js)
-
-          if [ "$runtime_count" -gt 12 ]; then
-            if ! grep -Eqi 'OWNER-APPROVED-BROAD-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR changes more than 12 runtime/data files. Split the work or explicitly record owner approval for a broad change."
-              exit 1
-            fi
-          fi
-
-          echo "FOA change-control scope checks passed."
-
-
-          if grep -Eq "$protected_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'OWNER-APPROVED-PROTECTED-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR changes a protected FOA surface. The PR must explicitly record OWNER-APPROVED-PROTECTED-CHANGE: yes when the owner request actually requires it."
-              exit 1
-            fi
-          fi
-
-          if grep -Fxq 'index.html' /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'OWNER-APPROVED-HOMEPAGE-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::The Home page is owner-approved as final. A direct index.html change requires explicit OWNER-APPROVED-HOMEPAGE-CHANGE: yes."
-              exit 1
-            fi
-          fi
-
-          homepage_runtime_regex='^(index\.html|supabase-config\.js|academy-identity\.js|marketing-public-tracking\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js|public-course-enroll-cta\.js)$'
-
-          if grep -Eq "$homepage_runtime_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'HOMEPAGE-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR touches a file that can affect the approved Home page. Record HOMEPAGE-REGRESSION-CHECKED: yes only after confirming the final Home-page design and behaviour remain unchanged."
-              exit 1
-            fi
-          fi
-
-          runtime_count=$(awk '!/^(AGENTS\.md|FOA_APPROVED_STATE\.md|FOA_CHANGE_CONTROL\.md|\.github\/)/ && NF {count++} END {print count+0}' /tmp/foa-changed-files.txt)
-
-          if [ "$runtime_count" -gt 12 ]; then
-            if ! grep -Eqi 'OWNER-APPROVED-BROAD-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR changes more than 12 runtime/data files. Split the work or explicitly record owner approval for a broad change."
-              exit 1
-            fi
-          fi
-
-          echo "FOA change-control scope checks passed."
-
+          browse_courses_runtime_regex='^(courses-public\.html|supabase-config\.js|courses-public-faq-loader\.js|courses-public-enrollment-faq\.js|course-career-skill-areas\.js|course-search-mobile-polish\.js|ambassador-referral-tracking\.js|academy-identity\.js|create-account-route-fix\.js|public-course-enroll-cta\.js|courses-public-controls-restore\.js|courses-public-brand-theme\.js|public-course-value\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js)$'
 
           if grep -Eq "$browse_courses_runtime_regex" /tmp/foa-changed-files.txt; then
             if ! grep -Eqi 'BROWSE-COURSES-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
               echo "::error::This PR touches a file that can affect the final approved Browse Courses page. Record BROWSE-COURSES-REGRESSION-CHECKED: yes only after confirming its final design, FAQ/contact content, navigation and responsive behaviour remain unchanged."
-              exit 1
-            fi
-          fi
-
-          runtime_count=$(awk '!/^(AGENTS\.md|FOA_APPROVED_STATE\.md|FOA_CHANGE_CONTROL\.md|\.github\/)/ && NF {count++} END {print count+0}' /tmp/foa-changed-files.txt)
-
-          if [ "$runtime_count" -gt 12 ]; then
-            if ! grep -Eqi 'OWNER-APPROVED-BROAD-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR changes more than 12 runtime/data files. Split the work or explicitly record owner approval for a broad change."
-              exit 1
-            fi
-          fi
-
-          echo "FOA change-control scope checks passed."
-
-
-          if grep -Eq "$protected_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'OWNER-APPROVED-PROTECTED-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR changes a protected FOA surface. The PR must explicitly record OWNER-APPROVED-PROTECTED-CHANGE: yes when the owner request actually requires it."
-              exit 1
-            fi
-          fi
-
-          if grep -Fxq 'index.html' /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'OWNER-APPROVED-HOMEPAGE-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::The Home page is owner-approved as final. A direct index.html change requires explicit OWNER-APPROVED-HOMEPAGE-CHANGE: yes."
-              exit 1
-            fi
-          fi
-
-          homepage_runtime_regex='^(index\.html|supabase-config\.js|academy-identity\.js|marketing-public-tracking\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js|public-course-enroll-cta\.js)$'
-
-          if grep -Eq "$homepage_runtime_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'HOMEPAGE-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR touches a file that can affect the approved Home page. Record HOMEPAGE-REGRESSION-CHECKED: yes only after confirming the final Home-page design and behaviour remain unchanged."
               exit 1
             fi
           fi
