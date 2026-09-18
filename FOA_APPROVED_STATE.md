@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 18 September 2026 (South Africa time)
-Baseline commit: `353fee3ac327b826479990b8c7d3f0cdbf39d0e1`
+Baseline commit: `6b4cb49a42a3f89077464db82dc63ba4f975d5e8`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
