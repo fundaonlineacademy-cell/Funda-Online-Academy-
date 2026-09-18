@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 18 September 2026 (South Africa time)
-Baseline commit: `8be986865f5f670339968faeac0bd9822e50525b`
+Baseline commit: `353fee3ac327b826479990b8c7d3f0cdbf39d0e1`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -34,12 +34,22 @@ The Home page (`index.html`) is owner-approved as the final public Home-page str
 - Staff/Admin role verification must remain enforced; a normal Student account must not gain Staff/Admin access through the staff route.
 - Successful Admin login routes to the Admin Command Center; successful Staff login routes to the Staff Workspace.
 
-### Public Courses page
+### Browse Courses — FINAL OWNER-APPROVED STATE
 
+The Browse Courses page (`courses-public.html`) is owner-approved as the final public course-catalogue structure and design as of 18 September 2026.
+
+- Do not redesign, restyle, reorder, add, remove, rename or rewrite Browse Courses sections, course cards, filters, navigation, FAQs, contact area, typography, colours, spacing or responsive structure unless Aziwe Futhe explicitly reopens Browse Courses for change.
 - The public course-result-count summary remains hidden in the approved presentation.
-- The approved primary sort presentation is **Most Popular**, not a restored legacy catalogue label.
-- The sort control remains left-aligned in the approved presentation.
-- Do not reintroduce an older Courses-page layout when working on unrelated functionality.
+- The approved primary sort presentation is **Most Popular**, with the approved control placement preserved.
+- Course cards must continue to show the approved course information and route **View Course** to the correct course overview. Student login and account-creation routes must continue to lead to the correct secure Student journey.
+- The approved FAQ answer for enrolment timing states that Funda Online Academy **accepts registrations every day**. Do not restore the retired “throughout the year” wording.
+- The public contact section remains intentionally WhatsApp-focused. Do not add a public enquiry email form or another general-enquiry channel to this page unless the owner explicitly requests it.
+- Course images must fail gracefully: a remote-image failure must show the approved course placeholder rather than a broken-image icon. Successful images must keep the approved presentation.
+- The approved public navigation routes to the Academy Map, Employers, Ambassadors, Student Login, Create Student Account, course catalogue/course-selection pathway and related public destinations must remain intact.
+- The current Academy Map public and private destination routing has been owner-tested and approved: registered-learner destinations route through Student Login; Staff/Admin destinations route through the shared secure Staff/Admin login; Ambassador and Employer destinations remain role-appropriate. Do not bypass or silently redirect these protected pathways.
+- Shared/global scripts that execute on or alter Browse Courses must preserve this final state. A change elsewhere is not permission to disturb Browse Courses indirectly.
+- Do not reintroduce legacy, retired, duplicated or cached Browse Courses content from older commits or previous overrides.
+- A direct change to `courses-public.html` requires explicit Browse Courses owner approval in the pull request.
 
 ### Student Dashboard / Student Library typography
 
@@ -88,6 +98,7 @@ These are known cleanup targets, not permission to alter them during unrelated t
 
 Add future protected decisions here in concise form, with the date and the owner request that established them. Do not remove older entries merely because code was refactored; mark them as superseded only when the owner explicitly changes the decision.
 
+- **2026-09-18:** Browse Courses approved by Aziwe Futhe as the final public course-catalogue design, structure, FAQ/contact presentation and tested navigation standard. No further Browse Courses changes are permitted unless the owner explicitly reopens it; approved Academy Map destination routing must not be silently changed.
 - **2026-09-18:** Home page approved by Aziwe Futhe as the final public Home-page design and structure. No further Home-page changes are permitted unless the owner explicitly reopens it. Protect direct and indirect Home-page behaviour from regressions and do not restore legacy/retired content.
 - **2026-09-17:** Protect the approved mobile login order and public Courses-page control presentation from regression.
 - **2026-09-17:** Keep the Source Sans 3 change limited to the Student Dashboard and Student Library trial until the owner decides whether to expand it.
