@@ -62,6 +62,7 @@ The following changes require explicit scope confirmation in the PR/task notes:
 - The final owner-approved Enrollment Step 1 — Choose Your Course behaviour is protected. Step 1-specific course-browser logic must not change without explicit owner approval; shared onboarding changes must prove the approved Step 1 remains intact.
 - The final owner-approved Enrollment Step 2 — Student Type behaviour is protected. Step 2-specific legacy verification logic must not change without explicit owner approval; shared onboarding/draft/legacy changes must prove the approved Step 2 remains intact.
 - The final owner-approved Enrollment Step 3 — Student Registration / Complete Your Details behaviour is protected. Step 3 fields/validation/profile-save logic must not change without explicit owner approval; shared onboarding/registration/draft changes must prove the approved Step 3 remains intact.
+- The final owner-approved Enrollment Step 4 — Payment behaviour is protected. Step 4-specific payment-plan, amount, banking and proof logic must not change without explicit owner approval; shared onboarding/payment changes must prove the approved Step 4 remains intact.
 - Ambassador server-side ownership/RLS/RPC/payment-eligibility controls must not be weakened or replaced by browser-only access control.
 - `auth.html` is currently the working Student registration form reached from `create-account.html`; it is not a disposable legacy redirect target. Do not retire or redirect it unless the complete tested registration implementation and Ambassador referral-claim hook have first been migrated. Retired `auth.js` and malformed duplicate reset implementations must remain absent.
 - `supabase-config.js` or any global loader.
@@ -99,6 +100,7 @@ When a UI fix is requested:
 - Enrollment Step 1 — Choose Your Course is a final approved surface. Preserve the active-course catalogue, 10-per-page pagination, Previous/Next controls, responsive card grid, search, View more, Select/Clear Selection, Continue, branding and typography unless the owner explicitly reopens Step 1. Changes to Steps 2–5 must leave Step 1 unchanged except for verified shared compatibility work.
 - Enrollment Step 2 — Student Type is a final approved surface. Preserve the four Student Type paths, evidence/ID requirements, 70%/50%/25% provisional-discount safeguards, certificate/historical verification, manual-review fallback, Back/Continue navigation, draft restoration and approved presentation unless the owner explicitly reopens Step 2. Changes to Steps 3–5 must leave Step 2 unchanged except for verified shared compatibility work.
 - Enrollment Step 3 — Student Registration / Complete Your Details is a final approved surface. Preserve existing-profile prefill, read-only account email, required/optional field status, SA ID/passport validation, Student/profile saving, Back to Student Type, Continue to Payment, draft persistence and approved presentation unless the owner explicitly reopens Step 3. Changes to Steps 4–5 must leave Step 3 unchanged except for verified shared compatibility work.
+- Enrollment Step 4 — Payment is a final approved surface. Preserve official banking-details presentation, EFT/Bank Deposit methods, full-payment/eligible 2-or-3-instalment choices, full-payment availability, exact required-amount enforcement, required payment reference, PDF/JPG/PNG proof up to 5 MB, Admissions & Finance verification, Back/Continue navigation and approved presentation unless the owner explicitly reopens Step 4. Changes to Step 5 must leave Step 4 unchanged except for verified shared compatibility work.
 - Test both desktop and mobile when responsive behaviour is touched.
 - Do not replace a page-specific fix with a global CSS/JS change unless the owner asked for a global change.
 - Do not expand a trial design choice to other portals/pages.
@@ -148,6 +150,15 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Postal Code, Employment Status, Highest Education, Emergency Contact Name and Emergency Contact Phone remain optional unless the owner explicitly changes that standard.
 - Step 3 Back to Student Type and Continue to Payment remain functional.
 - Step 3 edits continue to save/autosave to the authenticated learner's own Student/profile context.
+- Enrollment Step 4 still shows only active official Academy banking details and blocks payment submission when official details are unavailable.
+- EFT / Bank Transfer and Bank Deposit remain the approved payment methods; cash remains excluded.
+- Courses below R2,000 or 4 weeks/less remain full-payment-only; eligible R2,000+ courses over 4 weeks may offer 2 or 3 instalments according to duration.
+- Eligible instalment courses still offer Pay full course fee.
+- Amount Paid Now remains system-calculated/read-only and must exactly match the selected full-payment or instalment amount.
+- A mismatch between the verified paid amount/proof and the system-required amount remains a rejection condition under the approved payment rule.
+- Payment reference remains required.
+- Proof of Payment remains required as PDF/JPG/PNG up to 5 MB.
+- Step 4 Back to Student Registration and Continue to Declaration remain functional.
 - Dashboard loads.
 - Library loads.
 - Sidebar/navigation remains usable.
