@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 18 September 2026 (South Africa time)
-Baseline commit: `ef2c3386b53cd3af2e791a38db23ae60fa58f273`
+Baseline commit: `39c46c22a02e1f96824f2c4a58d1b4c528fdf842`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -78,6 +78,26 @@ Enrollment Step 1 on `onboarding.html` is owner-approved as the final **Choose Y
 - Search, pagination, selection, Clear Selection, View more, Continue, responsive card layout, branding, typography and Step 1 navigation are part of this final approved standard.
 - Do not redesign, restyle, reorder, remove, rename, weaken or replace Step 1 behaviour unless Aziwe Futhe explicitly reopens Enrollment Step 1.
 - Changes to later enrollment stages are **not** permission to disturb Step 1. Any shared `onboarding.html` or onboarding-script change must regression-check this approved Step 1 before merge.
+
+### Enrollment Step 2 — Student Type — FINAL OWNER-APPROVED STATE
+
+Enrollment Step 2 on `onboarding.html` is owner-approved as the final **Student Type** structure, verification logic and presentation as of 18 September 2026. This approval applies to Step 2 only; Steps 3–5 remain subject to separate owner review and approval.
+
+- The approved Student Type choices are:
+  - **First-time Funda Online Academy student** — no legacy evidence fields are required on Step 2 and the standard current course price applies.
+  - **I completed this course before** — Legacy Upgrade path with a provisional **70% discount** only after certificate verification.
+  - **I paid for this course but did not complete it** — Restart path with a provisional **50% discount** only after prior-record/evidence verification.
+  - **I studied with Funda Online Academy before, but this is a different course** — Returning Student path with a provisional **25% discount** only after previous-study verification.
+- Legacy/returning paths must require the **ID number used with the previous Funda Online Academy record**. The completed-course path requires the old FOA certificate. The incomplete path requires the prior payment date, the reason the learner did not complete, and old proof of payment. The returning-student path requires proof of previous FOA study.
+- For the completed-course 70% path, the approved system reads the uploaded certificate and checks **ID number, Student name and course** before provisionally unlocking the discounted amount. The result is provisional only: final Academy/Admin audit remains required before course access is approved.
+- For incomplete/returning paths, the approved system checks the learner's historical FOA record for the selected claim type and course context. If automatic matching fails, the learner may submit evidence for **manual verification** and must not proceed as though the discount were already approved.
+- The approved legacy evidence file types remain **PDF, JPG or PNG**, with the current 5 MB limit.
+- The approved security model remains account-bound: legacy claims are created/viewed by the authenticated learner for their own account, while Admin retains the review/management authority.
+- **Back to Course Selection** and **Continue** are approved Step 2 controls and must keep their current navigation behaviour.
+- Step 2 draft persistence is approved: Student Type, legacy ID, prior payment date, non-completion reason and navigation state may be restored for the authenticated learner. For security/browser limitations, an uploaded evidence file itself is not treated as permanently restored; the learner must reselect/re-verify evidence after returning when required.
+- Step 2 must keep the current approved branding, typography, spacing, responsive presentation, wording and selected-state behaviour.
+- Changes to Steps 3–5 are not permission to disturb Step 2. Any shared onboarding/legacy-verification change must regression-check this approved Step 2 before merge.
+- Do not redesign, restyle, reorder, remove, rename, weaken or replace Step 2 options, evidence requirements, verification rules, provisional-discount rules, navigation, persistence or presentation unless Aziwe Futhe explicitly reopens Enrollment Step 2.
 
 ### Browse Courses — FINAL OWNER-APPROVED STATE
 
@@ -161,6 +181,7 @@ These are known cleanup targets, not permission to alter them during unrelated t
 
 Add future protected decisions here in concise form, with the date and the owner request that established them. Do not remove older entries merely because code was refactored; mark them as superseded only when the owner explicitly changes the decision.
 
+- **2026-09-18:** Enrollment Step 2 — Student Type approved by Aziwe Futhe as final: first-time, 70% completed-course Legacy Upgrade, 50% incomplete-course Restart and 25% returning-student paths; evidence/ID verification, provisional-discount safeguards, Back/Continue navigation, draft restoration and Step 2 presentation are protected; Steps 3–5 remain separately reviewable.
 - **2026-09-18:** Enrollment Step 1 — Choose Your Course approved by Aziwe Futhe as final: all active courses surfaced (35 at approval checkpoint), 10-per-page pagination, responsive course cards, search, View more, Select/Clear Selection, Continue, branding and typography are protected; Steps 2–5 remain separately reviewable.
 - **2026-09-18:** Create Student Account approved by Aziwe Futhe as the final Student registration standard: required profile details, Student Terms & Privacy acceptance, 8+ character strong-password rule, official transparent FOA logo, optional immediate course selection, secure Student-profile creation and permanent eligible Ambassador attribution are protected from unapproved change.
 - **2026-09-18:** Cleanup safety rule added after the Create Student Account regression: “legacy” never means “safe to remove.” Every retirement/redirect must first prove the dependency is unused or fully migrated, including indirect callers, then pass the adjacent end-to-end journey without loops or dead ends.
