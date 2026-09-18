@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 18 September 2026 (South Africa time)
-Baseline commit: `de09def1f2d53d90c75b56ef4e0ab54e89c631a1`
+Baseline commit: `c8a0916cfc8d31b55f4e29a987dfb262043690ea`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -117,6 +117,25 @@ Enrollment Step 3 on `onboarding.html` is owner-approved as the final **Student 
 - Changes to Steps 4–5 are not permission to disturb Step 3. Any shared onboarding/registration/draft change must regression-check this approved Step 3 before merge.
 - Do not redesign, restyle, reorder, remove, rename, weaken or replace Step 3 fields, required/optional status, identity validation, profile-prefill/save behaviour, navigation, persistence or presentation unless Aziwe Futhe explicitly reopens Enrollment Step 3.
 
+### Enrollment Step 4 — Payment — FINAL OWNER-APPROVED STATE
+
+Enrollment Step 4 on `onboarding.html` is owner-approved as the final **Payment** structure, payment-plan behaviour, proof requirements and presentation as of 18 September 2026. This approval applies to Step 4 only; Step 5 remains subject to separate owner review and approval.
+
+- The approved Payment step must display the Academy's current official banking details from the active payment settings and must instruct learners not to pay until official banking details are shown.
+- The approved payment methods remain **EFT / Bank Transfer** and **Bank Deposit**. Cash payments are not accepted.
+- Courses below **R2,000**, or courses of **4 weeks or less**, remain full-payment-only under the current payment-plan rules.
+- Courses of **R2,000 or more** that run for more than 4 weeks may qualify for **2 or 3 instalments**, depending on course duration, with the current maximum of 3 instalments.
+- When instalments are available, the learner must still retain the option to **Pay full course fee**. Instalments are an option, not a requirement.
+- The system must continue to calculate the amount currently due. **Amount Paid Now** remains read-only and must correspond to the selected full-payment or instalment option.
+- The amount required by the system must be paid **exactly**. For full payment, proof must show the exact full required amount. For an instalment option, proof must show the exact instalment amount due now. If Admissions & Finance verifies that the amount paid does not match the required amount, the enrollment application is rejected under the approved payment rule.
+- The approved payment reference remains required so Admissions & Finance can match the payment to the learner/application.
+- **Proof of Payment** remains compulsory and may be uploaded only as **PDF, JPG or PNG**, with a maximum file size of **5 MB**.
+- Proof of payment and payment details remain subject to **Admissions & Finance verification** before course access is approved.
+- **Back to Student Registration** and **Continue to Declaration** are approved Step 4 controls and must keep their tested navigation behaviour.
+- The current approved Step 4 banking presentation, payment rules, payment option control, schedule display, amount-due presentation, proof-upload area, branding, typography, spacing and responsive layout must remain unchanged unless Aziwe Futhe explicitly reopens Step 4.
+- Changes to Step 5 are not permission to disturb Step 4. Any shared onboarding/payment change must regression-check this approved Step 4 before merge.
+- Do not redesign, restyle, reorder, remove, rename, weaken or replace Step 4 payment eligibility, instalment/full-payment choices, amount calculation, exact-payment rule, banking presentation, payment reference, proof requirements, verification boundary, navigation or presentation unless Aziwe Futhe explicitly reopens Enrollment Step 4.
+
 ### Browse Courses — FINAL OWNER-APPROVED STATE
 
 The Browse Courses page (`courses-public.html`) is owner-approved as the final public course-catalogue structure and design as of 18 September 2026.
@@ -199,6 +218,7 @@ These are known cleanup targets, not permission to alter them during unrelated t
 
 Add future protected decisions here in concise form, with the date and the owner request that established them. Do not remove older entries merely because code was refactored; mark them as superseded only when the owner explicitly changes the decision.
 
+- **2026-09-18:** Enrollment Step 4 — Payment approved by Aziwe Futhe as final: official banking details, EFT/Bank Deposit, full-payment and eligible 2/3-instalment choices, always-available full-payment option, exact required-amount rule, required payment reference, PDF/JPG/PNG proof up to 5 MB, Admissions & Finance verification, Back/Continue navigation and Step 4 presentation are protected; Step 5 remains separately reviewable.
 - **2026-09-18:** Enrollment Step 3 — Student Registration / Complete Your Details approved by Aziwe Futhe as final: existing-account profile prefill, required/optional Student details, SA ID/passport validation, read-only registered email, Student/profile saving, Back to Student Type, Continue to Payment, draft persistence and Step 3 presentation are protected; Steps 4–5 remain separately reviewable.
 - **2026-09-18:** Enrollment Step 2 — Student Type approved by Aziwe Futhe as final: first-time, 70% completed-course Legacy Upgrade, 50% incomplete-course Restart and 25% returning-student paths; evidence/ID verification, provisional-discount safeguards, Back/Continue navigation, draft restoration and Step 2 presentation are protected; Steps 3–5 remain separately reviewable.
 - **2026-09-18:** Enrollment Step 1 — Choose Your Course approved by Aziwe Futhe as final: all active courses surfaced (35 at approval checkpoint), 10-per-page pagination, responsive course cards, search, View more, Select/Clear Selection, Continue, branding and typography are protected; Steps 2–5 remain separately reviewable.
