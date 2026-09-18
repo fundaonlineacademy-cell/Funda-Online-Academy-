@@ -26,6 +26,19 @@ Preferred order:
 
 Do not add another observer/timer/override merely because an existing override is difficult to understand.
 
+### Legacy / cleanup dependency safety
+
+“Legacy” is not a deletion instruction. Before removing, redirecting, renaming, disabling or replacing any file, route, script, function, table, RPC, policy, migration hook, form, loader or compatibility layer:
+
+1. Prove whether it is still referenced by any approved live page, route, script loader, form action, redirect, event hook, referral flow, authentication path, database function or deployment/runtime dependency.
+2. Trace both direct and indirect callers. A file can still be required even when users never navigate to it directly.
+3. Confirm the replacement already contains the complete working behaviour before retiring the old dependency.
+4. Run the adjacent approved journey end-to-end after the cleanup. For route changes, verify there is no redirect loop or dead end.
+5. Preserve migration/audit history unless there is a separately approved reason to remove it.
+6. If dependency status is uncertain, **do not delete or redirect it**. Treat uncertainty as a blocker and inspect further.
+
+The goal of cleanup is to remove obsolete or harmful behaviour that can disturb the approved system — not to remove working dependencies. **Fix up; do not break up.**
+
 ## C. Branching and live-site safety
 
 - `main` is the live approved baseline.
@@ -155,6 +168,7 @@ Every change should finish with a concise note containing:
 - Behaviour explicitly preserved
 - Regression checks performed
 - Known remaining risk/blocker
+- For any cleanup/removal: dependency references checked and replacement verified before retirement
 
 If a check was not run, say so. Never substitute “should work” for a verified result.
 
