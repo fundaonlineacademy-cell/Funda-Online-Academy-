@@ -46,7 +46,7 @@ The following changes require explicit scope confirmation in the PR/task notes:
 - The final owner-approved Login section is protected: `login.html`, `ambassador-login.html`, `reset-password.html`, Staff Access Code enforcement, approved role routing and password-recovery destinations must not change unless Aziwe Futhe explicitly reopens Login.
 - The final owner-approved Ambassador system is protected end-to-end: public programme, application/agreement, application status, activation, Ambassador Login/recovery/logout, portal/dashboard, referral attribution, privacy-limited referral display, confirmed earnings, ranks/compensation, banking, support/Your Voice, marketing resources, announcements and Admin-side Ambassador controls must not change unless Aziwe Futhe explicitly reopens the Ambassador system.
 - Ambassador server-side ownership/RLS/RPC/payment-eligibility controls must not be weakened or replaced by browser-only access control.
-- Legacy login/reset implementations must not be restored as active surfaces. Compatibility redirects may point only to the current approved route.
+- `auth.html` is currently the working Student registration form reached from `create-account.html`; it is not a disposable legacy redirect target. Do not retire or redirect it unless the complete tested registration implementation and Ambassador referral-claim hook have first been migrated. Retired `auth.js` and malformed duplicate reset implementations must remain absent.
 - `supabase-config.js` or any global loader.
 - Login/authentication/role routing.
 - Supabase schema/RLS/RPC/storage/auth/production-data changes.
@@ -93,6 +93,8 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Forgot Password sends recovery to the registered email and uses the approved reset-password flow.
 - Password recovery returns to the correct login entry after a successful update.
 - Create Student Account, Ambassador Portal Login and Browse Courses links keep their approved destinations.
+- Create Student Account opens a usable registration form and does not loop between `create-account.html` and `auth.html`.
+- Ambassador referral codes survive the Create Student Account → registration form journey and can still be claimed only by an eligible newly created Student account.
 - Correct role redirects remain intact.
 - No login route exposes another portal or introduces an unapproved fourth portal.
 - Retired `auth.js` / duplicate reset implementations remain absent from active use.
