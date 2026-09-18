@@ -14,6 +14,7 @@
 - [ ] I read `FOA_APPROVED_STATE.md`.
 - [ ] I read `FOA_CHANGE_CONTROL.md`.
 - [ ] No previously rejected/retired behaviour was restored.
+- [ ] Any file/route/script/function being removed, redirected, renamed or disabled was dependency-traced first; direct and indirect callers were verified or fully migrated.
 - [ ] No trial UI choice was expanded without explicit approval.
 - [ ] The final approved Home page remains unchanged unless the owner explicitly reopened it.
 - [ ] The final approved Browse Courses page remains unchanged unless the owner explicitly reopened it.
@@ -61,6 +62,7 @@ OWNER-APPROVED-BROAD-CHANGE: no
 ## Regression checks performed
 - [ ] Requested path tested
 - [ ] Adjacent path tested
+- [ ] Redirect/dependency loop or dead-end check completed where cleanup/routing changed
 - [ ] Desktop checked where applicable
 - [ ] Mobile checked where applicable
 - [ ] Role separation checked where applicable
