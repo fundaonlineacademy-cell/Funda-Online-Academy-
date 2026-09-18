@@ -113,6 +113,8 @@ The following patterns are not acceptable unless Aziwe explicitly asks for them:
 - Replacing an approved working flow with a “newer” or more generic pattern without owner instruction.
 - Using an unrelated feature file as the permanent home for another feature.
 - Adding a new override script to fight an existing override without first identifying the source conflict.
+- Deleting, redirecting, renaming, disabling or replacing something merely because it appears old, duplicated or “legacy” without first proving it is not an active dependency of an approved flow.
+- Retiring a working dependency before the replacement has the complete tested behaviour and all direct/indirect callers have been moved safely.
 
 ## Architecture risks already identified — do not worsen them
 
@@ -126,6 +128,7 @@ These are known cleanup targets, not permission to alter them during unrelated t
 
 Add future protected decisions here in concise form, with the date and the owner request that established them. Do not remove older entries merely because code was refactored; mark them as superseded only when the owner explicitly changes the decision.
 
+- **2026-09-18:** Cleanup safety rule added after the Create Student Account regression: “legacy” never means “safe to remove.” Every retirement/redirect must first prove the dependency is unused or fully migrated, including indirect callers, then pass the adjacent end-to-end journey without loops or dead ends.
 - **2026-09-18:** Entire Ambassador system approved by Aziwe Futhe as the final Ambassador programme/portal standard: public programme, application/agreement, review/status, activation, login/recovery/logout, permanent account-creation referral attribution, privacy-limited referral summaries, confirmed earnings, ranks/compensation, banking, tickets/Your Voice, resources and dashboard behaviour are protected from unapproved change.
 - **2026-09-18:** Create Student Account dependency clarified after urgent regression: `create-account.html` is the approved public entry and `auth.html` remains its current working registration form until a complete migration is explicitly approved. Never replace `auth.html` with a redirect while this dependency exists.
 - **2026-09-18:** Login section approved by Aziwe Futhe as the final Academy authentication standard: Student, Staff/Admin and Ambassador are the only approved portal entry journeys; Staff/Admin requires email + password + Staff Access Code; approved recovery and navigation destinations are protected; retired `auth.js` and duplicate reset implementations must not return.
