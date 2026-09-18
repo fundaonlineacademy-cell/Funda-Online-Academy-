@@ -15,7 +15,7 @@
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js?v=20260916-login-audit-v1"></script>
+  <script src="supabase-config.js?v=20260918-password-recovery-v1"></script>
 
   <style>
     :root{
@@ -477,10 +477,9 @@
     forgotButton.textContent = "Sending...";
 
     try {
-      const { data, error } = await supabaseClient.functions.invoke("request-password-reset", {
-        body: { email }
-      });
-      if (error || data?.ok === false) throw error || new Error(data?.error || "reset-request-failed");
+      const redirectTo = new URL("reset-password.html", window.location.origin + "/").href;
+      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
+      if (error) throw error;
       showMessage("If an account exists for that email address, password reset instructions will be sent to it.", true);
     } catch (error) {
       console.error("Password reset error:", error);

@@ -1,3 +1,42 @@
+// Password-recovery relay.
+// Supabase may fall back to the configured Site URL when a recovery redirect is
+// not accepted by Auth URL configuration. Only a verified recovery-shaped URL
+// landing on the public site root is forwarded; normal Home-page visits are
+// unchanged.
+(() => {
+  'use strict';
+  try {
+    const path = window.location.pathname || '/';
+    const isHome = /\/$/.test(path) || /(^|\/)index\.html$/i.test(path);
+    if (!isHome) return;
+
+    const search = new URLSearchParams(window.location.search);
+    const hash = new URLSearchParams((window.location.hash || '').replace(/^#/, ''));
+    const type = String(search.get('type') || hash.get('type') || '').toLowerCase();
+    const hasRecoveryCredential =
+      hash.has('access_token') ||
+      hash.has('refresh_token') ||
+      hash.has('token_hash') ||
+      search.has('token_hash') ||
+      search.has('code');
+
+    if (type !== 'recovery' || !hasRecoveryCredential) return;
+
+    const target = new URL('reset-password.html', window.location.origin + '/');
+    target.search = window.location.search;
+    target.hash = window.location.hash;
+    const targetHref = target.href;
+
+    document.documentElement.style.visibility = 'hidden';
+    try {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } catch (_) {}
+    window.location.replace(targetHref);
+  } catch (error) {
+    console.warn('Password recovery relay could not be started.', error);
+  }
+})();
+
 window.SUPABASE_URL =
   "https://nzwfowwoazmpnwfrednh.supabase.co";
 
