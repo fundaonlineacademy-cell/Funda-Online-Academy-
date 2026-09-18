@@ -467,14 +467,27 @@
       return;
     }
 
+    if (!supabaseClient) {
+      showMessage("The Academy connection is not ready. Please refresh the page and try again.");
+      return;
+    }
+
+    const forgotButton = document.getElementById("forgotBtn");
+    forgotButton.disabled = true;
+    forgotButton.textContent = "Sending...";
+
     try {
-      const redirectTo = new URL("reset-password.html", window.location.href).href;
-      const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
-      if (error) throw error;
+      const { data, error } = await supabaseClient.functions.invoke("request-password-reset", {
+        body: { email }
+      });
+      if (error || data?.ok === false) throw error || new Error(data?.error || "reset-request-failed");
       showMessage("If an account exists for that email address, password reset instructions will be sent to it.", true);
     } catch (error) {
       console.error("Password reset error:", error);
       showMessage("Password reset could not be started right now. Please try again later.");
+    } finally {
+      forgotButton.disabled = false;
+      forgotButton.textContent = "Forgot password?";
     }
   }
 
