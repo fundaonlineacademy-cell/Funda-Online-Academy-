@@ -113,6 +113,22 @@ jobs:
             fi
           fi
 
+          enrollment_step4_surface_regex='^(onboarding-integrity-payments\.js)$'
+
+          if grep -Eq "$enrollment_step4_surface_regex" /tmp/foa-changed-files.txt; then
+            if ! grep -Eqi 'OWNER-APPROVED-ENROLLMENT-STEP4-CHANGE:[[:space:]]*yes' <<< "$body"; then
+              echo "::error::Enrollment Step 4 — Payment is owner-approved as final. A direct Step 4 payment-integrity change requires explicit OWNER-APPROVED-ENROLLMENT-STEP4-CHANGE: yes."
+              exit 1
+            fi
+          fi
+
+          if git diff -U0 "origin/${BASE_REF}...HEAD" -- onboarding.html onboarding-registration-flow.js | grep -Eq '(paymentMethod|paymentReference|proofFile|paymentStep|paymentBack|paymentContinue|validatePaymentDetails|backToPayment|Continue to Declaration|Back to Student Registration)'; then
+            if ! grep -Eqi 'OWNER-APPROVED-ENROLLMENT-STEP4-CHANGE:[[:space:]]*yes' <<< "$body"; then
+              echo "::error::Enrollment Step 4 — Payment is owner-approved as final. A change to Step 4 payment fields, proof requirements or navigation requires explicit OWNER-APPROVED-ENROLLMENT-STEP4-CHANGE: yes."
+              exit 1
+            fi
+          fi
+
           homepage_runtime_regex='^(index\.html|supabase-config\.js|academy-identity\.js|marketing-public-tracking\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js|public-course-enroll-cta\.js)$'
 
           if grep -Eq "$homepage_runtime_regex" /tmp/foa-changed-files.txt; then
@@ -181,6 +197,15 @@ jobs:
           if grep -Eq "$enrollment_step3_runtime_regex" /tmp/foa-changed-files.txt; then
             if ! grep -Eqi 'ENROLLMENT-STEP3-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
               echo "::error::This PR touches a file that can affect final approved Enrollment Step 3. Record ENROLLMENT-STEP3-REGRESSION-CHECKED: yes only after checking profile prefill, required fields, SA ID/passport validation, read-only email, Student/profile save, Back/Continue and draft persistence."
+              exit 1
+            fi
+          fi
+
+          enrollment_step4_runtime_regex='^(onboarding\.html|onboarding-registration-flow\.js|onboarding-integrity-payments\.js|onboarding-draft-persistence\.js|supabase-config\.js|.*payment.*\.sql)$'
+
+          if grep -Eq "$enrollment_step4_runtime_regex" /tmp/foa-changed-files.txt; then
+            if ! grep -Eqi 'ENROLLMENT-STEP4-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
+              echo "::error::This PR touches a file that can affect final approved Enrollment Step 4. Record ENROLLMENT-STEP4-REGRESSION-CHECKED: yes only after checking banking details, payment methods, full/instalment options, exact amount, payment reference, proof type/size, Finance verification and Back/Continue."
               exit 1
             fi
           fi
