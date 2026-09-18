@@ -120,6 +120,7 @@
       <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
         <p class="font-black text-[#03133d]">Payment rules</p>
         <p class="text-sm text-gray-700 leading-6 mt-2">Courses below R2,000 must be paid in full. Courses of R2,000 or more may qualify for instalments when the course runs for more than 4 weeks. The number of instalments is based on the course duration and is capped at 3.</p>
+        <p class="text-sm text-red-700 font-bold leading-6 mt-3">Important: The amount required by the system must be paid exactly. If full payment is required, the proof of payment must show the full required course amount. If an instalment option is selected, the proof must show the exact instalment amount due now. If Admissions &amp; Finance verifies that the amount paid does not match the required amount, the enrollment application will be rejected.</p>
       </div>
       <div id="bankDetailsBox" class="rounded-2xl border border-blue-200 bg-blue-50 p-5">
         <p class="text-xs uppercase tracking-widest font-black text-blue-700">Official banking details</p>
