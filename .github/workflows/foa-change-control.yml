@@ -70,7 +70,6 @@ jobs:
             fi
           fi
 
-          create_account_surface_regex='^(create-account\.html|auth\.html|funda-transparent-logo-master\.js)
           ambassador_surface_regex='(^|/)(ambassadors\.html|ambassador-application\.html|ambassador-login\.html|ambassador-portal-v2\.html|.*ambassador.*\.(js|sql))$'
 
           if grep -Eq "$ambassador_surface_regex" /tmp/foa-changed-files.txt; then
@@ -80,53 +79,7 @@ jobs:
             fi
           fi
 
-          homepage_runtime_regex='^(index\.html|supabase-config\.js|academy-identity\.js|marketing-public-tracking\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js|public-course-enroll-cta\.js)$'
-
-          if grep -Eq "$homepage_runtime_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'HOMEPAGE-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR touches a file that can affect the approved Home page. Record HOMEPAGE-REGRESSION-CHECKED: yes only after confirming the final Home-page design and behaviour remain unchanged."
-              exit 1
-            fi
-          fi
-
-          browse_courses_runtime_regex='^(courses-public\.html|supabase-config\.js|courses-public-faq-loader\.js|courses-public-enrollment-faq\.js|course-career-skill-areas\.js|course-search-mobile-polish\.js|ambassador-referral-tracking\.js|academy-identity\.js|create-account-route-fix\.js|public-course-enroll-cta\.js|courses-public-controls-restore\.js|courses-public-brand-theme\.js|public-course-value\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js)$'
-
-          if grep -Eq "$browse_courses_runtime_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'BROWSE-COURSES-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR touches a file that can affect the final approved Browse Courses page. Record BROWSE-COURSES-REGRESSION-CHECKED: yes only after confirming its final design, FAQ/contact content, navigation and responsive behaviour remain unchanged."
-              exit 1
-            fi
-          fi
-
-          login_runtime_regex='^(login\.html|ambassador-login\.html|reset-password\.html|supabase-config\.js|staff-access-code-login\.js|login-layout-order-restore\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|academy-map\.html|auth\.html)$'
-
-          if grep -Eq "$login_runtime_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'LOGIN-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR touches a file that can affect the final approved Login section. Record LOGIN-REGRESSION-CHECKED: yes only after confirming Student, Staff/Admin, Ambassador, recovery and approved destinations remain correct."
-              exit 1
-            fi
-          fi
-
-          ambassador_runtime_regex='(^|/)(ambassadors\.html|ambassador-application\.html|ambassador-login\.html|ambassador-portal-v2\.html|.*ambassador.*\.(js|sql)|supabase-config\.js|create-account\.html|create-account-route-fix\.js|courses-public\.html|public-course-enroll-cta\.js|reset-password\.html|admin-v2\.html)$'
-
-          if grep -Eq "$ambassador_runtime_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'AMBASSADOR-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR touches a file that can affect the final approved Ambassador system. Record AMBASSADOR-REGRESSION-CHECKED: yes only after checking programme/application/status, login/recovery/logout, referral attribution/privacy, earnings/ranks/banking/support and portal boundaries."
-              exit 1
-            fi
-          fi
-
-          create_account_runtime_regex='^(create-account\.html|auth\.html|funda-transparent-logo-master\.js|supabase-config\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|onboarding\.html)
-
-          if [ "$runtime_count" -gt 12 ]; then
-            if ! grep -Eqi 'OWNER-APPROVED-BROAD-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR changes more than 12 runtime/data files. Split the work or explicitly record owner approval for a broad change."
-              exit 1
-            fi
-          fi
-
-          echo "FOA change-control scope checks passed."
-
+          create_account_surface_regex='^(create-account\.html|auth\.html|funda-transparent-logo-master\.js)$'
 
           if grep -Eq "$create_account_surface_regex" /tmp/foa-changed-files.txt; then
             if ! grep -Eqi 'OWNER-APPROVED-CREATE-ACCOUNT-CHANGE:[[:space:]]*yes' <<< "$body"; then
@@ -135,15 +88,6 @@ jobs:
             fi
           fi
 
-          ambassador_surface_regex='(^|/)(ambassadors\.html|ambassador-application\.html|ambassador-login\.html|ambassador-portal-v2\.html|.*ambassador.*\.(js|sql))$'
-
-          if grep -Eq "$ambassador_surface_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'OWNER-APPROVED-AMBASSADOR-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::The Ambassador system is owner-approved as final. A direct Ambassador programme/application/login/portal/admin/database change requires explicit OWNER-APPROVED-AMBASSADOR-CHANGE: yes."
-              exit 1
-            fi
-          fi
-
           homepage_runtime_regex='^(index\.html|supabase-config\.js|academy-identity\.js|marketing-public-tracking\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js|public-course-enroll-cta\.js)$'
 
           if grep -Eq "$homepage_runtime_regex" /tmp/foa-changed-files.txt; then
@@ -180,85 +124,11 @@ jobs:
             fi
           fi
 
-          runtime_count=$(awk '!/^(AGENTS\.md|FOA_APPROVED_STATE\.md|FOA_CHANGE_CONTROL\.md|\.github\/)/ && NF {count++} END {print count+0}' /tmp/foa-changed-files.txt)
-
-          if [ "$runtime_count" -gt 12 ]; then
-            if ! grep -Eqi 'OWNER-APPROVED-BROAD-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR changes more than 12 runtime/data files. Split the work or explicitly record owner approval for a broad change."
-              exit 1
-            fi
-          fi
-
-          echo "FOA change-control scope checks passed."
-
+          create_account_runtime_regex='^(create-account\.html|auth\.html|funda-transparent-logo-master\.js|supabase-config\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|onboarding\.html)$'
 
           if grep -Eq "$create_account_runtime_regex" /tmp/foa-changed-files.txt; then
             if ! grep -Eqi 'CREATE-ACCOUNT-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
               echo "::error::This PR touches a file that can affect the final approved Create Student Account journey. Record CREATE-ACCOUNT-REGRESSION-CHECKED: yes only after checking required fields, Terms/Privacy, strong password, registration, referral attribution and onboarding/course-selection handoff."
-              exit 1
-            fi
-          fi
-
-          runtime_count=$(awk '!/^(AGENTS\.md|FOA_APPROVED_STATE\.md|FOA_CHANGE_CONTROL\.md|\.github\/)/ && NF {count++} END {print count+0}' /tmp/foa-changed-files.txt)
-
-          if [ "$runtime_count" -gt 12 ]; then
-            if ! grep -Eqi 'OWNER-APPROVED-BROAD-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR changes more than 12 runtime/data files. Split the work or explicitly record owner approval for a broad change."
-              exit 1
-            fi
-          fi
-
-          echo "FOA change-control scope checks passed."
-
-
-          if grep -Eq "$create_account_surface_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'OWNER-APPROVED-CREATE-ACCOUNT-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::Create Student Account is owner-approved as final. A direct registration-surface change requires explicit OWNER-APPROVED-CREATE-ACCOUNT-CHANGE: yes."
-              exit 1
-            fi
-          fi
-
-          ambassador_surface_regex='(^|/)(ambassadors\.html|ambassador-application\.html|ambassador-login\.html|ambassador-portal-v2\.html|.*ambassador.*\.(js|sql))$'
-
-          if grep -Eq "$ambassador_surface_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'OWNER-APPROVED-AMBASSADOR-CHANGE:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::The Ambassador system is owner-approved as final. A direct Ambassador programme/application/login/portal/admin/database change requires explicit OWNER-APPROVED-AMBASSADOR-CHANGE: yes."
-              exit 1
-            fi
-          fi
-
-          homepage_runtime_regex='^(index\.html|supabase-config\.js|academy-identity\.js|marketing-public-tracking\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js|public-course-enroll-cta\.js)$'
-
-          if grep -Eq "$homepage_runtime_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'HOMEPAGE-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR touches a file that can affect the approved Home page. Record HOMEPAGE-REGRESSION-CHECKED: yes only after confirming the final Home-page design and behaviour remain unchanged."
-              exit 1
-            fi
-          fi
-
-          browse_courses_runtime_regex='^(courses-public\.html|supabase-config\.js|courses-public-faq-loader\.js|courses-public-enrollment-faq\.js|course-career-skill-areas\.js|course-search-mobile-polish\.js|ambassador-referral-tracking\.js|academy-identity\.js|create-account-route-fix\.js|public-course-enroll-cta\.js|courses-public-controls-restore\.js|courses-public-brand-theme\.js|public-course-value\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js)$'
-
-          if grep -Eq "$browse_courses_runtime_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'BROWSE-COURSES-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR touches a file that can affect the final approved Browse Courses page. Record BROWSE-COURSES-REGRESSION-CHECKED: yes only after confirming its final design, FAQ/contact content, navigation and responsive behaviour remain unchanged."
-              exit 1
-            fi
-          fi
-
-          login_runtime_regex='^(login\.html|ambassador-login\.html|reset-password\.html|supabase-config\.js|staff-access-code-login\.js|login-layout-order-restore\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|academy-map\.html|auth\.html)$'
-
-          if grep -Eq "$login_runtime_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'LOGIN-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR touches a file that can affect the final approved Login section. Record LOGIN-REGRESSION-CHECKED: yes only after confirming Student, Staff/Admin, Ambassador, recovery and approved destinations remain correct."
-              exit 1
-            fi
-          fi
-
-          ambassador_runtime_regex='(^|/)(ambassadors\.html|ambassador-application\.html|ambassador-login\.html|ambassador-portal-v2\.html|.*ambassador.*\.(js|sql)|supabase-config\.js|create-account\.html|create-account-route-fix\.js|courses-public\.html|public-course-enroll-cta\.js|reset-password\.html|admin-v2\.html)$'
-
-          if grep -Eq "$ambassador_runtime_regex" /tmp/foa-changed-files.txt; then
-            if ! grep -Eqi 'AMBASSADOR-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
-              echo "::error::This PR touches a file that can affect the final approved Ambassador system. Record AMBASSADOR-REGRESSION-CHECKED: yes only after checking programme/application/status, login/recovery/logout, referral attribution/privacy, earnings/ranks/banking/support and portal boundaries."
               exit 1
             fi
           fi
