@@ -40,6 +40,9 @@ The following changes require explicit scope confirmation in the PR/task notes:
 
 - The final owner-approved Home page (`index.html`). It must not be changed unless Aziwe Futhe explicitly reopens the Home page.
 - Shared/global scripts that execute on or can alter the Home page. These may change for other approved work only when the Home-page final state is regression-checked and deliberately preserved.
+- The final owner-approved Browse Courses page (`courses-public.html`). It must not be changed unless Aziwe Futhe explicitly reopens Browse Courses.
+- Shared/global scripts that execute on or can alter Browse Courses. These may change for other approved work only when the Browse Courses final state is regression-checked and deliberately preserved.
+- Academy Map destination routing is protected. Public/private destinations must keep their approved role-appropriate login or public route unless the owner explicitly requests a routing change.
 - `supabase-config.js` or any global loader.
 - Login/authentication/role routing.
 - Supabase schema/RLS/RPC/storage/auth/production-data changes.
@@ -68,6 +71,7 @@ When a UI fix is requested:
 
 - Preserve existing approved structure, wording, colour, spacing, controls, navigation, and responsive ordering unless they are part of the request.
 - The Home page is a final approved surface. Do not redesign, restyle, reorder, add, remove or rewrite Home-page content or behaviour unless the owner explicitly reopens it.
+- Browse Courses is a final approved surface. Preserve its course cards, filters, FAQs, WhatsApp-focused contact area, navigation, typography, spacing and responsive structure unless the owner explicitly reopens it.
 - Test both desktop and mobile when responsive behaviour is touched.
 - Do not replace a page-specific fix with a global CSS/JS change unless the owner asked for a global change.
 - Do not expand a trial design choice to other portals/pages.
@@ -106,7 +110,10 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Final approved Home-page design, wording, navigation, course-card controls, contact details and responsive behaviour remain unchanged unless explicitly reopened by the owner.
 - Home-page course cards keep non-clickable bodies with separate **View Course** and **Enroll Now** actions.
 - The General Enquiries address remains `info@fundaonlineacademy.co.za`.
-- Courses page keeps approved controls/layout.
+- Browse Courses keeps its final approved controls/layout, FAQ wording, course-card presentation and WhatsApp-focused contact section.
+- Browse Courses course images fail gracefully to the approved placeholder rather than exposing a broken-image icon.
+- Student Login, Create Student Account, View Course, Academy Map, Employer and Ambassador routes remain correct.
+- Academy Map registered-learner routes continue through Student Login; Staff/Admin routes continue through the shared secure Staff/Admin login; public routes remain public.
 - Course overview and registration links work.
 - Enrol-anytime messaging/FAQ remains present where approved.
 - Mobile navigation remains usable.
