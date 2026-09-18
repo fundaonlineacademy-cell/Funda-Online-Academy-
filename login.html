@@ -472,6 +472,8 @@
       return;
     }
 
+    document.cookie = "foa_password_reset_portal=; Max-Age=0; Path=/; Secure; SameSite=Lax";
+
     const forgotButton = document.getElementById("forgotBtn");
     forgotButton.disabled = true;
     forgotButton.textContent = "Sending...";
