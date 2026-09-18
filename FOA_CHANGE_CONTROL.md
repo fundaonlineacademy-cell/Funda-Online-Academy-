@@ -44,6 +44,8 @@ The following changes require explicit scope confirmation in the PR/task notes:
 - Shared/global scripts that execute on or can alter Browse Courses. These may change for other approved work only when the Browse Courses final state is regression-checked and deliberately preserved.
 - Academy Map destination routing is protected. Public/private destinations must keep their approved role-appropriate login or public route unless the owner explicitly requests a routing change.
 - The final owner-approved Login section is protected: `login.html`, `ambassador-login.html`, `reset-password.html`, Staff Access Code enforcement, approved role routing and password-recovery destinations must not change unless Aziwe Futhe explicitly reopens Login.
+- The final owner-approved Ambassador system is protected end-to-end: public programme, application/agreement, application status, activation, Ambassador Login/recovery/logout, portal/dashboard, referral attribution, privacy-limited referral display, confirmed earnings, ranks/compensation, banking, support/Your Voice, marketing resources, announcements and Admin-side Ambassador controls must not change unless Aziwe Futhe explicitly reopens the Ambassador system.
+- Ambassador server-side ownership/RLS/RPC/payment-eligibility controls must not be weakened or replaced by browser-only access control.
 - Legacy login/reset implementations must not be restored as active surfaces. Compatibility redirects may point only to the current approved route.
 - `supabase-config.js` or any global loader.
 - Login/authentication/role routing.
@@ -75,6 +77,7 @@ When a UI fix is requested:
 - The Home page is a final approved surface. Do not redesign, restyle, reorder, add, remove or rewrite Home-page content or behaviour unless the owner explicitly reopens it.
 - Browse Courses is a final approved surface. Preserve its course cards, filters, FAQs, WhatsApp-focused contact area, navigation, typography, spacing and responsive structure unless the owner explicitly reopens it.
 - Login is a final approved surface. Preserve the Student / Staff-Admin selector, strict Staff Access Code requirement, Ambassador Login separation, Forgot Password flow, approved destinations and responsive ordering unless the owner explicitly reopens it.
+- The Ambassador programme/application/login/portal are final approved surfaces. Preserve their structure, wording, compensation/rank presentation, privacy-limited referral summaries, banking/security presentation, tickets/Your Voice, navigation and responsive behaviour unless the owner explicitly reopens the Ambassador system.
 - Test both desktop and mobile when responsive behaviour is touched.
 - Do not replace a page-specific fix with a global CSS/JS change unless the owner asked for a global change.
 - Do not expand a trial design choice to other portals/pages.
@@ -109,10 +112,19 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - No Student/Ambassador access is broadened accidentally.
 
 ### Ambassador
-- Application/login remains separate from Student access.
-- Referral links still point to the intended registration journey.
-- Referral attribution still works.
-- Earnings/banking/programme views are not altered by unrelated work.
+- Public programme and dedicated application/agreement journey remain intact.
+- Application status keeps the approved pending/waitlisted/declined/approved boundaries.
+- Ambassador Login, Forgot Password, successful portal entry and Logout return paths remain correct.
+- Referral links still lead to Student account creation with the Ambassador code preserved.
+- Referral ownership is established only through an eligible new account claim and cannot be overwritten by another Ambassador code.
+- Privacy-limited referral display remains first-name + surname initial where available, with no private Student contact/ID/payment/assessment/support data exposed.
+- **Course not yet selected** remains valid for a referred account that has not enrolled yet.
+- Unconfirmed referrals remain R0/not-yet-earned; only approved/paid eligible earnings appear as money.
+- Compensation plan, ranks, direct-referral-only rules and no-downline/no-recruitment model remain unchanged.
+- Banking remains own-account only, masked after storage and subject to Finance verification.
+- Support tickets/replies and Your Voice records remain account-bound and private.
+- Marketing resources, announcements, programme rules/agreement, profile and dashboard navigation remain available as approved.
+- Admin-side Ambassador programme/finance/support controls remain role-restricted.
 
 ### Public site
 - Final approved Home-page design, wording, navigation, course-card controls, contact details and responsive behaviour remain unchanged unless explicitly reopened by the owner.
