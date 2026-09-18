@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 18 September 2026 (South Africa time)
-Baseline commit: `6b4cb49a42a3f89077464db82dc63ba4f975d5e8`
+Baseline commit: `52d571b5d87b1a2ecfe2291e43f54ae2c9a160ee`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -80,11 +80,27 @@ The current baseline includes the recent five-step onboarding direction. Preserv
 - Enrolment-submission confirmation email hook.
 - Public “enrol anytime” messaging and related course FAQ behaviour.
 
-### Ambassador referrals
+### Ambassador system — FINAL OWNER-APPROVED STATE
 
-- Ambassador referral links are intended to lead into account creation/registration rather than bypassing the registration journey.
-- Referral attribution must remain separated from Student account privileges.
-- Existing referral behaviour must not be silently rewritten while working on Staff/Admin login or public-course content.
+The Ambassador programme and portal are owner-approved as the final working Ambassador standard as of 18 September 2026.
+
+- The approved Ambassador journey is: **public programme → dedicated application + login creation + programme agreement → Academy review → approved / waitlisted / declined → activation → Ambassador Login → Ambassador Portal**. Do not replace, bypass or redesign this journey unless Aziwe Futhe explicitly reopens the Ambassador system.
+- `ambassadors.html`, `ambassador-application.html`, `ambassador-login.html` and `ambassador-portal-v2.html` are protected Ambassador surfaces. Their approved design, wording, navigation, responsive behaviour, status handling and security boundaries must be preserved.
+- The approved Ambassador Login uses the email/password created during application. **Forgot password** sends recovery to the registered email, uses the approved secure reset-password flow and returns the user to Ambassador Login. Logout returns to Ambassador Login.
+- Pending, waitlisted and declined applicants remain in the approved status-only journey. Full referral, earnings, banking, marketing and operational tools remain restricted until the approved/activated state.
+- The approved referral link leads to **Student account creation**. Referral ownership is established only when a new eligible Student account is created and securely claimed; a link click alone is not an earned referral or commission.
+- Existing referral attribution is permanent and must not be overwritten by a later Ambassador code. Old/cached browser referral data must not claim an existing learner.
+- Ambassador referral summaries remain privacy-limited. The approved display uses the Student's first name plus the first letter of the surname where available, does not expose Student email/phone/ID/payment/assessment/private-support data, and may show **Course not yet selected** until an enrolment exists.
+- Unconfirmed referrals must remain **R0 / not yet earned**. Ambassador earnings shown in the portal must come only from Academy-confirmed approved/paid earning records under the existing eligibility checks.
+- The approved compensation plan, rank progression, achievement/performance rules and direct-referral-only model must not be altered or converted into downlines, recruitment commissions or team overrides unless explicitly approved by the owner.
+- The approved banking flow remains restricted to the Ambassador's own payout details, with Finance verification and masked account display. Do not expose stored full bank account numbers back to the portal.
+- Support tickets, replies and **Your Voice** submissions remain private, traceable, account-bound Ambassador records. An Ambassador must not be able to read another Ambassador's tickets, submissions, earnings, payouts or account details.
+- The approved marketing resources, announcements, programme rules, agreement record, profile, referrals, earnings, payment history, banking, rank progress, compensation plan and support areas are part of the final Ambassador Dashboard.
+- Current server-side ownership/security controls for Ambassador applications, referrals, earnings, payouts, support records and notifications must not be weakened, bypassed or replaced with browser-only hiding.
+- Historical Ambassador SQL migrations are retained as migration/audit history. They are not permission to restore superseded UI or behaviour.
+- Shared/global files that affect Ambassador referral attribution, account creation, recovery, public programme links or portal access require an Ambassador regression check before merge.
+- Do not reintroduce retired, superseded, duplicate or cached Ambassador behaviour from older commits. A file name containing an older version/audit label is not by itself evidence that the file is obsolete; remove it only after proving it is not part of the approved runtime.
+- A direct change to an Ambassador programme/application/login/portal/admin-Ambassador file or Ambassador SQL requires explicit Ambassador owner approval in the pull request.
 
 ## Explicit anti-regression rules
 
@@ -109,6 +125,7 @@ These are known cleanup targets, not permission to alter them during unrelated t
 
 Add future protected decisions here in concise form, with the date and the owner request that established them. Do not remove older entries merely because code was refactored; mark them as superseded only when the owner explicitly changes the decision.
 
+- **2026-09-18:** Entire Ambassador system approved by Aziwe Futhe as the final Ambassador programme/portal standard: public programme, application/agreement, review/status, activation, login/recovery/logout, permanent account-creation referral attribution, privacy-limited referral summaries, confirmed earnings, ranks/compensation, banking, tickets/Your Voice, resources and dashboard behaviour are protected from unapproved change.
 - **2026-09-18:** Login section approved by Aziwe Futhe as the final Academy authentication standard: Student, Staff/Admin and Ambassador are the only approved portal entry journeys; Staff/Admin requires email + password + Staff Access Code; approved recovery and navigation destinations are protected; legacy auth/reset implementations are retired.
 - **2026-09-18:** Browse Courses approved by Aziwe Futhe as the final public course-catalogue design, structure, FAQ/contact presentation and tested navigation standard. No further Browse Courses changes are permitted unless the owner explicitly reopens it; approved Academy Map destination routing must not be silently changed.
 - **2026-09-18:** Home page approved by Aziwe Futhe as the final public Home-page design and structure. No further Home-page changes are permitted unless the owner explicitly reopens it. Protect direct and indirect Home-page behaviour from regressions and do not restore legacy/retired content.
