@@ -23,6 +23,7 @@
 - [ ] The final approved Create Student Account journey remains unchanged unless the owner explicitly reopened it.
 - [ ] The final approved Enrollment Step 1 — Choose Your Course remains unchanged unless the owner explicitly reopened it.
 - [ ] The final approved Enrollment Step 2 — Student Type remains unchanged unless the owner explicitly reopened it.
+- [ ] The final approved Enrollment Step 3 — Student Registration / Complete Your Details remains unchanged unless the owner explicitly reopened it.
 - [ ] Approved Academy Map public/private destination routing remains intact unless explicitly changed.
 
 ## Protected change authorization
@@ -71,6 +72,12 @@ OWNER-APPROVED-ENROLLMENT-STEP2-CHANGE: no
 <!-- Use `yes` when a changed file can execute on or affect Enrollment Step 2 and the approved Student Type/legacy-verification behaviour was regression-checked. -->
 ENROLLMENT-STEP2-REGRESSION-CHECKED: no
 
+<!-- Use `yes` only when Aziwe Futhe explicitly reopens final Enrollment Step 3 — Student Registration / Complete Your Details. -->
+OWNER-APPROVED-ENROLLMENT-STEP3-CHANGE: no
+
+<!-- Use `yes` when a changed file can execute on or affect Enrollment Step 3 and the approved registration/profile behaviour was regression-checked. -->
+ENROLLMENT-STEP3-REGRESSION-CHECKED: no
+
 <!-- Use `yes` only when the owner explicitly asked for a broad/cross-portal change. -->
 OWNER-APPROVED-BROAD-CHANGE: no
 
@@ -95,6 +102,7 @@ OWNER-APPROVED-BROAD-CHANGE: no
 - [ ] Final approved Create Student Account fields, Terms/Privacy, password rule, registration/referral and onboarding handoff preserved where applicable
 - [ ] Final approved Enrollment Step 1 active courses, 10-per-page pagination, responsive cards, search, Select/Clear and Continue preserved where applicable
 - [ ] Final approved Enrollment Step 2 Student Type options, evidence/ID verification, provisional discounts, navigation and draft restoration preserved where applicable
+- [ ] Final approved Enrollment Step 3 profile prefill, fields, identity validation, read-only email, saving, navigation and draft persistence preserved where applicable
 - [ ] Academy Map approved destination routing preserved where applicable
 - [ ] Student/Admin/Ambassador portal boundaries preserved where applicable
 

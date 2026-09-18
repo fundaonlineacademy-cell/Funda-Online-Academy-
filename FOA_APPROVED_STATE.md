@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 18 September 2026 (South Africa time)
-Baseline commit: `39c46c22a02e1f96824f2c4a58d1b4c528fdf842`
+Baseline commit: `de09def1f2d53d90c75b56ef4e0ab54e89c631a1`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -99,6 +99,24 @@ Enrollment Step 2 on `onboarding.html` is owner-approved as the final **Student 
 - Changes to Steps 3–5 are not permission to disturb Step 2. Any shared onboarding/legacy-verification change must regression-check this approved Step 2 before merge.
 - Do not redesign, restyle, reorder, remove, rename, weaken or replace Step 2 options, evidence requirements, verification rules, provisional-discount rules, navigation, persistence or presentation unless Aziwe Futhe explicitly reopens Enrollment Step 2.
 
+### Enrollment Step 3 — Student Registration / Complete Your Details — FINAL OWNER-APPROVED STATE
+
+Enrollment Step 3 on `onboarding.html` is owner-approved as the final **Student Registration / Complete Your Details** structure, validation and presentation as of 18 September 2026. This approval applies to Step 3 only; Steps 4–5 remain subject to separate owner review and approval.
+
+- Step 3 must continue to use the authenticated learner's existing FOA profile and Student record where available, pre-filling known information instead of creating a duplicate Student identity.
+- The registered **Email Address** remains read-only in Step 3. Enrollment must remain tied to the authenticated account rather than allowing the learner to substitute another account email during this step.
+- The approved required details before continuing to Payment are: **Full Name, Mobile / WhatsApp, Gender, Identification Type, Date of Birth, Nationality, Residential Address, City / Town, Province, and Where Did You Hear About Us**.
+- The approved identity paths are **South African ID** or **Passport / Foreign ID**.
+- A South African ID must remain exactly **13 digits**, pass the Academy's South African ID validity check, and produce a Date of Birth that agrees with the form before the learner can continue.
+- A Passport / Foreign ID must remain required when that identity type is selected and must meet the current minimum validity check.
+- The approved optional profile fields remain **Postal Code, Employment Status, Highest Education, Emergency Contact Name, and Emergency Contact Phone**. Do not make them compulsory or remove them without explicit owner approval.
+- Existing Student details and current Step 3 edits must continue to save to the authenticated learner's Student record, with shared identity/profile fields synchronised through the existing approved mechanism.
+- **Back to Student Type** and **Continue to Payment** are approved Step 3 controls and must keep their tested navigation behaviour.
+- Step 3 draft persistence/autosave is approved. Entered details and navigation state may be restored for the authenticated learner, subject to the existing handling of sensitive identity values.
+- The current approved Step 3 branding, typography, spacing, responsive layout, field labels and presentation must remain unchanged unless the owner explicitly reopens Step 3.
+- Changes to Steps 4–5 are not permission to disturb Step 3. Any shared onboarding/registration/draft change must regression-check this approved Step 3 before merge.
+- Do not redesign, restyle, reorder, remove, rename, weaken or replace Step 3 fields, required/optional status, identity validation, profile-prefill/save behaviour, navigation, persistence or presentation unless Aziwe Futhe explicitly reopens Enrollment Step 3.
+
 ### Browse Courses — FINAL OWNER-APPROVED STATE
 
 The Browse Courses page (`courses-public.html`) is owner-approved as the final public course-catalogue structure and design as of 18 September 2026.
@@ -181,6 +199,7 @@ These are known cleanup targets, not permission to alter them during unrelated t
 
 Add future protected decisions here in concise form, with the date and the owner request that established them. Do not remove older entries merely because code was refactored; mark them as superseded only when the owner explicitly changes the decision.
 
+- **2026-09-18:** Enrollment Step 3 — Student Registration / Complete Your Details approved by Aziwe Futhe as final: existing-account profile prefill, required/optional Student details, SA ID/passport validation, read-only registered email, Student/profile saving, Back to Student Type, Continue to Payment, draft persistence and Step 3 presentation are protected; Steps 4–5 remain separately reviewable.
 - **2026-09-18:** Enrollment Step 2 — Student Type approved by Aziwe Futhe as final: first-time, 70% completed-course Legacy Upgrade, 50% incomplete-course Restart and 25% returning-student paths; evidence/ID verification, provisional-discount safeguards, Back/Continue navigation, draft restoration and Step 2 presentation are protected; Steps 3–5 remain separately reviewable.
 - **2026-09-18:** Enrollment Step 1 — Choose Your Course approved by Aziwe Futhe as final: all active courses surfaced (35 at approval checkpoint), 10-per-page pagination, responsive course cards, search, View more, Select/Clear Selection, Continue, branding and typography are protected; Steps 2–5 remain separately reviewable.
 - **2026-09-18:** Create Student Account approved by Aziwe Futhe as the final Student registration standard: required profile details, Student Terms & Privacy acceptance, 8+ character strong-password rule, official transparent FOA logo, optional immediate course selection, secure Student-profile creation and permanent eligible Ambassador attribution are protected from unapproved change.
