@@ -178,11 +178,12 @@
         <div class="grid sm:grid-cols-2 gap-5 mt-5">
           <div>
             <label for="password" class="block text-sm font-bold text-[#06152f]">Password <span class="text-red-500">*</span></label>
-            <input id="password" type="password" autocomplete="new-password" placeholder="Minimum 6 characters" class="input-field mt-2" required>
+            <input id="password" type="password" autocomplete="new-password" minlength="8" placeholder="8+ characters" class="input-field mt-2" required>
+            <p class="mt-2 text-xs text-slate-500">Use at least 8 characters with a letter, a number and a special symbol.</p>
           </div>
           <div>
             <label for="confirm_password" class="block text-sm font-bold text-[#06152f]">Confirm password <span class="text-red-500">*</span></label>
-            <input id="confirm_password" type="password" autocomplete="new-password" placeholder="Re-enter password" class="input-field mt-2" required>
+            <input id="confirm_password" type="password" autocomplete="new-password" minlength="8" placeholder="Re-enter password" class="input-field mt-2" required>
           </div>
         </div>
 
@@ -371,7 +372,11 @@
     if (!validPhone(phone)) return showMessage("Please enter a valid phone or WhatsApp number.");
     if (!validEmail(email)) return showMessage("Please enter a valid email address, for example yourname@gmail.com.");
     if (email !== confirmEmail) return showMessage("The email addresses do not match.");
-    if (password.length < 6) return showMessage("Your password must contain at least 6 characters.");
+    const strongPassword = password.length >= 8
+      && /[A-Za-z]/.test(password)
+      && /[0-9]/.test(password)
+      && /[^A-Za-z0-9\s]/.test(password);
+    if (!strongPassword) return showMessage("Your password must be at least 8 characters and include a letter, a number and a special symbol.");
     if (password !== confirmPassword) return showMessage("The passwords do not match.");
     if (!terms) return showMessage("Please read and accept the Student Terms before creating your account.");
 
