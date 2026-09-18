@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 18 September 2026 (South Africa time)
-Baseline commit: `52d571b5d87b1a2ecfe2291e43f54ae2c9a160ee`
+Baseline commit: `d0c9f86a4957944977f5e4ef7ca0f3dff9daaf87`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -45,6 +45,23 @@ The Login section is owner-approved as the final Academy authentication structur
 - The approved Login design, wording, fields, role controls, destinations, recovery behaviour and security requirements must not be redesigned, weakened, bypassed or replaced unless the owner explicitly reopens the Login section.
 - `create-account.html` is the approved public Create Student Account entry and currently hands the learner to the working registration form in `auth.html`. **Do not replace `auth.html` with a redirect while `create-account.html` depends on it.** Any future migration must first move the complete tested registration form and referral-claim behaviour to the new authoritative page before retiring `auth.html`. The old `auth.js` login/reset logic and malformed duplicate `reset-password. html` remain retired.
 - Shared/global scripts that can alter Login/authentication must preserve this final state and require Login regression confirmation when changed.
+
+### Create Student Account — FINAL OWNER-APPROVED STATE
+
+The Create Student Account journey is owner-approved as the final Student registration structure and design as of 18 September 2026.
+
+- `create-account.html` is the approved public entry point and `auth.html` is the current working Student registration form behind it. This dependency must not be redirected, removed or replaced unless the complete tested registration behaviour has first been migrated and explicitly approved.
+- The approved required Student profile details are: **Name, Surname, Gender, Phone / WhatsApp, Email address, Confirm email, Password, Confirm password**, plus acceptance of the approved **Student Terms & Privacy** requirements.
+- The approved password standard for new Student accounts is: **minimum 8 characters, at least one letter, at least one number and at least one special symbol**. Confirm Password must match. This rule applies to future password creation and does not invalidate existing account passwords.
+- The owner-supplied FOA transparent master logo is the approved transparent brand asset for this registration page. Do not substitute the retired defective Results-template transparent asset on Create Student Account.
+- Student Terms & Privacy must remain visible and acceptance must be required before account creation. The full Student Terms, Privacy, Payment and Refund Policies link must remain available.
+- Successful account creation must create/maintain the approved Student profile and Student record, preserve policy acceptance recording where applicable, and continue to the approved onboarding/course-selection journey.
+- **Course selection is not compulsory at the moment the Student account is created.** A Student account may exist before a course has been selected; the learner can continue the enrolment/course-selection journey later.
+- When a valid Ambassador referral code is present for an eligible new Student account, the referral claim must continue to be tied to the authenticated Student account. Once securely attributed, the approved Ambassador attribution must not be overwritten by a later Ambassador code.
+- A referral-link click alone is not authoritative attribution. The approved referral record is established through the eligible Student account-creation/claim process.
+- The approved registration form must remain usable on desktop and mobile and must not loop between `create-account.html` and `auth.html`.
+- Do not redesign, restyle, reorder, add, remove, rename or weaken registration fields, validation, Terms & Privacy, password security, logo presentation, referral handoff, profile creation or post-registration routing unless Aziwe Futhe explicitly reopens Create Student Account.
+- Shared/global scripts that can alter registration, referral attribution, account creation or onboarding handoff must preserve this final state and require Create Student Account regression confirmation when changed.
 
 ### Browse Courses — FINAL OWNER-APPROVED STATE
 
@@ -128,6 +145,7 @@ These are known cleanup targets, not permission to alter them during unrelated t
 
 Add future protected decisions here in concise form, with the date and the owner request that established them. Do not remove older entries merely because code was refactored; mark them as superseded only when the owner explicitly changes the decision.
 
+- **2026-09-18:** Create Student Account approved by Aziwe Futhe as the final Student registration standard: required profile details, Student Terms & Privacy acceptance, 8+ character strong-password rule, official transparent FOA logo, optional immediate course selection, secure Student-profile creation and permanent eligible Ambassador attribution are protected from unapproved change.
 - **2026-09-18:** Cleanup safety rule added after the Create Student Account regression: “legacy” never means “safe to remove.” Every retirement/redirect must first prove the dependency is unused or fully migrated, including indirect callers, then pass the adjacent end-to-end journey without loops or dead ends.
 - **2026-09-18:** Entire Ambassador system approved by Aziwe Futhe as the final Ambassador programme/portal standard: public programme, application/agreement, review/status, activation, login/recovery/logout, permanent account-creation referral attribution, privacy-limited referral summaries, confirmed earnings, ranks/compensation, banking, tickets/Your Voice, resources and dashboard behaviour are protected from unapproved change.
 - **2026-09-18:** Create Student Account dependency clarified after urgent regression: `create-account.html` is the approved public entry and `auth.html` remains its current working registration form until a complete migration is explicitly approved. Never replace `auth.html` with a redirect while this dependency exists.

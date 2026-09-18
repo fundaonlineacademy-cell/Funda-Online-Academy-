@@ -20,6 +20,7 @@
 - [ ] The final approved Browse Courses page remains unchanged unless the owner explicitly reopened it.
 - [ ] The final approved Login section remains unchanged unless the owner explicitly reopened it.
 - [ ] The final approved Ambassador system remains unchanged unless the owner explicitly reopened it.
+- [ ] The final approved Create Student Account journey remains unchanged unless the owner explicitly reopened it.
 - [ ] Approved Academy Map public/private destination routing remains intact unless explicitly changed.
 
 ## Protected change authorization
@@ -50,6 +51,12 @@ OWNER-APPROVED-AMBASSADOR-CHANGE: no
 <!-- Use `yes` when a changed file can execute on or affect the Ambassador system and the approved end-to-end Ambassador journey was regression-checked. -->
 AMBASSADOR-REGRESSION-CHECKED: no
 
+<!-- Use `yes` only when Aziwe Futhe explicitly reopens the final Create Student Account journey. -->
+OWNER-APPROVED-CREATE-ACCOUNT-CHANGE: no
+
+<!-- Use `yes` when a changed file can execute on or affect Student registration and the approved Create Student Account journey was regression-checked. -->
+CREATE-ACCOUNT-REGRESSION-CHECKED: no
+
 <!-- Use `yes` only when the owner explicitly asked for a broad/cross-portal change. -->
 OWNER-APPROVED-BROAD-CHANGE: no
 
@@ -71,6 +78,7 @@ OWNER-APPROVED-BROAD-CHANGE: no
 - [ ] Final approved Browse Courses design/behaviour preserved where applicable
 - [ ] Final approved Login/authentication design, fields, recovery and destinations preserved where applicable
 - [ ] Final approved Ambassador programme/application/login/portal/referral/privacy/earnings/support behaviour preserved where applicable
+- [ ] Final approved Create Student Account fields, Terms/Privacy, password rule, registration/referral and onboarding handoff preserved where applicable
 - [ ] Academy Map approved destination routing preserved where applicable
 - [ ] Student/Admin/Ambassador portal boundaries preserved where applicable
 

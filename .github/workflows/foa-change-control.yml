@@ -79,6 +79,15 @@ jobs:
             fi
           fi
 
+          create_account_surface_regex='^(create-account\.html|auth\.html|funda-transparent-logo-master\.js)$'
+
+          if grep -Eq "$create_account_surface_regex" /tmp/foa-changed-files.txt; then
+            if ! grep -Eqi 'OWNER-APPROVED-CREATE-ACCOUNT-CHANGE:[[:space:]]*yes' <<< "$body"; then
+              echo "::error::Create Student Account is owner-approved as final. A direct registration-surface change requires explicit OWNER-APPROVED-CREATE-ACCOUNT-CHANGE: yes."
+              exit 1
+            fi
+          fi
+
           homepage_runtime_regex='^(index\.html|supabase-config\.js|academy-identity\.js|marketing-public-tracking\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|funda-typography\.js|funda-text-contrast\.js|public-academy-map-link\.js|public-employer-link\.js|public-ambassador-link\.js|public-learner-testimonial-name\.js|public-course-enroll-cta\.js)$'
 
           if grep -Eq "$homepage_runtime_regex" /tmp/foa-changed-files.txt; then
@@ -111,6 +120,15 @@ jobs:
           if grep -Eq "$ambassador_runtime_regex" /tmp/foa-changed-files.txt; then
             if ! grep -Eqi 'AMBASSADOR-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
               echo "::error::This PR touches a file that can affect the final approved Ambassador system. Record AMBASSADOR-REGRESSION-CHECKED: yes only after checking programme/application/status, login/recovery/logout, referral attribution/privacy, earnings/ranks/banking/support and portal boundaries."
+              exit 1
+            fi
+          fi
+
+          create_account_runtime_regex='^(create-account\.html|auth\.html|funda-transparent-logo-master\.js|supabase-config\.js|create-account-route-fix\.js|ambassador-referral-tracking\.js|onboarding\.html)$'
+
+          if grep -Eq "$create_account_runtime_regex" /tmp/foa-changed-files.txt; then
+            if ! grep -Eqi 'CREATE-ACCOUNT-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
+              echo "::error::This PR touches a file that can affect the final approved Create Student Account journey. Record CREATE-ACCOUNT-REGRESSION-CHECKED: yes only after checking required fields, Terms/Privacy, strong password, registration, referral attribution and onboarding/course-selection handoff."
               exit 1
             fi
           fi

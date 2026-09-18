@@ -58,6 +58,7 @@ The following changes require explicit scope confirmation in the PR/task notes:
 - Academy Map destination routing is protected. Public/private destinations must keep their approved role-appropriate login or public route unless the owner explicitly requests a routing change.
 - The final owner-approved Login section is protected: `login.html`, `ambassador-login.html`, `reset-password.html`, Staff Access Code enforcement, approved role routing and password-recovery destinations must not change unless Aziwe Futhe explicitly reopens Login.
 - The final owner-approved Ambassador system is protected end-to-end: public programme, application/agreement, application status, activation, Ambassador Login/recovery/logout, portal/dashboard, referral attribution, privacy-limited referral display, confirmed earnings, ranks/compensation, banking, support/Your Voice, marketing resources, announcements and Admin-side Ambassador controls must not change unless Aziwe Futhe explicitly reopens the Ambassador system.
+- The final owner-approved Create Student Account journey is protected: `create-account.html`, the working `auth.html` registration form, required Student profile fields, Terms & Privacy acceptance, strong-password rules, official transparent logo, account/profile creation, referral handoff and onboarding/course-selection handoff must not change unless Aziwe Futhe explicitly reopens Student registration.
 - Ambassador server-side ownership/RLS/RPC/payment-eligibility controls must not be weakened or replaced by browser-only access control.
 - `auth.html` is currently the working Student registration form reached from `create-account.html`; it is not a disposable legacy redirect target. Do not retire or redirect it unless the complete tested registration implementation and Ambassador referral-claim hook have first been migrated. Retired `auth.js` and malformed duplicate reset implementations must remain absent.
 - `supabase-config.js` or any global loader.
@@ -91,6 +92,7 @@ When a UI fix is requested:
 - Browse Courses is a final approved surface. Preserve its course cards, filters, FAQs, WhatsApp-focused contact area, navigation, typography, spacing and responsive structure unless the owner explicitly reopens it.
 - Login is a final approved surface. Preserve the Student / Staff-Admin selector, strict Staff Access Code requirement, Ambassador Login separation, Forgot Password flow, approved destinations and responsive ordering unless the owner explicitly reopens it.
 - The Ambassador programme/application/login/portal are final approved surfaces. Preserve their structure, wording, compensation/rank presentation, privacy-limited referral summaries, banking/security presentation, tickets/Your Voice, navigation and responsive behaviour unless the owner explicitly reopens the Ambassador system.
+- Create Student Account is a final approved surface. Preserve the required profile fields, Student Terms & Privacy acceptance, strong-password standard, official transparent logo, referral handoff, profile creation and optional immediate course-selection behaviour unless the owner explicitly reopens Student registration.
 - Test both desktop and mobile when responsive behaviour is touched.
 - Do not replace a page-specific fix with a global CSS/JS change unless the owner asked for a global change.
 - Do not expand a trial design choice to other portals/pages.
@@ -111,6 +113,11 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Correct role redirects remain intact.
 - No login route exposes another portal or introduces an unapproved fourth portal.
 - Retired `auth.js` / duplicate reset implementations remain absent from active use.
+- Create Student Account still requires Name, Surname, Gender, Phone/WhatsApp, Email + Confirm Email, Password + Confirm Password and Student Terms & Privacy acceptance.
+- New Student passwords still require at least 8 characters with a letter, a number and a special symbol.
+- Existing account passwords are not invalidated by the new-account password rule.
+- A Student account can be created before a course is selected; later course selection/onboarding remains available.
+- Eligible Ambassador referral attribution is claimed through the Student account-creation path and cannot be overwritten by a later Ambassador code.
 
 ### Student
 - Dashboard loads.
