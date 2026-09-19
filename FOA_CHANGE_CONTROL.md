@@ -53,6 +53,7 @@ The goal of cleanup is to remove obsolete or harmful behaviour that can disturb 
 The following changes require explicit scope confirmation in the PR/task notes:
 
 - The final owner-approved Home page (`index.html`). It must not be changed unless Aziwe Futhe explicitly reopens the Home page.
+- The 19 September 2026 owner-approved Home-page amendment is limited to the compact General FAQs section. It does not reopen Home navigation, course cards, Academy Identity, Head of Academics message, employer/ambassador sections, footer, typography, colours, spacing or other Home-page behaviour. Future Home FAQ changes again require explicit owner approval.
 - Shared/global scripts that execute on or can alter the Home page. These may change for other approved work only when the Home-page final state is regression-checked and deliberately preserved.
 - The final owner-approved Browse Courses page (`courses-public.html`). It must not be changed unless Aziwe Futhe explicitly reopens Browse Courses.
 - The 19 September 2026 owner-approved Browse Courses amendment is limited to adding public payment FAQs that reflect the approved payment policy. It does not reopen course cards, filters, navigation, contact presentation, typography, spacing or other Browse Courses content. Future FAQ changes again require explicit owner approval.
@@ -97,6 +98,7 @@ When a UI fix is requested:
 
 - Preserve existing approved structure, wording, colour, spacing, controls, navigation, and responsive ordering unless they are part of the request.
 - The Home page is a final approved surface. Do not redesign, restyle, reorder, add, remove or rewrite Home-page content or behaviour unless the owner explicitly reopens it.
+- The approved Home General FAQs remain limited to broad public questions: registration fee, enrol-anytime availability, 100% online delivery, registered-business status, course browsing without an account, and official general contact channels.
 - Browse Courses is a final approved surface. Preserve its course cards, filters, FAQs, WhatsApp-focused contact area, navigation, typography, spacing and responsive structure unless the owner explicitly reopens it.
 - Login is a final approved surface. Preserve the Student / Staff-Admin selector, strict Staff Access Code requirement, Ambassador Login separation, Forgot Password flow, approved destinations and responsive ordering unless the owner explicitly reopens it.
 - The Ambassador programme/application/login/portal are final approved surfaces. Preserve their structure, wording, compensation/rank presentation, privacy-limited referral summaries, banking/security presentation, tickets/Your Voice, navigation and responsive behaviour unless the owner explicitly reopens the Ambassador system.
