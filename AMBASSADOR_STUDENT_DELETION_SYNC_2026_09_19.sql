@@ -152,11 +152,11 @@ as $function$
   select r.id,
          case
            when coalesce(p.full_name,'') = '' then 'Referred student'
-           when array_length(regexp_split_to_array(pg_catalog.trim(p.full_name),'\s+'),1) = 1
-             then split_part(pg_catalog.trim(p.full_name),' ',1)
-           else split_part(pg_catalog.trim(p.full_name),' ',1)||' '||
-             left((regexp_split_to_array(pg_catalog.trim(p.full_name),'\s+'))[
-               array_length(regexp_split_to_array(pg_catalog.trim(p.full_name),'\s+'),1)
+           when array_length(regexp_split_to_array(pg_catalog.btrim(p.full_name),'\s+'),1) = 1
+             then split_part(pg_catalog.btrim(p.full_name),' ',1)
+           else split_part(pg_catalog.btrim(p.full_name),' ',1)||' '||
+             left((regexp_split_to_array(pg_catalog.btrim(p.full_name),'\s+'))[
+               array_length(regexp_split_to_array(pg_catalog.btrim(p.full_name),'\s+'),1)
              ],1)||'.'
          end as student_display,
          coalesce(latest_enrolment.course_title,'Course not yet selected') as course_title,
@@ -346,7 +346,7 @@ begin
 
   perform public.refresh_ambassador_v2_rewards(
     v_application_id,
-    pg_catalog.date_trunc('month',pg_catalog.current_date)::date
+    pg_catalog.date_trunc('month',current_date)::date
   );
 
   return pg_catalog.jsonb_build_object(
@@ -429,7 +429,7 @@ begin
   loop
     perform public.refresh_ambassador_v2_rewards(
       v_app.application_id,
-      pg_catalog.date_trunc('month',pg_catalog.current_date)::date
+      pg_catalog.date_trunc('month',current_date)::date
     );
   end loop;
 end;
