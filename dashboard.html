@@ -162,12 +162,69 @@
   </section>
 
   <section class="sdOrientationAction" aria-labelledby="orientationReady">
-    <div><h2 id="orientationReady">Ready to use your Student Portal?</h2><p>You can return to your summary, open your course area or go directly to the formal support system.</p></div>
+    <div><h2 id="orientationReady">Ready to use your Student Portal?</h2><p>You can return to your summary, open your course area, check your balance, get support or open a visual guide to the online Academy system.</p></div>
     <div class="sdOrientationButtons">
       <button type="button" data-orientation-target="dashboard">My Dashboard</button>
       <button type="button" data-orientation-target="courses">My Courses</button>
       <button type="button" data-orientation-target="payments">Payments &amp; Balance</button>
       <button type="button" data-orientation-target="support">Get Support</button>
+      <button type="button" class="sdNavigateAcademyButton" data-orientation-map-toggle aria-expanded="false" aria-controls="academySystemMap">How to Navigate the Academy</button>
+    </div>
+  </section>
+
+  <section id="academySystemMap" class="sdSystemMap" aria-labelledby="academySystemMapHeading" hidden>
+    <div class="sdSystemMapHeader">
+      <div class="sdSystemMapTitle">
+        <span class="sdSystemMapIcon" aria-hidden="true">▤</span>
+        <div>
+          <p class="sdOrientationKicker">Online Academy System Map</p>
+          <h2 id="academySystemMapHeading">How to Navigate the Academy</h2>
+          <p>View how the Funda Online Academy digital system is connected. These are online platform destinations, not physical classrooms or offices.</p>
+        </div>
+      </div>
+      <button type="button" id="academySystemMapClose" class="sdSystemMapClose">Hide map</button>
+    </div>
+
+    <div class="sdSystemMapNotice"><strong>Online platform guide:</strong> use this map to understand where each digital area belongs and how your journey moves through the Academy.</div>
+
+    <div class="sdMapCanvas">
+      <div class="sdMapContour sdMapContourA" aria-hidden="true"></div>
+      <div class="sdMapContour sdMapContourB" aria-hidden="true"></div>
+      <svg class="sdMapRoutes" viewBox="0 0 1200 720" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M600 350 C590 240 590 170 600 95"></path>
+        <path d="M600 350 C500 260 410 210 315 170"></path>
+        <path d="M600 350 C420 330 300 320 170 315"></path>
+        <path d="M600 350 C420 420 315 485 205 560"></path>
+        <path d="M600 350 C510 475 480 545 455 625"></path>
+        <path d="M600 350 C650 500 700 560 745 625"></path>
+        <path d="M600 350 C770 470 850 515 945 560"></path>
+        <path d="M600 350 C790 365 900 345 1040 315"></path>
+        <path d="M600 350 C760 255 860 200 970 165"></path>
+        <path d="M600 350 C730 245 820 135 850 85"></path>
+        <path d="M600 350 C680 330 720 300 785 270"></path>
+        <path d="M600 350 C560 410 555 455 560 515"></path>
+      </svg>
+
+      <div class="sdMapHub" aria-label="Funda Online Academy central digital hub">
+        <div class="sdMapHubScreen"><strong>FUNDA</strong><span>ONLINE ACADEMY</span><small>LEARN • GROW • BELONG</small></div>
+        <div class="sdMapHubRibbon">ONE ONLINE SYSTEM • MANY OPPORTUNITIES</div>
+      </div>
+
+      <article class="sdMapNode sdMapHome" style="--x:50%;--y:9%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">⌂</span><strong>Home Page</strong><small>Start your online journey here</small></article>
+      <article class="sdMapNode" style="--x:26%;--y:19%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">▧</span><strong>Course Overview</strong><small>Explore what you can learn</small></article>
+      <article class="sdMapNode" style="--x:14%;--y:42%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">♙+</span><strong>Create Account</strong><small>Join the online Academy</small></article>
+      <article class="sdMapNode" style="--x:18%;--y:78%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">▣</span><strong>Log In</strong><small>Access your secure account</small></article>
+      <article class="sdMapNode" style="--x:38%;--y:88%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">▦</span><strong>Student Dashboard</strong><small>Your learning command centre</small></article>
+      <article class="sdMapNode" style="--x:62%;--y:88%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">≡</span><strong>My Courses</strong><small>Access and continue learning</small></article>
+      <article class="sdMapNode" style="--x:82%;--y:78%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">R</span><strong>Payments</strong><small>Manage your online balance</small></article>
+      <article class="sdMapNode" style="--x:88%;--y:42%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">✓</span><strong>My Certificates</strong><small>View formally issued achievements</small></article>
+      <article class="sdMapNode" style="--x:81%;--y:20%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">◎</span><strong>Orientation</strong><small>Learn how the portal works</small></article>
+      <article class="sdMapNode" style="--x:70%;--y:10%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">●●</span><strong>Ambassador Portal</strong><small>A separate online programme area</small></article>
+      <article class="sdMapNode" style="--x:69%;--y:34%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">◆</span><strong>Employer / Workplace Support</strong><small>Digital workplace and employer services</small></article>
+      <article class="sdMapNode" style="--x:47%;--y:70%"><span class="sdMapBrowser"></span><span class="sdMapNodeIcon">⚙</span><strong>Admin Dashboard</strong><small>Secure Academy administration area</small></article>
+
+      <div class="sdMapCompass" aria-hidden="true"><span>N</span><b>✦</b><small>W&nbsp;&nbsp;&nbsp;E</small><em>S</em></div>
+      <div class="sdMapLegend"><strong>Map guide</strong><span><i class="sdMapLegendDot"></i> Digital destination</span><span><i class="sdMapLegendLine"></i> Connected system path</span><span><i class="sdMapLegendHub"></i> Academy hub</span></div>
     </div>
   </section>
 </section>
