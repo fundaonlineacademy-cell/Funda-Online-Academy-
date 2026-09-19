@@ -188,7 +188,9 @@ as $function$
 $function$;
 
 revoke all on function public.get_my_certificate_readiness() from public;
+revoke all on function public.get_my_certificate_readiness() from anon;
 grant execute on function public.get_my_certificate_readiness() to authenticated;
+grant execute on function public.get_my_certificate_readiness() to service_role;
 
 comment on function public.get_my_certificate_readiness() is
 'Returns certificate-readiness summary only for the currently authenticated learner and approved courses. Formal issuance remains controlled by the Academy certificate workflow.';
