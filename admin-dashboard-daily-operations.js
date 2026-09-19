@@ -18,41 +18,41 @@ function installStyle(){
     .adcSectionHead h2{margin:0!important;font-size:16px!important;color:#12274d!important}
     .adcSectionHead small{color:#8794a8;font-size:10px;line-height:1.45}
     .adcGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
-    .adcCard{min-height:0;border:1px solid #dbe2ec;border-radius:10px;background:#fff;padding:12px;box-shadow:0 6px 18px rgba(13,39,78,.07);overflow:hidden;font-family:inherit}
+    .adcCard{min-height:0;border:1px solid #dbe2ec;border-radius:10px;background:#fff;padding:14px;box-shadow:0 6px 18px rgba(13,39,78,.07);overflow:hidden;font-family:inherit}
     .adcCardHead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
-    .adcCard h3{margin:0!important;font-size:12px!important;color:#12274d!important}
-    .adcCardHint{font-size:10px;color:#8794a8}
+    .adcCard h3{margin:0!important;font-size:13px!important;color:#12274d!important;line-height:1.3}
+    .adcCardHint{font-size:10px;color:#6e7d92;font-weight:600}
     .adcLinkList,.adcSummaryList,.adcReportList{display:grid;gap:6px}
-    .adcLink,.adcSummary,.adcReport{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #edf1f5;border-radius:8px;background:#fbfcfe;padding:9px 10px;color:#18314d;text-decoration:none;font-size:10px;line-height:1.35;cursor:pointer;font-family:inherit}
+    .adcLink,.adcSummary,.adcReport{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #e4e9f0;border-radius:9px;background:#fbfcfe;padding:10px 11px;color:#18314d;text-decoration:none;font-size:11px;line-height:1.4;cursor:pointer;font-family:inherit}
     button.adcLink,button.adcReport{width:100%;text-align:left}
     .adcLink:hover,.adcReport:hover{border-color:#d7bc68;background:#fffaf0}
-    .adcLink b,.adcReport b{font-size:10px}.adcArrow{color:#a27c24;font-weight:900;font-size:11px}
-    .adcCount{min-width:30px;height:25px;padding:0 7px;display:grid;place-items:center;border-radius:99px;background:#eef3f8;color:#17324a;font-size:10px;font-weight:900}
+    .adcLink b,.adcReport b{font-size:11px;line-height:1.35}.adcArrow{color:#a27c24;font-weight:900;font-size:13px}
+    .adcCount{min-width:32px;height:27px;padding:0 8px;display:grid;place-items:center;border-radius:99px;background:#eef3f8;color:#17324a;font-size:12px;font-weight:900}
     .adcCount.attn{background:#fff0d0;color:#895e00}.adcCount.bad{background:#ffe8e8;color:#9a2d2d}
-    .adcSummary span{font-size:10px;color:#526177;line-height:1.4}.adcSummary strong{font-size:11px;color:#071b31}
+    .adcSummary span{font-size:11px;color:#526177;line-height:1.45}.adcSummary strong{font-size:12px;color:#071b31}
     .adcChartTotals{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
-    .adcChartTotal{display:flex;align-items:center;gap:5px;border:1px solid #edf1f5;border-radius:7px;padding:5px 7px;background:#fbfcfe;font-size:9px;color:#627187}
-    .adcChartTotal b{font-size:10px;color:#12274d}
-    .adcChart{height:132px;display:flex;align-items:flex-end;gap:7px;padding:8px 2px 0;border-bottom:1px solid #dfe5ed}
+    .adcChartTotal{display:flex;align-items:center;gap:5px;border:1px solid #e3e9f0;border-radius:8px;padding:6px 8px;background:#fff;font-size:10px;color:#526177}
+    .adcChartTotal b{font-size:11px;color:#12274d}
+    .adcChart{height:150px;display:flex;align-items:flex-end;gap:7px;padding:14px 10px 8px;border:1px solid #e1e7ef;border-radius:10px;background:linear-gradient(180deg,#fbfcfe,#f6f9fc)}
     .adcDay{height:100%;flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:4px}
-    .adcBars{height:94px;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
+    .adcBars{height:105px;width:100%;display:flex;align-items:flex-end;justify-content:center;gap:3px}
     .adcBar{width:22%;min-width:5px;border-radius:4px 4px 0 0;background:#0b315c;min-height:0}
     .adcBar.pay{background:#b9902f}.adcBar.sup{background:#8da0b9}
-    .adcDayLabel{font-size:9px;color:#728197;font-weight:800}
-    .adcLegend{display:flex;gap:11px;flex-wrap:wrap;margin-top:8px;font-size:9px;color:#69798e}
+    .adcDayLabel{font-size:10px;color:#5f6f84;font-weight:800}
+    .adcLegend{display:flex;gap:12px;flex-wrap:wrap;margin-top:9px;font-size:10px;color:#627187}
     .adcLegend i{display:inline-block;width:8px;height:8px;border-radius:2px;background:#0b315c;margin-right:4px}.adcLegend i.pay{background:#b9902f}.adcLegend i.sup{background:#8da0b9}
     .adcWeekList{display:grid;gap:7px}.adcWeekItem{padding:9px 10px;border:1px solid #edf1f5;border-radius:8px;background:#fbfcfe}
-    .adcWeekItem b{display:block;font-size:10px;color:#152b43;line-height:1.4}.adcWeekItem span{display:block;margin-top:3px;font-size:9px;color:#758397}
-    .adcWeekTag{display:inline-block!important;margin-top:5px!important;width:auto;padding:3px 6px;border-radius:99px;background:#fff0d0;color:#875d00!important;font-size:8px!important;font-weight:900}
+    .adcWeekItem b{display:block;font-size:11px;color:#152b43;line-height:1.4}.adcWeekItem span{display:block;margin-top:3px;font-size:10px;color:#6e7d92;line-height:1.4}
+    .adcWeekTag{display:inline-block!important;margin-top:5px!important;width:auto;padding:4px 7px;border-radius:99px;background:#fff0d0;color:#875d00!important;font-size:9px!important;font-weight:900}
     .adcEmpty{padding:18px 8px;text-align:center;color:#8290a2;font-size:10px;line-height:1.45}
-    .adcCalTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}.adcCalTop b{font-size:11px;color:#17324a}
-    .adcCalendar{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.adcDow{text-align:center;font-size:9px;color:#8390a0;font-weight:900;padding:4px 0}
-    .adcDate{position:relative;min-height:29px;display:grid;place-items:center;border-radius:7px;font-size:9px;color:#273b52;background:#fbfcfe}
+    .adcCalTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.adcCalTop b{font-size:12px;color:#17324a}
+    .adcCalendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:9px;border:1px solid #e1e7ef;border-radius:10px;background:linear-gradient(180deg,#fbfcfe,#f7f9fc)}.adcDow{text-align:center;font-size:10px;color:#65758a;font-weight:900;padding:4px 0}
+    .adcDate{position:relative;min-height:31px;display:grid;place-items:center;border-radius:7px;font-size:10px;color:#273b52;background:#fff}
     .adcDate.muted{opacity:.18}.adcDate.today{outline:2px solid #0b315c;font-weight:900}.adcDate.holiday{background:#fff0d0;color:#7e5700;font-weight:900}
     .adcDate.hasEvent:after{content:"";position:absolute;bottom:3px;width:5px;height:5px;border-radius:50%;background:#0b63ce}.adcDate.holiday.hasEvent:after{background:#8a5a00}
-    .adcCalLegend{display:flex;gap:10px;flex-wrap:wrap;margin-top:9px;font-size:9px;color:#758397}.adcCalLegend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}
+    .adcCalLegend{display:flex;gap:11px;flex-wrap:wrap;margin-top:10px;font-size:10px;color:#65758a}.adcCalLegend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}
     .adcCalLegend .today{border:2px solid #0b315c;background:#fff}.adcCalLegend .holiday{background:#fff0d0}.adcCalLegend .event{background:#0b63ce;border-radius:50%}
-    .adcOpen{border:0;background:transparent;color:#8b6b19;font-size:9px;font-weight:900;cursor:pointer;text-decoration:none;font-family:inherit}
+    .adcOpen{border:1px solid #e0d3ad;background:#fffaf0;color:#765814;font-size:10px;font-weight:900;cursor:pointer;text-decoration:none;font-family:inherit;border-radius:8px;padding:5px 8px;white-space:nowrap}
     .adcLoading{min-height:140px;display:grid;place-items:center;color:#8290a2;font-size:10px}
     @media(max-width:1050px){.adcGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:650px){.adcGrid{grid-template-columns:1fr}.adcCard{min-height:0}.adcSectionHead{align-items:flex-start;flex-direction:column}}
@@ -196,7 +196,7 @@ function graph(d){
   });
   const totals=data.reduce((a,x)=>({ens:a.ens+x.ens,pays:a.pays+x.pays,sup:a.sup+x.sup}),{ens:0,pays:0,sup:0});
   const max=Math.max(1,...data.flatMap(x=>[x.ens,x.pays,x.sup]));
-  const height=v=>v<=0?0:Math.max(8,Math.round(v/max*88));
+  const height=v=>v<=0?0:Math.max(10,Math.round(v/max*98));
   return `<div class="adcChartTotals">
       <span class="adcChartTotal">Enrolments <b>${totals.ens}</b></span>
       <span class="adcChartTotal">Payment activity <b>${totals.pays}</b></span>
