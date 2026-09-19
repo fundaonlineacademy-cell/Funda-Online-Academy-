@@ -62,12 +62,11 @@ as $function$
     from duration_parts
   )
   select case
-    when greatest(coalesce(p_fee, 0), 0) < 2000 then 1
-    when (select weeks from duration_weeks) <= 4 then 1
-    else least(
-      3,
-      greatest(2, pg_catalog.ceil((select weeks from duration_weeks) / 4)::integer)
-    )
+    when greatest(coalesce(p_fee, 0), 0) <= 1300 then 1
+    when (select weeks from duration_weeks) < 4 then 1
+    when greatest(coalesce(p_fee, 0), 0) >= 2000
+      and (select weeks from duration_weeks) >= 8 then 3
+    else 2
   end;
 $function$;
 
