@@ -48,6 +48,6 @@ function open(){
  active=true;style();ensureNav();document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.s==='voice'));$('#side')?.classList.remove('open');const view=$('#view');if(!view)return;view.innerHTML=shell();wire();window.scrollTo(0,0);load();
 }
 async function refreshCount(){try{if(!ensureNav())return;await fetchRows();renderMetrics()}catch(_){} }
-function install(){style();let tries=0;const timer=setInterval(()=>{tries++;if(ensureNav()){clearInterval(timer);setTimeout(refreshCount,700)}else if(tries>40)clearInterval(timer)},150);document.addEventListener('click',e=>{const b=e.target.closest?.('#nav button');if(b&&b.dataset.s!=='voice')active=false});setInterval(()=>{if(active)load();else refreshCount()},45000)}
+function install(){style();let tries=0;const timer=setInterval(()=>{tries++;if(ensureNav()){clearInterval(timer);setTimeout(refreshCount,700)}else if(tries>40)clearInterval(timer)},150);document.addEventListener('click',e=>{const b=e.target.closest?.('#nav button');if(b&&b.dataset.s!=='voice')active=false});document.addEventListener('funda:admin-manual-refresh',()=>{if(active)load();else refreshCount()})}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
