@@ -340,9 +340,9 @@ begin
         updated_at=pg_catalog.now()
     where profile_id=p_target_user_id;
 
-    delete from storage.objects
-    where bucket_id='profile-avatars'
-      and (owner=p_target_user_id or owner_id=p_target_user_id::text);
+    -- Profile-avatar object cleanup is handled by the authenticated
+    -- ceo-account-control Edge Function through the Storage API. Direct
+    -- deletion from storage.objects is intentionally not permitted.
 
     insert into public.ceo_account_control_state(user_id,status,reason,changed_by,changed_at)
     values(p_target_user_id,'deleted',v_reason,v_actor,pg_catalog.now())
