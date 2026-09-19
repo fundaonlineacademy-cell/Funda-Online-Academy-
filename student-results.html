@@ -9,19 +9,18 @@
 <title>My Results | Funda Online Academy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js?v=20260913-session-v1"></script>
 <style>
-:root{--navy:#06152f;--navy2:#0b2f70;--gold:#c99a2e;--ink:#183153;--line:#d9e4f2;--green:#176b50;--red:#9f2f2f;--font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+:root{--navy:#06152f;--navy2:#0b2f70;--gold:#c99a2e;--gold2:#e4c777;--ink:#172b3f;--line:#d9e4f2;--font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
 *{box-sizing:border-box}body{margin:0;font-family:var(--font);background:linear-gradient(180deg,#f7fbff,#fffaf0);color:var(--ink);min-height:100vh}button,a{font-family:var(--font)}.card{background:#fff;border:1px solid var(--line);box-shadow:0 10px 28px rgba(34,72,119,.07)}
-.resultsIntro{border:1px solid rgba(201,154,46,.55);background:linear-gradient(135deg,#071d49,#0c377c 64%,#174b93);color:#fff}.resultsIntro h1{color:#fff}.resultsIntro p{color:#edf4ff}.eyebrow{color:#e4c777;font-size:11px;letter-spacing:.16em;font-weight:900;text-transform:uppercase}
-.provCard{border:1px solid #dcc783;border-radius:20px;background:linear-gradient(145deg,#fff,#fffaf0);overflow:hidden}.provHead{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:18px 20px}.provHead h2{margin:0;color:var(--navy);font-size:19px;font-weight:900;line-height:1.25}.provMeta{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}.provMeta span{padding:5px 8px;border-radius:999px;background:#fff;border:1px solid #ead9a7;color:#33475a;font-size:10px;font-weight:800}.provButton{flex:0 0 auto;padding:10px 13px;border:1px solid #c6921f;border-radius:11px;background:var(--navy);color:#fff;font-size:11px;font-weight:900;cursor:pointer}.provButton[aria-expanded="true"]{background:#fff;color:var(--navy)}
-.provPanel{border-top:1px solid #ead9a7;background:#fff}.provNotice{margin:15px 16px 0;padding:12px 14px;border:1px solid #e3ce8b;border-radius:12px;background:#fff8df;color:#55410b;font-size:12px;line-height:1.55;font-weight:700}.provSummary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:14px 16px 0}.provStat{padding:12px;border:1px solid #e0e6ec;border-radius:12px;background:#f9fbfd}.provStat small{display:block;color:#68798a;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.provStat strong{display:block;margin-top:4px;color:var(--navy);font-size:17px}
-.tableWrap{margin:14px 16px 16px;border:1px solid #dfe5ea;border-radius:13px;overflow:auto;max-height:430px;background:#fff}.resultsTable{width:100%;min-width:720px;border-collapse:collapse}.resultsTable thead th{position:sticky;top:0;z-index:2;background:#071d49;color:#fff;text-align:left;padding:11px 12px;font-size:10px;letter-spacing:.04em;text-transform:uppercase}.resultsTable tbody td{padding:11px 12px;border-top:1px solid #edf0f2;color:#263746;font-size:12px;font-weight:650;vertical-align:top}.resultsTable tbody tr:nth-child(even){background:#fbfcfd}.resultType{font-weight:900;color:var(--navy)}.statusPill{display:inline-flex;padding:5px 8px;border-radius:999px;background:#eef3f7;color:#44576a;font-size:9px;font-weight:900;white-space:nowrap}.statusPill.pass{background:#e7f6ee;color:#176b50}.statusPill.fail{background:#fff0f0;color:#9f2f2f}.statusPill.pending{background:#fff5d8;color:#765100}.emptyBox{padding:20px;border:1px solid #dde4ea;border-radius:15px;background:#f9fbfd;color:#617184;font-size:13px}
-.officialHead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}.officialNote{max-width:720px;color:#52657a;font-size:13px;line-height:1.6}.officialCard{border:1px solid #dfe5ea;border-radius:16px;padding:17px;background:#fff}.officialCard h3{color:var(--navy);font-weight:900}.officialButton{padding:10px 13px;border-radius:11px;background:var(--navy);color:#fff;font-size:11px;font-weight:900}.officialButton:disabled{opacity:.5}
-@media(max-width:720px){.provHead,.officialHead{display:block}.provButton{width:100%;margin-top:13px}.provSummary{grid-template-columns:1fr}.tableWrap{max-height:360px}.resultsIntro{padding:22px!important}}
+.resultsShell{max-width:1120px;margin:0 auto;padding:30px 16px 46px}.resultsIntro{padding:25px 27px;border-radius:24px;background:linear-gradient(135deg,#071d49 0%,#0c377c 65%,#174b93 100%);color:#fff;border:1px solid rgba(201,154,46,.58);box-shadow:0 12px 30px rgba(7,29,73,.16)}.resultsIntro .kicker,.sectionKicker{margin:0;color:#e4c777;font-size:11px;letter-spacing:.16em;font-weight:900;text-transform:uppercase}.resultsIntro h1{margin:6px 0 0;color:#fff;font-size:31px;line-height:1.15;font-weight:900}.resultsIntro p:last-child{max-width:880px;margin:12px 0 0;color:#edf4ff;font-size:14px;line-height:1.65;font-weight:650}
+.provisionalSection,.officialSection{margin-top:20px;padding:24px;border-radius:22px}.sectionHead{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.sectionHead h2{margin:5px 0 0;color:#06152f;font-size:22px;line-height:1.2;font-weight:900}.sectionHead p:last-child{max-width:820px;margin:8px 0 0;color:#304459;font-size:13px;line-height:1.6;font-weight:650}.viewOnly{flex:0 0 auto;padding:7px 10px;border-radius:999px;background:#fff3ca;color:#715006;border:1px solid #e3c86f;font-size:10px;font-weight:900}
+.provisionalNotice{margin-top:16px;padding:13px 15px;border-radius:13px;background:#fff9e8;border:1px solid #e6cf8c;color:#4c3a0c;font-size:12px;line-height:1.55;font-weight:700}.provList{display:grid;gap:14px;margin-top:16px}.provCourse{border:1px solid #dfe5ea;border-radius:18px;overflow:hidden;background:#fff}.provCourseHead{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:16px 17px;background:linear-gradient(145deg,#fff,#fffaf0)}.provCourseHead h3{margin:0;color:#06152f;font-size:16px;font-weight:900}.provCourseHead p{margin:4px 0 0;color:#52657a;font-size:11px;font-weight:700}.provToggle{flex:0 0 auto;padding:9px 12px;border-radius:10px;border:1px solid #071d49;background:#071d49;color:#fff;font-size:11px;font-weight:900;cursor:pointer}.provToggle[aria-expanded="true"]{background:#fff;color:#071d49}.provPanel[hidden]{display:none!important}.provPanel{border-top:1px solid #e5e9ed}.provSummary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;padding:14px 16px;background:#f9fbfd}.provMetric{padding:10px 11px;border:1px solid #dfe5ea;border-radius:12px;background:#fff}.provMetric small{display:block;color:#607080;font-size:9px;text-transform:uppercase;letter-spacing:.06em;font-weight:850}.provMetric strong{display:block;margin-top:4px;color:#06152f;font-size:14px}.resultTableWrap{overflow-x:auto}.resultTable{width:100%;border-collapse:collapse;min-width:690px}.resultTable th{padding:10px 12px;text-align:left;background:#071d49;color:#fff;font-size:10px;text-transform:uppercase;letter-spacing:.06em;font-weight:900;white-space:nowrap}.resultTable td{padding:11px 12px;border-bottom:1px solid #edf0f2;color:#25384a;font-size:11px;font-weight:650;vertical-align:middle}.resultTable tbody tr:last-child td{border-bottom:0}.resultTable td:first-child{font-weight:800;color:#06152f}.resultStatus{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:900;white-space:nowrap}.resultStatus.pass{background:#e8f6ef;color:#176b50}.resultStatus.retry{background:#fff2c9;color:#765100}.resultStatus.none{background:#eef2f5;color:#52606c}.resultStatus.final{background:#fdecec;color:#9a2f2f}.provFoot{padding:12px 16px;background:#fbfdff;border-top:1px solid #edf0f2;color:#52657a;font-size:10px;line-height:1.5;font-weight:700}
+.officialList{margin-top:16px;display:grid;gap:12px}.officialCard{padding:16px;border:1px solid #dfe5ea;border-radius:15px;background:#fff}.officialButton{padding:10px 13px;border-radius:10px;background:#071d49;color:#fff;font-size:11px;font-weight:900;border:0;cursor:pointer}.officialButton:disabled{opacity:.5;cursor:not-allowed}.emptyBox{margin-top:16px;padding:18px;border:1px solid #dfe5ea;border-radius:14px;background:#f9fbfd;color:#52657a;font-size:12px;line-height:1.55}.loading{margin-top:16px;color:#52657a;font-size:12px;font-weight:700}
+@media(max-width:700px){.sectionHead,.provCourseHead{display:block}.viewOnly,.provToggle{display:inline-flex;margin-top:10px}.provSummary{grid-template-columns:1fr}.resultsIntro{padding:22px 19px}.resultsIntro h1{font-size:27px}.provisionalSection,.officialSection{padding:18px 14px}}
 </style>
 </head>
 <body>
@@ -35,33 +34,37 @@
   </div>
 </header>
 
-<main class="max-w-6xl mx-auto px-4 py-8">
-  <section class="resultsIntro rounded-3xl p-6 sm:p-8">
-    <p class="eyebrow">MY RESULTS</p>
-    <h1 class="mt-1 text-3xl font-extrabold">Your current and official results in one place.</h1>
-    <p class="mt-3 text-sm leading-6 max-w-3xl">View your live provisional assessment results while you are still completing a course. Official Statements of Results remain separate and only appear after the Academy has formally finalised and issued them.</p>
+<main class="resultsShell">
+  <section class="resultsIntro">
+    <p class="kicker">My Results</p>
+    <h1>Your results, from current progress to formal outcome.</h1>
+    <p>Review your current recorded assessment results while you are still completing your course. Provisional results are for progress tracking only; official results appear separately after Academy finalisation.</p>
   </section>
 
-  <section class="card rounded-3xl p-5 sm:p-7 mt-6" aria-labelledby="provisionalHeading">
-    <div>
-      <p class="eyebrow">LIVE COURSE RESULTS</p>
-      <h2 id="provisionalHeading" class="mt-1 text-2xl font-extrabold text-[#06152f]">Provisional Results</h2>
-      <p class="mt-2 text-sm text-slate-600 max-w-3xl">These results update from your recorded assessment attempts. They are for your progress only and are not an official Statement of Results.</p>
-    </div>
-    <div id="provisionalState" class="mt-6 text-sm text-slate-500">Loading provisional results...</div>
-    <div id="provisionalList" class="mt-5 space-y-4"></div>
-  </section>
-
-  <section class="card rounded-3xl p-5 sm:p-7 mt-6" aria-labelledby="officialHeading">
-    <div class="officialHead">
+  <section class="card provisionalSection" aria-labelledby="provisionalHeading">
+    <div class="sectionHead">
       <div>
-        <p class="eyebrow">OFFICIAL RESULTS</p>
-        <h2 id="officialHeading" class="mt-1 text-2xl font-extrabold text-[#06152f]">Statements of Results</h2>
-        <p class="officialNote mt-2">Only finalised official Statements of Results appear here. Draft or in-progress results are never presented as official documents.</p>
+        <p class="sectionKicker">Current Course Results</p>
+        <h2 id="provisionalHeading">Provisional Results</h2>
+        <p>Open a course to view a compact table of every required assessment currently recorded for that course.</p>
+      </div>
+      <span class="viewOnly">VIEW-ONLY</span>
+    </div>
+    <div class="provisionalNotice"><strong>Important:</strong> Provisional Results are not an official Statement of Results. They update as you complete assessments and may change while your course is still in progress. No provisional PDF is created or downloadable.</div>
+    <div id="provisionalState" class="loading">Loading your provisional results...</div>
+    <div id="provisionalList" class="provList"></div>
+  </section>
+
+  <section class="card officialSection" aria-labelledby="officialHeading">
+    <div class="sectionHead">
+      <div>
+        <p class="sectionKicker">Official Academy Record</p>
+        <h2 id="officialHeading">Official Results</h2>
+        <p>Only formally finalised Statements of Results appear here. These are separate from the live provisional information above.</p>
       </div>
     </div>
-    <div id="officialState" class="mt-6 text-sm text-slate-500">Loading official results...</div>
-    <div id="officialList" class="mt-5 space-y-4"></div>
+    <div id="officialState" class="loading">Loading your official results...</div>
+    <div id="officialList" class="officialList"></div>
   </section>
 </main>
 
@@ -71,163 +74,148 @@
   const provisionalList=document.getElementById('provisionalList');
   const officialState=document.getElementById('officialState');
   const officialList=document.getElementById('officialList');
-  const db=supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
   const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  const fmtPct=v=>v==null||v===''?'—':Number(v).toFixed(1)+'%';
-  const fmtType=v=>{const s=String(v||'Assessment').toLowerCase();return s==='formative'?'Formative':s==='summative'?'Summative':s==='final'?'Final Assessment':'Assessment'};
-  const fmtDate=v=>{if(!v)return '';try{return new Intl.DateTimeFormat('en-ZA',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(v))}catch{return ''}};
-  const approvedStatus=v=>['approved','active','enrolled','completed'].includes(String(v||'').toLowerCase());
+  const db=supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+  const restored=window.FundaAuth?.restore
+    ?await window.FundaAuth.restore(db)
+    :await db.auth.getSession().then(x=>({user:x.data?.session?.user||null,confirmedSignedOut:!x.data?.session?.user}));
+  if(!restored.user){location.href='login.html?next=student-results.html&portal=student';return}
+  const uid=restored.user.id;
 
-  const {data:{session}}=await db.auth.getSession();
-  if(!session){location.href='login.html?next=student-results.html';return}
-  const uid=session.user.id;
+  const enrollmentQuery=await db.from('enrollments')
+    .select('course_id,enrollment_status,status,courses(id,title)')
+    .eq('student_id',uid);
 
-  async function loadProvisional(){
-    const enrol=await db.from('enrollments')
-      .select('course_id,enrollment_status,status,courses(id,title)')
-      .eq('student_id',uid);
-    if(enrol.error){provisionalState.textContent='Unable to load provisional results right now.';return}
-    const approved=(enrol.data||[]).filter(e=>approvedStatus(e.enrollment_status)||approvedStatus(e.status));
-    if(!approved.length){
-      provisionalState.innerHTML='<div class="emptyBox"><strong class="text-[#06152f]">No approved course results yet.</strong><div class="mt-1">Provisional results will appear here after your course access is approved and assessments are recorded.</div></div>';
-      return;
-    }
+  if(enrollmentQuery.error){
+    provisionalState.textContent='Unable to load your provisional results right now.';
+  }else{
+    const approved=(enrollmentQuery.data||[]).filter(e=>['approved','active','enrolled','completed'].includes(String(e.enrollment_status||e.status||'').toLowerCase()));
+    const byCourse=new Map();
+    approved.forEach(e=>{if(e.course_id&&!byCourse.has(String(e.course_id)))byCourse.set(String(e.course_id),e)});
+    const courses=[...byCourse.values()];
 
-    const courseIds=[...new Set(approved.map(e=>e.course_id).filter(Boolean))];
-    const required={};
-    let allAssessmentIds=[];
-    for(const cid of courseIds){
-      const rq=await db.rpc('get_required_course_assessments',{p_course_id:cid});
-      required[String(cid)]=rq.error?[]:(rq.data||[]);
-      allAssessmentIds.push(...required[String(cid)].map(r=>r.assessment_id));
-    }
-    allAssessmentIds=[...new Set(allAssessmentIds.filter(Boolean))];
+    if(!courses.length){
+      provisionalState.innerHTML='<div class="emptyBox"><strong>No approved course results are available yet.</strong><div class="mt-1">Provisional results will appear after your course is approved and you begin completing assessments.</div></div>';
+    }else{
+      provisionalState.classList.add('hidden');
 
-    let attempts=[];
-    if(allAssessmentIds.length){
-      for(let i=0;i<allAssessmentIds.length;i+=50){
-        const batch=allAssessmentIds.slice(i,i+50);
-        const a=await db.from('assessment_attempts')
-          .select('assessment_id,attempt_number,score,total_marks,percentage,passed,submitted_at,created_at')
-          .eq('student_id',uid)
-          .in('assessment_id',batch);
-        if(!a.error)attempts.push(...(a.data||[]));
+      for(const e of courses){
+        const courseId=e.course_id;
+        const title=e.courses?.title||'Approved Course';
+        const requiredQuery=await db.rpc('get_required_course_assessments',{p_course_id:courseId});
+        const required=requiredQuery.error?[]:(requiredQuery.data||[]);
+        const assessmentIds=required.map(r=>r.assessment_id).filter(Boolean);
+        let attempts=[];
+
+        if(assessmentIds.length){
+          for(let i=0;i<assessmentIds.length;i+=60){
+            const q=await db.from('assessment_attempts')
+              .select('assessment_id,attempt_number,score,total_marks,percentage,passed,submitted_at')
+              .eq('student_id',uid)
+              .in('assessment_id',assessmentIds.slice(i,i+60))
+              .order('submitted_at',{ascending:false});
+            if(!q.error)attempts.push(...(q.data||[]));
+          }
+        }
+
+        const attemptsBy={};
+        attempts.forEach(a=>(attemptsBy[String(a.assessment_id)]||(attemptsBy[String(a.assessment_id)]=[])).push(a));
+
+        let passedCount=0,attemptedCount=0;
+        const rows=required.map(r=>{
+          const ats=(attemptsBy[String(r.assessment_id)]||[]).slice().sort((a,b)=>new Date(b.submitted_at||0)-new Date(a.submitted_at||0));
+          const passed=ats.filter(a=>a.passed===true).sort((a,b)=>new Date(b.submitted_at||0)-new Date(a.submitted_at||0));
+          const chosen=passed[0]||ats[0]||null;
+
+          if(ats.length)attemptedCount++;
+          if(passed.length)passedCount++;
+
+          let status='Not completed',cls='none';
+          if(passed.length){status='Passed';cls='pass'}
+          else if(ats.length>=3){status='Finalised — not passed';cls='final'}
+          else if(ats.length){status='Not yet passed';cls='retry'}
+
+          const score=chosen&&chosen.score!=null&&chosen.total_marks!=null?chosen.score+' / '+chosen.total_marks:'—';
+          const percentage=chosen&&chosen.percentage!=null?Number(chosen.percentage).toFixed(1)+'%':'—';
+          const type=String(r.assessment_type||'assessment').replace(/^./,x=>x.toUpperCase());
+          const module=r.module_number!=null?'Module '+r.module_number:(r.module_name||'Course');
+
+          return `<tr><td>${esc(module)}</td><td>${esc(type)}</td><td>${esc(score)}</td><td>${esc(percentage)}</td><td><span class="resultStatus ${cls}">${esc(status)}</span></td></tr>`;
+        }).join('');
+
+        const overall=required.length&&passedCount===required.length?'Requirements completed':'Course in progress';
+        const article=document.createElement('article');
+        article.className='provCourse';
+        article.innerHTML=`
+          <div class="provCourseHead">
+            <div><h3>${esc(title)}</h3><p>${passedCount} of ${required.length} required assessments passed • ${overall}</p></div>
+            <button type="button" class="provToggle" aria-expanded="false">View Provisional Results</button>
+          </div>
+          <div class="provPanel" hidden>
+            <div class="provSummary">
+              <div class="provMetric"><small>Required assessments</small><strong>${required.length}</strong></div>
+              <div class="provMetric"><small>Attempted</small><strong>${attemptedCount}</strong></div>
+              <div class="provMetric"><small>Passed</small><strong>${passedCount}</strong></div>
+            </div>
+            <div class="resultTableWrap">
+              <table class="resultTable">
+                <thead><tr><th>Module</th><th>Assessment Type</th><th>Mark</th><th>Percentage</th><th>Status</th></tr></thead>
+                <tbody>${rows||'<tr><td colspan="5">No required assessments are configured for this course yet.</td></tr>'}</tbody>
+              </table>
+            </div>
+            <div class="provFoot">Where a passing attempt exists, the table shows the recorded passing result. If an assessment has not yet been passed, it shows the latest recorded attempt. This table is for current progress tracking only.</div>
+          </div>`;
+
+        const toggle=article.querySelector('.provToggle');
+        const panel=article.querySelector('.provPanel');
+        toggle.addEventListener('click',()=>{
+          const open=panel.hidden;
+          panel.hidden=!open;
+          toggle.setAttribute('aria-expanded',open?'true':'false');
+          toggle.textContent=open?'Hide Provisional Results':'View Provisional Results';
+        });
+
+        provisionalList.appendChild(article);
       }
     }
-
-    const byAssessment={};
-    attempts.forEach(a=>(byAssessment[String(a.assessment_id)]||(byAssessment[String(a.assessment_id)]=[])).push(a));
-    const bestAttempt=id=>{
-      const rows=(byAssessment[String(id)]||[]).slice();
-      rows.sort((a,b)=>{
-        if(Boolean(a.passed)!==Boolean(b.passed))return a.passed?-1:1;
-        const ad=new Date(a.submitted_at||a.created_at||0).getTime();
-        const bd=new Date(b.submitted_at||b.created_at||0).getTime();
-        if(ad!==bd)return bd-ad;
-        return Number(b.attempt_number||0)-Number(a.attempt_number||0);
-      });
-      return rows[0]||null;
-    };
-
-    provisionalState.classList.add('hidden');
-    provisionalList.innerHTML='';
-    approved.forEach((e,index)=>{
-      const cid=String(e.course_id);
-      const rows=(required[cid]||[]).slice().sort((a,b)=>{
-        const am=Number(a.module_number??9999),bm=Number(b.module_number??9999);
-        if(am!==bm)return am-bm;
-        const order=x=>String(x.assessment_type||'').toLowerCase()==='formative'?1:String(x.assessment_type||'').toLowerCase()==='summative'?2:3;
-        return order(a)-order(b);
-      });
-      const passed=rows.filter(r=>bestAttempt(r.assessment_id)?.passed===true).length;
-      const attempted=rows.filter(r=>!!bestAttempt(r.assessment_id)).length;
-      const article=document.createElement('article');
-      article.className='provCard';
-      const panelId='prov-panel-'+index;
-      const body=rows.length?rows.map(r=>{
-        const a=bestAttempt(r.assessment_id);
-        const mark=a?(Number.isFinite(Number(a.score))&&Number.isFinite(Number(a.total_marks))?Number(a.score)+' / '+Number(a.total_marks):'—'):'—';
-        const pct=a?fmtPct(a.percentage):'—';
-        const status=!a?['Not Yet Completed','pending']:a.passed?['Passed','pass']:['Not Yet Passed','fail'];
-        const attemptsUsed=(byAssessment[String(r.assessment_id)]||[]).length;
-        const moduleLabel=r.module_number!=null?'Module '+r.module_number:'Course';
-        const moduleName=r.module_name?' — '+esc(r.module_name):'';
-        return `<tr>
-          <td><strong>${esc(moduleLabel)}</strong><div class="text-[10px] text-slate-500 mt-1">${moduleName}</div></td>
-          <td><span class="resultType">${esc(fmtType(r.assessment_type))}</span></td>
-          <td>${esc(mark)}</td>
-          <td>${esc(pct)}</td>
-          <td><span class="statusPill ${status[1]}">${status[0]}</span></td>
-          <td>${attemptsUsed||'—'}</td>
-        </tr>`;
-      }).join(''):'<tr><td colspan="6">No required assessments are configured for this course yet.</td></tr>';
-      article.innerHTML=`
-        <div class="provHead">
-          <div>
-            <h2>${esc(e.courses?.title||'Approved Course')}</h2>
-            <div class="provMeta">
-              <span>${rows.length} required assessment${rows.length===1?'':'s'}</span>
-              <span>${attempted} completed/attempted</span>
-              <span>${passed} passed</span>
-            </div>
-          </div>
-          <button type="button" class="provButton" aria-expanded="false" aria-controls="${panelId}">View Provisional Results</button>
-        </div>
-        <div id="${panelId}" class="provPanel" hidden>
-          <div class="provNotice"><strong>Provisional Results:</strong> this is a live progress view. It can change while your course is still in progress and it is not an official Statement of Results.</div>
-          <div class="provSummary">
-            <div class="provStat"><small>Required assessments</small><strong>${rows.length}</strong></div>
-            <div class="provStat"><small>Passed</small><strong>${passed}</strong></div>
-            <div class="provStat"><small>Course result status</small><strong>${passed===rows.length&&rows.length?'Requirements complete':'In Progress'}</strong></div>
-          </div>
-          <div class="tableWrap">
-            <table class="resultsTable">
-              <thead><tr><th>Module</th><th>Assessment Type</th><th>Mark</th><th>Percentage</th><th>Status</th><th>Attempts Used</th></tr></thead>
-              <tbody>${body}</tbody>
-            </table>
-          </div>
-        </div>`;
-      const btn=article.querySelector('.provButton');
-      const panel=article.querySelector('.provPanel');
-      btn.addEventListener('click',()=>{
-        const open=panel.hidden;
-        panel.hidden=!open;
-        btn.setAttribute('aria-expanded',open?'true':'false');
-        btn.textContent=open?'Hide Provisional Results':'View Provisional Results';
-      });
-      provisionalList.appendChild(article);
-    });
   }
 
-  async function loadOfficial(){
-    const q=await db.from('course_results')
-      .select('id,result_number,final_percentage,result_status,completed_at,statement_status,statement_issued_at,statement_pdf_path,course_title_snapshot,duration_snapshot,cpd_points_snapshot,statement_version')
-      .eq('student_id',uid)
-      .in('statement_status',['final','amended'])
-      .order('statement_issued_at',{ascending:false});
-    if(q.error){officialState.textContent='Unable to load your official results right now.';return}
-    const rows=q.data||[];
+  const officialQuery=await db.from('course_results')
+    .select('id,result_number,final_percentage,result_status,completed_at,statement_status,statement_issued_at,statement_pdf_path,course_title_snapshot,duration_snapshot,cpd_points_snapshot,statement_version')
+    .eq('student_id',uid)
+    .in('statement_status',['final','amended'])
+    .order('statement_issued_at',{ascending:false});
+
+  if(officialQuery.error){
+    officialState.textContent='Unable to load your official results right now.';
+  }else{
+    const rows=officialQuery.data||[];
     if(!rows.length){
-      officialState.innerHTML='<div class="emptyBox"><strong class="text-[#06152f]">No final Statements of Results yet.</strong><div class="mt-1">An official document will appear here after your academic result has been formally finalised and issued.</div></div>';
-      return;
-    }
-    officialState.classList.add('hidden');
-    for(const r of rows){
-      const c=document.createElement('article');
-      c.className='officialCard';
-      const issued=r.statement_issued_at?new Date(r.statement_issued_at).toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'}):'—';
-      c.innerHTML=`<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"><div><div class="text-xs font-bold text-[#b58216]">${esc(r.result_number||'Result number pending')}</div><h3 class="mt-1">${esc(r.course_title_snapshot||'Official Statement of Results')}</h3><div class="mt-2 text-xs text-slate-500">Final result: <strong>${r.final_percentage==null?'—':Number(r.final_percentage).toFixed(1)+'%'}</strong> • Status: <strong>${esc(String(r.result_status||'').replaceAll('_',' ')||'—')}</strong> • Issued: ${issued}</div></div><button class="officialButton view" ${r.statement_pdf_path?'':'disabled'}>${r.statement_pdf_path?'View / Download PDF':'PDF pending'}</button></div>`;
-      c.querySelector('.view')?.addEventListener('click',async()=>{
-        if(!r.statement_pdf_path)return;
-        const out=await db.functions.invoke('result-download',{body:{result_id:r.id}});
-        if(out.error||out.data?.error||!out.data?.url){alert(out.data?.error||'Unable to open this result right now.');return}
-        window.open(out.data.url,'_blank','noopener');
-      });
-      officialList.appendChild(c);
+      officialState.innerHTML='<div class="emptyBox"><strong>No final Statements of Results yet.</strong><div class="mt-1">An official document will appear here after your academic result has been formally finalised and issued.</div></div>';
+    }else{
+      officialState.classList.add('hidden');
+
+      for(const r of rows){
+        const c=document.createElement('article');
+        c.className='officialCard';
+        const issued=r.statement_issued_at?new Date(r.statement_issued_at).toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'}):'—';
+
+        c.innerHTML=`<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"><div><div class="text-xs font-bold text-[#b58216]">${esc(r.result_number||'Result number pending')}</div><h3 class="mt-1 font-extrabold text-[#06152f]">${esc(r.course_title_snapshot||'Official Statement of Results')}</h3><div class="mt-2 text-xs text-slate-500">Final result: <strong>${r.final_percentage==null?'—':Number(r.final_percentage).toFixed(1)+'%'}</strong> • Status: <strong>${esc(String(r.result_status||'').replaceAll('_',' ')||'—')}</strong> • Issued: ${esc(issued)}</div></div><button class="officialButton" ${r.statement_pdf_path?'':'disabled'}>${r.statement_pdf_path?'View / Download PDF':'PDF pending'}</button></div>`;
+
+        c.querySelector('.officialButton')?.addEventListener('click',async()=>{
+          if(!r.statement_pdf_path)return;
+          const out=await db.functions.invoke('result-download',{body:{result_id:r.id}});
+          if(out.error||out.data?.error||!out.data?.url){
+            alert(out.data?.error||'Unable to open this result right now.');
+            return;
+          }
+          window.open(out.data.url,'_blank','noopener');
+        });
+
+        officialList.appendChild(c);
+      }
     }
   }
-
-  await Promise.all([loadProvisional(),loadOfficial()]);
 })();
 </script>
 
