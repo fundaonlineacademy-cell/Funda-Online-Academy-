@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `a98341ad2f310101718a145dc48b11bff39c3e48`
+Baseline commit: `ba3c5ef20caf459d14c090174cf9868056bf5e0e`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -202,6 +202,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - The compact card keeps the approved Academy Identity content available through **View Academy Identity**, which opens the complete Vision, Mission, Purpose, Core Values, Strategic Objectives and Commitment in a modal.
 - This amendment changes only the Admin My Dashboard presentation of Academy Identity. The shared Academy Identity content and its presentation on Student, Ambassador, Staff and public surfaces remain unchanged.
 - The existing compact **Admin & Staff House Rules** card remains unchanged and the Academy Identity compact card sits with that dashboard-governance area.
+- **Owner-approved Admin My Dashboard company-details amendment — 19 September 2026:** below the compact governance/identity area, My Dashboard includes one simple **Academy Details** section (not a new set of dashboard tabs) showing the registered business name, company registration number, professional-development status and 100% online delivery model. A compact legal footer follows with **© 2026 Funda Online Academy. All rights reserved.**, **Terms & Conditions**, **Privacy Policy**, and **Policies & Legal** links. Terms and Privacy link to the existing sections of `policies.html`. No partner/company showcase is added yet; that may be added later only when actual approved partners exist.
 
 ### Student onboarding / enrolment
 
