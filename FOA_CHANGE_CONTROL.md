@@ -80,6 +80,16 @@ The following changes require explicit scope confirmation in the PR/task notes:
 
 Approval for one protected area does not imply approval for another.
 
+### CEO account control
+
+- The Admin Dashboard CEO Account Control is restricted to the authenticated **CEO** by server-side authorization; hiding buttons in the browser is not sufficient authorization.
+- Only **Student** and **Staff** accounts may be managed by this control. The CEO cannot delete/deactivate the signed-in CEO account or other Admin accounts through it.
+- **Deactivate**, **Reactivate**, and **Permanently Delete** actions require a recorded reason. Permanent deletion additionally requires typed confirmation matching the target account name or email.
+- Every action must write to the dedicated CEO account-action audit trail with the target identity snapshot, action, reason, actor and timestamp.
+- Permanent deletion must remove authentication access and personal account data. Historical finance, academic, HR, security or audit records that must remain linked are retained only in anonymised/tombstone form rather than silently destroying institutional records.
+- Profile-avatar cleanup for permanent deletion must use the Storage API through the authenticated CEO account-control Edge Function; do not directly delete from `storage.objects`.
+- Do not weaken the server-side CEO check, mandatory reason, typed confirmation, audit logging or Student/Staff-only boundary without explicit owner approval.
+
 ## E. Supabase rules
 
 When database work is required:
