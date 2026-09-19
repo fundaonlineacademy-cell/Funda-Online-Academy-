@@ -57,6 +57,9 @@ body.sdV2{background:linear-gradient(180deg,#fffdf8 0%,#f7f8fa 46%,#fffaf0 100%)
 @media(max-width:1180px){.sdMapCanvas{height:auto;padding:20px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.sdMapRoutes,.sdMapContour,.sdMapCompass,.sdMapLegend{display:none}.sdMapHub{position:relative;left:auto;top:auto;transform:none;width:auto;grid-column:1/-1;order:-1;margin:0 auto 8px;max-width:320px}.sdMapNode{position:relative;left:auto!important;top:auto!important;transform:none;width:auto;min-height:112px}.sdMapCanvas:after{display:none}}
 @media(max-width:760px){.sdSystemMapHeader{flex-direction:column;padding:19px 17px}.sdSystemMapClose{width:100%}.sdSystemMapNotice{margin:14px 14px 0}.sdMapCanvas{margin:14px;grid-template-columns:1fr 1fr}.sdSystemMapTitle{gap:10px}.sdSystemMapIcon{width:40px;height:40px}.sdSystemMapTitle h2{font-size:20px}}
 @media(max-width:500px){.sdMapCanvas{grid-template-columns:1fr}.sdMapHub{grid-column:auto}.sdSystemMapTitle{display:block}.sdSystemMapIcon{margin-bottom:10px}}
+body.sdV2:not([data-sd-view="progress"]) #studentProgressCentre{display:none!important}
+body.sdV2[data-sd-view="progress"] #dashboardContent > *:not(#studentProgressCentre){display:none!important}
+body.sdV2[data-sd-view="progress"] #studentProgressCentre{display:block!important}
 body.sdV2:not([data-sd-view="orientation"]) #studentOrientation{display:none!important}
 body.sdV2[data-sd-view="orientation"] #compactWelcome,
 body.sdV2[data-sd-view="orientation"] #studentHero,
@@ -241,7 +244,7 @@ const groups=[
   ['dashboard','#overview','⌂','My Dashboard'],
   ['orientation','#studentOrientation','◎','Orientation'],
   ['courses','#myCoursesSection','▣','My Courses'],
-  ['progress','#myCoursesSection','▥','My Progress'],
+  ['progress','#studentProgressCentre','▥','My Progress'],
   ['assessments','#myCoursesSection','✓','Assessments']
  ]},
  {label:'LEARNING',items:[
@@ -368,6 +371,8 @@ function dashboardView(view){
  const cms=document.getElementById('compactMemberSince');if(cms)cms.textContent=memberSince();
  const cs=document.getElementById('compactStatus');if(cs)cs.textContent=statusText();
  document.querySelectorAll('#sdSide [data-sd-key]').forEach(x=>x.classList.toggle('active',x.dataset.sdKey===view));
+ if(view==='progress')window.FundaStudentProgress?.show?.();
+ else window.FundaStudentProgress?.hide?.();
  if(view==='payments')window.FundaStudentPayments?.show?.();
  if(view==='voice')window.FundaStudentVoice?.show?.();
  close();window.scrollTo({top:0,behavior:'smooth'});
@@ -422,7 +427,7 @@ function install(){
  document.getElementById('sdLogout')?.addEventListener('click',()=>document.getElementById('logoutButton')?.click());
  document.querySelectorAll('#sdSide a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
   e.preventDefault();const key=a.dataset.sdKey;
-  if(['dashboard','orientation','courses','payments','career','communication','faq','academic','support','voice'].includes(key))return dashboardView(key);
+  if(['dashboard','orientation','courses','progress','payments','career','communication','faq','academic','support','voice'].includes(key))return dashboardView(key);
   close();const target=document.querySelector(a.getAttribute('href'));
   if(target){target.classList.add('sdSectionMark');target.scrollIntoView({behavior:'smooth',block:'start'})}
   document.querySelectorAll('#sdSide a').forEach(x=>x.classList.remove('active'));a.classList.add('active');
