@@ -64,6 +64,7 @@ The following changes require explicit scope confirmation in the PR/task notes:
 - The final owner-approved Enrollment Step 2 — Student Type behaviour is protected. Step 2-specific legacy verification logic must not change without explicit owner approval; shared onboarding/draft/legacy changes must prove the approved Step 2 remains intact.
 - The final owner-approved Enrollment Step 3 — Student Registration / Complete Your Details behaviour is protected. Step 3 fields/validation/profile-save logic must not change without explicit owner approval; shared onboarding/registration/draft changes must prove the approved Step 3 remains intact.
 - The final owner-approved Enrollment Step 4 — Payment behaviour is protected. Step 4-specific payment-plan, amount, banking and proof logic must not change without explicit owner approval; shared onboarding/payment changes must prove the approved Step 4 remains intact.
+- The 19 September 2026 owner-approved Payment / Enrollment Step 4 amendment changes only instalment eligibility thresholds. It does not reopen any other locked Student Portal area. Future changes to these thresholds again require explicit owner approval.
 - Ambassador server-side ownership/RLS/RPC/payment-eligibility controls must not be weakened or replaced by browser-only access control.
 - `auth.html` is currently the working Student registration form reached from `create-account.html`; it is not a disposable legacy redirect target. Do not retire or redirect it unless the complete tested registration implementation and Ambassador referral-claim hook have first been migrated. Retired `auth.js` and malformed duplicate reset implementations must remain absent.
 - `supabase-config.js` or any global loader.
@@ -169,7 +170,7 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Step 3 edits continue to save/autosave to the authenticated learner's own Student/profile context.
 - Enrollment Step 4 still shows only active official Academy banking details and blocks payment submission when official details are unavailable.
 - EFT / Bank Transfer and Bank Deposit remain the approved payment methods; cash remains excluded.
-- Courses below R2,000 or 4 weeks/less remain full-payment-only; eligible R2,000+ courses over 4 weeks may offer 2 or 3 instalments according to duration.
+- Payment-plan policy remains: payable amount **R1,300 or less** = full payment; **above R1,300 + at least 4 weeks** = 2 instalments; **R2,000 or more + at least 8 weeks** = 3 instalments; courses shorter than 4 weeks remain full-payment-only.
 - Eligible instalment courses still offer Pay full course fee.
 - Amount Paid Now remains system-calculated/read-only and must exactly match the selected full-payment or instalment amount.
 - A mismatch between the verified paid amount/proof and the system-required amount remains a rejection condition under the approved payment rule.
