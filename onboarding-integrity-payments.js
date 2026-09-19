@@ -3,7 +3,10 @@
   window.__fundaOnboardingIntegrityPayments=true;
 
   const MINIMUM_AGE=16;
-  const FULL_PAYMENT_THRESHOLD=2000;
+  const FULL_PAYMENT_MAX=1300;
+  const MIN_INSTALLMENT_WEEKS=4;
+  const THREE_INSTALLMENT_MIN_FEE=2000;
+  const THREE_INSTALLMENT_MIN_WEEKS=8;
   const money=n=>Number(n||0).toLocaleString('en-ZA',{style:'currency',currency:'ZAR',maximumFractionDigits:2});
   const digits=v=>String(v||'').replace(/\D/g,'');
 
@@ -65,8 +68,9 @@
 
   function paymentPlanFor(price,duration){
     const fee=Number(price||0),weeks=durationWeeks(duration);
-    if(fee<FULL_PAYMENT_THRESHOLD||weeks<=4)return {installments:1,weeks,fee};
-    return {installments:Math.min(3,Math.max(2,Math.ceil(weeks/4))),weeks,fee};
+    if(fee<=FULL_PAYMENT_MAX||weeks<MIN_INSTALLMENT_WEEKS)return {installments:1,weeks,fee};
+    if(fee>=THREE_INSTALLMENT_MIN_FEE&&weeks>=THREE_INSTALLMENT_MIN_WEEKS)return {installments:3,weeks,fee};
+    return {installments:2,weeks,fee};
   }
 
   function paymentParts(total,count){
@@ -119,7 +123,7 @@
     block.innerHTML=`
       <div class="rounded-2xl border border-amber-200 bg-amber-50 p-5">
         <p class="font-black text-[#03133d]">Payment rules</p>
-        <p class="text-sm text-gray-700 leading-6 mt-2">Courses below R2,000 must be paid in full. Courses of R2,000 or more may qualify for instalments when the course runs for more than 4 weeks. The number of instalments is based on the course duration and is capped at 3.</p>
+        <p class="text-sm text-gray-700 leading-6 mt-2">Courses costing R1,300 or less must be paid in full. Courses above R1,300 that run for at least 4 weeks qualify for 2 instalments. Courses of R2,000 or more that run for at least 8 weeks qualify for 3 instalments. Where instalments are available, you may still choose to pay the full course fee upfront.</p>
         <p class="text-sm text-red-700 font-bold leading-6 mt-3">Important: The amount required by the system must be paid exactly. If full payment is required, the proof of payment must show the full required course amount. If an instalment option is selected, the proof must show the exact instalment amount due now. If Admissions &amp; Finance verifies that the amount paid does not match the required amount, the enrollment application will be rejected.</p>
       </div>
       <div id="bankDetailsBox" class="rounded-2xl border border-blue-200 bg-blue-50 p-5">
