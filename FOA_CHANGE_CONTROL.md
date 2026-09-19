@@ -89,6 +89,7 @@ Approval for one protected area does not imply approval for another.
 - Permanent deletion must remove authentication access and personal account data. Historical finance, academic, HR, security or audit records that must remain linked are retained only in anonymised/tombstone form rather than silently destroying institutional records.
 - Profile-avatar cleanup for permanent deletion must use the Storage API through the authenticated CEO account-control Edge Function; do not directly delete from `storage.objects`.
 - Do not weaken the server-side CEO check, mandatory reason, typed confirmation, audit logging or Student/Staff-only boundary without explicit owner approval.
+- Permanent Student deletion must continue to trigger the Ambassador deletion-sync when that Student was referred: disqualify the active referral, reverse/exclude linked commission, and remove the deleted Student's revenue from rank/quota calculations while retaining Admin audit history.
 
 ## E. Supabase rules
 
@@ -212,6 +213,8 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Privacy-limited referral display remains first-name + surname initial where available, with no private Student contact/ID/payment/assessment/support data exposed.
 - **Course not yet selected** remains valid for a referred account that has not enrolled yet.
 - Unconfirmed referrals remain R0/not-yet-earned; only approved/paid eligible earnings appear as money.
+- Permanently deleted referred Students must disappear from active Ambassador referral totals and must contribute **R0** to confirmed earnings and rank/quota revenue. Their referral/ledger history remains only as Admin audit history with the referral disqualified and linked commission reversed.
+- Ambassador earnings must be loaded through the server-side current-eligibility check; do not restore direct display of stale approved ledger rows that no longer have an eligible Student/payment/enrolment chain.
 - Compensation plan, ranks, direct-referral-only rules and no-downline/no-recruitment model remain unchanged.
 - Banking remains own-account only, masked after storage and subject to Finance verification.
 - Support tickets/replies and Your Voice records remain account-bound and private.
