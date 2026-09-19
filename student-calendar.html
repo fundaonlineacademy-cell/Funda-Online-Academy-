@@ -146,7 +146,7 @@ function upcomingItems(){
   for(let y=now.getFullYear();y<=now.getFullYear()+2;y++)for(const h of publicHolidays(y))if(h.date>=start(now))holidayRows.push({id:'holiday-'+keyOf(h.date)+'-'+h.name,_kind:'holiday',title:h.name,starts_at:h.date.toISOString(),official:true,event_type:'public holiday'});
   return [...events.filter(x=>new Date(x.starts_at)>=now),...holidayRows].sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at));
 }
-async function load(){
+async function load(keepView=false){
   db=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
   const restored=window.FundaAuth?.restore?await window.FundaAuth.restore(db):await db.auth.getUser().then(r=>({user:r.data?.user||null}));
   user=restored.user;
@@ -166,8 +166,7 @@ async function load(){
     starts_at:c.scheduled_start,official:true,event_type:'consultation',action_url:c.meeting_link||null,student_visible_notes:c.student_visible_notes||null
   }));
   events.sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at));
-  monthCursor=new Date(now.getFullYear(),now.getMonth(),1);
-  selectedDate=start(now);
+  if(!keepView){monthCursor=new Date(now.getFullYear(),now.getMonth(),1);selectedDate=start(now)}
   $('status').style.display='none';$('app').style.display='block';renderAll();
 }
 function renderAll(){renderStats();renderCalendar();renderSelectedDay();renderUpcoming()}
@@ -176,7 +175,7 @@ function renderStats(){
   const todayItems=events.filter(x=>new Date(x.starts_at)>=now&&new Date(x.starts_at)<tom);
   $('todayCount').textContent=todayItems.length+(holidayOn(now)?1:0);
   $('todayNote').textContent=holidayOn(now)?.name||(todayItems.length?todayItems[0].title:'No scheduled items');
-  $('weekCount').textContent=events.filter(x=>new Date(x.starts_at)>=now&&new Date(x.starts_at)<week).length+publicHolidays(now.getFullYear()).filter(h=>h.date>=now&&h.date<week).length;
+  $('weekCount').textContent=events.filter(x=>new Date(x.starts_at)>=now&&new Date(x.starts_at)<week).length+[...publicHolidays(now.getFullYear()),...publicHolidays(now.getFullYear()+1)].filter(h=>h.date>=now&&h.date<week).length;
   $('personalCount').textContent=events.filter(x=>personal(x)&&new Date(x.starts_at)>=now).length;
   const next=upcomingItems()[0];
   $('nextImportant').textContent=next?shortDate(next.starts_at):'—';
@@ -246,13 +245,13 @@ async function savePersonal(e,id){
   const q=id?db.from('academy_calendar_events').update(payload).eq('id',id):db.from('academy_calendar_events').insert(payload);
   const r=await q;
   if(r.error){alert(r.error.message);return}
-  $('modal').remove();selectedDate=start(when);monthCursor=new Date(when.getFullYear(),when.getMonth(),1);await load();
+  $('modal').remove();selectedDate=start(when);monthCursor=new Date(when.getFullYear(),when.getMonth(),1);await load(true);
 }
 async function removePersonal(id){
   if(!confirm('Delete this personal reminder?'))return;
   const r=await db.from('academy_calendar_events').delete().eq('id',id);
   if(r.error){alert(r.error.message);return}
-  await load();
+  await load(true);
 }
 function showError(msg){$('status').className='error';$('status').textContent=msg}
 $('prevMonth').onclick=()=>{monthCursor=new Date(monthCursor.getFullYear(),monthCursor.getMonth()-1,1);renderCalendar()};
