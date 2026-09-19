@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `957f7059537aa9769490a2517565697b4a5af1ba`
+Baseline commit: `cdb77d56e96dfb99f04656971e72409be1737270`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -203,6 +203,19 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - Manual **Refresh** controls, refreshes immediately after a save/status change, and non-data startup/mount timers remain allowed because they are user-initiated or required only to attach the approved interface; they are not background data refreshes.
 - Returning focus to the Admin page may still perform lightweight state checks where needed, but must not reintroduce a recurring sub-10-minute data refresh that replaces the content while the CEO is reading or working.
 - Do not add any recurring Admin data refresh below 10 minutes without explicit owner approval.
+
+### Admin My Dashboard — Daily Operations cards, owner-approved 20 September 2026
+
+- **Business Health Overview, Department Status and Recent Audits & Alerts remain intact.**
+- Between **Department Status** and **Recent Audits & Alerts**, My Dashboard now includes one compact **Daily Operations** area with six cards in a 3 × 2 desktop layout:
+  1. **Quick Links** — direct shortcuts to existing Enrolments, Finance/Payment Proof Review, Student Support, Ambassador Programme, HR & Team and CEO Account Control workspaces. These are links only and do not duplicate departmental records.
+  2. **System Summary** — attention-only counts for pending enrolments, payment proofs awaiting verification, open support tickets, Ambassador applications awaiting review and executive actions due/overdue.
+  3. **Quick Reports** — shortcuts into the existing Funda Report Centre for Executive Summary, Enrolments, Payments, Student Support and Academic & Assessments reports.
+  4. **Operational Activity** — a compact 7-day activity graph using enrolment, payment and support activity rather than duplicating the existing Business Health growth/performance cards.
+  5. **This Week** — up to four open CEO/management actions due within the next seven days, linked back to Management & Governance rather than creating a separate notes/task system.
+  6. **Calendar** — a compact current-month calendar with Today, South African public-holiday and Academy event/consultation indicators plus a link to the existing Executive Calendar & Tasks page.
+- These cards refresh through the approved central Admin refresh flow; they do **not** introduce a new sub-10-minute recurring background data refresh.
+- Responsive layout becomes 2 columns on medium screens and 1 column on small screens.
 
 ### Admin My Dashboard — owner-approved amendment 19 September 2026
 
