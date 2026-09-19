@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `cdb77d56e96dfb99f04656971e72409be1737270`
+Baseline commit: `79ef9326ca64458ef9456ab32e6cb99117e38f0b`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -216,6 +216,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
   6. **Calendar** — a compact current-month calendar with Today, South African public-holiday and Academy event/consultation indicators plus a link to the existing Executive Calendar & Tasks page.
 - These cards refresh through the approved central Admin refresh flow; they do **not** introduce a new sub-10-minute recurring background data refresh.
 - Responsive layout becomes 2 columns on medium screens and 1 column on small screens.
+- **Readability refinement — 20 September 2026:** Daily Operations now follows the same readable Admin typography scale used in Business Health and Department Status. Primary labels are enlarged, secondary text is no longer micro-sized, System Summary counts are larger, and the CEO Action Snapshot uses the same readable scale. The Operational Activity graph and compact Calendar are placed in defined bordered/rounded visual panels with clearer labels and spacing so they read as intentional dashboard components rather than loose content.
 
 ### Admin My Dashboard — owner-approved amendment 19 September 2026
 
