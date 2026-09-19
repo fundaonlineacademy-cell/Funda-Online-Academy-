@@ -18,7 +18,7 @@ function installStyle(){
     .adcSectionHead h2{margin:0!important;font-size:16px!important;color:#12274d!important}
     .adcSectionHead small{color:#8794a8;font-size:10px;line-height:1.45}
     .adcGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
-    .adcCard{min-height:0;border:1px solid #dbe2ec;border-radius:10px;background:#fff;padding:14px;box-shadow:0 6px 18px rgba(13,39,78,.07);overflow:hidden;font-family:inherit}
+    .adcCard{min-height:0;border:1px solid #dbe2ec;border-radius:10px;background:#fff;padding:14px;box-shadow:0 6px 18px rgba(13,39,78,.07);overflow:hidden;font-family:inherit;display:flex;flex-direction:column}.adcBottomCard{height:315px}
     .adcCardHead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}
     .adcCard h3{margin:0!important;font-size:13px!important;color:#12274d!important;line-height:1.3}
     .adcCardHint{font-size:10px;color:#6e7d92;font-weight:600}
@@ -41,12 +41,12 @@ function installStyle(){
     .adcDayLabel{font-size:10px;color:#5f6f84;font-weight:800}
     .adcLegend{display:flex;gap:12px;flex-wrap:wrap;margin-top:9px;font-size:10px;color:#627187}
     .adcLegend i{display:inline-block;width:8px;height:8px;border-radius:2px;background:#0b315c;margin-right:4px}.adcLegend i.pay{background:#b9902f}.adcLegend i.sup{background:#8da0b9}
-    .adcWeekList{display:grid;gap:7px}.adcWeekItem{padding:9px 10px;border:1px solid #edf1f5;border-radius:8px;background:#fbfcfe}
+    .adcWeekList{display:grid;gap:7px}.adcWeekItem{padding:9px 10px;border:1px solid #edf1f5;border-radius:8px;background:#fbfcfe}.adcWeekFooter{margin-top:auto;padding-top:9px;border-top:1px solid #edf1f5}.adcWeekMore{width:100%;border:1px solid #d9e2ef;border-radius:8px;background:#f7f9fc;color:#17324a;padding:8px 10px;font-size:10px;font-weight:900;cursor:pointer;font-family:inherit}.adcWeekMore:hover{border-color:#d7bc68;background:#fffaf0}
     .adcWeekItem b{display:block;font-size:11px;color:#152b43;line-height:1.4}.adcWeekItem span{display:block;margin-top:3px;font-size:10px;color:#6e7d92;line-height:1.4}
     .adcWeekTag{display:inline-block!important;margin-top:5px!important;width:auto;padding:4px 7px;border-radius:99px;background:#fff0d0;color:#875d00!important;font-size:9px!important;font-weight:900}
     .adcEmpty{padding:18px 8px;text-align:center;color:#8290a2;font-size:10px;line-height:1.45}
-    .adcCalTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.adcCalTop b{font-size:12px;color:#17324a}
-    .adcCalendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;padding:9px;border:1px solid #e1e7ef;border-radius:10px;background:linear-gradient(180deg,#fbfcfe,#f7f9fc)}.adcDow{text-align:center;font-size:10px;color:#65758a;font-weight:900;padding:4px 0}
+    .adcCalendarPanel{width:100%;min-height:224px;border:1px solid #e1e7ef;border-radius:10px;background:linear-gradient(180deg,#fbfcfe,#f6f9fc);padding:12px 10px 10px}.adcCalTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.adcCalTop b{font-size:12px;color:#17324a}
+    .adcCalendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;width:100%}.adcDow{text-align:center;font-size:10px;color:#65758a;font-weight:900;padding:4px 0}
     .adcDate{position:relative;min-height:31px;display:grid;place-items:center;border-radius:7px;font-size:10px;color:#273b52;background:#fff}
     .adcDate.muted{opacity:.18}.adcDate.today{outline:2px solid #0b315c;font-weight:900}.adcDate.holiday{background:#fff0d0;color:#7e5700;font-weight:900}
     .adcDate.hasEvent:after{content:"";position:absolute;bottom:3px;width:5px;height:5px;border-radius:50%;background:#0b63ce}.adcDate.holiday.hasEvent:after{background:#8a5a00}
@@ -54,7 +54,7 @@ function installStyle(){
     .adcCalLegend .today{border:2px solid #0b315c;background:#fff}.adcCalLegend .holiday{background:#fff0d0}.adcCalLegend .event{background:#0b63ce;border-radius:50%}
     .adcOpen{border:1px solid #e0d3ad;background:#fffaf0;color:#765814;font-size:10px;font-weight:900;cursor:pointer;text-decoration:none;font-family:inherit;border-radius:8px;padding:5px 8px;white-space:nowrap}
     .adcLoading{min-height:140px;display:grid;place-items:center;color:#8290a2;font-size:10px}
-    @media(max-width:1050px){.adcGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:1050px){.adcGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.adcBottomCard{height:auto;min-height:0}}
     @media(max-width:650px){.adcGrid{grid-template-columns:1fr}.adcCard{min-height:0}.adcSectionHead{align-items:flex-start;flex-direction:column}}
   `;
   document.head.appendChild(s);
@@ -216,12 +216,14 @@ function graph(d){
 
 function thisWeek(d){
   const today=dateKeyLocal(d.today),end=dateKeyLocal(addDays(d.today,7));
-  const open=d.actions.filter(x=>!['completed','closed'].includes(low(x.status))&&x.due_date&&x.due_date<=end).slice(0,4);
-  if(!open.length)return '<div class="adcEmpty">No executive actions are due in the next 7 days.</div>';
-  return `<div class="adcWeekList">${open.map(a=>{
+  const all=d.actions.filter(x=>!['completed','closed'].includes(low(x.status))&&x.due_date&&x.due_date<=end);
+  const visible=all.slice(0,3);
+  if(!visible.length)return '<div class="adcEmpty">No executive actions are due in the next 7 days.</div>';
+  return `<div class="adcWeekList">${visible.map(a=>{
     const over=a.due_date<today,when=over?'Overdue':a.due_date===today?'Due today':'Due '+new Date(a.due_date+'T12:00:00').toLocaleDateString('en-ZA',{day:'2-digit',month:'short'});
     return `<div class="adcWeekItem"><b>${esc(a.title||'Executive action')}</b><span>${esc(a.department||'Management')}</span><span class="adcWeekTag">${esc(when)}</span></div>`;
-  }).join('')}</div>`;
+  }).join('')}</div>
+  <div class="adcWeekFooter"><button class="adcWeekMore" data-adc-open="management">View all actions${all.length>3?' ('+all.length+')':''} →</button></div>`;
 }
 
 function calendar(d){
@@ -235,9 +237,11 @@ function calendar(d){
     const dt=new Date(y,m,day),k=dateKeyLocal(dt),holiday=holidayMap.get(k),today=k===dateKeyLocal(now),has=eventDays.has(k);
     cells.push(`<span class="adcDate${today?' today':''}${holiday?' holiday':''}${has?' hasEvent':''}" title="${esc(holiday||'')}${holiday&&has?' · ':''}${has?'Academy event / consultation':''}">${day}</span>`);
   }
-  return `<div class="adcCalTop"><b>${now.toLocaleDateString('en-ZA',{month:'long',year:'numeric'})}</b><a class="adcOpen" href="admin-calendar.html">Open Calendar →</a></div>
+  return `<div class="adcCalendarPanel">
+    <div class="adcCalTop"><b>${now.toLocaleDateString('en-ZA',{month:'long',year:'numeric'})}</b><a class="adcOpen" href="admin-calendar.html">Open Calendar →</a></div>
     <div class="adcCalendar">${['Mo','Tu','We','Th','Fr','Sa','Su'].map(x=>'<span class="adcDow">'+x+'</span>').join('')}${cells.join('')}</div>
-    <div class="adcCalLegend"><span><i class="today"></i>Today</span><span><i class="holiday"></i>Public holiday</span><span><i class="event"></i>Academy event</span></div>`;
+    <div class="adcCalLegend"><span><i class="today"></i>Today</span><span><i class="holiday"></i>Public holiday</span><span><i class="event"></i>Academy event</span></div>
+  </div>`;
 }
 
 function shell(){
@@ -250,9 +254,9 @@ function shell(){
       <article class="adcCard"><div class="adcCardHead"><h3>Quick Links</h3><span class="adcCardHint">Daily access</span></div><div id="adcQuick">${quickLinks()}</div></article>
       <article class="adcCard"><div class="adcCardHead"><h3>System Summary</h3><span class="adcCardHint">Needs attention</span></div><div id="adcSummary" class="adcLoading">Loading…</div></article>
       <article class="adcCard"><div class="adcCardHead"><h3>Quick Reports</h3><span class="adcCardHint">Existing reports</span></div><div id="adcReports">${quickReports()}</div></article>
-      <article class="adcCard"><div class="adcCardHead"><h3>Operational Activity</h3><span class="adcCardHint">Last 7 days</span></div><div id="adcGraph" class="adcLoading">Loading…</div></article>
-      <article class="adcCard"><div class="adcCardHead"><h3>This Week</h3><button class="adcOpen" data-adc-open="management">Management →</button></div><div id="adcWeek" class="adcLoading">Loading…</div></article>
-      <article class="adcCard"><div class="adcCardHead"><h3>Calendar</h3><span class="adcCardHint">Month view</span></div><div id="adcCalendar" class="adcLoading">Loading…</div></article>
+      <article class="adcCard adcBottomCard"><div class="adcCardHead"><h3>Operational Activity</h3><span class="adcCardHint">Last 7 days</span></div><div id="adcGraph" class="adcLoading">Loading…</div></article>
+      <article class="adcCard adcBottomCard"><div class="adcCardHead"><h3>This Week</h3><span class="adcCardHint">Next 7 days</span></div><div id="adcWeek" class="adcLoading">Loading…</div></article>
+      <article class="adcCard adcBottomCard"><div class="adcCardHead"><h3>Calendar</h3><span class="adcCardHint">Month view</span></div><div id="adcCalendar" class="adcLoading">Loading…</div></article>
     </div>`;
   return section;
 }
@@ -270,8 +274,12 @@ function place(){
 }
 
 function wire(root){
-  root.querySelectorAll('[data-adc-open]').forEach(b=>b.addEventListener('click',()=>openSection(b.dataset.adcOpen)));
-  root.querySelectorAll('[data-adc-report]').forEach(b=>b.addEventListener('click',()=>openReport(b.dataset.adcReport)));
+  root.addEventListener('click',e=>{
+    const open=e.target.closest?.('[data-adc-open]');
+    if(open){openSection(open.dataset.adcOpen);return}
+    const report=e.target.closest?.('[data-adc-report]');
+    if(report)openReport(report.dataset.adcReport);
+  });
 }
 
 async function refreshData(){
