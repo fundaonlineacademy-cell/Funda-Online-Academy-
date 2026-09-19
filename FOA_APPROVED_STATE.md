@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `959a63f840eb7105eb7b22f79494525b5af87f11`
+Baseline commit: `3c7b091cd3e8cface5d80e1895fc353fb1699a95`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -17,7 +17,7 @@ This file exists to prevent regressions and the reintroduction of previously cor
 
 ### Student Portal — FINAL OWNER-APPROVED AND LOCKED
 
-The complete Student Portal is owner-approved as final and locked as of **19 September 2026**, following Aziwe Futhe's completed final review. The locked functional checkpoint is commit `959a63f840eb7105eb7b22f79494525b5af87f11`.
+The complete Student Portal remains owner-approved and locked. After explicit owner reopening of Payment / Enrollment Step 4 on **19 September 2026**, the payment-plan policy was amended and re-locked at functional checkpoint `3c7b091cd3e8cface5d80e1895fc353fb1699a95`. All other Student Portal areas remain protected and unchanged by that amendment.
 
 - The Student Portal is now a **change-controlled protected surface**. No Student Portal code, content, layout, navigation, wording, styling, data presentation, workflow, assessment behaviour, results behaviour, payment behaviour, support/contact presentation, calendar behaviour, course-study experience or shared Student-facing runtime may be changed unless Aziwe Futhe explicitly approves that specific change.
 - Approval is required even for changes presented as cleanup, polish, refactoring, responsiveness, consistency, accessibility, bug fixing, student feedback, performance work or shared/global-script maintenance when they can alter the approved Student experience.
@@ -153,8 +153,11 @@ Enrollment Step 4 on `onboarding.html` is owner-approved as the final **Payment*
 
 - The approved Payment step must display the Academy's current official banking details from the active payment settings and must instruct learners not to pay until official banking details are shown.
 - The approved payment methods remain **EFT / Bank Transfer** and **Bank Deposit**. Cash payments are not accepted.
-- Courses below **R2,000**, or courses of **4 weeks or less**, remain full-payment-only under the current payment-plan rules.
-- Courses of **R2,000 or more** that run for more than 4 weeks may qualify for **2 or 3 instalments**, depending on course duration, with the current maximum of 3 instalments.
+- **Owner-approved payment-plan amendment — 19 September 2026:** a payable course amount of **R1,300 or less** remains full-payment-only.
+- A payable course amount **above R1,300** with a course duration of **at least 4 weeks** qualifies for **2 instalments**.
+- A payable course amount of **R2,000 or more** with a course duration of **at least 8 weeks** qualifies for **3 instalments**.
+- A course shorter than 4 weeks remains full-payment-only even when its payable amount is above R1,300.
+- Payment-plan eligibility continues to use the learner's current payable enrolment amount, preserving existing approved discount/legacy pricing behaviour.
 - When instalments are available, the learner must still retain the option to **Pay full course fee**. Instalments are an option, not a requirement.
 - The system must continue to calculate the amount currently due. **Amount Paid Now** remains read-only and must correspond to the selected full-payment or instalment option.
 - The amount required by the system must be paid **exactly**. For full payment, proof must show the exact full required amount. For an instalment option, proof must show the exact instalment amount due now. If Admissions & Finance verifies that the amount paid does not match the required amount, the enrollment application is rejected under the approved payment rule.
