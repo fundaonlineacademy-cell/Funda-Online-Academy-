@@ -49,6 +49,7 @@ The goal of cleanup is to remove obsolete or harmful behaviour that can disturb 
 
 ## D. Protected-area approval
 
+- The complete final owner-approved **Student Portal** is protected at locked functional checkpoint `959a63f840eb7105eb7b22f79494525b5af87f11`. This protection covers the Student Dashboard shell/navigation, every Student tab and Student-facing page, course-study/lesson pages, module-assessment pages, Student support/contact presentation, Student results/payments/calendar/communication/certificates/progress/assessment behaviour, and shared/global code that can alter those surfaces. No change may be made unless Aziwe Futhe explicitly reopens the affected Student Portal area. Student feedback is a change request only and does not itself authorize implementation.
 The following changes require explicit scope confirmation in the PR/task notes:
 
 - The final owner-approved Home page (`index.html`). It must not be changed unless Aziwe Futhe explicitly reopens the Home page.
@@ -89,6 +90,7 @@ When database work is required:
 
 ## F. UI rules
 
+- The Student Portal is final owner-approved and locked. Preserve its complete current structure, navigation, typography (**Source Sans 3**), navy/gold presentation, responsive behaviour, Student-facing contact boundaries, My Courses/My Progress separation, course-embedded assessment model, provisional-vs-official Results separation, monthly Calendar planner, professional Communication inbox, and all existing Student workflows unless Aziwe Futhe explicitly reopens the relevant area.
 When a UI fix is requested:
 
 - Preserve existing approved structure, wording, colour, spacing, controls, navigation, and responsive ordering unless they are part of the request.
@@ -126,6 +128,21 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Existing account passwords are not invalidated by the new-account password rule.
 - A Student account can be created before a course is selected; later course selection/onboarding remains available.
 - Eligible Ambassador referral attribution is claimed through the Student account-creation path and cannot be overwritten by a later Ambassador code.
+
+### Locked Student Portal
+- Confirm the requested change has explicit owner approval identifying the Student Portal area being reopened.
+- Confirm all non-reopened Student Portal areas remain byte-for-byte or behaviourally unchanged as appropriate.
+- Confirm Student Dashboard navigation and all existing Student destinations still load and route correctly.
+- Confirm Source Sans 3 remains the primary Student Portal font on Dashboard/tabs, Student pages, course-study pages and module-assessment pages.
+- Confirm My Courses remains unchanged unless specifically reopened and remains distinct from My Progress.
+- Confirm My Progress continues to show completion/roadmap/outstanding requirements without becoming a duplicate course-entry surface.
+- Confirm assessments remain in their approved course/module learning sequence and Assessment Centre guidance remains explanatory rather than a duplicate assessment engine.
+- Confirm Provisional Results remain view-only/non-downloadable and Official Results remain separately issued.
+- Confirm Calendar still shows the approved monthly planner, South African public holidays, day details, upcoming schedule and personal reminders.
+- Confirm Communication Centre still provides compact inbox rows, Important/Pinned handling, search/category filters, message details and correct read-state behaviour.
+- Confirm only approved Student-facing role mailboxes are shown; no CEO/executive, named-staff, webmaster or other internal/private mailbox is exposed.
+- Confirm course-study, module-assessment, progress, result, payment, certificate and support workflows remain intact.
+- Test desktop and mobile for every reopened Student surface.
 
 ### Student
 - Enrollment Step 1 loads all active courses from the approved catalogue.
