@@ -199,6 +199,7 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Course progress/assessment navigation is not disturbed.
 
 ### Admin/Staff
+- Admin Command Center typography is locked to **Source Sans 3** across all Admin tabs, forms, tables, dialogs and dynamically rendered modules. Typography-only approval does not reopen Admin layout, colours, navigation structure or workflows.
 - Admin Command Center loads for authorized Admin.
 - Staff Workspace loads for authorized Staff.
 - Notifications/navigation remain available.
