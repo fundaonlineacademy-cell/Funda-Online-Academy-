@@ -174,8 +174,6 @@ as $function$
     from public.ambassador_v2_referrals r
     join mine m on m.application_id = r.application_id
     join public.profiles p on p.id = r.student_user_id
-    where r.eligibility_status = 'recorded'
-      and public.ambassador_v2_student_account_is_active(r.student_user_id)
     left join lateral (
       select e.id enrolment_id,
              c.title course_title,
@@ -204,6 +202,8 @@ as $function$
          and l.earning_status in ('approved','paid')
          and public.ambassador_v2_payment_is_eligible(l.payment_id)
     ) confirmed on true
+   where r.eligibility_status = 'recorded'
+     and public.ambassador_v2_student_account_is_active(r.student_user_id)
    order by r.claimed_at desc;
 $function$;
 
