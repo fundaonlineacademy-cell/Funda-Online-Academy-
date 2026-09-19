@@ -1,14 +1,268 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>My Calendar | Funda Online Academy</title><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js?v=20260913-session-v1"></script><style>
-:root{--navy:#06152f;--gold:#c99a2e;--ink:#183153;--line:#d9e4f2}*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(180deg,#f7fbff,#fffaf0);color:var(--ink)}header{background:var(--navy);color:#fff;padding:15px 16px;position:sticky;top:0;z-index:5}.head{max-width:1000px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:10px;font-weight:900}.brand img{width:42px;height:42px;border-radius:10px;background:#fff;object-fit:contain}.back{color:#fff;text-decoration:none;border:1px solid #ffffff33;border-radius:10px;padding:9px 11px;font-size:12px;font-weight:800}main{max-width:1000px;margin:auto;padding:18px}.hero,.card{background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 10px 28px rgba(34,72,119,.07)}.hero{padding:20px;background:linear-gradient(135deg,#071d49,#0c377c);color:#fff}.hero h1{margin:5px 0 6px;font-size:25px}.hero p{margin:0;color:#dbeafe;font-size:13px;line-height:1.6}.notice{margin-top:12px;padding:10px;border-radius:11px;background:#fff6d9;color:#705313;font-size:11px;line-height:1.5}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.btn{border:0;border-radius:10px;background:var(--navy);color:#fff;padding:10px 13px;font-weight:800;font-size:12px;cursor:pointer}.btn.alt{background:#fff;color:var(--navy);border:1px solid var(--line)}.btn.gold{background:var(--gold);color:#07152b}.btn.on{box-shadow:inset 0 0 0 2px #e8c76b}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.stat{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.stat strong{display:block;font-size:23px;color:var(--navy)}.stat span{font-size:10px;color:#66758a}.card{padding:16px}.list{display:grid;gap:10px}.item{border:1px solid #e2e8f0;border-radius:14px;padding:13px;display:grid;grid-template-columns:110px 1fr auto;gap:12px;align-items:start}.when{font-size:11px;font-weight:900;color:#245294}.item h3{margin:0 0 5px;color:var(--navy);font-size:14px}.item p{margin:0;color:#64748b;font-size:11px;line-height:1.5}.pill{display:inline-block;margin-top:7px;margin-right:5px;padding:4px 7px;border-radius:99px;background:#eaf2ff;color:#1458b9;font-size:8px;font-weight:900}.pill.personal{background:#fff1c9;color:#815c0c}.empty{text-align:center;padding:25px;border:1px dashed #cbd5e1;border-radius:13px;color:#64748b;font-size:12px}.modal{position:fixed;inset:0;background:#03101fcc;z-index:20;display:grid;place-items:center;padding:14px}.box{width:min(560px,96vw);background:#fff;border-radius:18px;padding:18px}.box h2{margin:0 0 12px;color:var(--navy)}label{font-size:10px;font-weight:900;color:#52657d;display:block;margin:8px 0 4px}input,textarea{width:100%;padding:11px;border:1px solid #d6e0ec;border-radius:10px;font:inherit}textarea{min-height:90px}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:13px}.error{padding:18px;background:#fff0f0;color:#922;border:1px solid #f0caca;border-radius:14px}@media(max-width:700px){.item{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.hero h1{font-size:22px}}
-</style></head><body><header><div class="head"><div class="brand"><img src="logo.png" alt="Funda"><span>FUNDA ONLINE ACADEMY</span></div><a class="back" href="dashboard.html">← Student Dashboard</a></div></header><main><section class="hero"><div style="font-size:10px;letter-spacing:.18em;font-weight:900;color:#e4c777">MY SCHEDULE</div><h1>My Calendar & Reminders</h1><p>View official Academy dates, consultations and your own study reminders in one secure place.</p><div class="notice">Safe rollout: this calendar runs on its own page. It does not modify the Student Dashboard, phone notifications or background services.</div></section><div id="status" class="card" style="margin-top:14px">Loading your secure calendar…</div><div id="app" style="display:none"><div class="stats"><div class="stat"><strong id="todayCount">0</strong><span>Today</span></div><div class="stat"><strong id="weekCount">0</strong><span>Next 7 days</span></div><div class="stat"><strong id="personalCount">0</strong><span>My reminders</span></div></div><div class="toolbar"><button class="btn on" data-view="week">Next 7 Days</button><button class="btn alt" data-view="today">Today</button><button class="btn alt" data-view="all">Upcoming</button><button class="btn gold" id="newReminder">+ Personal Reminder</button></div><section class="card"><div id="list" class="list"></div></section></div></main><script>
-(()=>{'use strict';let db,user,events=[],view='week';const $=id=>document.getElementById(id),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));const start=d=>{let x=new Date(d);x.setHours(0,0,0,0);return x},add=(d,n)=>{let x=new Date(d);x.setDate(x.getDate()+n);return x},fmt=v=>new Date(v).toLocaleString('en-ZA',{timeZone:'Africa/Johannesburg',weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
-async function load(){db=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const u=await db.auth.getUser();user=u.data?.user;if(!user){location.href='login.html';return}const p=await db.from('profiles').select('role').eq('id',user.id).maybeSingle();if(String(p.data?.role||'').toLowerCase()!=='student'){showError('This calendar is available to student accounts only.');return}const now=new Date(),from=add(now,-30).toISOString(),to=add(now,365).toISOString();const [ev,co]=await Promise.all([db.from('academy_calendar_events').select('*').eq('status','active').gte('starts_at',from).lte('starts_at',to).order('starts_at'),db.from('student_consultations').select('id,category,department,scheduled_start,duration_minutes,mode,status,meeting_link,student_visible_notes').gte('scheduled_start',from).lte('scheduled_start',to).in('status',['requested','confirmed']).order('scheduled_start')]);if(ev.error){showError('Calendar could not load: '+ev.error.message);return}events=(ev.data||[]).map(x=>({...x,_kind:'event'}));(co.data||[]).forEach(c=>events.push({id:'consult-'+c.id,_kind:'consultation',title:(c.category||'Student')+' consultation',description:(c.status==='confirmed'?'Confirmed':'Requested')+' · '+(c.department||'Academy')+' · '+(c.duration_minutes||30)+' min',starts_at:c.scheduled_start,official:true,event_type:'appointment',action_url:c.meeting_link||null}));events.sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at));$('status').style.display='none';$('app').style.display='block';render()}
-function filtered(){const now=start(new Date());if(view==='today'){const end=add(now,1);return events.filter(x=>new Date(x.starts_at)>=now&&new Date(x.starts_at)<end)}if(view==='week'){const end=add(now,8);return events.filter(x=>new Date(x.starts_at)>=now&&new Date(x.starts_at)<end)}return events.filter(x=>new Date(x.starts_at)>=now)}
-function render(){const now=start(new Date()),tom=add(now,1),week=add(now,8);$('todayCount').textContent=events.filter(x=>new Date(x.starts_at)>=now&&new Date(x.starts_at)<tom).length;$('weekCount').textContent=events.filter(x=>new Date(x.starts_at)>=now&&new Date(x.starts_at)<week).length;$('personalCount').textContent=events.filter(x=>x._kind==='event'&&!x.official&&x.source_type==='personal'&&new Date(x.starts_at)>=now).length;document.querySelectorAll('[data-view]').forEach(b=>{const on=b.dataset.view===view;b.classList.toggle('on',on);b.classList.toggle('alt',!on)});const arr=filtered();$('list').innerHTML=arr.length?arr.map(x=>{const personal=x._kind==='event'&&!x.official&&x.source_type==='personal';return `<article class="item"><div class="when">${esc(fmt(x.starts_at))} SAST</div><div><h3>${esc(x.title)}</h3>${x.description?`<p>${esc(x.description)}</p>`:''}<span class="pill ${personal?'personal':''}">${personal?'PERSONAL':'OFFICIAL'}</span><span class="pill">${esc(String(x.event_type||'reminder').toUpperCase())}</span></div><div>${x.action_url?`<a class="btn alt" style="display:inline-block;text-decoration:none" href="${esc(x.action_url)}">Open</a>`:''}${personal?`<button class="btn alt" data-delete="${x.id}">Delete</button>`:''}</div></article>`}).join(''):'<div class="empty">Nothing is scheduled in this view.</div>';document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>removePersonal(b.dataset.delete))}
-function modal(){const d=new Date(Date.now()+86400000);d.setMinutes(0,0,0);const local=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16);document.body.insertAdjacentHTML('beforeend',`<div class="modal" id="modal"><form class="box" id="reminderForm"><h2>New Personal Reminder</h2><label>Title</label><input name="title" maxlength="180" required><label>Date & time</label><input name="when" type="datetime-local" value="${local}" required><label>Notes</label><textarea name="description" maxlength="1000"></textarea><div class="actions"><button type="button" class="btn alt" id="cancel">Cancel</button><button class="btn">Save Reminder</button></div></form></div>`);$('cancel').onclick=()=>$('modal').remove();$('reminderForm').onsubmit=savePersonal}
-async function savePersonal(e){e.preventDefault();const f=new FormData(e.target),title=String(f.get('title')||'').trim(),when=new Date(f.get('when'));if(!title||Number.isNaN(when.getTime()))return;const r=await db.from('academy_calendar_events').insert({title,description:String(f.get('description')||'').trim()||null,event_type:'reminder',audience:'student',target_user_id:user.id,starts_at:when.toISOString(),priority:'normal',official:false,status:'active',source_type:'personal',created_by:user.id,email_reminders_enabled:false,push_reminders_enabled:false});if(r.error){alert(r.error.message);return}$('modal').remove();await load()}
-async function removePersonal(id){if(!confirm('Delete this personal reminder?'))return;const r=await db.from('academy_calendar_events').delete().eq('id',id);if(r.error)return alert(r.error.message);await load()}
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>My Calendar | Funda Online Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js?v=20260913-session-v1"></script>
+<style>
+:root{--navy:#06152f;--navy2:#0c377c;--blue:#2767c6;--gold:#c99a2e;--gold2:#e4c777;--ink:#183153;--muted:#607080;--line:#d9e4f2;--soft:#f7fafc;--font:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:var(--font);background:linear-gradient(180deg,#f7fbff,#fffaf0);color:var(--ink);min-height:100vh}button,input,textarea,select,a{font-family:var(--font)}
+header{background:rgba(6,21,47,.98);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:15;box-shadow:0 7px 24px rgba(6,21,47,.12)}.head{max-width:1180px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{display:flex;align-items:center;gap:11px;font-weight:900}.brand img{width:44px;height:44px;border-radius:11px;background:#fff;padding:2px;object-fit:contain}.brand small{display:block;margin-top:3px;color:#e4c777;font-size:8px;letter-spacing:.22em}.back{color:#fff;text-decoration:none;border:1px solid #ffffff33;border-radius:11px;padding:10px 12px;font-size:12px;font-weight:800}
+main{max-width:1180px;margin:auto;padding:22px 16px 48px}.hero,.card{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 10px 28px rgba(34,72,119,.07)}.hero{position:relative;overflow:hidden;padding:27px;background:linear-gradient(135deg,#071d49,#0c377c 67%,#174b93);color:#fff;border-color:rgba(201,154,46,.55)}.hero:after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.07);right:-115px;top:-165px}.hero>*{position:relative;z-index:1}.hero .eyebrow{font-size:10px;letter-spacing:.18em;font-weight:900;color:#e4c777;text-transform:uppercase}.hero h1{margin:6px 0 7px;font-size:30px;line-height:1.18}.hero p{max-width:850px;margin:0;color:#e5efff;font-size:14px;line-height:1.65;font-weight:650}
+#status{margin-top:16px;padding:18px}.error{padding:18px;background:#fff0f0;color:#922;border:1px solid #f0caca;border-radius:14px}.app{display:none}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:16px 0}.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 15px;min-height:92px}.stat strong{display:block;font-size:24px;line-height:1;color:var(--navy);font-weight:900}.stat span{display:block;margin-top:7px;font-size:10px;color:#66758a;font-weight:800;text-transform:uppercase;letter-spacing:.05em}.stat em{display:block;margin-top:4px;color:#374a5e;font-size:10px;font-style:normal;font-weight:700;line-height:1.35}
+.calendarCard{padding:0;overflow:hidden}.calendarTop{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:18px 20px;background:linear-gradient(145deg,#fff,#fff9e8);border-bottom:1px solid #ead8a6}.monthTitle{min-width:0}.monthTitle .kicker{color:#a7740b;font-size:9px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.monthTitle h2{margin:3px 0 0;color:var(--navy);font-size:22px;line-height:1.2}.calendarControls{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.btn{border:0;border-radius:10px;background:var(--navy);color:#fff;padding:10px 13px;font-weight:850;font-size:11px;cursor:pointer}.btn.alt{background:#fff;color:var(--navy);border:1px solid #cfdbe8}.btn.gold{background:linear-gradient(135deg,#d6a936,#efd16f);color:#06152f;border:1px solid #c6921f}.btn.ghost{background:#f4f7fa;color:#263746;border:1px solid #dce4eb}.btn:disabled{opacity:.55;cursor:not-allowed}
+.legend{display:flex;flex-wrap:wrap;gap:12px;padding:11px 20px;border-bottom:1px solid #edf0f2;background:#fbfdff}.legend span{display:flex;align-items:center;gap:6px;color:#52657a;font-size:9px;font-weight:800}.dot{width:8px;height:8px;border-radius:50%;display:inline-block}.dot.academy{background:#071d49}.dot.holiday{background:#c99a2e}.dot.consult{background:#2767c6}.dot.personal{background:#fff;border:2px solid #c99a2e}
+.weekdays,.monthGrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.weekdays{background:#071d49;color:#fff}.weekdays div{padding:9px 6px;text-align:center;font-size:9px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}.dayCell{position:relative;min-height:118px;padding:9px;border-right:1px solid #edf0f2;border-bottom:1px solid #edf0f2;background:#fff;cursor:pointer;transition:.16s ease}.dayCell:nth-child(7n){border-right:0}.dayCell:hover{background:#fffdf7}.dayCell.other{background:#f8fafc;color:#9aa6b2}.dayCell.today{box-shadow:inset 0 0 0 2px #c99a2e;background:#fffaf0}.dayCell.selected{box-shadow:inset 0 0 0 2px #071d49;background:#f6f9fd}.dayNo{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:9px;color:#20354b;font-size:11px;font-weight:900}.today .dayNo{background:#071d49;color:#fff}.holidayName{display:block;margin-top:5px;padding:4px 6px;border-radius:7px;background:#fff1c9;color:#6f5009;font-size:8px;line-height:1.3;font-weight:900}.cellEvents{display:grid;gap:4px;margin-top:6px}.cellEvent{display:flex;align-items:center;gap:5px;min-width:0;color:#31475d;font-size:8px;font-weight:800}.cellEvent i{width:6px;height:6px;border-radius:50%;flex:0 0 auto}.cellEvent b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800}.cellEvent.academy i{background:#071d49}.cellEvent.consult i{background:#2767c6}.cellEvent.personal i{background:#c99a2e}.moreCount{margin-top:4px;color:#7b5a0f;font-size:8px;font-weight:900}
+.dayPanel{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:15px;margin-top:16px}.dayDetail,.upcoming{padding:18px}.panelHead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.panelHead .kicker{color:#a7740b;font-size:9px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}.panelHead h2{margin:3px 0 0;color:var(--navy);font-size:18px}.selectedHoliday{margin-top:12px;padding:10px 12px;border-radius:12px;background:#fff7dc;border:1px solid #e9cf81;color:#5f4708;font-size:11px;font-weight:800}.dayList,.upcomingList{display:grid;gap:9px;margin-top:13px}.eventRow{display:grid;grid-template-columns:86px minmax(0,1fr) auto;gap:10px;align-items:center;padding:11px 12px;border:1px solid #e2e8ef;border-radius:13px;background:#fbfdff}.eventTime{font-size:10px;color:#245294;font-weight:900}.eventRow h3{margin:0;color:var(--navy);font-size:12px}.eventRow p{margin:3px 0 0;color:#66758a;font-size:9px;line-height:1.4}.badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}.pill{display:inline-flex;padding:4px 6px;border-radius:999px;background:#eaf2ff;color:#1458b9;font-size:7px;font-weight:900;text-transform:uppercase}.pill.personal{background:#fff1c9;color:#815c0c}.pill.holiday{background:#fff4d7;color:#7a5808}.rowActions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.rowActions .btn{padding:7px 8px;font-size:8px}.empty{text-align:center;padding:20px;border:1px dashed #cbd5e1;border-radius:13px;color:#64748b;font-size:11px}
+.upcomingToolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:12px}.upcomingToolbar span{font-size:9px;color:#6a7887;font-weight:700}
+.modal{position:fixed;inset:0;background:#03101fcc;z-index:40;display:grid;place-items:center;padding:14px}.box{width:min(590px,96vw);max-height:92vh;overflow:auto;background:#fff;border-radius:20px;padding:19px;box-shadow:0 25px 60px rgba(0,0,0,.28)}.box h2{margin:0 0 12px;color:var(--navy);font-size:20px}.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}label{font-size:9px;font-weight:900;color:#52657d;display:block;margin:7px 0 4px;text-transform:uppercase;letter-spacing:.05em}input,textarea,select{width:100%;padding:11px;border:1px solid #d6e0ec;border-radius:10px;font:inherit;color:#20354b;background:#fff}textarea{min-height:90px;resize:vertical}.checkRow{display:flex;align-items:center;gap:8px;margin-top:10px}.checkRow input{width:auto}.checkRow label{margin:0;text-transform:none;letter-spacing:0}.actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.dayPanel{grid-template-columns:1fr}.dayCell{min-height:105px}.cellEvent{font-size:7px}}
+@media(max-width:700px){main{padding-left:10px;padding-right:10px}.hero{padding:22px 18px}.hero h1{font-size:25px}.calendarTop{display:block}.calendarControls{justify-content:flex-start;margin-top:12px}.weekdays div{font-size:8px;padding:8px 2px}.dayCell{min-height:88px;padding:6px}.dayNo{width:24px;height:24px}.holidayName{font-size:7px;padding:3px 4px}.cellEvent b{display:none}.cellEvent{display:inline-flex;margin-right:3px}.moreCount{display:none}.eventRow{grid-template-columns:1fr}.rowActions{justify-content:flex-start}.formGrid{grid-template-columns:1fr}.full{grid-column:auto}}
+@media(max-width:460px){.stats{grid-template-columns:1fr 1fr}.stat strong{font-size:21px}.dayCell{min-height:74px}.holidayName{max-height:28px;overflow:hidden}.legend{gap:8px;padding-left:12px;padding-right:12px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand"><img src="logo.png" alt="Funda Online Academy"><div>FUNDA ONLINE ACADEMY<small>MY CALENDAR</small></div></div>
+    <a class="back" href="dashboard.html">← Student Dashboard</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">My Schedule</div>
+    <h1>My Calendar & Reminders</h1>
+    <p>Plan your month around Academy dates, consultations, South African public holidays and your own study reminders — all in one student planner.</p>
+  </section>
+
+  <div id="status" class="card">Loading your secure calendar…</div>
+
+  <div id="app" class="app">
+    <div class="stats">
+      <div class="stat"><strong id="todayCount">0</strong><span>Today</span><em id="todayNote">No scheduled items</em></div>
+      <div class="stat"><strong id="weekCount">0</strong><span>This Week</span><em>Upcoming calendar items</em></div>
+      <div class="stat"><strong id="nextImportant">—</strong><span>Next Important Date</span><em id="nextImportantNote">No date found</em></div>
+      <div class="stat"><strong id="personalCount">0</strong><span>My Reminders</span><em>Active personal reminders</em></div>
+    </div>
+
+    <section class="card calendarCard" aria-labelledby="monthHeading">
+      <div class="calendarTop">
+        <div class="monthTitle"><div class="kicker">Monthly Planner</div><h2 id="monthHeading">Calendar</h2></div>
+        <div class="calendarControls">
+          <button class="btn alt" id="prevMonth" type="button">‹ Previous</button>
+          <button class="btn gold" id="todayButton" type="button">Today</button>
+          <button class="btn alt" id="nextMonth" type="button">Next ›</button>
+          <button class="btn" id="newReminder" type="button">+ Personal Reminder</button>
+        </div>
+      </div>
+
+      <div class="legend" aria-label="Calendar legend">
+        <span><i class="dot academy"></i>Academy Event</span>
+        <span><i class="dot holiday"></i>South African Public Holiday</span>
+        <span><i class="dot consult"></i>Consultation</span>
+        <span><i class="dot personal"></i>Personal Reminder</span>
+      </div>
+
+      <div class="weekdays" aria-hidden="true"><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div>
+      <div id="monthGrid" class="monthGrid"></div>
+    </section>
+
+    <div class="dayPanel">
+      <section class="card dayDetail" aria-labelledby="selectedDayHeading">
+        <div class="panelHead">
+          <div><div class="kicker">Selected Day</div><h2 id="selectedDayHeading">Today</h2></div>
+          <button id="addForDay" class="btn gold" type="button">+ Add Reminder</button>
+        </div>
+        <div id="selectedHoliday"></div>
+        <div id="dayList" class="dayList"></div>
+      </section>
+
+      <section class="card upcoming" aria-labelledby="upcomingHeading">
+        <div class="panelHead"><div><div class="kicker">What’s Next</div><h2 id="upcomingHeading">Upcoming Schedule</h2></div></div>
+        <div id="upcomingList" class="upcomingList"></div>
+        <div class="upcomingToolbar"><span id="upcomingCount"></span><button class="btn ghost" id="toggleUpcoming" type="button">View all upcoming</button></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script>
+(()=>{'use strict';
+let db,user,events=[],monthCursor=new Date(),selectedDate=new Date(),showAllUpcoming=false;
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const start=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x};
+const add=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+const sameDay=(a,b)=>{const x=new Date(a),y=new Date(b);return x.getFullYear()===y.getFullYear()&&x.getMonth()===y.getMonth()&&x.getDate()===y.getDate()};
+const keyOf=d=>{const x=new Date(d);return [x.getFullYear(),String(x.getMonth()+1).padStart(2,'0'),String(x.getDate()).padStart(2,'0')].join('-')};
+const dateText=d=>new Date(d).toLocaleDateString('en-ZA',{timeZone:'Africa/Johannesburg',weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+const monthText=d=>new Date(d).toLocaleDateString('en-ZA',{month:'long',year:'numeric'});
+const timeText=v=>new Date(v).toLocaleTimeString('en-ZA',{timeZone:'Africa/Johannesburg',hour:'2-digit',minute:'2-digit'});
+const shortDate=v=>new Date(v).toLocaleDateString('en-ZA',{timeZone:'Africa/Johannesburg',day:'2-digit',month:'short'});
+function easterSunday(year){
+  const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),month=Math.floor((h+l-7*m+114)/31)-1,day=((h+l-7*m+114)%31)+1;
+  return new Date(year,month,day);
+}
+function publicHolidays(year){
+  const items=[
+    [new Date(year,0,1),"New Year's Day"],
+    [new Date(year,2,21),"Human Rights Day"],
+    [add(easterSunday(year),-2),"Good Friday"],
+    [add(easterSunday(year),1),"Family Day"],
+    [new Date(year,3,27),"Freedom Day"],
+    [new Date(year,4,1),"Workers' Day"],
+    [new Date(year,5,16),"Youth Day"],
+    [new Date(year,7,9),"National Women's Day"],
+    [new Date(year,8,24),"Heritage Day"],
+    [new Date(year,11,16),"Day of Reconciliation"],
+    [new Date(year,11,25),"Christmas Day"],
+    [new Date(year,11,26),"Day of Goodwill"]
+  ];
+  const out=items.map(([date,name])=>({date:start(date),name,observed:false}));
+  items.forEach(([date,name])=>{
+    if(date.getDay()===0){
+      const observed=add(start(date),1);
+      if(!out.some(h=>sameDay(h.date,observed)&&h.name===name))out.push({date:observed,name:name+' (observed)',observed:true});
+    }
+  });
+  return out.sort((a,b)=>a.date-b.date);
+}
+function holidayOn(date){
+  const years=[date.getFullYear()-1,date.getFullYear(),date.getFullYear()+1];
+  return years.flatMap(publicHolidays).find(h=>sameDay(h.date,date))||null;
+}
+function personal(x){return x._kind==='event'&&!x.official&&x.source_type==='personal'}
+function consultation(x){return x._kind==='consultation'}
+function categoryOf(x){return personal(x)?'personal':consultation(x)?'consult':'academy'}
+function eventsOn(date){return events.filter(x=>sameDay(new Date(x.starts_at),date)).sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at))}
+function upcomingItems(){
+  const now=new Date(),holidayRows=[];
+  for(let y=now.getFullYear();y<=now.getFullYear()+2;y++)for(const h of publicHolidays(y))if(h.date>=start(now))holidayRows.push({id:'holiday-'+keyOf(h.date)+'-'+h.name,_kind:'holiday',title:h.name,starts_at:h.date.toISOString(),official:true,event_type:'public holiday'});
+  return [...events.filter(x=>new Date(x.starts_at)>=now),...holidayRows].sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at));
+}
+async function load(){
+  db=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
+  const restored=window.FundaAuth?.restore?await window.FundaAuth.restore(db):await db.auth.getUser().then(r=>({user:r.data?.user||null}));
+  user=restored.user;
+  if(!user){location.href='login.html?next=student-calendar.html&portal=student';return}
+  const p=await db.from('profiles').select('role').eq('id',user.id).maybeSingle();
+  if(String(p.data?.role||'').toLowerCase()!=='student'){showError('This calendar is available to student accounts only.');return}
+  const now=new Date(),from=add(now,-120).toISOString(),to=add(now,730).toISOString();
+  const [ev,co]=await Promise.all([
+    db.from('academy_calendar_events').select('*').eq('status','active').gte('starts_at',from).lte('starts_at',to).order('starts_at'),
+    db.from('student_consultations').select('id,category,department,scheduled_start,duration_minutes,mode,status,meeting_link,student_visible_notes').gte('scheduled_start',from).lte('scheduled_start',to).in('status',['requested','confirmed']).order('scheduled_start')
+  ]);
+  if(ev.error){showError('Calendar could not load: '+ev.error.message);return}
+  events=(ev.data||[]).map(x=>({...x,_kind:'event'}));
+  (co.data||[]).forEach(c=>events.push({
+    id:'consult-'+c.id,_kind:'consultation',title:(c.category||'Student')+' consultation',
+    description:(c.status==='confirmed'?'Confirmed':'Requested')+' · '+(c.department||'Academy')+' · '+(c.duration_minutes||30)+' min',
+    starts_at:c.scheduled_start,official:true,event_type:'consultation',action_url:c.meeting_link||null,student_visible_notes:c.student_visible_notes||null
+  }));
+  events.sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at));
+  monthCursor=new Date(now.getFullYear(),now.getMonth(),1);
+  selectedDate=start(now);
+  $('status').style.display='none';$('app').style.display='block';renderAll();
+}
+function renderAll(){renderStats();renderCalendar();renderSelectedDay();renderUpcoming()}
+function renderStats(){
+  const now=start(new Date()),tom=add(now,1),week=add(now,8);
+  const todayItems=events.filter(x=>new Date(x.starts_at)>=now&&new Date(x.starts_at)<tom);
+  $('todayCount').textContent=todayItems.length+(holidayOn(now)?1:0);
+  $('todayNote').textContent=holidayOn(now)?.name||(todayItems.length?todayItems[0].title:'No scheduled items');
+  $('weekCount').textContent=events.filter(x=>new Date(x.starts_at)>=now&&new Date(x.starts_at)<week).length+publicHolidays(now.getFullYear()).filter(h=>h.date>=now&&h.date<week).length;
+  $('personalCount').textContent=events.filter(x=>personal(x)&&new Date(x.starts_at)>=now).length;
+  const next=upcomingItems()[0];
+  $('nextImportant').textContent=next?shortDate(next.starts_at):'—';
+  $('nextImportantNote').textContent=next?next.title:'No date found';
+}
+function renderCalendar(){
+  $('monthHeading').textContent=monthText(monthCursor);
+  const grid=$('monthGrid');grid.innerHTML='';
+  const first=new Date(monthCursor.getFullYear(),monthCursor.getMonth(),1);
+  const mondayIndex=(first.getDay()+6)%7;
+  const firstCell=add(first,-mondayIndex);
+  for(let i=0;i<42;i++){
+    const date=add(firstCell,i),inMonth=date.getMonth()===monthCursor.getMonth(),holiday=holidayOn(date),dayEvents=eventsOn(date);
+    const cell=document.createElement('button');
+    cell.type='button';
+    cell.className='dayCell'+(inMonth?'':' other')+(sameDay(date,new Date())?' today':'')+(sameDay(date,selectedDate)?' selected':'');
+    cell.setAttribute('aria-label',dateText(date));
+    const visible=dayEvents.slice(0,2).map(x=>`<span class="cellEvent ${categoryOf(x)}"><i></i><b>${esc(x.title)}</b></span>`).join('');
+    cell.innerHTML=`<span class="dayNo">${date.getDate()}</span>${holiday?`<span class="holidayName">${esc(holiday.name)}</span>`:''}<span class="cellEvents">${visible}</span>${dayEvents.length>2?`<span class="moreCount">+${dayEvents.length-2} more</span>`:''}`;
+    cell.onclick=()=>{selectedDate=start(date);monthCursor=new Date(date.getFullYear(),date.getMonth(),1);renderCalendar();renderSelectedDay()};
+    grid.appendChild(cell);
+  }
+}
+function eventRow(x){
+  const isHoliday=x._kind==='holiday',isPersonal=personal(x),cat=isHoliday?'holiday':categoryOf(x);
+  const time=isHoliday?'All day':timeText(x.starts_at);
+  const description=isHoliday?'South African Public Holiday':(x.description||x.student_visible_notes||'');
+  return `<article class="eventRow"><div class="eventTime">${esc(time)}</div><div><h3>${esc(x.title)}</h3>${description?`<p>${esc(description)}</p>`:''}<div class="badges"><span class="pill ${isPersonal?'personal':isHoliday?'holiday':''}">${isHoliday?'PUBLIC HOLIDAY':isPersonal?'PERSONAL':consultation(x)?'CONSULTATION':'OFFICIAL'}</span>${!isHoliday?`<span class="pill">${esc(String(x.event_type||'event').toUpperCase())}</span>`:''}</div></div><div class="rowActions">${x.action_url?`<a class="btn alt" href="${esc(x.action_url)}" target="_blank" rel="noopener">Open</a>`:''}${isPersonal?`<button class="btn alt" type="button" data-edit="${esc(x.id)}">Edit</button><button class="btn ghost" type="button" data-delete="${esc(x.id)}">Delete</button>`:''}</div></article>`;
+}
+function renderSelectedDay(){
+  $('selectedDayHeading').textContent=dateText(selectedDate);
+  const holiday=holidayOn(selectedDate);
+  $('selectedHoliday').innerHTML=holiday?`<div class="selectedHoliday"><strong>${esc(holiday.name)}</strong><br>South African Public Holiday</div>`:'';
+  const arr=eventsOn(selectedDate);
+  $('dayList').innerHTML=arr.length?arr.map(eventRow).join(''):'<div class="empty">Nothing else is scheduled for this day.</div>';
+  wireRows();
+}
+function renderUpcoming(){
+  const all=upcomingItems(),arr=showAllUpcoming?all:all.slice(0,6);
+  $('upcomingList').innerHTML=arr.length?arr.map(eventRow).join(''):'<div class="empty">No upcoming dates found.</div>';
+  $('upcomingCount').textContent=all.length+(all.length===1?' upcoming item':' upcoming items');
+  $('toggleUpcoming').style.display=all.length>6?'inline-flex':'none';
+  $('toggleUpcoming').textContent=showAllUpcoming?'Show fewer':'View all upcoming';
+  wireRows();
+}
+function wireRows(){
+  document.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>removePersonal(b.dataset.delete));
+  document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openReminder(events.find(x=>String(x.id)===String(b.dataset.edit))));
+}
+function localInputValue(date){
+  const d=new Date(date),pad=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+}
+function openReminder(existing=null,dateOverride=null){
+  const base=existing?new Date(existing.starts_at):new Date(dateOverride||selectedDate);
+  if(!existing){base.setHours(18,0,0,0);if(base<new Date())base.setDate(base.getDate()+1)}
+  document.body.insertAdjacentHTML('beforeend',`<div class="modal" id="modal"><form class="box" id="reminderForm"><h2>${existing?'Edit':'New'} Personal Reminder</h2><div class="formGrid"><div class="full"><label>Title</label><input name="title" maxlength="180" required value="${esc(existing?.title||'')}"></div><div><label>Date & time</label><input name="when" type="datetime-local" value="${localInputValue(base)}" required></div><div><label>Reminder type</label><select name="type"><option value="study">Study</option><option value="assessment">Assessment</option><option value="personal">Personal</option><option value="other">Other</option></select></div><div class="full"><label>Notes</label><textarea name="description" maxlength="1000">${esc(existing?.description||'')}</textarea></div></div><div class="actions"><button type="button" class="btn alt" id="cancel">Cancel</button><button class="btn">${existing?'Save Changes':'Save Reminder'}</button></div></form></div>`);
+  const select=document.querySelector('#reminderForm [name="type"]');if(existing?.event_type)select.value=existing.event_type;
+  $('cancel').onclick=()=>$('modal').remove();
+  $('reminderForm').onsubmit=e=>savePersonal(e,existing?.id||null);
+}
+async function savePersonal(e,id){
+  e.preventDefault();
+  const f=new FormData(e.target),title=String(f.get('title')||'').trim(),when=new Date(f.get('when'));
+  if(!title||Number.isNaN(when.getTime()))return;
+  const payload={title,description:String(f.get('description')||'').trim()||null,event_type:String(f.get('type')||'personal'),audience:'student',target_user_id:user.id,starts_at:when.toISOString(),priority:'normal',official:false,status:'active',source_type:'personal',created_by:user.id,email_reminders_enabled:false,push_reminders_enabled:false};
+  const q=id?db.from('academy_calendar_events').update(payload).eq('id',id):db.from('academy_calendar_events').insert(payload);
+  const r=await q;
+  if(r.error){alert(r.error.message);return}
+  $('modal').remove();selectedDate=start(when);monthCursor=new Date(when.getFullYear(),when.getMonth(),1);await load();
+}
+async function removePersonal(id){
+  if(!confirm('Delete this personal reminder?'))return;
+  const r=await db.from('academy_calendar_events').delete().eq('id',id);
+  if(r.error){alert(r.error.message);return}
+  await load();
+}
 function showError(msg){$('status').className='error';$('status').textContent=msg}
-document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{view=b.dataset.view;render()});$('newReminder').onclick=modal;load().catch(e=>showError(e.message||String(e)))})();
-</script></body></html>
+$('prevMonth').onclick=()=>{monthCursor=new Date(monthCursor.getFullYear(),monthCursor.getMonth()-1,1);renderCalendar()};
+$('nextMonth').onclick=()=>{monthCursor=new Date(monthCursor.getFullYear(),monthCursor.getMonth()+1,1);renderCalendar()};
+$('todayButton').onclick=()=>{selectedDate=start(new Date());monthCursor=new Date(selectedDate.getFullYear(),selectedDate.getMonth(),1);renderAll()};
+$('newReminder').onclick=()=>openReminder();
+$('addForDay').onclick=()=>openReminder(null,selectedDate);
+$('toggleUpcoming').onclick=()=>{showAllUpcoming=!showAllUpcoming;renderUpcoming()};
+load().catch(e=>showError(e.message||String(e)));
+})();
+</script>
+</body>
+</html>
