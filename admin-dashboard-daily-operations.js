@@ -302,14 +302,13 @@ function boot(){
     queued=true;
     setTimeout(()=>{
       queued=false;
-      if(place()&&lastData){
-        if($('adcSummary'))$('adcSummary').innerHTML=systemSummary(lastData);
-        if($('adcGraph'))$('adcGraph').innerHTML=graph(lastData);
-        if($('adcWeek'))$('adcWeek').innerHTML=thisWeek(lastData);
-        if($('adcCalendar'))$('adcCalendar').innerHTML=calendar(lastData);
-      }
+      // Only react when the Admin tab workspace itself is replaced.
+      // Do not rewrite card contents in response to mutations inside the cards:
+      // doing that creates a render-feedback loop and visible jitter/flicker.
+      if(activeDashboard()&&!$('adminDailyCommandCentre'))place();
+      if(!activeDashboard())$('adminDailyCommandCentre')?.remove();
     },90);
-  }).observe(view,{childList:true,subtree:true});
+  }).observe(view,{childList:true,subtree:false});
 
   document.addEventListener('funda:admin-manual-refresh',()=>{if(activeDashboard())refreshData()});
   document.addEventListener('click',e=>{
