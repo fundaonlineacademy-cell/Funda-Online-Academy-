@@ -200,6 +200,7 @@ Run the subset relevant to the change, and for protected/global changes run all 
 
 ### Admin/Staff
 - Admin My Dashboard Academy Identity stays compact by default, with the full approved identity available only through **View Academy Identity**. Do not restore the always-expanded Admin identity block without explicit owner approval.
+- Admin My Dashboard keeps a single compact **Academy Details** section beneath the governance/identity cards rather than adding multiple new tabs. It shows the registered business, company registration, professional-development status and online delivery model, followed by the approved copyright/legal footer. Partner logos or partner-company listings must not be invented or added until a real owner-approved partnership exists.
 - Admin Command Center typography is locked to **Source Sans 3** across all Admin tabs, forms, tables, dialogs and dynamically rendered modules. Typography-only approval does not reopen Admin layout, colours, navigation structure or workflows.
 - Admin Command Center loads for authorized Admin.
 - Staff Workspace loads for authorized Staff.
