@@ -125,8 +125,8 @@ async function loadData(){
   if(!c)throw new Error('Admin data connection is not ready.');
   const today=dayStart(new Date()),from=addDays(today,-6),monthStart=new Date(today.getFullYear(),today.getMonth(),1),monthEnd=new Date(today.getFullYear(),today.getMonth()+1,1),weekEnd=addDays(today,8);
   const [en,pay,sup,amb,gov,cal,con]=await Promise.all([
-    c.from('enrollments').select('id,status,enrollment_status,created_at,submitted_at').gte('created_at',from.toISOString()),
-    c.from('payments').select('id,status,created_at,submitted_at,verified_at').gte('created_at',from.toISOString()),
+    c.from('enrollments').select('id,status,enrollment_status,created_at,submitted_at'),
+    c.from('payments').select('id,status,created_at,submitted_at,verified_at'),
     c.from('support_tickets').select('id,status,created_at'),
     c.from('ambassador_programme_applications').select('id,status,created_at'),
     c.from('governance_actions').select('id,title,status,due_date,priority,department').order('due_date',{ascending:true}),
