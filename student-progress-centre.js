@@ -107,9 +107,10 @@ function render(data){
     let currentText='No lesson activity has been recorded yet.';
     if(current)currentText=`Current position: Module ${esc(current.module.module_number)} — Lesson ${esc(current.lesson.lesson_number)}: ${esc(current.lesson.title||'Next lesson')}`;
     else if(remainingAssessments>0)currentText='All recorded lessons are complete. Required assessments are still outstanding.';
-    else if(Number(percent)>=100||(!remainingLessons&&!remainingAssessments))currentText='Learning requirements are complete for this course.';
+    else if(remainingModules>0)currentText='All recorded lessons are complete. Some modules are not yet recorded as complete.';
+    else if(Number(percent)>=100||(!remainingLessons&&!remainingAssessments&&!remainingModules))currentText='Learning requirements are complete for this course.';
     let outstanding='';
-    if(!remainingLessons&&!remainingAssessments)outstanding='<strong>Nothing outstanding:</strong> the recorded learning and required assessment requirements are complete.';
+    if(!remainingLessons&&!remainingAssessments&&!remainingModules)outstanding='<strong>Nothing outstanding:</strong> the recorded learning and required assessment requirements are complete.';
     else{
       const parts=[];
       if(remainingLessons)parts.push(`${remainingLessons} lesson${remainingLessons===1?'':'s'}`);
