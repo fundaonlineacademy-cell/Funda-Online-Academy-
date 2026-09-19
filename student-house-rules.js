@@ -5,8 +5,8 @@ function installStudentSerifTrial(){
  const style=document.createElement("style");
  style.id="fundaStudentSerifTrial";
  style.textContent=`
-body,body.sdV2{font-family:"Times New Roman",Times,Georgia,serif!important}
-body.sdV2 :where(h1,h2,h3,h4,h5,h6,.brand,nav,p,a,button,input,select,textarea,label,li,span,strong,b,small,div,section,article,aside,td,th){font-family:"Times New Roman",Times,Georgia,serif!important}
+body,body.sdV2{font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important}
+body.sdV2 :where(h1,h2,h3,h4,h5,h6,.brand,nav,p,a,button,input,select,textarea,label,li,span,strong,b,small,div,section,article,aside,td,th){font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important}
 body.sdV2 :where(h1,h2,h3,h4,h5,h6,.brand){font-weight:700!important}
 body.sdV2 :where(button,nav,.sdNav a,.sdNav button){font-weight:600!important}
 `;
