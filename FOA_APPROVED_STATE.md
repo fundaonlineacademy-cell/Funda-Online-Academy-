@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `ad0798ed596588a9398d9f9dfac89be915714807`
+Baseline commit: `957f7059537aa9769490a2517565697b4a5af1ba`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -210,7 +210,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - The compact card keeps the approved Academy Identity content available through **View Academy Identity**, which opens the complete Vision, Mission, Purpose, Core Values, Strategic Objectives and Commitment in a modal.
 - This amendment changes only the Admin My Dashboard presentation of Academy Identity. The shared Academy Identity content and its presentation on Student, Ambassador, Staff and public surfaces remain unchanged.
 - The existing compact **Admin & Staff House Rules** card remains unchanged and the Academy Identity compact card sits with that dashboard-governance area.
-- **Owner-approved Admin My Dashboard company-details amendment — 19 September 2026:** below the compact governance/identity area, My Dashboard includes one simple **Academy Details** section (not a new set of dashboard tabs) showing the registered business name, company registration number, professional-development status and 100% online delivery model. A compact legal footer follows with **© 2026 Funda Online Academy. All rights reserved.**, **Terms & Conditions**, **Privacy Policy**, and **Policies & Legal** links. Terms and Privacy link to the existing sections of `policies.html`. No partner/company showcase is added yet; that may be added later only when actual approved partners exist.
+- **Owner-approved permanent Admin footer amendment — 19 September 2026:** the Academy Details/footer is permanent across **all Admin tabs**, not only My Dashboard. It sits below the tab workspace and shows the registered business name, company registration **2023/830451/07**, **International CPD Accredited Trainer**, **100% Online Learning & Support**, WhatsApp **069 960 8590**, learning location **100% Online**, and the Admin Command Center label. The lower strip shows **© 2026 Funda Online Academy. All rights reserved.**, **Terms & Conditions**, **Privacy Policy**, and **Policies & Legal** links. Terms and Privacy link to the existing sections of `policies.html`. No partner/company showcase is added yet; that may be added later only when actual approved partners exist.
 
 ### Student onboarding / enrolment
 
