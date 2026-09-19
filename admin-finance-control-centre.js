@@ -21,5 +21,5 @@ async function accountantModal(){const [f,t]=dates();modal('Accountant / Tax Pre
 function bind(){style();if(bound)return true;const nav=[...document.querySelectorAll('#nav button,.nav button')].find(x=>/finance/i.test(x.textContent||''));if(!nav)return false;bound=true;nav.addEventListener('click',()=>setTimeout(render,300));return true}
 function refreshIfVisible(){if(active())render()}
 let tries=0,t=setInterval(()=>{tries++;if(bind()||tries>30)clearInterval(t)},250);
-window.addEventListener('focus',refreshIfVisible);window.addEventListener('funda:finance-data-changed',refreshIfVisible);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshIfVisible()});setInterval(refreshIfVisible,30000);setTimeout(()=>{bind();refreshIfVisible()},1200);
+window.addEventListener('focus',refreshIfVisible);window.addEventListener('funda:finance-data-changed',refreshIfVisible);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshIfVisible()});document.addEventListener('funda:admin-manual-refresh',refreshIfVisible);setTimeout(()=>{bind();refreshIfVisible()},1200);
 })();
