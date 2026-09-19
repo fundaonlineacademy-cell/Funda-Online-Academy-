@@ -220,13 +220,16 @@ async function submitAction(account,action,modal){
   if(btn){btn.disabled=true;btn.textContent='Processing…'}
   try{
     const c=await getClient();
-    const {data,error}=await c.rpc('ceo_manage_account',{
-      p_target_user_id:account.user_id,
-      p_action:action,
-      p_reason:reason,
-      p_confirmation:action==='delete'?confirmation:null
+    const {data,error}=await c.functions.invoke('ceo-account-control',{
+      body:{
+        target_user_id:account.user_id,
+        action,
+        reason,
+        confirmation:action==='delete'?confirmation:null
+      }
     });
     if(error)throw error;
+    if(data?.error)throw new Error(data.error);
     modal.remove();
     await loadData();
     render();
