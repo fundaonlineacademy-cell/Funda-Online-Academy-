@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `32453af865570dbbda4a1a6251a25049cdf50d49`
+Baseline commit: `7ccda4056746dfbb37969cb9b6814db6bc41cae9`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -219,6 +219,7 @@ The Ambassador programme and portal are owner-approved as the final working Amba
 - Existing referral attribution is permanent and must not be overwritten by a later Ambassador code. Old/cached browser referral data must not claim an existing learner.
 - Ambassador referral summaries remain privacy-limited. The approved display uses the Student's first name plus the first letter of the surname where available, does not expose Student email/phone/ID/payment/assessment/private-support data, and may show **Course not yet selected** until an enrolment exists.
 - Unconfirmed referrals must remain **R0 / not yet earned**. Ambassador earnings shown in the portal must come only from Academy-confirmed approved/paid earning records under the existing eligibility checks.
+- **Owner-approved deletion-sync amendment — 19 September 2026:** when the CEO permanently deletes a referred Student account, that referral is automatically disqualified from active Ambassador totals, any linked direct commission is reversed/excluded from confirmed earnings, and the deleted Student's revenue no longer contributes to rank/quota progress. The referral and reversed ledger entries remain Admin-visible for audit history. The Ambassador portal also re-checks current server-side eligibility before showing earnings, so a deleted Student cannot remain visible as an active/earning referral.
 - The approved compensation plan, rank progression, achievement/performance rules and direct-referral-only model must not be altered or converted into downlines, recruitment commissions or team overrides unless explicitly approved by the owner.
 - The approved banking flow remains restricted to the Ambassador's own payout details, with Finance verification and masked account display. Do not expose stored full bank account numbers back to the portal.
 - Support tickets, replies and **Your Voice** submissions remain private, traceable, account-bound Ambassador records. An Ambassador must not be able to read another Ambassador's tickets, submissions, earnings, payouts or account details.
