@@ -140,7 +140,7 @@ async function init(){
    app=a.data;
  }
  const [l,r,p,b,m,n,t]=await Promise.all([
-   db.from('ambassador_earnings_ledger').select('id,application_id,enrolment_id,payment_id,qualifying_revenue,commission_rate,commission_amount,earning_type,earning_status,earning_month,notes,created_at').eq('application_id',app.id).in('earning_status',['approved','paid']).order('created_at',{ascending:false}),
+   db.rpc('get_own_ambassador_earnings'),
    db.rpc('get_own_ambassador_referrals'),
    db.from('ambassador_payouts').select('id,application_id,amount,payment_reference,payment_date,status,notes,created_at').eq('application_id',app.id).order('created_at',{ascending:false}),
    db.rpc('get_own_ambassador_payout_details'),
