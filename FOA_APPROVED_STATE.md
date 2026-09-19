@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `04b32b32e6990a6990252691633a433dfce96f4c`
+Baseline commit: `07b4f3969fa584994f317df1f55c0de75fdf9b38`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -218,6 +218,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - Responsive layout becomes 2 columns on medium screens and 1 column on small screens.
 - **Readability refinement — 20 September 2026:** Daily Operations now follows the same readable Admin typography scale used in Business Health and Department Status. Primary labels are enlarged, secondary text is no longer micro-sized, System Summary counts are larger, and the CEO Action Snapshot uses the same readable scale. The Operational Activity graph and compact Calendar are placed in defined bordered/rounded visual panels with clearer labels and spacing so they read as intentional dashboard components rather than loose content.
 - **Stability refinement — 20 September 2026:** Daily Operations must not continuously rewrite its own card contents in response to its own DOM mutations. The dashboard now observes only replacement of the Admin workspace and refreshes card data only on initial load, explicit navigation/load, or the approved Admin refresh event. This prevents visible card jitter/flicker while the CEO is reading.
+- **Card-balance refinement — 20 September 2026:** the lower Daily Operations row is visually balanced. **This Week** shows at most three due/overdue actions with a **View all actions** control into Management & Governance instead of allowing the card to stretch indefinitely. Operational Activity, This Week and Calendar use matching desktop card heights. The compact Calendar is contained in a full-width rounded inner panel matching the visual treatment of the graph; responsive layouts return to natural height on smaller screens.
 
 ### Admin My Dashboard — owner-approved amendment 19 September 2026
 
