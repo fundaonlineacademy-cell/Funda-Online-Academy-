@@ -196,6 +196,13 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - This Admin font approval changes typography only. It is not permission to redesign Admin spacing, sizes, colours, cards, navigation, workflows or data presentation.
 - Do not expand this approval to the Ambassador Portal or other public/private surfaces without explicit owner approval for those surfaces.
 
+### Admin My Dashboard — owner-approved amendment 19 September 2026
+
+- On **Admin → My Dashboard**, the Academy Identity is now intentionally presented as a compact summary card rather than the full Vision/Mission/Values block.
+- The compact card keeps the approved Academy Identity content available through **View Academy Identity**, which opens the complete Vision, Mission, Purpose, Core Values, Strategic Objectives and Commitment in a modal.
+- This amendment changes only the Admin My Dashboard presentation of Academy Identity. The shared Academy Identity content and its presentation on Student, Ambassador, Staff and public surfaces remain unchanged.
+- The existing compact **Admin & Staff House Rules** card remains unchanged and the Academy Identity compact card sits with that dashboard-governance area.
+
 ### Student onboarding / enrolment
 
 The current baseline includes the recent five-step onboarding direction. Preserve it unless specifically asked to change it:
