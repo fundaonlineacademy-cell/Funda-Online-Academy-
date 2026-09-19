@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `79ef9326ca64458ef9456ab32e6cb99117e38f0b`
+Baseline commit: `04b32b32e6990a6990252691633a433dfce96f4c`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -217,6 +217,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - These cards refresh through the approved central Admin refresh flow; they do **not** introduce a new sub-10-minute recurring background data refresh.
 - Responsive layout becomes 2 columns on medium screens and 1 column on small screens.
 - **Readability refinement — 20 September 2026:** Daily Operations now follows the same readable Admin typography scale used in Business Health and Department Status. Primary labels are enlarged, secondary text is no longer micro-sized, System Summary counts are larger, and the CEO Action Snapshot uses the same readable scale. The Operational Activity graph and compact Calendar are placed in defined bordered/rounded visual panels with clearer labels and spacing so they read as intentional dashboard components rather than loose content.
+- **Stability refinement — 20 September 2026:** Daily Operations must not continuously rewrite its own card contents in response to its own DOM mutations. The dashboard now observes only replacement of the Admin workspace and refreshes card data only on initial load, explicit navigation/load, or the approved Admin refresh event. This prevents visible card jitter/flicker while the CEO is reading.
 
 ### Admin My Dashboard — owner-approved amendment 19 September 2026
 
