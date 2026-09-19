@@ -6,7 +6,8 @@ function installStyle(){
   const style=document.createElement("style");
   style.id="studentAcademyIdentityCompactStyle";
   style.textContent=`
-#studentAcademyIdentitySummary,#studentAcademyIdentityModal,#studentAcademyIdentityModal #academy-identity,#studentAcademyIdentityModal #academy-identity *{font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important}\n#studentAcademyIdentitySummary{margin:28px 0 2px;padding:22px 24px;border:1px solid #dbe6f2;border-radius:24px;background:#fff;box-shadow:0 5px 16px rgba(20,49,77,.05)}
+#studentAcademyIdentitySummary,#studentAcademyIdentityModal,#studentAcademyIdentityModal #academy-identity,#studentAcademyIdentityModal #academy-identity *{font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important}
+#studentAcademyIdentitySummary{margin:28px 0 2px;padding:22px 24px;border:1px solid #dbe6f2;border-radius:24px;background:#fff;box-shadow:0 5px 16px rgba(20,49,77,.05)}
 #studentAcademyIdentitySummary .saiRow{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
 #studentAcademyIdentitySummary .saiKicker{margin:0;color:#9a6c0d;font-size:11px;letter-spacing:.17em;font-weight:900;text-transform:uppercase}
 #studentAcademyIdentitySummary h2{margin:7px 0 0;color:#17324a!important;font-size:22px;line-height:1.3;font-weight:900}
