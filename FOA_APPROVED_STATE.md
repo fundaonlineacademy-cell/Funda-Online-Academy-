@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `ba3c5ef20caf459d14c090174cf9868056bf5e0e`
+Baseline commit: `ad0798ed596588a9398d9f9dfac89be915714807`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -195,6 +195,14 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - **Owner-approved Admin typography amendment — 19 September 2026:** `Source Sans 3` is also the approved font for the complete Admin Command Center, including every department tab, navigation label, table, form control, dynamically rendered Admin module and CEO Account Control dialog.
 - This Admin font approval changes typography only. It is not permission to redesign Admin spacing, sizes, colours, cards, navigation, workflows or data presentation.
 - Do not expand this approval to the Ambassador Portal or other public/private surfaces without explicit owner approval for those surfaces.
+
+### Admin automatic refresh standard — owner-approved 19 September 2026
+
+- The Admin Command Center uses **one central 10-minute automatic data refresh** through `admin-auto-refresh-10min.js`.
+- The previous recurring 30-second Finance/Payment Review/notification refreshes, 45-second Your Voice refresh, and 60-second Business Intelligence refresh are removed. Those modules now respond to the central Admin refresh event instead of running their own short data-refresh timers.
+- Manual **Refresh** controls, refreshes immediately after a save/status change, and non-data startup/mount timers remain allowed because they are user-initiated or required only to attach the approved interface; they are not background data refreshes.
+- Returning focus to the Admin page may still perform lightweight state checks where needed, but must not reintroduce a recurring sub-10-minute data refresh that replaces the content while the CEO is reading or working.
+- Do not add any recurring Admin data refresh below 10 minutes without explicit owner approval.
 
 ### Admin My Dashboard — owner-approved amendment 19 September 2026
 
