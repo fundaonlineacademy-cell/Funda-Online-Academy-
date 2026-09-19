@@ -154,7 +154,7 @@
   function init(){
     addStyle();document.addEventListener('click',event=>{const button=event.target.closest?.('#nav button,.nav button');if(button&&/finance/i.test(button.textContent||''))setTimeout(mount,350);},true);
     const view=$('view');if(view)new MutationObserver(()=>setTimeout(mount,100)).observe(view,{childList:true,subtree:false});
-    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&$('aprModal'))closeDecision();});window.addEventListener('focus',()=>{if(financeActive()&&!$('aprModal'))load(false,true);});setInterval(()=>{if(!document.hidden&&financeActive()&&!$('aprModal'))load(true,true);},30000);setTimeout(mount,1200);
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&$('aprModal'))closeDecision();});window.addEventListener('focus',()=>{if(financeActive()&&!$('aprModal'))load(false,true);});document.addEventListener('funda:admin-manual-refresh',()=>{if(!document.hidden&&financeActive()&&!$('aprModal'))load(true,true);});setTimeout(mount,1200);
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
