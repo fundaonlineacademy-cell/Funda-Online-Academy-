@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `294bcf271f647629c3463647c48605ad7f1f0102`
+Baseline commit: `d8446bc6c604fe1fbc1c48523fab6970921528d7`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -52,6 +52,7 @@ The Home page (`index.html`) is owner-approved as the final public Home-page str
 - Do not redesign, restyle, reorder, add, remove, rename or rewrite Home-page sections, navigation, CTAs, course-card controls, Academy Identity, Head of Academics message, footer, contact details, typography, colours, spacing or responsive structure unless Aziwe Futhe explicitly reopens the Home page for change.
 - The approved Home-page course-card behaviour is: the card body/image/title/price is not a navigation target; **View Course** opens the course overview; **Enroll Now** opens Student account creation and preserves an Ambassador referral code when present.
 - The approved General Enquiries address is `info@fundaonlineacademy.co.za`; do not restore the retired `infor@fundaonlineacademy.co.za` typo.
+- **Owner-approved Home FAQ amendment — 19 September 2026:** the Home page now includes a compact General FAQs section covering registration fee, enrol-anytime availability, fully-online learning, registered-business status, browsing courses without an account, and official general contact channels. This amendment reopens only the Home FAQ content; all other Home-page sections and behaviour remain locked and unchanged.
 - Existing Home-page navigation destinations and public pathways must remain intact unless explicitly changed by the owner.
 - Shared/global scripts that execute on the Home page must preserve the approved Home-page render and behaviour. A change to such a script is not permission to alter the Home page indirectly.
 - Do not reintroduce legacy, retired, superseded or duplicate Home-page content from older commits, cached implementations or prior overrides.
