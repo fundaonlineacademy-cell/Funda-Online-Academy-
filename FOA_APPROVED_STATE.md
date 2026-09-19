@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `3c7b091cd3e8cface5d80e1895fc353fb1699a95`
+Baseline commit: `e6560a321b203e2297cd8987b8a9dda4921a2804`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -178,6 +178,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - The approved primary sort presentation is **Most Popular**, with the approved control placement preserved.
 - Course cards must continue to show the approved course information and route **View Course** to the correct course overview. Student login and account-creation routes must continue to lead to the correct secure Student journey.
 - The approved FAQ answer for enrolment timing states that Funda Online Academy **accepts registrations every day**. Do not restore the retired “throughout the year” wording.
+- **Owner-approved FAQ amendment — 19 September 2026:** the public FAQ now also explains the approved payment-plan thresholds, full-payment option, exact instalment amount rule and accepted payment methods. This amendment reopens the FAQ content only; the rest of Browse Courses remains locked and unchanged.
 - The public contact section remains intentionally WhatsApp-focused. Do not add a public enquiry email form or another general-enquiry channel to this page unless the owner explicitly requests it.
 - Course images must fail gracefully: a remote-image failure must show the approved course placeholder rather than a broken-image icon. Successful images must keep the approved presentation.
 - The approved public navigation routes to the Academy Map, Employers, Ambassadors, Student Login, Create Student Account, course catalogue/course-selection pathway and related public destinations must remain intact.
