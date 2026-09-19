@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `7ccda4056746dfbb37969cb9b6814db6bc41cae9`
+Baseline commit: `a98341ad2f310101718a145dc48b11bff39c3e48`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -189,11 +189,12 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - Do not reintroduce legacy, retired, duplicated or cached Browse Courses content from older commits or previous overrides.
 - A direct change to `courses-public.html` requires explicit Browse Courses owner approval in the pull request.
 
-### Student Dashboard / Student Library typography
+### Approved portal typography
 
-- `Source Sans 3` is currently a **limited trial** on the Student Dashboard and Student Library only.
-- Do not expand that font system-wide, to Admin, Ambassador, public pages, or other portals without explicit owner approval.
-- Do not treat the trial as approval to redesign spacing, sizes, colours, cards, navigation, or other UI.
+- `Source Sans 3` is the approved Student Portal typeface.
+- **Owner-approved Admin typography amendment — 19 September 2026:** `Source Sans 3` is also the approved font for the complete Admin Command Center, including every department tab, navigation label, table, form control, dynamically rendered Admin module and CEO Account Control dialog.
+- This Admin font approval changes typography only. It is not permission to redesign Admin spacing, sizes, colours, cards, navigation, workflows or data presentation.
+- Do not expand this approval to the Ambassador Portal or other public/private surfaces without explicit owner approval for those surfaces.
 
 ### Student onboarding / enrolment
 
