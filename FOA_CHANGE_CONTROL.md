@@ -55,6 +55,7 @@ The following changes require explicit scope confirmation in the PR/task notes:
 - The final owner-approved Home page (`index.html`). It must not be changed unless Aziwe Futhe explicitly reopens the Home page.
 - Shared/global scripts that execute on or can alter the Home page. These may change for other approved work only when the Home-page final state is regression-checked and deliberately preserved.
 - The final owner-approved Browse Courses page (`courses-public.html`). It must not be changed unless Aziwe Futhe explicitly reopens Browse Courses.
+- The 19 September 2026 owner-approved Browse Courses amendment is limited to adding public payment FAQs that reflect the approved payment policy. It does not reopen course cards, filters, navigation, contact presentation, typography, spacing or other Browse Courses content. Future FAQ changes again require explicit owner approval.
 - Shared/global scripts that execute on or can alter Browse Courses. These may change for other approved work only when the Browse Courses final state is regression-checked and deliberately preserved.
 - Academy Map destination routing is protected. Public/private destinations must keep their approved role-appropriate login or public route unless the owner explicitly requests a routing change.
 - The final owner-approved Login section is protected: `login.html`, `ambassador-login.html`, `reset-password.html`, Staff Access Code enforcement, approved role routing and password-recovery destinations must not change unless Aziwe Futhe explicitly reopens Login.
@@ -210,6 +211,7 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Home-page course cards keep non-clickable bodies with separate **View Course** and **Enroll Now** actions.
 - The General Enquiries address remains `info@fundaonlineacademy.co.za`.
 - Browse Courses keeps its final approved controls/layout, FAQ wording, course-card presentation and WhatsApp-focused contact section.
+- Browse Courses payment FAQs continue to state: payable amount R1,300 or less = full payment; above R1,300 + at least 4 weeks = 2 instalments; R2,000 or more + at least 8 weeks = 3 instalments; shorter than 4 weeks = full payment; full upfront settlement remains available; exact system-calculated payment amount is required; accepted methods are EFT / Bank Transfer and Bank Deposit.
 - Browse Courses course images fail gracefully to the approved placeholder rather than exposing a broken-image icon.
 - Student Login, Create Student Account, View Course, Academy Map, Employer and Ambassador routes remain correct.
 - Academy Map registered-learner routes continue through Student Login; Staff/Admin routes continue through the shared secure Staff/Admin login; public routes remain public.
