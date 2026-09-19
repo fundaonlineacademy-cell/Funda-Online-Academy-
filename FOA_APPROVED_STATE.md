@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
-Last established: 18 September 2026 (South Africa time)
-Baseline commit: `c8a0916cfc8d31b55f4e29a987dfb262043690ea`
+Last established: 19 September 2026 (South Africa time)
+Baseline commit: `959a63f840eb7105eb7b22f79494525b5af87f11`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -14,6 +14,36 @@ This file exists to prevent regressions and the reintroduction of previously cor
 - If a new owner decision supersedes an item below, update this file in the same controlled change.
 
 ## Protected current decisions
+
+### Student Portal — FINAL OWNER-APPROVED AND LOCKED
+
+The complete Student Portal is owner-approved as final and locked as of **19 September 2026**, following Aziwe Futhe's completed final review. The locked functional checkpoint is commit `959a63f840eb7105eb7b22f79494525b5af87f11`.
+
+- The Student Portal is now a **change-controlled protected surface**. No Student Portal code, content, layout, navigation, wording, styling, data presentation, workflow, assessment behaviour, results behaviour, payment behaviour, support/contact presentation, calendar behaviour, course-study experience or shared Student-facing runtime may be changed unless Aziwe Futhe explicitly approves that specific change.
+- Approval is required even for changes presented as cleanup, polish, refactoring, responsiveness, consistency, accessibility, bug fixing, student feedback, performance work or shared/global-script maintenance when they can alter the approved Student experience.
+- Student feedback may be collected after this lock, but feedback is a **change request**, not authority to modify the approved portal. The owner must explicitly reopen the affected Student Portal area before implementation.
+- The approved Student Portal includes the Student Dashboard shell/navigation and all currently available Student tabs/surfaces, including Dashboard, Student Orientation, My Courses, My Progress, Assessments, My Results, Payments & Balance, My Calendar & Reminders, Communication Centre, Academic & Student Support, consultations/support, Career & Workplace Support, Certificates, Your Voice, Study Materials/Digital Library as currently presented, and all other current Student-facing dashboard destinations.
+- The approved learning journey also includes the Student course-study/lesson experience and module-assessment experience. Course progression, locking/unlocking, assessment gating, attempts, recorded results and completion behaviour must not be altered without explicit owner approval.
+- **My Courses** remains distinct from **My Progress**. My Courses is the enrolled-course entry surface; My Progress is the dedicated completion/roadmap/outstanding-requirements view.
+- **Assessments** remain part of the course learning sequence. The Assessment Centre explains the course-specific assessment procedure and requirements; it must not duplicate or move assessments out of their approved course/module context.
+- **My Results** retains the approved separation between live **Provisional Results** and formally issued **Official Results**. Provisional Results are view-only, compact/table-based and non-downloadable; official Statements of Results remain separately controlled and formally issued.
+- **My Calendar & Reminders** retains the approved professional monthly planner, South African public-holiday display, selected-day details, Upcoming Schedule and personal reminder create/edit/delete behaviour.
+- **Communication Centre** retains the approved professional inbox pattern: Unread / Important / All Messages summary, search, category filtering, Important/Pinned messages, compact inbox rows, message-detail opening, learner-specific read-state behaviour and View older messages.
+- The approved Student-facing support directory uses only role/function mailboxes intended for learner contact. Current approved contacts are:
+  - Student & Technical Support — `support@fundaonlineacademy.co.za`
+  - Admissions & Enrolment — `admissions@fundaonlineacademy.co.za`
+  - Academic Support — `academicsupport@fundaonlineacademy.co.za`
+  - Assessments — `assessments@fundaonlineacademy.co.za`
+  - Finance & Payments — `finance@fundaonlineacademy.co.za`
+  - Certificates — `certificate@fundaonlineacademy.co.za`
+  - General Enquiries — `info@fundaonlineacademy.co.za`
+- Private/internal/executive mailboxes must not be exposed merely because they exist. Executive/CEO, named staff, webmaster, internal academic administration, marketing, partnership, Ambassador or other operational mailboxes remain private unless the owner explicitly approves a specific public/Student-facing use.
+- The approved Student Portal font is **Source Sans 3** throughout the Student Dashboard, tabs, Student pages, course-study/lesson pages and module-assessment pages. Do not reintroduce Times New Roman, Inter, Arial-only or another primary typeface without explicit owner approval.
+- Existing navy/gold Academy branding, responsive behaviour and accessibility/readability choices are part of the locked presentation.
+- No new Student sidebar tab may be added, removed, renamed or reordered without explicit owner approval.
+- Shared/global scripts that execute on Student-facing pages must preserve this locked state. A change for another portal or public surface is not permission to alter Student Portal behaviour indirectly.
+- Do not restore legacy, superseded, duplicate or previously rejected Student Portal code from older commits or cached implementations.
+- Any approved future Student Portal change must identify the exact reopened surface, preserve all unaffected locked areas, run relevant regression checks, and update this approved-state record in the same controlled change.
 
 ### Home page — FINAL OWNER-APPROVED STATE
 
