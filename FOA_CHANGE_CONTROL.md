@@ -199,6 +199,7 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Course progress/assessment navigation is not disturbed.
 
 ### Admin/Staff
+- Management & Governance keeps Vision/Mission in the bottom **Academy Direction** section before the permanent Admin footer; do not restore them to the top governance hero without explicit owner approval. Career & Workplace Support must render as a single section only; preserve its single-flight/duplicate-prevention behavior and keep it before Academy Direction.
 - **Executive Calendar & Tasks** must not appear as a permanent Admin sidebar item. Its access card belongs on My Dashboard after CEO Action Snapshot and before Admin & Staff House Rules, while the existing `admin-calendar.html` workspace remains the destination.
 - Executive Calendar improvements must preserve the live month calendar, date-level event visibility, Today/Next 7 Days/Upcoming views, Create Reminder workflow and cancellation controls. Admin calendar presentation uses Source Sans 3 and may include the approved Selected Date detail panel. Do not apply these Admin-only calendar presentation changes to the locked Student Calendar without explicit owner approval.
 - Student account security: active Student totals must exclude CEO-deleted accounts; blank/anonymous Student profiles and reserved automation/test email prefixes must be rejected; public registrations retain provenance metadata and Admin-only registration audit history. Do not weaken these controls or create test/audit Student accounts without explicit owner approval.
