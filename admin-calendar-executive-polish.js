@@ -146,14 +146,6 @@ function decorateHoliday(cell,k){
   cell.querySelectorAll('.execHolidayLabel').forEach(x=>x.remove());
   const names=holidayNames(k);
   cell.classList.toggle('publicHoliday',names.length>0);
-  if(names.length){
-    const label=document.createElement('div');
-    label.className='execHolidayLabel';
-    label.title=names.join(' · ');
-    label.textContent=names[0]+(names.length>1?` +${names.length-1}`:'');
-    const num=cell.querySelector('.monthNum');
-    if(num)num.insertAdjacentElement('afterend',label);else cell.prepend(label);
-  }
   return names;
 }
 
