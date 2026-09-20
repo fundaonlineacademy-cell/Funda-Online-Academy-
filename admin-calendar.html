@@ -11,4 +11,4 @@ async function saveEvent(e){e.preventDefault();const f=new FormData(e.target),au
 async function cancelEvent(id){if(!confirm('Cancel this calendar item?'))return;const r=await db.from('academy_calendar_events').update({status:'cancelled',updated_at:new Date().toISOString()}).eq('id',id);if(r.error)return alert(r.error.message);await load()}
 function showError(msg){$('status').className='error';$('status').textContent=msg}
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{view=b.dataset.view;render()});$('newEvent').onclick=modal;load().catch(e=>showError(e.message||String(e)))})();
-</script><script src="admin-calendar-executive-polish.js?v=20260920-holidays-bell-v2"></script></body></html>
+</script><script src="admin-calendar-executive-polish.js?v=20260920-date-selection-v3"></script></body></html>
