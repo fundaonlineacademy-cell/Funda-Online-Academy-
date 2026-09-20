@@ -207,8 +207,8 @@ async function downloadPdf(){
     doc.setTextColor(0,0,0);doc.setFont('times','bold');doc.setFontSize(12);
     const subject=`RE: REQUEST FOR WORKPLACE EXPOSURE — ${v.learner} | ${v.course}`;const sub=doc.splitTextToSize(subject,w);doc.text(sub,margin,y);y+=sub.length*5.6+6;
     const copy=letterCopy(v,state);doc.setTextColor(0,0,0);doc.setFont('times','normal');doc.setFontSize(12);
-    const para=t=>{const lines=doc.splitTextToSize(t,w);if(y+lines.length*5.4>274){doc.addPage();y=18;doc.setTextColor(0,0,0);doc.setFont('times','normal');doc.setFontSize(12)}doc.text(lines,margin,y,{maxWidth:w,align:'justify'});y+=lines.length*5.4+5};
-    para('Dear Sir / Madam,');para(copy.intro);para(copy.purpose);para(copy.conditions);para(copy.learner);para(copy.close);if(v.notes)para('Additional request information: '+v.notes);
+    const para=(t,justify=true)=>{const lines=doc.splitTextToSize(t,w);if(y+lines.length*5.4>274){doc.addPage();y=18;doc.setTextColor(0,0,0);doc.setFont('times','normal');doc.setFontSize(12)}doc.text(lines,margin,y,justify?{maxWidth:w,align:'justify'}:{maxWidth:w});y+=lines.length*5.4+5};
+    para('Dear Sir / Madam,',false);para(copy.intro);para(copy.purpose);para(copy.conditions);para(copy.learner);para(copy.close);if(v.notes)para('Additional request information: '+v.notes);
     if(y>260){doc.addPage();y=22;doc.setTextColor(0,0,0);doc.setFont('times','normal');doc.setFontSize(12)}doc.text('Yours sincerely,',margin,y);y+=8;
     doc.setFont('times','bold');doc.setTextColor(0,0,0);doc.text(co.ceo,margin,y);y+=5.5;doc.setFont('times','normal');doc.text('Founder & Chief Executive Officer',margin,y);y+=5.5;doc.text('Funda Online Academy',margin,y);
     const pages=doc.getNumberOfPages();for(let p=1;p<=pages;p++){doc.setPage(p);doc.setDrawColor(225,230,236);doc.line(margin,286,192,286);doc.setFont('times','normal');doc.setFontSize(8);doc.setTextColor(0,0,0);doc.text(`Official workplace-exposure request · ${co.reg}`,margin,291);doc.text(`Page ${p} of ${pages}`,192,291,{align:'right'})}
