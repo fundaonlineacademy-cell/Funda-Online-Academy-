@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `b2b8434e21661ad3e9074e8044dbf2f27a66e1d0`
+Baseline commit: `a433a151b419a0d2b71e79bd221fd709a6d3f11b`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -251,6 +251,8 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - This refinement is Admin-only. The locked Student Calendar/Student Portal presentation is unchanged.
 
 ### Management & Governance — owner-approved refinement 20 September 2026
+
+- **Learner CV Builder — 20 September 2026:** the Career & Workplace Support CV area is no longer a static example only. Admin can select an active learner, auto-fill name, phone, email and location from Academy records, choose the learner’s course, generate a course-aware professional profile/skills/training section, edit every field, preview the final CV live, and download a finished PDF. Open CV support requests can be loaded directly into the builder. The generated wording is status-aware so pending/active/completed training is not represented as completed unless the recorded enrolment status supports that claim. The Workplace Exposure Letter remains unchanged for a later dedicated review.
 
 - **Typography refinement — 20 September 2026:** Management & Governance, CEO Executive Action Centre, and Career & Workplace Support explicitly use the approved **Source Sans 3** Admin font. Meaningful interface text was raised to the established readable Admin scale; 8px/9px micro-text was removed from these Management sections, while form inputs remain comfortably readable and mobile-safe.
 
