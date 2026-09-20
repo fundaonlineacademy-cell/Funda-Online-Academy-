@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `451a5b0926e922f830fce31f936b7e08ee701e19`
+Baseline commit: `0ae5d9c617cb2590647ae28bac582984657dfb16`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -251,6 +251,11 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - Existing **Today**, **Next 7 Days**, **Upcoming**, **Calendar**, **Create Reminder**, reminder creation and event-cancellation behaviour remain available.
 - The old wording that described this page as isolated from the Admin Command Center is retired because access now comes from My Dashboard.
 - This refinement is Admin-only. The locked Student Calendar/Student Portal presentation is unchanged.
+
+### Admin tab refresh stability — owner-approved 20 September 2026
+
+- The Admin Command Center now preserves the currently open top-level Admin section across a browser refresh. The selected section is stored locally and mirrored in the Admin URL hash (for example `#management`), and the sidebar restores the matching active tab after reload instead of defaulting to My Dashboard.
+- Internal Admin data refreshes continue to call the currently active section and must not force a return to My Dashboard.
 
 ### Management & Governance — owner-approved refinement 20 September 2026
 
