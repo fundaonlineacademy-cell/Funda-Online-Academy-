@@ -66,20 +66,21 @@ function getClient(){
 async function loadData(){
   const c=getClient();
   if(!c)throw new Error('Academy data connection is not ready.');
-  const [pr,st,en,co]=await Promise.all([
+  const [pr,st,en,co,rq]=await Promise.all([
     c.from('profiles').select('id,full_name,email,phone,role').eq('role','student').order('full_name'),
     c.from('students').select('id,user_id,full_name,email,mobile_whatsapp,address,city,province,highest_education'),
     c.from('enrollments').select('id,student_id,course_id,enrollment_status,status,enrolled_at').order('enrolled_at',{ascending:false}),
-    c.from('courses').select('id,title,description,learning_outcomes,career_application,active').order('title')
+    c.from('courses').select('id,title,description,learning_outcomes,career_application,active').order('title'),
+    c.from('career_support_requests').select('id,student_id,request_type,course_id,status,notes,created_at').order('created_at',{ascending:false})
   ]);
-  const failed=[pr,st,en,co].find(x=>x.error);
+  const failed=[pr,st,en,co,rq].find(x=>x.error);
   if(failed)throw failed.error;
   const profiles=(pr.data||[]).filter(x=>!String(x.email||'').toLowerCase().endsWith('@deleted.funda.invalid'));
   const students=st.data||[],enrollments=en.data||[],courses=co.data||[];
   const studentMap=new Map();
   students.forEach(x=>{if(x.user_id)studentMap.set(x.user_id,x);studentMap.set(x.id,x)});
   const courseMap=new Map(courses.map(x=>[x.id,x]));
-  return {profiles,students,enrollments,courses,studentMap,courseMap};
+  return {profiles,students,enrollments,courses,requests:rq.data||[],studentMap,courseMap};
 }
 
 function shortCourseTitle(v){
@@ -100,12 +101,14 @@ function learnerEnrollments(studentId){
   return (data?.enrollments||[]).filter(x=>x.student_id===studentId&&x.course_id);
 }
 
-function profileForCourse(course){
+function profileForCourse(course,enrolment){
   if(!course)return 'Motivated entry-level candidate with a professional, dependable and learning-focused approach. Ready to apply developing workplace skills, communicate respectfully and contribute positively in an entry-level environment.';
   const name=shortCourseTitle(course.title);
+  const status=String(enrolment?.enrollment_status||enrolment?.status||'').toLowerCase();
+  const learningPhrase=status==='completed'||status==='complete'?`having completed training in ${name}`:status==='approved'||status==='active'?`currently developing skills through ${name}`:status==='pending'?`with an interest in developing skills in ${name}`:`with training exposure in ${name}`;
   const outcomes=Array.isArray(course.learning_outcomes)?course.learning_outcomes.filter(Boolean).slice(0,3):[];
   const skills=outcomes.length?outcomes.map(x=>String(x).replace(/[.]$/,'').toLowerCase()).join('; '):text(course.career_application||course.description);
-  return `Motivated entry-level candidate with training in ${name}. Developed foundational knowledge and practical awareness in ${skills || 'course-related workplace skills'}. Brings a professional, dependable and learning-focused approach, with readiness to apply these skills responsibly in an entry-level or workplace-exposure environment.`;
+  return `Motivated entry-level candidate ${learningPhrase}. Building foundational knowledge and practical awareness in ${skills || 'course-related workplace skills'}. Brings a professional, dependable and learning-focused approach, with readiness to apply verified skills responsibly in an entry-level or workplace-exposure environment.`;
 }
 
 function skillsForCourse(course){
@@ -192,7 +195,7 @@ function generateFromCourse(){
   const profile=(data?.profiles||[]).find(x=>x.id===learnerId)||null;
   const enrolment=(data?.enrollments||[]).find(x=>x.id===$('cvbCourse')?.value)||null;
   const course=enrolment?data.courseMap.get(enrolment.course_id):null;
-  $('cvbProfile').value=profileForCourse(course);
+  $('cvbProfile').value=profileForCourse(course,enrolment);
   $('cvbSkills').value=skillsForCourse(course);
   $('cvbEducation').value=educationFor(profile,course,enrolment);
   if(course)$('cvbHeadline').value=`${shortCourseTitle(course.title)} · Entry-Level Candidate`;
@@ -297,10 +300,12 @@ async function downloadPdf(){
 
 function builderHtml(){
   const options=(data?.profiles||[]).map(p=>`<option value="${esc(p.id)}">${esc(p.full_name||p.email||'Student')}</option>`).join('');
+  const cvRequests=(data?.requests||[]).filter(r=>/cv/i.test(String(r.request_type||''))&&!['completed','closed','cancelled'].includes(String(r.status||'').toLowerCase()));
   return `
     <div class="cvbWrap">
       <div class="cvbTop">
         <div><span class="cvbBadge">LEARNER CV BUILDER</span><h3>Professional Graduate CV</h3><p>Select a learner, use their existing Academy details, choose the relevant course, then edit any field before downloading a finished PDF.</p></div>
+        ${cvRequests.length?`<button class="cvbBtn alt" type="button" id="cvbLoadRequest">Load Latest CV Request (${cvRequests.length})</button>`:''}
       </div>
       <div class="cvbControls">
         <div class="cvbField"><label>Learner</label><select id="cvbLearner"><option value="">Choose learner</option>${options}</select></div>
@@ -334,6 +339,20 @@ function builderHtml(){
 function bindBuilder(card){
   card.innerHTML=builderHtml();
   $('cvbLearner').onchange=()=>{fillFromLearner();renderPreview()};
+  const requestButton=$('cvbLoadRequest');
+  if(requestButton)requestButton.onclick=()=>{
+    const request=(data?.requests||[]).find(r=>/cv/i.test(String(r.request_type||''))&&!['completed','closed','cancelled'].includes(String(r.status||'').toLowerCase()));
+    if(!request)return;
+    const learner=$('cvbLearner');
+    if(learner&&[...learner.options].some(o=>o.value===request.student_id)){
+      learner.value=request.student_id;
+      fillFromLearner();
+      if(request.course_id){
+        const matching=learnerEnrollments(request.student_id).find(e=>e.course_id===request.course_id);
+        if(matching&&$('cvbCourse')){$('cvbCourse').value=matching.id;generateFromCourse()}
+      }
+    }
+  };
   $('cvbCourse').onchange=generateFromCourse;
   $('cvbGenerate').onclick=generateFromCourse;
   $('cvbReset').onclick=resetEditable;
