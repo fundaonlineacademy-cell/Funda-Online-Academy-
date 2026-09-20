@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `c9bca9d9637bb00e31147086fbb8651a2af8fa6e`
+Baseline commit: `451a5b0926e922f830fce31f936b7e08ee701e19`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -253,6 +253,8 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - This refinement is Admin-only. The locked Student Calendar/Student Portal presentation is unchanged.
 
 ### Management & Governance — owner-approved refinement 20 September 2026
+
+- **Workplace Exposure Letter document style — 20 September 2026:** the official letter preview and downloaded PDF use **Times New Roman / Times**, with **12 pt body text**, black body ink, a stronger black subject heading, clean justified body paragraphs, and a compact no-signature closing. The CEO handwritten signature is intentionally not used. Closing remains **Aziwe Futhe · Founder & Chief Executive Officer · Funda Online Academy**.
 
 - **Official Workplace Exposure Letter Builder — 20 September 2026:** the workplace-exposure section is now a learner-aware full-width builder beneath the Professional Graduate CV. Admin selects a learner and course, the system reads the learner/course records, auto-fills the learner name and course, uses the generation date by default, accepts host organisation/contact/branch details, generates a formal expanded letter, shows completion verification status, provides a live preview and downloads a finished PDF. The official transparent Funda Online Academy logo is loaded from the approved master asset and remains part of the letterhead. Permanent institutional details are Funda Online Academy, company registration **2023/830451/07**, **100% Online Academy — South Africa**, Tel **069 960 8590**, WhatsApp **069 960 8590**, **info@fundaonlineacademy.co.za**, **fundaonlineacademy.co.za**, and CEO **Aziwe Futhe**. The builder does not falsely claim course completion when Academy results/certificates do not support that claim.
 - **Student workplace-exposure request refinement — 20 September 2026:** when a learner requests a Workplace Exposure Letter, the Student Career & Workplace Support form additionally captures the host organisation, optional attention/contact person and optional branch/location. These are stored with the request so Admin can load the request directly into the workplace-exposure builder. Other Student Career Support request types remain unchanged.
