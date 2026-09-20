@@ -32,7 +32,7 @@ function css(){
     .webField label{display:block;margin:0 0 4px;color:#52657d;font-size:11px;font-weight:900}
     .webField input,.webField select,.webField textarea{width:100%;box-sizing:border-box;border:1px solid #d8dfe7;border-radius:9px;background:#fff;color:#17243a;padding:9px 10px;font:inherit;font-size:12px}
     .webField textarea{min-height:82px;resize:vertical;line-height:1.5}
-    .webField.full,.webActions,.webHint{grid-column:1/-1}
+    .webField.full,.webActions,.webHint,.webStatus.full{grid-column:1/-1}
     .webBtn{border:0;border-radius:9px;background:#17324a;color:#fff;padding:9px 12px;font:800 11px/1.25 "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer}
     .webBtn.alt{background:#fff;color:#17324a;border:1px solid #d8cba9}.webBtn.gold{background:#c99a2e;color:#07152b}
     .webBtn:disabled{opacity:.5;cursor:not-allowed}
@@ -139,7 +139,7 @@ function render(){
   const copy=letterCopy(v,state),logo=window.FUNDA_TRANSPARENT_LOGO_MASTER||'';
   const preview=$('webPreview');if(!preview)return;
   preview.innerHTML=`<div class="webLetter">
-    <div class="webLetterHead"><div>${logo?`<img src="${logo}" alt="Funda Online Academy logo">`:''}</div><div><div class="webBrand">${esc(co.name)}</div><div class="webMeta">Registration No: ${esc(co.reg)}</div><div class="webMeta">${esc(co.address)}</div><div class="webMeta">Tel/WhatsApp: ${esc(co.phone)} · ${esc(co.email)} · ${esc(co.website.replace(/^https?:\/\//,''))}</div></div></div>
+    <div class="webLetterHead"><div>${logo?`<img src="${logo}" alt="Funda Online Academy logo">`:''}</div><div><div class="webBrand">${esc(co.name)}</div><div class="webMeta">Registration No: ${esc(co.reg)}</div><div class="webMeta">${esc(co.address)}</div><div class="webMeta">Tel: ${esc(co.phone)} · WhatsApp: ${esc(co.whatsapp)} · ${esc(co.email)} · ${esc(co.website.replace(/^https?:\/\//,''))}</div></div></div>
     <div class="webLetterDate"><b>Date:</b> ${esc(prettyDate(v.date)||'[date]')}<br><br><b>To:</b> ${esc(v.host||'[host organisation]')}${v.branch?` — ${esc(v.branch)}`:''}<br><b>Attention:</b> ${esc(v.contact||'The Manager / Human Resources')}</div>
     <div class="webLetterSubject">RE: REQUEST FOR WORKPLACE EXPOSURE — ${esc(v.learner||'[STUDENT NAME]')} | ${esc(v.course||'[COURSE NAME]')}</div>
     <p>Dear Sir / Madam,</p><p>${esc(copy.intro)}</p><p>${esc(copy.purpose)}</p><p>${esc(copy.conditions)}</p><p>${esc(copy.learner)}</p><p>${esc(copy.close)}</p>
@@ -199,7 +199,7 @@ async function downloadPdf(){
     if(logo)doc.addImage(logo,'PNG',margin,y,25,25);
     doc.setTextColor(23,50,74);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text(co.name,50,21);
     doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(92,106,123);
-    doc.text([`Registration No: ${co.reg}`,co.address,`Tel/WhatsApp: ${co.phone} · ${co.email}`,co.website.replace(/^https?:\/\//,'')],50,27);
+    doc.text([`Registration No: ${co.reg}`,co.address,`Tel: ${co.phone} · WhatsApp: ${co.whatsapp} · ${co.email}`,co.website.replace(/^https?:\/\//,'')],50,27);
     y=43;doc.setDrawColor(201,154,46);doc.setLineWidth(1);doc.line(margin,y,192,y);y+=9;
     doc.setTextColor(55,68,82);doc.setFontSize(9.5);
     doc.text(`Date: ${prettyDate(v.date)}`,margin,y);y+=7;doc.text(`To: ${v.host}${v.branch?' — '+v.branch:''}`,margin,y,{maxWidth:w});y+=6;
@@ -218,7 +218,7 @@ async function downloadPdf(){
 function html(){
   const options=(data?.profiles||[]).map(p=>`<option value="${esc(p.id)}">${esc(p.full_name||p.email||'Student')}</option>`).join(''),co=company(),request=latestRequest(),logo=window.FUNDA_TRANSPARENT_LOGO_MASTER||'';
   return `<div class="webWrap"><div class="webTop"><div><span class="webBadge">OFFICIAL WORKPLACE EXPOSURE</span><h3>Workplace Exposure Letter Builder</h3><p>Select the learner and course, add the receiving organisation, review the Academy-generated wording and download a formal PDF request letter.</p></div>${request?'<button class="webBtn alt" type="button" id="webLoadRequest">Load Latest Learner Request</button>':''}</div>
-  <div class="webInstitution"><div class="webLogoBox">${logo?`<img src="${logo}" alt="Funda Online Academy transparent logo">`:''}</div><div><div class="webInstName">${esc(co.name)}</div><div class="webInstLine">Registration No: ${esc(co.reg)} · ${esc(co.address)}</div><div class="webInstLine">Tel/WhatsApp: ${esc(co.phone)} · ${esc(co.email)} · ${esc(co.website.replace(/^https?:\/\//,''))}</div></div></div>
+  <div class="webInstitution"><div class="webLogoBox">${logo?`<img src="${logo}" alt="Funda Online Academy transparent logo">`:''}</div><div><div class="webInstName">${esc(co.name)}</div><div class="webInstLine">Registration No: ${esc(co.reg)} · ${esc(co.address)}</div><div class="webInstLine">Tel: ${esc(co.phone)} · WhatsApp: ${esc(co.whatsapp)} · ${esc(co.email)} · ${esc(co.website.replace(/^https?:\/\//,''))}</div></div></div>
   <div class="webControls"><div class="webField"><label>Learner</label><select id="webLearner"><option value="">Choose learner</option>${options}</select></div><div class="webField"><label>Course</label><select id="webCourse"><option value="">Choose course</option></select></div><button class="webBtn gold" id="webGenerate" type="button">Generate Letter</button></div>
   <div class="webGrid"><div class="webForm" id="webForm"><div class="webField"><label>Letter date</label><input id="webDate" type="date" value="${today()}"></div><div class="webField"><label>Learner full name</label><input id="webLearnerName"></div><div class="webField full"><label>Course name</label><input id="webCourseName"></div><div class="webField full"><label>Host organisation</label><input id="webHost" placeholder="e.g. Shell, Engen, a retail store, employer or other host organisation"></div><div class="webField"><label>Attention / contact person</label><input id="webContact" placeholder="Manager, HR representative, supervisor or named contact"></div><div class="webField"><label>Host branch / location</label><input id="webBranch" placeholder="Optional branch or location"></div><div class="webField full"><label>Course-related exposure focus</label><textarea id="webFocus"></textarea></div><div class="webField full"><label>Additional request information</label><textarea id="webNotes" placeholder="Optional practical details, preferred exposure period or learner context."></textarea></div><div id="webVerification" class="webStatus full"></div><div class="webHint">The Academy logo and company identity are permanent letterhead details. Learner/course details come from Academy records; host organisation and contact details remain editable. Completion wording is generated from the recorded course result/certificate status so the letter does not make an unsupported completion claim.</div><div class="webActions"><button class="webBtn" type="button" id="webDownload">Download PDF</button></div></div><div class="webPreview" id="webPreview"></div></div></div>`;
 }
