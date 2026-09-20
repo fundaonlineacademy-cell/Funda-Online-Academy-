@@ -45,6 +45,10 @@ The complete Student Portal remains owner-approved and locked. After explicit ow
 - Do not restore legacy, superseded, duplicate or previously rejected Student Portal code from older commits or cached implementations.
 - Any approved future Student Portal change must identify the exact reopened surface, preserve all unaffected locked areas, run relevant regression checks, and update this approved-state record in the same controlled change.
 
+### Student Support & CRM — OWNER-APPROVED FINALISATION (20 September 2026)
+
+The owner explicitly reopened the Admin **Student Support & CRM** tab for a focused finalisation pass. The approved scope is limited to loading the existing protected Student Support Command Centre in Admin, improving Admin-side readability while retaining Source Sans 3 and the established design, superseding the obsolete Admin ticket-creation view that conflicts with the current screenshot-required Student ticket rules, and adding a compact Admin-only CRM context inside ticket detail (student contact, enrolment/course context and support-history counts). The locked Student Support ticket submission/reply experience, screenshot requirement, Student Portal design, Finance data, enrolment rules and all unrelated portal behaviour remain unchanged.
+
 ### Communication Hub — OWNER-APPROVED FINALISATION (20 September 2026)
 
 The owner explicitly reopened the Admin **Communication Hub** for a focused finalisation pass. The approved scope is limited to: improving Admin-side readability while retaining Source Sans 3 and the existing design; correcting **Everyone in Funda** recipient tracking so entitled Student/staff recipients receive the same protected portal communication; completing automatic email dispatch for scheduled communications; and adding Admin controls to edit/publish/cancel saved Draft/Scheduled communications plus retry a failed requested email. The existing Student Communication Centre design, navigation, inbox presentation, search/filtering, read-state behaviour and all unrelated Student Portal areas remain locked and unchanged.
