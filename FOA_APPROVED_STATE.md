@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `89b5d4a85a4bb5b180392e64ab232338ef84dab1`
+Baseline commit: `c9bca9d9637bb00e31147086fbb8651a2af8fa6e`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -253,6 +253,9 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - This refinement is Admin-only. The locked Student Calendar/Student Portal presentation is unchanged.
 
 ### Management & Governance — owner-approved refinement 20 September 2026
+
+- **Official Workplace Exposure Letter Builder — 20 September 2026:** the workplace-exposure section is now a learner-aware full-width builder beneath the Professional Graduate CV. Admin selects a learner and course, the system reads the learner/course records, auto-fills the learner name and course, uses the generation date by default, accepts host organisation/contact/branch details, generates a formal expanded letter, shows completion verification status, provides a live preview and downloads a finished PDF. The official transparent Funda Online Academy logo is loaded from the approved master asset and remains part of the letterhead. Permanent institutional details are Funda Online Academy, company registration **2023/830451/07**, **100% Online Academy — South Africa**, Tel **069 960 8590**, WhatsApp **069 960 8590**, **info@fundaonlineacademy.co.za**, **fundaonlineacademy.co.za**, and CEO **Aziwe Futhe**. The builder does not falsely claim course completion when Academy results/certificates do not support that claim.
+- **Student workplace-exposure request refinement — 20 September 2026:** when a learner requests a Workplace Exposure Letter, the Student Career & Workplace Support form additionally captures the host organisation, optional attention/contact person and optional branch/location. These are stored with the request so Admin can load the request directly into the workplace-exposure builder. Other Student Career Support request types remain unchanged.
 
 - **Learner CV Builder — 20 September 2026:** the Career & Workplace Support CV area is no longer a static example only. Admin can select an active learner, auto-fill name, phone, email and location from Academy records, choose the learner’s course, generate a course-aware professional profile/skills/training section, edit every field, preview the final CV live, and download a finished PDF. Open CV support requests can be loaded directly into the builder. The generated wording is status-aware so pending/active/completed training is not represented as completed unless the recorded enrolment status supports that claim. The Workplace Exposure Letter remains unchanged for a later dedicated review.
 - **Career & Workplace Support layout — 20 September 2026:** Professional Graduate CV and Official Workplace Exposure Letter are stacked vertically on Management & Governance. The CV appears first at full workspace width; Workplace Exposure sits underneath at full width. Do not place these two tools side-by-side on desktop unless explicitly re-approved.
