@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `a433a151b419a0d2b71e79bd221fd709a6d3f11b`
+Baseline commit: `9332a92a5b1a621b4252e42564086e5b6656ffb6`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -232,6 +232,8 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - **Card-balance refinement — 20 September 2026:** the lower Daily Operations row is visually balanced. **This Week** shows at most two due/overdue actions with a **View all actions** control into Management & Governance instead of allowing the card to stretch indefinitely. Operational Activity, This Week and Calendar use matching compact desktop card heights. The Calendar uses a slightly inset rounded inner panel, reduced vertical size and smaller day-cell height so it stays neat without dominating the row; responsive layouts return to natural height on smaller screens. Loaded card bodies also remove the temporary loading-layout class so content is not accidentally centred or pushed to the bottom.
 
 ### Executive Calendar holidays and Admin reminders — owner-approved 20 September 2026
+
+- **Selected-date interaction repair — 20 September 2026:** month cells now carry stable date keys and use delegated click/keyboard handling, so navigating months or rendering holiday labels cannot break the right-side Selected Date details panel. Rapid date changes are request-safe; the newest selection wins.
 
 - The Executive Calendar recognizes South African statutory public holidays, including **Good Friday**, **Family Day**, and the Public Holidays Act Sunday-observed Monday rule. Holidays are highlighted directly on the monthly calendar and appear in the Selected Date detail panel.
 - Holiday rendering is now built directly into the Admin month-grid renderer: each recognised holiday date carries a visible **PUBLIC HOLIDAY · [holiday name]** label, including prior/future months when navigating the calendar (for example National Women's Day on 9 August and Heritage Day on 24 September). The Student Calendar remains unchanged by this Admin-only display rule.
