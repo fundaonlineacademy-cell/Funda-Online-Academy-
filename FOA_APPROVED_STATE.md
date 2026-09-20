@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `821411df194d175302707a0ff1ad4fc02fb031e5`
+Baseline commit: `d3970dc28f3e53fcda9b95a3a9c0a22ffeec8f4c`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -250,6 +250,8 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - This refinement is Admin-only. The locked Student Calendar/Student Portal presentation is unchanged.
 
 ### Management & Governance — owner-approved refinement 20 September 2026
+
+- **Typography refinement — 20 September 2026:** Management & Governance, CEO Executive Action Centre, and Career & Workplace Support explicitly use the approved **Source Sans 3** Admin font. Meaningful interface text was raised to the established readable Admin scale; 8px/9px micro-text was removed from these Management sections, while form inputs remain comfortably readable and mobile-safe.
 
 - **Vision** and **Mission** remain available in Management & Governance but are intentionally removed from the top Executive Governance hero. They now appear together in a compact **Academy Direction** section at the bottom of the Management workspace, immediately before the permanent Admin footer/Academy Details.
 - **Learner Success · Career Services / Career & Workplace Support** must render only once. The management-side career-support loader now uses a single-flight guard and an atomic placement rule so concurrent mount events cannot create duplicate template sections.
