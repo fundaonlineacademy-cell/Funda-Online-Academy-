@@ -35,18 +35,18 @@ function css(){
     .cvbForm{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:13px;border:1px solid #e5e9ef;border-radius:12px;background:#fbfcfe}
     .cvbField.full{grid-column:1/-1}.cvbActions{grid-column:1/-1;display:flex;gap:7px;flex-wrap:wrap;padding-top:3px}
     .cvbHint{grid-column:1/-1;color:#6b7788;font-size:10px;line-height:1.5;background:#f4f7fa;border-radius:8px;padding:8px 9px}
-    .cvbPreview{background:#fff;border:1px solid #dfe5ec;border-radius:12px;overflow:hidden;box-shadow:0 8px 20px rgba(7,27,49,.07)}
+    .cvbPreview{background:#fff;border:1px solid #dfe5ec;border-radius:12px;overflow:hidden;box-shadow:0 8px 20px rgba(7,27,49,.07);font-family:"Times New Roman",Times,serif}
     .cvbCvHead{background:linear-gradient(135deg,#07172f,#0b2f70);color:#fff;padding:22px 24px}
-    .cvbCvName{font-size:27px;font-weight:900;line-height:1.1;letter-spacing:-.02em}
-    .cvbCvRole{margin-top:5px;color:#e8cc76;font-size:13px;font-weight:800}
-    .cvbContact{margin-top:10px;color:#dbe7f7;font-size:11px;line-height:1.6;word-break:break-word}
+    .cvbCvName{font-size:29px;font-weight:700;line-height:1.1;letter-spacing:-.01em}
+    .cvbCvRole{margin-top:5px;color:#e8cc76;font-size:15px;font-weight:700}
+    .cvbContact{margin-top:10px;color:#dbe7f7;font-size:14px;line-height:1.45;word-break:break-word}
     .cvbCvBody{padding:20px 24px 24px}
     .cvbSection{margin-top:16px}.cvbSection:first-child{margin-top:0}
-    .cvbSection h4{margin:0 0 6px;color:#17324a;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid #d4af58;padding-bottom:5px}
-    .cvbSection p{margin:0;color:#3f4f61;font-size:11px;line-height:1.65;white-space:pre-wrap}
+    .cvbSection h4{margin:0 0 7px;color:#17324a;font-size:16px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid #d4af58;padding-bottom:5px}
+    .cvbSection p{margin:0;color:#000;font-size:14.7px;line-height:1.5;white-space:pre-wrap}.cvbSection.cvbProfileSection p{text-align:justify;text-justify:inter-word}
     .cvbSkills{display:flex;flex-wrap:wrap;gap:6px}
-    .cvbSkill{border-radius:999px;background:#eef3f8;color:#17324a;padding:5px 8px;font-size:10px;font-weight:800}
-    .cvbFooter{border-top:1px solid #edf1f5;margin-top:18px;padding-top:8px;color:#8a94a3;font-size:9px}
+    .cvbSkill{border-radius:999px;background:#eef3f8;color:#17324a;padding:5px 8px;font-size:14px;font-weight:700}
+    .cvbFooter{border-top:1px solid #edf1f5;margin-top:18px;padding-top:8px;color:#5f6874;font-size:12px}
     .cvbLoading{padding:20px;text-align:center;color:#66758a;font-size:11px}
     .cvbError{padding:12px;border:1px solid #f0caca;border-radius:9px;background:#fff2f2;color:#8a2d2d;font-size:11px}
     @media(max-width:980px){.cvbGrid{grid-template-columns:1fr}.cvbControls{grid-template-columns:1fr 1fr}.cvbControls .cvbBtn{grid-column:1/-1;width:max-content}.cvbPreview{max-width:760px}}
@@ -151,7 +151,7 @@ function renderPreview(){
       <div class="cvbContact">${contact||'Phone • Email • Location'}</div>
     </div>
     <div class="cvbCvBody">
-      <section class="cvbSection"><h4>Professional Profile</h4><p>${esc(v.profile||'Professional profile will appear here.')}</p></section>
+      <section class="cvbSection cvbProfileSection"><h4>Professional Profile</h4><p>${esc(v.profile||'Professional profile will appear here.')}</p></section>
       <section class="cvbSection"><h4>Core Skills</h4><div class="cvbSkills">${skills.length?skills.map(x=>`<span class="cvbSkill">${esc(x)}</span>`).join(''):'<span class="cvbSkill">Add skills</span>'}</div></section>
       <section class="cvbSection"><h4>Education & Training</h4><p>${esc(v.education||'Add education and training information.')}</p></section>
       <section class="cvbSection"><h4>Workplace Exposure / Experience</h4><p>${esc(v.experience||'Add relevant workplace exposure, projects, volunteering or previous employment.')}</p></section>
@@ -243,39 +243,41 @@ async function downloadPdf(){
     let y=0;
 
     doc.setFillColor(7,23,47);doc.rect(0,0,pageW,42,'F');
-    doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(20);
+    doc.setTextColor(255,255,255);doc.setFont('times','bold');doc.setFontSize(22);
     doc.text(v.name.toUpperCase(),margin,17,{maxWidth:contentW});
-    doc.setTextColor(232,204,118);doc.setFontSize(10);doc.text(v.headline||'Entry-Level Candidate',margin,25,{maxWidth:contentW});
-    doc.setTextColor(224,232,242);doc.setFont('helvetica','normal');doc.setFontSize(8.5);
+    doc.setTextColor(232,204,118);doc.setFont('times','bold');doc.setFontSize(11);doc.text(v.headline||'Entry-Level Candidate',margin,25,{maxWidth:contentW});
+    doc.setTextColor(224,232,242);doc.setFont('times','normal');doc.setFontSize(10.5);
     doc.text([v.phone,v.email,v.location].filter(Boolean).join('  •  '),margin,33,{maxWidth:contentW});
     y=50;
 
     const ensureSpace=needed=>{if(y+needed>pageH-18){doc.addPage();y=18}};
-    const section=(title,body,bullets=false)=>{
+    const section=(title,body,bullets=false,justify=false)=>{
       body=text(body);if(!body)return;
-      ensureSpace(22);
-      doc.setTextColor(23,50,74);doc.setFont('helvetica','bold');doc.setFontSize(9.5);doc.text(title.toUpperCase(),margin,y);
-      y+=2;doc.setDrawColor(201,154,46);doc.setLineWidth(.6);doc.line(margin,y,margin+contentW,y);y+=5;
-      doc.setTextColor(55,68,82);doc.setFont('helvetica','normal');doc.setFontSize(9);
+      ensureSpace(24);
+      doc.setTextColor(23,50,74);doc.setFont('times','bold');doc.setFontSize(12);doc.text(title.toUpperCase(),margin,y);
+      y+=2;doc.setDrawColor(201,154,46);doc.setLineWidth(.6);doc.line(margin,y,margin+contentW,y);y+=6;
+      doc.setTextColor(0,0,0);doc.setFont('times','normal');doc.setFontSize(11);
+      const lineStep=5.8;
       const lines=bullets?body.split(/\n|,/).map(x=>text(x)).filter(Boolean):[body];
       if(bullets){
         for(const item of lines){
           const wrapped=doc.splitTextToSize('• '+item,contentW-2);
-          ensureSpace(wrapped.length*4.6+3);
-          doc.text(wrapped,margin+1,y);y+=wrapped.length*4.6+1.5;
+          ensureSpace(wrapped.length*lineStep+3);
+          doc.text(wrapped,margin+1,y);y+=wrapped.length*lineStep+1.8;
         }
       }else{
         const paras=body.split(/\n\s*\n/).filter(Boolean);
         for(const para of paras){
           const wrapped=doc.splitTextToSize(para.replace(/\n/g,' · '),contentW);
-          ensureSpace(wrapped.length*4.6+3);
-          doc.text(wrapped,margin,y);y+=wrapped.length*4.6+2.5;
+          ensureSpace(wrapped.length*lineStep+4);
+          doc.text(wrapped,margin,y,justify?{maxWidth:contentW,align:'justify'}:{maxWidth:contentW});
+          y+=wrapped.length*lineStep+3;
         }
       }
       y+=3;
     };
 
-    section('Professional Profile',v.profile);
+    section('Professional Profile',v.profile,false,true);
     section('Core Skills',v.skills,true);
     section('Education & Training',v.education);
     section('Workplace Exposure / Experience',v.experience);
@@ -285,7 +287,7 @@ async function downloadPdf(){
     const pages=doc.getNumberOfPages();
     for(let p=1;p<=pages;p++){
       doc.setPage(p);doc.setDrawColor(226,232,240);doc.line(margin,pageH-12,pageW-margin,pageH-12);
-      doc.setTextColor(125,137,151);doc.setFontSize(7.5);doc.setFont('helvetica','normal');
+      doc.setTextColor(95,104,116);doc.setFontSize(8);doc.setFont('times','normal');
       doc.text('Prepared with career-support assistance from Funda Online Academy.',margin,pageH-7);
       doc.text(`Page ${p} of ${pages}`,pageW-margin,pageH-7,{align:'right'});
     }
