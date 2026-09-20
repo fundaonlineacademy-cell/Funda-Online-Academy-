@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `07b4f3969fa584994f317df1f55c0de75fdf9b38`
+Baseline commit: `51937ab73e93d6204b87454c3440441460d07cac`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -203,6 +203,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - Manual **Refresh** controls, refreshes immediately after a save/status change, and non-data startup/mount timers remain allowed because they are user-initiated or required only to attach the approved interface; they are not background data refreshes.
 - Returning focus to the Admin page may still perform lightweight state checks where needed, but must not reintroduce a recurring sub-10-minute data refresh that replaces the content while the CEO is reading or working.
 - Do not add any recurring Admin data refresh below 10 minutes without explicit owner approval.
+- **Non-destructive refresh refinement — 20 September 2026:** automatic and manual Admin refreshes must preserve the currently visible workspace while fresh data is requested. The previous blocking live-data gate that hid My Dashboard and replaced it with **“Live Academy data could not refresh” / Retry** has been removed. Temporary connection/query failures keep the last successfully rendered information visible; modules retry on the next manual or approved 10-minute refresh instead of blanking the page.
 
 ### Admin My Dashboard — Daily Operations cards, owner-approved 20 September 2026
 
