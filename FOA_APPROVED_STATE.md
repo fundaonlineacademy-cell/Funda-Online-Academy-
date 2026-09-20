@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `e2f6a745ff9d2a4bfeb295e52a15ab44d3863a9d`
+Baseline commit: `19977c17a4c8c89e68c8c60e69fdc2d82dde78e3`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -195,6 +195,15 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - **Owner-approved Admin typography amendment — 19 September 2026:** `Source Sans 3` is also the approved font for the complete Admin Command Center, including every department tab, navigation label, table, form control, dynamically rendered Admin module and CEO Account Control dialog.
 - This Admin font approval changes typography only. It is not permission to redesign Admin spacing, sizes, colours, cards, navigation, workflows or data presentation.
 - Do not expand this approval to the Ambassador Portal or other public/private surfaces without explicit owner approval for those surfaces.
+
+### Student account-creation security — owner-approved 20 September 2026
+
+- The unnamed audit/test account `audit_sec_1789818676_202348@gmail.com` was owner-directed for permanent deletion through CEO Account Control. It is now marked deleted, banned from sign-in and anonymised under the approved deletion model; retained tombstone records exist only for audit integrity.
+- Live Student Growth must count **active Student profiles only**. Profiles marked `deleted` in CEO Account Control are excluded from the secure executive snapshot and therefore do not contribute to Student Growth.
+- New Student profiles must have a non-blank full name and valid email. Reserved automation/test prefixes such as `audit_`, `security_`, `sec_`, `qa_`, `test_` and `demo_` are rejected for live Student accounts.
+- Public Student registration now tags account provenance as `public_student_registration`.
+- A minimal Admin-only `account_registration_audit` record is created for new auth accounts so future account-origin investigations have a traceable registration source/declared role/account type without relying on guesswork.
+- This hardening must not prevent legitimate public Student registration through the approved account-creation form, nor change approved Student Portal content/layout.
 
 ### Admin automatic refresh standard — owner-approved 19 September 2026
 
