@@ -9,12 +9,18 @@
   let busy=false;
 
   async function refreshAdmin(){
-    if(busy||typeof window.load!=='function')return;
+    if(busy||document.hidden)return;
+    if('onLine' in navigator&&!navigator.onLine)return;
     busy=true;
     const scrollY=window.scrollY;
     try{
-      await window.load();
-      document.dispatchEvent(new CustomEvent('funda:admin-manual-refresh'));
+      // Non-destructive refresh: keep the current workspace visible and ask
+      // each Admin module to refresh its own data. Do not call the legacy
+      // global load(), which can replace a healthy screen with an empty/error
+      // state when one network request temporarily fails.
+      document.dispatchEvent(new CustomEvent('funda:admin-manual-refresh',{
+        detail:{source:'automatic',interval_ms:REFRESH_MS}
+      }));
       requestAnimationFrame(()=>window.scrollTo(0,scrollY));
     }catch(error){
       console.error('Admin 10-minute auto refresh failed',error);
