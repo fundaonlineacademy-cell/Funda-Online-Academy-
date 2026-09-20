@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `1c6f5cd419537539312a7c6e080e5c936d967f05`
+Baseline commit: `821411df194d175302707a0ff1ad4fc02fb031e5`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -230,6 +230,14 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - **Final My Dashboard consistency pass — 20 September 2026:** remaining small helper/status text in My Dashboard, Daily Operations and CEO Action Snapshot was increased to the established readable Admin scale. The legacy/base Admin fallback now also treats only genuine Student profiles as Students and excludes CEO-deleted tombstones, preventing temporary Student-count inconsistencies before/around enhanced dashboard rendering.
 - **Stability refinement — 20 September 2026:** Daily Operations must not continuously rewrite its own card contents in response to its own DOM mutations. The dashboard now observes only replacement of the Admin workspace and refreshes card data only on initial load, explicit navigation/load, or the approved Admin refresh event. This prevents visible card jitter/flicker while the CEO is reading.
 - **Card-balance refinement — 20 September 2026:** the lower Daily Operations row is visually balanced. **This Week** shows at most two due/overdue actions with a **View all actions** control into Management & Governance instead of allowing the card to stretch indefinitely. Operational Activity, This Week and Calendar use matching compact desktop card heights. The Calendar uses a slightly inset rounded inner panel, reduced vertical size and smaller day-cell height so it stays neat without dominating the row; responsive layouts return to natural height on smaller screens. Loaded card bodies also remove the temporary loading-layout class so content is not accidentally centred or pushed to the bottom.
+
+### Executive Calendar holidays and Admin reminders — owner-approved 20 September 2026
+
+- The Executive Calendar recognizes South African statutory public holidays, including **Good Friday**, **Family Day**, and the Public Holidays Act Sunday-observed Monday rule. Holidays are highlighted directly on the monthly calendar and appear in the Selected Date detail panel.
+- Calendar reminders/events now participate in the existing Admin notification-bell workflow. Newly created upcoming reminders can appear as unread Calendar notifications; when an active calendar item is within **24 hours**, a separate **DUE SOON** bell notification is generated so reading the original creation notification does not suppress the due reminder.
+- Clicking a calendar notification in the Admin bell opens the existing **Executive Calendar & Tasks** workspace.
+- The bell continues to use the approved event-driven/10-minute Admin refresh architecture; this change does **not** restore a 30-second polling loop.
+- This is an in-app Admin bell notification. Email and browser-push reminder delivery remain disabled unless separately approved and implemented.
 
 ### Executive Calendar & Tasks — owner-approved presentation refinement 20 September 2026
 
