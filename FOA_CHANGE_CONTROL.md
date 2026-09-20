@@ -199,6 +199,7 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Course progress/assessment navigation is not disturbed.
 
 ### Admin/Staff
+- **Executive Calendar & Tasks** must not appear as a permanent Admin sidebar item. Its access card belongs on My Dashboard after CEO Action Snapshot and before Admin & Staff House Rules, while the existing `admin-calendar.html` workspace remains the destination.
 - Student account security: active Student totals must exclude CEO-deleted accounts; blank/anonymous Student profiles and reserved automation/test email prefixes must be rejected; public registrations retain provenance metadata and Admin-only registration audit history. Do not weaken these controls or create test/audit Student accounts without explicit owner approval.
 - Admin My Dashboard **Daily Operations** stays between Department Status and Recent Audits & Alerts with six compact cards: Quick Links, System Summary, Quick Reports, Operational Activity (7 days), This Week, and compact Calendar. The cards must link to/use existing department systems rather than duplicate records or create parallel reports/tasks. Do not remove or replace the approved Business Health, Department Status or Recent Audits & Alerts sections without explicit owner approval.
 - Daily Operations and CEO Action Snapshot typography must remain consistent with the readable Admin Dashboard scale: no micro-text for primary/secondary information. The Operational Activity graph and Calendar retain their defined inner visual panels, readable labels and spacing.
