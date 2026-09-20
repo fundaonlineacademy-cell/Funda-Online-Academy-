@@ -8,8 +8,35 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 const monthName=d=>d.toLocaleDateString('en-ZA',{month:'long',year:'numeric'});
 const dateKey=v=>{const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Africa/Johannesburg',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(v));const g=t=>p.find(x=>x.type===t)?.value||'';return `${g('year')}-${g('month')}-${g('day')}`};
 const timeLabel=v=>new Intl.DateTimeFormat('en-ZA',{timeZone:'Africa/Johannesburg',hour:'2-digit',minute:'2-digit'}).format(new Date(v));
+const localHolidayKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const addHolidayDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x};
+function easterSunday(year){
+  const a=year%19,b=Math.floor(year/100),cc=year%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(cc/4),k=cc%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+  return new Date(year,month-1,day);
+}
+function saHolidayMap(year){
+  const base=[
+    {date:new Date(year,0,1),name:"New Year's Day"},
+    {date:new Date(year,2,21),name:'Human Rights Day'},
+    {date:new Date(year,3,27),name:'Freedom Day'},
+    {date:new Date(year,4,1),name:"Workers' Day"},
+    {date:new Date(year,5,16),name:'Youth Day'},
+    {date:new Date(year,7,9),name:"National Women's Day"},
+    {date:new Date(year,8,24),name:'Heritage Day'},
+    {date:new Date(year,11,16),name:'Day of Reconciliation'},
+    {date:new Date(year,11,25),name:'Christmas Day'},
+    {date:new Date(year,11,26),name:'Day of Goodwill'}
+  ];
+  const easter=easterSunday(year);
+  base.push({date:addHolidayDays(easter,-2),name:'Good Friday'},{date:addHolidayDays(easter,1),name:'Family Day'});
+  const all=[...base];
+  base.forEach(h=>{if(h.date.getDay()===0)all.push({date:addHolidayDays(h.date,1),name:h.name+' (Observed)'})});
+  const map=new Map();
+  all.forEach(h=>{const k=localHolidayKey(h.date),arr=map.get(k)||[];if(!arr.includes(h.name))arr.push(h.name);map.set(k,arr)});
+  return map;
+}
 function style(){if(document.getElementById('fundaMonthCalendarStyle'))return;const s=document.createElement('style');s.id='fundaMonthCalendarStyle';s.textContent=`
-.monthCard{display:none;margin-top:0}.monthTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.monthTop h2{margin:0;color:#06152f;font-size:18px}.monthNav{display:flex;gap:7px;align-items:center}.monthNav button{border:1px solid #d9e4f2;background:#fff;color:#06152f;border-radius:9px;padding:8px 10px;font-weight:900;cursor:pointer}.monthShell{overflow-x:auto;padding-bottom:4px}.monthGrid{display:grid;grid-template-columns:repeat(7,minmax(78px,1fr));gap:6px;min-width:610px}.monthDow{text-align:center;font-size:9px;font-weight:900;letter-spacing:.04em;color:#728096;padding:6px 2px;text-transform:uppercase}.monthDay{min-height:104px;border:1px solid #e1e8f1;border-radius:11px;background:#fff;padding:7px;overflow:hidden}.monthDay.blank{background:#f8fafc;border-style:dashed}.monthDay.today{border:2px solid #173d78}.monthDay.hasEvents{background:linear-gradient(180deg,#fff9df,#fff);border-color:#d6ae3f;box-shadow:0 4px 12px rgba(155,112,0,.08)}.monthNum{font-size:11px;font-weight:900;color:#06152f;margin-bottom:5px}.monthDay.today .monthNum{display:inline-grid;place-items:center;width:23px;height:23px;border-radius:50%;background:#06152f;color:#fff}.monthEvent{display:block;margin:3px 0;padding:4px 5px;border-radius:6px;background:#eaf2ff;color:#174d91;font-size:8px;font-weight:800;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.monthDay.hasEvents .monthEvent:first-of-type{background:#f4df9e;color:#5d4510}.monthMore{font-size:8px;font-weight:900;color:#7c5b0c;margin-top:3px}.monthLoading,.monthError,.monthEmpty{padding:24px;text-align:center;color:#66758a;font-size:12px}.monthError{color:#922;background:#fff1f1;border-radius:10px}.monthHint{margin-top:10px;font-size:10px;color:#6b7788;line-height:1.45}@media(max-width:700px){.monthTop{align-items:flex-start}.monthTop h2{font-size:16px}.monthGrid{min-width:600px}.monthDay{min-height:96px;padding:6px}.monthEvent{font-size:7.5px}}
+.monthCard{display:none;margin-top:0}.monthTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.monthTop h2{margin:0;color:#06152f;font-size:18px}.monthNav{display:flex;gap:7px;align-items:center}.monthNav button{border:1px solid #d9e4f2;background:#fff;color:#06152f;border-radius:9px;padding:8px 10px;font-weight:900;cursor:pointer}.monthShell{overflow-x:auto;padding-bottom:4px}.monthGrid{display:grid;grid-template-columns:repeat(7,minmax(78px,1fr));gap:6px;min-width:610px}.monthDow{text-align:center;font-size:9px;font-weight:900;letter-spacing:.04em;color:#728096;padding:6px 2px;text-transform:uppercase}.monthDay{min-height:104px;border:1px solid #e1e8f1;border-radius:11px;background:#fff;padding:7px;overflow:hidden}.monthDay.blank{background:#f8fafc;border-style:dashed}.monthDay.today{border:2px solid #173d78}.monthDay.hasEvents{background:linear-gradient(180deg,#fff9df,#fff);border-color:#d6ae3f;box-shadow:0 4px 12px rgba(155,112,0,.08)}.monthDay.publicHoliday{background:linear-gradient(180deg,#fff4c8,#fffaf0);border-color:#d6ae3f;box-shadow:0 4px 12px rgba(155,112,0,.08)}.monthDay.publicHoliday.hasEvents{background:linear-gradient(180deg,#fff0b3,#fffaf0)}.monthHoliday{display:block;margin:3px 0 5px;padding:4px 5px;border-radius:6px;background:#d9b44a;color:#3f300b;font-size:8px;font-weight:900;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.monthNum{font-size:11px;font-weight:900;color:#06152f;margin-bottom:5px}.monthDay.today .monthNum{display:inline-grid;place-items:center;width:23px;height:23px;border-radius:50%;background:#06152f;color:#fff}.monthEvent{display:block;margin:3px 0;padding:4px 5px;border-radius:6px;background:#eaf2ff;color:#174d91;font-size:8px;font-weight:800;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.monthDay.hasEvents .monthEvent:first-of-type{background:#f4df9e;color:#5d4510}.monthMore{font-size:8px;font-weight:900;color:#7c5b0c;margin-top:3px}.monthLoading,.monthError,.monthEmpty{padding:24px;text-align:center;color:#66758a;font-size:12px}.monthError{color:#922;background:#fff1f1;border-radius:10px}.monthHint{margin-top:10px;font-size:10px;color:#6b7788;line-height:1.45}@media(max-width:700px){.monthTop{align-items:flex-start}.monthTop h2{font-size:16px}.monthGrid{min-width:600px}.monthDay{min-height:96px;padding:6px}.monthEvent{font-size:7.5px}}
 `;document.head.appendChild(s)}
 function tidy(){
   document.querySelectorAll('.notice').forEach(n=>n.remove());
@@ -42,7 +69,7 @@ function installMonthUi(){
   const listCard=document.getElementById('list')?.closest('.card');
   if(listCard&&!document.getElementById('monthCard')){
     const c=document.createElement('section');c.className='card monthCard';c.id='monthCard';
-    c.innerHTML=`<div class="monthTop"><div><h2 id="monthTitle"></h2><div class="monthHint">Dates with scheduled items are highlighted. Event titles appear directly on the relevant day.</div></div><div class="monthNav"><button type="button" id="monthPrev" aria-label="Previous month">‹</button><button type="button" id="monthToday">Today</button><button type="button" id="monthNext" aria-label="Next month">›</button></div></div><div class="monthShell"><div id="monthGrid" class="monthGrid"></div></div>`;
+    c.innerHTML=`<div class="monthTop"><div><h2 id="monthTitle"></h2><div class="monthHint">${isStudent?'Dates with scheduled items are highlighted. Event titles appear directly on the relevant day.':'South African public holidays are labelled automatically. Scheduled meetings, reminders and appointments also appear directly on their dates.'}</div></div><div class="monthNav"><button type="button" id="monthPrev" aria-label="Previous month">‹</button><button type="button" id="monthToday">Today</button><button type="button" id="monthNext" aria-label="Next month">›</button></div></div><div class="monthShell"><div id="monthGrid" class="monthGrid"></div></div>`;
     listCard.parentNode.insertBefore(c,listCard);
     document.getElementById('monthPrev').onclick=()=>{monthCursor=new Date(monthCursor.getFullYear(),monthCursor.getMonth()-1,1);loadMonth()};
     document.getElementById('monthNext').onclick=()=>{monthCursor=new Date(monthCursor.getFullYear(),monthCursor.getMonth()+1,1);loadMonth()};
@@ -77,12 +104,14 @@ function renderMonth(items){
   title.textContent=monthName(monthCursor);
   const y=monthCursor.getFullYear(),m=monthCursor.getMonth(),first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),offset=first.getDay();
   const grouped={};items.forEach(x=>{const k=dateKey(x.starts_at);(grouped[k]||(grouped[k]=[])).push(x)});
+  const holidays=isStudent?new Map():saHolidayMap(y);
   const names=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];let html=names.map(x=>`<div class="monthDow">${x}</div>`).join('');
   for(let i=0;i<offset;i++)html+='<div class="monthDay blank"></div>';
   const now=new Date(),todayKey=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
   for(let d=1;d<=days;d++){
-    const key=`${y}-${pad(m+1)}-${pad(d)}`,arr=grouped[key]||[],show=arr.slice(0,3),more=arr.length-show.length;
-    html+=`<div class="monthDay ${arr.length?'hasEvents':''} ${key===todayKey?'today':''}"><div class="monthNum">${d}</div>${show.map(x=>`<div class="monthEvent" title="${esc(x.title)}">${esc(timeLabel(x.starts_at))} · ${esc(x.title)}</div>`).join('')}${more?`<div class="monthMore">+${more} more</div>`:''}</div>`;
+    const key=`${y}-${pad(m+1)}-${pad(d)}`,arr=grouped[key]||[],show=arr.slice(0,3),more=arr.length-show.length,holidayNames=holidays.get(key)||[];
+    const holidayTitle=holidayNames.join(' · ');
+    html+=`<div class="monthDay ${arr.length?'hasEvents':''} ${holidayNames.length?'publicHoliday':''} ${key===todayKey?'today':''}" ${holidayNames.length?`title="${esc(holidayTitle)}"`:''}><div class="monthNum">${d}</div>${holidayNames.map(name=>`<div class="monthHoliday" title="${esc(name)}">PUBLIC HOLIDAY · ${esc(name)}</div>`).join('')}${show.map(x=>`<div class="monthEvent" title="${esc(x.title)}">${esc(timeLabel(x.starts_at))} · ${esc(x.title)}</div>`).join('')}${more?`<div class="monthMore">+${more} more</div>`:''}</div>`;
   }
   const used=offset+days,tail=(7-(used%7))%7;for(let i=0;i<tail;i++)html+='<div class="monthDay blank"></div>';
   grid.innerHTML=html;
