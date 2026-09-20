@@ -308,7 +308,7 @@ function renderAgreement(){
  if($('#agreementStanding')){$('#agreementStanding').textContent=['active','introductory'].includes(app.account_status)?'GOOD STANDING':String(app.account_status||'REVIEW').replaceAll('_',' ').toUpperCase();$('#agreementStanding').className='badge '+(['active','introductory'].includes(app.account_status)?'ok':'warn')}
 
  if(currentAgreement&&currentAccepted){
-   a.innerHTML='<div class="notice ok"><b>Current agreement version accepted ✓</b><br>Version '+esc(currentVersion)+' was accepted on '+fmt(currentAgreement.accepted_at)+'. Your earlier historical acceptance record remains preserved separately.</div>';
+   a.innerHTML='<div class="notice ok"><b>Current agreement version accepted ✓</b><br>Version '+esc(currentVersion)+' was accepted on '+fmt(currentAgreement.accepted_at)+'. This version-specific acceptance is recorded securely against the exact agreement version and content hash.</div>';
    return;
  }
 
