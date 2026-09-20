@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `51937ab73e93d6204b87454c3440441460d07cac`
+Baseline commit: `e2f6a745ff9d2a4bfeb295e52a15ab44d3863a9d`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -219,7 +219,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - Responsive layout becomes 2 columns on medium screens and 1 column on small screens.
 - **Readability refinement — 20 September 2026:** Daily Operations now follows the same readable Admin typography scale used in Business Health and Department Status. Primary labels are enlarged, secondary text is no longer micro-sized, System Summary counts are larger, and the CEO Action Snapshot uses the same readable scale. The Operational Activity graph and compact Calendar are placed in defined bordered/rounded visual panels with clearer labels and spacing so they read as intentional dashboard components rather than loose content.
 - **Stability refinement — 20 September 2026:** Daily Operations must not continuously rewrite its own card contents in response to its own DOM mutations. The dashboard now observes only replacement of the Admin workspace and refreshes card data only on initial load, explicit navigation/load, or the approved Admin refresh event. This prevents visible card jitter/flicker while the CEO is reading.
-- **Card-balance refinement — 20 September 2026:** the lower Daily Operations row is visually balanced. **This Week** shows at most three due/overdue actions with a **View all actions** control into Management & Governance instead of allowing the card to stretch indefinitely. Operational Activity, This Week and Calendar use matching desktop card heights. The compact Calendar is contained in a full-width rounded inner panel matching the visual treatment of the graph; responsive layouts return to natural height on smaller screens.
+- **Card-balance refinement — 20 September 2026:** the lower Daily Operations row is visually balanced. **This Week** shows at most two due/overdue actions with a **View all actions** control into Management & Governance instead of allowing the card to stretch indefinitely. Operational Activity, This Week and Calendar use matching compact desktop card heights. The Calendar uses a slightly inset rounded inner panel, reduced vertical size and smaller day-cell height so it stays neat without dominating the row; responsive layouts return to natural height on smaller screens. Loaded card bodies also remove the temporary loading-layout class so content is not accidentally centred or pushed to the bottom.
 
 ### Admin My Dashboard — owner-approved amendment 19 September 2026
 
