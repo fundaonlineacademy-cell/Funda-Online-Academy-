@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `6e15cbf93c52291d4b91f642a97c5a749a3ed74d`
+Baseline commit: `1c6f5cd419537539312a7c6e080e5c936d967f05`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -240,6 +240,13 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - Existing **Today**, **Next 7 Days**, **Upcoming**, **Calendar**, **Create Reminder**, reminder creation and event-cancellation behaviour remain available.
 - The old wording that described this page as isolated from the Admin Command Center is retired because access now comes from My Dashboard.
 - This refinement is Admin-only. The locked Student Calendar/Student Portal presentation is unchanged.
+
+### Management & Governance — owner-approved refinement 20 September 2026
+
+- **Vision** and **Mission** remain available in Management & Governance but are intentionally removed from the top Executive Governance hero. They now appear together in a compact **Academy Direction** section at the bottom of the Management workspace, immediately before the permanent Admin footer/Academy Details.
+- **Learner Success · Career Services / Career & Workplace Support** must render only once. The management-side career-support loader now uses a single-flight guard and an atomic placement rule so concurrent mount events cannot create duplicate template sections.
+- The existing two distinct master templates — **Professional Graduate CV** and **Official Workplace Exposure Letter** — remain separate approved templates. No database template records were deleted by this UI deduplication.
+- Career & Workplace Support is inserted before Academy Direction so Academy Direction remains the final Management section before the permanent Admin footer.
 
 ### Executive Calendar access — owner-approved move 20 September 2026
 
