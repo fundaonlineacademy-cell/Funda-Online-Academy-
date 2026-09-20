@@ -127,7 +127,6 @@
         cursor:pointer;
       }
       html.adminAwaitingLiveData .adminLiveGate{display:flex}
-      html.adminAwaitingLiveData #view{visibility:hidden}
       @keyframes adminLiveSpin{to{transform:rotate(360deg)}}
       @media(max-width:820px){
         html body .top{padding-right:8px!important}
@@ -263,121 +262,70 @@
     ));
   }
 
-  function liveGate(){
-    let gate=$('adminLiveGate');
-    const view=$('view');
-    if(gate||!view?.parentElement)return gate;
-    gate=document.createElement('div');
-    gate.id='adminLiveGate';
-    gate.className='adminLiveGate';
-    gate.setAttribute('role','status');
-    gate.setAttribute('aria-live','polite');
-    gate.innerHTML='<span class="adminLiveGateSpinner" aria-hidden="true"></span><span>Refreshing live Academy data…</span>';
-    view.parentElement.insertBefore(gate,view);
-    return gate;
-  }
-
-  function stopLiveGate(){
+  function clearLegacyLiveGate(){
     document.documentElement.classList.remove('adminAwaitingLiveData');
     if(dashboardGateTimer){
       clearTimeout(dashboardGateTimer);
       dashboardGateTimer=null;
     }
-  }
-
-  function showLiveError(){
-    if(!dashboardActive()){
-      stopLiveGate();
-      return;
-    }
-    const gate=liveGate();
-    if(!gate)return;
-    dashboardGateTimer=null;
-    gate.innerHTML='<span class="adminLiveGateError" aria-hidden="true">!</span><span>Live Academy data could not refresh. Check your connection and try again.</span><button class="adminLiveRetry" id="adminLiveRetry" type="button">Retry</button>';
-    $('adminLiveRetry').onclick=()=>refreshDashboard(true);
-  }
-
-  function startLiveGate(){
-    if(!dashboardActive())return;
-    const gate=liveGate();
-    if(gate)gate.innerHTML='<span class="adminLiveGateSpinner" aria-hidden="true"></span><span>Refreshing live Academy data…</span>';
-    document.documentElement.classList.add('adminAwaitingLiveData');
-    if(dashboardGateTimer)clearTimeout(dashboardGateTimer);
-    dashboardGateTimer=setTimeout(showLiveError,8000);
+    $('adminLiveGate')?.remove();
   }
 
   function stampLiveDashboard(){
     const dashboard=document.querySelector('#view .execSafe');
     if(!dashboard)return false;
-    stopLiveGate();
-    if(dashboard===lastDashboardNode)return true;
-    lastDashboardNode=dashboard;
+    if(dashboard!==lastDashboardNode)lastDashboardNode=dashboard;
     const badge=[...dashboard.querySelectorAll('.badge')].find(item=>
-      /live operations/i.test(text(item.textContent))
+      /live operations|live · updated/i.test(text(item.textContent))
     );
     if(badge){
       const timestamp=new Intl.DateTimeFormat(undefined,{
-        hour:'2-digit',minute:'2-digit',second:'2-digit'
+        hour:'2-digit',minute:'2-digit'
       }).format(new Date());
       badge.textContent=`LIVE · Updated ${timestamp}`;
-      badge.setAttribute('aria-label',`Live Academy data updated at ${timestamp}`);
+      badge.setAttribute('aria-label',`Live Academy data last updated at ${timestamp}`);
     }
-    setTimeout(()=>window.FundaAdminNotifications?.refresh?.(),100);
     return true;
   }
 
-  function inspectDashboard(){
-    if(!dashboardActive()){
-      stopLiveGate();
-      return;
-    }
-    if(!stampLiveDashboard()&&!document.documentElement.classList.contains('adminAwaitingLiveData')){
-      startLiveGate();
-    }
-  }
-
-  function refreshDashboard(force=false){
+  function refreshDashboard(){
     if(document.hidden||!dashboardActive())return;
-    const now=Date.now();
-    if(!force&&now-dashboardRefreshAt<2500)return;
-    dashboardRefreshAt=now;
-    startLiveGate();
-    const button=dashboardButton();
-    if(button){
-      button.dispatchEvent(new MouseEvent('click',{
-        bubbles:true,cancelable:true,view:window
-      }));
-    }
-    setTimeout(inspectDashboard,150);
-    setTimeout(()=>window.FundaAdminNotifications?.refresh?.(),400);
+    // Refresh requests are non-blocking. Existing dashboard data stays visible
+    // while the dashboard modules query fresh data in the background.
+    document.dispatchEvent(new CustomEvent('funda:admin-manual-refresh',{
+      detail:{source:'dashboard'}
+    }));
   }
 
   function installLiveRefresh(){
-    liveGate();
+    clearLegacyLiveGate();
+
     let inspectionQueued=false;
     const queueInspection=()=>{
       if(inspectionQueued)return;
       inspectionQueued=true;
       requestAnimationFrame(()=>{
         inspectionQueued=false;
-        inspectDashboard();
+        if(dashboardActive())stampLiveDashboard();
       });
     };
-    new MutationObserver(queueInspection).observe(document.body,{childList:true,subtree:true});
+
+    const view=$('view');
+    if(view)new MutationObserver(queueInspection).observe(view,{childList:true,subtree:false});
+
+    document.addEventListener('funda:admin-manual-refresh',()=>{
+      if(!dashboardActive())return;
+      // Give the data modules time to finish; never hide or replace the
+      // existing dashboard while they refresh.
+      setTimeout(queueInspection,700);
+    });
+
     document.addEventListener('click',event=>{
       const button=event.target.closest('#nav button');
-      if(!button)return;
-      if(/my dashboard/i.test(text(button.textContent)))startLiveGate();
-      else stopLiveGate();
+      if(button&&/my dashboard/i.test(text(button.textContent)))setTimeout(queueInspection,250);
     },true);
-    const foreground=()=>{
-      if(!document.hidden)refreshDashboard();
-    };
-    window.addEventListener('pageshow',foreground);
-    window.addEventListener('focus',foreground);
-    document.addEventListener('visibilitychange',foreground);
-    window.FundaAdminDashboard={refresh:()=>refreshDashboard(true)};
-    setTimeout(()=>refreshDashboard(true),120);
+
+    window.FundaAdminDashboard={refresh:refreshDashboard};
     setTimeout(queueInspection,1100);
   }
 
