@@ -42,13 +42,15 @@
     button.textContent='Refreshing…';
     const scrollY=window.scrollY;
     try{
-      if(typeof window.load!=='function')throw new Error('Admin data loader is not ready.');
-      await window.load();
-      document.dispatchEvent(new CustomEvent('funda:admin-manual-refresh'));
+      if('onLine' in navigator&&!navigator.onLine)throw new Error('No internet connection.');
+      // Keep the current Admin workspace on screen while modules refresh.
+      // A transient query failure must never wipe what the CEO is reading.
+      document.dispatchEvent(new CustomEvent('funda:admin-manual-refresh',{
+        detail:{source:'manual'}
+      }));
       stamp(button);
-      button.textContent='✓ Updated';
+      button.textContent='✓ Refresh requested';
       requestAnimationFrame(()=>window.scrollTo(0,scrollY));
-      setTimeout(()=>{if(!button.disabled)return;},0);
       setTimeout(()=>{button.textContent='↻ Refresh';button.disabled=false;},900);
     }catch(error){
       console.error('Admin manual refresh failed',error);
