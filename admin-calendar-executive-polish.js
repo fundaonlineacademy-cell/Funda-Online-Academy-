@@ -6,7 +6,7 @@ window.__fundaExecutiveCalendarPolish=true;
 
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-let db=null,selectedKey='',selectedLoading=false,monthOpened=false;
+let db=null,selectedKey='',selectedRequest=0,monthOpened=false;
 
 function style(){
   if($('fundaExecutiveCalendarStyle'))return;
@@ -98,8 +98,10 @@ function monthParts(){
 }
 
 function keyFromCell(cell){
+  const stamped=cell?.dataset?.date||'';
+  if(/^\d{4}-\d{2}-\d{2}$/.test(stamped))return stamped;
   const p=monthParts();
-  const num=Number(cell.querySelector('.monthNum')?.textContent||0);
+  const num=Number(cell?.querySelector('.monthNum')?.textContent||0);
   if(!p||!num)return '';
   return `${p.year}-${String(p.month+1).padStart(2,'0')}-${String(num).padStart(2,'0')}`;
 }
@@ -161,11 +163,12 @@ async function client(){
 }
 
 async function loadSelectedDate(k){
-  if(!k||selectedLoading)return;
-  selectedLoading=true;
+  if(!k)return;
+  const request=++selectedRequest;
   selectedKey=k;
   const panel=$('execSelectedDatePanel');
-  if(panel)panel.innerHTML=`<h3>${esc(prettyDate(k))}</h3><div class="dateSub">Loading scheduled items…</div>`;
+  const holidays=holidayNames(k);
+  if(panel)panel.innerHTML=`<h3>${esc(prettyDate(k))}</h3><div class="dateSub">${holidays.length?`Public holiday: ${esc(holidays.join(' · '))} · `:''}Loading scheduled items…</div>`;
   try{
     const c=await client();
     const from=k+'T00:00:00+02:00';
@@ -180,6 +183,7 @@ async function loadSelectedDate(k){
     (co.data||[]).forEach(x=>items.push({time:x.scheduled_start,title:(x.category||'Student')+' consultation',meta:[x.department,x.status,(x.duration_minutes||30)+' min'].filter(Boolean).join(' · '),description:'',holiday:false}));
     holidayNames(k).forEach(name=>items.push({time:k+'T00:00:00+02:00',title:name,meta:'South African public holiday',description:'',holiday:true}));
     items.sort((a,b)=>new Date(a.time)-new Date(b.time));
+    if(request!==selectedRequest)return;
     if(panel){
       panel.innerHTML=`<h3>${esc(prettyDate(k))}</h3><div class="dateSub">${items.length?items.length+' scheduled item'+(items.length===1?'':'s'):'No scheduled items'}</div>
         <div class="execDateItems">${items.length?items.map(x=>`<div class="execDateItem ${x.holiday?'holiday':''}"><div class="execDateTime">${x.holiday?'PUBLIC HOLIDAY':esc(timeLabel(x.time))+' SAST'}</div><b>${esc(x.title)}</b>${x.meta?`<span>${esc(x.meta)}</span>`:''}${x.description?`<span>${esc(x.description)}</span>`:''}</div>`).join(''):'<div class="execDateEmpty">Nothing is scheduled for this date.</div>'}</div>
@@ -188,8 +192,9 @@ async function loadSelectedDate(k){
       if(b)b.onclick=()=>$('newEvent')?.click();
     }
   }catch(e){
+    if(request!==selectedRequest)return;
     if(panel)panel.innerHTML=`<h3>${esc(prettyDate(k))}</h3><div class="execDateEmpty">This date could not load right now. The calendar view remains available.</div>`;
-  }finally{selectedLoading=false}
+  }
 }
 
 function wireMonthCells(){
@@ -199,22 +204,29 @@ function wireMonthCells(){
     const k=keyFromCell(cell);
     const holidays=decorateHoliday(cell,k);
     const baseLabel=prettyDate(k);
-    cell.setAttribute('aria-label',holidays.length?`${baseLabel} — Public holiday: ${holidays.join(', ')}`:baseLabel);
-    if(cell.dataset.execBound)return;
-    cell.dataset.execBound='1';
     cell.tabIndex=0;
     cell.setAttribute('role','button');
-    const activate=()=>{
-      grid.querySelectorAll('.monthDay.selected').forEach(x=>x.classList.remove('selected'));
-      cell.classList.add('selected');
-      const selectedDate=keyFromCell(cell);
-      if(selectedDate)loadSelectedDate(selectedDate);
-    };
-    cell.addEventListener('click',activate);
-    cell.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});
+    cell.setAttribute('aria-label',holidays.length?`${baseLabel} — Public holiday: ${holidays.join(', ')}`:baseLabel);
+    cell.classList.toggle('selected',k===selectedKey);
+  });
+  if(grid.dataset.execDelegated==='1')return;
+  grid.dataset.execDelegated='1';
+  const activate=cell=>{
+    if(!cell)return;
+    const selectedDate=keyFromCell(cell);
+    if(!selectedDate)return;
+    grid.querySelectorAll('.monthDay.selected').forEach(x=>x.classList.remove('selected'));
+    cell.classList.add('selected');
+    loadSelectedDate(selectedDate);
+  };
+  grid.addEventListener('click',e=>activate(e.target.closest?.('.monthDay:not(.blank)')));
+  grid.addEventListener('keydown',e=>{
+    const cell=e.target.closest?.('.monthDay:not(.blank)');
+    if(!cell||(e.key!=='Enter'&&e.key!==' '))return;
+    e.preventDefault();
+    activate(cell);
   });
 }
-
 function enhanceMonth(){
   const card=$('monthCard'),shell=card?.querySelector('.monthShell');
   if(!card||!shell)return false;
@@ -263,16 +275,27 @@ function install(){
 
   const gridWatcher=()=>{
     const grid=$('monthGrid');
-    if(!grid)return;
-    new MutationObserver(()=>setTimeout(()=>{
-      wireMonthCells();
-      if(!grid.querySelector('.monthDay.selected')){
-        const today=grid.querySelector('.monthDay.today');
-        if(today)today.click();
-      }
-    },40)).observe(grid,{childList:true,subtree:false});
+    if(!grid)return false;
+    if(grid.dataset.execObserved!=='1'){
+      grid.dataset.execObserved='1';
+      new MutationObserver(()=>setTimeout(()=>{
+        wireMonthCells();
+        const selected=selectedKey&&grid.querySelector(`.monthDay[data-date="${selectedKey}"]`);
+        if(selected)selected.classList.add('selected');
+        else if(!grid.querySelector('.monthDay.selected')){
+          const today=grid.querySelector('.monthDay.today');
+          if(today)today.click();
+        }
+      },40)).observe(grid,{childList:true,subtree:false});
+    }
+    wireMonthCells();
+    return true;
   };
-  setTimeout(gridWatcher,1200);
+  let watcherTries=0;
+  const watcherTimer=setInterval(()=>{
+    watcherTries++;
+    if(gridWatcher()||watcherTries>=30)clearInterval(watcherTimer);
+  },200);
 }
 
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
