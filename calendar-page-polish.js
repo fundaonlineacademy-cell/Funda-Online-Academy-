@@ -111,7 +111,7 @@ function renderMonth(items){
   for(let d=1;d<=days;d++){
     const key=`${y}-${pad(m+1)}-${pad(d)}`,arr=grouped[key]||[],show=arr.slice(0,3),more=arr.length-show.length,holidayNames=holidays.get(key)||[];
     const holidayTitle=holidayNames.join(' · ');
-    html+=`<div class="monthDay ${arr.length?'hasEvents':''} ${holidayNames.length?'publicHoliday':''} ${key===todayKey?'today':''}" ${holidayNames.length?`title="${esc(holidayTitle)}"`:''}><div class="monthNum">${d}</div>${holidayNames.map(name=>`<div class="monthHoliday" title="${esc(name)}">PUBLIC HOLIDAY · ${esc(name)}</div>`).join('')}${show.map(x=>`<div class="monthEvent" title="${esc(x.title)}">${esc(timeLabel(x.starts_at))} · ${esc(x.title)}</div>`).join('')}${more?`<div class="monthMore">+${more} more</div>`:''}</div>`;
+    html+=`<div class="monthDay ${arr.length?'hasEvents':''} ${holidayNames.length?'publicHoliday':''} ${key===todayKey?'today':''}" data-date="${key}" ${holidayNames.length?`title="${esc(holidayTitle)}"`:''}><div class="monthNum">${d}</div>${holidayNames.map(name=>`<div class="monthHoliday" title="${esc(name)}">PUBLIC HOLIDAY · ${esc(name)}</div>`).join('')}${show.map(x=>`<div class="monthEvent" title="${esc(x.title)}">${esc(timeLabel(x.starts_at))} · ${esc(x.title)}</div>`).join('')}${more?`<div class="monthMore">+${more} more</div>`:''}</div>`;
   }
   const used=offset+days,tail=(7-(used%7))%7;for(let i=0;i<tail;i++)html+='<div class="monthDay blank"></div>';
   grid.innerHTML=html;
