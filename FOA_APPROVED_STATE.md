@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `a5e595b6abfaae636085188c4098189ef0e6fb66`
+Baseline commit: `6e15cbf93c52291d4b91f642a97c5a749a3ed74d`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -230,6 +230,16 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - **Final My Dashboard consistency pass — 20 September 2026:** remaining small helper/status text in My Dashboard, Daily Operations and CEO Action Snapshot was increased to the established readable Admin scale. The legacy/base Admin fallback now also treats only genuine Student profiles as Students and excludes CEO-deleted tombstones, preventing temporary Student-count inconsistencies before/around enhanced dashboard rendering.
 - **Stability refinement — 20 September 2026:** Daily Operations must not continuously rewrite its own card contents in response to its own DOM mutations. The dashboard now observes only replacement of the Admin workspace and refreshes card data only on initial load, explicit navigation/load, or the approved Admin refresh event. This prevents visible card jitter/flicker while the CEO is reading.
 - **Card-balance refinement — 20 September 2026:** the lower Daily Operations row is visually balanced. **This Week** shows at most two due/overdue actions with a **View all actions** control into Management & Governance instead of allowing the card to stretch indefinitely. Operational Activity, This Week and Calendar use matching compact desktop card heights. The Calendar uses a slightly inset rounded inner panel, reduced vertical size and smaller day-cell height so it stays neat without dominating the row; responsive layouts return to natural height on smaller screens. Loaded card bodies also remove the temporary loading-layout class so content is not accidentally centred or pushed to the bottom.
+
+### Executive Calendar & Tasks — owner-approved presentation refinement 20 September 2026
+
+- The existing Executive Calendar remains the authoritative calendar workspace and continues to show scheduled Academy events, meetings, reminders and learner consultations on their relevant dates.
+- The page now uses the approved **Source Sans 3** Admin typography and a refined navy/gold Admin visual treatment without changing the underlying calendar/reminder workflows.
+- The monthly Calendar is retained and visually strengthened as the main planning view. Date cells, weekday labels and event labels are more readable while the calendar remains compact.
+- A **Selected Date** detail panel now appears beside/below the month calendar. Selecting a date shows that day's live meetings, reminders, Academy items and learner consultations without removing the calendar.
+- Existing **Today**, **Next 7 Days**, **Upcoming**, **Calendar**, **Create Reminder**, reminder creation and event-cancellation behaviour remain available.
+- The old wording that described this page as isolated from the Admin Command Center is retired because access now comes from My Dashboard.
+- This refinement is Admin-only. The locked Student Calendar/Student Portal presentation is unchanged.
 
 ### Executive Calendar access — owner-approved move 20 September 2026
 
