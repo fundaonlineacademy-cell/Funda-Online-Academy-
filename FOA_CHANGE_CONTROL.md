@@ -199,6 +199,7 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Course progress/assessment navigation is not disturbed.
 
 ### Admin/Staff
+- Management & Governance, CEO Executive Action Centre and Career & Workplace Support must use the approved **Source Sans 3** Admin typography and readable Admin sizing. Do not reintroduce 8px/9px meaningful interface text in these sections without explicit owner approval.
 - Executive Calendar must continue to recognize South African statutory public holidays and Sunday-observed Mondays in the Admin month view. Active calendar reminders must remain integrated with the Admin notification bell, including a distinct due-within-24-hours notification. Do not replace this with sub-10-minute polling or claim email/browser-push delivery unless those channels are explicitly implemented.
 - Management & Governance keeps Vision/Mission in the bottom **Academy Direction** section before the permanent Admin footer; do not restore them to the top governance hero without explicit owner approval. Career & Workplace Support must render as a single section only; preserve its single-flight/duplicate-prevention behavior and keep it before Academy Direction.
 - **Executive Calendar & Tasks** must not appear as a permanent Admin sidebar item. Its access card belongs on My Dashboard after CEO Action Snapshot and before Admin & Staff House Rules, while the existing `admin-calendar.html` workspace remains the destination.
