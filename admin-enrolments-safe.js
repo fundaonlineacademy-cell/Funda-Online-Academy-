@@ -36,6 +36,6 @@ async function approveRequest(id){let r=requests.find(x=>x.id===id);if(!r)return
 async function rejectRequest(id){let r=requests.find(x=>x.id===id);if(!r)return;let note=prompt('Reason for rejecting this course change:')?.trim()||'';if(note.length<8)return alert('Enter a clear rejection reason of at least 8 characters.');let up=await db.rpc('review_course_change_governed',{p_request_id:id,p_decision:'reject',p_note:note});if(up.error)return alert(up.error.message);await open();render('governance')}
 
 async function open(){css();await load();render()}
-function install(){css();window.FundaEnrolmentsCourses={open};let legacy=window.enrolments;window.enrolments=function(){try{legacy?.()}catch(e){}setTimeout(open,0)};document.addEventListener('click',e=>{let b=e.target.closest?.('#nav button,.nav button');if(b&&/enrol/i.test(b.textContent))setTimeout(open,60)},false);if(active())setTimeout(open,80)}
+function install(){css();window.FundaEnrolmentsCourses={open};window.enrolments=function(){setTimeout(open,0)};document.addEventListener('click',e=>{let b=e.target.closest?.('#nav button,.nav button');if(b&&/enrol/i.test(b.textContent))setTimeout(open,60)},false);if(active())setTimeout(open,80)}
 if(document.readyState==='complete')setTimeout(install,0);else window.addEventListener('load',()=>setTimeout(install,0),{once:true});
 })();
