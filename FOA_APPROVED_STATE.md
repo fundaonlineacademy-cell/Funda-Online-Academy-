@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `d3970dc28f3e53fcda9b95a3a9c0a22ffeec8f4c`
+Baseline commit: `b2b8434e21661ad3e9074e8044dbf2f27a66e1d0`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -234,6 +234,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 ### Executive Calendar holidays and Admin reminders — owner-approved 20 September 2026
 
 - The Executive Calendar recognizes South African statutory public holidays, including **Good Friday**, **Family Day**, and the Public Holidays Act Sunday-observed Monday rule. Holidays are highlighted directly on the monthly calendar and appear in the Selected Date detail panel.
+- Holiday rendering is now built directly into the Admin month-grid renderer: each recognised holiday date carries a visible **PUBLIC HOLIDAY · [holiday name]** label, including prior/future months when navigating the calendar (for example National Women's Day on 9 August and Heritage Day on 24 September). The Student Calendar remains unchanged by this Admin-only display rule.
 - Calendar reminders/events now participate in the existing Admin notification-bell workflow. Newly created upcoming reminders can appear as unread Calendar notifications; when an active calendar item is within **24 hours**, a separate **DUE SOON** bell notification is generated so reading the original creation notification does not suppress the due reminder.
 - Clicking a calendar notification in the Admin bell opens the existing **Executive Calendar & Tasks** workspace.
 - The bell continues to use the approved event-driven/10-minute Admin refresh architecture; this change does **not** restore a 30-second polling loop.
