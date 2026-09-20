@@ -31,7 +31,7 @@ function installBankOptions(){
  const apply=()=>{let o=s.selectedOptions?.[0],code=o?.dataset?.code||'',other=s.value==='Other South African Bank',manual=$('#otherBankName');if(manual){manual.classList.toggle('hide',!other);manual.required=other;if(!other)manual.value=''}b.readOnly=!!code&&!other;b.value=code;if(h)h.textContent=other?'Enter the bank name and branch code exactly as shown on the bank statement or banking app.':code?'Universal branch code for '+s.value+': '+code:'Select a bank to continue.';if(other||!code)b.readOnly=false};
  s.onchange=apply;apply();
 }
-let db,user,app,ledger=[],referrals=[],payouts=[],bank=null,resources=[],notifications=[],supportTickets=[],supportMessages=[];
+let db,user,app,currentAgreement=null,ledger=[],referrals=[],payouts=[],bank=null,resources=[],notifications=[],supportTickets=[],supportMessages=[];
 
 function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
 function fmt(v){if(!v)return '—';try{return new Date(v).toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'})}catch{return '—'}}
@@ -123,6 +123,12 @@ async function init(){
    if(title)title.textContent=app.status==='declined'?'Ambassador application declined':app.status==='waitlisted'?'Ambassador application waitlisted':'Ambassador application under review';
    if(msg)msg.textContent=app.status==='declined'?'Your Ambassador application was not approved. Contact Ambassador Support if you need clarification.':app.status==='waitlisted'?'Your application is on the Ambassador waitlist. You can keep using this login to check for status changes.':'Your application has been received and is still being reviewed. You can keep using this login to check your status.';
    return;
+ }
+ const agreementState=await db.rpc('get_own_ambassador_agreement_status');
+ if(agreementState.error){
+   console.error('Current Ambassador agreement status could not be loaded',agreementState.error);
+ }else{
+   currentAgreement=Array.isArray(agreementState.data)?agreementState.data[0]||null:agreementState.data||null;
  }
  if(app.agreement_status!=='accepted'){
    $('#loading').classList.add('hide');$('#portal').classList.remove('hide');
@@ -288,26 +294,55 @@ async function saveProfile(e){
  if(q.error)m.textContent=q.error.message;else{m.textContent='Your Ambassador contact profile has been updated.';app.phone=$('#profilePhone').value.trim();app.province=$('#profileProvince').value.trim();app.country=$('#profileCountry').value.trim();app.best_platform=$('#profilePlatform').value.trim()}
  b.disabled=false;b.textContent='Update My Contact Profile';
 }
+function currentAgreementRules(){
+ const rules=Array.isArray(currentAgreement?.house_rules)?currentAgreement.house_rules:[];
+ return rules.length?'<ul style="margin:8px 0 0 18px">'+rules.map(x=>'<li style="margin:5px 0">'+esc(x)+'</li>').join('')+'</ul>':'';
+}
 function renderAgreement(){
- const a=$('#agreementAction');
- if($('#agreementStatusText'))$('#agreementStatusText').textContent=String(app.agreement_status||'not accepted').replaceAll('_',' ').toUpperCase();
- if($('#agreementAcceptedDate'))$('#agreementAcceptedDate').textContent=app.agreement_accepted_at?fmt(app.agreement_accepted_at):'NOT YET';
+ const a=$('#agreementAction');if(!a)return;
+ const currentVersion=currentAgreement?.version||null,currentAccepted=!!currentAgreement?.accepted;
+ if($('#agreementStatusText'))$('#agreementStatusText').textContent=currentAccepted?'CURRENT VERSION ACCEPTED':String(app.agreement_status||'not accepted').replaceAll('_',' ').toUpperCase();
+ if($('#agreementAcceptedDate'))$('#agreementAcceptedDate').textContent=currentAccepted?fmt(currentAgreement.accepted_at):(app.agreement_accepted_at?fmt(app.agreement_accepted_at):'NOT YET');
  if($('#programmeStatusText'))$('#programmeStatusText').textContent=String(app.account_status||'application').replaceAll('_',' ').toUpperCase();
- if($('#agreementVersionText'))$('#agreementVersionText').textContent='LEGACY RECORD';
+ if($('#agreementVersionText'))$('#agreementVersionText').textContent=currentVersion?'VERSION '+String(currentVersion).toUpperCase():(app.agreement_status==='accepted'?'LEGACY RECORD':'CURRENT AGREEMENT');
  if($('#agreementStanding')){$('#agreementStanding').textContent=['active','introductory'].includes(app.account_status)?'GOOD STANDING':String(app.account_status||'REVIEW').replaceAll('_',' ').toUpperCase();$('#agreementStanding').className='badge '+(['active','introductory'].includes(app.account_status)?'ok':'warn')}
- if(app.agreement_status==='accepted'){a.innerHTML='<div class="notice ok"><b>Agreement accepted ✓</b><br>Your existing acceptance record is preserved. Accepted on '+fmt(app.agreement_accepted_at)+'.</div><p class="muted" style="margin-top:10px">The Academy is introducing formal agreement versioning. A future material version will require its own recorded acceptance where applicable; it will not overwrite this historical acceptance.</p>';return}
- a.innerHTML='<div class="notice gold"><b>Agreement acceptance required</b><br>Read the programme rules below before accepting the current agreement.</div><label class="row" style="margin-top:12px"><input id="acceptCheck" type="checkbox"> <span class="muted">I confirm that I have read, understood and agree to the current Funda Brand Ambassador Programme rules.</span></label><button id="acceptAgreement" class="btn gold" style="margin-top:10px" disabled>Accept Agreement</button><div id="agreementMsg" class="muted"></div>';
- $('#acceptCheck').onchange=e=>$('#acceptAgreement').disabled=!e.target.checked;
- $('#acceptAgreement').onclick=acceptAgreement;
+
+ if(currentAgreement&&currentAccepted){
+   a.innerHTML='<div class="notice ok"><b>Current agreement version accepted ✓</b><br>Version '+esc(currentVersion)+' was accepted on '+fmt(currentAgreement.accepted_at)+'. Your earlier historical acceptance record remains preserved separately.</div>';
+   return;
+ }
+
+ if(currentAgreement&&!currentAccepted){
+   const historic=app.agreement_status==='accepted'&&app.agreement_accepted_at?'<div class="notice ok" style="margin-top:10px"><b>Historical acceptance preserved</b><br>Your earlier Ambassador agreement acceptance from '+fmt(app.agreement_accepted_at)+' remains on record. It has not been overwritten or treated as acceptance of Version '+esc(currentVersion)+'.</div>':'';
+   a.innerHTML='<div class="notice gold"><b>Current agreement version requires your acceptance</b><br>Please review Version '+esc(currentVersion)+' before accepting it. Your existing Ambassador access and historical acceptance remain preserved while you review this version.</div>'+historic+
+   '<details class="agreement" style="margin-top:12px"><summary style="cursor:pointer;font-weight:900">Review '+esc(currentAgreement.title||'current Ambassador Programme Agreement')+' · Version '+esc(currentVersion)+'</summary><div style="white-space:pre-wrap;margin-top:12px;line-height:1.65">'+esc(currentAgreement.agreement_text||'')+'</div>'+currentAgreementRules()+'</details>'+
+   '<label class="row" style="margin-top:12px"><input id="acceptCheck" type="checkbox"> <span class="muted">I confirm that I have read, understood and agree to Version '+esc(currentVersion)+' of the Funda Online Academy Ambassador Programme Agreement & Terms.</span></label><button id="acceptAgreement" class="btn gold" style="margin-top:10px" disabled>Accept Version '+esc(currentVersion)+'</button><div id="agreementMsg" class="muted"></div>';
+   $('#acceptCheck').onchange=e=>$('#acceptAgreement').disabled=!e.target.checked;
+   $('#acceptAgreement').onclick=acceptAgreement;
+   return;
+ }
+
+ if(app.agreement_status==='accepted'){
+   a.innerHTML='<div class="notice ok"><b>Historical agreement acceptance preserved ✓</b><br>Accepted on '+fmt(app.agreement_accepted_at)+'.</div><p class="muted" style="margin-top:10px">The current version record could not be loaded right now. Your existing Ambassador access has not been changed. Refresh later to check the current agreement version.</p>';
+   return;
+ }
+
+ a.innerHTML='<div class="notice gold"><b>Agreement acceptance required</b><br>The current Ambassador Programme Agreement could not be loaded. Please refresh before accepting.</div>';
 }
 async function acceptAgreement(){
- let m=$('#agreementMsg');if(!$('#acceptCheck').checked){m.textContent='Please confirm that you have read and accept the agreement.';return}
- let b=$('#acceptAgreement');b.disabled=true;b.textContent='Accepting & activating…';
+ let m=$('#agreementMsg');if(!m)return;
+ if(!$('#acceptCheck')?.checked){m.textContent='Please confirm that you have read and accept the current agreement version.';return}
+ let b=$('#acceptAgreement');b.disabled=true;b.textContent='Recording acceptance…';
  let q=await db.rpc('accept_own_ambassador_agreement');
  if(q.error||q.data!==true){m.textContent=q.error?.message||'Agreement could not be accepted.';b.disabled=false;b.textContent='Accept Agreement';return}
- let ac=await db.rpc('activate_own_ambassador_account');
- if(ac.error||ac.data!==true){m.textContent=ac.error?.message||'Agreement accepted, but account activation could not be completed.';b.disabled=false;b.textContent='Try Activation Again';return}
- m.textContent='Agreement accepted. Your Ambassador account is now active.';
+ if(!['introductory','active'].includes(app.account_status)){
+   b.textContent='Activating account…';
+   let ac=await db.rpc('activate_own_ambassador_account');
+   if(ac.error||ac.data!==true){m.textContent=ac.error?.message||'Agreement accepted, but account activation could not be completed.';b.disabled=false;b.textContent='Try Activation Again';return}
+ }
+ const refreshed=await db.rpc('get_own_ambassador_agreement_status');
+ if(!refreshed.error)currentAgreement=Array.isArray(refreshed.data)?refreshed.data[0]||null:refreshed.data||null;
+ m.textContent='Current Ambassador Programme Agreement version accepted and recorded securely.';
  setTimeout(()=>location.reload(),700);
 }
 
