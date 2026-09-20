@@ -199,6 +199,7 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Course progress/assessment navigation is not disturbed.
 
 ### Admin/Staff
+- Executive Calendar date selection must remain stable across month redraws and holiday rendering: preserve stable `data-date` keys, delegated calendar-cell interaction, and newest-selection-wins request handling for the Selected Date details panel.
 - Career & Workplace Support CV workflow must remain an editable learner-specific builder: use live Academy learner details, course-aware/status-aware generated wording, live preview, and PDF export. Do not revert it to a static CV mock-up. Do not claim a learner completed a course unless the recorded enrolment status supports that claim. Keep the Workplace Exposure Letter separate until explicitly reviewed.
 - Management & Governance, CEO Executive Action Centre and Career & Workplace Support must use the approved **Source Sans 3** Admin typography and readable Admin sizing. Do not reintroduce 8px/9px meaningful interface text in these sections without explicit owner approval.
 - Executive Calendar must continue to recognize South African statutory public holidays and Sunday-observed Mondays in the Admin month view. Active calendar reminders must remain integrated with the Admin notification bell, including a distinct due-within-24-hours notification. Do not replace this with sub-10-minute polling or claim email/browser-push delivery unless those channels are explicitly implemented.
