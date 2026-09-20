@@ -212,7 +212,13 @@ function install(){
   const gridWatcher=()=>{
     const grid=$('monthGrid');
     if(!grid)return;
-    new MutationObserver(()=>setTimeout(wireMonthCells,40)).observe(grid,{childList:true,subtree:false});
+    new MutationObserver(()=>setTimeout(()=>{
+      wireMonthCells();
+      if(!grid.querySelector('.monthDay.selected')){
+        const today=grid.querySelector('.monthDay.today');
+        if(today)today.click();
+      }
+    },40)).observe(grid,{childList:true,subtree:false});
   };
   setTimeout(gridWatcher,1200);
 }
