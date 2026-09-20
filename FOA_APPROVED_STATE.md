@@ -318,6 +318,10 @@ The current baseline includes the recent five-step onboarding direction. Preserv
 - Enrolment-submission confirmation email hook.
 - Public “enrol anytime” messaging and related course FAQ behaviour.
 
+### Ambassador Programme — OWNER-APPROVED FINALISATION (21 September 2026)
+
+The owner explicitly reopened the Ambassador Programme for a focused finalisation pass. The approved scope is limited to: improving the Admin Ambassador Applications & Approval readability while retaining Source Sans 3 and the established design; correcting the Admin Ambassador workspace detector so Ambassador application controls mount only on the **Ambassador Programme** tab and never on Marketing; and completing formal agreement-version acceptance for approved Ambassadors. Existing historical/legacy agreement acceptance must remain preserved and must never be silently converted into acceptance of a later agreement version. A current agreement version requires the Ambassador's explicit in-portal acceptance, which is recorded against that exact version/hash. Existing Ambassador access is not removed merely because a later/current version still requires review unless separately re-approved. Referral attribution, earnings, ranks, compensation, banking, support, marketing resources, application/login flow and all other protected Ambassador behaviour remain unchanged.
+
 ### Ambassador system — FINAL OWNER-APPROVED STATE
 
 The Ambassador programme and portal are owner-approved as the final working Ambassador standard as of 18 September 2026.
