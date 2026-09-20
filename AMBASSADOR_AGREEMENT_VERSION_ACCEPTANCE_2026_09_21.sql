@@ -124,9 +124,11 @@ end;
 $function$;
 
 revoke all on function public.get_own_ambassador_agreement_status() from public;
+revoke all on function public.get_own_ambassador_agreement_status() from anon;
 grant execute on function public.get_own_ambassador_agreement_status() to authenticated;
 
 revoke all on function public.accept_own_ambassador_agreement() from public;
+revoke all on function public.accept_own_ambassador_agreement() from anon;
 grant execute on function public.accept_own_ambassador_agreement() to authenticated;
 
 commit;
