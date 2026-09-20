@@ -87,7 +87,6 @@ function createFooter(){
           <div class="fundaAdminFooterMetaItem"><span>Registered Business</span><strong>Funda Online Academy</strong></div>
           <div class="fundaAdminFooterMetaItem"><span>Company Registration</span><strong>2023/830451/07</strong></div>
           <div class="fundaAdminFooterMetaItem"><span>Professional Development</span><strong>International CPD Accredited Trainer</strong></div>
-          <div class="fundaAdminFooterMetaItem"><span>Delivery Model</span><strong>100% Online Learning &amp; Support</strong></div>
         </div>
       </section>
 
@@ -95,7 +94,7 @@ function createFooter(){
         <div class="fundaAdminFooterHeading">Academy Contact</div>
         <div class="fundaAdminFooterMeta">
           <div class="fundaAdminFooterMetaItem"><span>WhatsApp</span><strong><a href="https://wa.me/27699608590?text=Hello%20Funda%20Online%20Academy" target="_blank" rel="noopener noreferrer">069 960 8590</a></strong></div>
-          <div class="fundaAdminFooterMetaItem"><span>Learning Location</span><strong>100% Online</strong></div>
+          <div class="fundaAdminFooterMetaItem"><span>CEO Professional Email</span><strong><a href="mailto:aziwe@fundaonlineacademy.co.za">aziwe@fundaonlineacademy.co.za</a></strong></div>
           <div class="fundaAdminFooterMetaItem"><span>Admin Environment</span><strong>Funda Admin Command Center</strong></div>
         </div>
       </section>
