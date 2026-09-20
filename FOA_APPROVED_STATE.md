@@ -1,7 +1,7 @@
 # Funda Online Academy — Protected Approved State
 
 Last established: 19 September 2026 (South Africa time)
-Baseline commit: `0ae5d9c617cb2590647ae28bac582984657dfb16`
+Baseline commit: `0cac79fc96e2b5c8e58017d3abc7a79fac1d36c0`
 
 This file exists to prevent regressions and the reintroduction of previously corrected or rejected behaviour.
 
@@ -265,6 +265,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - **Student workplace-exposure request refinement — 20 September 2026:** when a learner requests a Workplace Exposure Letter, the Student Career & Workplace Support form additionally captures the host organisation, optional attention/contact person and optional branch/location. These are stored with the request so Admin can load the request directly into the workplace-exposure builder. Other Student Career Support request types remain unchanged.
 
 - **Learner CV Builder — 20 September 2026:** the Career & Workplace Support CV area is no longer a static example only. Admin can select an active learner, auto-fill name, phone, email and location from Academy records, choose the learner’s course, generate a course-aware professional profile/skills/training section, edit every field, preview the final CV live, and download a finished PDF. Open CV support requests can be loaded directly into the builder. The generated wording is status-aware so pending/active/completed training is not represented as completed unless the recorded enrolment status supports that claim. The Workplace Exposure Letter remains unchanged for a later dedicated review.
+- **CV document typography — 20 September 2026:** the CV preview and downloaded PDF use **Times New Roman / Times**. Main CV body text is **11 pt** in the PDF with approximately **1.5 line spacing** for paragraph readability. Professional Profile text is cleanly justified. Section headings such as Professional Profile, Core Skills and Education & Training retain the navy treatment, while paragraph/body text is black. The Admin builder interface itself remains Source Sans 3.
 - **Career & Workplace Support layout — 20 September 2026:** Professional Graduate CV and Official Workplace Exposure Letter are stacked vertically on Management & Governance. The CV appears first at full workspace width; Workplace Exposure sits underneath at full width. Do not place these two tools side-by-side on desktop unless explicitly re-approved.
 
 - **Typography refinement — 20 September 2026:** Management & Governance, CEO Executive Action Centre, and Career & Workplace Support explicitly use the approved **Source Sans 3** Admin font. Meaningful interface text was raised to the established readable Admin scale; 8px/9px micro-text was removed from these Management sections, while form inputs remain comfortably readable and mobile-safe.
