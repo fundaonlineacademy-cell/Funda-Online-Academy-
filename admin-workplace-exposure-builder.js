@@ -41,15 +41,15 @@ function css(){
     .webStatus{padding:9px;border-radius:9px;background:#eef5ff;color:#244d7d;font-size:10px;line-height:1.45}
     .webStatus.verified{background:#edf8ef;color:#2e6b3b}.webStatus.pending{background:#fff5d8;color:#75570f}
     .webPreview{background:#fff;border:1px solid #dfe5ec;border-radius:12px;overflow:hidden;box-shadow:0 8px 20px rgba(7,27,49,.07)}
-    .webLetter{padding:28px 34px 32px;background:#fff;color:#26384a;min-height:790px}
+    .webLetter{padding:28px 34px 32px;background:#fff;color:#000;min-height:790px;font-family:"Times New Roman",Times,serif}
     .webLetterHead{display:grid;grid-template-columns:88px 1fr;gap:14px;align-items:center;padding-bottom:12px;border-bottom:3px solid #c99a2e}
     .webLetterHead img{max-width:82px;max-height:78px;object-fit:contain}
-    .webBrand{font-size:17px;font-weight:900;color:#17324a}.webMeta{margin-top:3px;font-size:9px;color:#66758a;line-height:1.45}
-    .webLetterDate{margin-top:18px;font-size:10.5px;line-height:1.55}.webLetterSubject{margin:17px 0 13px;font-size:11px;font-weight:900;color:#17324a;text-transform:uppercase}
-    .webLetter p{font-size:10.5px;line-height:1.7;margin:0 0 11px}
-    .webSign{margin-top:22px;font-size:10.5px;line-height:1.55}.webSign strong{display:block;color:#17324a;font-size:12px}
-    .webSigLine{width:150px;border-top:1px solid #8d99a8;margin:28px 0 6px}
-    .webFoot{margin-top:20px;padding-top:8px;border-top:1px solid #e7ebef;color:#8793a1;font-size:8.5px}
+    .webBrand{font-size:21px;font-weight:700;color:#000}.webMeta{margin-top:3px;font-size:12px;color:#000;line-height:1.45}
+    .webLetterDate{margin-top:18px;font-size:16px;line-height:1.5;color:#000}.webLetterSubject{margin:17px 0 14px;font-size:16px;line-height:1.4;font-weight:700;color:#000;text-transform:uppercase}
+    .webLetter p{font-size:16px;line-height:1.5;margin:0 0 12px;color:#000;text-align:justify;text-justify:inter-word}
+    .webSign{margin-top:16px;font-size:16px;line-height:1.5;color:#000}.webSign strong{display:block;margin-top:7px;color:#000;font-size:16px;font-weight:700}
+    .webSigLine{display:none}
+    .webFoot{margin-top:20px;padding-top:8px;border-top:1px solid #e7ebef;color:#000;font-size:11px}
     .webLoading{padding:22px;text-align:center;color:#66758a;font-size:11px}
     .webError{padding:12px;border:1px solid #f0caca;border-radius:9px;background:#fff2f2;color:#8a2d2d;font-size:11px}
     @media(max-width:1000px){.webGrid{grid-template-columns:1fr}.webControls{grid-template-columns:1fr 1fr}.webControls .webBtn{grid-column:1/-1;width:max-content}.webPreview{max-width:800px}}
@@ -144,7 +144,7 @@ function render(){
     <div class="webLetterSubject">RE: REQUEST FOR WORKPLACE EXPOSURE — ${esc(v.learner||'[STUDENT NAME]')} | ${esc(v.course||'[COURSE NAME]')}</div>
     <p>Dear Sir / Madam,</p><p>${esc(copy.intro)}</p><p>${esc(copy.purpose)}</p><p>${esc(copy.conditions)}</p><p>${esc(copy.learner)}</p><p>${esc(copy.close)}</p>
     ${v.notes?`<p><b>Additional request information:</b> ${esc(v.notes)}</p>`:''}
-    <div class="webSign">Yours sincerely,<div class="webSigLine"></div><strong>${esc(co.ceo)}</strong>Founder &amp; Chief Executive Officer<br>Funda Online Academy</div>
+    <div class="webSign">Yours sincerely,<strong>${esc(co.ceo)}</strong>Founder &amp; Chief Executive Officer<br>Funda Online Academy</div>
     <div class="webFoot">Official workplace-exposure request · Funda Online Academy · ${esc(co.reg)}</div>
   </div>`;
   const status=$('webVerification');
@@ -197,21 +197,21 @@ async function downloadPdf(){
     const doc=new jsPDF({unit:'mm',format:'a4'}),margin=18,w=174;let y=15;
     const logo=await logoPng(window.FUNDA_TRANSPARENT_LOGO_MASTER||'').catch(()=> '');
     if(logo)doc.addImage(logo,'PNG',margin,y,25,25);
-    doc.setTextColor(23,50,74);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text(co.name,50,21);
-    doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(92,106,123);
+    doc.setTextColor(0,0,0);doc.setFont('times','bold');doc.setFontSize(16);doc.text(co.name,50,21);
+    doc.setFont('times','normal');doc.setFontSize(9.5);doc.setTextColor(0,0,0);
     doc.text([`Registration No: ${co.reg}`,co.address,`Tel: ${co.phone} · WhatsApp: ${co.whatsapp} · ${co.email}`,co.website.replace(/^https?:\/\//,'')],50,27);
     y=43;doc.setDrawColor(201,154,46);doc.setLineWidth(1);doc.line(margin,y,192,y);y+=9;
-    doc.setTextColor(55,68,82);doc.setFontSize(9.5);
-    doc.text(`Date: ${prettyDate(v.date)}`,margin,y);y+=7;doc.text(`To: ${v.host}${v.branch?' — '+v.branch:''}`,margin,y,{maxWidth:w});y+=6;
-    doc.text(`Attention: ${v.contact||'The Manager / Human Resources'}`,margin,y,{maxWidth:w});y+=11;
-    doc.setTextColor(23,50,74);doc.setFont('helvetica','bold');doc.setFontSize(10);
-    const subject=`RE: REQUEST FOR WORKPLACE EXPOSURE — ${v.learner} | ${v.course}`;const sub=doc.splitTextToSize(subject,w);doc.text(sub,margin,y);y+=sub.length*5+5;
-    const copy=letterCopy(v,state);doc.setTextColor(55,68,82);doc.setFont('helvetica','normal');doc.setFontSize(9.5);
-    const para=t=>{const lines=doc.splitTextToSize(t,w);if(y+lines.length*4.7>276){doc.addPage();y=18}doc.text(lines,margin,y);y+=lines.length*4.7+5};
+    doc.setTextColor(0,0,0);doc.setFont('times','normal');doc.setFontSize(12);
+    doc.text(`Date: ${prettyDate(v.date)}`,margin,y);y+=7;doc.text(`To: ${v.host}${v.branch?' — '+v.branch:''}`,margin,y,{maxWidth:w});y+=7;
+    doc.text(`Attention: ${v.contact||'The Manager / Human Resources'}`,margin,y,{maxWidth:w});y+=12;
+    doc.setTextColor(0,0,0);doc.setFont('times','bold');doc.setFontSize(12);
+    const subject=`RE: REQUEST FOR WORKPLACE EXPOSURE — ${v.learner} | ${v.course}`;const sub=doc.splitTextToSize(subject,w);doc.text(sub,margin,y);y+=sub.length*5.6+6;
+    const copy=letterCopy(v,state);doc.setTextColor(0,0,0);doc.setFont('times','normal');doc.setFontSize(12);
+    const para=t=>{const lines=doc.splitTextToSize(t,w);if(y+lines.length*5.4>274){doc.addPage();y=18;doc.setTextColor(0,0,0);doc.setFont('times','normal');doc.setFontSize(12)}doc.text(lines,margin,y,{maxWidth:w,align:'justify'});y+=lines.length*5.4+5};
     para('Dear Sir / Madam,');para(copy.intro);para(copy.purpose);para(copy.conditions);para(copy.learner);para(copy.close);if(v.notes)para('Additional request information: '+v.notes);
-    if(y>248){doc.addPage();y=22}doc.text('Yours sincerely,',margin,y);y+=18;doc.setDrawColor(110,120,130);doc.line(margin,y,margin+42,y);y+=5;
-    doc.setFont('helvetica','bold');doc.setTextColor(23,50,74);doc.text(co.ceo,margin,y);y+=5;doc.setFont('helvetica','normal');doc.setTextColor(55,68,82);doc.text('Founder & Chief Executive Officer',margin,y);y+=5;doc.text('Funda Online Academy',margin,y);
-    const pages=doc.getNumberOfPages();for(let p=1;p<=pages;p++){doc.setPage(p);doc.setDrawColor(225,230,236);doc.line(margin,286,192,286);doc.setFontSize(7.5);doc.setTextColor(130,140,150);doc.text(`Official workplace-exposure request · ${co.reg}`,margin,291);doc.text(`Page ${p} of ${pages}`,192,291,{align:'right'})}
+    if(y>260){doc.addPage();y=22;doc.setTextColor(0,0,0);doc.setFont('times','normal');doc.setFontSize(12)}doc.text('Yours sincerely,',margin,y);y+=8;
+    doc.setFont('times','bold');doc.setTextColor(0,0,0);doc.text(co.ceo,margin,y);y+=5.5;doc.setFont('times','normal');doc.text('Founder & Chief Executive Officer',margin,y);y+=5.5;doc.text('Funda Online Academy',margin,y);
+    const pages=doc.getNumberOfPages();for(let p=1;p<=pages;p++){doc.setPage(p);doc.setDrawColor(225,230,236);doc.line(margin,286,192,286);doc.setFont('times','normal');doc.setFontSize(8);doc.setTextColor(0,0,0);doc.text(`Official workplace-exposure request · ${co.reg}`,margin,291);doc.text(`Page ${p} of ${pages}`,192,291,{align:'right'})}
     doc.save((v.learner||'Learner').replace(/[^a-z0-9 _-]/gi,'').trim().replace(/\s+/g,'-')+'-Workplace-Exposure-Letter.pdf');
   }catch(e){console.error(e);alert('The PDF could not be generated right now. Please try again.')}finally{if(b){b.disabled=false;b.textContent='Download PDF'}}
 }
