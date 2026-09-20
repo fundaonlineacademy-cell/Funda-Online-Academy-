@@ -78,7 +78,8 @@ $function$;
 
 -- Backfill the currently published all-Funda notices through the same protected trigger.
 update public.communications
-   set updated_at = now()
+   set published_at = published_at,
+       updated_at = now()
  where published = true
    and lower(replace(coalesce(audience,''),' ','_')) = 'all_funda';
 
