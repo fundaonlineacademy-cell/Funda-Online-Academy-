@@ -43,6 +43,11 @@ function style(){
     .monthDay{min-height:94px!important;border-radius:9px!important;padding:7px!important;cursor:pointer;transition:border-color .12s,box-shadow .12s,transform .12s}
     .monthDay:not(.blank):hover{border-color:#9aafc8;box-shadow:0 4px 10px rgba(7,27,49,.06)}
     .monthDay.selected{border:2px solid #c99a2e!important;box-shadow:0 0 0 3px rgba(201,154,46,.12)!important}
+    .monthDay.publicHoliday{background:linear-gradient(180deg,#fff5cf,#fffaf0)!important;border-color:#d8b85e!important}
+    .monthDay.publicHoliday .monthNum{color:#7b5810!important}
+    .execHolidayLabel{display:block;margin:3px 0;padding:3px 5px;border-radius:6px;background:#f5df9d;color:#62480d;font-size:9px;font-weight:900;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .execDateItem.holiday{background:#fff8df;border-color:#e3c66f}
+    .execDateItem.holiday .execDateTime{color:#7b5810}
     .monthNum{font-size:11px!important}
     .monthEvent{font-size:9px!important;padding:4px 5px!important;border-radius:6px!important}
     .monthMore{font-size:9px!important}
@@ -104,6 +109,54 @@ function prettyDate(k){
   return d.toLocaleDateString('en-ZA',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
 }
 
+function localKey(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
+function easterSunday(year){
+  const a=year%19,b=Math.floor(year/100),cc=year%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(cc/4),k=cc%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+  return new Date(year,month-1,day);
+}
+function saPublicHolidays(year){
+  const base=[
+    {date:new Date(year,0,1),name:"New Year's Day"},
+    {date:new Date(year,2,21),name:'Human Rights Day'},
+    {date:new Date(year,3,27),name:'Freedom Day'},
+    {date:new Date(year,4,1),name:"Workers' Day"},
+    {date:new Date(year,5,16),name:'Youth Day'},
+    {date:new Date(year,7,9),name:"National Women's Day"},
+    {date:new Date(year,8,24),name:'Heritage Day'},
+    {date:new Date(year,11,16),name:'Day of Reconciliation'},
+    {date:new Date(year,11,25),name:'Christmas Day'},
+    {date:new Date(year,11,26),name:'Day of Goodwill'}
+  ];
+  const easter=easterSunday(year);
+  base.push({date:addDays(easter,-2),name:'Good Friday'},{date:addDays(easter,1),name:'Family Day'});
+  const all=[...base];
+  base.forEach(h=>{if(h.date.getDay()===0)all.push({date:addDays(h.date,1),name:h.name+' (Observed)'})});
+  const map=new Map();
+  all.forEach(h=>{const k=localKey(h.date),arr=map.get(k)||[];if(!arr.includes(h.name))arr.push(h.name);map.set(k,arr)});
+  return map;
+}
+function holidayNames(k){
+  const year=Number(String(k||'').slice(0,4));
+  return Number.isFinite(year)?(saPublicHolidays(year).get(k)||[]):[];
+}
+function decorateHoliday(cell,k){
+  cell.querySelectorAll('.execHolidayLabel').forEach(x=>x.remove());
+  const names=holidayNames(k);
+  cell.classList.toggle('publicHoliday',names.length>0);
+  if(names.length){
+    const label=document.createElement('div');
+    label.className='execHolidayLabel';
+    label.title=names.join(' · ');
+    label.textContent=names[0]+(names.length>1?` +${names.length-1}`:'');
+    const num=cell.querySelector('.monthNum');
+    if(num)num.insertAdjacentElement('afterend',label);else cell.prepend(label);
+  }
+  return names;
+}
+
 function timeLabel(v){
   return new Intl.DateTimeFormat('en-ZA',{timeZone:'Africa/Johannesburg',hour:'2-digit',minute:'2-digit'}).format(new Date(v));
 }
@@ -131,12 +184,13 @@ async function loadSelectedDate(k){
       c.from('student_consultations').select('id,category,department,scheduled_start,duration_minutes,status').in('status',['requested','confirmed']).gte('scheduled_start',from).lt('scheduled_start',next).order('scheduled_start')
     ]);
     if(ev.error)throw ev.error;
-    const items=(ev.data||[]).map(x=>({time:x.starts_at,title:x.title||'Calendar item',meta:[x.event_type,x.priority].filter(Boolean).join(' · '),description:x.description||''}));
-    (co.data||[]).forEach(x=>items.push({time:x.scheduled_start,title:(x.category||'Student')+' consultation',meta:[x.department,x.status,(x.duration_minutes||30)+' min'].filter(Boolean).join(' · '),description:''}));
+    const items=(ev.data||[]).map(x=>({time:x.starts_at,title:x.title||'Calendar item',meta:[x.event_type,x.priority].filter(Boolean).join(' · '),description:x.description||'',holiday:false}));
+    (co.data||[]).forEach(x=>items.push({time:x.scheduled_start,title:(x.category||'Student')+' consultation',meta:[x.department,x.status,(x.duration_minutes||30)+' min'].filter(Boolean).join(' · '),description:'',holiday:false}));
+    holidayNames(k).forEach(name=>items.push({time:k+'T00:00:00+02:00',title:name,meta:'South African public holiday',description:'',holiday:true}));
     items.sort((a,b)=>new Date(a.time)-new Date(b.time));
     if(panel){
       panel.innerHTML=`<h3>${esc(prettyDate(k))}</h3><div class="dateSub">${items.length?items.length+' scheduled item'+(items.length===1?'':'s'):'No scheduled items'}</div>
-        <div class="execDateItems">${items.length?items.map(x=>`<div class="execDateItem"><div class="execDateTime">${esc(timeLabel(x.time))} SAST</div><b>${esc(x.title)}</b>${x.meta?`<span>${esc(x.meta)}</span>`:''}${x.description?`<span>${esc(x.description)}</span>`:''}</div>`).join(''):'<div class="execDateEmpty">Nothing is scheduled for this date.</div>'}</div>
+        <div class="execDateItems">${items.length?items.map(x=>`<div class="execDateItem ${x.holiday?'holiday':''}"><div class="execDateTime">${x.holiday?'PUBLIC HOLIDAY':esc(timeLabel(x.time))+' SAST'}</div><b>${esc(x.title)}</b>${x.meta?`<span>${esc(x.meta)}</span>`:''}${x.description?`<span>${esc(x.description)}</span>`:''}</div>`).join(''):'<div class="execDateEmpty">Nothing is scheduled for this date.</div>'}</div>
         <button type="button" class="dateAction" id="createForSelectedDate">+ Create Reminder</button>`;
       const b=$('createForSelectedDate');
       if(b)b.onclick=()=>$('newEvent')?.click();
@@ -150,6 +204,10 @@ function wireMonthCells(){
   const grid=$('monthGrid');
   if(!grid)return;
   grid.querySelectorAll('.monthDay:not(.blank)').forEach(cell=>{
+    const k=keyFromCell(cell);
+    const holidays=decorateHoliday(cell,k);
+    const baseLabel=prettyDate(k);
+    cell.setAttribute('aria-label',holidays.length?`${baseLabel} — Public holiday: ${holidays.join(', ')}`:baseLabel);
     if(cell.dataset.execBound)return;
     cell.dataset.execBound='1';
     cell.tabIndex=0;
@@ -157,8 +215,8 @@ function wireMonthCells(){
     const activate=()=>{
       grid.querySelectorAll('.monthDay.selected').forEach(x=>x.classList.remove('selected'));
       cell.classList.add('selected');
-      const k=keyFromCell(cell);
-      if(k)loadSelectedDate(k);
+      const selectedDate=keyFromCell(cell);
+      if(selectedDate)loadSelectedDate(selectedDate);
     };
     cell.addEventListener('click',activate);
     cell.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();activate()}});
@@ -168,6 +226,8 @@ function wireMonthCells(){
 function enhanceMonth(){
   const card=$('monthCard'),shell=card?.querySelector('.monthShell');
   if(!card||!shell)return false;
+  const hint=card.querySelector('.monthHint');
+  if(hint)hint.textContent='South African public holidays are highlighted. Scheduled meetings, reminders and appointments appear directly on their dates.';
   if(!card.querySelector('.monthLayout')){
     const layout=document.createElement('div');
     layout.className='monthLayout';
