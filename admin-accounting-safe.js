@@ -151,13 +151,13 @@ function targetProgress(actual,target){
 }
 function overview(){
   const m=currentMonthPnl||{},fy=currentFyPnl||{},set=settings(),target=n(set.annual_turnover_target),pct=targetProgress(n(fy.turnover),target);
-  const future=futurePosted();
+  const future=loaded.cash?futurePosted():[];
   const duplicateKeys=new Map();
-  for(const x of S.cash){
+  if(loaded.cash)for(const x of S.cash){
     const k=[x.entry_date,low(x.entry_type),Number(x.amount||0).toFixed(2),low(x.reference_number||''),low(x.category)].join('|');
     duplicateKeys.set(k,(duplicateKeys.get(k)||0)+1);
   }
-  const likelyDupes=[...duplicateKeys.values()].filter(v=>v>1).reduce((a,v)=>a+v-1,0);
+  const likelyDupes=loaded.cash?[...duplicateKeys.values()].filter(v=>v>1).reduce((a,v)=>a+v-1,0):null;
   return `
   <div class="acGrid">
     <div class="acPanel">
@@ -180,15 +180,15 @@ function overview(){
   <div class="acGrid" style="margin-top:9px">
     <div class="acPanel">
       <h3>Cashbook Controls</h3>
-      <div class="acMeta">Actual posted entries to date: <b>${actualCashRows().length}</b></div>
-      <div class="acMeta">Planned / scheduled items: <b>${plannedRows().length}</b></div>
-      <div class="acMeta">Voided records retained for audit: <b>${voidedRows().length}</b></div>
-      <div class="acMeta">Unreconciled actual entries: <b>${actualCashRows().filter(x=>x.reconciliation_status!=='reconciled').length}</b></div>
+      <div class="acMeta">Actual posted entries to date: <b>${loaded.cash?actualCashRows().length:'—'}</b></div>
+      <div class="acMeta">Planned / scheduled items: <b>${loaded.cash?plannedRows().length:'—'}</b></div>
+      <div class="acMeta">Voided records retained for audit: <b>${loaded.cash?voidedRows().length:'—'}</b></div>
+      <div class="acMeta">Unreconciled actual entries: <b>${loaded.cash?actualCashRows().filter(x=>x.reconciliation_status!=='reconciled').length:'—'}</b></div>
       ${future.length?'<div class="acFuture">'+future.length+' legacy future-dated posted item(s) require review. They are not automatically deleted or changed.</div>':''}
     </div>
     <div class="acPanel">
       <h3>Integrity Review</h3>
-      <div class="acMeta">Likely duplicate records detected by date/type/amount/reference/category: <b>${likelyDupes}</b></div>
+      <div class="acMeta">Likely duplicate records detected by date/type/amount/reference/category: <b>${likelyDupes??'—'}</b></div>
       <div class="acMeta">Browser users cannot hard-delete cashbook records. Use controlled Void when a record is wrong.</div>
       <div class="acMeta">Closed monthly P&Ls use a stored snapshot. Later changes do not silently rewrite a closed month's report.</div>
       <div class="acBar"><button class="acBtn" id="acImportPayments">Sync Verified Payments to Cashbook</button><button class="acBtn alt" id="acReports">Open Report Centre</button></div>
@@ -244,6 +244,7 @@ function cashbookPanel(type=''){
   </div>`;
 }
 function plannedPanel(){
+  if(!loaded.cash)return '<div class="acPanel"><div class="acMeta">Planned-item data is currently unavailable. Use Refresh after checking the warning above.</div></div>';
   const rows=plannedRows(),pg=pageRows(rows,plannedPage);plannedPage=pg.page;
   const body=pg.rows.map(x=>`<tr><td>${day(x.entry_date)}</td><td>${pill(x.entry_type)}</td><td>${esc(x.category)}</td><td>${esc(x.description)}</td><td>${money(x.amount)}</td><td>${esc(x.recurrence||'none')}</td><td><button class="acBtn ok" data-post="${x.id}">Post Now</button> <button class="acBtn bad" data-void="${x.id}">Void</button></td></tr>`).join('')||'<tr><td colspan="7"><div class="acMeta">No planned or scheduled finance items.</div></td></tr>';
   return `<div class="acPanel"><h3>Planned & Recurring Items</h3><p class="acMeta">Planned amounts do not enter the P&L until they are posted. Monthly items create the next planned occurrence when posted.</p><div class="acTableWrap"><table class="acTable"><thead><tr><th>Planned Date</th><th>Type</th><th>Category</th><th>Description</th><th>Amount</th><th>Recurrence</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length}</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="plPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="plNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div></div>`;
@@ -312,6 +313,7 @@ function pnlMarkup(x,from,to){
   </div>`;
 }
 function reconciliation(){
+  if(!loaded.cash)return '<div class="acPanel"><div class="acMeta">Reconciliation data is currently unavailable. Use Refresh after checking the warning above.</div></div>';
   const rows=actualCashRows(),pg=pageRows(rows,reconPage);reconPage=pg.page;
   const body=pg.rows.map(x=>`<tr><td>${day(x.entry_date)}</td><td>${esc(x.reference_number||'—')}</td><td>${esc(x.description)}</td><td>${money(x.amount)}</td><td>${pill(x.reconciliation_status||'unreconciled')}</td><td>${x.reconciliation_status==='reconciled'?'<span class="acMeta">Reconciled '+fmt(x.reconciled_at)+'</span>':'<button class="acBtn ok" data-reconcile="'+x.id+'">Mark Reconciled</button>'}</td></tr>`).join('')||'<tr><td colspan="6"><div class="acMeta">No posted actual cashbook entries.</div></td></tr>';
   return `<div class="acPanel"><h3>Entry Reconciliation</h3><p class="acMeta">Reconcile actual posted cashbook records against supporting evidence or the bank statement. Reconciled accounting values cannot be silently rewritten.</p><div class="acTableWrap"><table class="acTable"><thead><tr><th>Date</th><th>Reference</th><th>Description</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length}</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="rePrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="reNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div></div>`;
@@ -509,6 +511,7 @@ function cashbookReportRows(month){
   }));
 }
 async function exportCashbook(format){
+  if(!loaded.cash)return alert('Cashbook data is currently unavailable. Refresh before exporting.');
   const api=window.FundaReportExports;if(!api)return alert('The formal report export service is still loading. Please try again.');
   const month=$('reportMonth').value;if(!month)return alert('Choose an export month.');
   const [from,to]=monthRange(month),rows=cashbookReportRows(month),report={title:'Cashbook Register',rows,summary:[['Month',month],['Records',rows.length],['Posted',rows.filter(x=>x['Posting Status']==='posted').length],['Planned',rows.filter(x=>x['Posting Status']==='planned').length],['Voided',rows.filter(x=>x['Posting Status']==='voided').length]]};
