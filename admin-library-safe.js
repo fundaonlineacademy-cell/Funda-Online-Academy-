@@ -1,14 +1,14 @@
 (()=>{
 'use strict';
 if(!/admin-v2\.html$/i.test(location.pathname))return;
-const TARGET='library-admin.html';
+const TARGET='library-admin.html?v=20260921-admin-structure-v1';
 let navObserver=null;
 
 function addStyle(){
   if(document.getElementById('adminLibrarySafeStyle'))return;
   const s=document.createElement('style');
   s.id='adminLibrarySafeStyle';
-  s.textContent=`.admin-library-card{border:1px solid #d8b75a!important;background:linear-gradient(135deg,#fff,#fff9ea)!important}.admin-library-card .lib-kicker{font-size:10px;font-weight:900;letter-spacing:.1em;color:#9a7312;margin-bottom:5px}.admin-library-card .lib-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}`;
+  s.textContent=`.admin-library-card{border:1px solid #d8b75a!important;background:linear-gradient(135deg,#fff,#fff9ea)!important}.admin-library-card .lib-kicker{font-size:12px;font-weight:900;letter-spacing:.1em;color:#9a7312;margin-bottom:5px}.admin-library-card .lib-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}`;
   document.head.appendChild(s);
 }
 function openLibrary(){location.href=TARGET}
