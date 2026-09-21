@@ -1,59 +1,521 @@
 (()=>{
-  if(window.__FUNDA_REPORT_CENTRE__) return; window.__FUNDA_REPORT_CENTRE__=true;
-  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  const money=n=>'R'+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:2});
-  const fmtDate=v=>v?new Date(v).toLocaleDateString('en-ZA'):'—';
-  const client=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
-  if(!client) return;
-  const defs={
-    executive:{label:'Executive Summary',tables:['profiles','courses','enrollments','payments','admin_cashbook','support_tickets','assessment_attempts','certificates','communications'],date:'created_at'},
-    management:{label:'Management & Governance',tables:['admin_governance'],date:'created_at'},
-    finance:{label:'Finance & Accounting',tables:['profiles','courses','enrollments','payments','admin_cashbook'],date:'created_at'},
-    enrolments:{label:'Enrolments',tables:['profiles','courses','enrollments'],date:'created_at'},
-    students:{label:'Students',tables:['profiles'],date:'created_at'},
-    courses:{label:'Courses',tables:['courses'],date:'created_at'},
-    academic:{label:'Academic & Assessments',tables:['profiles','courses','assessment_attempts','certificates'],date:'created_at'},
-    payments:{label:'Payments',tables:['profiles','payments'],date:'created_at'},
-    support:{label:'Student Support',tables:['profiles','support_tickets'],date:'created_at'},
-    marketing:{label:'Marketing & Admissions',tables:['marketing_leads'],date:'created_at'},
-    communication:{label:'Communication',tables:['communications'],date:'created_at'},
-    cashbook:{label:'Expenses & Income',tables:['admin_cashbook'],date:'entry_date'},
-    hr:{label:'HR & Team',tables:['profiles','staff_records'],date:'created_at'},
-    audit:{label:'Reports, Compliance & Audit',tables:['admin_audit_log','admin_governance','admin_report_runs'],date:'created_at'}
-  };
-  const css=`
-  .frc-backdrop{position:fixed;inset:0;background:rgba(3,16,31,.58);backdrop-filter:blur(3px);display:none;place-items:center;z-index:9999;padding:18px}.frc-backdrop.open{display:grid}.frc-modal{width:min(760px,96vw);max-height:92vh;overflow:auto;background:#fff;border:1px solid #d8cfbb;border-radius:18px;box-shadow:0 30px 90px rgba(3,16,31,.35)}.frc-head{padding:18px 20px;background:linear-gradient(135deg,#03101f,#0a2344);color:#fff;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.frc-head h2{margin:0;font-size:20px}.frc-head p{margin:5px 0 0;color:#dfe7f2;font-size:11px}.frc-close{border:1px solid rgba(212,175,88,.35);background:rgba(255,255,255,.07);color:#fff;width:34px;height:34px;border-radius:10px;cursor:pointer}.frc-body{padding:18px}.frc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.frc-field{display:grid;gap:6px}.frc-field label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;color:#536174}.frc-field select,.frc-field input{width:100%;border:1px solid #d8d2c6;border-radius:10px;padding:11px;background:#fff;color:#10213f}.frc-field select:focus,.frc-field input:focus{outline:none;border-color:#d4af58;box-shadow:0 0 0 3px rgba(212,175,88,.12)}.frc-note{margin-top:12px;padding:11px;border-radius:10px;background:#f8f4e8;border:1px solid #e4d5aa;color:#6f5a21;font-size:11px}.frc-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding-top:15px}.frc-btn{border:0;border-radius:10px;padding:10px 14px;font-weight:900;font-size:11px;cursor:pointer}.frc-btn.primary{background:linear-gradient(135deg,#06172d,#12345d);color:#fff;border:1px solid rgba(212,175,88,.35)}.frc-btn.light{background:#fff;color:#06172d;border:1px solid #d8cfbb}.frc-status{font-size:11px;color:#667085;margin-top:10px;min-height:16px}.frc-trigger{display:inline-flex;align-items:center;gap:6px}
-  @media(max-width:700px){.frc-grid{grid-template-columns:1fr}.frc-modal{border-radius:14px}.frc-head h2{font-size:18px}}
-  `;
-  function installStyle(){if(document.getElementById('frc-style'))return;const s=document.createElement('style');s.id='frc-style';s.textContent=css;document.head.appendChild(s)}
-  function modal(){let b=document.getElementById('frc-backdrop');if(b)return b; b=document.createElement('div');b.id='frc-backdrop';b.className='frc-backdrop';b.innerHTML=`<div class="frc-modal" role="dialog" aria-modal="true"><div class="frc-head"><div><h2>Funda Report Centre</h2><p>Choose exactly which report you want to generate and download.</p></div><button class="frc-close" id="frc-close">×</button></div><div class="frc-body"><div class="frc-grid"><div class="frc-field" style="grid-column:1/-1"><label>Report type</label><select id="frc-type">${Object.entries(defs).map(([k,v])=>`<option value="${k}">${esc(v.label)}</option>`).join('')}</select></div><div class="frc-field"><label>From date</label><input type="date" id="frc-from"></div><div class="frc-field"><label>To date</label><input type="date" id="frc-to"></div><div class="frc-field"><label>Format</label><select id="frc-format"><option value="pdf">PDF / Print-ready report</option><option value="csv">CSV / Spreadsheet data</option></select></div><div class="frc-field"><label>Scope</label><select id="frc-scope"><option value="period">Selected date range</option><option value="all">All available records</option></select></div></div><div class="frc-note">PDF creates a branded, print-ready Funda Online Academy report. CSV downloads only the underlying rows for the selected department/report.</div><div class="frc-status" id="frc-status"></div><div class="frc-actions"><button class="frc-btn light" id="frc-cancel">Cancel</button><button class="frc-btn primary" id="frc-generate">Generate Report</button></div></div></div>`;document.body.appendChild(b);document.getElementById('frc-close').onclick=close;document.getElementById('frc-cancel').onclick=close;b.addEventListener('click',e=>{if(e.target===b)close()});document.getElementById('frc-generate').onclick=generate;return b}
-  function open(){installStyle();modal().classList.add('open')}
-  function close(){document.getElementById('frc-backdrop')?.classList.remove('open')}
-  function between(row,from,to,fields){if(!from&&!to)return true;const f=fields.find(k=>row[k])||fields[0],v=row[f];if(!v)return true;const d=new Date(v);if(from&&d<new Date(from+'T00:00:00'))return false;if(to&&d>new Date(to+'T23:59:59'))return false;return true}
-  async function fetchAll(){const names=[...new Set(Object.values(defs).flatMap(d=>d.tables))],out={};await Promise.all(names.map(async t=>{const {data,error}=await client.from(t).select('*');out[t]=error?[]:(data||[])}));return out}
-  const byId=a=>Object.fromEntries((a||[]).map(x=>[x.id,x]));
-  function build(type,data,from,to,scope){const p=byId(data.profiles),c=byId(data.courses),all=scope==='all'?()=>true:r=>between(r,from,to,['created_at','entry_date','submitted_at','issued_at','enrolled_at','published_at']);let rows=[],summary=[],title=defs[type].label;
-    if(type==='executive'){const students=data.profiles.filter(x=>x.role!=='admin'),approved=data.enrollments.filter(x=>String(x.status||x.enrollment_status).toLowerCase()==='approved'),revenue=approved.reduce((a,x)=>a+Number(x.amount||c[x.course_id]?.price||0),0),expenses=data.admin_cashbook.filter(x=>String(x.entry_type).toLowerCase()==='expense').reduce((a,x)=>a+Number(x.amount||0),0),income=data.admin_cashbook.filter(x=>String(x.entry_type).toLowerCase()==='income').reduce((a,x)=>a+Number(x.amount||0),0),open=data.support_tickets.filter(x=>!['closed','solved'].includes(String(x.status||'').toLowerCase())).length;summary=[['Students',students.length],['Courses',data.courses.length],['Approved enrolments',approved.length],['Approved revenue',money(revenue)],['Cashbook income',money(income)],['Cashbook expenses',money(expenses)],['Net operating result',money(revenue+income-expenses)],['Open support tickets',open],['Assessment attempts',data.assessment_attempts.length],['Certificates issued',data.certificates.length],['Published communications',data.communications.filter(x=>x.published).length]];rows=summary.map(x=>({Metric:x[0],Value:x[1]}));}
-    if(type==='management'){rows=data.admin_governance.filter(all).map(x=>({'Type':x.item_type,'Title':x.title,'Owner':x.owner,'Status':x.status,'Target Date':fmtDate(x.target_date),'Details':x.details,'Created':fmtDate(x.created_at)}));summary=[['Governance items',rows.length],['Active',data.admin_governance.filter(x=>String(x.status).toLowerCase()==='active').length]]}
-    if(type==='finance'){const e=data.enrollments.filter(all).map(x=>({'Source':'Enrolment','Date':fmtDate(x.created_at||x.enrolled_at),'Student':p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,'Course':c[x.course_id]?.title||x.course_id,'Description':'Tuition / enrolment','Status':x.status||x.enrollment_status,'Amount':Number(x.amount||c[x.course_id]?.price||0)}));const pay=data.payments.filter(all).map(x=>({'Source':'Payment','Date':fmtDate(x.created_at||x.submitted_at),'Student':p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,'Course':'','Description':x.payment_method||'Payment','Status':x.status,'Amount':Number(x.amount||0)}));const cash=data.admin_cashbook.filter(all).map(x=>({'Source':'Cashbook','Date':fmtDate(x.entry_date||x.created_at),'Student':'','Course':'','Description':`${x.entry_type||''} · ${x.category||''} · ${x.description||''}`,'Status':x.entry_type,'Amount':Number(x.amount||0)}));rows=[...e,...pay,...cash];summary=[['Enrolment records',e.length],['Payment records',pay.length],['Cashbook records',cash.length],['Total listed amount',money(rows.reduce((a,x)=>a+Number(x.Amount||0),0))]]}
-    if(type==='enrolments'){rows=data.enrollments.filter(all).map(x=>({'Student':p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,'Course':c[x.course_id]?.title||x.course_id,'Status':x.status||x.enrollment_status,'Amount':Number(x.amount||c[x.course_id]?.price||0),'Submitted':fmtDate(x.submitted_at||x.created_at),'Reviewed':fmtDate(x.reviewed_at),'Approval Department':x.approval_department,'Review Notes':x.review_notes||x.rejection_reason||''}));summary=[['Enrolments',rows.length],['Approved',rows.filter(x=>String(x.Status).toLowerCase()==='approved').length],['Pending',rows.filter(x=>String(x.Status).toLowerCase()==='pending').length]]}
-    if(type==='students'){rows=data.profiles.filter(x=>x.role!=='admin'&&all(x)).map(x=>({'Name':x.full_name,'Email':x.email,'Phone':x.phone,'Role':x.role,'Gender':x.gender,'Created':fmtDate(x.created_at)}));summary=[['Students',rows.length]]}
-    if(type==='courses'){rows=data.courses.filter(all).map(x=>({'Course':x.title,'Duration':x.duration,'Price':Number(x.price||0),'Active':x.active!==false?'Yes':'No','Assessment':x.assessment_info||'','Certificate':x.certificate_info||'','Created':fmtDate(x.created_at),'Updated':fmtDate(x.updated_at)}));summary=[['Courses',rows.length],['Active',rows.filter(x=>x.Active==='Yes').length]]}
-    if(type==='academic'){const attempts=data.assessment_attempts.filter(all).map(x=>({'Record Type':'Assessment Attempt','Student':p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,'Course':'','Reference':x.assessment_id,'Score':x.score,'Percentage':x.percentage,'Status':x.passed?'Passed':'Not passed','Date':fmtDate(x.submitted_at||x.created_at)}));const certs=data.certificates.filter(r=>scope==='all'||between(r,from,to,['issued_at'])).map(x=>({'Record Type':'Certificate','Student':p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,'Course':c[x.course_id]?.title||x.course_id,'Reference':x.certificate_number,'Score':'','Percentage':'','Status':x.certificate_status,'Date':fmtDate(x.issued_at)}));rows=[...attempts,...certs];summary=[['Assessment attempts',attempts.length],['Passed attempts',attempts.filter(x=>x.Status==='Passed').length],['Certificates',certs.length]]}
-    if(type==='payments'){rows=data.payments.filter(all).map(x=>({'Student':p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,'Amount':Number(x.amount||0),'Method':x.payment_method,'Status':x.status,'Submitted':fmtDate(x.submitted_at||x.created_at),'Verified':fmtDate(x.verified_at),'Notes':x.notes||x.rejection_reason||''}));summary=[['Payments',rows.length],['Total amount',money(rows.reduce((a,x)=>a+Number(x.Amount||0),0))]]}
-    if(type==='support'){rows=data.support_tickets.filter(all).map(x=>({'Student':p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,'Subject':x.subject,'Category':x.category,'Priority':x.priority,'Status':x.status,'Notes':x.notes,'Created':fmtDate(x.created_at),'Updated':fmtDate(x.updated_at)}));summary=[['Tickets',rows.length],['Open',rows.filter(x=>!['closed','solved'].includes(String(x.Status||'').toLowerCase())).length]]}
-    if(type==='marketing'){rows=data.marketing_leads.filter(all).map(x=>({'Name':x.full_name,'Email':x.email,'Phone':x.phone,'Source':x.source,'Course Interest':x.course_interest,'Status':x.status,'Notes':x.notes,'Created':fmtDate(x.created_at)}));summary=[['Leads',rows.length]]}
-    if(type==='communication'){rows=data.communications.filter(all).map(x=>({'Title':x.title,'Category':x.category,'Audience':x.audience,'Published':x.published?'Yes':'No','Published Date':fmtDate(x.published_at),'Created':fmtDate(x.created_at),'Message':x.body}));summary=[['Communications',rows.length],['Published',rows.filter(x=>x.Published==='Yes').length]]}
-    if(type==='cashbook'){rows=data.admin_cashbook.filter(all).map(x=>({'Date':fmtDate(x.entry_date||x.created_at),'Type':x.entry_type,'Category':x.category,'Description':x.description,'Amount':Number(x.amount||0),'Receipt':x.receipt_url||''}));const inc=rows.filter(x=>String(x.Type).toLowerCase()==='income').reduce((a,x)=>a+Number(x.Amount||0),0),exp=rows.filter(x=>String(x.Type).toLowerCase()==='expense').reduce((a,x)=>a+Number(x.Amount||0),0);summary=[['Entries',rows.length],['Income',money(inc)],['Expenses',money(exp)],['Net',money(inc-exp)]]}
-    if(type==='hr'){const staff=data.staff_records.filter(all);rows=staff.map(x=>({'Staff':p[x.profile_id]?.full_name||p[x.profile_id]?.email||x.profile_id,'Job Title':x.job_title,'Department':x.department,'Employment Status':x.employment_status,'Start Date':fmtDate(x.start_date),'Notes':x.notes}));summary=[['Staff records',rows.length]]}
-    if(type==='audit'){const aud=data.admin_audit_log.filter(all).map(x=>({'Record Type':'Audit Log','Date':fmtDate(x.created_at),'Department':x.department,'Action':x.action,'Entity':x.entity_type,'Details':x.details}));const gov=data.admin_governance.filter(all).map(x=>({'Record Type':'Governance','Date':fmtDate(x.created_at),'Department':'Management','Action':x.title,'Entity':x.item_type,'Details':`${x.status||''} · ${x.owner||''} · ${x.details||''}`}));const runs=data.admin_report_runs.filter(all).map(x=>({'Record Type':'Report Run','Date':fmtDate(x.created_at),'Department':'Reports','Action':x.report_type,'Entity':x.status,'Details':JSON.stringify(x.summary||{})}));rows=[...aud,...gov,...runs];summary=[['Audit log entries',aud.length],['Governance items',gov.length],['Report runs',runs.length]]}
-    return {title,rows,summary};
+'use strict';
+if(window.__FUNDA_REPORT_CENTRE__)return;
+window.__FUNDA_REPORT_CENTRE__=true;
+
+const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const low=v=>String(v??'').trim().toLowerCase();
+const money=n=>'R'+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtDate=v=>v?new Date(v).toLocaleDateString('en-ZA'):'—';
+const fmtDateTime=v=>v?new Date(v).toLocaleString('en-ZA'):'—';
+const safeName=v=>String(v||'report').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,80)||'report';
+const client=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+if(!client)return;
+
+const defs={
+  executive:{label:'Executive Summary',tables:['profiles','ceo_account_control_state','courses','enrollments','payments','admin_cashbook','support_tickets','assessment_attempts','certificates','communications']},
+  management:{label:'Management & Governance',tables:['admin_governance']},
+  finance:{label:'Finance & Accounting',tables:['profiles','courses','enrollments','payments','admin_cashbook']},
+  enrolments:{label:'Enrolments',tables:['profiles','courses','enrollments']},
+  students:{label:'Students',tables:['profiles','ceo_account_control_state']},
+  courses:{label:'Courses',tables:['courses']},
+  academic:{label:'Academic & Assessments',tables:['profiles','courses','assessment_attempts','certificates']},
+  payments:{label:'Payments',tables:['profiles','payments']},
+  support:{label:'Student Support',tables:['profiles','support_tickets']},
+  marketing:{label:'Marketing & Admissions',tables:['marketing_leads']},
+  communication:{label:'Communication Hub',tables:['communications']},
+  cashbook:{label:'Expenses & Income',tables:['admin_cashbook']},
+  hr:{label:'HR & Team',tables:['profiles','staff_records','hr_contracts','hr_leave_requests','hr_safety_incidents','hr_training_records','hr_performance_reviews','hr_compliance_reviews']},
+  ambassador:{label:'Ambassador Programme',tables:['ambassador_programme_applications','ambassador_earnings_ledger','ambassador_payouts']},
+  employer:{label:'Employer & Industry Partnerships',tables:['employer_partnership_requests','employer_opportunities']},
+  library:{label:'Digital Library',tables:['courses','library_resources']},
+  security:{label:'IT, Security & Platform',tables:['profiles','security_access_reviews','platform_security_checks','security_incidents']},
+  compliance:{label:'Compliance Register',tables:['admin_compliance_register','hr_compliance_reviews']},
+  audit:{label:'Audit Activity Register',tables:[]}
+};
+
+const css=`
+.frc-backdrop{position:fixed;inset:0;background:rgba(3,16,31,.58);backdrop-filter:blur(3px);display:none;place-items:center;z-index:9999;padding:18px;font-family:"Source Sans 3","Segoe UI",Arial,sans-serif}
+.frc-backdrop.open{display:grid}.frc-modal{width:min(780px,96vw);max-height:92vh;overflow:auto;background:#fff;border:1px solid #d8cfbb;border-radius:18px;box-shadow:0 30px 90px rgba(3,16,31,.35)}
+.frc-head{padding:20px;background:linear-gradient(135deg,#03101f,#0a2344);color:#fff;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;border-bottom:4px solid #d4af58}
+.frc-head h2{margin:0;font-size:22px;line-height:1.2}.frc-head p{margin:6px 0 0;color:#dfe7f2;font-size:14px;line-height:1.45}
+.frc-close{border:1px solid rgba(212,175,88,.35);background:rgba(255,255,255,.07);color:#fff;width:36px;height:36px;border-radius:10px;cursor:pointer;font-size:20px}
+.frc-body{padding:20px}.frc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.frc-field{display:grid;gap:6px}
+.frc-field label{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:#536174}
+.frc-field select,.frc-field input{width:100%;border:1px solid #d8d2c6;border-radius:10px;padding:10px 11px;background:#fff;color:#10213f;font:400 14px/1.4 "Source Sans 3","Segoe UI",Arial,sans-serif}
+.frc-field select:focus,.frc-field input:focus{outline:none;border-color:#d4af58;box-shadow:0 0 0 3px rgba(212,175,88,.12)}
+.frc-note{margin-top:12px;padding:12px;border-radius:10px;background:#f8f4e8;border:1px solid #e4d5aa;color:#6f5a21;font-size:13px;line-height:1.5}
+.frc-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding-top:16px}
+.frc-btn{border:0;border-radius:10px;padding:10px 14px;font:900 13px/1.2 "Source Sans 3","Segoe UI",Arial,sans-serif;cursor:pointer}
+.frc-btn.primary{background:linear-gradient(135deg,#06172d,#12345d);color:#fff;border:1px solid rgba(212,175,88,.35)}
+.frc-btn.light{background:#fff;color:#06172d;border:1px solid #d8cfbb}.frc-btn:disabled{opacity:.55;cursor:not-allowed}
+.frc-status{font-size:13px;line-height:1.45;color:#667085;margin-top:10px;min-height:18px}.frc-trigger{display:inline-flex;align-items:center;gap:6px}
+@media(max-width:700px){.frc-grid{grid-template-columns:1fr}.frc-modal{border-radius:14px}.frc-head h2{font-size:19px}}
+`;
+
+function installStyle(){
+  if(document.getElementById('frc-style'))return;
+  const s=document.createElement('style');s.id='frc-style';s.textContent=css;document.head.appendChild(s);
+}
+function loadScript(src,test){
+  if(test())return Promise.resolve();
+  return new Promise((resolve,reject)=>{
+    const old=[...document.scripts].find(s=>s.src===src);
+    if(old){
+      old.addEventListener('load',()=>test()?resolve():reject(new Error('Report export library did not initialise.')),{once:true});
+      old.addEventListener('error',()=>reject(new Error('Report export library could not load.')),{once:true});
+      return;
+    }
+    const s=document.createElement('script');s.src=src;s.async=true;
+    s.onload=()=>test()?resolve():reject(new Error('Report export library did not initialise.'));
+    s.onerror=()=>reject(new Error('Report export library could not load.'));
+    document.head.appendChild(s);
+  });
+}
+async function ensureExcel(){
+  await loadScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js',()=>!!window.ExcelJS);
+}
+async function ensurePdf(){
+  await loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js',()=>!!window.jspdf?.jsPDF);
+  await loadScript('https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js',()=>!!window.jspdf?.jsPDF?.API?.autoTable);
+}
+function modal(selected='executive'){
+  let b=document.getElementById('frc-backdrop');
+  if(!b){
+    b=document.createElement('div');b.id='frc-backdrop';b.className='frc-backdrop';
+    b.innerHTML=`<div class="frc-modal" role="dialog" aria-modal="true">
+      <div class="frc-head"><div><h2>Funda Report Centre</h2><p>Generate a formal Excel workbook or downloadable PDF from live Academy records.</p></div><button class="frc-close" id="frc-close">×</button></div>
+      <div class="frc-body">
+        <div class="frc-grid">
+          <div class="frc-field" style="grid-column:1/-1"><label>Report type</label><select id="frc-type">${Object.entries(defs).map(([k,v])=>`<option value="${k}">${esc(v.label)}</option>`).join('')}</select></div>
+          <div class="frc-field"><label>From date</label><input type="date" id="frc-from"></div>
+          <div class="frc-field"><label>To date</label><input type="date" id="frc-to"></div>
+          <div class="frc-field"><label>Format</label><select id="frc-format"><option value="xlsx">Excel Workbook (.xlsx)</option><option value="pdf">PDF Report (.pdf)</option></select></div>
+          <div class="frc-field"><label>Scope</label><select id="frc-scope"><option value="period">Selected date range</option><option value="all">All available records</option></select></div>
+        </div>
+        <div class="frc-note"><b>Excel</b> creates a structured FOA workbook with title, reporting period, generated-by details, styled columns, filters, frozen headings and print settings. <b>PDF</b> creates a directly downloadable formal report. If any required data source fails, the report is stopped rather than presenting incomplete data as zero.</div>
+        <div class="frc-status" id="frc-status"></div>
+        <div class="frc-actions"><button class="frc-btn light" id="frc-cancel">Cancel</button><button class="frc-btn primary" id="frc-generate">Generate Report</button></div>
+      </div>
+    </div>`;
+    document.body.appendChild(b);
+    document.getElementById('frc-close').onclick=close;
+    document.getElementById('frc-cancel').onclick=close;
+    b.addEventListener('click',e=>{if(e.target===b)close()});
+    document.getElementById('frc-generate').onclick=generate;
   }
-  const csvCell=v=>'"'+String(v??'').replaceAll('"','""')+'"';
-  function downloadCsv(report){const cols=report.rows.length?Object.keys(report.rows[0]):['Message'];const rows=report.rows.length?report.rows:[{Message:'No records found for the selected report/date range.'}];const csv=[cols.join(','),...rows.map(r=>cols.map(c=>csvCell(r[c])).join(','))].join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`funda-${report.title.toLowerCase().replace(/[^a-z0-9]+/g,'-')}-${new Date().toISOString().slice(0,10)}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),5000)}
-  function renderPdf(win,report,from,to,scope){const cols=report.rows.length?Object.keys(report.rows[0]):[],summary=report.summary||[];win.document.open();win.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(report.title)} | Funda Online Academy</title><style>body{font-family:Arial,sans-serif;color:#10213f;margin:0;background:#fff}.head{background:#06172d;color:#fff;padding:26px 32px;border-bottom:5px solid #d4af58}.head h1{margin:0;font-size:24px}.head p{margin:5px 0 0;color:#dfe7f2;font-size:12px}.wrap{padding:24px 32px}.meta{display:flex;gap:14px;flex-wrap:wrap;color:#667085;font-size:11px;margin-bottom:16px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0 20px}.sum{border:1px solid #ddd7ca;border-top:3px solid #d4af58;border-radius:8px;padding:10px}.sum small{display:block;color:#667085;font-size:9px;text-transform:uppercase}.sum b{display:block;margin-top:5px;font-size:15px}.tbl{width:100%;border-collapse:collapse;font-size:9px}.tbl th,.tbl td{padding:7px;border-bottom:1px solid #e9e6df;text-align:left;vertical-align:top}.tbl th{background:#f6f1e4;color:#4a3b16;text-transform:uppercase;font-size:8px}.empty{padding:20px;border:1px dashed #d5d0c7;color:#667085}.foot{margin-top:20px;font-size:9px;color:#8992a0}@media print{.wrap{padding:16px 20px}.head{padding:18px 20px}.summary{grid-template-columns:repeat(4,1fr)}@page{size:A4 landscape;margin:10mm}}</style></head><body><div class="head"><h1>FUNDA ONLINE ACADEMY</h1><p>${esc(report.title)}</p></div><div class="wrap"><div class="meta"><span>Generated: ${new Date().toLocaleString('en-ZA')}</span><span>Scope: ${scope==='all'?'All records':`${from||'Beginning'} to ${to||'Today'}`}</span></div>${summary.length?`<div class="summary">${summary.map(x=>`<div class="sum"><small>${esc(x[0])}</small><b>${esc(x[1])}</b></div>`).join('')}</div>`:''}${report.rows.length?`<table class="tbl"><thead><tr>${cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${report.rows.map(r=>`<tr>${cols.map(c=>`<td>${esc(r[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`:'<div class="empty">No records found for this report and date range.</div>'}<div class="foot">Funda Online Academy · Admin Command Center · System-generated report</div></div><script>setTimeout(()=>window.print(),350)<\/script></body></html>`);win.document.close()}
-  async function logRun(type,from,to,count){try{const {data:{session}}=await client.auth.getSession();if(!session?.user)return;await client.from('admin_report_runs').insert({report_type:defs[type].label,period_start:from||null,period_end:to||null,status:'Generated',generated_by:session.user.id,summary:{rows:count}});await client.from('admin_audit_log').insert({actor_id:session.user.id,action:'Generated '+defs[type].label+' report',department:'Reports',entity_type:'report',details:`${count} row(s)`})}catch(e){console.warn('Report log skipped',e)}}
-  async function generate(){const type=document.getElementById('frc-type').value,format=document.getElementById('frc-format').value,scope=document.getElementById('frc-scope').value,from=document.getElementById('frc-from').value,to=document.getElementById('frc-to').value,status=document.getElementById('frc-status');if(from&&to&&from>to){status.textContent='From date cannot be later than To date.';return}let win=null;if(format==='pdf'){win=window.open('','_blank');if(!win){status.textContent='Please allow pop-ups so the PDF report can open.';return}win.document.write('<p style="font-family:Arial;padding:24px">Generating Funda Online Academy report…</p>')}status.textContent='Loading report data…';try{const data=await fetchAll(),report=build(type,data,from,to,scope);if(format==='csv')downloadCsv(report);else renderPdf(win,report,from,to,scope);await logRun(type,scope==='all'?null:from,scope==='all'?null:to,report.rows.length);status.textContent=`Report ready: ${report.rows.length} row(s).`;setTimeout(close,700)}catch(e){console.error(e);status.textContent='Could not generate the report. Please try again.';if(win&&!win.closed)win.close()}}
-  function hookButtons(){const attach=()=>{document.querySelectorAll('.download2,.reportActions .btn').forEach(btn=>{const t=(btn.textContent||'').toLowerCase();if(t.includes('download')||t.includes('report')){btn.onclick=e=>{e.preventDefault();open()};btn.classList.add('frc-trigger')}})};attach();new MutationObserver(attach).observe(document.body,{subtree:true,childList:true})}
-  window.openFundaReportCentre=open;installStyle();hookButtons();
+  if(defs[selected])document.getElementById('frc-type').value=selected;
+  return b;
+}
+function open(selected='executive'){installStyle();modal(selected).classList.add('open')}
+function close(){document.getElementById('frc-backdrop')?.classList.remove('open')}
+function between(row,from,to,fields){
+  if(!from&&!to)return true;
+  const f=fields.find(k=>row?.[k])||fields[0],v=row?.[f];
+  if(!v)return true;
+  const d=new Date(v);
+  if(Number.isNaN(d.getTime()))return true;
+  if(from&&d<new Date(from+'T00:00:00'))return false;
+  if(to&&d>new Date(to+'T23:59:59'))return false;
+  return true;
+}
+async function fetchTables(names){
+  const out={},errors=[];
+  await Promise.all([...new Set(names)].map(async t=>{
+    const {data,error}=await client.from(t).select('*');
+    if(error)errors.push(t+': '+error.message);
+    else out[t]=data||[];
+  }));
+  if(errors.length)throw new Error('Report data is incomplete because these sources could not be loaded: '+errors.join(' | '));
+  return out;
+}
+async function fetchAudit(from,to,scope){
+  const args={
+    p_from:scope==='all'?null:(from||null),
+    p_to:scope==='all'?null:(to||null),
+    p_source:null,p_department:null,p_status:null,p_search:null,p_limit:10000
+  };
+  const {data,error}=await client.rpc('admin_get_audit_register',args);
+  if(error)throw new Error('Unified audit register could not be loaded: '+error.message);
+  return data||[];
+}
+async function fetchFor(type,from,to,scope){
+  const data=await fetchTables(defs[type].tables||[]);
+  if(type==='audit')data.audit_register=await fetchAudit(from,to,scope);
+  return data;
+}
+const byId=a=>Object.fromEntries((a||[]).map(x=>[x.id,x]));
+function currentProfiles(data,role){
+  const states=Object.fromEntries((data.ceo_account_control_state||[]).map(x=>[x.user_id,low(x.status)||'active']));
+  return (data.profiles||[]).filter(x=>low(x.role)===role&&states[x.id]!=='deleted');
+}
+function filterRows(arr,scope,from,to,fields=['created_at','updated_at','submitted_at','issued_at','entry_date']){
+  return (arr||[]).filter(r=>scope==='all'||between(r,from,to,fields));
+}
+function build(type,data,from,to,scope){
+  const p=byId(data.profiles||[]),c=byId(data.courses||[]);
+  let rows=[],summary=[],title=defs[type].label;
+  const all=(arr,fields)=>filterRows(arr,scope,from,to,fields);
+
+  if(type==='executive'){
+    const students=currentProfiles(data,'student');
+    const staff=currentProfiles(data,'staff');
+    const courses=(data.courses||[]).filter(x=>x.active!==false);
+    const approved=(data.enrollments||[]).filter(x=>low(x.status||x.enrollment_status)==='approved');
+    const verified=(data.payments||[]).filter(x=>low(x.status)==='verified');
+    const cash=(data.admin_cashbook||[]);
+    const income=cash.filter(x=>low(x.entry_type)==='income').reduce((a,x)=>a+Number(x.amount||0),0);
+    const expenses=cash.filter(x=>low(x.entry_type)==='expense').reduce((a,x)=>a+Number(x.amount||0),0);
+    const receipts=verified.reduce((a,x)=>a+Number(x.amount||0),0);
+    const open=(data.support_tickets||[]).filter(x=>!['closed','solved','resolved'].includes(low(x.status))).length;
+    summary=[
+      ['Current students',students.length],['Staff',staff.length],['Active courses',courses.length],
+      ['Approved enrolments',approved.length],['Verified payment receipts',money(receipts)],
+      ['Cashbook income',money(income)],['Cashbook expenses',money(expenses)],['Cashbook net',money(income-expenses)],
+      ['Open support tickets',open],['Assessment attempts',(data.assessment_attempts||[]).length],
+      ['Certificates issued',(data.certificates||[]).length],['Published communications',(data.communications||[]).filter(x=>x.published===true).length]
+    ];
+    rows=summary.map(x=>({Metric:x[0],Value:x[1]}));
+  }
+
+  if(type==='management'){
+    rows=all(data.admin_governance,['created_at','updated_at','target_date']).map(x=>({
+      Type:x.item_type,Title:x.title,Owner:x.owner,Status:x.status,'Target Date':fmtDate(x.target_date),Details:x.details,Created:fmtDate(x.created_at)
+    }));
+    summary=[['Governance items',rows.length],['Active',rows.filter(x=>low(x.Status)==='active').length]];
+  }
+
+  if(type==='finance'){
+    const enrol=all(data.enrollments,['created_at','submitted_at','enrolled_at']).filter(x=>low(x.status||x.enrollment_status)==='approved');
+    const pay=all(data.payments,['verified_at','submitted_at','created_at']).filter(x=>low(x.status)==='verified');
+    const cash=all(data.admin_cashbook,['entry_date','created_at']);
+    const commitment=enrol.reduce((a,x)=>a+Number(x.amount||c[x.course_id]?.price||0),0);
+    const receipts=pay.reduce((a,x)=>a+Number(x.amount||0),0);
+    const income=cash.filter(x=>low(x.entry_type)==='income').reduce((a,x)=>a+Number(x.amount||0),0);
+    const expenses=cash.filter(x=>low(x.entry_type)==='expense').reduce((a,x)=>a+Number(x.amount||0),0);
+    rows=[
+      ...enrol.map(x=>({'Record Type':'Approved enrolment commitment',Date:fmtDate(x.reviewed_at||x.submitted_at||x.created_at),Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,Course:c[x.course_id]?.title||x.course_id,Description:'Approved tuition / enrolment commitment',Status:x.status||x.enrollment_status,Amount:Number(x.amount||c[x.course_id]?.price||0)})),
+      ...pay.map(x=>({'Record Type':'Verified payment receipt',Date:fmtDate(x.verified_at||x.submitted_at||x.created_at),Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,Course:'',Description:x.payment_method||'Payment',Status:x.status,Amount:Number(x.amount||0)})),
+      ...cash.map(x=>({'Record Type':'Cashbook '+String(x.entry_type||'entry'),Date:fmtDate(x.entry_date||x.created_at),Student:'',Course:'',Description:[x.category,x.description,x.counterparty].filter(Boolean).join(' · '),Status:x.reconciliation_status||x.entry_type,Amount:Number(x.amount||0)}))
+    ];
+    summary=[
+      ['Approved enrolment commitments',money(commitment)],
+      ['Verified payment receipts',money(receipts)],
+      ['Cashbook income',money(income)],
+      ['Cashbook expenses',money(expenses)],
+      ['Cashbook net',money(income-expenses)],
+      ['Unreconciled cashbook records',cash.filter(x=>low(x.reconciliation_status)!=='reconciled').length]
+    ];
+  }
+
+  if(type==='enrolments'){
+    rows=all(data.enrollments,['created_at','submitted_at','enrolled_at']).map(x=>({
+      Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+      'Learner Number':p[x.student_id]?.student_number||'',
+      Course:c[x.course_id]?.title||x.course_id,Status:x.status||x.enrollment_status,
+      Amount:Number(x.amount||c[x.course_id]?.price||0),
+      Submitted:fmtDate(x.submitted_at||x.created_at),Reviewed:fmtDate(x.reviewed_at),
+      'Approval Department':x.approval_department,'Review Notes':x.review_notes||x.rejection_reason||''
+    }));
+    summary=[['Enrolments',rows.length],['Approved',rows.filter(x=>low(x.Status)==='approved').length],['Pending',rows.filter(x=>low(x.Status)==='pending').length]];
+  }
+
+  if(type==='students'){
+    const students=currentProfiles(data,'student').filter(x=>scope==='all'||between(x,from,to,['created_at']));
+    rows=students.map(x=>({
+      'Learner Number':x.student_number||'',Name:x.full_name,Email:x.email,Phone:x.phone||'',Gender:x.gender||'',Created:fmtDate(x.created_at)
+    }));
+    summary=[['Current students',rows.length]];
+  }
+
+  if(type==='courses'){
+    rows=all(data.courses,['created_at','updated_at']).map(x=>({
+      Course:x.title,Duration:x.duration,Price:Number(x.price||0),Active:x.active!==false?'Yes':'No',
+      'Nominal Learning Hours':x.nominal_learning_hours??'','CPD Applicable':x.cpd_applicable===true?'Yes':'No','CPD Points':x.cpd_points??'',
+      Created:fmtDate(x.created_at),Updated:fmtDate(x.updated_at)
+    }));
+    summary=[['Courses',rows.length],['Active',rows.filter(x=>x.Active==='Yes').length]];
+  }
+
+  if(type==='academic'){
+    const attempts=all(data.assessment_attempts,['submitted_at','created_at']).map(x=>({
+      'Record Type':'Assessment Attempt',Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+      Reference:x.assessment_id,Score:x.score,Percentage:x.percentage,Status:x.passed?'Passed':'Not passed',Date:fmtDate(x.submitted_at||x.created_at)
+    }));
+    const certs=all(data.certificates,['issued_at']).map(x=>({
+      'Record Type':'Certificate',Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+      Reference:x.certificate_number,Score:'',Percentage:'',Status:x.certificate_status,Date:fmtDate(x.issued_at)
+    }));
+    rows=[...attempts,...certs];
+    summary=[['Assessment attempts',attempts.length],['Passed attempts',attempts.filter(x=>x.Status==='Passed').length],['Certificates',certs.length]];
+  }
+
+  if(type==='payments'){
+    rows=all(data.payments,['verified_at','submitted_at','created_at']).map(x=>({
+      Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+      Amount:Number(x.amount||0),Status:x.status,'Payment Method':x.payment_method||'',
+      'Payment Reference':x.payment_reference||'',Submitted:fmtDate(x.submitted_at||x.created_at),Verified:fmtDate(x.verified_at)
+    }));
+    summary=[['Payment records',rows.length],['Verified receipts',money(rows.filter(x=>low(x.Status)==='verified').reduce((a,x)=>a+Number(x.Amount||0),0))]];
+  }
+
+  if(type==='support'){
+    rows=all(data.support_tickets,['created_at','updated_at','resolved_at']).map(x=>({
+      Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+      Subject:x.subject,Category:x.category,Priority:x.priority,Status:x.status,
+      Created:fmtDate(x.created_at),Resolved:fmtDate(x.resolved_at),Notes:x.notes||''
+    }));
+    summary=[['Tickets',rows.length],['Open',rows.filter(x=>!['closed','solved','resolved'].includes(low(x.Status))).length]];
+  }
+
+  if(type==='marketing'){
+    rows=all(data.marketing_leads,['created_at','updated_at']).map(x=>({
+      Name:x.full_name,Email:x.email,Phone:x.phone,Source:x.source,'Course Interest':x.course_interest,Status:x.status,Notes:x.notes||'',Created:fmtDate(x.created_at)
+    }));
+    summary=[['Leads',rows.length]];
+  }
+
+  if(type==='communication'){
+    rows=all(data.communications,['published_at','created_at','scheduled_at']).map(x=>({
+      Title:x.title,Category:x.category,Audience:x.audience,Priority:x.priority||'',Published:x.published?'Yes':'No',
+      'Delivery Status':x.delivery_status||'',Scheduled:fmtDateTime(x.scheduled_at),PublishedAt:fmtDateTime(x.published_at),Created:fmtDateTime(x.created_at)
+    }));
+    summary=[['Communications',rows.length],['Published',rows.filter(x=>x.Published==='Yes').length]];
+  }
+
+  if(type==='cashbook'){
+    rows=all(data.admin_cashbook,['entry_date','created_at']).map(x=>({
+      Date:fmtDate(x.entry_date||x.created_at),Type:x.entry_type,Category:x.category,Description:x.description,
+      Counterparty:x.counterparty||'',Reference:x.reference_number||'',Amount:Number(x.amount||0),
+      'Payment Method':x.payment_method||'',Department:x.department||'','Reconciliation Status':x.reconciliation_status||''
+    }));
+    const income=rows.filter(x=>low(x.Type)==='income').reduce((a,x)=>a+Number(x.Amount||0),0);
+    const expenses=rows.filter(x=>low(x.Type)==='expense').reduce((a,x)=>a+Number(x.Amount||0),0);
+    summary=[['Income',money(income)],['Expenses',money(expenses)],['Net',money(income-expenses)],['Records',rows.length]];
+  }
+
+  if(type==='hr'){
+    const sr=all(data.staff_records,['created_at','updated_at']).map(x=>({'Record Type':'Staff Record',Staff:p[x.profile_id]?.full_name||p[x.profile_id]?.email||x.profile_id,Reference:x.id,Status:x.employment_status,Date:fmtDate(x.created_at),Details:[x.job_title,x.department].filter(Boolean).join(' · ')}));
+    const ct=all(data.hr_contracts,['created_at','issued_at','accepted_at']).map(x=>({'Record Type':'Contract',Staff:p[x.profile_id]?.full_name||p[x.profile_id]?.email||x.profile_id,Reference:x.contract_number,Status:x.status,Date:fmtDate(x.issued_at||x.created_at),Details:[x.contract_type,x.title].filter(Boolean).join(' · ')}));
+    const lv=all(data.hr_leave_requests,['requested_at','reviewed_at','start_date']).map(x=>({'Record Type':'Leave',Staff:p[x.profile_id]?.full_name||p[x.profile_id]?.email||x.profile_id,Reference:x.id,Status:x.status,Date:fmtDate(x.requested_at),Details:[x.leave_type,x.start_date+' to '+x.end_date,x.review_notes||x.reason].filter(Boolean).join(' · ')}));
+    const sf=all(data.hr_safety_incidents,['occurred_at','created_at','resolved_at']).map(x=>({'Record Type':'Safety / Wellbeing',Staff:p[x.profile_id]?.full_name||p[x.profile_id]?.email||'General workplace',Reference:x.id,Status:x.status,Date:fmtDate(x.occurred_at||x.created_at),Details:[x.severity,x.title,x.action_taken].filter(Boolean).join(' · ')}));
+    const tr=all(data.hr_training_records,['created_at','scheduled_on','completed_on']).map(x=>({'Record Type':'Training',Staff:p[x.profile_id]?.full_name||p[x.profile_id]?.email||x.profile_id,Reference:x.id,Status:x.status,Date:fmtDate(x.completed_on||x.scheduled_on||x.created_at),Details:[x.training_name,x.provider,x.evidence_url].filter(Boolean).join(' · ')}));
+    const pr=all(data.hr_performance_reviews,['created_at','reviewed_at','due_date']).map(x=>({'Record Type':'Performance Review',Staff:p[x.profile_id]?.full_name||p[x.profile_id]?.email||x.profile_id,Reference:x.review_period,Status:x.status,Date:fmtDate(x.reviewed_at||x.created_at),Details:['Rating '+(x.rating??'—'),x.employee_acknowledged_at?'Employee acknowledged':'Awaiting acknowledgement'].join(' · ')}));
+    const hc=all(data.hr_compliance_reviews,['review_date','created_at','next_review_date']).map(x=>({'Record Type':'HR Compliance',Staff:x.owner||'Human Resources',Reference:x.law_code,Status:x.status,Date:fmtDate(x.review_date),Details:[x.control_name,x.evidence,'Next review '+(x.next_review_date||'—')].filter(Boolean).join(' · ')}));
+    rows=[...sr,...ct,...lv,...sf,...tr,...pr,...hc];
+    summary=[['Staff records',sr.length],['Contracts',ct.length],['Leave requests',lv.length],['Safety/wellbeing cases',sf.length],['Training records',tr.length],['Performance reviews',pr.length],['HR compliance reviews',hc.length]];
+  }
+
+  if(type==='ambassador'){
+    const apps=all(data.ambassador_programme_applications,['created_at','updated_at']).map(x=>({'Record Type':'Application',Name:x.full_name,Reference:x.referral_code||x.id,Status:x.status,Date:fmtDate(x.created_at),Amount:'',Details:[x.account_status,x.agreement_status].filter(Boolean).join(' · ')}));
+    const earn=all(data.ambassador_earnings_ledger,['created_at','earning_month']).map(x=>({'Record Type':'Earning',Name:x.application_id,Reference:x.earning_type,Status:x.earning_status,Date:fmtDate(x.earning_month||x.created_at),Amount:Number(x.commission_amount||0),Details:x.notes||''}));
+    const pay=all(data.ambassador_payouts,['created_at','payment_date']).map(x=>({'Record Type':'Payout',Name:x.application_id,Reference:x.payment_reference||x.id,Status:x.status,Date:fmtDate(x.payment_date||x.created_at),Amount:Number(x.amount||0),Details:x.notes||''}));
+    rows=[...apps,...earn,...pay];
+    summary=[['Applications',apps.length],['Earnings ledger entries',earn.length],['Payout records',pay.length],['Paid payouts',money(pay.filter(x=>low(x.Status)==='paid').reduce((a,x)=>a+Number(x.Amount||0),0))]];
+  }
+
+  if(type==='employer'){
+    const req=all(data.employer_partnership_requests,['created_at','reviewed_at','partner_since','review_due_at']).map(x=>({'Record Type':'Partnership Request',Organisation:x.organisation_name,Title:x.contact_name,Status:x.status,Date:fmtDate(x.created_at),Location:[x.city,x.province].filter(Boolean).join(', '),Details:[x.industry,x.agreement_status,(x.partnership_scope||[]).join?.(', ')].filter(Boolean).join(' · ')}));
+    const opp=all(data.employer_opportunities,['created_at','closing_date']).map(x=>({'Record Type':'Opportunity',Organisation:x.organisation_name,Title:x.title,Status:x.status,Date:fmtDate(x.created_at),Location:[x.city,x.province].filter(Boolean).join(', '),Details:[x.opportunity_type,x.industry,x.skills_or_courses,'Closing '+(x.closing_date||'—')].filter(Boolean).join(' · ')}));
+    rows=[...req,...opp];
+    summary=[['Partnership requests',req.length],['Employer opportunities',opp.length]];
+  }
+
+  if(type==='library'){
+    rows=all(data.library_resources,['created_at','updated_at','source_verified_at','reviewed_at']).map(x=>({
+      Title:x.title,Course:x.course_id?c[x.course_id]?.title||x.course_id:'All students',Type:x.resource_type,Category:x.category,
+      'Publication Status':x.publication_status,Active:x.is_active?'Yes':'No','Quality Status':x.quality_status||'',
+      'Rights Status':x.rights_status||'','Source Verified':fmtDate(x.source_verified_at),Updated:fmtDate(x.updated_at)
+    }));
+    summary=[['Library records',rows.length],['Live resources',rows.filter(x=>x['Publication Status']==='published'&&x.Active==='Yes').length]];
+  }
+
+  if(type==='security'){
+    const ar=all(data.security_access_reviews,['reviewed_at']).map(x=>({'Record Type':'Access Review',Area:x.department_snapshot||'Access Governance',Subject:p[x.subject_profile_id]?.full_name||p[x.subject_profile_id]?.email||x.subject_profile_id,Status:x.decision,Date:fmtDateTime(x.reviewed_at),Evidence:x.notes||''}));
+    const pc=all(data.platform_security_checks,['checked_at']).map(x=>({'Record Type':'Platform Security Check',Area:x.check_area,Subject:x.check_name,Status:x.status,Date:fmtDateTime(x.checked_at),Evidence:x.evidence||''}));
+    const si=all(data.security_incidents,['detected_at','created_at','resolved_at']).map(x=>({'Record Type':'Security Incident',Area:'Incident Management',Subject:x.title,Status:x.status,Date:fmtDateTime(x.detected_at||x.created_at),Evidence:[x.severity,x.description,x.resolution_notes].filter(Boolean).join(' · ')}));
+    rows=[...ar,...pc,...si];
+    summary=[['Access reviews',ar.length],['Platform security checks',pc.length],['Security incidents',si.length]];
+  }
+
+  if(type==='compliance'){
+    const core=all(data.admin_compliance_register,['last_review_date','next_review_date','due_date','created_at']).map(x=>({
+      'Control Area':x.control_area,'Control / Requirement':x.control_name,'Requirement Basis':x.requirement_basis||'',
+      Department:x.owner_department,'Responsible Person':x.responsible_person||'',Status:x.status,
+      Evidence:x.evidence||'','Corrective Action':x.corrective_action||'','Last Review':fmtDate(x.last_review_date),
+      'Next Review':fmtDate(x.next_review_date),'Due Date':fmtDate(x.due_date)
+    }));
+    const hr=all(data.hr_compliance_reviews,['review_date','next_review_date','created_at']).map(x=>({
+      'Control Area':'HR / Labour Compliance','Control / Requirement':x.control_name,'Requirement Basis':x.law_code,
+      Department:'Human Resources','Responsible Person':x.owner||'',Status:x.status,Evidence:x.evidence||'',
+      'Corrective Action':'','Last Review':fmtDate(x.review_date),'Next Review':fmtDate(x.next_review_date),'Due Date':'—'
+    }));
+    rows=[...core,...hr];
+    summary=[['Compliance controls',rows.length],['Action required',rows.filter(x=>['action_required','review_due'].includes(low(x.Status))).length],['Compliant',rows.filter(x=>low(x.Status)==='compliant'||low(x.Status)==='good').length]];
+  }
+
+  if(type==='audit'){
+    rows=(data.audit_register||[]).map(x=>({
+      Date:fmtDateTime(x.event_time),Source:x.source,Department:x.department,Activity:x.action,
+      Entity:x.entity_type,Reference:x.entity_id||'',Responsible:x.responsible_person||'',
+      Status:x.status,Details:x.details||'', 'Recorded By':x.actor_name||'System'
+    }));
+    summary=[['Audit events',rows.length],['Manual entries',rows.filter(x=>x.Source==='Manual Audit').length],['Open / in progress',rows.filter(x=>['open','in_progress','action_required'].includes(low(x.Status))).length],['Sources',new Set(rows.map(x=>x.Source)).size]];
+  }
+
+  return {title,rows,summary};
+}
+
+async function generatedBy(){
+  const {data:{user}}=await client.auth.getUser();
+  if(!user)return {id:null,name:'System Administrator',email:''};
+  const {data}=await client.from('profiles').select('full_name,email').eq('id',user.id).maybeSingle();
+  return {id:user.id,name:data?.full_name||data?.email||user.email||'Administrator',email:data?.email||user.email||''};
+}
+function metaFor(report,from,to,scope,actor){
+  const now=new Date();
+  return {
+    reportTitle:report.title,
+    generatedAt:now,
+    generatedBy:actor.name,
+    generatedByEmail:actor.email,
+    period:scope==='all'?'All available records':(from||'Beginning')+' to '+(to||'Today'),
+    reference:'FOA-RPT-'+now.toISOString().replace(/[-:TZ.]/g,'').slice(0,14)
+  };
+}
+function downloadBlob(blob,fileName){
+  const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=fileName;a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+async function exportExcel(report,meta={}){
+  await ensureExcel();
+  const actor=meta.generatedBy?null:await generatedBy();
+  const m={...meta,...(!meta.generatedBy?metaFor(report,meta.from,meta.to,meta.scope||'all',actor):{})};
+  const ExcelJS=window.ExcelJS,wb=new ExcelJS.Workbook();
+  wb.creator='Funda Online Academy';wb.company='Funda Online Academy (Pty) Ltd';wb.created=new Date();
+  const ws=wb.addWorksheet('Report',{views:[{state:'frozen',ySplit:8}]});
+  const rows=report.rows?.length?report.rows:[{Message:'No records found for the selected report and date range.'}];
+  const cols=Object.keys(rows[0]);
+  const lastCol=Math.max(1,cols.length);
+  const endCol=ws.getColumn(lastCol).letter;
+
+  ws.mergeCells(`A1:${endCol}1`);ws.getCell('A1').value='FUNDA ONLINE ACADEMY';
+  ws.getCell('A1').font={bold:true,size:20,color:{argb:'FFFFFFFF'}};ws.getCell('A1').fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF06172D'}};ws.getCell('A1').alignment={vertical:'middle'};ws.getRow(1).height=30;
+  ws.mergeCells(`A2:${endCol}2`);ws.getCell('A2').value=report.title;
+  ws.getCell('A2').font={bold:true,size:16,color:{argb:'FF10213F'}};ws.getCell('A2').fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF6F1E4'}};ws.getRow(2).height=24;
+
+  const info=[
+    ['Report Reference',m.reference||''],['Reporting Period',m.period||'All available records'],
+    ['Generated',m.generatedAt?new Date(m.generatedAt).toLocaleString('en-ZA'):new Date().toLocaleString('en-ZA')],
+    ['Generated By',m.generatedBy||'Administrator']
+  ];
+  info.forEach((x,i)=>{const row=4+i;ws.getCell(row,1).value=x[0];ws.getCell(row,1).font={bold:true,color:{argb:'FF536174'}};ws.getCell(row,2).value=x[1];});
+
+  const headerRow=8;
+  cols.forEach((col,i)=>{const cell=ws.getCell(headerRow,i+1);cell.value=col;cell.font={bold:true,color:{argb:'FFFFFFFF'}};cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF0B315C'}};cell.alignment={vertical:'middle',wrapText:true};cell.border={bottom:{style:'medium',color:{argb:'FFD4AF58'}}};});
+  ws.getRow(headerRow).height=24;
+  rows.forEach((row,ri)=>{cols.forEach((col,ci)=>{const cell=ws.getCell(headerRow+1+ri,ci+1);let v=row[col];if(v&&typeof v==='object')v=JSON.stringify(v);cell.value=v??'';cell.alignment={vertical:'top',wrapText:true};if(ri%2===1)cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};});});
+  ws.autoFilter={from:{row:headerRow,column:1},to:{row:headerRow+rows.length,column:lastCol}};
+  cols.forEach((col,i)=>{
+    let width=Math.max(12,Math.min(42,col.length+2));
+    for(const row of rows.slice(0,250)){const s=String(row[col]??'');width=Math.max(width,Math.min(42,Math.ceil(s.length*0.8)+2));}
+    if(/details|description|notes|evidence|action/i.test(col))width=Math.max(width,30);
+    ws.getColumn(i+1).width=width;
+  });
+  ws.pageSetup={orientation:lastCol>6?'landscape':'portrait',fitToPage:true,fitToWidth:1,fitToHeight:0,paperSize:9,margins:{left:.3,right:.3,top:.5,bottom:.5,header:.2,footer:.2}};
+  ws.headerFooter.oddFooter='&LFunda Online Academy (Pty) Ltd&C'+report.title+'&RPage &P of &N';
+  const buffer=await wb.xlsx.writeBuffer();
+  const fileName=(m.fileName||`funda-${safeName(report.title)}-${new Date().toISOString().slice(0,10)}.xlsx`);
+  downloadBlob(new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),fileName);
+  return fileName;
+}
+async function exportPdf(report,meta={}){
+  await ensurePdf();
+  const actor=meta.generatedBy?null:await generatedBy();
+  const m={...meta,...(!meta.generatedBy?metaFor(report,meta.from,meta.to,meta.scope||'all',actor):{})};
+  const {jsPDF}=window.jspdf;
+  const rows=report.rows?.length?report.rows:[{Message:'No records found for the selected report and date range.'}];
+  const cols=Object.keys(rows[0]);
+  const large=cols.length>7;
+  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:large?'a3':'a4'});
+  const pageWidth=doc.internal.pageSize.getWidth();
+  doc.setFillColor(6,23,45);doc.rect(0,0,pageWidth,30,'F');
+  doc.setFillColor(212,175,88);doc.rect(0,30,pageWidth,2,'F');
+  doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(18);doc.text('FUNDA ONLINE ACADEMY',14,13);
+  doc.setFontSize(12);doc.text(report.title,14,22);
+  doc.setTextColor(70,82,102);doc.setFont('helvetica','normal');doc.setFontSize(9);
+  doc.text(`Reference: ${m.reference||''}`,14,39);doc.text(`Period: ${m.period||'All available records'}`,14,44);
+  doc.text(`Generated: ${m.generatedAt?new Date(m.generatedAt).toLocaleString('en-ZA'):new Date().toLocaleString('en-ZA')}`,14,49);
+  doc.text(`Generated by: ${m.generatedBy||'Administrator'}`,14,54);
+  let startY=61;
+  if(report.summary?.length){
+    const text=report.summary.map(x=>x[0]+': '+x[1]).join('   |   ');
+    doc.setFillColor(248,244,232);doc.roundedRect(14,startY,pageWidth-28,12,2,2,'F');
+    doc.setTextColor(88,70,28);doc.setFont('helvetica','bold');doc.setFontSize(8.5);
+    const lines=doc.splitTextToSize(text,pageWidth-36);doc.text(lines,18,startY+5);
+    startY+=16+(lines.length>1?(lines.length-1)*4:0);
+  }
+  const body=rows.map(r=>cols.map(c=>{const v=r[c];return v&&typeof v==='object'?JSON.stringify(v):String(v??'')}));
+  doc.autoTable({
+    head:[cols],body,startY,theme:'grid',
+    styles:{font:'helvetica',fontSize:large?8.5:9,cellPadding:2.2,valign:'top',overflow:'linebreak',textColor:[38,50,68]},
+    headStyles:{fillColor:[11,49,92],textColor:[255,255,255],fontStyle:'bold',lineColor:[212,175,88],lineWidth:.3},
+    alternateRowStyles:{fillColor:[248,250,252]},
+    margin:{left:14,right:14,bottom:14},
+    didDrawPage:()=>{
+      const h=doc.internal.pageSize.getHeight();doc.setFontSize(8);doc.setTextColor(120,130,145);doc.setFont('helvetica','normal');
+      doc.text('Funda Online Academy (Pty) Ltd · System-generated report',14,h-7);
+      doc.text(`Page ${doc.internal.getNumberOfPages()}`,pageWidth-30,h-7);
+    }
+  });
+  const fileName=(m.fileName||`funda-${safeName(report.title)}-${new Date().toISOString().slice(0,10)}.pdf`);
+  doc.save(fileName);
+  return fileName;
+}
+async function logRun(type,from,to,scope,format,count,fileName){
+  try{
+    const {data:{session}}=await client.auth.getSession();if(!session?.user)return;
+    await client.from('admin_report_runs').insert({
+      report_type:defs[type]?.label||type,period_start:scope==='all'?null:(from||null),period_end:scope==='all'?null:(to||null),
+      status:'Generated',generated_by:session.user.id,summary:{rows:count},output_format:format,row_count:count,file_name:fileName,report_scope:scope
+    });
+    await client.from('admin_audit_log').insert({
+      actor_id:session.user.id,action:'Generated '+(defs[type]?.label||type)+' report',
+      department:'Executive / Governance',entity_type:'report',entity_id:fileName,
+      details:`${count} row(s) · ${format.toUpperCase()} · ${scope==='all'?'all records':(from||'Beginning')+' to '+(to||'Today')}`,
+      source:'system',status:'recorded'
+    });
+  }catch(e){console.warn('Report run could not be logged',e)}
+}
+async function generate(){
+  const type=document.getElementById('frc-type').value,format=document.getElementById('frc-format').value,scope=document.getElementById('frc-scope').value;
+  const from=document.getElementById('frc-from').value,to=document.getElementById('frc-to').value,status=document.getElementById('frc-status'),btn=document.getElementById('frc-generate');
+  if(from&&to&&from>to){status.textContent='From date cannot be later than To date.';return}
+  status.textContent='Loading and validating report data…';btn.disabled=true;
+  try{
+    const data=await fetchFor(type,from,to,scope),report=build(type,data,from,to,scope),actor=await generatedBy(),meta=metaFor(report,from,to,scope,actor);
+    let fileName;
+    if(format==='xlsx')fileName=await exportExcel(report,meta);
+    else fileName=await exportPdf(report,meta);
+    await logRun(type,from,to,scope,format,report.rows.length,fileName);
+    status.textContent=`Report ready: ${report.rows.length} row(s) · ${format.toUpperCase()}.`;
+    setTimeout(close,850);
+  }catch(e){
+    console.error(e);status.textContent=e.message||'Could not generate the report. No incomplete report was downloaded.';
+  }finally{btn.disabled=false}
+}
+function hookButtons(){
+  const attach=()=>{
+    document.querySelectorAll('.download2,.reportActions .btn').forEach(btn=>{
+      const t=low(btn.textContent);
+      if((t.includes('download')||t.includes('report'))&&!btn.classList.contains('frc-trigger')){
+        btn.onclick=e=>{e.preventDefault();open()};btn.classList.add('frc-trigger');
+      }
+    });
+  };
+  attach();new MutationObserver(attach).observe(document.body,{subtree:true,childList:true});
+}
+
+window.FundaReportExports={exportExcel,exportPdf,build,fetchFor,generatedBy,metaFor};
+window.openFundaReportCentre=open;
+installStyle();hookButtons();
 })();
