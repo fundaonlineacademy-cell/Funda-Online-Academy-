@@ -225,6 +225,37 @@
     });
   }
 
+  async function writeAdminLogoutAudit(client){
+    if(!client)return;
+    const timeout=ms=>new Promise(resolve=>setTimeout(()=>resolve(null),ms));
+    try{
+      const userResult=await Promise.race([
+        client.auth?.getUser?.().catch(()=>null),
+        timeout(900)
+      ]);
+      const userId=userResult?.data?.user?.id||null;
+      const now=new Date();
+      const zaDate=new Intl.DateTimeFormat('en-CA',{
+        timeZone:'Africa/Johannesburg',year:'numeric',month:'2-digit',day:'2-digit'
+      }).format(now);
+      const write=client.from('admin_audit_log').insert({
+        actor_id:userId,
+        action:'Admin logged out',
+        department:'IT, Security & Platform',
+        entity_type:'session',
+        entity_id:userId||'admin-portal',
+        details:'Admin session ended through the Admin Command Center logout control.',
+        source:'system',
+        status:'recorded',
+        occurred_on:zaDate
+      });
+      const result=await Promise.race([write,timeout(1200)]);
+      if(result?.error)console.warn('Admin logout audit could not be recorded',result.error);
+    }catch(error){
+      console.warn('Admin logout audit could not be recorded',error);
+    }
+  }
+
   async function signOutAdmin(){
     const button=document.querySelector('[data-funda-admin-logout]');
     if(!window.confirm('Are you sure you want to log out?'))return;
@@ -241,6 +272,7 @@
           : null
       );
       if(client?.auth){
+        await writeAdminLogoutAudit(client);
         const result=await client.auth.signOut();
         if(result?.error)throw result.error;
         window.location.replace('login.html');
