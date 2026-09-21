@@ -119,10 +119,24 @@ declare
   v_full_name text:=coalesce(new.raw_user_meta_data->>'full_name','');
   v_account_type text:=lower(coalesce(new.raw_user_meta_data->>'account_type','student'));
   v_declared_role text:=lower(coalesce(new.raw_user_meta_data->>'role',''));
+  v_staff_department text:=nullif(new.raw_user_meta_data->>'department','');
   v_staff_invite boolean:=new.invited_at is not null
     and (v_account_type='staff' or v_declared_role='staff');
 begin
   if v_staff_invite then
+    if v_staff_department is null or v_staff_department not in (
+      'Human Resources',
+      'Finance & Accounting',
+      'Academic, Assessments & Content',
+      'Enrolments & Courses',
+      'Student Support & CRM',
+      'Marketing & Admissions',
+      'Communication Hub',
+      'IT, Security & Platform'
+    ) then
+      raise exception 'Invalid Staff department';
+    end if;
+
     insert into public.profiles(
       id,full_name,email,phone,gender,role,staff_code,job_title,department
     )
@@ -225,6 +239,19 @@ begin
 
   if p_access_level not in ('read','edit','manager') then
     raise exception 'Invalid staff access level';
+  end if;
+
+  if p_department not in (
+    'Human Resources',
+    'Finance & Accounting',
+    'Academic, Assessments & Content',
+    'Enrolments & Courses',
+    'Student Support & CRM',
+    'Marketing & Admissions',
+    'Communication Hub',
+    'IT, Security & Platform'
+  ) then
+    raise exception 'Invalid Staff department';
   end if;
 
   insert into public.profiles(
