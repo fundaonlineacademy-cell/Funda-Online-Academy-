@@ -242,8 +242,11 @@ async function exportAudit(format){
   const report=auditExportReport(),from=$('rcaFrom').value,to=$('rcaTo').value,scope=from||to?'period':'all';
   const btn=$(format==='xlsx'?'rcaExcel':'rcaPdf');btn.disabled=true;const old=btn.textContent;btn.textContent='Generating…';
   try{
-    if(format==='xlsx')await api.exportExcel(report,{from,to,scope});
-    else await api.exportPdf(report,{from,to,scope});
+    let fileName;
+    if(format==='xlsx')fileName=await api.exportExcel(report,{from,to,scope});
+    else fileName=await api.exportPdf(report,{from,to,scope});
+    await api.logRun?.('audit',from,to,scope,format,report.rows.length,fileName);
+    await loadData();
   }catch(e){alert(e.message||'The audit report could not be generated.')}
   finally{btn.disabled=false;btn.textContent=old}
 }
