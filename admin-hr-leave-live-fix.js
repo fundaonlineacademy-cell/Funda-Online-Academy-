@@ -1,5 +1,5 @@
 (()=>{
-if(!/admin-v2\.html$/i.test(location.pathname)||window.__fundaHrLeaveLiveFix)return;
+if(!/admin-v2\.html$/i.test(location.pathname)||window.__fundaHrLeaveLiveFix||window.__fundaHrAuthoritativeLoader)return;
 window.__fundaHrLeaveLiveFix=true;
 let db,busy=false;
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));

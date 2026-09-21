@@ -16,6 +16,7 @@
 <main class="wrap"><div id="app" class="card">Loading secure staff workspace…</div></main>
 <script>
 const esc=s=>String(s??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));
+const safeUrl=v=>/^https?:\/\//i.test(String(v||'').trim())?String(v).trim():'';
 const inviteArrival=/type=invite|type=recovery|code=/i.test(location.href);
 let db,u,p,contracts=[],leave=[],training=[],reviews=[],access=[];
 async function initClient(){if(db)return;db=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY)}
@@ -87,7 +88,9 @@ function render(){
   <div class="card"><h3 class="sectionTitle">My Department Access</h3>${access.map(a=>`<div class="row"><b>${esc(a.department)}</b><div class="meta">Access level: ${esc(a.access_level)} ${a.can_approve?'· Approval authority granted':''}</div></div>`).join('')||'<p class="meta">No active departmental access assignment is currently recorded.</p>'}</div>
   <div class="card"><h3 class="sectionTitle">Employment Contracts & Acknowledgements</h3>${contracts.map(c=>`<div class="row"><b>${esc(c.contract_number)} · ${esc(c.title)}</b><p class="meta">${esc(c.contract_type)} · <span class="pill ${esc(c.status)}">${esc(String(c.status).toUpperCase())}</span></p><div style="white-space:pre-wrap;line-height:1.55;font-size:12px">${esc(c.body)}</div>${c.status==='issued'?`<hr><label class="meta"><input type="checkbox" id="agree-${c.id}"> I confirm that I have read and accept these terms.</label><input class="input" id="sig-${c.id}" placeholder="Type your full name as digital signature"><div class="actions"><button class="btn" onclick="acceptContract('${c.id}')">Accept & Sign</button><button class="btn bad" onclick="declineContract('${c.id}')">Decline</button></div>`:c.status==='accepted'?`<p class="meta">Accepted ${esc(c.accepted_at||'')} · Signature: ${esc(c.typed_signature||'')}</p>`:c.status==='declined'?`<p class="meta">Declined ${esc(c.declined_at||'')} · Reason: ${esc(c.decline_reason||'Not stated')}</p>`:''}</div>`).join('')||'<p class="meta">No contracts have been issued to you.</p>'}</div>
   <div class="card"><h3 class="sectionTitle">Leave Requests</h3><select class="input" id="lt"><option>Annual Leave</option><option>Sick Leave</option><option>Family Responsibility Leave</option><option>Unpaid Leave</option><option>Study Leave</option><option>Compassionate Leave</option><option>Other</option></select><input class="input" id="ls" type="date"><input class="input" id="le" type="date"><textarea class="input" id="lr" placeholder="Reason / notes"></textarea><button class="btn" onclick="requestLeave()">Submit Leave Request</button>${leave.map(x=>`<div class="row">${esc(x.leave_type)} · ${esc(x.start_date)} to ${esc(x.end_date)} · <span class="pill ${esc(x.status)}">${esc(x.status)}</span>${x.review_notes?`<div class="meta">Review note: ${esc(x.review_notes)}</div>`:''}</div>`).join('')}</div>
-  <div class="card"><h3 class="sectionTitle">Training & Performance</h3>${training.map(x=>`<div class="row"><b>${esc(x.training_name)}</b><div class="meta">${esc(x.status)} ${x.completed_on?'· '+esc(x.completed_on):''}</div></div>`).join('')||'<p class="meta">No training records yet.</p>'}${reviews.map(x=>`<div class="row"><b>Performance review ${esc(x.review_period)}</b><div class="meta">${esc(x.status)} · Rating ${esc(x.rating??'—')}</div></div>`).join('')}</div>
+  <div class="card"><h3 class="sectionTitle">Training & Performance</h3>
+  ${training.map(x=>{let evidence=safeUrl(x.evidence_url);return `<div class="row"><b>${esc(x.training_name)}</b><div class="meta">${esc(x.status)} ${x.completed_on?'· '+esc(x.completed_on):''}</div>${evidence?`<div class="meta"><a href="${esc(evidence)}" target="_blank" rel="noopener">Open training evidence ↗</a></div>`:''}</div>`}).join('')||'<p class="meta">No training records yet.</p>'}
+  ${reviews.map(x=>`<div class="row"><b>Performance review ${esc(x.review_period)}</b><div class="meta">${esc(x.status)} · Rating ${esc(x.rating??'—')}</div><div class="meta"><b>Strengths:</b> ${esc(x.strengths||'—')}</div><div class="meta"><b>Development:</b> ${esc(x.development_needs||'—')}</div><div class="meta"><b>Objectives:</b> ${esc(x.objectives||'—')}</div>${x.employee_acknowledged_at?`<div class="meta">Acknowledged ${esc(x.employee_acknowledged_at)}${x.employee_comments?' · Comment: '+esc(x.employee_comments):''}</div>`:['shared','closed'].includes(x.status)?`<div class="actions"><button class="btn" onclick="acknowledgePerformance('${x.id}')">Acknowledge Review</button></div>`:'<div class="meta">Awaiting HR to share this review.</div>'}</div>`).join('')}</div>
   <div class="card"><button class="btn alt" onclick="logout()">Sign out</button></div>
   </div>`;
 }
@@ -107,14 +110,21 @@ async function acceptContract(id){
   let declaration='I confirm that I have read, understood and accepted this agreement electronically.';
   let r=await db.from('hr_contracts').update({status:'accepted',typed_signature:sig,acceptance_declaration:declaration,accepted_at:new Date().toISOString()}).eq('id',id).eq('profile_id',u.id).eq('status','issued');
   if(r.error)return alert(r.error.message);
-  await db.from('hr_audit_log').insert({actor_id:u.id,action:'contract_accepted',entity_type:'hr_contract',entity_id:id,subject_profile_id:u.id,details:{typed_signature:sig,declaration}});
   load();
 }
 async function declineContract(id){
   let reason=prompt('Reason for declining this contract:');if(!reason||!reason.trim())return;
   let r=await db.from('hr_contracts').update({status:'declined',declined_at:new Date().toISOString(),decline_reason:reason.trim()}).eq('id',id).eq('profile_id',u.id).eq('status','issued');
   if(r.error)return alert(r.error.message);
-  await db.from('hr_audit_log').insert({actor_id:u.id,action:'contract_declined',entity_type:'hr_contract',entity_id:id,subject_profile_id:u.id,details:{reason:reason.trim()}});
+  load();
+}
+async function acknowledgePerformance(id){
+  let review=reviews.find(x=>x.id===id);
+  if(!review||!['shared','closed'].includes(review.status)||review.employee_acknowledged_at)return;
+  let comments=prompt('Optional comments on this performance review:','');
+  if(comments===null)return;
+  let r=await db.rpc('acknowledge_my_performance_review',{p_review_id:id,p_comments:comments.trim()||null});
+  if(r.error)return alert('Performance review could not be acknowledged: '+r.error.message);
   load();
 }
 async function requestLeave(){
