@@ -14,7 +14,7 @@ if(!client)return;
 
 const defs={
   executive:{label:'Executive Summary',tables:['profiles','ceo_account_control_state','courses','enrollments','payments','admin_cashbook','support_tickets','assessment_attempts','certificates','communications']},
-  management:{label:'Management & Governance',tables:['admin_governance']},
+  management:{label:'Management & Governance',tables:['governance_objectives','governance_policies','governance_risks','governance_actions','governance_decisions','governance_action_history']},
   finance:{label:'Finance & Accounting',tables:['profiles','courses','enrollments','payments','admin_cashbook']},
   enrolments:{label:'Enrolments',tables:['profiles','courses','enrollments']},
   students:{label:'Students',tables:['profiles','ceo_account_control_state']},
@@ -182,10 +182,32 @@ function build(type,data,from,to,scope){
   }
 
   if(type==='management'){
-    rows=all(data.admin_governance,['created_at','updated_at','target_date']).map(x=>({
-      Type:x.item_type,Title:x.title,Owner:x.owner,Status:x.status,'Target Date':fmtDate(x.target_date),Details:x.details,Created:fmtDate(x.created_at)
-    }));
-    summary=[['Governance items',rows.length],['Active',rows.filter(x=>low(x.Status)==='active').length]];
+    const objectives=all(data.governance_objectives,['created_at','updated_at','target_date']);
+    const policies=all(data.governance_policies,['created_at','updated_at','approved_at','review_date']);
+    const risks=all(data.governance_risks,['created_at','updated_at','review_date']);
+    const actions=all(data.governance_actions,['created_at','updated_at','due_date','last_completed_at']);
+    const decisions=all(data.governance_decisions,['created_at','updated_at','decision_date','target_date']);
+    const history=all(data.governance_action_history,['completed_at','created_at','due_date_completed','next_due_date']);
+    rows=[
+      ...objectives.map(x=>({'Record Type':'Strategic Objective',Title:x.title,Owner:x.owner||'',Department:x.department||'',Status:x.status||'',Date:fmtDate(x.target_date),Details:[x.description,x.progress!=null?'Progress '+x.progress+'%':''].filter(Boolean).join(' · '),Created:fmtDate(x.created_at)})),
+      ...policies.map(x=>({'Record Type':'Policy',Title:x.title,Owner:x.owner||'',Department:x.category||'',Status:x.status||'',Date:fmtDate(x.review_date),Details:[x.version?'Version '+x.version:'',x.document_url||'',x.notes||''].filter(Boolean).join(' · '),Created:fmtDate(x.created_at)})),
+      ...risks.map(x=>({'Record Type':'Risk',Title:x.title,Owner:x.owner||'',Department:x.department||x.category||'',Status:x.risk_status||'',Date:fmtDate(x.review_date),Details:[x.likelihood?'Likelihood '+x.likelihood:'',x.impact?'Impact '+x.impact:'',x.mitigation||''].filter(Boolean).join(' · '),Created:fmtDate(x.created_at)})),
+      ...actions.map(x=>({'Record Type':'Management Action',Title:x.title,Owner:x.owner||'',Department:x.department||x.category||'',Status:x.status||'',Date:fmtDate(x.due_date),Details:[x.recurrence?String(x.recurrence).replaceAll('_',' '):'',x.priority||'',x.source_reference||'',x.evidence_requirement||''].filter(Boolean).join(' · '),Created:fmtDate(x.created_at)})),
+      ...decisions.map(x=>({'Record Type':'Governance Decision',Title:x.title,Owner:x.owner||x.approved_by||'',Department:x.department||'',Status:x.implementation_status||'',Date:fmtDate(x.decision_date),Details:[x.decision_text,x.target_date?'Target '+fmtDate(x.target_date):''].filter(Boolean).join(' · '),Created:fmtDate(x.created_at)})),
+      ...history.map(x=>({'Record Type':'Action Completion',Title:(actions.find(a=>a.id===x.action_id)?.title)||'Executive action',Owner:'',Department:'',Status:'completed',Date:fmtDateTime(x.completed_at),Details:[x.completion_notes,x.evidence_notes,x.next_due_date?'Next due '+fmtDate(x.next_due_date):''].filter(Boolean).join(' · '),Created:fmtDateTime(x.created_at)}))
+    ];
+    const openActions=actions.filter(x=>!['completed','closed'].includes(low(x.status)));
+    const activeRisks=risks.filter(x=>['open','monitoring'].includes(low(x.risk_status)));
+    const duePolicies=policies.filter(x=>low(x.status)!=='retired'&&x.review_date&&new Date(x.review_date+'T23:59:59')<new Date());
+    summary=[
+      ['Strategic objectives',objectives.length],
+      ['Policies',policies.length],
+      ['Active / monitored risks',activeRisks.length],
+      ['Open management actions',openActions.length],
+      ['Governance decisions',decisions.length],
+      ['Action completion history',history.length],
+      ['Policies due for review',duePolicies.length]
+    ];
   }
 
   if(type==='finance'){
