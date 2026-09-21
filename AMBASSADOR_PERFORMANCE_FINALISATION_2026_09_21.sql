@@ -376,3 +376,61 @@ begin
 end $$;
 
 commit;
+
+
+-- 21 September 2026 — Ambassador correspondence and final physical-review corrections
+-- Physical review corrections:
+--   * removed duplicate empty Ambassador shell KPI cards and duplicate workspace copy
+--   * exposed Referral Register directly from the performance panel
+--   * added confirmed Ambassador earnings and payouts-paid summaries
+--   * added Admin-only Ambassador correspondence drafts / final letters
+--   * added approval, high-value partnership, activation, recognition and follow-up templates
+--   * correspondence history is included in the formal Ambassador report
+
+create table if not exists public.ambassador_correspondence_drafts(
+  id uuid primary key default gen_random_uuid(),
+  application_id uuid null
+    references public.ambassador_programme_applications(id) on delete set null,
+  correspondence_kind text not null default 'email'
+    check (correspondence_kind in ('email','letter')),
+  template_key text not null,
+  correspondence_date date not null default current_date,
+  recipient_name text null,
+  recipient_email text null,
+  subject text not null,
+  body_text text not null,
+  status text not null default 'draft'
+    check (status in ('draft','final')),
+  created_by uuid null references public.profiles(id) on delete set null,
+  updated_by uuid null references public.profiles(id) on delete set null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.ambassador_correspondence_drafts enable row level security;
+grant select,insert,update,delete on public.ambassador_correspondence_drafts
+  to authenticated;
+
+drop policy if exists "Admins manage ambassador correspondence"
+  on public.ambassador_correspondence_drafts;
+
+create policy "Admins manage ambassador correspondence"
+on public.ambassador_correspondence_drafts
+for all
+to authenticated
+using ((select public.is_admin()))
+with check ((select public.is_admin()));
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_publication_tables
+    where pubname='supabase_realtime'
+      and schemaname='public'
+      and tablename='ambassador_correspondence_drafts'
+  ) then
+    alter publication supabase_realtime
+      add table public.ambassador_correspondence_drafts;
+  end if;
+end $$;
