@@ -46,6 +46,7 @@ function filtered(){try{const term=(document.getElementById('search')?.value||''
 function build(){
   const table=document.querySelector('.overflow-x-auto');if(!table)return;
   let host=document.getElementById('libraryMobileCards');if(!host){host=document.createElement('div');host.id='libraryMobileCards';host.setAttribute('aria-live','polite');table.insertAdjacentElement('afterend',host)}
+  if(window.FundaLibraryAdminDataReady&&!window.FundaLibraryAdminDataReady()){host.innerHTML='<div class="lam-empty">Library data is currently unavailable. Use Refresh to try again.</div>';return}
   const a=window.FundaLibraryAdminVisibleRows?window.FundaLibraryAdminVisibleRows():filtered();
   host.innerHTML=a.length?a.map(x=>{const status=String(x.publication_status||'draft').toLowerCase();return `<article class="lam-card">
     <div class="lam-top"><div><div class="lam-title">${escM(x.title||'Untitled resource')}</div><div class="lam-author">${escM(x.author||x.publisher||'Funda Online Academy')}</div></div><span class="lam-status ${escM(status)}">${escM(status)}</span></div>
