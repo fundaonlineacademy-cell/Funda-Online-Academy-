@@ -7,6 +7,7 @@ let auditRows=[],reportRuns=[],complianceRows=[],profiles=[];
 let auditLoaded=false,runsLoaded=false,complianceLoaded=false;
 let loadErrors=[];
 let activeTab='audit',auditPage=1,compliancePage=1,historyPage=1,editingComplianceId=null;
+let auditFilters={search:'',from:'',to:'',source:'',department:'',status:''};
 const PAGE_SIZE=10;
 const $=x=>document.getElementById(x);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -65,12 +66,12 @@ function profileName(id){
 }
 function auditFilter(){
   if(!auditLoaded)return [];
-  const search=low($('rcaSearch')?.value),from=$('rcaFrom')?.value,to=$('rcaTo')?.value,source=$('rcaSource')?.value||'',dept=$('rcaDept')?.value||'',status=$('rcaStatus')?.value||'';
+  const {search,from,to,source,department,status}=auditFilters;
   return auditRows.filter(x=>{
     const d=String(x.event_date||x.event_time||'').slice(0,10);
     if(from&&d<from)return false;if(to&&d>to)return false;
-    if(source&&x.source!==source)return false;if(dept&&x.department!==dept)return false;if(status&&low(x.status)!==low(status))return false;
-    if(search&&!low([x.source,x.department,x.action,x.entity_type,x.entity_id,x.responsible_person,x.status,x.details,x.actor_name].join(' ')).includes(search))return false;
+    if(source&&x.source!==source)return false;if(department&&x.department!==department)return false;if(status&&low(x.status)!==low(status))return false;
+    if(search&&!low([x.source,x.department,x.action,x.entity_type,x.entity_id,x.responsible_person,x.status,x.details,x.actor_name].join(' ')).includes(low(search)))return false;
     return true;
   });
 }
@@ -98,11 +99,11 @@ function auditPanel(){
       <h2>Audit Activity Register</h2>
       <p class="rcaMeta">Unified register across Admin, Academic, Enrolments/Course Change, HR, CEO Account Control, Account Registration and IT/Security audit sources. Historical source records remain in their original tables.</p>
       <div class="rcaBar">
-        <input id="rcaSearch" class="rcaField" style="flex:1;min-width:230px" placeholder="Search activity, person, reference, details…">
-        <input id="rcaFrom" class="rcaField" type="date"><input id="rcaTo" class="rcaField" type="date">
-        <select id="rcaSource" class="rcaField"><option value="">All sources</option>${sources.map(x=>`<option>${esc(x)}</option>`).join('')}</select>
-        <select id="rcaDept" class="rcaField"><option value="">All departments</option>${depts.map(x=>`<option>${esc(x)}</option>`).join('')}</select>
-        <select id="rcaStatus" class="rcaField"><option value="">All statuses</option>${statuses.map(x=>`<option>${esc(x)}</option>`).join('')}</select>
+        <input id="rcaSearch" class="rcaField" style="flex:1;min-width:230px" value="${esc(auditFilters.search)}" placeholder="Search activity, person, reference, details…">
+        <input id="rcaFrom" class="rcaField" type="date" value="${esc(auditFilters.from)}"><input id="rcaTo" class="rcaField" type="date" value="${esc(auditFilters.to)}">
+        <select id="rcaSource" class="rcaField"><option value="">All sources</option>${sources.map(x=>`<option value="${esc(x)}" ${auditFilters.source===x?'selected':''}>${esc(x)}</option>`).join('')}</select>
+        <select id="rcaDept" class="rcaField"><option value="">All departments</option>${depts.map(x=>`<option value="${esc(x)}" ${auditFilters.department===x?'selected':''}>${esc(x)}</option>`).join('')}</select>
+        <select id="rcaStatus" class="rcaField"><option value="">All statuses</option>${statuses.map(x=>`<option value="${esc(x)}" ${auditFilters.status===x?'selected':''}>${esc(x)}</option>`).join('')}</select>
         <button class="rcaBtn alt" id="rcaApply">Apply</button>
       </div>
       <div class="rcaBar"><button class="rcaBtn" id="rcaExcel">Download Excel (.xlsx)</button><button class="rcaBtn" id="rcaPdf">Download PDF</button><button class="rcaBtn alt" id="rcaReportCentre">Report Centre</button></div>
@@ -197,9 +198,14 @@ function wire(){
   if(activeTab==='history')wireHistory();
 }
 function wireAudit(){
-  const refreshList=()=>{auditPage=1;render()};
-  ['rcaSearch','rcaFrom','rcaTo','rcaSource','rcaDept','rcaStatus'].forEach(id=>$(id)?.addEventListener(id==='rcaSearch'?'input':'change',refreshList));
-  $('rcaApply').onclick=refreshList;
+  $('rcaApply').onclick=()=>{
+    auditFilters={
+      search:$('rcaSearch').value.trim(),from:$('rcaFrom').value,to:$('rcaTo').value,
+      source:$('rcaSource').value,department:$('rcaDept').value,status:$('rcaStatus').value
+    };
+    auditPage=1;render();
+  };
+  $('rcaSearch').addEventListener('keydown',e=>{if(e.key==='Enter')$('rcaApply').click()});
   $('rcaPrev').onclick=()=>{auditPage=Math.max(1,auditPage-1);render()};
   $('rcaNext').onclick=()=>{auditPage++;render()};
   $('aaSave').onclick=saveAudit;
@@ -246,7 +252,7 @@ async function exportAudit(format){
     if(format==='xlsx')fileName=await api.exportExcel(report,{from,to,scope});
     else fileName=await api.exportPdf(report,{from,to,scope});
     await api.logRun?.('audit',from,to,scope,format,report.rows.length,fileName);
-    await loadData();
+    await loadData();render();
   }catch(e){alert(e.message||'The audit report could not be generated.')}
   finally{btn.disabled=false;btn.textContent=old}
 }
