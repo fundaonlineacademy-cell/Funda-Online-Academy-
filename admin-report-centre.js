@@ -148,16 +148,16 @@ async function fetchFor(type,from,to,scope){
     const cash=all(data.admin_cashbook,['entry_date','created_at']);
     const period=data.finance_period||{};
     const snapshot=data.finance_snapshot||{};
-    const commitment=enrol.reduce((total,x)=>total+Number(c[x.course_id]?.price??x.amount??0),0);
+    const commitment=enrol.reduce((total,x)=>total+Number(x.amount??c[x.course_id]?.price??0),0);
     rows=[
       ...enrol.map(x=>({
         'Record Type':'Approved enrolment commitment',
         Date:fmtDate(x.reviewed_at||x.submitted_at||x.created_at),
         Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
         Course:c[x.course_id]?.title||x.course_id,
-        Description:'Approved tuition using current course catalogue price',
+        Description:'Contracted approved tuition · current catalogue price '+money(c[x.course_id]?.price??x.amount??0),
         Status:x.status||x.enrollment_status,
-        Amount:Number(c[x.course_id]?.price??x.amount??0)
+        Amount:Number(x.amount??c[x.course_id]?.price??0)
       })),
       ...pay.map(x=>({
         'Record Type':'Payment',
@@ -179,7 +179,7 @@ async function fetchFor(type,from,to,scope){
       }))
     ];
     summary=[
-      ['Approved tuition commitments in report scope',money(commitment)],
+      ['Contracted approved tuition in report scope',money(commitment)],
       ['Confirmed payment income',money(period.verified_tuition)],
       ['Other confirmed income',money(period.other_income)],
       ['Total confirmed income',money(period.confirmed_income)],
@@ -191,8 +191,10 @@ async function fetchFor(type,from,to,scope){
     ];
     if(scope==='all'){
       summary.push(
-        ['Current approved tuition',money(snapshot.approved_tuition)],
-        ['Current outstanding approved tuition',money(snapshot.outstanding_tuition)],
+        ['Current contracted approved tuition',money(snapshot.contracted_tuition??snapshot.enrolment_snapshot_tuition)],
+        ['Current outstanding approved receivables',money(snapshot.contracted_outstanding_tuition??snapshot.outstanding_tuition)],
+        ['Current catalogue value of approved enrolments',money(snapshot.approved_tuition)],
+        ['Current catalogue variance',money(snapshot.catalogue_variance)],
         ['Current confirmed cash income',money(snapshot.confirmed_cash_income)]
       );
     }
