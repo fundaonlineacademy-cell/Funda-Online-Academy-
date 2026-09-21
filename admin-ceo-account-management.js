@@ -8,6 +8,8 @@ let accounts=[];
 let actions=[];
 let activeKind='student';
 let searchTerm='';
+let navObserver=null;
+let ceoAuthorised=false;
 const PAGE_SIZE=10;
 const pages={student:1,staff:1,deleted:1,audit:1};
 
@@ -73,6 +75,7 @@ async function isCeo(){
 }
 
 function ensureNavButton(){
+  if(!ceoAuthorised)return false;
   const nav=document.getElementById('nav');
   if(!nav)return false;
   if(document.getElementById('ceoAccountControlNav'))return true;
@@ -377,17 +380,25 @@ async function openControl(){
   }
 }
 
+function watchNav(){
+  const nav=document.getElementById('nav');
+  if(!nav)return false;
+  if(navObserver)return true;
+  navObserver=new MutationObserver(()=>{ensureNavButton()});
+  navObserver.observe(nav,{childList:true});
+  return true;
+}
+
 async function boot(){
   installStyles();
   const ok=await isCeo();
   if(!ok)return;
-  if(ensureNavButton())return;
-  const observer=new MutationObserver(()=>{
-    if(ensureNavButton())observer.disconnect();
-  });
-  observer.observe(document.body,{childList:true,subtree:true});
+  ceoAuthorised=true;
+  ensureNavButton();
+  watchNav();
 }
 
+document.addEventListener('funda:admin-nav-ready',()=>{if(ceoAuthorised){ensureNavButton();watchNav()}});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,400),{once:true});
 else setTimeout(boot,400);
 })();
