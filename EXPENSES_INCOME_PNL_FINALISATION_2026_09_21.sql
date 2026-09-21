@@ -500,7 +500,10 @@ returns void
 language plpgsql
 security definer
 set search_path=''
-as $$
+as $
+declare
+  v_row public.admin_cashbook%rowtype;
+  v_next date;
 begin
   if not (
     public.is_admin()
@@ -511,13 +514,32 @@ begin
   if p_entry_date>current_date then
     raise exception 'A planned item cannot be posted with a future date' using errcode='22023';
   end if;
+
+  select * into v_row
+  from public.admin_cashbook
+  where id=p_id and posting_status='planned'
+  for update;
+  if not found then raise exception 'Planned cashbook item not found' using errcode='P0002'; end if;
+
+  if v_row.recurrence='monthly' then
+    v_next:=(v_row.entry_date+interval '1 month')::date;
+    insert into public.admin_cashbook(
+      entry_type,category,description,amount,entry_date,counterparty,reference_number,payment_method,
+      department,tax_treatment,reconciliation_status,source_type,source_id,receipt_url,created_by,
+      posting_status,recurrence
+    ) values(
+      v_row.entry_type,v_row.category,v_row.description,v_row.amount,v_next,v_row.counterparty,null,v_row.payment_method,
+      v_row.department,v_row.tax_treatment,'unreconciled','manual',null,v_row.receipt_url,auth.uid(),
+      'planned','monthly'
+    );
+  end if;
+
   perform set_config('funda.finance_cashbook_rpc','on',true);
   update public.admin_cashbook
   set posting_status='posted',entry_date=p_entry_date,recurrence='none',updated_at=now()
-  where id=p_id and posting_status='planned';
-  if not found then raise exception 'Planned cashbook item not found' using errcode='P0002'; end if;
+  where id=p_id;
 end;
-$$;
+$;
 
 create or replace function public.finance_void_cashbook_entry(
   p_id uuid,
