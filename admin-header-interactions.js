@@ -96,7 +96,7 @@ function searchRows(query){
   const profiles=searchSource('profiles'),courses=searchSource('courses'),enrolments=searchSource('enrolments');
   const profileById=new Map(profiles.map(p=>[String(p.id),p]));
   const courseById=new Map(courses.map(c=>[String(c.id),c]));
-  const deleted=p=>/@deleted.funda.invalid$/i.test(String(p?.email||''))||/^deleteds+(student|staff)s+account$/i.test(String(p?.full_name||'').trim());
+  const deleted=p=>/@deleted\.funda\.invalid$/i.test(String(p?.email||''))||/^deleted\s+(student|staff)\s+account$/i.test(String(p?.full_name||'').trim());
   const results=[];
   profiles.filter(p=>lowText(p.role)==='student'&&!deleted(p)).forEach(p=>{
     const hay=lowText([p.full_name,p.email,p.phone,p.mobile_whatsapp,p.student_number].join(' '));
@@ -124,7 +124,7 @@ function positionSearch(panel,input){
   panel.style.left=Math.max(8,Math.min(r.left,window.innerWidth-Math.min(width,window.innerWidth-16)-8))+'px';
   panel.style.top=Math.min(window.innerHeight-80,r.bottom+8)+'px';
 }
-function closeSearch(){$('ahiSearchPanel')?.classList.remove('open')}
+function closeSearch(){$('ahiSearchPanel')?.classList.remove('open');$('global')?.setAttribute('aria-expanded','false')}
 function filterEnrolments(term){
   let tries=0;
   const apply=()=>{
@@ -184,6 +184,7 @@ function renderSearch(input){
     document.body.appendChild(panel);
   }
   const query=input.value.trim();
+  if(!query){closeSearch();return}
   const rows=searchRows(query);
   if(query.length<2){
     panel.innerHTML='<div class="ahiSearchEmpty">Type at least 2 characters to search students, courses and enrolments.</div>';
