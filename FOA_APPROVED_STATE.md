@@ -408,3 +408,26 @@ Add future protected decisions here in concise form, with the date and the owner
 - **2026-09-17:** Protect the approved mobile login order and public Courses-page control presentation from regression.
 - **2026-09-17:** Keep the Source Sans 3 change limited to the Student Dashboard and Student Library trial until the owner decides whether to expand it.
 - **2026-09-17:** Introduce a strict no-surprise-change protocol: change only what the owner requested and preserve unrelated approved behaviour.
+
+
+### Admin Management & Governance — FINAL OWNER-APPROVED AND LOCKED (21 September 2026)
+
+The owner physically reviewed **Admin → Management & Governance**, identified the Executive Action Centre completion-jump instability during real daily CEO use, authorised the correction and explicitly instructed that the corrected Management & Governance workspace be locked. The approved functional checkpoint is `2eda8150de1254c2641b78d55cf819617a82134a`.
+
+- **Management & Governance is a change-controlled protected Admin surface.** No layout, wording, register structure, governance lifecycle, CEO Executive Action Centre behaviour, Academy Direction presentation, reporting connection, Realtime behaviour, responsive handling or management-control workflow may be changed unless Aziwe Futhe explicitly reopens the affected area.
+- The approved governance structure remains: **Executive Governance Centre → governance summary metrics → Executive Overview / Objectives / Policies / Risks / Actions / Decisions → CEO Executive Action Centre → completion history → Academy Direction**.
+- Objectives, Policies, Risks, Actions and Decisions remain live lifecycle registers with View / Edit capability after creation. Do not restore create-once or legacy `admin_governance` behaviour.
+- The retired legacy Management/Governance writer and fallback remain disabled. If the live governance module cannot initialise, Admin must show an explicit unavailable state rather than silently using obsolete governance arithmetic or storage.
+- The CEO Executive Action Centre remains the governed workflow for daily, weekly, monthly, quarterly, annual and one-off executive responsibilities. Recurring completion must preserve completion history and advance the next due date without destroying the prior completion record.
+- **Stability is part of the lock.** Completing, adding, editing or refreshing a governance action must not make the Management workspace jump up/down, tear out the Executive Action Centre, repeatedly redraw the section or move the CEO away from the working position. Governance refreshes preserve the existing Executive Action Centre element, update action counters/rows/history in place, coalesce duplicate Realtime events and suppress immediate local-event echoes.
+- All six governance sources — `governance_objectives`, `governance_policies`, `governance_risks`, `governance_actions`, `governance_decisions` and `governance_action_history` — remain the live governance sources and remain published for Realtime subject to their Admin RLS controls.
+- Evidence expected for an executive responsibility remains separate from the evidence actually recorded on completion.
+- Executive action due/today/overdue classification continues to use the **Africa/Johannesburg** calendar date.
+- Completion History continues to use the exact database count while retaining recent detail rows for display.
+- The formal **Management & Governance** report continues to read the live governance registers and completion history, never the retired empty `admin_governance` table.
+- Failed data refreshes preserve the last successful governance information and show an error; they must not convert an unavailable source into false zeroes.
+- Governance tables retain safe horizontal handling on narrow screens and the approved Source Sans 3 Admin typography.
+- Dynamic governance content is **not frozen** by this lock: legitimate actions, objectives, risks, policies, decisions, due dates, statuses and completion-history records must continue to change through the approved live workflows. The lock protects the system structure, definitions and behaviour — not the business records themselves.
+- Work in Finance & Accounting or another Admin tab does **not** reopen Management & Governance. Shared Admin files may be edited only for an explicitly approved area and must regression-check this locked workspace when they can affect it.
+- A newly discovered Management/Governance defect is a change request, not automatic permission to alter the locked workspace. Aziwe Futhe must explicitly approve the affected correction before implementation.
+
