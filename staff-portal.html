@@ -90,7 +90,7 @@ function render(){
   <div class="card"><h3 class="sectionTitle">Leave Requests</h3><select class="input" id="lt"><option>Annual Leave</option><option>Sick Leave</option><option>Family Responsibility Leave</option><option>Unpaid Leave</option><option>Study Leave</option><option>Compassionate Leave</option><option>Other</option></select><input class="input" id="ls" type="date"><input class="input" id="le" type="date"><textarea class="input" id="lr" placeholder="Reason / notes"></textarea><button class="btn" onclick="requestLeave()">Submit Leave Request</button>${leave.map(x=>`<div class="row">${esc(x.leave_type)} · ${esc(x.start_date)} to ${esc(x.end_date)} · <span class="pill ${esc(x.status)}">${esc(x.status)}</span>${x.review_notes?`<div class="meta">Review note: ${esc(x.review_notes)}</div>`:''}</div>`).join('')}</div>
   <div class="card"><h3 class="sectionTitle">Training & Performance</h3>
   ${training.map(x=>{let evidence=safeUrl(x.evidence_url);return `<div class="row"><b>${esc(x.training_name)}</b><div class="meta">${esc(x.status)} ${x.completed_on?'· '+esc(x.completed_on):''}</div>${evidence?`<div class="meta"><a href="${esc(evidence)}" target="_blank" rel="noopener">Open training evidence ↗</a></div>`:''}</div>`}).join('')||'<p class="meta">No training records yet.</p>'}
-  ${reviews.map(x=>`<div class="row"><b>Performance review ${esc(x.review_period)}</b><div class="meta">${esc(x.status)} · Rating ${esc(x.rating??'—')}</div><div class="meta"><b>Strengths:</b> ${esc(x.strengths||'—')}</div><div class="meta"><b>Development:</b> ${esc(x.development_needs||'—')}</div><div class="meta"><b>Objectives:</b> ${esc(x.objectives||'—')}</div>${x.employee_acknowledged_at?`<div class="meta">Acknowledged ${esc(x.employee_acknowledged_at)}${x.employee_comments?' · Comment: '+esc(x.employee_comments):''}</div>`:x.status==='shared'?`<div class="actions"><button class="btn" onclick="acknowledgePerformance('${x.id}')">Acknowledge Review</button></div>`:'<div class="meta">Awaiting HR to share this review.</div>'}</div>`).join('')}</div>
+  ${reviews.map(x=>`<div class="row"><b>Performance review ${esc(x.review_period)}</b><div class="meta">${esc(x.status)} · Rating ${esc(x.rating??'—')}</div><div class="meta"><b>Strengths:</b> ${esc(x.strengths||'—')}</div><div class="meta"><b>Development:</b> ${esc(x.development_needs||'—')}</div><div class="meta"><b>Objectives:</b> ${esc(x.objectives||'—')}</div>${x.employee_acknowledged_at?`<div class="meta">Acknowledged ${esc(x.employee_acknowledged_at)}${x.employee_comments?' · Comment: '+esc(x.employee_comments):''}</div>`:['shared','closed'].includes(x.status)?`<div class="actions"><button class="btn" onclick="acknowledgePerformance('${x.id}')">Acknowledge Review</button></div>`:'<div class="meta">Awaiting HR to share this review.</div>'}</div>`).join('')}</div>
   <div class="card"><button class="btn alt" onclick="logout()">Sign out</button></div>
   </div>`;
 }
@@ -120,7 +120,7 @@ async function declineContract(id){
 }
 async function acknowledgePerformance(id){
   let review=reviews.find(x=>x.id===id);
-  if(!review||review.status!=='shared'||review.employee_acknowledged_at)return;
+  if(!review||!['shared','closed'].includes(review.status)||review.employee_acknowledged_at)return;
   let comments=prompt('Optional comments on this performance review:','');
   if(comments===null)return;
   let r=await db.rpc('acknowledge_my_performance_review',{p_review_id:id,p_comments:comments.trim()||null});
