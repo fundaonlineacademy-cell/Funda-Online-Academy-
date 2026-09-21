@@ -32,9 +32,9 @@
   html body .side .brand small.funda-strong-text.funda-strong-text,
   html body .side .sideLabel.funda-strong-text.funda-strong-text{color:#8a5f09!important}
   .top{background:radial-gradient(circle at 12% 0%,rgba(212,175,88,.14),transparent 28%),linear-gradient(100deg,var(--funda-navy-950) 0%,var(--funda-navy-900) 48%,var(--funda-navy-800) 100%)!important;border-bottom:1px solid rgba(212,175,88,.22)!important;box-shadow:0 8px 26px rgba(3,16,31,.22)!important}
-  .top input{background:rgba(255,255,255,.08)!important;border:1px solid rgba(234,215,157,.30)!important;color:#fff!important}
-  .top input:focus{outline:none!important;border-color:var(--funda-gold)!important;box-shadow:0 0 0 3px rgba(212,175,88,.14)!important}
-  .top input::placeholder{color:#d9e2ee!important}
+  html body .top input#global{background:rgba(255,255,255,.08)!important;border:1px solid rgba(234,215,157,.30)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff!important}
+  html body .top input#global:focus{outline:none!important;border-color:var(--funda-gold)!important;box-shadow:0 0 0 3px rgba(212,175,88,.14)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+  html body .top input#global::placeholder{color:#d9e2ee!important;-webkit-text-fill-color:#d9e2ee!important;opacity:1!important}
   .adminBell{background:rgba(255,255,255,.07)!important;border:1px solid rgba(212,175,88,.30)!important}
   .adminAvatar{background:linear-gradient(135deg,var(--funda-gold),var(--funda-gold-soft))!important;color:var(--funda-navy-900)!important;border-color:#fff6d8!important;box-shadow:0 4px 14px rgba(212,175,88,.23)!important}
   .adminIdentityText b{color:#fff!important}
