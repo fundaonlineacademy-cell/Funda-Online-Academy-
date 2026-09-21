@@ -142,95 +142,60 @@ async function fetchAudit(from,to,scope){
 async function fetchFor(type,from,to,scope){
   const data=await fetchTables(defs[type].tables||[]);
   if(type==='audit')data.audit_register=await fetchAudit(from,to,scope);
-  return data;
-}
-const byId=a=>Object.fromEntries((a||[]).map(x=>[x.id,x]));
-function currentProfiles(data,role){
-  const states=Object.fromEntries((data.ceo_account_control_state||[]).map(x=>[x.user_id,low(x.status)||'active']));
-  return (data.profiles||[]).filter(x=>low(x.role)===role&&states[x.id]!=='deleted');
-}
-function filterRows(arr,scope,from,to,fields=['created_at','updated_at','submitted_at','issued_at','entry_date']){
-  return (arr||[]).filter(r=>scope==='all'||between(r,from,to,fields));
-}
-function build(type,data,from,to,scope){
-  const p=byId(data.profiles||[]),c=byId(data.courses||[]);
-  let rows=[],summary=[],title=defs[type].label;
-  const all=(arr,fields)=>filterRows(arr,scope,from,to,fields);
-
-  if(type==='executive'){
-    const students=currentProfiles(data,'student');
-    const staff=currentProfiles(data,'staff');
-    const courses=(data.courses||[]).filter(x=>x.active!==false);
-    const approved=all(data.enrollments,['created_at','submitted_at','enrolled_at']).filter(x=>low(x.status||x.enrollment_status)==='approved');
-    const verified=all(data.payments,['verified_at','submitted_at','created_at']).filter(x=>low(x.status)==='verified');
-    const cash=all(data.admin_cashbook,['entry_date','created_at']);
-    const attempts=all(data.assessment_attempts,['submitted_at','created_at']);
-    const certs=all(data.certificates,['issued_at']);
-    const comms=all(data.communications,['published_at','created_at']).filter(x=>x.published===true);
-    const income=cash.filter(x=>low(x.entry_type)==='income').reduce((a,x)=>a+Number(x.amount||0),0);
-    const expenses=cash.filter(x=>low(x.entry_type)==='expense').reduce((a,x)=>a+Number(x.amount||0),0);
-    const receipts=verified.reduce((a,x)=>a+Number(x.amount||0),0);
-    const open=(data.support_tickets||[]).filter(x=>!['closed','solved','resolved'].includes(low(x.status))).length;
-    summary=[
-      ['Current students',students.length],['Staff',staff.length],['Active courses',courses.length],
-      ['Approved enrolments',approved.length],['Verified payment receipts',money(receipts)],
-      ['Cashbook income',money(income)],['Cashbook expenses',money(expenses)],['Cashbook net',money(income-expenses)],
-      ['Current open support tickets',open],['Assessment attempts',attempts.length],
-      ['Certificates issued',certs.length],['Published communications',comms.length]
-    ];
-    rows=summary.map(x=>({Metric:x[0],Value:x[1]}));
-  }
-
-  if(type==='management'){
-    const objectives=all(data.governance_objectives,['created_at','updated_at','target_date']);
-    const policies=all(data.governance_policies,['created_at','updated_at','approved_at','review_date']);
-    const risks=all(data.governance_risks,['created_at','updated_at','review_date']);
-    const actions=all(data.governance_actions,['created_at','updated_at','due_date','last_completed_at']);
-    const decisions=all(data.governance_decisions,['created_at','updated_at','decision_date','target_date']);
-    const history=all(data.governance_action_history,['completed_at','created_at','due_date_completed','next_due_date']);
-    rows=[
-      ...objectives.map(x=>({'Record Type':'Strategic Objective',Title:x.title,Owner:x.owner||'',Department:x.department||'',Status:x.status||'',Date:fmtDate(x.target_date),Details:[x.description,x.progress!=null?'Progress '+x.progress+'%':''].filter(Boolean).join(' · '),Created:fmtDate(x.created_at)})),
-      ...policies.map(x=>({'Record Type':'Policy',Title:x.title,Owner:x.owner||'',Department:x.category||'',Status:x.status||'',Date:fmtDate(x.review_date),Details:[x.version?'Version '+x.version:'',x.document_url||'',x.notes||''].filter(Boolean).join(' · '),Created:fmtDate(x.created_at)})),
-      ...risks.map(x=>({'Record Type':'Risk',Title:x.title,Owner:x.owner||'',Department:x.department||x.category||'',Status:x.risk_status||'',Date:fmtDate(x.review_date),Details:[x.likelihood?'Likelihood '+x.likelihood:'',x.impact?'Impact '+x.impact:'',x.mitigation||''].filter(Boolean).join(' · '),Created:fmtDate(x.created_at)})),
-      ...actions.map(x=>({'Record Type':'Management Action',Title:x.title,Owner:x.owner||'',Department:x.department||x.category||'',Status:x.status||'',Date:fmtDate(x.due_date),Details:[x.recurrence?String(x.recurrence).replaceAll('_',' '):'',x.priority||'',x.source_reference||'',x.evidence_requirement||''].filter(Boolean).join(' · '),Created:fmtDate(x.created_at)})),
-      ...decisions.map(x=>({'Record Type':'Governance Decision',Title:x.title,Owner:x.owner||x.approved_by||'',Department:x.department||'',Status:x.implementation_status||'',Date:fmtDate(x.decision_date),Details:[x.decision_text,x.target_date?'Target '+fmtDate(x.target_date):''].filter(Boolean).join(' · '),Created:fmtDate(x.created_at)})),
-      ...history.map(x=>({'Record Type':'Action Completion',Title:(actions.find(a=>a.id===x.action_id)?.title)||'Executive action',Owner:'',Department:'',Status:'completed',Date:fmtDateTime(x.completed_at),Details:[x.completion_notes,x.evidence_notes,x.next_due_date?'Next due '+fmtDate(x.next_due_date):''].filter(Boolean).join(' · '),Created:fmtDateTime(x.created_at)}))
-    ];
-    const openActions=actions.filter(x=>!['completed','closed'].includes(low(x.status)));
-    const activeRisks=risks.filter(x=>['open','monitoring'].includes(low(x.risk_status)));
-    const duePolicies=policies.filter(x=>low(x.status)!=='retired'&&x.review_date&&new Date(x.review_date+'T23:59:59')<new Date());
-    summary=[
-      ['Strategic objectives',objectives.length],
-      ['Policies',policies.length],
-      ['Active / monitored risks',activeRisks.length],
-      ['Open management actions',openActions.length],
-      ['Governance decisions',decisions.length],
-      ['Action completion history',history.length],
-      ['Policies due for review',duePolicies.length]
-    ];
-  }
-
   if(type==='finance'){
-    const enrol=all(data.enrollments,['created_at','submitted_at','enrolled_at']).filter(x=>low(x.status||x.enrollment_status)==='approved');
-    const pay=all(data.payments,['verified_at','submitted_at','created_at']).filter(x=>low(x.status)==='verified');
+    const enrol=all(data.enrollments,['created_at','submitted_at','enrolled_at','reviewed_at']).filter(x=>low(x.status||x.enrollment_status)==='approved');
+    const pay=all(data.payments,['verified_at','submitted_at','created_at']);
     const cash=all(data.admin_cashbook,['entry_date','created_at']);
-    const commitment=enrol.reduce((a,x)=>a+Number(x.amount||c[x.course_id]?.price||0),0);
-    const receipts=pay.reduce((a,x)=>a+Number(x.amount||0),0);
-    const income=cash.filter(x=>low(x.entry_type)==='income').reduce((a,x)=>a+Number(x.amount||0),0);
-    const expenses=cash.filter(x=>low(x.entry_type)==='expense').reduce((a,x)=>a+Number(x.amount||0),0);
+    const period=data.finance_period||{};
+    const snapshot=data.finance_snapshot||{};
+    const commitment=enrol.reduce((total,x)=>total+Number(c[x.course_id]?.price??x.amount??0),0);
     rows=[
-      ...enrol.map(x=>({'Record Type':'Approved enrolment commitment',Date:fmtDate(x.reviewed_at||x.submitted_at||x.created_at),Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,Course:c[x.course_id]?.title||x.course_id,Description:'Approved tuition / enrolment commitment',Status:x.status||x.enrollment_status,Amount:Number(x.amount||c[x.course_id]?.price||0)})),
-      ...pay.map(x=>({'Record Type':'Verified payment receipt',Date:fmtDate(x.verified_at||x.submitted_at||x.created_at),Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,Course:'',Description:x.payment_method||'Payment',Status:x.status,Amount:Number(x.amount||0)})),
-      ...cash.map(x=>({'Record Type':'Cashbook '+String(x.entry_type||'entry'),Date:fmtDate(x.entry_date||x.created_at),Student:'',Course:'',Description:[x.category,x.description,x.counterparty].filter(Boolean).join(' · '),Status:x.reconciliation_status||x.entry_type,Amount:Number(x.amount||0)}))
+      ...enrol.map(x=>({
+        'Record Type':'Approved enrolment commitment',
+        Date:fmtDate(x.reviewed_at||x.submitted_at||x.created_at),
+        Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+        Course:c[x.course_id]?.title||x.course_id,
+        Description:'Approved tuition using current course catalogue price',
+        Status:x.status||x.enrollment_status,
+        Amount:Number(c[x.course_id]?.price??x.amount??0)
+      })),
+      ...pay.map(x=>({
+        'Record Type':'Payment',
+        Date:fmtDate(x.verified_at||x.submitted_at||x.created_at),
+        Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+        Course:c[x.course_id]?.title||'',
+        Description:[x.payment_method||'Payment',x.payment_reference||''].filter(Boolean).join(' · '),
+        Status:x.status||'',
+        Amount:Number(x.amount||0)
+      })),
+      ...cash.map(x=>({
+        'Record Type':'Cashbook '+String(x.entry_type||'entry'),
+        Date:fmtDate(x.entry_date||x.created_at),
+        Student:'',
+        Course:'',
+        Description:[x.category,x.description,x.counterparty].filter(Boolean).join(' · '),
+        Status:[x.posting_status||'posted',x.reconciliation_status||'unreconciled'].join(' · '),
+        Amount:Number(x.amount||0)
+      }))
     ];
     summary=[
-      ['Approved enrolment commitments',money(commitment)],
-      ['Verified payment receipts',money(receipts)],
-      ['Cashbook income',money(income)],
-      ['Cashbook expenses',money(expenses)],
-      ['Cashbook net',money(income-expenses)],
-      ['Unreconciled cashbook records',cash.filter(x=>low(x.reconciliation_status)!=='reconciled').length]
+      ['Approved tuition commitments in report scope',money(commitment)],
+      ['Confirmed payment income',money(period.verified_tuition)],
+      ['Other confirmed income',money(period.other_income)],
+      ['Total confirmed income',money(period.confirmed_income)],
+      ['Submitted / unverified collections',money(period.pending_collections)],
+      ['Operating expenses',money(period.expenses)],
+      ['Net cash result',money(period.net_result)],
+      ['Payment records in canonical period',Number(period.payment_records||0)],
+      ['Cashbook entries in canonical period',Number(period.cashbook_entries||0)]
     ];
+    if(scope==='all'){
+      summary.push(
+        ['Current approved tuition',money(snapshot.approved_tuition)],
+        ['Current outstanding approved tuition',money(snapshot.outstanding_tuition)],
+        ['Current confirmed cash income',money(snapshot.confirmed_cash_income)]
+      );
+    }
   }
 
   if(type==='enrolments'){
