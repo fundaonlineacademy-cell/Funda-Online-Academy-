@@ -22,6 +22,7 @@ const defs={
   academic:{label:'Academic & Assessments',tables:['profiles','courses','assessment_attempts','certificates']},
   payments:{label:'Payments',tables:['profiles','payments']},
   support:{label:'Student Support & CRM',tables:['profiles','support_tickets','support_ticket_messages','support_ticket_events','student_consultations','consultation_events']},
+  voice:{label:'Voice & Feedback',tables:['profiles','academy_voice_submissions','academy_voice_review_history']},
   marketing:{label:'Marketing & Admissions',tables:['marketing_leads']},
   communication:{label:'Communication Hub',tables:['communications','communication_recipients']},
   cashbook:{label:'Expenses & Income',tables:['admin_cashbook']},
@@ -389,6 +390,42 @@ function build(type,data,from,to,scope){
       ['No-shows',consultations.filter(x=>low(x.Status)==='no_show').length],
       ['Cancelled consultations',consultations.filter(x=>low(x.Status)==='cancelled').length],
       ['Consultation audit events',(data.consultation_events||[]).length]
+    ];
+  }
+
+  if(type==='voice'){
+    const subs=all(data.academy_voice_submissions,['created_at','updated_at','responded_at','resolved_at']);
+    const hist=all(data.academy_voice_review_history,['created_at']);
+    rows=subs.map(x=>({
+      Reference:x.reference_number,
+      Submitter:p[x.submitter_user_id]?.full_name||p[x.submitter_user_id]?.email||x.submitter_role,
+      Role:x.submitter_role,
+      Type:x.submission_type,
+      Topic:x.service_area,
+      Department:x.routed_department,
+      Owner:x.assigned_to?(p[x.assigned_to]?.full_name||p[x.assigned_to]?.email||x.assigned_to):'Unassigned',
+      Priority:x.priority,
+      Status:x.status,
+      Confidential:x.confidential?'Yes':'No',
+      Subject:x.subject,
+      Message:x.message,
+      'Requested Outcome':x.preferred_outcome||'',
+      'Official Response':x.public_response||'',
+      Submitted:fmtDateTime(x.created_at),
+      Responded:fmtDateTime(x.responded_at),
+      Resolved:fmtDateTime(x.resolved_at)
+    }));
+    const open=rows.filter(x=>!['resolved','closed'].includes(low(x.Status)));
+    summary=[
+      ['Submissions',rows.length],
+      ['Open / active',open.length],
+      ['Open complaints',open.filter(x=>low(x.Type)==='complaint').length],
+      ['Confidential open reviews',open.filter(x=>x.Confidential==='Yes').length],
+      ['Unassigned open cases',open.filter(x=>x.Owner==='Unassigned').length],
+      ['Resolved / closed',rows.length-open.length],
+      ['Student submissions',rows.filter(x=>low(x.Role)==='student').length],
+      ['Ambassador submissions',rows.filter(x=>low(x.Role)==='ambassador').length],
+      ['Review history events',hist.length]
     ];
   }
 
