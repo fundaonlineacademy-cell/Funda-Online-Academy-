@@ -567,3 +567,24 @@ The owner physically reviewed **Admin → Enrolments & Courses**, requested fina
 - Work in Ambassador Programme, Academic QA or another Admin tab does **not** reopen Enrolments & Courses.
 - A newly discovered Enrolments & Courses defect is a change request and requires explicit owner approval before this locked workspace is changed.
 
+
+
+### Admin Ambassador Programme — FINAL OWNER-APPROVED AND LOCKED (21 September 2026)
+
+The owner physically reviewed **Admin → Ambassador Programme** after the final duplicate-removal, performance, referral-evidence, earnings-summary and correspondence corrections and explicitly approved it for lock.
+
+- **Ambassador Programme is a change-controlled protected Admin surface.** Do not alter the approved Programme Oversight, application review, activation controls, Ambassador performance tracking, direct Referral Register, monthly performance summaries, commission/payout visibility, Monthly Ambassador Challenge controls, Ambassador Correspondence & Templates, reporting, responsive treatment or Realtime behaviour unless Aziwe Futhe explicitly reopens this tab.
+- The old duplicate shell KPI row and duplicate “Ambassador Programme Workspace” block must not be reintroduced.
+- The Programme Oversight figures remain the authoritative application summary.
+- Application suitability scoring remains a **pre-approval suitability assessment** and must not be presented as active Ambassador performance.
+- Active Ambassador performance remains based on verified referral evidence, approved referred Students, verified qualifying revenue, confirmed Ambassador earnings and payout records.
+- The direct **Referral Register** must continue to show Ambassador, referred Student, Student/course context, referral date, eligibility state, verified qualifying revenue and confirmed commission, with evidence available for investigation.
+- Historical referrals tied to deleted Student accounts remain retained for audit but must stay disqualified from active performance.
+- Ambassador Programme may display confirmed earnings and paid-out outcomes, but Finance remains the controlled place where earnings and payouts are approved and processed.
+- The approved **Ambassador Correspondence & Templates** workspace remains Admin-only and includes Approval & Welcome, Strategic / High-Value Ambassador Partnership, Activation & Referral Code, Performance Recognition and Programme Follow-Up / Action Required templates.
+- Correspondence drafts/final letters remain part of the formal Ambassador Programme report and must remain protected from Student access.
+- Realtime remains tab-scoped and edit-safe; polling/timed refresh must not be reintroduced as the primary live mechanism.
+- Dynamic Ambassador applications, referrals, earnings, payouts, challenges and correspondence are not frozen by this lock; the lock protects the approved workflow, controls and presentation.
+- Work in Academic, Assessments & Content or another Admin tab does **not** reopen Ambassador Programme.
+- A newly discovered Ambassador Programme defect is a change request and requires explicit owner approval before this locked workspace is changed.
+
