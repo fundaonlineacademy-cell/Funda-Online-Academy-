@@ -27,7 +27,7 @@ const defs={
   communication:{label:'Communication Hub',tables:['communications','communication_recipients']},
   cashbook:{label:'Expenses & Income',tables:['admin_cashbook']},
   hr:{label:'HR & Team',tables:['profiles','staff_records','hr_contracts','hr_leave_requests','hr_safety_incidents','hr_training_records','hr_performance_reviews','hr_compliance_reviews']},
-  ambassador:{label:'Ambassador Programme',tables:['profiles','courses','enrollments','ambassador_programme_applications','ambassador_v2_referrals','ambassador_earnings_ledger','ambassador_payouts','ambassador_v2_reward_state','ambassador_monthly_challenges']},
+  ambassador:{label:'Ambassador Programme',tables:['profiles','courses','enrollments','ambassador_programme_applications','ambassador_v2_referrals','ambassador_earnings_ledger','ambassador_payouts','ambassador_v2_reward_state','ambassador_monthly_challenges','ambassador_correspondence_drafts']},
   employer:{label:'Employer & Industry Partnerships',tables:['profiles','employer_partnership_requests','employer_opportunities','learner_employer_preferences','student_opportunity_interests','learner_employer_readiness','employer_outreach_targets','employer_outreach_activities','graduate_employment_referrals','employer_correspondence_drafts']},
   library:{label:'Digital Library',tables:['courses','library_resources']},
   security:{label:'IT, Security & Platform',tables:['profiles','security_access_reviews','platform_security_checks','security_incidents']},
@@ -754,7 +754,19 @@ function build(type,data,from,to,scope){
         ].filter(Boolean).join(' · ')
       };
     });
-    rows=[...appRows,...refRows,...earnRows,...payoutRows,...rewardRows,...challengeRows];
+    const correspondenceRows=all(data.ambassador_correspondence_drafts,['correspondence_date','created_at','updated_at']).map(x=>{
+      const app=appMap.get(String(x.application_id||''));
+      return {
+        'Record Type':'Ambassador Correspondence',
+        Name:app?.full_name||x.recipient_name||'Ambassador',
+        Reference:x.template_key,
+        Status:x.status,
+        Date:fmtDate(x.correspondence_date||x.created_at),
+        Amount:'',
+        Details:[String(x.correspondence_kind||'').toUpperCase(),x.recipient_email,x.subject].filter(Boolean).join(' · ')
+      };
+    });
+    rows=[...appRows,...refRows,...earnRows,...payoutRows,...rewardRows,...challengeRows,...correspondenceRows];
 
     const validRefs=(data.ambassador_v2_referrals||[]).filter(x=>low(x.eligibility_status)==='recorded');
     const disqualifiedRefs=(data.ambassador_v2_referrals||[]).filter(x=>low(x.eligibility_status)!=='recorded');
@@ -772,7 +784,8 @@ function build(type,data,from,to,scope){
       ['Payout records',payoutRows.length],
       ['Paid payouts',money(paid)],
       ['Reward-state records',rewardRows.length],
-      ['Monthly challenges',challengeRows.length]
+      ['Monthly challenges',challengeRows.length],
+      ['Ambassador correspondence records',correspondenceRows.length]
     ];
   }
 
