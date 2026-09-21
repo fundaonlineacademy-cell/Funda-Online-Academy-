@@ -431,3 +431,24 @@ The owner physically reviewed **Admin → Management & Governance**, identified 
 - Work in Finance & Accounting or another Admin tab does **not** reopen Management & Governance. Shared Admin files may be edited only for an explicitly approved area and must regression-check this locked workspace when they can affect it.
 - A newly discovered Management/Governance defect is a change request, not automatic permission to alter the locked workspace. Aziwe Futhe must explicitly approve the affected correction before implementation.
 
+
+
+### Admin Finance & Accounting — FINAL OWNER-APPROVED AND LOCKED (21 September 2026)
+
+The owner physically reviewed **Admin → Finance & Accounting** after the final reconciliation, receivables, reporting, readability and live-refresh corrections and explicitly approved it for lock. The approved Finance code checkpoint is `04fd55eddeaba73bb738bde9e6257ae06843fe5a`; the approved database state also includes the canonical Finance snapshot fields separating contractual receivables from current catalogue valuation.
+
+- **Finance & Accounting is a change-controlled protected Admin surface.** No Finance layout, KPI meaning, contractual-receivables definition, catalogue-comparison logic, payment-review workflow, reconciliation workflow, Accountant Pack workflow, reporting connection, live-refresh behaviour, mobile presentation or typography may be changed unless Aziwe Futhe explicitly reopens the affected Finance area.
+- Contracted approved tuition and outstanding approved receivables remain tied to the learner's approved enrolment/agreed amount. Current catalogue pricing remains a separate management-analysis value and must not silently rewrite an existing learner's debt.
+- Rejected/declined enrolments must not contribute to approved outstanding receivables.
+- Verified collections, current posted expenses, confirmed cash income and net cash result continue to come from the governed Finance calculation. Future/voided cashbook rows must not contaminate current operating totals.
+- The Finance Control Centre, Finance Report Centre, Payment Proof Review and period/reconciliation calculations must remain aligned to the same canonical Finance rules; do not restore independent parallel Finance arithmetic.
+- Finance reports continue to use the protected Finance period/snapshot RPCs. Finance & Accounting must open as the selected Finance report type.
+- Reconciliation keeps validated date ranges, a required valid external statement total and a stored reconciliation difference. Accountant Pack keeps valid start/end period checks.
+- Finance remains live through approved Realtime/manual/focus refresh behaviour. A failed refresh preserves the last good figures and displays an error instead of replacing healthy data with false zeroes.
+- Payment approval/rejection remains Admin-authorized server-side, blocks double review and overpayment approval, and requires a meaningful rejection reason.
+- The retired legacy Finance renderer/fallback remains disabled. If the canonical Finance Centre cannot initialise, Admin must show an explicit unavailable state rather than reverting to obsolete Finance arithmetic.
+- Finance uses South African reporting dates in the Admin interface, preserves cents, retains readable Source Sans 3 sizing and responsive desktop/tablet/mobile behaviour.
+- Dynamic financial records are not frozen by this lock. Legitimate payments, enrolments, course-price changes, cashbook entries, reconciliations and accountant periods must continue to change through approved workflows. The lock protects definitions, calculations, structure and behaviour.
+- Work in Communication Hub or another Admin tab does **not** reopen Finance & Accounting. Shared Admin files touched for another approved area must regression-check Finance when they can affect it.
+- A newly discovered Finance defect is a change request, not automatic permission to alter the locked Finance workspace. Aziwe Futhe must explicitly approve the affected correction before implementation.
+
