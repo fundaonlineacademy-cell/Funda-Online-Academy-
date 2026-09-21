@@ -500,7 +500,7 @@ returns void
 language plpgsql
 security definer
 set search_path=''
-as $
+as $$
 declare
   v_row public.admin_cashbook%rowtype;
   v_next date;
@@ -539,7 +539,7 @@ begin
   set posting_status='posted',entry_date=p_entry_date,recurrence='none',updated_at=now()
   where id=p_id;
 end;
-$;
+$$;
 
 create or replace function public.finance_void_cashbook_entry(
   p_id uuid,
