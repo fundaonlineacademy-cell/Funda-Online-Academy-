@@ -1,6 +1,7 @@
 (()=>{
 'use strict';
 if(!/admin-v2\.html$/i.test(location.pathname))return;
+window.__fundaHrAuthoritativeLoader=true;
 
 let db,D={},loadErrors=[],currentTab='team';
 const $=x=>document.getElementById(x);
