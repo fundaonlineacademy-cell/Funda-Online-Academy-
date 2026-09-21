@@ -16,7 +16,7 @@ const css=`
 .ampTop{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.amp h3{margin:0;font-size:16px}.ampLead{margin:4px 0 0;color:#697887;font-size:11px;line-height:1.5}
 .ampActions{display:flex;gap:6px;flex-wrap:wrap}.ampBtn{border:0;border-radius:8px;background:#21384d;color:#fff;padding:8px 10px;font-size:10px;font-weight:900;cursor:pointer}.ampBtn.alt{background:#fff;color:#21384d;border:1px solid #d8ccb0}.ampBtn.gold{background:#c99a2e;color:#132b42}.ampBtn:disabled{opacity:.5}
 .ampMonth{border:1px solid #d8ccb0;border-radius:8px;padding:7px 9px;font:inherit;font-size:10px;background:#fff}
-.ampStats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:10px}.ampStat{border:1px solid #e5decf;border-radius:10px;background:#fffaf0;padding:9px}.ampStat b{display:block;font-size:18px;color:#21384d}.ampStat span{font-size:9px;color:#71808c;font-weight:800;line-height:1.35}
+.ampStats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.ampStat{border:1px solid #e5decf;border-radius:10px;background:#fffaf0;padding:9px}.ampStat b{display:block;font-size:18px;color:#21384d}.ampStat span{font-size:9px;color:#71808c;font-weight:800;line-height:1.35}
 .ampSignal{margin-top:9px;border-radius:9px;background:#f6f3ea;padding:9px 10px;font-size:10px;color:#5d6b78;line-height:1.5}.ampSignal b{color:#21384d}
 .ampBackdrop{position:fixed;inset:0;background:rgba(3,16,31,.72);z-index:10040;display:grid;place-items:center;padding:12px}.ampModal{width:min(1120px,97vw);max-height:94vh;overflow:auto;background:#fff;border-radius:17px;box-shadow:0 30px 90px rgba(3,16,31,.38)}
 .ampHead{position:sticky;top:0;z-index:2;background:linear-gradient(135deg,#03101f,#0a2344);border-bottom:4px solid #c99a2e;color:#fff;padding:15px 18px;display:flex;justify-content:space-between;gap:12px}.ampHead h3{margin:0;font-size:19px}.ampHead p{margin:4px 0 0;color:#dfe7f2;font-size:12px}.ampClose{width:36px;height:36px;border-radius:9px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.07);color:#fff;font-size:20px;cursor:pointer}.ampBody{padding:15px}
@@ -52,7 +52,9 @@ function totals(){return{
   active:performance.length,
   referrals:performance.reduce((n,x)=>n+Number(x.valid_referrals_month||0),0),
   students:performance.reduce((n,x)=>n+Number(x.approved_students_month||0),0),
-  revenue:performance.reduce((n,x)=>n+Number(x.verified_revenue_month||0),0)
+  revenue:performance.reduce((n,x)=>n+Number(x.verified_revenue_month||0),0),
+  commission:performance.reduce((n,x)=>n+Number(x.confirmed_commission_month||0)+Number(x.monthly_performance_payment||0),0),
+  paid:performance.reduce((n,x)=>n+Number(x.paid_out||0),0)
 }}
 function comparisonText(){
   if(!performance.length)return 'No approved active Ambassadors are available for this month.';
@@ -62,11 +64,12 @@ function comparisonText(){
 }
 function panel(){
   let t=totals(),challengeLine=challenge?'<b>'+esc(challenge.title)+'</b> · '+esc(label(challenge.status))+(challenge.prize_description?' · Prize: '+esc(challenge.prize_description):''):'No monthly challenge is set for this month.';
-  return `<section class="amp" id="ambPerformancePanel"><div class="ampTop"><div><h3>Ambassador Performance & Referrals</h3><p class="ampLead">Verified monthly performance, referral evidence and challenge tracking without duplicating Finance controls.</p></div><div class="ampActions"><input class="ampMonth" id="ampMonth" type="month" value="${esc(month)}"><button class="ampBtn" id="ampLeaderboard">Leaderboard</button><button class="ampBtn alt" id="ampChallenge">Monthly Challenge</button><button class="ampBtn alt" id="ampReport">Report</button></div></div><div id="ampLiveNotice" class="ampNotice"></div><div class="ampStats"><div class="ampStat"><b>${t.active}</b><span>ACTIVE / INTRODUCTORY AMBASSADORS</span></div><div class="ampStat"><b>${t.referrals}</b><span>VALID REFERRALS · MONTH</span></div><div class="ampStat"><b>${t.students}</b><span>APPROVED REFERRED STUDENTS · MONTH</span></div><div class="ampStat"><b>${money(t.revenue)}</b><span>VERIFIED QUALIFYING REVENUE · MONTH</span></div></div><div class="ampSignal">${comparisonText()}<br><span>${challengeLine}</span></div></section>`
+  return `<section class="amp" id="ambPerformancePanel"><div class="ampTop"><div><h3>Ambassador Performance & Referrals</h3><p class="ampLead">Verified monthly performance, referral evidence and challenge tracking without duplicating Finance controls.</p></div><div class="ampActions"><input class="ampMonth" id="ampMonth" type="month" value="${esc(month)}"><button class="ampBtn" id="ampLeaderboard">Leaderboard</button><button class="ampBtn alt" id="ampReferralRegister">Referral Register</button><button class="ampBtn alt" id="ampChallenge">Monthly Challenge</button><button class="ampBtn alt" id="ampReport">Report</button></div></div><div id="ampLiveNotice" class="ampNotice"></div><div class="ampStats"><div class="ampStat"><b>${t.active}</b><span>ACTIVE / INTRODUCTORY AMBASSADORS</span></div><div class="ampStat"><b>${t.referrals}</b><span>VALID REFERRALS · MONTH</span></div><div class="ampStat"><b>${t.students}</b><span>APPROVED REFERRED STUDENTS · MONTH</span></div><div class="ampStat"><b>${money(t.revenue)}</b><span>VERIFIED QUALIFYING REVENUE · MONTH</span></div><div class="ampStat"><b>${money(t.commission)}</b><span>CONFIRMED AMBASSADOR EARNINGS · MONTH</span></div><div class="ampStat"><b>${money(t.paid)}</b><span>PAYOUTS PAID · LIFETIME</span></div></div><div class="ampSignal">${comparisonText()}<br><span>${challengeLine}</span></div></section>`
 }
 function bindPanel(){
   $('ampMonth').onchange=async e=>{month=e.target.value||new Date().toISOString().slice(0,7);await refresh()};
   $('ampLeaderboard').onclick=leaderboardModal;
+  $('ampReferralRegister').onclick=referralRegisterModal;
   $('ampChallenge').onclick=challengeModal;
   $('ampReport').onclick=()=>window.openFundaReportCentre?window.openFundaReportCentre('ambassador'):alert('Report Centre is loading. Please try again.');
 }
@@ -87,6 +90,16 @@ function leaderboardModal(){
 function coursesHtml(items){
   if(!Array.isArray(items)||!items.length)return '<div class="ampCourse">No course enrolment is currently linked to this referral.</div>';
   return items.map(c=>`<div class="ampCourse"><b>${esc(c.course_title||'Course')}</b><br>Status: ${esc(label(c.enrollment_status||c.status||'pending'))} · Enrolled ${esc(fmt(c.enrolled_at))}${c.reviewed_at?' · Reviewed '+esc(fmt(c.reviewed_at)):''}${c.amount!=null?' · Enrolment amount '+money(c.amount):''}</div>`).join('');
+}
+function referralRegisterModal(){
+  const rows=referrals.map(x=>{
+    const person=performance.find(p=>String(p.application_id)===String(x.application_id));
+    const first=Array.isArray(x.enrolments)&&x.enrolments.length?x.enrolments[0]:null;
+    const portal=first?(String(first.enrollment_status||first.status||'').toLowerCase()==='approved'?'Student Approved':'Enrolment Pending'):'Registered';
+    return `<tr><td><b>${esc(person?.full_name||x.ambassador_name||'Ambassador')}</b></td><td><b>${esc(x.student_name)}</b><div class="ampMeta">${esc(x.student_number||'No Student number')} · ${esc(x.student_email||'No active email')}</div></td><td>${esc(first?.course_title||'No course yet')}</td><td>${esc(fmt(x.referral_date))}</td><td><span class="ampBadge ${esc(x.eligibility_status)}">${esc(label(x.eligibility_status))}</span><div class="ampMeta">${esc(portal)} · ${Number(x.confirmed_commission||0)>0?'Confirmed':'Not Yet Earned'}</div></td><td>${money(x.verified_qualifying_revenue)}</td><td>${money(x.confirmed_commission)}</td><td><button class="ampBtn alt" data-referrals="${x.application_id}">Open Evidence</button></td></tr>`;
+  }).join('');
+  modal('Ambassador Referral Register','Every tracked referral, Student, course, eligibility state and confirmed commercial outcome.',`<div class="ampTableWrap"><table class="ampTable"><thead><tr><th>Ambassador</th><th>Referred Student</th><th>Course</th><th>Referral Date</th><th>Status</th><th>Verified Revenue</th><th>Confirmed Commission</th><th>Evidence</th></tr></thead><tbody>${rows||'<tr><td colspan="8">No Ambassador referrals are currently recorded.</td></tr>'}</tbody></table></div>`);
+  document.querySelectorAll('[data-referrals]').forEach(b=>b.onclick=()=>referralModal(b.dataset.referrals));
 }
 function referralModal(appId){
   let person=performance.find(x=>String(x.application_id)===String(appId)),rows=referrals.filter(x=>String(x.application_id)===String(appId));
