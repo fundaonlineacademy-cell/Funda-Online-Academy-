@@ -23,7 +23,7 @@ const defs={
   payments:{label:'Payments',tables:['profiles','payments']},
   support:{label:'Student Support & CRM',tables:['profiles','support_tickets','support_ticket_messages','support_ticket_events','student_consultations','consultation_events']},
   voice:{label:'Voice & Feedback',tables:['profiles','academy_voice_submissions','academy_voice_review_history']},
-  marketing:{label:'Marketing & Admissions',tables:['profiles','courses','marketing_leads','marketing_lead_history','marketing_subscribers','marketing_campaigns','marketing_campaign_events','marketing_page_views']},
+  marketing:{label:'Marketing & Admissions',tables:['profiles','courses','marketing_leads','marketing_lead_history','marketing_subscribers','marketing_campaigns','marketing_campaign_events','marketing_page_views','ambassador_marketing_resources','ambassador_notifications']},
   communication:{label:'Communication Hub',tables:['communications','communication_recipients']},
   cashbook:{label:'Expenses & Income',tables:['admin_cashbook']},
   hr:{label:'HR & Team',tables:['profiles','staff_records','hr_contracts','hr_leave_requests','hr_safety_incidents','hr_training_records','hr_performance_reviews','hr_compliance_reviews']},
@@ -466,11 +466,44 @@ function build(type,data,from,to,scope){
         Created:fmtDateTime(x.created_at)
       };
     });
-    rows=[...leadRows,...campaignRows];
+    const resourceRows=all(data.ambassador_marketing_resources,['created_at','updated_at','starts_at','expires_at']).map(x=>({
+      'Record Type':'Ambassador Marketing Resource',
+      Name:x.title,
+      Email:'',
+      Phone:'',
+      Source:x.resource_type||'resource',
+      'Course Interest':x.course_id?(c[x.course_id]?.title||x.course_id):'All courses / general',
+      Owner:x.created_by?(p[x.created_by]?.full_name||p[x.created_by]?.email||x.created_by):'',
+      Status:x.status||'draft',
+      'Next Follow-Up':fmtDateTime(x.expires_at),
+      Converted:fmtDateTime(x.approved_at),
+      Details:[x.description,x.approved_caption].filter(Boolean).join(' · '),
+      Created:fmtDateTime(x.created_at)
+    }));
+    const noticeRows=all(data.ambassador_notifications,['created_at']).filter(x=>low(x.category)==='marketing').map(x=>({
+      'Record Type':'Ambassador Marketing Notice',
+      Name:x.title,
+      Email:'',
+      Phone:'',
+      Source:'Ambassador portal',
+      'Course Interest':'',
+      Owner:x.created_by?(p[x.created_by]?.full_name||p[x.created_by]?.email||x.created_by):'',
+      Status:x.status||'active',
+      'Next Follow-Up':'—',
+      Converted:'—',
+      Details:x.message||'',
+      Created:fmtDateTime(x.created_at)
+    }));
+    rows=[...leadRows,...campaignRows,...resourceRows,...noticeRows];
     const activeSubs=(data.marketing_subscribers||[]).filter(x=>x.consent===true&&!x.unsubscribed_at);
     const leads=leadRows;
     const campaigns=campaignRows;
     const followUps=leads.filter(x=>low(x.Status)==='follow-up');
+    const pageViews=data.marketing_page_views||[];
+    const now=Date.now(),dayMs=86400000;
+    const within=days=>pageViews.filter(x=>{const t=new Date(x.viewed_at).getTime();return Number.isFinite(t)&&now-t<=days*dayMs});
+    const sessions=arr=>new Set(arr.map(x=>x.session_key).filter(Boolean)).size;
+    const v24=within(1),v7=within(7),v30=within(30);
     summary=[
       ['Admissions leads',leads.length],
       ['New leads',leads.filter(x=>low(x.Status)==='new').length],
@@ -486,7 +519,15 @@ function build(type,data,from,to,scope){
       ['Scheduled campaigns',campaigns.filter(x=>low(x.Status)==='scheduled').length],
       ['Failed campaigns',campaigns.filter(x=>low(x.Status)==='failed').length],
       ['Campaign activity events',(data.marketing_campaign_events||[]).length],
-      ['Website / course views',(data.marketing_page_views||[]).length]
+      ['View events · last 24 hours',v24.length],
+      ['Tracked sessions · last 24 hours',sessions(v24)],
+      ['View events · last 7 days',v7.length],
+      ['Tracked sessions · last 7 days',sessions(v7)],
+      ['View events · last 30 days',v30.length],
+      ['Tracked sessions · last 30 days',sessions(v30)],
+      ['All recorded view events',pageViews.length],
+      ['Active Ambassador marketing resources',resourceRows.filter(x=>low(x.Status)==='active').length],
+      ['Ambassador marketing notices',noticeRows.length]
     ];
   }
 
