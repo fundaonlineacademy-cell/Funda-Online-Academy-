@@ -142,15 +142,15 @@ h1,h2,h3,.brand{font-family:"Source Sans 3","Segoe UI",Arial,sans-serif}
 
 <script>
 const db=supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY),$=x=>document.getElementById(x),esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-let U,R=[],C=[],editing=null,page=1,loadError='';
+let U,R=[],C=[],editing=null,page=1,hasLoadedResources=false,courseError='',resourceError='';
 const PAGE_SIZE=10;
 
-function warning(message=''){
-  loadError=message||'';
+function updateWarning(){
+  const messages=[courseError,resourceError].filter(Boolean);
   const box=$('loadWarning');
   if(!box)return;
-  box.textContent=loadError;
-  box.classList.toggle('show',!!loadError);
+  box.textContent=messages.join(' ');
+  box.classList.toggle('show',messages.length>0);
 }
 function filteredRows(){
   const term=$('search').value.trim().toLowerCase(),st=$('status').value;
@@ -170,16 +170,18 @@ async function init(){
   if(!s.data.session)return location.href='login.html';
   U=s.data.session.user;
   const p=await db.from('profiles').select('role').eq('id',U.id).maybeSingle();
-  if(p.error){warning('Admin verification could not be completed: '+p.error.message);return}
+  if(p.error){resourceError='Admin verification could not be completed: '+p.error.message;updateWarning();return}
   if(p.data?.role!=='admin')return location.href='dashboard.html';
 
   const c=await db.from('courses').select('id,title').order('title');
   if(c.error){
-    warning('Course list could not be loaded. Existing Library records remain available, but course labels may be incomplete. '+c.error.message);
+    courseError='Course list could not be loaded. Existing Library records remain available, but course labels may be incomplete. '+c.error.message;
   }else{
+    courseError='';
     C=c.data||[];
     $('fCourse').innerHTML='<option value="">No course restriction</option>'+C.map(x=>`<option value="${x.id}">${esc(x.title)}</option>`).join('');
   }
+  updateWarning();
   await load();
 }
 async function load(){
@@ -187,16 +189,25 @@ async function load(){
   if(btn){btn.disabled=true;btn.textContent='Refreshing…'}
   const q=await db.from('library_resources').select('*').order('created_at',{ascending:false});
   if(q.error){
-    warning('Library data could not be refreshed. The last successfully loaded information remains visible. '+q.error.message);
+    resourceError=(hasLoadedResources?'Library data could not be refreshed. The last successfully loaded information remains visible. ':'Library data could not be loaded. No resource totals are being shown as zero. ')+q.error.message;
   }else{
     R=q.data||[];
-    warning('');
+    hasLoadedResources=true;
+    resourceError='';
     page=1;
   }
+  updateWarning();
   if(btn){btn.disabled=false;btn.textContent='Refresh'}
   render();
 }
 function render(){
+  if(!hasLoadedResources){
+    $('mTotal').textContent='—';$('mPub').textContent='—';$('mCourse').textContent='—';$('mDown').textContent='—';
+    $('rows').innerHTML='<tr><td colspan="6" class="text-center text-slate-500 py-8">Library data is currently unavailable. Use Refresh to try again.</td></tr>';
+    $('pageInfo').textContent='Resource totals unavailable';$('pageNumber').textContent='Page —';$('prevPage').disabled=true;$('nextPage').disabled=true;
+    if(window.FundaLibraryAdminVisibleRows)window.FundaLibraryAdminVisibleRows=()=>[];
+    return;
+  }
   const all=filteredRows(),a=visibleRows(),max=Math.max(1,Math.ceil(all.length/PAGE_SIZE)),start=all.length?(page-1)*PAGE_SIZE+1:0,end=Math.min(page*PAGE_SIZE,all.length);
   const live=x=>x.publication_status==='published'&&x.is_active===true;
   $('mTotal').textContent=R.length;
