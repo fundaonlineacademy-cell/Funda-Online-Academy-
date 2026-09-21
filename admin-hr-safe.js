@@ -45,8 +45,16 @@ function css(){
   .hrAlert{margin:10px 0;padding:11px 13px;border:1px solid #efcaca;border-radius:9px;background:#fff3f3;color:#8b2626;font-size:13px;line-height:1.5}
   .hrEvidence{margin-top:4px;font-size:12px;line-height:1.45;color:#475569}
   .hrEvidence a{color:#164b84;font-weight:700}
+  .hrDeptGuide{margin-top:14px;border-top:1px solid #e6e9ee;padding-top:14px}
+  .hrDeptGuide h3{margin:0 0 5px;color:#071b31;font-size:18px}
+  .hrDeptGuide>p{margin:0 0 11px;color:#64748b;font-size:13px;line-height:1.5}
+  .hrDeptGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .hrDeptCard{border:1px solid #e1dac9;border-radius:10px;padding:12px;background:#fbfcfe}
+  .hrDeptCard h4{margin:0 0 5px;color:#071b31;font-size:14px}
+  .hrDeptCard p{margin:0;color:#526275;font-size:13px;line-height:1.5}
+  .hrDeptCard small{display:block;margin-top:6px;color:#64748b;font-size:12px;line-height:1.45}
   @media(max-width:1050px){.hrK{grid-template-columns:repeat(3,1fr)}}
-  @media(max-width:760px){.hrGrid{grid-template-columns:1fr}.hrK{grid-template-columns:repeat(2,1fr)}.hrTable{font-size:12px}.hrHero h2{font-size:21px}}
+  @media(max-width:760px){.hrGrid{grid-template-columns:1fr}.hrK{grid-template-columns:repeat(2,1fr)}.hrDeptGrid{grid-template-columns:1fr}.hrTable{font-size:12px}.hrHero h2{font-size:21px}}
   `;
   document.head.appendChild(s);
 }
@@ -102,6 +110,19 @@ function directory(){
       <td>${access}</td>
     </tr>`;
   }).join('')||'<tr><td colspan="6">No staff records yet.</td></tr>';
+}
+function departmentGuide(){
+  const departments=[
+    ['Human Resources','Staff onboarding, contracts, leave, attendance, performance, training, workplace wellbeing and employment-compliance records.','Coordinates staff access with Management and IT; HR does not become a separate technical-security team.'],
+    ['Finance & Accounting','Student payments, receivables, refunds, cashbook controls, income and expenses, financial records and reporting.','Also owns the financial side of Ambassador earnings and approved payouts.'],
+    ['Academic, Assessments & Content','Curriculum, lessons, assessments, academic QA, results, transcripts, certificates and academic-content standards.','Owns Digital Library content quality and approval; IT owns the technical library platform.'],
+    ['Enrolments & Courses','Student applications and enrolments, course access, course catalogue administration, enrolment decisions and governed course changes.','Works with Finance where payment verification affects enrolment approval.'],
+    ['Student Support & CRM','Support tickets, consultations, learner follow-up, student experience, career/workplace support and graduate-employment support.','Owns learner-facing delivery of Employer & Industry opportunities after partnerships are established.'],
+    ['Marketing & Admissions','Marketing campaigns, admissions leads, public course promotion, growth activity and external relationship development.','Primary home for Ambassador Programme recruitment/growth and Employer & Industry partner outreach; Finance owns payouts and Student Support owns learner delivery.'],
+    ['Communication Hub','Official Academy notices, scheduled communications, student/staff announcements, email communication and message-delivery coordination.','Supports every department but does not replace the department responsible for the underlying issue.'],
+    ['IT, Security & Platform','Platform reliability, authentication, technical access controls, security, integrations, backups/recovery evidence and technical automation.','Owns technical infrastructure for tools such as WhatsApp automation and the Digital Library platform.']
+  ];
+  return `<div class="hrDeptGuide"><h3>Department Responsibilities</h3><p>These are the Academy's existing operating departments. New functions are assigned into them rather than creating unnecessary new departments. A staff member's <b>job title</b> describes their role inside the selected department.</p><div class="hrDeptGrid">${departments.map(d=>`<div class="hrDeptCard"><h4>${esc(d[0])}</h4><p>${esc(d[1])}</p><small>${esc(d[2])}</small></div>`).join('')}</div><div class="hrMeta" style="margin-top:10px"><b>Executive / Management & Governance</b> remains an oversight function of the CEO/management rather than a new staff department. Reports, compliance and audit responsibilities stay with the department that owns the subject, with executive oversight.</div></div>`;
 }
 function contracts(){
   return (D.hr_contracts||[]).map(c=>`<tr>
@@ -178,7 +199,7 @@ function render(tab=currentTab){
   const pendingLeave=(D.hr_leave_requests||[]).filter(x=>low(x.status)==='pending').length;
   const trainingDue=(D.hr_training_records||[]).filter(x=>low(x.status)!=='completed').length;
   let body='';
-  if(tab==='team')body=`<div class="hrBar"><button class="hrBtn" id="hrAddStaff">+ Invite Staff User</button></div><table class="hrTable"><tr><th>Staff member</th><th>Staff code</th><th>Job title</th><th>Department</th><th>Status</th><th>Access</th></tr>${directory()}</table>`;
+  if(tab==='team')body=`<div class="hrBar"><button class="hrBtn" id="hrAddStaff">+ Invite Staff User</button></div><table class="hrTable"><tr><th>Staff member</th><th>Staff code</th><th>Job title</th><th>Department</th><th>Status</th><th>Access</th></tr>${directory()}</table>${departmentGuide()}`;
   if(tab==='contracts')body=`<div class="hrBar"><select class="hrSelect" id="hcStaff"><option value="">Select staff member</option>${staffOpts()}</select><input class="hrInput" id="hcTitle" placeholder="Contract title e.g. Employment Agreement"><select class="hrSelect" id="hcType"><option>Employment</option><option>Fixed Term</option><option>Consultancy</option><option>Confidentiality</option><option>Policy Acknowledgement</option></select><button class="hrBtn" id="hcCreate">Create Contract</button></div><textarea class="hrText" id="hcBody" placeholder="Contract terms, duties, remuneration reference, confidentiality, conduct, termination, data protection and acceptance terms..."></textarea><table class="hrTable"><tr><th>Contract</th><th>Staff</th><th>Type</th><th>Status</th><th>Issued</th><th>Accepted</th><th>Action</th></tr>${contracts()}</table>`;
   if(tab==='leave')body=`<div class="hrBar"><select class="hrSelect" id="hlStaff"><option value="">Select staff member</option>${staffOpts()}</select><select class="hrSelect" id="hlType"><option>Annual Leave</option><option>Sick Leave</option><option>Family Responsibility Leave</option><option>Unpaid Leave</option><option>Study Leave</option><option>Compassionate Leave</option><option>Other</option></select><input class="hrInput" id="hlStart" type="date"><input class="hrInput" id="hlEnd" type="date"><input class="hrInput" id="hlReason" placeholder="Reason / HR note"><button class="hrBtn" id="hlAdd">Add Leave Request</button></div><div class="hrMeta" style="margin-bottom:8px">HR can capture a request on behalf of a staff member. Staff self-service requests will also appear here. Every request records who submitted it, current status, and who approved or rejected it.</div><table class="hrTable"><tr><th>Staff</th><th>Leave type</th><th>Dates</th><th>Status</th><th>Requested by</th><th>Reviewed by</th><th>Action</th></tr>${leaves()}</table>`;
   if(tab==='safety')body=`<div class="hrBar"><select class="hrSelect" id="hsStaff"><option value="">General workplace</option>${staffOpts()}</select><input class="hrInput" id="hsTitle" placeholder="Safety / wellbeing incident"><select class="hrSelect" id="hsSeverity"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select><input class="hrInput" id="hsDesc" placeholder="What happened / required action"><button class="hrBtn bad" id="hsAdd">Record Incident</button></div><table class="hrTable"><tr><th>Incident</th><th>Staff</th><th>Severity</th><th>Status</th><th>Date</th><th>Resolved</th><th>Action</th></tr>${safety()}</table>`;
