@@ -27,7 +27,7 @@ const defs={
   communication:{label:'Communication Hub',tables:['communications','communication_recipients']},
   cashbook:{label:'Expenses & Income',tables:['admin_cashbook']},
   hr:{label:'HR & Team',tables:['profiles','staff_records','hr_contracts','hr_leave_requests','hr_safety_incidents','hr_training_records','hr_performance_reviews','hr_compliance_reviews']},
-  ambassador:{label:'Ambassador Programme',tables:['ambassador_programme_applications','ambassador_earnings_ledger','ambassador_payouts']},
+  ambassador:{label:'Ambassador Programme',tables:['profiles','courses','enrollments','ambassador_programme_applications','ambassador_v2_referrals','ambassador_earnings_ledger','ambassador_payouts','ambassador_v2_reward_state','ambassador_monthly_challenges']},
   employer:{label:'Employer & Industry Partnerships',tables:['profiles','employer_partnership_requests','employer_opportunities','learner_employer_preferences','student_opportunity_interests','learner_employer_readiness','employer_outreach_targets','employer_outreach_activities','graduate_employment_referrals','employer_correspondence_drafts']},
   library:{label:'Digital Library',tables:['courses','library_resources']},
   security:{label:'IT, Security & Platform',tables:['profiles','security_access_reviews','platform_security_checks','security_incidents']},
@@ -587,11 +587,115 @@ function build(type,data,from,to,scope){
   }
 
   if(type==='ambassador'){
-    const apps=all(data.ambassador_programme_applications,['created_at','updated_at']).map(x=>({'Record Type':'Application',Name:x.full_name,Reference:x.referral_code||x.id,Status:x.status,Date:fmtDate(x.created_at),Amount:'',Details:[x.account_status,x.agreement_status].filter(Boolean).join(' · ')}));
-    const earn=all(data.ambassador_earnings_ledger,['created_at','earning_month']).map(x=>({'Record Type':'Earning',Name:x.application_id,Reference:x.earning_type,Status:x.earning_status,Date:fmtDate(x.earning_month||x.created_at),Amount:Number(x.commission_amount||0),Details:x.notes||''}));
-    const pay=all(data.ambassador_payouts,['created_at','payment_date']).map(x=>({'Record Type':'Payout',Name:x.application_id,Reference:x.payment_reference||x.id,Status:x.status,Date:fmtDate(x.payment_date||x.created_at),Amount:Number(x.amount||0),Details:x.notes||''}));
-    rows=[...apps,...earn,...pay];
-    summary=[['Applications',apps.length],['Earnings ledger entries',earn.length],['Payout records',pay.length],['Paid payouts',money(pay.filter(x=>low(x.Status)==='paid').reduce((a,x)=>a+Number(x.Amount||0),0))]];
+    const appRows=all(data.ambassador_programme_applications,['created_at','updated_at']).map(x=>({
+      'Record Type':'Application',
+      Name:x.full_name,
+      Reference:x.referral_code||x.id,
+      Status:x.status,
+      Date:fmtDate(x.created_at),
+      Amount:'',
+      Details:[x.account_status,x.agreement_status,'Score '+(x.total_score??'—')+'/100'].filter(Boolean).join(' · ')
+    }));
+    const appMap=new Map((data.ambassador_programme_applications||[]).map(x=>[String(x.id),x]));
+    const enrolByStudent=new Map();
+    (data.enrollments||[]).forEach(e=>{
+      const k=String(e.student_id||'');
+      if(!enrolByStudent.has(k))enrolByStudent.set(k,[]);
+      enrolByStudent.get(k).push(e);
+    });
+    const refRows=all(data.ambassador_v2_referrals,['claimed_at','reviewed_at']).map(x=>{
+      const student=p[x.student_user_id];
+      const enrols=(enrolByStudent.get(String(x.student_user_id))||[]).slice().sort((u,v)=>new Date(v.reviewed_at||v.enrolled_at||v.created_at||0)-new Date(u.reviewed_at||u.enrolled_at||u.created_at||0));
+      const latest=enrols[0];
+      const app=appMap.get(String(x.application_id));
+      return {
+        'Record Type':'Student Referral',
+        Name:app?.full_name||x.application_id,
+        Reference:student?.student_number||student?.full_name||student?.email||x.referral_code,
+        Status:x.eligibility_status,
+        Date:fmtDateTime(x.claimed_at),
+        Amount:'',
+        Details:[
+          latest?.course_id?(c[latest.course_id]?.title||latest.course_id):'Course not yet selected',
+          latest?('Enrolment '+(latest.enrollment_status||latest.status||'pending')):'',
+          x.source_page,
+          x.disqualification_reason
+        ].filter(Boolean).join(' · ')
+      };
+    });
+    const earnRows=all(data.ambassador_earnings_ledger,['created_at','earning_month']).map(x=>{
+      const app=appMap.get(String(x.application_id));
+      return {
+        'Record Type':'Earning',
+        Name:app?.full_name||x.application_id,
+        Reference:x.earning_type,
+        Status:x.earning_status,
+        Date:fmtDate(x.earning_month||x.created_at),
+        Amount:Number(x.commission_amount||0),
+        Details:[x.notes,x.enrolment_id?'Enrolment '+x.enrolment_id:''].filter(Boolean).join(' · ')
+      };
+    });
+    const payoutRows=all(data.ambassador_payouts,['created_at','payment_date']).map(x=>{
+      const app=appMap.get(String(x.application_id));
+      return {
+        'Record Type':'Payout',
+        Name:app?.full_name||x.application_id,
+        Reference:x.payment_reference||x.id,
+        Status:x.status,
+        Date:fmtDate(x.payment_date||x.created_at),
+        Amount:Number(x.amount||0),
+        Details:x.notes||''
+      };
+    });
+    const rewardRows=all(data.ambassador_v2_reward_state,['updated_at']).map(x=>{
+      const app=appMap.get(String(x.application_id));
+      return {
+        'Record Type':'Reward State',
+        Name:app?.full_name||x.application_id,
+        Reference:x.highest_rank,
+        Status:'recorded',
+        Date:fmtDateTime(x.updated_at),
+        Amount:Number(x.highest_bonus_value||0),
+        Details:'Highest programme rank / achievement value'
+      };
+    });
+    const challengeRows=all(data.ambassador_monthly_challenges,['challenge_month','created_at','updated_at','winner_finalised_at']).map(x=>{
+      const winner=appMap.get(String(x.winner_application_id||''));
+      return {
+        'Record Type':'Monthly Challenge',
+        Name:x.title,
+        Reference:fmtDate(x.challenge_month),
+        Status:x.status,
+        Date:fmtDate(x.challenge_month),
+        Amount:'',
+        Details:[
+          x.prize_description,
+          x.rules_text,
+          winner?('Winner '+winner.full_name):'',
+          x.winner_finalised_at?('Finalised '+fmtDateTime(x.winner_finalised_at)):''
+        ].filter(Boolean).join(' · ')
+      };
+    });
+    rows=[...appRows,...refRows,...earnRows,...payoutRows,...rewardRows,...challengeRows];
+
+    const validRefs=(data.ambassador_v2_referrals||[]).filter(x=>low(x.eligibility_status)==='recorded');
+    const disqualifiedRefs=(data.ambassador_v2_referrals||[]).filter(x=>low(x.eligibility_status)!=='recorded');
+    const activeApps=(data.ambassador_programme_applications||[]).filter(x=>low(x.status)==='approved'&&['introductory','active'].includes(low(x.account_status)));
+    const confirmedCommission=(data.ambassador_earnings_ledger||[]).filter(x=>low(x.earning_type)==='commission'&&['approved','paid'].includes(low(x.earning_status))).reduce((a,x)=>a+Number(x.commission_amount||0),0);
+    const performancePayments=(data.ambassador_earnings_ledger||[]).filter(x=>low(x.earning_type)==='monthly_performance'&&['approved','paid'].includes(low(x.earning_status))).reduce((a,x)=>a+Number(x.commission_amount||0),0);
+    const paid=(data.ambassador_payouts||[]).filter(x=>low(x.status)==='paid').reduce((a,x)=>a+Number(x.amount||0),0);
+    summary=[
+      ['Applications',appRows.length],
+      ['Approved active / introductory Ambassadors',activeApps.length],
+      ['Valid Student referrals',validRefs.length],
+      ['Disqualified referral records',disqualifiedRefs.length],
+      ['Confirmed commission',money(confirmedCommission)],
+      ['Monthly performance payments',money(performancePayments)],
+      ['Payout records',payoutRows.length],
+      ['Paid payouts',money(paid)],
+      ['Reward-state records',rewardRows.length],
+      ['Monthly challenges',challengeRows.length]
+    ];
   }
 
   if(type==='employer'){
