@@ -136,3 +136,64 @@ select cron.schedule(
 );
 
 commit;
+
+
+-- 2026-09-21 Communication permission-boundary correction
+-- The Admin Communication client must never SELECT ceo_account_control_state directly.
+-- A non-exposed SECURITY DEFINER helper filters deleted accounts and the public
+-- Data API exposes only a SECURITY INVOKER wrapper returning the Student directory fields needed by Communication.
+
+create schema if not exists private;
+revoke all on schema private from public,anon;
+grant usage on schema private to authenticated;
+
+create or replace function private.get_communication_students_internal()
+returns table(id uuid,full_name text,email text,role text)
+language plpgsql
+security definer
+set search_path to 'public','pg_temp'
+as $function$
+declare v_actor uuid := (select auth.uid());
+begin
+  if v_actor is null or not exists (
+    select 1 from public.profiles p
+    where p.id=v_actor
+      and lower(coalesce(p.role,'')) in ('admin','staff')
+      and (
+        lower(coalesce(p.role,''))='admin'
+        or lower(coalesce(p.department,'')) in (
+          'executive management','communication','communications','communication hub',
+          'finance & accounting','student support & crm','marketing & admissions','hr & team'
+        )
+      )
+  ) then
+    raise exception 'Communication access required';
+  end if;
+
+  return query
+  select p.id,p.full_name,p.email,p.role
+  from public.profiles p
+  where lower(coalesce(p.role,''))='student'
+    and lower(coalesce(p.email,'')) not like '%@deleted.funda.invalid'
+    and not exists (
+      select 1 from public.ceo_account_control_state s
+      where s.user_id=p.id and lower(coalesce(s.status,''))='deleted'
+    )
+  order by coalesce(p.full_name,p.email);
+end;
+$function$;
+
+revoke execute on function private.get_communication_students_internal() from public,anon;
+grant execute on function private.get_communication_students_internal() to authenticated;
+
+create or replace function public.get_communication_students()
+returns table(id uuid,full_name text,email text,role text)
+language sql
+security invoker
+set search_path to 'public','private','pg_temp'
+as $function$
+  select * from private.get_communication_students_internal();
+$function$;
+
+revoke execute on function public.get_communication_students() from public,anon;
+grant execute on function public.get_communication_students() to authenticated;
