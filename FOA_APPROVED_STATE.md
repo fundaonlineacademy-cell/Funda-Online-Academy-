@@ -492,3 +492,20 @@ The owner physically re-checked **Admin → Communication Hub** after the final 
 - Work in Marketing & Admissions, Voice & Feedback, or another Admin tab does **not** reopen Communication Hub.
 - A newly discovered Communication defect is a change request, not automatic permission to alter this locked workspace. Aziwe Futhe must explicitly approve the affected correction before implementation.
 
+
+
+### Admin Voice & Feedback — FINAL OWNER-APPROVED AND LOCKED (21 September 2026)
+
+The owner physically reviewed **Admin → Voice & Feedback** after the final accountability, confidentiality, Realtime and reporting corrections and explicitly approved it for lock. The approved Voice checkpoint is represented by the audited runtime commits `4644a616b3dc9dc696d4f72bc396cb48a9c75c34`, `48d38239dd55eda956a3b66da568488a2cd9485b` and `c05e43226156d8e3d8d6be7ab3ec755afee50f70`, together with the live database controls applied during the 21 September 2026 final audit.
+
+- **Voice & Feedback is a change-controlled protected Admin surface.** Do not alter submission routing, confidentiality, ownership requirements, review history, public-response visibility, internal-note privacy, Realtime behaviour, reporting, responsive treatment or Student/Ambassador own-history access unless Aziwe Futhe explicitly reopens this tab.
+- New feedback may remain **Received / Unassigned**, but review states that represent active handling must retain the approved ownership requirement.
+- Confidential complaints must continue to route to **Management & Governance**.
+- Internal administrative notes and case-owner fields must remain hidden from Student/Ambassador own-history responses.
+- Review-history events remain authoritative evidence of status, routing, priority, ownership and response changes.
+- Realtime updates must preserve active unsaved Admin review work.
+- The formal Voice report must remain aligned to the approved privacy boundary and must never include internal administrative notes.
+- Dynamic Voice submissions and legitimate reviews are not frozen by this lock; the lock protects the approved workflow and presentation.
+- Work in Employer & Industry Partnerships, Marketing & Admissions, or another Admin tab does **not** reopen Voice & Feedback.
+- A newly discovered Voice defect is a change request and requires explicit owner approval before the locked workspace is changed.
+
