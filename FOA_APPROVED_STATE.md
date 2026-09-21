@@ -526,3 +526,20 @@ The owner physically reviewed **Admin → Employer & Industry Partnerships** aft
 - Work in Ambassador Programme, Marketing & Admissions, or another Admin tab does **not** reopen Employer & Industry Partnerships.
 - A newly discovered Employer defect is a change request and requires explicit owner approval before the locked workspace is changed.
 
+
+
+### Admin Marketing & Admissions — FINAL OWNER-APPROVED AND LOCKED (21 September 2026)
+
+The owner physically reviewed **Admin → Marketing & Admissions** after the duplicate-removal, Realtime, traffic-analytics, strategic-signal and Ambassador marketing-channel corrections and explicitly approved it for lock.
+
+- **Marketing & Admissions is a change-controlled protected Admin surface.** Do not alter the approved Marketing Studio, Admissions lead workflow, campaign controls, consent-based audience handling, traffic analytics, strategic Marketing signals, compact Ambassador Marketing Channel, reporting, responsive treatment or Realtime behaviour unless Aziwe Futhe explicitly reopens this tab.
+- The approved Marketing traffic presentation must continue to distinguish **view events** and **tracked browser sessions** from concurrent visitors or verified individual people.
+- The Ambassador Programme financial snapshot must not be reintroduced into Marketing.
+- The Ambassador Marketing Channel remains compact/collapsed and marketing-only; programme, referral, earnings and payout communications remain in their proper programme/finance areas.
+- The global timed Admin refresh must not be restored. Marketing remains Realtime-driven, tab-scoped and edit-safe, with manual Refresh retained only as a recovery control.
+- Old/retired Marketing runtimes must not be reloaded alongside the approved Marketing Studio.
+- Query failures must not be shown as false zero/empty business records.
+- Dynamic Marketing, lead, campaign, subscriber and traffic records are not frozen by this lock; the lock protects the approved workflow, controls and presentation.
+- Work in Enrolments & Courses, Ambassador Programme or another Admin tab does **not** reopen Marketing & Admissions.
+- A newly discovered Marketing defect is a change request and requires explicit owner approval before the locked workspace is changed.
+
