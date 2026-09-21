@@ -62,8 +62,175 @@ async function bell(e,rerender=false){
     $('ahiRetry').onclick=()=>bell(null,true);
   }
 }
+
+function searchCss(){
+  if($('ahiSearchCss'))return;
+  const s=document.createElement('style');
+  s.id='ahiSearchCss';
+  s.textContent=`
+    .ahiSearchPanel{position:fixed;z-index:40002;display:none;width:min(560px,calc(100vw - 24px));max-height:min(65vh,560px);overflow:auto;background:#fff;color:#142846;border:1px solid #d9c98f;border-radius:14px;box-shadow:0 22px 60px #06142144;padding:8px}
+    .ahiSearchPanel.open{display:block}
+    .ahiSearchHead{padding:9px 10px 7px;color:#64748b;font-size:12px;line-height:1.4}
+    .ahiSearchItem{width:100%;display:grid;grid-template-columns:94px minmax(0,1fr);gap:10px;align-items:start;border:0;border-top:1px solid #ece7dc;background:#fff;padding:11px 10px;text-align:left;color:#142846;cursor:pointer;border-radius:8px}
+    .ahiSearchItem:hover,.ahiSearchItem:focus-visible{background:#fff7df;outline:none}
+    .ahiSearchType{font-size:11px;font-weight:900;color:#8a640d;letter-spacing:.03em;text-transform:uppercase}
+    .ahiSearchText b{display:block;font-size:13px;line-height:1.35}
+    .ahiSearchText small{display:block;margin-top:3px;font-size:12px;line-height:1.4;color:#64748b}
+    .ahiSearchEmpty{padding:18px 12px;color:#64748b;font-size:13px;line-height:1.5;text-align:center}
+    @media(max-width:820px){.ahiSearchPanel{width:calc(100vw - 16px);max-height:62vh}.ahiSearchItem{grid-template-columns:82px minmax(0,1fr)}}
+  `;
+  document.head.appendChild(s);
+}
+function searchSource(name){
+  try{
+    if(name==='profiles'&&typeof PR!=='undefined'&&Array.isArray(PR))return PR;
+    if(name==='courses'&&typeof CO!=='undefined'&&Array.isArray(CO))return CO;
+    if(name==='enrolments'&&typeof EN!=='undefined'&&Array.isArray(EN))return EN;
+  }catch(_){}
+  return [];
+}
+function lowText(v){return String(v??'').trim().toLowerCase()}
+function searchRows(query){
+  const q=lowText(query);
+  if(q.length<2)return[];
+  const profiles=searchSource('profiles'),courses=searchSource('courses'),enrolments=searchSource('enrolments');
+  const profileById=new Map(profiles.map(p=>[String(p.id),p]));
+  const courseById=new Map(courses.map(c=>[String(c.id),c]));
+  const deleted=p=>/@deleted.funda.invalid$/i.test(String(p?.email||''))||/^deleteds+(student|staff)s+account$/i.test(String(p?.full_name||'').trim());
+  const results=[];
+  profiles.filter(p=>lowText(p.role)==='student'&&!deleted(p)).forEach(p=>{
+    const hay=lowText([p.full_name,p.email,p.phone,p.mobile_whatsapp,p.student_number].join(' '));
+    if(hay.includes(q))results.push({kind:'student',label:'Student',title:p.full_name||p.email||'Student',meta:[p.email,p.phone||p.mobile_whatsapp].filter(Boolean).join(' · '),term:p.email||p.full_name||q});
+  });
+  courses.forEach(c=>{
+    const hay=lowText([c.title,c.duration,c.description].join(' '));
+    if(hay.includes(q))results.push({kind:'course',label:'Course',title:c.title||'Course',meta:[c.duration,c.active===false?'Inactive':'Active'].filter(Boolean).join(' · '),courseId:String(c.id||''),term:c.title||q});
+  });
+  enrolments.forEach(en=>{
+    const p=profileById.get(String(en.student_id))||en.student||{},c=courseById.get(String(en.course_id))||en.course||{};
+    if(deleted(p))return;
+    const status=lowText(en.enrollment_status||en.status||'pending');
+    const hay=lowText([p.full_name,p.email,p.phone,c.title,status,en.id].join(' '));
+    if(hay.includes(q))results.push({kind:'enrolment',label:'Enrolment',title:p.full_name||p.email||'Student',meta:[c.title,status?status.replaceAll('_',' '):''].filter(Boolean).join(' · '),term:p.email||p.full_name||c.title||q});
+  });
+  const order={student:0,enrolment:1,course:2};
+  results.sort((a,b)=>(order[a.kind]-order[b.kind])||a.title.localeCompare(b.title));
+  return results.slice(0,14);
+}
+function positionSearch(panel,input){
+  const r=input.getBoundingClientRect();
+  const width=Math.min(560,Math.max(300,r.width));
+  panel.style.width=Math.min(width,window.innerWidth-16)+'px';
+  panel.style.left=Math.max(8,Math.min(r.left,window.innerWidth-Math.min(width,window.innerWidth-16)-8))+'px';
+  panel.style.top=Math.min(window.innerHeight-80,r.bottom+8)+'px';
+}
+function closeSearch(){$('ahiSearchPanel')?.classList.remove('open')}
+function filterEnrolments(term){
+  let tries=0;
+  const apply=()=>{
+    tries++;
+    const q=$('enSearch');
+    if(q){
+      q.value=term;
+      q.dispatchEvent(new Event('input',{bubbles:true}));
+      q.focus({preventScroll:true});
+      q.scrollIntoView({behavior:'smooth',block:'center'});
+      return;
+    }
+    if(tries<18)setTimeout(apply,100);
+  };
+  apply();
+}
+function focusCourse(title){
+  let tries=0;
+  const openCourse=()=>{
+    tries++;
+    const tab=document.querySelector('[data-en-tab="courses"]');
+    if(tab){
+      tab.click();
+      setTimeout(()=>{
+        const card=[...document.querySelectorAll('.enCourse')].find(x=>lowText(x.querySelector('h3')?.textContent)===lowText(title));
+        if(card){
+          card.scrollIntoView({behavior:'smooth',block:'center'});
+          const before=card.style.boxShadow;
+          card.style.boxShadow='0 0 0 3px #d4aa42';
+          setTimeout(()=>{card.style.boxShadow=before},1800);
+        }
+      },120);
+      return;
+    }
+    if(tries<18)setTimeout(openCourse,100);
+  };
+  openCourse();
+}
+function openSearchResult(result){
+  closeSearch();
+  const navButton=[...document.querySelectorAll('#nav button')].find(b=>b.dataset.s==='enrolments');
+  if(navButton)navButton.click();
+  else if(typeof window.show==='function')window.show('enrolments');
+  else try{show('enrolments')}catch(_){}
+  if(result.kind==='course')focusCourse(result.title);
+  else filterEnrolments(result.term);
+}
+function renderSearch(input){
+  searchCss();
+  let panel=$('ahiSearchPanel');
+  if(!panel){
+    panel=document.createElement('div');
+    panel.id='ahiSearchPanel';
+    panel.className='ahiSearchPanel';
+    panel.setAttribute('role','listbox');
+    panel.setAttribute('aria-label','Admin search results');
+    document.body.appendChild(panel);
+  }
+  const query=input.value.trim();
+  const rows=searchRows(query);
+  if(query.length<2){
+    panel.innerHTML='<div class="ahiSearchEmpty">Type at least 2 characters to search students, courses and enrolments.</div>';
+  }else if(!rows.length){
+    panel.innerHTML='<div class="ahiSearchEmpty">No matching students, courses or enrolments were found.</div>';
+  }else{
+    panel.innerHTML='<div class="ahiSearchHead">'+rows.length+' result'+(rows.length===1?'':'s')+' shown</div>'+rows.map((r,i)=>`<button type="button" class="ahiSearchItem" data-ahi-search-index="${i}" role="option"><span class="ahiSearchType">${esc(r.label)}</span><span class="ahiSearchText"><b>${esc(r.title)}</b><small>${esc(r.meta||'')}</small></span></button>`).join('');
+    panel.querySelectorAll('[data-ahi-search-index]').forEach(button=>{
+      button.onclick=()=>openSearchResult(rows[Number(button.dataset.ahiSearchIndex)]);
+    });
+  }
+  positionSearch(panel,input);
+  panel.classList.add('open');
+  input.setAttribute('aria-expanded','true');
+}
+function wireSearch(){
+  const input=$('global');
+  if(!input||input.dataset.ahiSearch)return;
+  input.dataset.ahiSearch='1';
+  input.setAttribute('role','combobox');
+  input.setAttribute('aria-autocomplete','list');
+  input.setAttribute('aria-controls','ahiSearchPanel');
+  input.setAttribute('aria-expanded','false');
+  input.setAttribute('autocomplete','off');
+  let timer;
+  input.addEventListener('input',()=>{
+    clearTimeout(timer);
+    timer=setTimeout(()=>renderSearch(input),120);
+  });
+  input.addEventListener('focus',()=>{if(input.value.trim())renderSearch(input)});
+  input.addEventListener('keydown',event=>{
+    if(event.key==='Enter'){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const rows=searchRows(input.value);
+      if(rows.length===1)openSearchResult(rows[0]);
+      else renderSearch(input);
+    }else if(event.key==='Escape'){
+      closeSearch();
+      input.setAttribute('aria-expanded','false');
+    }
+  },true);
+  window.addEventListener('resize',()=>{const panel=$('ahiSearchPanel');if(panel?.classList.contains('open'))positionSearch(panel,input)});
+  window.addEventListener('scroll',()=>{const panel=$('ahiSearchPanel');if(panel?.classList.contains('open'))positionSearch(panel,input)},{passive:true});
+}
 function enhanceProfile(){let p=$('safeProfileBtn');if(!p)return;let profile=p.closest('.safeProfile');if(profile&&!profile.querySelector('.safeRoleMobile')){let role=document.createElement('span');role.className='safeRoleMobile';let desktop=profile.querySelector('.safeId b');role.textContent=desktop?.textContent||'CEO';profile.insertBefore(role,profile.querySelector('#safeChevron')||profile.children[1]||null)}}
 function wire(){let b=$('safeBell');if(b&&!b.dataset.ahi){b.dataset.ahi='1';b.onclick=bell;b.setAttribute('aria-label','Open notifications');b.setAttribute('aria-haspopup','dialog');refreshCount(true)}enhanceProfile();let profile=$('safeProfileBtn'),chev=$('safeChevron');[profile,chev].filter(Boolean).forEach(x=>{if(x.dataset.ahi)return;x.dataset.ahi='1';x.addEventListener('click',()=>close())})}
 function refreshForeground(){if(!document.hidden)refreshCount(true)}
-function init(){css();wire();window.FundaAdminNotifications={refresh:()=>refreshCount(true),open:()=>bell(null,true)};setTimeout(()=>refreshCount(true),500);document.addEventListener('funda:admin-manual-refresh',refreshForeground);window.addEventListener('focus',refreshForeground);window.addEventListener('pageshow',refreshForeground);document.addEventListener('visibilitychange',refreshForeground);new MutationObserver(wire).observe(document.body,{childList:true,subtree:true});document.addEventListener('click',e=>{if(!e.target.closest('#ahiPanel,#safeBell'))close()})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+function init(){css();wire();setTimeout(wireSearch,0);window.FundaAdminNotifications={refresh:()=>refreshCount(true),open:()=>bell(null,true)};setTimeout(()=>refreshCount(true),500);document.addEventListener('funda:admin-manual-refresh',refreshForeground);window.addEventListener('focus',refreshForeground);window.addEventListener('pageshow',refreshForeground);document.addEventListener('visibilitychange',refreshForeground);new MutationObserver(()=>{wire();wireSearch()}).observe(document.body,{childList:true,subtree:true});document.addEventListener('click',e=>{if(!e.target.closest('#ahiPanel,#safeBell'))close();if(!e.target.closest('#ahiSearchPanel,#global')){closeSearch();$('global')?.setAttribute('aria-expanded','false')}})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
