@@ -406,3 +406,41 @@ revoke insert on public.marketing_subscribers from anon;
 -- Scheduled Marketing is owned by pg_cron + the dispatch secret.
 revoke execute on function public.run_scheduled_marketing_cycle()
   from public,anon,authenticated;
+
+
+-- 21 September 2026 — Marketing final physical-review corrections
+-- Owner review identified unnecessary Ambassador cross-functional duplication
+-- and ambiguous cumulative traffic labelling in Marketing & Admissions.
+--
+-- Source-side corrections:
+--   * Ambassador finance snapshot removed from Marketing.
+--   * Ambassador Marketing Channel compacted/collapsed.
+--   * Ambassador Marketing control restricted to marketing notices.
+--   * Marketing traffic now uses explicit 24h/7d/30d view + session windows.
+--   * Global timed Admin refresh removed from the Admin wrapper.
+--   * Marketing live refresh is tab-scoped and edit-safe.
+--
+-- These Ambassador marketing sources are now authoritative Realtime inputs.
+
+do $$
+declare t text;
+begin
+  foreach t in array array[
+    'ambassador_marketing_resources',
+    'ambassador_notifications'
+  ]
+  loop
+    if not exists (
+      select 1
+      from pg_publication_tables
+      where pubname='supabase_realtime'
+        and schemaname='public'
+        and tablename=t
+    ) then
+      execute format(
+        'alter publication supabase_realtime add table public.%I',
+        t
+      );
+    end if;
+  end loop;
+end $$;
