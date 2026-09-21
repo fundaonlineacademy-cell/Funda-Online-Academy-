@@ -164,6 +164,7 @@ function visibleRows(){
   return all.slice(start,start+PAGE_SIZE);
 }
 window.FundaLibraryAdminVisibleRows=visibleRows;
+window.FundaLibraryAdminDataReady=()=>hasLoadedResources;
 
 async function init(){
   const s=await db.auth.getSession();
@@ -205,7 +206,6 @@ function render(){
     $('mTotal').textContent='—';$('mPub').textContent='—';$('mCourse').textContent='—';$('mDown').textContent='—';
     $('rows').innerHTML='<tr><td colspan="6" class="text-center text-slate-500 py-8">Library data is currently unavailable. Use Refresh to try again.</td></tr>';
     $('pageInfo').textContent='Resource totals unavailable';$('pageNumber').textContent='Page —';$('prevPage').disabled=true;$('nextPage').disabled=true;
-    if(window.FundaLibraryAdminVisibleRows)window.FundaLibraryAdminVisibleRows=()=>[];
     return;
   }
   const all=filteredRows(),a=visibleRows(),max=Math.max(1,Math.ceil(all.length/PAGE_SIZE)),start=all.length?(page-1)*PAGE_SIZE+1:0,end=Math.min(page*PAGE_SIZE,all.length);
