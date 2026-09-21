@@ -515,3 +515,79 @@ begin
     end if;
   end loop;
 end $$;
+
+
+-- 21 September 2026 — owner physical review: reversible enrolment decisions
+-- Final owner-requested corrections before lock:
+--   * rejected enrolments may be re-approved once the original approval guards pass
+--   * approved enrolments may be reversed/rejected with a mandatory reason
+--   * protected Student learning access follows the final enrolment status
+--   * Student progress is retained when access is temporarily removed
+--   * rejected Students may resubmit corrected proof through Payments & Balance
+--   * Admin may record externally received replacement proof (email/WhatsApp)
+--     as a submitted payment for Finance review; this never bypasses Finance
+--   * Course Catalogue descriptions are collapsed to avoid long scrolling
+--   * Course Governance shows 5 recent events with full history in a modal
+--
+-- Audit trigger correction:
+-- admin_audit_log.source only accepts 'system' or 'manual'.
+-- The enrolment decision trigger previously used 'enrolment_review_trigger',
+-- which caused a valid status reversal to fail at audit insertion time.
+
+create or replace function public.audit_enrolment_decision()
+returns trigger
+language plpgsql
+security definer
+set search_path to ''
+as $function$
+declare
+  v_old_status text := lower(coalesce(old.enrollment_status,old.status,''));
+  v_new_status text := lower(coalesce(new.enrollment_status,new.status,''));
+  v_name text;
+begin
+  if v_new_status in ('approved','rejected')
+     and v_new_status is distinct from v_old_status then
+    select coalesce(p.full_name,p.email)
+      into v_name
+      from public.profiles p
+     where p.id = coalesce(new.reviewed_by,auth.uid());
+
+    insert into public.admin_audit_log(
+      actor_id,
+      action,
+      department,
+      entity_type,
+      entity_id,
+      details,
+      source,
+      status,
+      responsible_person,
+      occurred_on
+    )
+    values(
+      coalesce(new.reviewed_by,auth.uid()),
+      case
+        when v_new_status='approved' then 'Approved enrolment'
+        else 'Rejected enrolment'
+      end,
+      coalesce(new.approval_department,'Admissions'),
+      'enrollment',
+      new.id::text,
+      pg_catalog.jsonb_build_object(
+        'previous_status',v_old_status,
+        'new_status',v_new_status,
+        'student_id',new.student_id,
+        'course_id',new.course_id,
+        'rejection_reason',new.rejection_reason,
+        'review_notes',new.review_notes
+      )::text,
+      'system',
+      'recorded',
+      v_name,
+      current_date
+    );
+  end if;
+
+  return new;
+end;
+$function$;
