@@ -5,7 +5,7 @@ window.__fundaCeoActionSummaryInstalled=true;
 let db=null;
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-const today=()=>new Date().toISOString().slice(0,10);
+const today=()=>{const parts=Object.fromEntries(new Intl.DateTimeFormat('en-ZA',{timeZone:'Africa/Johannesburg',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));return `${parts.year}-${parts.month}-${parts.day}`};
 const closed=a=>['completed','closed'].includes(String(a.status||'').toLowerCase());
 const overdue=a=>a.due_date&&!closed(a)&&a.due_date<today();
 const dueSoon=a=>{if(!a.due_date||closed(a)||overdue(a)||a.due_date===today())return false;const d=new Date(`${a.due_date}T12:00:00`),t=new Date(`${today()}T12:00:00`),days=Math.ceil((d-t)/86400000),lead=Math.max(0,Number(a.reminder_days??7));return days>=0&&days<=lead};
@@ -66,6 +66,6 @@ async function inject(){
     window.__fundaCeoActionSnapshotLoading=false;
   }
 }
-function install(){css();document.querySelectorAll('#ceoActionSnapshot,.ceoAct[data-ceo-action-snapshot]').forEach((x,i)=>{if(i>0)x.remove()});document.addEventListener('click',e=>{const b=e.target.closest?.('#nav button,.nav button');if(b&&/dashboard/i.test(b.textContent))setTimeout(inject,300)},true);const v=$('view');if(v)new MutationObserver(()=>{if(dashboardActive()&&!$('ceoActionSnapshot'))setTimeout(inject,180)}).observe(v,{childList:true,subtree:false});setTimeout(inject,1300)}
+function refreshSnapshot(){if(!dashboardActive())return;if(window.__fundaCeoActionSnapshotLoading){setTimeout(refreshSnapshot,180);return}$('ceoActionSnapshot')?.remove();setTimeout(inject,80)}function install(){css();document.querySelectorAll('#ceoActionSnapshot,.ceoAct[data-ceo-action-snapshot]').forEach((x,i)=>{if(i>0)x.remove()});document.addEventListener('click',e=>{const b=e.target.closest?.('#nav button,.nav button');if(b&&/dashboard/i.test(b.textContent))setTimeout(inject,300)},true);document.addEventListener('funda:admin-live-change',refreshSnapshot);document.addEventListener('funda:admin-manual-refresh',refreshSnapshot);const v=$('view');if(v)new MutationObserver(()=>{if(dashboardActive()&&!$('ceoActionSnapshot'))setTimeout(inject,180)}).observe(v,{childList:true,subtree:false});setTimeout(inject,1300)}
 if(document.readyState==='complete')install();else window.addEventListener('load',install,{once:true});
 })();
