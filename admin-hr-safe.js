@@ -108,6 +108,7 @@ function directory(){
       <td>${esc(p.department||r?.department||'—')}</td>
       <td>${esc(r?.employment_status||'Active')}</td>
       <td>${access}</td>
+      <td>${low(p.role)==='staff'?'<button class="hrBtn alt" data-manage-access="'+p.id+'">'+(a.length?'Update Access':'Set Access')+'</button>':'Executive / Admin'}</td>
     </tr>`;
   }).join('')||'<tr><td colspan="6">No staff records yet.</td></tr>';
 }
@@ -199,7 +200,7 @@ function render(tab=currentTab){
   const pendingLeave=(D.hr_leave_requests||[]).filter(x=>low(x.status)==='pending').length;
   const trainingDue=(D.hr_training_records||[]).filter(x=>low(x.status)!=='completed').length;
   let body='';
-  if(tab==='team')body=`<div class="hrBar"><button class="hrBtn" id="hrAddStaff">+ Invite Staff User</button></div><table class="hrTable"><tr><th>Staff member</th><th>Staff code</th><th>Job title</th><th>Department</th><th>Status</th><th>Access</th></tr>${directory()}</table>${departmentGuide()}`;
+  if(tab==='team')body=`<div class="hrBar"><button class="hrBtn" id="hrAddStaff">+ Invite Staff User</button></div><table class="hrTable"><tr><th>Staff member</th><th>Staff code</th><th>Job title</th><th>Department</th><th>Status</th><th>Access</th><th>Action</th></tr>${directory()}</table>${departmentGuide()}`;
   if(tab==='contracts')body=`<div class="hrBar"><select class="hrSelect" id="hcStaff"><option value="">Select staff member</option>${staffOpts()}</select><input class="hrInput" id="hcTitle" placeholder="Contract title e.g. Employment Agreement"><select class="hrSelect" id="hcType"><option>Employment</option><option>Fixed Term</option><option>Consultancy</option><option>Confidentiality</option><option>Policy Acknowledgement</option></select><button class="hrBtn" id="hcCreate">Create Contract</button></div><textarea class="hrText" id="hcBody" placeholder="Contract terms, duties, remuneration reference, confidentiality, conduct, termination, data protection and acceptance terms..."></textarea><table class="hrTable"><tr><th>Contract</th><th>Staff</th><th>Type</th><th>Status</th><th>Issued</th><th>Accepted</th><th>Action</th></tr>${contracts()}</table>`;
   if(tab==='leave')body=`<div class="hrBar"><select class="hrSelect" id="hlStaff"><option value="">Select staff member</option>${staffOpts()}</select><select class="hrSelect" id="hlType"><option>Annual Leave</option><option>Sick Leave</option><option>Family Responsibility Leave</option><option>Unpaid Leave</option><option>Study Leave</option><option>Compassionate Leave</option><option>Other</option></select><input class="hrInput" id="hlStart" type="date"><input class="hrInput" id="hlEnd" type="date"><input class="hrInput" id="hlReason" placeholder="Reason / HR note"><button class="hrBtn" id="hlAdd">Add Leave Request</button></div><div class="hrMeta" style="margin-bottom:8px">HR can capture a request on behalf of a staff member. Staff self-service requests will also appear here. Every request records who submitted it, current status, and who approved or rejected it.</div><table class="hrTable"><tr><th>Staff</th><th>Leave type</th><th>Dates</th><th>Status</th><th>Requested by</th><th>Reviewed by</th><th>Action</th></tr>${leaves()}</table>`;
   if(tab==='safety')body=`<div class="hrBar"><select class="hrSelect" id="hsStaff"><option value="">General workplace</option>${staffOpts()}</select><input class="hrInput" id="hsTitle" placeholder="Safety / wellbeing incident"><select class="hrSelect" id="hsSeverity"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select><input class="hrInput" id="hsDesc" placeholder="What happened / required action"><button class="hrBtn bad" id="hsAdd">Record Incident</button></div><table class="hrTable"><tr><th>Incident</th><th>Staff</th><th>Severity</th><th>Status</th><th>Date</th><th>Resolved</th><th>Action</th></tr>${safety()}</table>`;
@@ -227,7 +228,13 @@ function render(tab=currentTab){
 function wire(tab){
   document.querySelectorAll('[data-hr-tab]').forEach(b=>b.onclick=()=>render(b.dataset.hrTab));
   $('hrRefresh').onclick=open;
-  if(tab==='team')$('hrAddStaff').onclick=inviteForm;
+  if(tab==='team'){
+    $('hrAddStaff').onclick=inviteForm;
+    document.querySelector('.hrPanel').onclick=e=>{
+      const b=e.target.closest('[data-manage-access]');
+      if(b)manageAccess(b.dataset.manageAccess);
+    };
+  }
   if(tab==='contracts'){
     $('hcCreate').onclick=createContract;
     document.querySelector('.hrPanel').onclick=e=>{
@@ -249,6 +256,33 @@ function wire(tab){
       if(b)setSafety(b.dataset.id,b.dataset.safetyStatus);
     };
   }
+}
+async function manageAccess(id){
+  const p=prof(id);
+  if(!p?.id||low(p.role)!=='staff')return;
+  const department=String(p.department||'').trim();
+  if(!department)return alert('This staff member does not yet have a department. Update the staff record before assigning access.');
+  const current=(D.staff_access_assignments||[]).find(x=>x.profile_id===id&&x.department===department&&x.active);
+  const level=low(prompt('Department access level: read, edit, or manager',current?.access_level||'read')||'');
+  if(!['read','edit','manager'].includes(level))return alert('Use read, edit, or manager.');
+  const canApprove=confirm('Should this staff member be allowed to approve work within '+department+'?');
+  const u=await me();
+  const payload={
+    profile_id:id,
+    department,
+    access_level:level,
+    can_approve:canApprove,
+    active:true,
+    granted_by:u?.id||null,
+    granted_at:new Date().toISOString(),
+    revoked_by:null,
+    revoked_at:null
+  };
+  const r=await db.from('staff_access_assignments').upsert(payload,{onConflict:'profile_id,department'});
+  if(r.error)return alert('Staff access could not be saved: '+r.error.message);
+  await audit('staff_access_updated','staff_access_assignment',id,id,{department,access_level:level,can_approve:canApprove});
+  await open();
+  render('team');
 }
 function inviteForm(){
   $('view').insertAdjacentHTML('afterbegin',`<div class="hrPanel" id="hrInvitePanel"><h3>Invite New Staff User</h3><div class="hrGrid"><input class="hrInput" id="hiName" placeholder="Full name"><input class="hrInput" id="hiEmail" placeholder="Personal or work email"><input class="hrInput" id="hiJob" placeholder="Job title"><select class="hrSelect" id="hiDept"><option>Human Resources</option><option>Finance & Accounting</option><option>Academic, Assessments & Content</option><option>Enrolments & Courses</option><option>Student Support & CRM</option><option>Marketing & Admissions</option><option>Communication Hub</option><option>IT, Security & Platform</option></select><select class="hrSelect" id="hiLevel"><option value="read">Read only</option><option value="edit" selected>Edit</option><option value="manager">Manager</option></select><label class="hrMeta"><input type="checkbox" id="hiApprove"> May approve within department</label></div><div class="hrBar"><button class="hrBtn" id="hiSend">Send Secure Invitation</button><button class="hrBtn alt" id="hiCancel">Cancel</button></div><div class="hrMeta">The system generates the staff code. HR/CEO never chooses or sees the employee's password; the employee sets it securely from the invitation email.</div></div>`);
