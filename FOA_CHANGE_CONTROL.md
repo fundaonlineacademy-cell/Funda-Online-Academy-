@@ -49,6 +49,7 @@ The goal of cleanup is to remove obsolete or harmful behaviour that can disturb 
 
 ## D. Protected-area approval
 
+- The final owner-approved **Admin My Dashboard** is protected at functional checkpoint `c8e24ceb7721b3d4c188a2816c907deb1c696fdc`. No change may be made to its structure, wording, card order, KPI definitions, canonical data sources, Realtime/fallback refresh behaviour, responsive presentation, Daily Operations, CEO Action Snapshot, Executive Calendar card, House Rules, compact Academy Identity or Executive Summary routing unless Aziwe Futhe explicitly reopens the affected Dashboard area. Work in Management & Governance or another Admin tab does **not** reopen My Dashboard. Shared Admin files/loaders touched for other approved work must preserve and regression-check the locked Dashboard.
 - The complete final owner-approved **Student Portal** is protected at locked functional checkpoint `959a63f840eb7105eb7b22f79494525b5af87f11`. This protection covers the Student Dashboard shell/navigation, every Student tab and Student-facing page, course-study/lesson pages, module-assessment pages, Student support/contact presentation, Student results/payments/calendar/communication/certificates/progress/assessment behaviour, and shared/global code that can alter those surfaces. No change may be made unless Aziwe Futhe explicitly reopens the affected Student Portal area. Student feedback is a change request only and does not itself authorize implementation.
 The following changes require explicit scope confirmation in the PR/task notes:
 
