@@ -465,3 +465,53 @@ revoke all on function public.review_course_change_governed(uuid,text,text) from
 grant execute on function public.review_course_change_governed(uuid,text,text) to authenticated;
 
 commit;
+
+
+-- 21 September 2026 — final live Enrolments & Courses audit
+-- Owner requested final operational verification of Student/course/status search,
+-- Legacy Student Verification, live tracking, payment linkage and governed
+-- course changes.
+--
+-- Front-end finalisation:
+--   * admin-enrolments-safe.js uses the shared Admin Supabase client.
+--   * Student / Course / Status filtering is explicit and live.
+--   * payment badges use payments.enrolment_id, matching the server approval guard.
+--   * unsubmitted enrolments do not expose an Approve action.
+--   * Legacy Student Verification is called directly from Enrolments.
+--   * admin-legacy-students.js is fail-safe, Realtime-driven and preserves
+--     historical/orphaned claims whose original Student account was deleted.
+--   * the Enrolments report covers payments, Legacy verification and governed
+--     course-change audit evidence.
+--
+-- Realtime sources required by the approved Enrolments & Courses workflow.
+
+do $$
+declare
+  t text;
+begin
+  foreach t in array array[
+    'enrollments',
+    'courses',
+    'profiles',
+    'payments',
+    'students',
+    'legacy_verification_claims',
+    'legacy_student_records',
+    'course_change_requests',
+    'course_change_audit'
+  ]
+  loop
+    if not exists (
+      select 1
+      from pg_publication_tables
+      where pubname='supabase_realtime'
+        and schemaname='public'
+        and tablename=t
+    ) then
+      execute format(
+        'alter publication supabase_realtime add table public.%I',
+        t
+      );
+    end if;
+  end loop;
+end $$;
