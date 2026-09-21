@@ -518,7 +518,7 @@ function hookButtons(){
   attach();new MutationObserver(attach).observe(document.body,{subtree:true,childList:true});
 }
 
-window.FundaReportExports={exportExcel,exportPdf,build,fetchFor,generatedBy,metaFor};
+window.FundaReportExports={exportExcel,exportPdf,build,fetchFor,generatedBy,metaFor,logRun};
 window.openFundaReportCentre=open;
 installStyle();hookButtons();
 })();
