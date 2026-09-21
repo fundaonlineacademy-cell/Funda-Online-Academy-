@@ -3,6 +3,112 @@
 -- Fixes invited Staff accounts being initially classified as Students.
 -- Preserves normal Student and Ambassador registration behaviour.
 
+-- Correct the Staff Access Code pgcrypto schema references first.
+-- The extension is installed in the "extensions" schema, not "public".
+create or replace function public.sync_staff_access_credential()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+begin
+  if lower(coalesce(new.role,'')) in ('admin','staff')
+     and nullif(pg_catalog.btrim(new.staff_code),'') is not null
+     and (
+       tg_op = 'INSERT'
+       or new.staff_code is distinct from old.staff_code
+       or new.role is distinct from old.role
+     ) then
+    insert into public.staff_access_credentials(
+      profile_id,access_code_hash,failed_attempts,locked_until,rotated_at
+    )
+    values(
+      new.id,
+      extensions.crypt(new.staff_code, extensions.gen_salt('bf',12)),
+      0,
+      null,
+      pg_catalog.now()
+    )
+    on conflict(profile_id) do update
+      set access_code_hash=excluded.access_code_hash,
+          failed_attempts=0,
+          locked_until=null,
+          rotated_at=excluded.rotated_at;
+  elsif lower(coalesce(new.role,'')) not in ('admin','staff')
+        or nullif(pg_catalog.btrim(new.staff_code),'') is null then
+    delete from public.staff_access_credentials where profile_id=new.id;
+  end if;
+  return new;
+end;
+$;
+
+revoke all on function public.sync_staff_access_credential() from PUBLIC,anon,authenticated;
+
+create or replace function public.verify_staff_access_code(p_staff_code text)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $
+declare
+  v_uid uuid := auth.uid();
+  v_role text;
+  v_hash text;
+  v_failed integer;
+  v_locked timestamptz;
+begin
+  if v_uid is null then
+    raise exception 'Authentication required' using errcode='42501';
+  end if;
+
+  select lower(coalesce(p.role,'')),c.access_code_hash,c.failed_attempts,c.locked_until
+    into v_role,v_hash,v_failed,v_locked
+  from public.profiles p
+  left join public.staff_access_credentials c on c.profile_id=p.id
+  where p.id=v_uid;
+
+  if v_role not in ('admin','staff') then
+    raise exception 'Staff or administrator access required' using errcode='42501';
+  end if;
+
+  if v_hash is null then
+    return pg_catalog.jsonb_build_object('ok',false,'reason','not_configured');
+  end if;
+
+  if v_locked is not null and v_locked > pg_catalog.now() then
+    return pg_catalog.jsonb_build_object(
+      'ok',false,
+      'reason','temporarily_locked',
+      'locked_until',v_locked
+    );
+  end if;
+
+  if extensions.crypt(coalesce(p_staff_code,''),v_hash)=v_hash then
+    update public.staff_access_credentials
+       set failed_attempts=0,
+           locked_until=null,
+           last_verified_at=pg_catalog.now()
+     where profile_id=v_uid;
+    return pg_catalog.jsonb_build_object('ok',true,'role',v_role);
+  end if;
+
+  v_failed := coalesce(v_failed,0)+1;
+  update public.staff_access_credentials
+     set failed_attempts=v_failed,
+         locked_until=case when v_failed>=5 then pg_catalog.now()+interval '15 minutes' else null end
+   where profile_id=v_uid;
+
+  return pg_catalog.jsonb_build_object(
+    'ok',false,
+    'reason',case when v_failed>=5 then 'temporarily_locked' else 'invalid_code' end,
+    'attempts_remaining',greatest(0,5-v_failed)
+  );
+end;
+$;
+
+revoke all on function public.verify_staff_access_code(text) from PUBLIC,anon;
+grant execute on function public.verify_staff_access_code(text) to authenticated;
+
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
