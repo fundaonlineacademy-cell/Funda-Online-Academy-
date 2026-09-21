@@ -7,8 +7,8 @@ function standardizeTypeSelect(){const s=el('fType');if(!s)return;const keep=can
 function addUploadUI(){
  const url=el('fUrl'),cover=el('fCover');
  if(!url||el('fFileUpload'))return;
- const fileWrap=document.createElement('div');fileWrap.className='col-span-full field';fileWrap.innerHTML='<div style="font-size:10px;font-weight:800;color:#06152f;margin-bottom:6px">Upload Library File</div><input id="fFileUpload" type="file" accept=".pdf,.epub,.doc,.docx,.txt,application/pdf,application/epub+zip" style="font-size:10px"><div id="fFileStatus" style="font-size:8px;color:#718096;margin-top:5px">PDF/EPUB/DOCX up to 50 MB. Uploading will securely store the resource.</div>';url.parentNode.insertBefore(fileWrap,url);
- const coverWrap=document.createElement('div');coverWrap.className='col-span-full field';coverWrap.innerHTML='<div style="font-size:10px;font-weight:800;color:#06152f;margin-bottom:6px">Upload Cover Image</div><input id="fCoverUpload" type="file" accept="image/jpeg,image/png,image/webp" style="font-size:10px"><div id="fCoverStatus" style="font-size:8px;color:#718096;margin-top:5px">JPG/PNG/WEBP up to 5 MB.</div>';cover.parentNode.insertBefore(coverWrap,cover);
+ const fileWrap=document.createElement('div');fileWrap.className='col-span-full field';fileWrap.innerHTML='<div style="font-size:13px;font-weight:800;color:#06152f;margin-bottom:6px">Upload Library File</div><input id="fFileUpload" type="file" accept=".pdf,.epub,.doc,.docx,.txt,application/pdf,application/epub+zip" style="font-size:13px"><div id="fFileStatus" style="font-size:12px;color:#64748b;margin-top:5px">PDF/EPUB/DOCX up to 50 MB. Uploading will securely store the resource.</div>';url.parentNode.insertBefore(fileWrap,url);
+ const coverWrap=document.createElement('div');coverWrap.className='col-span-full field';coverWrap.innerHTML='<div style="font-size:13px;font-weight:800;color:#06152f;margin-bottom:6px">Upload Cover Image</div><input id="fCoverUpload" type="file" accept="image/jpeg,image/png,image/webp" style="font-size:13px"><div id="fCoverStatus" style="font-size:12px;color:#64748b;margin-top:5px">JPG/PNG/WEBP up to 5 MB.</div>';cover.parentNode.insertBefore(coverWrap,cover);
  url.placeholder='External resource URL (optional if uploading a file)';
 }
 function addGovernanceUI(){
@@ -19,7 +19,7 @@ function addGovernanceUI(){
  <select id="fQuality" class="field"><option value="pending_review">Pending quality review</option><option value="approved">Approved</option><option value="rejected">Rejected / hold</option></select>
  <label class="field flex items-center gap-2"><input id="fVerified" type="checkbox"> Source and rights independently verified</label>
  <textarea id="fReviewNotes" class="field sm:col-span-2 min-h-16" placeholder="Quality / source review notes"></textarea>
- <div class="sm:col-span-2" style="font-size:9px;line-height:1.55;color:#667085;background:#fff9e8;border:1px solid #ead49a;border-radius:9px;padding:9px 11px"><b style="color:#76570b">Publishing safeguard:</b> a resource cannot be published until its source and rights are verified and its quality status is Approved.</div>`;
+ <div class="sm:col-span-2" style="font-size:12px;line-height:1.55;color:#667085;background:#fff9e8;border:1px solid #ead49a;border-radius:9px;padding:9px 11px"><b style="color:#76570b">Publishing safeguard:</b> a resource cannot be published until its source and rights are verified and its quality status is Approved.</div>`;
  desc.parentNode.insertBefore(box,desc);
 }
 function setSelectValue(id,value,label){const s=el(id);if(!s)return;if(value&&!Array.from(s.options).some(o=>o.value===value)){const o=document.createElement('option');o.value=value;o.textContent=label||value.replaceAll('_',' ');s.appendChild(o)}s.value=value||''}
