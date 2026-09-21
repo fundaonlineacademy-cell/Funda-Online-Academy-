@@ -10,7 +10,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 begin
   if lower(coalesce(new.role,'')) in ('admin','staff')
      and nullif(pg_catalog.btrim(new.staff_code),'') is not null
@@ -40,7 +40,7 @@ begin
   end if;
   return new;
 end;
-$;
+$$;
 
 revoke all on function public.sync_staff_access_credential() from PUBLIC,anon,authenticated;
 
@@ -49,7 +49,7 @@ returns jsonb
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 declare
   v_uid uuid := auth.uid();
   v_role text;
@@ -104,7 +104,7 @@ begin
     'attempts_remaining',greatest(0,5-v_failed)
   );
 end;
-$;
+$$;
 
 revoke all on function public.verify_staff_access_code(text) from PUBLIC,anon;
 grant execute on function public.verify_staff_access_code(text) to authenticated;
