@@ -19,13 +19,12 @@ const css=`
 function style(){if($('#afmStyle'))return;const s=document.createElement('style');s.id='afmStyle';s.textContent=css;document.head.appendChild(s)}
 function currentNav(){return [...document.querySelectorAll('#nav button,.nav button')].find(b=>b.classList.contains('on')||b.classList.contains('active'))}
 function activeFinance(){const n=currentNav();return !!(n&&/finance/i.test(n.textContent||''))}
-function activeMarketing(){const n=currentNav();return !!(n&&/marketing/i.test(n.textContent||''))}
 function badge(value){const s=String(value||'pending');return '<span class="afmBadge '+esc(s)+'">'+esc(s.replaceAll('_',' ').toUpperCase())+'</span>'}
 function appName(id){return apps.find(x=>x.id===id)?.full_name||'Unknown Ambassador'}
 function activeApps(){return apps.filter(x=>x.status==='approved'&&['introductory','active'].includes(x.account_status))}
 
 async function load(){
- db=db||window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+ db=db||window.__fundaSharedSupabaseClient||window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
  if(!db)return false;
  const rs=await Promise.all([
   db.from('ambassador_programme_applications').select('id,full_name,email,status,account_status,referral_code,created_at').order('created_at',{ascending:false}),
@@ -125,14 +124,13 @@ function wire(){
 }
 
 async function refresh(){$('#ambFinanceAdmin')?.remove();await mountFinance()}
-async function marketingSummary(){
- if(!activeMarketing()||$('#ambFinanceSummary'))return;if(!await load())return;style();
- const host=$('#ambV2Admin')||$('#view .mktStudio');if(!host)return;
- const t=totals(),s=document.createElement('section');s.id='ambFinanceSummary';s.className='afmPanel';
- s.innerHTML='<h3>Ambassador Programme Financial Snapshot</h3><div class="afmStats"><div class="afmStat"><b>'+money(t.approved)+'</b><small>CONFIRMED EARNINGS</small></div><div class="afmStat"><b>'+t.review+'</b><small>RECORDS REQUIRING REVIEW</small></div><div class="afmStat"><b>'+money(t.paid)+'</b><small>PAYOUTS PAID</small></div><div class="afmStat"><b>'+t.banks+'</b><small>BANK ACCOUNTS TO VERIFY</small></div></div><p class="afmMeta">Full banking verification, controlled earning confirmation, monthly performance verification and payout processing are available under Finance & Accounting.</p>';
- host.appendChild(s);
-}
 
-setInterval(()=>{if(activeFinance())mountFinance();else $('#ambFinanceAdmin')?.remove();if(activeMarketing())marketingSummary();else $('#ambFinanceSummary')?.remove()},900);
-document.addEventListener('click',()=>setTimeout(()=>{mountFinance();marketingSummary()},180),true);
+function initFinanceMount(){
+ const view=$('#view');
+ if(view)new MutationObserver(()=>{if(activeFinance()&&!$('#ambFinanceAdmin'))setTimeout(mountFinance,120)}).observe(view,{childList:true,subtree:true});
+ document.addEventListener('click',()=>setTimeout(()=>{if(activeFinance())mountFinance();else $('#ambFinanceAdmin')?.remove()},180),true);
+ document.addEventListener('funda:admin-manual-refresh',()=>{if(activeFinance())refresh()});
+ setTimeout(()=>{if(activeFinance())mountFinance()},900);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initFinanceMount);else initFinanceMount();
 })();
