@@ -161,9 +161,12 @@ function build(type,data,from,to,scope){
     const students=currentProfiles(data,'student');
     const staff=currentProfiles(data,'staff');
     const courses=(data.courses||[]).filter(x=>x.active!==false);
-    const approved=(data.enrollments||[]).filter(x=>low(x.status||x.enrollment_status)==='approved');
-    const verified=(data.payments||[]).filter(x=>low(x.status)==='verified');
-    const cash=(data.admin_cashbook||[]);
+    const approved=all(data.enrollments,['created_at','submitted_at','enrolled_at']).filter(x=>low(x.status||x.enrollment_status)==='approved');
+    const verified=all(data.payments,['verified_at','submitted_at','created_at']).filter(x=>low(x.status)==='verified');
+    const cash=all(data.admin_cashbook,['entry_date','created_at']);
+    const attempts=all(data.assessment_attempts,['submitted_at','created_at']);
+    const certs=all(data.certificates,['issued_at']);
+    const comms=all(data.communications,['published_at','created_at']).filter(x=>x.published===true);
     const income=cash.filter(x=>low(x.entry_type)==='income').reduce((a,x)=>a+Number(x.amount||0),0);
     const expenses=cash.filter(x=>low(x.entry_type)==='expense').reduce((a,x)=>a+Number(x.amount||0),0);
     const receipts=verified.reduce((a,x)=>a+Number(x.amount||0),0);
@@ -172,8 +175,8 @@ function build(type,data,from,to,scope){
       ['Current students',students.length],['Staff',staff.length],['Active courses',courses.length],
       ['Approved enrolments',approved.length],['Verified payment receipts',money(receipts)],
       ['Cashbook income',money(income)],['Cashbook expenses',money(expenses)],['Cashbook net',money(income-expenses)],
-      ['Open support tickets',open],['Assessment attempts',(data.assessment_attempts||[]).length],
-      ['Certificates issued',(data.certificates||[]).length],['Published communications',(data.communications||[]).filter(x=>x.published===true).length]
+      ['Current open support tickets',open],['Assessment attempts',attempts.length],
+      ['Certificates issued',certs.length],['Published communications',comms.length]
     ];
     rows=summary.map(x=>({Metric:x[0],Value:x[1]}));
   }
@@ -377,7 +380,7 @@ function metaFor(report,from,to,scope,actor){
   return {
     reportTitle:report.title,
     generatedAt:now,
-    generatedBy:actor.name,
+    generatedBy:actor.email?actor.name+' ('+actor.email+')':actor.name,
     generatedByEmail:actor.email,
     period:scope==='all'?'All available records':(from||'Beginning')+' to '+(to||'Today'),
     reference:'FOA-RPT-'+now.toISOString().replace(/[-:TZ.]/g,'').slice(0,14)
@@ -463,7 +466,7 @@ async function exportPdf(report,meta={}){
     margin:{left:14,right:14,bottom:14},
     didDrawPage:()=>{
       const h=doc.internal.pageSize.getHeight();doc.setFontSize(8);doc.setTextColor(120,130,145);doc.setFont('helvetica','normal');
-      doc.text('Funda Online Academy (Pty) Ltd · System-generated report',14,h-7);
+      doc.text('Funda Online Academy (Pty) Ltd | System-generated report',14,h-7);
       doc.text(`Page ${doc.internal.getNumberOfPages()}`,pageWidth-30,h-7);
     }
   });
