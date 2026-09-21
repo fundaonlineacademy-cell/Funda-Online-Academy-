@@ -15,6 +15,26 @@ This file exists to prevent regressions and the reintroduction of previously cor
 
 ## Protected current decisions
 
+
+### Admin My Dashboard — FINAL OWNER-APPROVED AND LOCKED (21 September 2026)
+
+The owner physically reviewed **Admin → My Dashboard** after the final live-data corrections and explicitly approved it for lock. The approved functional checkpoint is `c8e24ceb7721b3d4c188a2816c907deb1c696fdc`.
+
+- **My Dashboard is a change-controlled protected Admin surface.** No layout, wording, card order, KPI definition, data source, live-sync behaviour, reporting link, responsive behaviour, typography, Academy Identity presentation, House Rules presentation, Executive Calendar card, CEO Action Snapshot, Daily Operations card or Business Health/Department/Alert presentation may be changed unless Aziwe Futhe explicitly reopens that exact Dashboard area.
+- The approved order remains: **Business Health Overview → Department Status → Daily Operations → Recent Audits & Alerts → CEO Action Snapshot → Executive Calendar & Tasks → Admin & Staff House Rules → compact Academy Identity**, followed by the permanent Admin footer outside the tab workspace.
+- Business Health and Business Stats must continue to read the governed Admin executive/Finance snapshot. Do not restore parallel Dashboard-side finance arithmetic, hard-coded course/Student totals, future/voided-expense counting, certificate-row completion calculation or rounded-away cents.
+- Approved live behaviour includes the authenticated Admin Realtime change channel for Dashboard source tables, focus/pageshow reconciliation, non-destructive manual refresh and the 10-minute automatic refresh as fallback. Realtime/database events may refresh displayed values, but must not alter the approved Dashboard structure.
+- Active course, Student, enrolment, payment, current posted expense, support, communication, academic-result, issued-certificate, governance-action, Ambassador, calendar and consultation information must remain database-driven. Do not replace live counts with manually entered numbers.
+- Course Completion remains based on actual passed Student/course results; issued certificates remain a separate measure.
+- CEO Action Snapshot continues to use the **Africa/Johannesburg** calendar date for today/due/overdue classification.
+- **Download Executive Summary** continues to explicitly open the Executive Summary report.
+- Daily Operations retains the approved six-card layout and fail-safe behaviour: a required-source failure must not silently become a false zero.
+- House Rules retain the approved readable sizing and narrow-screen wrapping.
+- Desktop and mobile/tablet responsiveness are part of the lock.
+- Any future work in **Management & Governance or another Admin tab is out of scope for My Dashboard**. Shared files/loaders may be edited only when necessary for the explicitly reopened area and only if My Dashboard is regression-checked and remains behaviourally unchanged.
+- Feedback or a newly discovered defect is a change request, not automatic permission to modify the locked Dashboard. The owner must explicitly approve the Dashboard correction before implementation.
+
+
 ### Student Portal — FINAL OWNER-APPROVED AND LOCKED
 
 The complete Student Portal remains owner-approved and locked. After explicit owner reopening of Payment / Enrollment Step 4 on **19 September 2026**, the payment-plan policy was amended and re-locked at functional checkpoint `3c7b091cd3e8cface5d80e1895fc353fb1699a95`. All other Student Portal areas remain protected and unchanged by that amendment.
