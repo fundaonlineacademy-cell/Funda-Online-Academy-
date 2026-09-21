@@ -543,3 +543,27 @@ The owner physically reviewed **Admin → Marketing & Admissions** after the dup
 - Work in Enrolments & Courses, Ambassador Programme or another Admin tab does **not** reopen Marketing & Admissions.
 - A newly discovered Marketing defect is a change request and requires explicit owner approval before the locked workspace is changed.
 
+
+
+### Admin Enrolments & Courses — FINAL OWNER-APPROVED AND LOCKED (21 September 2026)
+
+The owner physically reviewed **Admin → Enrolments & Courses**, requested final recovery/scroll corrections, authorised those corrections, and explicitly authorised lock after completion. The protected final source includes the Enrolments recovery/compactness update ending with `1ad014111b35e146a67e6876ca98d6fd2f839f7e` and the recorded finalisation SQL ending with `89a650d0b2c5dec20bef63cb4e5bee597bbcbbfa`.
+
+- **Enrolments & Courses is a change-controlled protected Admin surface.** Do not change the approved Enrolment Pipeline, Student/Course/Status filters, Legacy Student Verification, Course Catalogue, Course Governance & Audit, reporting, Realtime behaviour, responsive treatment or payment-recovery controls unless Aziwe Futhe explicitly reopens this tab.
+- Enrolment decisions are intentionally reversible under controlled rules:
+  - rejected enrolments may be **re-approved** only after all current server approval guards pass, including verified linked payment and approved Legacy verification where applicable;
+  - approved enrolments may be **reversed/rejected** with an explicit reason and signed-in reviewer;
+  - protected Student learning access follows the current enrolment status while existing learning progress remains preserved.
+- A rejected Student may submit corrected proof through the Student Payments & Balance workflow.
+- Admin may record replacement proof received through email/WhatsApp/other documented channels, but the record enters Finance as **submitted / awaiting review** and must still be verified by Finance before re-approval.
+- The enrolment decision audit trigger must write an allowed Admin audit source (`system`) and must not revert to the invalid `enrolment_review_trigger` source value.
+- Payment display and approval eligibility must remain linked through `payments.enrolment_id`.
+- Unsubmitted enrolments must not expose an Approve action.
+- Course descriptions remain collapsed behind **View course description** to prevent catalogue scroll bloat.
+- Course Governance displays a compact recent audit preview with full history available inside a bounded modal.
+- Legacy historical/orphaned claims remain retained and clearly labelled; deleted Student accounts must not be treated as active Students.
+- Realtime remains tab-scoped and edit-safe across Enrolments, Courses, Profiles, Payments, Students, Legacy verification and Course Governance sources.
+- Dynamic enrolment/course/payment records are not frozen by this lock; the lock protects the approved workflow, controls and presentation.
+- Work in Ambassador Programme, Academic QA or another Admin tab does **not** reopen Enrolments & Courses.
+- A newly discovered Enrolments & Courses defect is a change request and requires explicit owner approval before this locked workspace is changed.
+
