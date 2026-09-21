@@ -21,7 +21,7 @@ const defs={
   courses:{label:'Courses',tables:['courses']},
   academic:{label:'Academic & Assessments',tables:['profiles','courses','assessment_attempts','certificates']},
   payments:{label:'Payments',tables:['profiles','payments']},
-  support:{label:'Student Support',tables:['profiles','support_tickets']},
+  support:{label:'Student Support & CRM',tables:['profiles','support_tickets','support_ticket_messages','support_ticket_events','student_consultations','consultation_events']},
   marketing:{label:'Marketing & Admissions',tables:['marketing_leads']},
   communication:{label:'Communication Hub',tables:['communications','communication_recipients']},
   cashbook:{label:'Expenses & Income',tables:['admin_cashbook']},
@@ -331,12 +331,65 @@ function build(type,data,from,to,scope){
   }
 
   if(type==='support'){
-    rows=all(data.support_tickets,['created_at','updated_at','resolved_at']).map(x=>({
+    const ticketRows=all(data.support_tickets,['created_at','updated_at','resolved_at']).map(x=>{
+      const created=x.created_at?new Date(x.created_at):null,first=x.first_response_at?new Date(x.first_response_at):null;
+      const responseMinutes=created&&first&&!Number.isNaN(created)&&!Number.isNaN(first)?Math.max(0,Math.round((first-created)/60000)):'';
+      return {
+        'Record Type':'Support Ticket',
+        Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+        Subject:x.subject,
+        Category:x.category,
+        Priority:x.priority,
+        Status:x.status,
+        Owner:x.assigned_to?(p[x.assigned_to]?.full_name||p[x.assigned_to]?.email||x.assigned_to):'Unassigned',
+        Created:fmtDateTime(x.created_at),
+        'First Response':fmtDateTime(x.first_response_at),
+        'Response Minutes':responseMinutes,
+        Resolved:fmtDateTime(x.resolved_at),
+        Notes:x.notes||''
+      };
+    });
+    const consultationRows=all(data.student_consultations,['created_at','scheduled_start','completed_at','cancelled_at']).map(x=>({
+      'Record Type':'Consultation',
       Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
-      Subject:x.subject,Category:x.category,Priority:x.priority,Status:x.status,
-      Created:fmtDate(x.created_at),Resolved:fmtDate(x.resolved_at),Notes:x.notes||''
+      Subject:x.reason||'Student consultation',
+      Category:x.category,
+      Priority:'',
+      Status:x.status,
+      Owner:x.assigned_staff_id?(p[x.assigned_staff_id]?.full_name||p[x.assigned_staff_id]?.email||x.assigned_staff_id):'Unassigned',
+      Created:fmtDateTime(x.created_at),
+      'First Response':fmtDateTime(x.confirmed_at),
+      'Response Minutes':x.created_at&&x.confirmed_at?Math.max(0,Math.round((new Date(x.confirmed_at)-new Date(x.created_at))/60000)):'',
+      Resolved:fmtDateTime(x.completed_at||x.cancelled_at),
+      Notes:[x.department,x.mode,x.student_visible_notes].filter(Boolean).join(' · ')
     }));
-    summary=[['Tickets',rows.length],['Open',rows.filter(x=>!['closed','solved','resolved'].includes(low(x.Status))).length]];
+    rows=[...ticketRows,...consultationRows];
+
+    const tickets=ticketRows;
+    const open=tickets.filter(x=>!['closed','solved','resolved'].includes(low(x.Status)));
+    const urgent=open.filter(x=>['urgent','high'].includes(low(x.Priority)));
+    const responded=tickets.filter(x=>x['First Response']&&x['First Response']!=='—');
+    const responseValues=responded.map(x=>Number(x['Response Minutes'])).filter(Number.isFinite);
+    const avgResponse=responseValues.length?Math.round(responseValues.reduce((a,x)=>a+x,0)/responseValues.length):0;
+    const consultations=consultationRows;
+    summary=[
+      ['Support tickets',tickets.length],
+      ['Open / active tickets',open.length],
+      ['Urgent / high open tickets',urgent.length],
+      ['Resolved / closed tickets',tickets.length-open.length],
+      ['Tickets responded to',responded.length],
+      ['Response coverage',tickets.length?Math.round(responded.length/tickets.length*100)+'%':'—'],
+      ['Average first response',responseValues.length?avgResponse+' minutes':'—'],
+      ['Support messages',(data.support_ticket_messages||[]).length],
+      ['Support audit events',(data.support_ticket_events||[]).length],
+      ['Consultation bookings',consultations.length],
+      ['Consultations awaiting confirmation',consultations.filter(x=>low(x.Status)==='requested').length],
+      ['Confirmed consultations',consultations.filter(x=>low(x.Status)==='confirmed').length],
+      ['Completed consultations',consultations.filter(x=>low(x.Status)==='completed').length],
+      ['No-shows',consultations.filter(x=>low(x.Status)==='no_show').length],
+      ['Cancelled consultations',consultations.filter(x=>low(x.Status)==='cancelled').length],
+      ['Consultation audit events',(data.consultation_events||[]).length]
+    ];
   }
 
   if(type==='marketing'){
