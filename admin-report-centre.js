@@ -23,7 +23,7 @@ const defs={
   payments:{label:'Payments',tables:['profiles','payments']},
   support:{label:'Student Support & CRM',tables:['profiles','support_tickets','support_ticket_messages','support_ticket_events','student_consultations','consultation_events']},
   voice:{label:'Voice & Feedback',tables:['profiles','academy_voice_submissions','academy_voice_review_history']},
-  marketing:{label:'Marketing & Admissions',tables:['marketing_leads']},
+  marketing:{label:'Marketing & Admissions',tables:['profiles','courses','marketing_leads','marketing_lead_history','marketing_subscribers','marketing_campaigns','marketing_campaign_events','marketing_page_views']},
   communication:{label:'Communication Hub',tables:['communications','communication_recipients']},
   cashbook:{label:'Expenses & Income',tables:['admin_cashbook']},
   hr:{label:'HR & Team',tables:['profiles','staff_records','hr_contracts','hr_leave_requests','hr_safety_incidents','hr_training_records','hr_performance_reviews','hr_compliance_reviews']},
@@ -430,10 +430,64 @@ function build(type,data,from,to,scope){
   }
 
   if(type==='marketing'){
-    rows=all(data.marketing_leads,['created_at','updated_at']).map(x=>({
-      Name:x.full_name,Email:x.email,Phone:x.phone,Source:x.source,'Course Interest':x.course_interest,Status:x.status,Notes:x.notes||'',Created:fmtDate(x.created_at)
+    const leadRows=all(data.marketing_leads,['created_at','updated_at','converted_at','next_follow_up_at']).map(x=>({
+      'Record Type':'Admissions Lead',
+      Name:x.full_name,
+      Email:x.email||'',
+      Phone:x.phone||'',
+      Source:x.source||'',
+      'Course Interest':x.course_interest||'',
+      Owner:x.assigned_to?(p[x.assigned_to]?.full_name||p[x.assigned_to]?.email||x.assigned_to):'Unassigned',
+      Status:x.status||'New',
+      'Next Follow-Up':fmtDateTime(x.next_follow_up_at),
+      Converted:fmtDateTime(x.converted_at),
+      Details:x.notes||'',
+      Created:fmtDateTime(x.created_at)
     }));
-    summary=[['Leads',rows.length]];
+    const campaignRows=all(data.marketing_campaigns,['created_at','updated_at','scheduled_at','published_at']).map(x=>{
+      const ev=(data.marketing_campaign_events||[]).filter(e=>String(e.campaign_id)===String(x.id));
+      const totals=ev.reduce((t,e)=>{
+        const m=e.metadata||{};
+        t.sent+=Number(m.sent||0);t.failed+=Number(m.failed||0);t.queued+=Number(m.queued||0);
+        return t;
+      },{sent:0,failed:0,queued:0});
+      return {
+        'Record Type':'Marketing Campaign',
+        Name:x.name,
+        Email:'',
+        Phone:'',
+        Source:x.channel||'',
+        'Course Interest':x.course_id?(c[x.course_id]?.title||x.course_id):'',
+        Owner:x.created_by?(p[x.created_by]?.full_name||p[x.created_by]?.email||x.created_by):'',
+        Status:x.campaign_status||'draft',
+        'Next Follow-Up':fmtDateTime(x.scheduled_at),
+        Converted:fmtDateTime(x.published_at),
+        Details:['Audience '+(x.audience||'—'),'Sent '+totals.sent,'Failed '+totals.failed,'Queued '+totals.queued].join(' · '),
+        Created:fmtDateTime(x.created_at)
+      };
+    });
+    rows=[...leadRows,...campaignRows];
+    const activeSubs=(data.marketing_subscribers||[]).filter(x=>x.consent===true&&!x.unsubscribed_at);
+    const leads=leadRows;
+    const campaigns=campaignRows;
+    const followUps=leads.filter(x=>low(x.Status)==='follow-up');
+    summary=[
+      ['Admissions leads',leads.length],
+      ['New leads',leads.filter(x=>low(x.Status)==='new').length],
+      ['Contacted / follow-up leads',leads.filter(x=>['contacted','follow-up'].includes(low(x.Status))).length],
+      ['Converted leads',leads.filter(x=>low(x.Status)==='converted').length],
+      ['Closed leads',leads.filter(x=>low(x.Status)==='closed').length],
+      ['Unassigned active leads',leads.filter(x=>!['converted','closed'].includes(low(x.Status))&&x.Owner==='Unassigned').length],
+      ['Follow-ups scheduled',followUps.filter(x=>x['Next Follow-Up']&&x['Next Follow-Up']!=='—').length],
+      ['Lead history events',(data.marketing_lead_history||[]).length],
+      ['Active opted-in subscribers',activeSubs.length],
+      ['Campaigns',campaigns.length],
+      ['Published campaigns',campaigns.filter(x=>low(x.Status)==='published').length],
+      ['Scheduled campaigns',campaigns.filter(x=>low(x.Status)==='scheduled').length],
+      ['Failed campaigns',campaigns.filter(x=>low(x.Status)==='failed').length],
+      ['Campaign activity events',(data.marketing_campaign_events||[]).length],
+      ['Website / course views',(data.marketing_page_views||[]).length]
+    ];
   }
 
   if(type==='communication'){
