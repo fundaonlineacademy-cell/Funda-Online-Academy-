@@ -256,7 +256,7 @@ const textContrast = document.createElement('script'); textContrast.src = 'funda
 
 if (/login\.html$/i.test(window.location.pathname)) {
   const loginLayoutRestore=document.createElement('script');loginLayoutRestore.src='login-layout-order-restore.js?v=20260917-approved-order-v1';document.head.appendChild(loginLayoutRestore);
-  const staffAccessCode=document.createElement('script');staffAccessCode.src='staff-access-code-login.js?v=20260917-separated-v1';document.head.appendChild(staffAccessCode);
+  const staffAccessCode=document.createElement('script');staffAccessCode.src='staff-access-code-login.js?v=20260921-server-verified-v1';document.head.appendChild(staffAccessCode);
 }
 
 if (/courses-public\.html$/i.test(window.location.pathname)) {

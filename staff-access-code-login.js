@@ -22,7 +22,7 @@ const attach=()=>{
   extra=document.createElement('div');
   extra.id='admin-extra';
   extra.className='hidden mt-5';
-  extra.innerHTML='<label for="staff_code" class="block text-sm font-bold text-[#06152f]">Staff access code</label><input id="staff_code" type="password" autocomplete="off" placeholder="Enter staff access code" class="input-field mt-2"><p class="mt-1.5 text-xs text-slate-500">Required for Staff / Admin access.</p>';
+  extra.innerHTML='<label for="staff_code" class="block text-sm font-bold text-[#06152f]">Staff access code</label><input id="staff_code" type="password" autocomplete="off" placeholder="Enter staff access code" class="input-field mt-2"><p class="mt-1.5 text-xs text-slate-500">Required for Staff / Admin access. The code is verified securely by the Academy server.</p>';
   const note=document.getElementById('staffAccessNote');
   (note||loginBtn).insertAdjacentElement('beforebegin',extra);
  }
@@ -78,35 +78,48 @@ const attach=()=>{
    const {data,error}=await c.auth.signInWithPassword({email,password});
    if(error)throw error;
    if(!data?.user)throw new Error('login-failed');
-   const {data:profile,error:profileError}=await c.from('profiles').select('role, staff_code').eq('id',data.user.id).maybeSingle();
-   if(profileError)throw new Error('profile-load');
-   const actualRole=profile?.role||'student';
+
+   const verified=await c.rpc('verify_staff_access_code',{p_staff_code:staffCode});
+   if(verified.error){
+    await c.auth.signOut();
+    throw new Error('staff-code-verification');
+   }
+
+   const result=verified.data||{};
+   if(!result.ok){
+    await c.auth.signOut();
+    if(result.reason==='temporarily_locked'){
+      show('Staff Access Code verification is temporarily locked after repeated failed attempts. Please wait 15 minutes and try again.');
+      return;
+    }
+    if(result.reason==='not_configured'){
+      show('No secure Staff Access Code is configured for this account. Please contact the Academy administrator.');
+      return;
+    }
+    const remaining=Number(result.attempts_remaining);
+    show(Number.isFinite(remaining)&&remaining>0
+      ?'Invalid Staff Access Code. '+remaining+' attempt'+(remaining===1?'':'s')+' remaining before a temporary lock.'
+      :'Invalid Staff Access Code.');
+    return;
+   }
+
+   const actualRole=String(result.role||'').toLowerCase();
    if(!['admin','staff'].includes(actualRole)){
     await c.auth.signOut();
     show('This account does not have staff or administrator access.');
     return;
    }
-   const assigned=String(profile?.staff_code||'').trim();
-   if(!assigned){
-    await c.auth.signOut();
-    show('No Staff Access Code is assigned to this account. Please contact the Academy administrator.');
-    return;
-   }
-   if(assigned!==staffCode){
-    await c.auth.signOut();
-    show('Invalid Staff Access Code.');
-    return;
-   }
+
    const destination=actualRole==='admin'?'admin-v2.html':'staff-portal.html';
    const portalName=actualRole==='admin'?'Admin Command Center':'Staff Workspace';
    show(`Login successful. Opening the ${portalName}...`,true);
    setTimeout(()=>{window.location.href=destination},450);
   }catch(error){
    console.error('Staff/Admin login error:',error);
-   const text=String(error?.message||'').toLowerCase();
-   if(text.includes('invalid login credentials'))show('The email address or password is incorrect. Please check your details and try again.');
-   else if(text.includes('email not confirmed'))show('This account is waiting for email confirmation. Please contact the Academy if this message continues.');
-   else if(text.includes('profile-load'))show('Your account was signed in, but the Academy could not verify staff access. Please try again.');
+   const message=String(error?.message||'').toLowerCase();
+   if(message.includes('invalid login credentials'))show('The email address or password is incorrect. Please check your details and try again.');
+   else if(message.includes('email not confirmed'))show('This account is waiting for email confirmation. Please contact the Academy if this message continues.');
+   else if(message.includes('staff-code-verification'))show('The Academy could not securely verify the Staff Access Code. Please try again.');
    else show('Unable to sign in right now. Please check your details and try again.');
   }finally{
    loginBtn.disabled=false;
