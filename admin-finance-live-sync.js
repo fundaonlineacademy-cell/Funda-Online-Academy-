@@ -3,7 +3,7 @@
 if(!/admin-v2\.html$/i.test(location.pathname)||window.__fundaCanonicalFinanceDashboard)return;
 window.__fundaCanonicalFinanceDashboard=true;
 let db,timer,busy=false;
-const n=v=>Number(v||0),money=v=>'R'+n(v).toLocaleString('en-ZA',{maximumFractionDigits:0}),pct=(a,b)=>b?Math.round(n(a)/n(b)*100):0;
+const n=v=>Number(v||0),money=v=>'R'+n(v).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2}),pct=(a,b)=>b?Math.round(n(a)/n(b)*100):0;
 function client(){return db||(db=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY))}
 function activeLabel(){return [...document.querySelectorAll('#nav button,.nav button')].find(x=>x.classList.contains('on')||x.classList.contains('active'))?.textContent||''}
 function dashboardVisible(){return /dashboard/i.test(activeLabel())}
