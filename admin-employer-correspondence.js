@@ -7,7 +7,7 @@ const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const clean=v=>String(v??'').trim();
 const fmt=v=>v?new Date(v).toLocaleString('en-ZA',{dateStyle:'medium',timeStyle:'short'}):'—';
-const niceDate=()=>new Intl.DateTimeFormat('en-ZA',{timeZone:'Africa/Johannesburg',day:'2-digit',month:'long',year:'numeric'}).format(new Date());
+const niceDate=v=>new Intl.DateTimeFormat('en-ZA',{timeZone:'Africa/Johannesburg',day:'2-digit',month:'long',year:'numeric'}).format(v?new Date(v+'T12:00:00+02:00'):new Date());
 const site=v=>String(v||'').replace('https://','').replace('http://','');
 
 const T=[
@@ -58,7 +58,7 @@ function sources(){let a=['<option value="">Manual recipient / stakeholder</opti
 function source(v){if(!v)return null;let parts=String(v).split(':'),kind=parts[0],id=parts[1];return kind==='request'?data.requests.find(x=>x.id===id):kind==='outreach'?data.targets.find(x=>x.id===id):null}
 function templateOptions(){return T.map(x=>`<option value="${esc(x.key)}">${esc(x.label)}</option>`).join('')}
 function template(key){return T.find(x=>x.key===key)||T[0]}
-function vals(){return{kind:$('ecorKind')?.value||'email',template:$('ecorTemplate')?.value||T[0].key,source:$('ecorSource')?.value||'',org:clean($('ecorOrg')?.value),contact:clean($('ecorContact')?.value),job:clean($('ecorJob')?.value),email:clean($('ecorEmail')?.value).toLowerCase(),subject:clean($('ecorSubject')?.value),body:clean($('ecorBodyText')?.value)}}
+function vals(){return{kind:$('ecorKind')?.value||'email',template:$('ecorTemplate')?.value||T[0].key,source:$('ecorSource')?.value||'',date:$('ecorDate')?.value||new Date().toISOString().slice(0,10),org:clean($('ecorOrg')?.value),contact:clean($('ecorContact')?.value),job:clean($('ecorJob')?.value),email:clean($('ecorEmail')?.value).toLowerCase(),subject:clean($('ecorSubject')?.value),body:clean($('ecorBodyText')?.value)}}
 function shell(title,sub,body){$('employerCorrespondenceModal')?.remove();document.body.insertAdjacentHTML('beforeend',`<div class="ecorBack" id="employerCorrespondenceModal"><div class="ecorModal"><div class="ecorHead"><div><h3>${esc(title)}</h3><p>${esc(sub)}</p></div><button class="ecorClose" id="ecorClose">×</button></div><div class="ecorBody">${body}</div></div></div>`);$('ecorClose').onclick=closeModal;$('employerCorrespondenceModal').onclick=e=>{if(e.target.id==='employerCorrespondenceModal')closeModal()}}
 function closeModal(){$('employerCorrespondenceModal')?.remove();draftId=null;window.__fundaEmployerCorrespondenceEditing=false;if(pending){pending=false;refresh()}}
 function editor(kind='email',draft=null){
@@ -66,6 +66,7 @@ function editor(kind='email',draft=null){
  shell(k==='letter'?'Formal Employer Letter':'Employer Email Draft',k==='letter'?'Use the Academy letterhead, edit the content, then download the final PDF.':'Prepare professional employer correspondence, save it, then copy it into the Academy email account.',
  `<div id="ecorNotice" class="ecorNotice"></div><div class="ecorGrid"><div class="ecorForm">
  <div class="ecorField ecorWide"><label>Source organisation</label><select id="ecorSource">${sources()}</select></div>
+ <div class="ecorField"><label>Letter / correspondence date</label><input id="ecorDate" type="date" value="${esc(draft?.correspondence_date||new Date().toISOString().slice(0,10))}"></div>
  <div class="ecorField"><label>Format</label><select id="ecorKind"><option value="email">Email</option><option value="letter">Formal Letter</option></select></div>
  <div class="ecorField"><label>Template</label><select id="ecorTemplate">${templateOptions()}</select></div>
  <div class="ecorField ecorWide"><label>Organisation / stakeholder</label><input id="ecorOrg" value="${esc(draft?.organisation_name||'')}" placeholder="Organisation or stakeholder name"></div>
@@ -74,7 +75,7 @@ function editor(kind='email',draft=null){
  <div class="ecorField ecorWide"><label>Recipient email</label><input id="ecorEmail" type="email" value="${esc(draft?.recipient_email||'')}" placeholder="name@organisation.co.za"></div>
  <div class="ecorField ecorWide"><label>Subject</label><input id="ecorSubject" value="${esc(draft?.subject||'')}"></div>
  <div class="ecorField ecorWide"><label>Message / letter body</label><textarea id="ecorBodyText">${esc(draft?.body_text||'')}</textarea></div>
- <div class="ecorFormActions"><button class="ecorBtn" id="ecorSave">Save Draft</button><button class="ecorBtn alt" id="ecorFinal">Save as Final</button><button class="ecorBtn alt" id="ecorCopy">Copy Email</button><button class="ecorBtn gold" id="ecorPdf">Download PDF</button></div>
+ <div class="ecorFormActions"><button class="ecorBtn" id="ecorSave">Save Draft</button><button class="ecorBtn alt" id="ecorFinal">Save as Final</button><button class="ecorBtn alt" id="ecorCopy">Copy Email</button><button class="ecorBtn alt" id="ecorMail">Open Email App</button><button class="ecorBtn gold" id="ecorPdf">Download PDF</button></div>
  </div><div class="ecorPreview"><div id="ecorPreview"></div></div></div>`);
  $('ecorKind').value=k;$('ecorTemplate').value=draft?.template_key||T[0].key;
  if(draft){$('ecorSource').value=draft.employer_request_id?'request:'+draft.employer_request_id:draft.outreach_id?'outreach:'+draft.outreach_id:''}else applyTemplate();
@@ -83,13 +84,13 @@ function editor(kind='email',draft=null){
 function applySource(){let s=source($('ecorSource').value);if(!s)return;$('ecorOrg').value=s.organisation_name||'';$('ecorContact').value=s.contact_name||'';$('ecorJob').value=s.job_title||'';$('ecorEmail').value=s.email||'';applyTemplate()}
 function applyTemplate(){let v=vals(),t=template(v.template);$('ecorSubject').value=t.subject;$('ecorBodyText').value=t.body({org:v.org,contact:v.contact});preview()}
 function preview(){
- let v=vals(),co=company();$('ecorPdf').style.display=v.kind==='letter'?'inline-block':'none';$('ecorCopy').textContent=v.kind==='letter'?'Copy Letter Text':'Copy Email';
+ let v=vals(),co=company();$('ecorPdf').style.display=v.kind==='letter'?'inline-block':'none';$('ecorMail').style.display=v.kind==='email'?'inline-block':'none';$('ecorCopy').textContent=v.kind==='letter'?'Copy Letter Text':'Copy Email';
  if(v.kind==='email'){$('ecorPreview').innerHTML=`<div class="ecorEmail"><div class="ecorLabel">To</div><div class="ecorValue">${esc(v.email||'Recipient email not entered')}</div><div class="ecorLabel">Subject</div><div class="ecorValue"><b>${esc(v.subject||'No subject')}</b></div><div class="ecorEmailBody">${esc(v.body||'Start editing the email draft.')}\n\nKind regards,\n${esc(co.ceo)}\nFounder & Chief Executive Officer\nFunda Online Academy</div></div>`;return}
- $('ecorPreview').innerHTML=`<div class="ecorLetter"><div class="ecorLetterHead"><div>${logo?`<img src="${logo}" alt="Funda Online Academy transparent logo">`:''}</div><div><div class="ecorBrand">${esc(co.name)}</div><div class="ecorHeadMeta">Registration No: ${esc(co.reg)}<br>${esc(co.address)}<br>Tel: ${esc(co.phone)} · WhatsApp: ${esc(co.whatsapp)} · ${esc(co.email)}<br>${esc(site(co.website))}</div></div></div><div class="ecorLetterMeta">Date: ${esc(niceDate())}<br>To: ${esc(v.org||'Receiving organisation')}<br>Attention: ${esc(v.contact||'The Manager / Relevant Representative')}${v.job?' · '+esc(v.job):''}</div><div class="ecorSubject">RE: ${esc(v.subject||'Formal correspondence')}</div><div class="ecorLetterBody">${esc(v.body||'Start editing the letter body.')}</div><div class="ecorSign">Yours sincerely,<br><br><strong>${esc(co.ceo)}</strong><br>Founder & Chief Executive Officer<br>Funda Online Academy</div><div class="ecorFoot">Official Academy correspondence · Registration No: ${esc(co.reg)}</div></div>`
+ $('ecorPreview').innerHTML=`<div class="ecorLetter"><div class="ecorLetterHead"><div>${logo?`<img src="${logo}" alt="Funda Online Academy transparent logo">`:''}</div><div><div class="ecorBrand">${esc(co.name)}</div><div class="ecorHeadMeta">Registration No: ${esc(co.reg)}<br>${esc(co.address)}<br>Tel: ${esc(co.phone)} · WhatsApp: ${esc(co.whatsapp)} · ${esc(co.email)}<br>${esc(site(co.website))}</div></div></div><div class="ecorLetterMeta">Date: ${esc(niceDate(v.date))}<br>To: ${esc(v.org||'Receiving organisation')}<br>Attention: ${esc(v.contact||'The Manager / Relevant Representative')}${v.job?' · '+esc(v.job):''}</div><div class="ecorSubject">RE: ${esc(v.subject||'Formal correspondence')}</div><div class="ecorLetterBody">${esc(v.body||'Start editing the letter body.')}</div><div class="ecorSign">Yours sincerely,<br><br><strong>${esc(co.ceo)}</strong><br>Founder & Chief Executive Officer<br>Funda Online Academy</div><div class="ecorFoot">Official Academy correspondence · Registration No: ${esc(co.reg)}</div></div>`
 }
 async function save(status){
  let v=vals();if(!v.org)return alert('Enter the organisation or stakeholder name.');if(!v.subject||!v.body)return alert('Subject and correspondence body are required.');
- let p=String(v.source).split(':'),payload={correspondence_kind:v.kind,template_key:v.template,employer_request_id:p[0]==='request'?p[1]:null,outreach_id:p[0]==='outreach'?p[1]:null,organisation_name:v.org,contact_name:v.contact||null,contact_job_title:v.job||null,recipient_email:v.email||null,subject:v.subject,body_text:v.body,status,updated_by:user.id,updated_at:new Date().toISOString()};
+ let p=String(v.source).split(':'),payload={correspondence_kind:v.kind,template_key:v.template,correspondence_date:v.date,employer_request_id:p[0]==='request'?p[1]:null,outreach_id:p[0]==='outreach'?p[1]:null,organisation_name:v.org,contact_name:v.contact||null,contact_job_title:v.job||null,recipient_email:v.email||null,subject:v.subject,body_text:v.body,status,updated_by:user.id,updated_at:new Date().toISOString()};
  let q=draftId?await db.from('employer_correspondence_drafts').update(payload).eq('id',draftId).select('*').single():await db.from('employer_correspondence_drafts').insert({...payload,created_by:user.id}).select('*').single();
  if(q.error)return alert('Could not save correspondence: '+q.error.message);draftId=q.data.id;await load();renderPanel();alert(status==='final'?'Correspondence saved as final.':'Draft saved.');
 }
@@ -97,13 +98,14 @@ async function copy(){
  let v=vals(),co=company(),out=v.kind==='email'?`To: ${v.email||''}\nSubject: ${v.subject}\n\n${v.body}\n\nKind regards,\n${co.ceo}\nFounder & Chief Executive Officer\nFunda Online Academy`:`${v.subject}\n\n${v.body}\n\nYours sincerely,\n${co.ceo}\nFounder & Chief Executive Officer\nFunda Online Academy`;
  try{await navigator.clipboard.writeText(out);alert(v.kind==='email'?'Email copied.':'Letter text copied.')}catch(e){prompt('Copy the correspondence below:',out)}
 }
+function openMail(){let v=vals(),co=company();if(v.kind!=='email')return;if(!v.email)return alert('Enter the recipient email address first.');let body=v.body+'\n\nKind regards,\n'+co.ceo+'\nFounder & Chief Executive Officer\nFunda Online Academy';window.location.href='mailto:'+encodeURIComponent(v.email)+'?subject='+encodeURIComponent(v.subject)+'&body='+encodeURIComponent(body)}
 async function ensurePdf(){if(window.jspdf?.jsPDF)return window.jspdf.jsPDF;await new Promise((resolve,reject)=>{let s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js';s.onload=resolve;s.onerror=reject;document.head.appendChild(s)});return window.jspdf?.jsPDF}
 async function logoPng(v){if(!v)return '';return await new Promise((resolve,reject)=>{let im=new Image();im.onload=()=>{let cv=document.createElement('canvas');cv.width=im.naturalWidth;cv.height=im.naturalHeight;cv.getContext('2d').drawImage(im,0,0);resolve(cv.toDataURL('image/png'))};im.onerror=reject;im.src=v})}
 async function pdf(){
  let v=vals(),co=company();if(v.kind!=='letter')return;if(!v.org||!v.subject||!v.body)return alert('Complete the organisation, subject and letter body first.');let b=$('ecorPdf');b.disabled=true;b.textContent='Preparing PDF…';
  try{
   let jsPDF=await ensurePdf(),doc=new jsPDF({unit:'mm',format:'a4'}),margin=18,w=174,y=15,png=await logoPng(logo||window.FUNDA_TRANSPARENT_LOGO_MASTER||'').catch(()=> '');
-  if(png)doc.addImage(png,'PNG',margin,y,25,25);doc.setTextColor(0,0,0);doc.setFont('times','bold');doc.setFontSize(16);doc.text(co.name,50,21);doc.setFont('times','normal');doc.setFontSize(9.5);doc.text([`Registration No: ${co.reg}`,co.address,`Tel: ${co.phone} · WhatsApp: ${co.whatsapp} · ${co.email}`,site(co.website)],50,27);y=43;doc.setDrawColor(201,154,46);doc.setLineWidth(1);doc.line(margin,y,192,y);y+=9;doc.setFontSize(12);doc.text(`Date: ${niceDate()}`,margin,y);y+=7;doc.text(`To: ${v.org}`,margin,y,{maxWidth:w});y+=7;doc.text(`Attention: ${v.contact||'The Manager / Relevant Representative'}${v.job?' · '+v.job:''}`,margin,y,{maxWidth:w});y+=12;doc.setFont('times','bold');let sub=doc.splitTextToSize('RE: '+v.subject.toUpperCase(),w);doc.text(sub,margin,y);y+=sub.length*5.5+6;doc.setFont('times','normal');
+  if(png)doc.addImage(png,'PNG',margin,y,25,25);doc.setTextColor(0,0,0);doc.setFont('times','bold');doc.setFontSize(16);doc.text(co.name,50,21);doc.setFont('times','normal');doc.setFontSize(9.5);doc.text([`Registration No: ${co.reg}`,co.address,`Tel: ${co.phone} · WhatsApp: ${co.whatsapp} · ${co.email}`,site(co.website)],50,27);y=43;doc.setDrawColor(201,154,46);doc.setLineWidth(1);doc.line(margin,y,192,y);y+=9;doc.setFontSize(12);doc.text(`Date: ${niceDate(v.date)}`,margin,y);y+=7;doc.text(`To: ${v.org}`,margin,y,{maxWidth:w});y+=7;doc.text(`Attention: ${v.contact||'The Manager / Relevant Representative'}${v.job?' · '+v.job:''}`,margin,y,{maxWidth:w});y+=12;doc.setFont('times','bold');let sub=doc.splitTextToSize('RE: '+v.subject.toUpperCase(),w);doc.text(sub,margin,y);y+=sub.length*5.5+6;doc.setFont('times','normal');
   let para=t=>{let lines=doc.splitTextToSize(t,w);if(y+lines.length*5.4>270){doc.addPage();y=18;doc.setFont('times','normal');doc.setFontSize(12)}doc.text(lines,margin,y,{maxWidth:w,align:'justify'});y+=lines.length*5.4+5};v.body.split(/\n{2,}/).map(x=>x.trim()).filter(Boolean).forEach(para);
   if(y>258){doc.addPage();y=22}doc.text('Yours sincerely,',margin,y);y+=10;doc.setFont('times','bold');doc.text(co.ceo,margin,y);y+=5.5;doc.setFont('times','normal');doc.text('Founder & Chief Executive Officer',margin,y);y+=5.5;doc.text('Funda Online Academy',margin,y);
   let pages=doc.getNumberOfPages();for(let p=1;p<=pages;p++){doc.setPage(p);doc.setDrawColor(225,230,236);doc.line(margin,286,192,286);doc.setFontSize(8);doc.text(`Official Academy correspondence · ${co.reg}`,margin,291);doc.text(`Page ${p} of ${pages}`,192,291,{align:'right'})}
@@ -112,8 +114,8 @@ async function pdf(){
 }
 function bindEditor(){
  $('ecorSource').onchange=applySource;$('ecorTemplate').onchange=applyTemplate;$('ecorKind').onchange=preview;
- ['ecorOrg','ecorContact','ecorJob','ecorEmail','ecorSubject','ecorBodyText'].forEach(id=>$(id).addEventListener('input',()=>{window.__fundaEmployerCorrespondenceEditing=true;preview()}));
- $('ecorSave').onclick=()=>save('draft');$('ecorFinal').onclick=()=>save('final');$('ecorCopy').onclick=copy;$('ecorPdf').onclick=pdf;
+ ['ecorDate','ecorOrg','ecorContact','ecorJob','ecorEmail','ecorSubject','ecorBodyText'].forEach(id=>$(id).addEventListener('input',()=>{window.__fundaEmployerCorrespondenceEditing=true;preview()}));
+ $('ecorSave').onclick=()=>save('draft');$('ecorFinal').onclick=()=>save('final');$('ecorCopy').onclick=copy;$('ecorMail').onclick=openMail;$('ecorPdf').onclick=pdf;
 }
 function saved(){
  shell('Saved Employer Correspondence','Reopen and edit previous correspondence without lengthening the Employer page.',
