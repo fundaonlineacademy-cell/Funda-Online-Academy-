@@ -167,6 +167,7 @@ begin
       on lower(cat.category_type)=lower(c.entry_type)
      and lower(cat.name)=lower(c.category)
     where c.entry_date between p_from and p_to
+      and c.entry_date<=current_date
       and coalesce(c.posting_status,'posted')='posted'
       and coalesce(lower(c.source_type),'manual') not in ('payment','student_payment')
   ),
@@ -213,6 +214,13 @@ begin
       count(*) filter (where lower(entry_type)='income')::int cash_income_records,
       count(*) filter (where lower(entry_type)='expense')::int cash_expense_records
     from cash
+  ),
+  future_posted as (
+    select count(*)::int records,coalesce(sum(amount),0)::numeric amount
+    from public.admin_cashbook
+    where entry_date between p_from and p_to
+      and entry_date>current_date
+      and coalesce(posting_status,'posted')='posted'
   )
   select jsonb_build_object(
     'period_start',p_from,
@@ -236,6 +244,8 @@ begin
     'pending_payment_records',pay.pending_payment_records,
     'cash_income_records',ct.cash_income_records,
     'cash_expense_records',ct.cash_expense_records,
+    'future_posted_records',fp.records,
+    'future_posted_amount',fp.amount,
     'income_lines',il.lines,
     'expense_lines',el.lines,
     'generated_at',now()
@@ -245,7 +255,8 @@ begin
   cross join expense_group eg
   cross join inc_lines il
   cross join exp_lines el
-  cross join counts ct;
+  cross join counts ct
+  cross join future_posted fp;
 
   return v_result;
 end;
@@ -572,6 +583,7 @@ begin
       coalesce(sum(case when lower(coalesce(entry_type,''))='expense' then coalesce(amount,0) else 0 end),0)::numeric as expenses
     from public.admin_cashbook
     where coalesce(posting_status,'posted')='posted'
+      and entry_date<=current_date
       and (p_from is null or entry_date>=p_from)
       and (p_to is null or entry_date<=p_to)
   )
@@ -624,6 +636,7 @@ begin
       coalesce(sum(case when lower(coalesce(entry_type,''))='expense' then coalesce(amount,0) else 0 end),0)::numeric operating_expenses
     from public.admin_cashbook
     where coalesce(posting_status,'posted')='posted'
+      and entry_date<=current_date
   )
   select jsonb_build_object(
     'approved_enrolments',a.approved_enrolments,
