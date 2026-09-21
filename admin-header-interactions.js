@@ -81,40 +81,48 @@ function searchCss(){
   `;
   document.head.appendChild(s);
 }
-function searchSource(name){
-  try{
-    if(name==='profiles'&&typeof PR!=='undefined'&&Array.isArray(PR))return PR;
-    if(name==='courses'&&typeof CO!=='undefined'&&Array.isArray(CO))return CO;
-    if(name==='enrolments'&&typeof EN!=='undefined'&&Array.isArray(EN))return EN;
-  }catch(_){}
-  return [];
-}
+let searchCache=null,searchCacheAt=0,searchSequence=0;
 function lowText(v){return String(v??'').trim().toLowerCase()}
-function searchRows(query){
+function deletedProfile(p){return /@deleted\.funda\.invalid$/i.test(String(p?.email||''))||/^deleted\s+(student|staff)\s+account$/i.test(String(p?.full_name||'').trim())}
+async function liveSearchData(force=false){
+  if(searchCache&&!force&&Date.now()-searchCacheAt<60000)return searchCache;
+  const c=await client();
+  if(!c)throw new Error('Admin data service is unavailable.');
+  const [profiles,courses,enrolments]=await Promise.all([
+    c.from('profiles').select('id,full_name,email,phone,role,student_number').eq('role','student'),
+    c.from('courses').select('id,title,duration,description,active'),
+    c.from('enrollments').select('id,student_id,course_id,status,enrollment_status,student:profiles!enrollments_student_id_fkey(id,full_name,email,phone,role,student_number),course:courses!enrollments_course_id_fkey(id,title,duration,active)')
+  ]);
+  const failed=[profiles,courses,enrolments].find(result=>result.error);
+  if(failed)throw failed.error;
+  searchCache={
+    profiles:(profiles.data||[]).filter(p=>!deletedProfile(p)),
+    courses:courses.data||[],
+    enrolments:(enrolments.data||[]).filter(en=>!deletedProfile(en.student||{}))
+  };
+  searchCacheAt=Date.now();
+  return searchCache;
+}
+async function searchRows(query){
   const q=lowText(query);
   if(q.length<2)return[];
-  const profiles=searchSource('profiles'),courses=searchSource('courses'),enrolments=searchSource('enrolments');
-  const profileById=new Map(profiles.map(p=>[String(p.id),p]));
-  const courseById=new Map(courses.map(c=>[String(c.id),c]));
-  const deleted=p=>/@deleted\.funda\.invalid$/i.test(String(p?.email||''))||/^deleted\s+(student|staff)\s+account$/i.test(String(p?.full_name||'').trim());
+  const data=await liveSearchData();
   const results=[];
-  profiles.filter(p=>lowText(p.role)==='student'&&!deleted(p)).forEach(p=>{
-    const hay=lowText([p.full_name,p.email,p.phone,p.mobile_whatsapp,p.student_number].join(' '));
-    if(hay.includes(q))results.push({kind:'student',label:'Student',title:p.full_name||p.email||'Student',meta:[p.email,p.phone||p.mobile_whatsapp].filter(Boolean).join(' · '),term:p.email||p.full_name||q});
+  data.profiles.forEach(p=>{
+    const hay=lowText([p.full_name,p.email,p.phone,p.student_number].join(' '));
+    if(hay.includes(q))results.push({kind:'student',label:'Student',title:p.full_name||p.email||'Student',meta:[p.email,p.phone,p.student_number].filter(Boolean).join(' · '),term:p.email||p.full_name||q});
   });
-  courses.forEach(c=>{
+  data.courses.forEach(c=>{
     const hay=lowText([c.title,c.duration,c.description].join(' '));
     if(hay.includes(q))results.push({kind:'course',label:'Course',title:c.title||'Course',meta:[c.duration,c.active===false?'Inactive':'Active'].filter(Boolean).join(' · '),courseId:String(c.id||''),term:c.title||q});
   });
-  enrolments.forEach(en=>{
-    const p=profileById.get(String(en.student_id))||en.student||{},c=courseById.get(String(en.course_id))||en.course||{};
-    if(deleted(p))return;
-    const status=lowText(en.enrollment_status||en.status||'pending');
-    const hay=lowText([p.full_name,p.email,p.phone,c.title,status,en.id].join(' '));
+  data.enrolments.forEach(en=>{
+    const p=en.student||{},c=en.course||{},status=lowText(en.enrollment_status||en.status||'pending');
+    const hay=lowText([p.full_name,p.email,p.phone,p.student_number,c.title,status,en.id].join(' '));
     if(hay.includes(q))results.push({kind:'enrolment',label:'Enrolment',title:p.full_name||p.email||'Student',meta:[c.title,status?status.replaceAll('_',' '):''].filter(Boolean).join(' · '),term:p.email||p.full_name||c.title||q});
   });
   const order={student:0,enrolment:1,course:2};
-  results.sort((a,b)=>(order[a.kind]-order[b.kind])||a.title.localeCompare(b.title));
+  results.sort((a,b)=>(order[a.kind]-order[b.kind])||String(a.title).localeCompare(String(b.title)));
   return results.slice(0,14);
 }
 function positionSearch(panel,input){
@@ -172,7 +180,7 @@ function openSearchResult(result){
   if(result.kind==='course')focusCourse(result.title);
   else filterEnrolments(result.term);
 }
-function renderSearch(input){
+async function renderSearch(input){
   searchCss();
   let panel=$('ahiSearchPanel');
   if(!panel){
@@ -185,20 +193,31 @@ function renderSearch(input){
   }
   const query=input.value.trim();
   if(!query){closeSearch();return}
-  const rows=searchRows(query);
-  if(query.length<2){
-    panel.innerHTML='<div class="ahiSearchEmpty">Type at least 2 characters to search students, courses and enrolments.</div>';
-  }else if(!rows.length){
-    panel.innerHTML='<div class="ahiSearchEmpty">No matching students, courses or enrolments were found.</div>';
-  }else{
-    panel.innerHTML='<div class="ahiSearchHead">'+rows.length+' result'+(rows.length===1?'':'s')+' shown</div>'+rows.map((r,i)=>`<button type="button" class="ahiSearchItem" data-ahi-search-index="${i}" role="option"><span class="ahiSearchType">${esc(r.label)}</span><span class="ahiSearchText"><b>${esc(r.title)}</b><small>${esc(r.meta||'')}</small></span></button>`).join('');
-    panel.querySelectorAll('[data-ahi-search-index]').forEach(button=>{
-      button.onclick=()=>openSearchResult(rows[Number(button.dataset.ahiSearchIndex)]);
-    });
-  }
   positionSearch(panel,input);
   panel.classList.add('open');
   input.setAttribute('aria-expanded','true');
+  if(query.length<2){
+    panel.innerHTML='<div class="ahiSearchEmpty">Type at least 2 characters to search students, courses and enrolments.</div>';
+    return;
+  }
+  const sequence=++searchSequence;
+  panel.innerHTML='<div class="ahiSearchEmpty">Searching Academy records…</div>';
+  try{
+    const rows=await searchRows(query);
+    if(sequence!==searchSequence||input.value.trim()!==query)return;
+    if(!rows.length){
+      panel.innerHTML='<div class="ahiSearchEmpty">No matching students, courses or enrolments were found.</div>';
+      return;
+    }
+    panel.innerHTML='<div class="ahiSearchHead">'+rows.length+' result'+(rows.length===1?'':'s')+' shown</div>'+rows.map((r,i)=>'<button type="button" class="ahiSearchItem" data-ahi-search-index="'+i+'" role="option"><span class="ahiSearchType">'+esc(r.label)+'</span><span class="ahiSearchText"><b>'+esc(r.title)+'</b><small>'+esc(r.meta||'')+'</small></span></button>').join('');
+    panel.querySelectorAll('[data-ahi-search-index]').forEach(button=>{
+      button.onclick=()=>openSearchResult(rows[Number(button.dataset.ahiSearchIndex)]);
+    });
+  }catch(error){
+    console.error('Admin search failed',error);
+    if(sequence!==searchSequence)return;
+    panel.innerHTML='<div class="ahiSearchEmpty">Search could not load Academy records. Please check your connection and try again.</div>';
+  }
 }
 function wireSearch(){
   const input=$('global');
@@ -212,19 +231,23 @@ function wireSearch(){
   let timer;
   input.addEventListener('input',()=>{
     clearTimeout(timer);
-    timer=setTimeout(()=>renderSearch(input),120);
+    timer=setTimeout(()=>renderSearch(input),150);
   });
   input.addEventListener('focus',()=>{if(input.value.trim())renderSearch(input)});
-  input.addEventListener('keydown',event=>{
+  input.addEventListener('keydown',async event=>{
     if(event.key==='Enter'){
       event.preventDefault();
       event.stopImmediatePropagation();
-      const rows=searchRows(input.value);
-      if(rows.length===1)openSearchResult(rows[0]);
-      else renderSearch(input);
+      try{
+        const rows=await searchRows(input.value);
+        if(rows.length===1)openSearchResult(rows[0]);
+        else renderSearch(input);
+      }catch(error){
+        console.error('Admin search failed',error);
+        renderSearch(input);
+      }
     }else if(event.key==='Escape'){
       closeSearch();
-      input.setAttribute('aria-expanded','false');
     }
   },true);
   window.addEventListener('resize',()=>{const panel=$('ahiSearchPanel');if(panel?.classList.contains('open'))positionSearch(panel,input)});
@@ -233,5 +256,5 @@ function wireSearch(){
 function enhanceProfile(){let p=$('safeProfileBtn');if(!p)return;let profile=p.closest('.safeProfile');if(profile&&!profile.querySelector('.safeRoleMobile')){let role=document.createElement('span');role.className='safeRoleMobile';let desktop=profile.querySelector('.safeId b');role.textContent=desktop?.textContent||'CEO';profile.insertBefore(role,profile.querySelector('#safeChevron')||profile.children[1]||null)}}
 function wire(){let b=$('safeBell');if(b&&!b.dataset.ahi){b.dataset.ahi='1';b.onclick=bell;b.setAttribute('aria-label','Open notifications');b.setAttribute('aria-haspopup','dialog');refreshCount(true)}enhanceProfile();let profile=$('safeProfileBtn'),chev=$('safeChevron');[profile,chev].filter(Boolean).forEach(x=>{if(x.dataset.ahi)return;x.dataset.ahi='1';x.addEventListener('click',()=>close())})}
 function refreshForeground(){if(!document.hidden)refreshCount(true)}
-function init(){css();wire();setTimeout(wireSearch,0);window.FundaAdminNotifications={refresh:()=>refreshCount(true),open:()=>bell(null,true)};setTimeout(()=>refreshCount(true),500);document.addEventListener('funda:admin-manual-refresh',refreshForeground);window.addEventListener('focus',refreshForeground);window.addEventListener('pageshow',refreshForeground);document.addEventListener('visibilitychange',refreshForeground);new MutationObserver(()=>{wire();wireSearch()}).observe(document.body,{childList:true,subtree:true});document.addEventListener('click',e=>{if(!e.target.closest('#ahiPanel,#safeBell'))close();if(!e.target.closest('#ahiSearchPanel,#global')){closeSearch();$('global')?.setAttribute('aria-expanded','false')}})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+function init(){css();wire();setTimeout(wireSearch,0);window.FundaAdminNotifications={refresh:()=>refreshCount(true),open:()=>bell(null,true)};setTimeout(()=>refreshCount(true),500);document.addEventListener('funda:admin-manual-refresh',()=>{searchCache=null;searchCacheAt=0;refreshForeground()});window.addEventListener('focus',refreshForeground);window.addEventListener('pageshow',refreshForeground);document.addEventListener('visibilitychange',refreshForeground);new MutationObserver(()=>{wire();wireSearch()}).observe(document.body,{childList:true,subtree:true});document.addEventListener('click',e=>{if(!e.target.closest('#ahiPanel,#safeBell'))close();if(!e.target.closest('#ahiSearchPanel,#global')){closeSearch();$('global')?.setAttribute('aria-expanded','false')}})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
