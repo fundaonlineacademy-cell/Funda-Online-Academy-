@@ -274,6 +274,13 @@ async function saveCompliance(){
   if(editingComplianceId)q=await db.from('admin_compliance_register').update(payload).eq('id',editingComplianceId);
   else q=await db.from('admin_compliance_register').insert({...payload,created_by:user?.id||null});
   if(q.error)return alert(q.error.message);
+  const action=editingComplianceId?'Updated compliance control':'Created compliance control';
+  await db.from('admin_audit_log').insert({
+    actor_id:user?.id||null,action,department:'Executive / Governance',
+    entity_type:'Compliance Register',entity_id:editingComplianceId||name,
+    details:[area,name,$('coDept').value,$('coStatus').value,$('coEvidence').value.trim(),$('coAction').value.trim()].filter(Boolean).join(' · '),
+    source:'manual',status:$('coStatus').value,responsible_person:$('coResponsible').value.trim()||null,occurred_on:new Date().toISOString().slice(0,10)
+  });
   editingComplianceId=null;await loadData();render();
 }
 function wireHistory(){
