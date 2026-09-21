@@ -474,3 +474,21 @@ The owner physically reviewed **Admin → Student Support & CRM** after the fina
 - Work in Voice & Feedback or another Admin tab does **not** reopen Student Support & CRM. Shared Admin files touched elsewhere must regression-check this locked surface when relevant.
 - A newly discovered Support defect is a change request, not automatic permission to alter this locked workspace. Aziwe Futhe must explicitly approve the affected correction before implementation.
 
+
+
+### Admin Communication Hub — FINAL OWNER-APPROVED AND LOCKED (21 September 2026)
+
+The owner physically re-checked **Admin → Communication Hub** after the final permission-boundary correction and explicitly approved it for lock. The final approved Communication checkpoint includes the audited Communication runtime and the permission-boundary correction recorded at commits `e69eae2b3ca87f0528ddea4497adc4e9883f1c0c` / `49fa1b85c09acb16a4c291d6874e1cb38fa9131f`, together with the live Communication database definitions already recorded in `COMMUNICATION_HUB_FINALISATION_2026_09_20.sql`.
+
+- **Communication Hub is a change-controlled protected Admin surface.** No message lifecycle, targeting, portal/email channel definition, scheduling, recipient/read tracking, Realtime behaviour, FAQ/contact-management layer, permission boundary, reporting, email-provider integration, or responsive/readability treatment may be changed unless Aziwe Futhe explicitly reopens Communication Hub.
+- The governed Communication Centre remains the sole active Admin Communication workspace. The retired legacy Communication form/writer and duplicate/force loaders must remain disabled.
+- The browser must not directly read `ceo_account_control_state`. Communication Student directory access remains behind the approved safe directory RPC/permission boundary.
+- Student-facing messages continue to use tracked Student portal receipts. Staff and Ambassadors continue to use the approved email delivery channels. “Everyone in Funda” continues to mean Student portal delivery plus wider Funda email delivery.
+- Existing Student receipt/read timestamps must remain non-destructive when message eligibility is re-synchronised.
+- Scheduled Communication dispatch remains automated through the approved scheduler/dispatch path; do not revert to cosmetic scheduling or manual recipient backfills.
+- Realtime remains authoritative for Communication messages/receipts and the surrounding FAQ/contact-management sources. Live refreshes must preserve the last good screen and must not overwrite active compose work.
+- The formal Communication report remains aligned to portal recipients, read/unread state, read rate, scheduling, and email-delivery state.
+- Dynamic Communication records are not frozen by this lock. Legitimate new messages, drafts, schedules, deliveries, receipts, read activity, FAQs and contact-setting changes continue through approved workflows.
+- Work in Marketing & Admissions, Voice & Feedback, or another Admin tab does **not** reopen Communication Hub.
+- A newly discovered Communication defect is a change request, not automatic permission to alter this locked workspace. Aziwe Futhe must explicitly approve the affected correction before implementation.
+
