@@ -62,8 +62,7 @@ grant all on public.admin_compliance_register to service_role;
 
 -- admin_audit_log is evidence. Authenticated Admin/Finance clients may append
 -- permitted rows and read permitted rows, but may not rewrite or delete history.
-revoke update,delete,truncate on public.admin_audit_log from anon,authenticated;
-revoke all on public.admin_audit_log from anon;
+revoke all on public.admin_audit_log from anon,authenticated;
 grant select,insert on public.admin_audit_log to authenticated;
 
 drop policy if exists admin_audit_admin_select on public.admin_audit_log;
@@ -79,6 +78,24 @@ for insert to authenticated
 with check (public.is_admin() and (actor_id=auth.uid() or actor_id is null));
 
 drop policy if exists admin_all on public.admin_audit_log;
+
+-- Generated report history is also append-oriented from the browser.
+revoke all on public.admin_report_runs from anon,authenticated;
+grant select,insert on public.admin_report_runs to authenticated;
+
+drop policy if exists admin_report_runs_admin_select on public.admin_report_runs;
+create policy admin_report_runs_admin_select
+on public.admin_report_runs
+for select to authenticated
+using (public.is_admin());
+
+drop policy if exists admin_report_runs_admin_insert on public.admin_report_runs;
+create policy admin_report_runs_admin_insert
+on public.admin_report_runs
+for insert to authenticated
+with check (public.is_admin() and (generated_by=auth.uid() or generated_by is null));
+
+drop policy if exists admin_all on public.admin_report_runs;
 
 create or replace function public.admin_get_audit_register(
   p_from date default null,
