@@ -21,14 +21,14 @@ const css=`
   #libraryMobileCards{display:grid;gap:12px;margin-top:14px}
   .lam-card{background:#fff;border:1px solid #dce5f1;border-radius:15px;padding:15px;box-shadow:0 5px 18px #06152f0d}
   .lam-top{display:flex;gap:10px;align-items:flex-start;justify-content:space-between}
-  .lam-title{font-family:Montserrat,sans-serif;font-weight:800;font-size:15px;line-height:1.35;color:#06152f;overflow-wrap:anywhere}
-  .lam-status{flex:none;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:800;text-transform:uppercase}
+  .lam-title{font-family:"Source Sans 3","Segoe UI",Arial,sans-serif;font-weight:800;font-size:15px;line-height:1.35;color:#06152f;overflow-wrap:anywhere}
+  .lam-status{flex:none;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:800;text-transform:uppercase}
   .lam-status.published{background:#dcfce7;color:#167249}.lam-status.draft{background:#f1f5f9;color:#526075}.lam-status.archived{background:#fee2e2;color:#9b2c2c}
-  .lam-author{font-size:11px;color:#718096;margin-top:5px}
+  .lam-author{font-size:12px;color:#64748b;margin-top:5px}
   .lam-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid #e7edf5}
-  .lam-meta{min-width:0}.lam-label{display:block;font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8a97aa;margin-bottom:4px}.lam-value{font-size:11px;line-height:1.4;color:#26364f;overflow-wrap:anywhere}
+  .lam-meta{min-width:0}.lam-label{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8a97aa;margin-bottom:4px}.lam-value{font-size:12px;line-height:1.45;color:#26364f;overflow-wrap:anywhere}
   .lam-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
-  .lam-actions button{min-height:48px;border:0;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer}
+  .lam-actions button{min-height:48px;border:0;border-radius:10px;font-size:13px;font-weight:800;cursor:pointer}
   .lam-edit{background:#edf4ff;color:#0b2f70}.lam-archive{background:#fff1f1;color:#9b2c2c;border:1px solid #f3cece!important}
   .lam-empty{text-align:center;padding:26px 16px;color:#718096;border:1px dashed #cfd9e6;border-radius:12px;background:#f8fafc;font-size:13px}
   #modal{padding:10px!important;align-items:start!important;overflow-y:auto}
@@ -46,7 +46,7 @@ function filtered(){try{const term=(document.getElementById('search')?.value||''
 function build(){
   const table=document.querySelector('.overflow-x-auto');if(!table)return;
   let host=document.getElementById('libraryMobileCards');if(!host){host=document.createElement('div');host.id='libraryMobileCards';host.setAttribute('aria-live','polite');table.insertAdjacentElement('afterend',host)}
-  const a=filtered();
+  const a=window.FundaLibraryAdminVisibleRows?window.FundaLibraryAdminVisibleRows():filtered();
   host.innerHTML=a.length?a.map(x=>{const status=String(x.publication_status||'draft').toLowerCase();return `<article class="lam-card">
     <div class="lam-top"><div><div class="lam-title">${escM(x.title||'Untitled resource')}</div><div class="lam-author">${escM(x.author||x.publisher||'Funda Online Academy')}</div></div><span class="lam-status ${escM(status)}">${escM(status)}</span></div>
     <div class="lam-grid">
