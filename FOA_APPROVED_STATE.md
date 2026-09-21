@@ -509,3 +509,20 @@ The owner physically reviewed **Admin → Voice & Feedback** after the final acc
 - Work in Employer & Industry Partnerships, Marketing & Admissions, or another Admin tab does **not** reopen Voice & Feedback.
 - A newly discovered Voice defect is a change request and requires explicit owner approval before the locked workspace is changed.
 
+
+
+### Admin Employer & Industry Partnerships — FINAL OWNER-APPROVED AND LOCKED (21 September 2026)
+
+The owner physically reviewed **Admin → Employer & Industry Partnerships** after the final Realtime, correspondence, governance, pipeline, reporting and mobile-stability corrections and explicitly approved it for lock. The approved Employer checkpoint includes the finalisation sequence ending with `22b9190c9ddf413ec50fc6dbacb66b2795bf93c0` and the source changes recorded immediately before it on 21 September 2026.
+
+- **Employer & Industry Partnerships is a change-controlled protected Admin surface.** Do not alter employer enquiries, opportunities, partner governance, learner opt-ins, readiness, outreach, referrals, placement evidence, correspondence drafts, reports, Realtime behaviour, responsive treatment or approved letter/email templates unless Aziwe Futhe explicitly reopens this tab.
+- The approved **Employer Correspondence & Templates** workspace remains compact and modal-based. It includes the official transparent Academy logo, live Academy contact details, editable email/formal-letter drafts, preserved correspondence dates, saved drafts, email-app handoff and A4 PDF generation.
+- Employer correspondence remains Admin-only under RLS.
+- Employer and graduate-employment workflow tables remain Realtime-enabled and must not revert to timer-based page refreshes.
+- Live refresh must remain tab-scoped, preserve scroll position and never overwrite active edits.
+- Query failures must not be displayed as false zero/empty business records.
+- The formal Employer report must remain aligned to the full live ecosystem.
+- Dynamic Employer records are not frozen by this lock; the lock protects the approved workflow, controls and presentation.
+- Work in Ambassador Programme, Marketing & Admissions, or another Admin tab does **not** reopen Employer & Industry Partnerships.
+- A newly discovered Employer defect is a change request and requires explicit owner approval before the locked workspace is changed.
+
