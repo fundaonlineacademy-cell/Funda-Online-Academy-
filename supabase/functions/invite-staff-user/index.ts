@@ -47,9 +47,22 @@ Deno.serve(async (req: Request) => {
     const department = String(b.department || '').trim();
     const access_level = ['read', 'edit', 'manager'].includes(b.access_level) ? b.access_level : 'edit';
     const can_approve = !!b.can_approve;
+    const allowedDepartments = new Set([
+      'Human Resources',
+      'Finance & Accounting',
+      'Academic, Assessments & Content',
+      'Enrolments & Courses',
+      'Student Support & CRM',
+      'Marketing & Admissions',
+      'Communication Hub',
+      'IT, Security & Platform'
+    ]);
 
     if (!full_name || !email || !job_title || !department) {
       throw new Error('Name, email, job title and department are required');
+    }
+    if (!allowedDepartments.has(department)) {
+      throw new Error('Choose one of the Academy’s approved staff departments');
     }
 
     const { data: staff_code, error: codeErr } = await admin.rpc('next_staff_code', {
