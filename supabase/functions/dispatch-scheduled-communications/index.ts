@@ -27,6 +27,8 @@ Deno.serve(async(req:Request)=>{
     const supplied=req.headers.get("x-funda-dispatch-secret")||"";
     if(!supplied||supplied!==dispatchCfg.dispatch_secret)return new Response(JSON.stringify({error:"Unauthorized"}),{status:401,headers:H});
 
+    const {data:deletedRows,error:deletedErr}=await admin.from("ceo_account_control_state").select("user_id").eq("status","deleted");if(deletedErr)throw deletedErr;
+    const deletedIds=new Set((deletedRows||[]).map((x:any)=>String(x.user_id)));
     const now=new Date().toISOString();
     const {data:messages,error:listErr}=await admin
       .from("communications")
@@ -65,17 +67,17 @@ Deno.serve(async(req:Request)=>{
       }else if(audience==="student"){
         if(m.recipient_id){const q=await admin.from("profiles").select("id,email,full_name").eq("id",m.recipient_id).eq("role","student").maybeSingle();if(q.error)throw q.error;if(q.data)recipients=[q.data]}
       }else if(audience==="staff"){
-        const q=await admin.from("profiles").select("id,email,full_name").in("role",["staff","admin"]);if(q.error)throw q.error;recipients=q.data||[];
+        const q=await admin.from("profiles").select("id,email,full_name").in("role",["staff","admin","manager"]);if(q.error)throw q.error;recipients=q.data||[];
       }else if(audience==="ambassadors"){
         const q=await admin.from("ambassador_programme_applications").select("email,full_name").eq("status","approved");if(q.error)throw q.error;recipients=(q.data||[]).map((x:any)=>({id:null,email:x.email,full_name:x.full_name}));
       }else if(audience==="all_funda"){
-        const p=await admin.from("profiles").select("id,email,full_name").in("role",["student","staff","admin"]);if(p.error)throw p.error;
+        const p=await admin.from("profiles").select("id,email,full_name").in("role",["student","staff","admin","manager"]);if(p.error)throw p.error;
         const a=await admin.from("ambassador_programme_applications").select("email,full_name").eq("status","approved");if(a.error)throw a.error;
         recipients=[...(p.data||[]),...(a.data||[]).map((x:any)=>({id:null,email:x.email,full_name:x.full_name}))];
       }
 
       const seen=new Set<string>();
-      recipients=recipients.filter((r:any)=>{const email=clean(r.email).toLowerCase();if(!email||seen.has(email))return false;seen.add(email);r.email=email;return true});
+      recipients=recipients.filter((r:any)=>{const email=clean(r.email).toLowerCase(),id=String(r.id||"");if(!email||email.endsWith("@deleted.funda.invalid")||(id&&deletedIds.has(id))||seen.has(email))return false;seen.add(email);r.email=email;return true});
 
       const messageKey="scheduled-communication-"+m.id;
       const html='<!doctype html><html><body style="margin:0;background:#f3f7fb;font-family:Arial,sans-serif;color:#17304f"><div style="max-width:640px;margin:24px auto;background:#fff;border:1px solid #dce6f0;border-radius:18px;overflow:hidden"><div style="background:#071d49;color:#fff;padding:22px 26px"><div style="font-size:11px;letter-spacing:2px;color:#e1bf67;font-weight:700">FUNDA ONLINE ACADEMY</div><h1 style="font-size:21px;margin:7px 0 0">'+esc(m.title)+'</h1></div><div style="padding:26px"><p style="font-size:14px;line-height:1.75;white-space:pre-line">'+esc(m.body)+'</p><p style="font-size:12px;color:#718096;margin-top:24px">Funda Online Academy · Learn. Grow. Achieve.</p></div></div></body></html>';
