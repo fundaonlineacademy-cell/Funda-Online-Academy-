@@ -138,7 +138,7 @@ async function loadData(){
   ]);
   const results=[en,pay,sup,amb,gov,cal,con];
   const bad=results.find(x=>x.error);
-  if(bad)console.warn('Daily command centre partial data load',bad.error);
+  if(bad)throw new Error('Daily Operations could not load a required live source: '+(bad.error?.message||'Unknown data error'));
   return {
     enrollments:en.data||[],payments:pay.data||[],support:sup.data||[],ambassadors:amb.data||[],
     actions:gov.data||[],events:cal.data||[],consultations:con.data||[],today,from,weekEnd
@@ -325,6 +325,7 @@ function boot(){
   }).observe(view,{childList:true,subtree:false});
 
   document.addEventListener('funda:admin-manual-refresh',()=>{if(activeDashboard())refreshData()});
+  document.addEventListener('funda:admin-live-change',()=>{if(activeDashboard())refreshData()});
   document.addEventListener('click',e=>{
     const b=e.target.closest?.('#nav button');
     if(b&&/dashboard/i.test(b.textContent||''))setTimeout(place,180);
