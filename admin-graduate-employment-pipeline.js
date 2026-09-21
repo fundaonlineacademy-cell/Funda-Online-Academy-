@@ -28,6 +28,7 @@ async function data(){
   db.from('graduate_employment_referrals').select('*').order('created_at',{ascending:false}),
   db.from('student_opportunity_interests').select('*').order('created_at',{ascending:false})
  ]);
+ const bad=[pf,rd,pr,en,co,op,ot,act,ref,int].find(x=>x.error);if(bad)throw bad.error;
  return {prefs:pf.data||[],ready:rd.data||[],profiles:pr.data||[],enrol:en.data||[],courses:co.data||[],opps:op.data||[],targets:ot.data||[],acts:act.data||[],refs:ref.data||[],interests:int.data||[]};
 }
 function maps(d){
@@ -51,7 +52,7 @@ async function mount(){
   <section class="gepPanel"><h2>Referral & Employment Outcomes</h2><p>Track each Academy referral through employer review, interview, offer and placement. These figures give the Academy evidence-based employment outcomes.</p><div class="gepGrid">${d.refs.length?d.refs.map(r=>refCard(r,m)).join(''):'<div class="gepEmpty">No employment referrals have been recorded yet.</div>'}</div><div class="gepNotice"><b>Reporting rule:</b> Count only verified outcomes. A referral is not an interview, an interview is not an offer, and an offer is not a placement.</div></section>`;
   const stats=host.querySelector('.epaStats');if(stats)stats.insertAdjacentElement('afterend',wrap);else host.prepend(wrap);
   bind(wrap,d,m);
- } finally {busy=false}
+ } catch(e){console.error('Graduate Employment Pipeline refresh failed',e);const host=document.querySelector('#view .epa');if(host&&!document.getElementById('graduateEmploymentPipeline')){let wrap=document.createElement('div');wrap.id='graduateEmploymentPipeline';wrap.className='gep';wrap.innerHTML='<section class="gepPanel"><h2>Graduate Employment Pipeline</h2><div class="gepNotice" style="background:#fff2f2;color:#8a2d2d"><b>Pipeline data could not refresh.</b> Retry using the Admin refresh control; incomplete sources are not shown as zero.</div></section>';host.appendChild(wrap)}} finally {busy=false}
 }
 function readyCard(x,m){
  const p=m.pmap.get(x.student_id)||{},r=m.rmap.get(x.student_id)||{},courses=m.approved.get(x.student_id)||[];
