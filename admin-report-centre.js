@@ -23,7 +23,7 @@ const defs={
   payments:{label:'Payments',tables:['profiles','payments']},
   support:{label:'Student Support',tables:['profiles','support_tickets']},
   marketing:{label:'Marketing & Admissions',tables:['marketing_leads']},
-  communication:{label:'Communication Hub',tables:['communications']},
+  communication:{label:'Communication Hub',tables:['communications','communication_recipients']},
   cashbook:{label:'Expenses & Income',tables:['admin_cashbook']},
   hr:{label:'HR & Team',tables:['profiles','staff_records','hr_contracts','hr_leave_requests','hr_safety_incidents','hr_training_records','hr_performance_reviews','hr_compliance_reviews']},
   ambassador:{label:'Ambassador Programme',tables:['ambassador_programme_applications','ambassador_earnings_ledger','ambassador_payouts']},
@@ -347,11 +347,35 @@ function build(type,data,from,to,scope){
   }
 
   if(type==='communication'){
-    rows=all(data.communications,['published_at','created_at','scheduled_at']).map(x=>({
-      Title:x.title,Category:x.category,Audience:x.audience,Priority:x.priority||'',Published:x.published?'Yes':'No',
-      'Delivery Status':x.delivery_status||'',Scheduled:fmtDateTime(x.scheduled_at),PublishedAt:fmtDateTime(x.published_at),Created:fmtDateTime(x.created_at)
-    }));
-    summary=[['Communications',rows.length],['Published',rows.filter(x=>x.Published==='Yes').length]];
+    const receipts=data.communication_recipients||[];
+    rows=all(data.communications,['published_at','created_at','scheduled_at']).map(x=>{
+      const rr=receipts.filter(r=>String(r.communication_id)===String(x.id));
+      const read=rr.filter(r=>r.read_at).length;
+      const unread=rr.length-read;
+      return {
+        Title:x.title,Category:x.category,Audience:x.audience,Priority:x.priority||'',
+        Published:x.published?'Yes':'No','Delivery Status':x.delivery_status||'',
+        'Portal Recipients':rr.length,Read:read,Unread:unread,'Read Rate':rr.length?Math.round(read/rr.length*100)+'%':'—',
+        'Email Requested':x.email_requested?'Yes':'No','Email Delivery':x.email_delivery_status||'',
+        Scheduled:fmtDateTime(x.scheduled_at),PublishedAt:fmtDateTime(x.published_at),Created:fmtDateTime(x.created_at)
+      };
+    });
+    const portal=rows.reduce((t,x)=>t+Number(x['Portal Recipients']||0),0);
+    const reads=rows.reduce((t,x)=>t+Number(x.Read||0),0);
+    const unread=rows.reduce((t,x)=>t+Number(x.Unread||0),0);
+    summary=[
+      ['Communications',rows.length],
+      ['Published',rows.filter(x=>x.Published==='Yes').length],
+      ['Drafts',rows.filter(x=>x.Published==='No'&&!x.Scheduled).length],
+      ['Scheduled',rows.filter(x=>x.Published==='No'&&x.Scheduled).length],
+      ['Portal delivery records',portal],
+      ['Read portal deliveries',reads],
+      ['Unread portal deliveries',unread],
+      ['Overall portal read rate',portal?Math.round(reads/portal*100)+'%':'—'],
+      ['Email requested',rows.filter(x=>x['Email Requested']==='Yes').length],
+      ['Email sent',rows.filter(x=>low(x['Email Delivery'])==='sent').length],
+      ['Email failed',rows.filter(x=>low(x['Email Delivery'])==='failed').length]
+    ];
   }
 
   if(type==='cashbook'){
