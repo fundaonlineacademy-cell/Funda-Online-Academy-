@@ -16,7 +16,7 @@ const defs={
   executive:{label:'Executive Summary',tables:['profiles','ceo_account_control_state','courses','enrollments','payments','admin_cashbook','support_tickets','assessment_attempts','certificates','communications']},
   management:{label:'Management & Governance',tables:['governance_objectives','governance_policies','governance_risks','governance_actions','governance_decisions','governance_action_history']},
   finance:{label:'Finance & Accounting',tables:['profiles','courses','enrollments','payments','admin_cashbook']},
-  enrolments:{label:'Enrolments',tables:['profiles','courses','enrollments']},
+  enrolments:{label:'Enrolments & Courses',tables:['profiles','courses','enrollments','payments','legacy_verification_claims','legacy_student_records','course_change_requests','course_change_audit']},
   students:{label:'Students',tables:['profiles','ceo_account_control_state']},
   courses:{label:'Courses',tables:['courses']},
   academic:{label:'Academic & Assessments',tables:['profiles','courses','assessment_attempts','certificates']},
@@ -281,15 +281,93 @@ function build(type,data,from,to,scope){
   }
 
   if(type==='enrolments'){
-    rows=all(data.enrollments,['created_at','submitted_at','enrolled_at']).map(x=>({
-      Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
-      'Learner Number':p[x.student_id]?.student_number||'',
-      Course:c[x.course_id]?.title||x.course_id,Status:x.status||x.enrollment_status,
-      Amount:Number(x.amount||c[x.course_id]?.price||0),
-      Submitted:fmtDate(x.submitted_at||x.created_at),Reviewed:fmtDate(x.reviewed_at),
-      'Approval Department':x.approval_department,'Review Notes':x.review_notes||x.rejection_reason||''
+    const payments=data.payments||[];
+    const claims=data.legacy_verification_claims||[];
+    const enrolRows=all(data.enrollments,['created_at','submitted_at','enrolled_at','reviewed_at']).map(x=>{
+      const linked=payments.find(pay=>String(pay.enrolment_id||'')===String(x.id));
+      const claim=x.legacy_claim_id?claims.find(q=>String(q.id)===String(x.legacy_claim_id)):null;
+      return {
+        'Record Type':'Enrolment',
+        Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+        'Learner Number':p[x.student_id]?.student_number||'',
+        Course:c[x.course_id]?.title||x.course_id,
+        Status:x.status||x.enrollment_status,
+        Amount:Number(x.amount||c[x.course_id]?.price||0),
+        'Payment Status':linked?.status||'No linked payment',
+        'Payment Amount':linked?Number(linked.amount||0):'',
+        'Legacy Verification':claim?.verification_status||'',
+        Submitted:fmtDate(x.submitted_at||x.created_at),
+        Reviewed:fmtDate(x.reviewed_at),
+        'Approval Department':x.approval_department,
+        Details:x.review_notes||x.rejection_reason||''
+      };
+    });
+    const claimRows=all(data.legacy_verification_claims,['submitted_at','reviewed_at','created_at']).map(x=>({
+      'Record Type':'Legacy Verification Claim',
+      Student:p[x.user_id]?.full_name||p[x.user_id]?.email||'Historical / unavailable Student account',
+      'Learner Number':p[x.user_id]?.student_number||'',
+      Course:c[x.course_id]?.title||x.course_id,
+      Status:x.verification_status,
+      Amount:Number(x.payable_amount||0),
+      'Payment Status':'',
+      'Payment Amount':'',
+      'Legacy Verification':x.verification_status,
+      Submitted:fmtDate(x.submitted_at||x.created_at),
+      Reviewed:fmtDate(x.reviewed_at),
+      'Approval Department':'Legacy Verification',
+      Details:[x.claim_type,x.system_verification_method,x.system_verification_score!=null?'System score '+x.system_verification_score+'%':'',x.disqualification_reason,x.review_notes].filter(Boolean).join(' · ')
     }));
-    summary=[['Enrolments',rows.length],['Approved',rows.filter(x=>low(x.Status)==='approved').length],['Pending',rows.filter(x=>low(x.Status)==='pending').length]];
+    const historicalRows=all(data.legacy_student_records,['created_at','updated_at']).map(x=>({
+      'Record Type':'Historical Legacy Record',
+      Student:x.full_name,
+      'Learner Number':'',
+      Course:x.current_course_id?(c[x.current_course_id]?.title||x.current_course_id):x.old_course_title,
+      Status:x.active===false?'inactive':'recorded',
+      Amount:'',
+      'Payment Status':'',
+      'Payment Amount':'',
+      'Legacy Verification':x.record_type,
+      Submitted:fmtDate(x.created_at),
+      Reviewed:fmtDate(x.updated_at),
+      'Approval Department':'Legacy Register',
+      Details:[x.old_course_title,x.certificate_number,x.old_payment_date,x.legacy_source,x.notes].filter(Boolean).join(' · ')
+    }));
+    const changeRows=all(data.course_change_requests,['requested_at','approved_at','implemented_at']).map(x=>({
+      'Record Type':'Course Change',
+      Student:'',
+      'Learner Number':'',
+      Course:c[x.course_id]?.title||x.course_id,
+      Status:x.status,
+      Amount:'',
+      'Payment Status':'',
+      'Payment Amount':'',
+      'Legacy Verification':'',
+      Submitted:fmtDate(x.requested_at),
+      Reviewed:fmtDate(x.approved_at||x.implemented_at),
+      'Approval Department':'Course Governance',
+      Details:[x.change_type,x.reason,x.approval_notes,x.override_used?'CEO override':''].filter(Boolean).join(' · ')
+    }));
+    rows=[...enrolRows,...claimRows,...historicalRows,...changeRows];
+
+    const approved=enrolRows.filter(x=>low(x.Status)==='approved');
+    const pending=enrolRows.filter(x=>['pending','submitted','under_review'].includes(low(x.Status)));
+    const rejected=enrolRows.filter(x=>low(x.Status)==='rejected');
+    const linkedVerified=enrolRows.filter(x=>['verified','paid','approved','completed'].includes(low(x['Payment Status'])));
+    summary=[
+      ['Enrolments',enrolRows.length],
+      ['Approved enrolments',approved.length],
+      ['Pending / submitted enrolments',pending.length],
+      ['Rejected enrolments',rejected.length],
+      ['Enrolments with verified linked payment',linkedVerified.length],
+      ['Courses',(data.courses||[]).length],
+      ['Active courses',(data.courses||[]).filter(x=>x.active!==false).length],
+      ['Legacy verification claims',claimRows.length],
+      ['Legacy claims awaiting review',claimRows.filter(x=>low(x.Status)==='pending').length],
+      ['Historical legacy records',historicalRows.length],
+      ['Course change requests',changeRows.length],
+      ['Pending course changes',changeRows.filter(x=>low(x.Status)==='pending').length],
+      ['Course governance audit events',(data.course_change_audit||[]).length]
+    ];
   }
 
   if(type==='students'){
