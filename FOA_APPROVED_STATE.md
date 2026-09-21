@@ -452,3 +452,25 @@ The owner physically reviewed **Admin → Finance & Accounting** after the final
 - Work in Communication Hub or another Admin tab does **not** reopen Finance & Accounting. Shared Admin files touched for another approved area must regression-check Finance when they can affect it.
 - A newly discovered Finance defect is a change request, not automatic permission to alter the locked Finance workspace. Aziwe Futhe must explicitly approve the affected correction before implementation.
 
+
+
+### Admin Student Support & CRM — FINAL OWNER-APPROVED AND LOCKED (21 September 2026)
+
+The owner physically reviewed **Admin → Student Support & CRM** after the final CRM, consultation, privacy, Realtime, audit-trail and reporting corrections and explicitly approved it for lock. The approved Support checkpoint is `ef8597df568680a6cb97d12a7d8e6b527e951c3d`, together with the live database functions/policies/indexes recorded in `STUDENT_SUPPORT_CRM_FINALISATION_2026_09_21.sql`.
+
+- **Student Support & CRM is a change-controlled protected Admin surface.** No ticket workflow, case-ownership model, response/status transaction, consultation workflow, privacy boundary, Support report, Realtime behaviour, mobile/readability treatment or CRM structure may be changed unless Aziwe Futhe explicitly reopens the affected Support area.
+- The live Student Support workspace remains the sole governed Admin Support interface. The retired legacy Support writer/fallback must remain disabled.
+- Support replies, case status and case ownership continue to use the atomic governed Support functions; do not restore parallel browser-only writes.
+- Ticket creation, messages, status changes and assignment changes remain database-audited. First/last response timestamps and resolution timestamps remain database-authoritative.
+- Case ownership remains visible/searchable and restricted to valid active Admin/staff/manager profiles.
+- Student consultation modes remain aligned with the governed backend: **Phone Call, Google Meet and Microsoft Teams**.
+- Completed, cancelled and no-show consultation records remain reviewable with Student-visible notes, private staff notes and consultation history.
+- **Private consultation notes remain protected at the database boundary.** Students must not regain direct SELECT access to the private consultation base table. Student consultation reads continue through the safe governed RPC that omits `private_staff_notes`.
+- Student Support and consultation live sources remain published for Realtime: `support_tickets`, `support_ticket_messages`, `support_ticket_events`, `student_consultations` and `consultation_events`.
+- Failed Support refreshes preserve the last good CRM data and show an error rather than presenting false zeroes.
+- The Support report remains connected to tickets, messages, audit events, consultations and consultation events, including ownership, response coverage and first-response timing.
+- Student screenshot evidence remains in the private Support screenshot bucket under the approved ownership/access rules.
+- Dynamic Support records are not frozen by this lock. Legitimate tickets, replies, status changes, assignments, consultations and outcomes must continue to change through approved workflows.
+- Work in Voice & Feedback or another Admin tab does **not** reopen Student Support & CRM. Shared Admin files touched elsewhere must regression-check this locked surface when relevant.
+- A newly discovered Support defect is a change request, not automatic permission to alter this locked workspace. Aziwe Futhe must explicitly approve the affected correction before implementation.
+
