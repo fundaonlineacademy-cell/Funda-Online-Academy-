@@ -28,7 +28,7 @@ const defs={
   cashbook:{label:'Expenses & Income',tables:['admin_cashbook']},
   hr:{label:'HR & Team',tables:['profiles','staff_records','hr_contracts','hr_leave_requests','hr_safety_incidents','hr_training_records','hr_performance_reviews','hr_compliance_reviews']},
   ambassador:{label:'Ambassador Programme',tables:['ambassador_programme_applications','ambassador_earnings_ledger','ambassador_payouts']},
-  employer:{label:'Employer & Industry Partnerships',tables:['employer_partnership_requests','employer_opportunities']},
+  employer:{label:'Employer & Industry Partnerships',tables:['profiles','employer_partnership_requests','employer_opportunities','learner_employer_preferences','student_opportunity_interests','learner_employer_readiness','employer_outreach_targets','employer_outreach_activities','graduate_employment_referrals','employer_correspondence_drafts']},
   library:{label:'Digital Library',tables:['courses','library_resources']},
   security:{label:'IT, Security & Platform',tables:['profiles','security_access_reviews','platform_security_checks','security_incidents']},
   compliance:{label:'Compliance Register',tables:['admin_compliance_register','hr_compliance_reviews']},
@@ -556,8 +556,30 @@ function build(type,data,from,to,scope){
   if(type==='employer'){
     const req=all(data.employer_partnership_requests,['created_at','reviewed_at','partner_since','review_due_at']).map(x=>({'Record Type':'Partnership Request',Organisation:x.organisation_name,Title:x.contact_name,Status:x.status,Date:fmtDate(x.created_at),Location:[x.city,x.province].filter(Boolean).join(', '),Details:[x.industry,x.agreement_status,(x.partnership_scope||[]).join?.(', ')].filter(Boolean).join(' · ')}));
     const opp=all(data.employer_opportunities,['created_at','closing_date']).map(x=>({'Record Type':'Opportunity',Organisation:x.organisation_name,Title:x.title,Status:x.status,Date:fmtDate(x.created_at),Location:[x.city,x.province].filter(Boolean).join(', '),Details:[x.opportunity_type,x.industry,x.skills_or_courses,'Closing '+(x.closing_date||'—')].filter(Boolean).join(' · ')}));
-    rows=[...req,...opp];
-    summary=[['Partnership requests',req.length],['Employer opportunities',opp.length]];
+    const outreach=all(data.employer_outreach_targets,['created_at','updated_at','last_contacted_at','next_follow_up_at']).map(x=>({'Record Type':'Outreach Target',Organisation:x.organisation_name,Title:x.contact_name||x.job_title||'',Status:x.status,Date:fmtDateTime(x.updated_at||x.created_at),Location:[x.city,x.province].filter(Boolean).join(', '),Details:[x.industry,x.interest_type,x.relevant_courses,x.next_follow_up_at?'Next follow-up '+fmtDateTime(x.next_follow_up_at):''].filter(Boolean).join(' · ')}));
+    const refs=all(data.graduate_employment_referrals,['created_at','referred_at','interview_at','offer_at','placed_at','outcome_at']).map(x=>({'Record Type':'Learner Referral',Organisation:x.organisation_name,Title:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,Status:x.status,Date:fmtDateTime(x.created_at),Location:'',Details:[x.role_title,x.referral_type,x.learner_status_note].filter(Boolean).join(' · ')}));
+    const corr=all(data.employer_correspondence_drafts,['created_at','updated_at','correspondence_date']).map(x=>({'Record Type':'Correspondence',Organisation:x.organisation_name,Title:x.subject,Status:x.status,Date:fmtDate(x.correspondence_date||x.updated_at),Location:'',Details:[x.correspondence_kind,x.contact_name,x.recipient_email].filter(Boolean).join(' · ')}));
+    rows=[...req,...opp,...outreach,...refs,...corr];
+
+    const prefs=data.learner_employer_preferences||[];
+    const ready=data.learner_employer_readiness||[];
+    const interests=data.student_opportunity_interests||[];
+    const activities=data.employer_outreach_activities||[];
+    summary=[
+      ['Partnership requests',req.length],
+      ['Approved employer partners',req.filter(x=>low(x.Status)==='partner').length],
+      ['Employer opportunities',opp.length],
+      ['Open opportunities',opp.filter(x=>low(x.Status)==='open').length],
+      ['Talent-pool opt-ins',prefs.filter(x=>x.share_profile===true).length],
+      ['Employer-ready learners',ready.filter(x=>low(x.employer_ready_status)==='ready').length],
+      ['Learner opportunity interests',interests.length],
+      ['Outreach targets',outreach.length],
+      ['Outreach activity records',activities.length],
+      ['Learner referrals',refs.length],
+      ['Verified placements',refs.filter(x=>low(x.Status)==='placed').length],
+      ['Correspondence records',corr.length],
+      ['Final correspondence',corr.filter(x=>low(x.Status)==='final').length]
+    ];
   }
 
   if(type==='library'){
