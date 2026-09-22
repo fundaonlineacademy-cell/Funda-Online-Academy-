@@ -148,7 +148,7 @@ function accessRowsMarkup(){
       <td>${esc(identifier)}</td>
       <td>${esc(context||'—')}</td>
       <td>${last?'<span class="sxPill '+esc(low(last.decision))+'">'+esc(String(last.decision).toUpperCase())+'</span><div class="sxMeta">'+fmt(last.reviewed_at)+'</div>':'Not reviewed'}</td>
-      <td>${deleted?'<span class="sxMeta">Archived record</span>':`<button class="sxBtn alt" data-review-user="${p.id}">Review Access</button>`}</td>
+      <td>${deleted?'<span class="sxMeta">Archived record</span>':`<button class="sxBtn alt" data-review-user="${p.id}">Record Review</button>`}</td>
     </tr>`;
   }).join('');
   return {
@@ -175,7 +175,7 @@ function drawAccess(){
 function accessBody(){
   const g=accessGroups();
   return `
-    <div class="sxMeta" style="margin-bottom:8px">Accounts are separated so Student, Staff/Admin and deleted-account evidence remain clear. Deleted accounts stay as archived records for historical accountability and cannot be access-reviewed here. Staff Access Codes are not loaded into this screen.</div>
+    <div class="sxMeta" style="margin-bottom:8px">Accounts are separated so Student, Staff/Admin and deleted-account evidence remain clear. Access-review outcomes are governance evidence only; they do not deactivate, delete or change a login. Account actions remain controlled through CEO Account Control. Deleted accounts stay as archived records for historical accountability and cannot be access-reviewed here. Staff Access Codes are not loaded into this screen.</div>
     <div class="sxAccessTabs">
       <button class="sxBtn ${accessKind==='students'?'':'alt'}" data-access-kind="students">Students (${g.students.length})</button>
       <button class="sxBtn ${accessKind==='staff'?'':'alt'}" data-access-kind="staff">Staff & Admin (${g.staff.length})</button>
@@ -333,7 +333,7 @@ async function setIncident(id,status){
 async function reviewAccess(id){
   const p=profile(id);
   if(isDeleted(p))return alert('Deleted accounts are retained as archived evidence and cannot be access-reviewed here.');
-  let decision=prompt('Access review decision: retain, restrict, remove, investigate','retain');
+  let decision=prompt('Record review outcome: retain, restrict, remove, investigate. This records governance evidence only and does not change the account.','retain');
   if(!decision)return;
   decision=low(decision);
   if(!['retain','restrict','remove','investigate'].includes(decision))return alert('Use retain, restrict, remove, or investigate.');
