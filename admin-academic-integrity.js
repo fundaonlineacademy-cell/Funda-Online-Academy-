@@ -18,11 +18,11 @@ async function load(){
  try{
   db=db||client();if(!db)throw new Error('Academic integrity connection is unavailable.');
   const rs=await Promise.all([
-   db.from('courses').select('id,title,duration,active,modules').eq('active',true).order('title'),
-   db.from('course_modules').select('id,course_id,module_number,module_name'),
-   db.from('lessons').select('id,module_id,lesson_number,title,main_content,content'),
-   db.from('assessments').select('id,course_id,module_id,title,active,status'),
-   db.from('academic_course_qa_reviews').select('id,course_id,review_status,reviewed_at,created_at').order('created_at',{ascending:false}),
+   db.from('courses').select('id,title,duration,active,modules').eq('active',true).order('title').limit(5000),
+   db.from('course_modules').select('id,course_id,module_number,module_name').limit(5000),
+   db.from('lessons').select('id,module_id,lesson_number,title,main_content,content').limit(5000),
+   db.from('assessments').select('id,course_id,module_id,title,active,status').limit(5000),
+   db.from('academic_course_qa_reviews').select('id,course_id,review_status,reviewed_at,created_at').order('created_at',{ascending:false}).limit(5000),
    db.rpc('get_admin_assessment_bank_health')
   ]);
   const bad=rs.find(x=>x.error);if(bad)throw bad.error;
