@@ -9,6 +9,8 @@
 .funda-course-pill svg { width: 17px; height: 17px; flex: none; }
 .funda-course-title { margin: 25px 0 0; max-width: 660px; color: #0b2047; font-size: clamp(38px, 4.25vw, 66px); line-height: 1.035; letter-spacing: -.045em; font-weight: 800; }
 .funda-course-title span, .funda-course-clarity h2 span { color: #ac731b; }
+.funda-course-title span.funda-strong-text,
+.funda-course-clarity h2 span.funda-strong-text { color: #ac731b !important; --funda-strong-color: #ac731b !important; }
 .funda-course-lead { margin: 19px 0 0; max-width: 630px; color: #344761; font-size: clamp(16px, 1.25vw, 19px); line-height: 1.52; }
 .funda-course-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
 .funda-course-actions a { display: inline-flex; justify-content: center; align-items: center; min-height: 52px; padding: 10px 24px; border-radius: 10px; text-decoration: none; font-size: 16px; line-height: 1.25; font-weight: 800; text-align: center; }
