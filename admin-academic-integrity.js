@@ -88,7 +88,10 @@ function openRegister(){
   if(x.shortBanks)ass+=pill(x.shortBanks+' undersized question bank'+(x.shortBanks===1?'':'s'),'bad');
   if(!ass)ass=pill('Required assessment types & bank sizes pass','good');
   const legacy=pill('Canonical live fields','good');
-  const qa=x.review?pill(String(x.review.review_status||'reviewed').replaceAll('_',' ').toUpperCase(),low(x.review.review_status)==='approved'?'good':'warn'):pill('No QA review','warn');
+  const recorded=x.review?String(x.review.review_status||'reviewed').replaceAll('_',' ').toUpperCase():'NO QA REVIEW';
+  const qa=x.actionable>0
+    ?pill((x.review?'RECORDED '+recorded+' · ':'')+'CURRENTLY REQUIRES ACTION','bad')
+    :(x.review?pill(recorded,low(x.review.review_status)==='approved'?'good':'warn'):pill('Integrity pass · QA review not recorded','warn'));
   const cats=[x.below||x.empty?'content':'',x.missF||x.missS||x.shortBanks?'assessment':''].filter(Boolean).join(' ');
   return '<tr data-ai-row data-search="'+esc(low(x.c.title))+'" data-issues="'+(x.actionable>0?'1':'0')+'" data-cats="'+cats+'"><td><b>'+esc(x.c.title)+'</b><div class="aiNote">'+esc(x.c.duration||'Duration not set')+'</div></td><td>'+x.ms+' modules · '+x.ls+' lessons · '+x.as+' live assessments</td><td>'+content+'</td><td>'+ass+'</td><td>'+legacy+'</td><td>'+qa+'</td></tr>';
  }).join('');
