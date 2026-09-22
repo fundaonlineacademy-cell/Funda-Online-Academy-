@@ -69,7 +69,7 @@ async function load(){
   const pageSize=1000;
   for(let from=0;;from+=pageSize){
     const r=await db.from('profiles')
-      .select('id,full_name,email,role,student_number,job_title,department,created_at')
+      .select('id,full_name,email,role,student_number,staff_number,job_title,department,created_at')
       .order('created_at',{ascending:false})
       .range(from,from+pageSize-1);
     if(r.error){
@@ -123,7 +123,7 @@ function filteredAccess(){
   let rows=accessGroups()[accessKind]||[];
   const q=low(accessSearch.trim());
   if(q)rows=rows.filter(p=>low([
-    p.full_name,p.email,p.role,p.student_number,p.job_title,p.department
+    p.full_name,p.email,p.role,p.student_number,p.staff_number,p.job_title,p.department
   ].join(' ')).includes(q));
   return rows;
 }
@@ -140,7 +140,7 @@ function accessRowsMarkup(){
     const deleted=isDeleted(p);
     const identifier=low(p.role)==='student'
       ?(p.student_number||'Student account')
-      :(p.job_title||'Staff / Admin');
+      :(p.staff_number||p.job_title||'Staff / Admin');
     const context=[p.department,low(p.role)==='admin'?'Administrator':low(p.role)==='staff'?'Staff':'Student'].filter(Boolean).join(' · ');
     return `<tr>
       <td><b>${esc(p.full_name||p.email||'User')}</b><div class="sxMeta">${esc(p.email||'')}</div></td>
@@ -148,7 +148,9 @@ function accessRowsMarkup(){
       <td>${esc(identifier)}</td>
       <td>${esc(context||'—')}</td>
       <td>${last?'<span class="sxPill '+esc(low(last.decision))+'">'+esc(String(last.decision).toUpperCase())+'</span><div class="sxMeta">'+fmt(last.reviewed_at)+'</div>':'Not reviewed'}</td>
-      <td>${deleted?'<span class="sxMeta">Archived record</span>':`<button class="sxBtn alt" data-review-user="${p.id}">Record Review</button>`}</td>
+      <td>${deleted
+        ?'<span class="sxMeta">Archived record</span>'
+        :`<button class="sxBtn alt" data-review-user="${p.id}">Record Review</button>${['admin','staff'].includes(low(p.role))?' <button class="sxBtn alt" data-rotate-code="'+p.id+'">Rotate Access Code</button>':''}`}</td>
     </tr>`;
   }).join('');
   return {
@@ -175,7 +177,7 @@ function drawAccess(){
 function accessBody(){
   const g=accessGroups();
   return `
-    <div class="sxMeta" style="margin-bottom:8px">Accounts are separated so Student, Staff/Admin and deleted-account evidence remain clear. Access-review outcomes are governance evidence only; they do not deactivate, delete or change a login. Account actions remain controlled through CEO Account Control. Deleted accounts stay as archived records for historical accountability and cannot be access-reviewed here. Staff Access Codes are not loaded into this screen.</div>
+    <div class="sxMeta" style="margin-bottom:8px">Accounts are separated so Student, Staff/Admin and deleted-account evidence remain clear. Access-review outcomes are governance evidence only; they do not deactivate, delete or change a login. Account actions remain controlled through CEO Account Control. Deleted accounts stay as archived records for historical accountability and cannot be access-reviewed here. Staff Access Codes are never loaded into this screen. IT/CEO may rotate a Staff Access Code here; the replacement is shown once and stored only as a secure hash.</div>
     <div class="sxAccessTabs">
       <button class="sxBtn ${accessKind==='students'?'':'alt'}" data-access-kind="students">Students (${g.students.length})</button>
       <button class="sxBtn ${accessKind==='staff'?'':'alt'}" data-access-kind="staff">Staff & Admin (${g.staff.length})</button>
@@ -274,8 +276,10 @@ function wire(tab){
     if(clear)clear.onclick=()=>{accessSearch='';accessPage[accessKind]=1;if(q)q.value='';drawAccess()};
     const panel=document.querySelector('.sxPanel');
     if(panel)panel.onclick=e=>{
-      const b=e.target.closest('[data-review-user]');
-      if(b)reviewAccess(b.dataset.reviewUser);
+      const rotate=e.target.closest('[data-rotate-code]');
+      if(rotate){rotateAccessCode(rotate.dataset.rotateCode);return}
+      const review=e.target.closest('[data-review-user]');
+      if(review)reviewAccess(review.dataset.reviewUser);
     };
     drawAccess();
   }
@@ -329,6 +333,22 @@ async function setIncident(id,status){
   if(r.error)return alert(r.error.message);
   warnAudit(await log('Updated security incident','security_incident',id,status+(patch.resolution_notes?' · '+patch.resolution_notes:'')));
   await open();render('incidents');
+}
+async function rotateAccessCode(id){
+  const p=profile(id);
+  if(!p?.id||!['admin','staff'].includes(low(p.role)))return;
+  if(isDeleted(p))return alert('Deleted accounts cannot receive a new Staff Access Code.');
+  if(!confirm('Rotate the Staff Access Code for '+(p.full_name||p.email||'this account')+'? The current code will stop working immediately.'))return;
+  const r=await db.functions.invoke('rotate-staff-access-code',{body:{profile_id:id}});
+  if(r.error||r.data?.error)return alert(r.data?.error||r.error.message);
+  alert(
+    'Staff Access Code rotated securely.\n\n'+
+    'Staff ID: '+(r.data.staff_number||p.staff_number||'—')+'\n'+
+    'New one-time Access Code: '+r.data.access_code+'\n\n'+
+    'This code is shown once and is stored by the Academy only as a secure hash. Share it securely with the staff member.'
+  );
+  await open();
+  render('access');
 }
 async function reviewAccess(id){
   const p=profile(id);
