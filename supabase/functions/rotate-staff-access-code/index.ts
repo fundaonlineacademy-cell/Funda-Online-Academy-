@@ -48,17 +48,17 @@ Deno.serve(async(req:Request)=>{
       .maybeSingle();
     if(actorErr||!actor)return json({error:'Account profile not found'},403);
 
-    const {data:hrAccess}=await admin
+    const {data:itAccess}=await admin
       .from('staff_access_assignments')
       .select('access_level,active')
       .eq('profile_id',user.id)
-      .eq('department','Human Resources')
+      .eq('department','IT, Security & Platform')
       .eq('active',true)
       .maybeSingle();
 
     const mayRotate=String(actor.role||'').toLowerCase()==='admin'
-      || String(hrAccess?.access_level||'').toLowerCase()==='manager';
-    if(!mayRotate)return json({error:'Administrator or HR manager authority is required'},403);
+      || String(itAccess?.access_level||'').toLowerCase()==='manager';
+    if(!mayRotate)return json({error:'Administrator or IT, Security & Platform manager authority is required'},403);
 
     const body=await req.json().catch(()=>({}));
     const targetId=String(body.profile_id||'').trim();
