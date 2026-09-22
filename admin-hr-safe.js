@@ -108,9 +108,7 @@ function directory(){
       <td>${esc(p.department||r?.department||'—')}</td>
       <td>${esc(r?.employment_status||'Active')}</td>
       <td>${access}</td>
-      <td>${low(p.role)==='staff'
-        ?'<button class="hrBtn alt" data-manage-access="'+p.id+'">'+(a.length?'Update Access':'Set Access')+'</button> <button class="hrBtn alt" data-rotate-code="'+p.id+'">Rotate Access Code</button>'
-        :'<button class="hrBtn alt" data-rotate-code="'+p.id+'">Rotate My Access Code</button>'}</td>
+      <td>${low(p.role)==='staff'?'<button class="hrBtn alt" data-manage-access="'+p.id+'">'+(a.length?'Update Access':'Set Access')+'</button>':'Executive / Admin'}</td>
     </tr>`;
   }).join('')||'<tr><td colspan="6">No staff records yet.</td></tr>';
 }
@@ -234,9 +232,7 @@ function wire(tab){
     $('hrAddStaff').onclick=inviteForm;
     document.querySelector('.hrPanel').onclick=e=>{
       const access=e.target.closest('[data-manage-access]');
-      if(access){manageAccess(access.dataset.manageAccess);return}
-      const rotate=e.target.closest('[data-rotate-code]');
-      if(rotate)rotateAccessCode(rotate.dataset.rotateCode);
+      if(access)manageAccess(access.dataset.manageAccess);
     };
   }
   if(tab==='contracts'){
@@ -285,21 +281,6 @@ async function manageAccess(id){
   const r=await db.from('staff_access_assignments').upsert(payload,{onConflict:'profile_id,department'});
   if(r.error)return alert('Staff access could not be saved: '+r.error.message);
   await audit('staff_access_updated','staff_access_assignment',id,id,{department,access_level:level,can_approve:canApprove});
-  await open();
-  render('team');
-}
-async function rotateAccessCode(id){
-  const p=prof(id);
-  if(!p?.id)return;
-  if(!confirm('Rotate the Staff Access Code for '+(p.full_name||p.email||'this account')+'? The current code will stop working immediately.'))return;
-  const r=await db.functions.invoke('rotate-staff-access-code',{body:{profile_id:id}});
-  if(r.error||r.data?.error)return alert(r.data?.error||r.error.message);
-  alert(
-    'Staff Access Code rotated securely.\n\n'+
-    'Staff ID: '+(r.data.staff_number||p.staff_number||'—')+'\n'+
-    'New one-time Access Code: '+r.data.access_code+'\n\n'+
-    'This code is shown once and is stored by the Academy only as a secure hash. Share it securely with the staff member.'
-  );
   await open();
   render('team');
 }
