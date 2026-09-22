@@ -93,7 +93,10 @@ const view=()=>document.getElementById('view');
 function observe(){
   const v=view();
   if(!v)return setTimeout(observe,100);
-  new MutationObserver(()=>setTimeout(paginateAudit,40)).observe(v,{childList:true,subtree:true});
+  new MutationObserver(mutations=>{
+    if(mutations.length&&mutations.every(m=>m.target.closest?.('#sxAuditPagerFixed')))return;
+    setTimeout(paginateAudit,40);
+  }).observe(v,{childList:true,subtree:true});
   setTimeout(paginateAudit,100);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',observe,{once:true});else observe();
