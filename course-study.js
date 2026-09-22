@@ -44,7 +44,7 @@ function renderLesson(){
  ${section('Lesson Overview',l.lesson_overview,'hero-learning')}
  ${section('Learning Objectives',l.learning_objectives,'outcomes')}
  ${section('Key Concepts',l.key_concepts)}
- ${section('Lesson Content',l.main_content||l.content)}
+ ${section('Lesson Content',l.main_content)}
  ${section('Examples',l.examples)}
  ${section('Case Study',l.case_study)}
  ${section('Practical Activity',l.practical_activity)}
