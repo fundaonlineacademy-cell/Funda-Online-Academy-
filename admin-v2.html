@@ -23,37 +23,38 @@
       if(h.includes(oldAuth))h=h.replace(oldAuth,stableAuth);
       h=h.replace(
         '</body>',
-        '<script src="funda-typography.js?v=20260916-systemwide-v1"><\/script>'+
-        '<script src="funda-sidebar-controls.js?v=20260921-admin-logout-audit-v1"><\/script>'+
-        '<script src="admin-manual-refresh.js?v=20260920-safe-refresh-v2"><\/script>'+
-        '<script src="admin-finance-separation.js?v=20260920-finance-typography-v1"><\/script>'+
-        '<script src="profile-photo-upload.js?v=20260901-profile-photo"><\/script>'+
-        '<script src="admin-document-vault.js?v=20260902-folder-filing"><\/script>'+
-        '<script src="admin-academic-qa-safe.js?v=20260922-academic-load-fix-v2"><\/script>'+
-        '<script src="admin-course-qa-review.js?v=20260922-academic-load-fix-v2"><\/script>'+
-        '<script src="admin-course-inspector.js?v=20260922-academic-load-fix-v2"><\/script>'+
-        '<script src="admin-academic-integrity.js?v=20260922-academic-load-fix-v2"><\/script>'+
-        '<script src="admin-academic-documents.js?v=20260922-academic-load-fix-v2"><\/script>'+
-        '<script src="admin-academic-document-tools.js?v=20260922-academic-load-fix-v2"><\/script>'+
-        '<script src="admin-academic-readability.js?v=20260922-academic-readable-v2"><\/script>'+
-        '<script src="admin-legacy-students.js?v=20260921-enrolments-audit-v2"><\/script>'+
-        '<script src="admin-house-rules.js?v=20260904-house-rules"><\/script>'+
-        '<script src="academy-identity.js?v=20260905-master-identity"><\/script>'+
-        '<script src="admin-academy-identity-compact.js?v=20260919-compact-v1"><\/script>'+
-        '<script src="admin-dashboard-company-details.js?v=20260920-ceo-footer-v3"><\/script>'+
-        '<script src="admin-dashboard-daily-operations.js?v=20260920-daily-ops-v7"><\/script>'+
-        '<script src="admin-communication-v2.js?v=20260921-communication-permission-fix-v2"><\/script>'+
-        '<script src="admin-support-safe.js?v=20260921-support-crm-audit-v1"><\/script>'+
-        '<script src="admin-marketing-safe.js?v=20260921-marketing-audit-v3"><\/script>'+
-        '<script src="admin-ambassador-programme-v2.js?v=20260921-performance-audit-v3"><\/script>'+
-        '<script src="admin-ambassador-performance.js?v=20260921-performance-review-v3"><\/script>'+
-        '<script src="admin-ambassador-correspondence.js?v=20260921-ambassador-correspondence-v1"><\/script>'+
-        '<script src="admin-ambassador-finance-v2.js?v=20260921-no-marketing-snapshot-v2"><\/script>'+
-        '<script src="admin-ambassador-support-marketing.js?v=20260921-compact-live-marketing-v3"><\/script>'+
-        '<script src="admin-your-voice.js?v=20260921-voice-audit-v1"><\/script>'+
-        '<script src="admin-ceo-account-management.js?v=20260921-ceo-account-control-v4"><\/script>'+
-        '<script src="admin-security-ui-fixes.js?v=20260922-it-audit-pagination-refresh-v1"><\/script>'+
-        '<script src="admin-font-standard.js?v=20260919-admin-source-sans-v1"><\/script>'+
+        '<script src="funda-typography.js?v=20260916-systemwide-v1"><\/script>'+ 
+        '<script src="funda-sidebar-controls.js?v=20260921-admin-logout-audit-v1"><\/script>'+ 
+        '<script src="admin-manual-refresh.js?v=20260920-safe-refresh-v2"><\/script>'+ 
+        '<script src="admin-finance-separation.js?v=20260920-finance-typography-v1"><\/script>'+ 
+        '<script src="profile-photo-upload.js?v=20260901-profile-photo"><\/script>'+ 
+        '<script src="admin-document-vault.js?v=20260902-folder-filing"><\/script>'+ 
+        '<script src="admin-academic-manual-refresh-policy.js?v=20260922-manual-only-v1"><\/script>'+ 
+        '<script src="admin-academic-qa-safe.js?v=20260922-academic-stable-v3"><\/script>'+ 
+        '<script src="admin-course-qa-review.js?v=20260922-academic-stable-v3"><\/script>'+ 
+        '<script src="admin-course-inspector.js?v=20260922-academic-stable-v3"><\/script>'+ 
+        '<script src="admin-academic-integrity.js?v=20260922-academic-stable-v3"><\/script>'+ 
+        '<script src="admin-academic-documents.js?v=20260922-academic-stable-v3"><\/script>'+ 
+        '<script src="admin-academic-document-tools.js?v=20260922-academic-stable-v3"><\/script>'+ 
+        '<script src="admin-academic-readability.js?v=20260922-academic-readable-v3"><\/script>'+ 
+        '<script src="admin-legacy-students.js?v=20260921-enrolments-audit-v2"><\/script>'+ 
+        '<script src="admin-house-rules.js?v=20260904-house-rules"><\/script>'+ 
+        '<script src="academy-identity.js?v=20260905-master-identity"><\/script>'+ 
+        '<script src="admin-academy-identity-compact.js?v=20260919-compact-v1"><\/script>'+ 
+        '<script src="admin-dashboard-company-details.js?v=20260920-ceo-footer-v3"><\/script>'+ 
+        '<script src="admin-dashboard-daily-operations.js?v=20260920-daily-ops-v7"><\/script>'+ 
+        '<script src="admin-communication-v2.js?v=20260921-communication-permission-fix-v2"><\/script>'+ 
+        '<script src="admin-support-safe.js?v=20260921-support-crm-audit-v1"><\/script>'+ 
+        '<script src="admin-marketing-safe.js?v=20260921-marketing-audit-v3"><\/script>'+ 
+        '<script src="admin-ambassador-programme-v2.js?v=20260921-performance-audit-v3"><\/script>'+ 
+        '<script src="admin-ambassador-performance.js?v=20260921-performance-review-v3"><\/script>'+ 
+        '<script src="admin-ambassador-correspondence.js?v=20260921-ambassador-correspondence-v1"><\/script>'+ 
+        '<script src="admin-ambassador-finance-v2.js?v=20260921-no-marketing-snapshot-v2"><\/script>'+ 
+        '<script src="admin-ambassador-support-marketing.js?v=20260921-compact-live-marketing-v3"><\/script>'+ 
+        '<script src="admin-your-voice.js?v=20260921-voice-audit-v1"><\/script>'+ 
+        '<script src="admin-ceo-account-management.js?v=20260921-ceo-account-control-v4"><\/script>'+ 
+        '<script src="admin-security-ui-fixes.js?v=20260922-it-audit-pagination-refresh-v1"><\/script>'+ 
+        '<script src="admin-font-standard.js?v=20260919-admin-source-sans-v1"><\/script>'+ 
         '</body>'
       );
       document.open();
