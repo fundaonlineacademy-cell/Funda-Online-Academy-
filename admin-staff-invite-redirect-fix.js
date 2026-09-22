@@ -39,7 +39,15 @@ async function sendInvite(){
       redirect_to
     }});
     if(r.error||r.data?.error)throw new Error(r.data?.error||r.error.message);
-    alert('Staff invitation sent.\n\nStaff ID: '+r.data.staff_number+'\nOne-time Staff Access Code: '+r.data.access_code+'\n\nThe Access Code is shown once and stored by the Academy only as a secure hash. The invitation will open the Staff Portal at the correct Academy path.');
+    const staffNumber=r.data.staff_number||r.data.staff_code||'—';
+    const issued=await c.rpc('rotate_staff_access_code',{p_profile_id:r.data.user_id});
+    if(issued.error||issued.data?.error||!issued.data?.access_code){
+      alert('Staff invitation was sent and Staff ID '+staffNumber+' was created, but the one-time Access Code could not be displayed. Use the secure access-code reset before sharing login details.');
+      if(window.FundaHRCentre?.open)await window.FundaHRCentre.open();
+      setTimeout(installPortalButton,120);
+      return;
+    }
+    alert('Staff invitation sent.\n\nStaff ID: '+(issued.data.staff_number||staffNumber)+'\nOne-time Staff Access Code: '+issued.data.access_code+'\n\nThe Access Code is shown once and stored by the Academy only as a secure hash. The invitation will open the Staff Portal at the correct Academy path.');
     if(window.FundaHRCentre?.open)await window.FundaHRCentre.open();
     setTimeout(installPortalButton,120);
   }catch(e){
