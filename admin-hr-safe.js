@@ -63,19 +63,19 @@ async function load(){
   if(!db)return;
   loadErrors=[];
   const specs=[
-    ['profiles','created_at'],
-    ['staff_records','created_at'],
-    ['staff_access_assignments','granted_at'],
-    ['staff_invitations','invited_at'],
-    ['hr_contracts','created_at'],
-    ['hr_leave_requests','requested_at'],
-    ['hr_safety_incidents','created_at'],
-    ['hr_training_records','created_at'],
-    ['hr_performance_reviews','created_at'],
-    ['hr_audit_log','created_at']
+    ['profiles','id,full_name,email,role,staff_number,job_title,department,created_at','created_at'],
+    ['staff_records','*','created_at'],
+    ['staff_access_assignments','*','granted_at'],
+    ['staff_invitations','id,email,full_name,staff_number,job_title,department,invited_user_id,invited_by,invitation_status,invited_at,accepted_at,notes','invited_at'],
+    ['hr_contracts','*','created_at'],
+    ['hr_leave_requests','*','requested_at'],
+    ['hr_safety_incidents','*','created_at'],
+    ['hr_training_records','*','created_at'],
+    ['hr_performance_reviews','*','created_at'],
+    ['hr_audit_log','*','created_at']
   ];
-  await Promise.all(specs.map(async([name,order])=>{
-    const r=await db.from(name).select('*').order(order,{ascending:false}).limit(2000);
+  await Promise.all(specs.map(async([name,fields,order])=>{
+    const r=await db.from(name).select(fields).order(order,{ascending:false}).limit(2000);
     if(r.error){
       loadErrors.push(name+': '+r.error.message);
       if(!Array.isArray(D[name]))D[name]=[];
@@ -103,12 +103,14 @@ function directory(){
       :low(p.role)==='admin'?'Executive / Admin access':'No active access assignment';
     return `<tr>
       <td><b>${esc(p.full_name||p.email)}</b><div class="hrMeta">${esc(p.email||'')}</div></td>
-      <td>${esc(p.staff_code||'—')}</td>
+      <td>${esc(p.staff_number||'—')}</td>
       <td>${esc(p.job_title||r?.job_title||'—')}</td>
       <td>${esc(p.department||r?.department||'—')}</td>
       <td>${esc(r?.employment_status||'Active')}</td>
       <td>${access}</td>
-      <td>${low(p.role)==='staff'?'<button class="hrBtn alt" data-manage-access="'+p.id+'">'+(a.length?'Update Access':'Set Access')+'</button>':'Executive / Admin'}</td>
+      <td>${low(p.role)==='staff'
+        ?'<button class="hrBtn alt" data-manage-access="'+p.id+'">'+(a.length?'Update Access':'Set Access')+'</button> <button class="hrBtn alt" data-rotate-code="'+p.id+'">Rotate Access Code</button>'
+        :'<button class="hrBtn alt" data-rotate-code="'+p.id+'">Rotate My Access Code</button>'}</td>
     </tr>`;
   }).join('')||'<tr><td colspan="6">No staff records yet.</td></tr>';
 }
@@ -185,7 +187,7 @@ function audits(){
 }
 function staffOpts(){
   return staff().map(p=>{
-    const tag=low(p.role)==='admin'?'Executive/Admin':(p.staff_code||'Staff');
+    const tag=low(p.role)==='admin'?'Executive/Admin':(p.staff_number||'Staff');
     return `<option value="${p.id}">${esc(p.full_name||p.email)} · ${esc(tag)}</option>`;
   }).join('');
 }
@@ -200,7 +202,7 @@ function render(tab=currentTab){
   const pendingLeave=(D.hr_leave_requests||[]).filter(x=>low(x.status)==='pending').length;
   const trainingDue=(D.hr_training_records||[]).filter(x=>low(x.status)!=='completed').length;
   let body='';
-  if(tab==='team')body=`<div class="hrBar"><button class="hrBtn" id="hrAddStaff">+ Invite Staff User</button></div><table class="hrTable"><tr><th>Staff member</th><th>Staff code</th><th>Job title</th><th>Department</th><th>Status</th><th>Access</th><th>Action</th></tr>${directory()}</table>${departmentGuide()}`;
+  if(tab==='team')body=`<div class="hrBar"><button class="hrBtn" id="hrAddStaff">+ Invite Staff User</button></div><table class="hrTable"><tr><th>Staff member</th><th>Staff ID</th><th>Job title</th><th>Department</th><th>Status</th><th>Access</th><th>Action</th></tr>${directory()}</table>${departmentGuide()}`;
   if(tab==='contracts')body=`<div class="hrBar"><select class="hrSelect" id="hcStaff"><option value="">Select staff member</option>${staffOpts()}</select><input class="hrInput" id="hcTitle" placeholder="Contract title e.g. Employment Agreement"><select class="hrSelect" id="hcType"><option>Employment</option><option>Fixed Term</option><option>Consultancy</option><option>Confidentiality</option><option>Policy Acknowledgement</option></select><button class="hrBtn" id="hcCreate">Create Contract</button></div><textarea class="hrText" id="hcBody" placeholder="Contract terms, duties, remuneration reference, confidentiality, conduct, termination, data protection and acceptance terms..."></textarea><table class="hrTable"><tr><th>Contract</th><th>Staff</th><th>Type</th><th>Status</th><th>Issued</th><th>Accepted</th><th>Action</th></tr>${contracts()}</table>`;
   if(tab==='leave')body=`<div class="hrBar"><select class="hrSelect" id="hlStaff"><option value="">Select staff member</option>${staffOpts()}</select><select class="hrSelect" id="hlType"><option>Annual Leave</option><option>Sick Leave</option><option>Family Responsibility Leave</option><option>Unpaid Leave</option><option>Study Leave</option><option>Compassionate Leave</option><option>Other</option></select><input class="hrInput" id="hlStart" type="date"><input class="hrInput" id="hlEnd" type="date"><input class="hrInput" id="hlReason" placeholder="Reason / HR note"><button class="hrBtn" id="hlAdd">Add Leave Request</button></div><div class="hrMeta" style="margin-bottom:8px">HR can capture a request on behalf of a staff member. Staff self-service requests will also appear here. Every request records who submitted it, current status, and who approved or rejected it.</div><table class="hrTable"><tr><th>Staff</th><th>Leave type</th><th>Dates</th><th>Status</th><th>Requested by</th><th>Reviewed by</th><th>Action</th></tr>${leaves()}</table>`;
   if(tab==='safety')body=`<div class="hrBar"><select class="hrSelect" id="hsStaff"><option value="">General workplace</option>${staffOpts()}</select><input class="hrInput" id="hsTitle" placeholder="Safety / wellbeing incident"><select class="hrSelect" id="hsSeverity"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select><input class="hrInput" id="hsDesc" placeholder="What happened / required action"><button class="hrBtn bad" id="hsAdd">Record Incident</button></div><table class="hrTable"><tr><th>Incident</th><th>Staff</th><th>Severity</th><th>Status</th><th>Date</th><th>Resolved</th><th>Action</th></tr>${safety()}</table>`;
@@ -231,8 +233,10 @@ function wire(tab){
   if(tab==='team'){
     $('hrAddStaff').onclick=inviteForm;
     document.querySelector('.hrPanel').onclick=e=>{
-      const b=e.target.closest('[data-manage-access]');
-      if(b)manageAccess(b.dataset.manageAccess);
+      const access=e.target.closest('[data-manage-access]');
+      if(access){manageAccess(access.dataset.manageAccess);return}
+      const rotate=e.target.closest('[data-rotate-code]');
+      if(rotate)rotateAccessCode(rotate.dataset.rotateCode);
     };
   }
   if(tab==='contracts'){
@@ -284,8 +288,23 @@ async function manageAccess(id){
   await open();
   render('team');
 }
+async function rotateAccessCode(id){
+  const p=prof(id);
+  if(!p?.id)return;
+  if(!confirm('Rotate the Staff Access Code for '+(p.full_name||p.email||'this account')+'? The current code will stop working immediately.'))return;
+  const r=await db.functions.invoke('rotate-staff-access-code',{body:{profile_id:id}});
+  if(r.error||r.data?.error)return alert(r.data?.error||r.error.message);
+  alert(
+    'Staff Access Code rotated securely.\n\n'+
+    'Staff ID: '+(r.data.staff_number||p.staff_number||'—')+'\n'+
+    'New one-time Access Code: '+r.data.access_code+'\n\n'+
+    'This code is shown once and is stored by the Academy only as a secure hash. Share it securely with the staff member.'
+  );
+  await open();
+  render('team');
+}
 function inviteForm(){
-  $('view').insertAdjacentHTML('afterbegin',`<div class="hrPanel" id="hrInvitePanel"><h3>Invite New Staff User</h3><div class="hrGrid"><input class="hrInput" id="hiName" placeholder="Full name"><input class="hrInput" id="hiEmail" placeholder="Personal or work email"><input class="hrInput" id="hiJob" placeholder="Job title"><select class="hrSelect" id="hiDept"><option>Human Resources</option><option>Finance & Accounting</option><option>Academic, Assessments & Content</option><option>Enrolments & Courses</option><option>Student Support & CRM</option><option>Marketing & Admissions</option><option>Communication Hub</option><option>IT, Security & Platform</option></select><select class="hrSelect" id="hiLevel"><option value="read">Read only</option><option value="edit" selected>Edit</option><option value="manager">Manager</option></select><label class="hrMeta"><input type="checkbox" id="hiApprove"> May approve within department</label></div><div class="hrBar"><button class="hrBtn" id="hiSend">Send Secure Invitation</button><button class="hrBtn alt" id="hiCancel">Cancel</button></div><div class="hrMeta">The system generates the staff code. HR/CEO never chooses or sees the employee's password; the employee sets it securely from the invitation email.</div></div>`);
+  $('view').insertAdjacentHTML('afterbegin',`<div class="hrPanel" id="hrInvitePanel"><h3>Invite New Staff User</h3><div class="hrGrid"><input class="hrInput" id="hiName" placeholder="Full name"><input class="hrInput" id="hiEmail" placeholder="Personal or work email"><input class="hrInput" id="hiJob" placeholder="Job title"><select class="hrSelect" id="hiDept"><option>Human Resources</option><option>Finance & Accounting</option><option>Academic, Assessments & Content</option><option>Enrolments & Courses</option><option>Student Support & CRM</option><option>Marketing & Admissions</option><option>Communication Hub</option><option>IT, Security & Platform</option></select><select class="hrSelect" id="hiLevel"><option value="read">Read only</option><option value="edit" selected>Edit</option><option value="manager">Manager</option></select><label class="hrMeta"><input type="checkbox" id="hiApprove"> May approve within department</label></div><div class="hrBar"><button class="hrBtn" id="hiSend">Send Secure Invitation</button><button class="hrBtn alt" id="hiCancel">Cancel</button></div><div class="hrMeta">The system generates a non-secret Staff ID and a separate one-time Staff Access Code. The Access Code is shown once, then stored only as a secure hash. HR/CEO never chooses or sees the employee's password; the employee sets it securely from the invitation email.</div></div>`);
   $('hiSend').onclick=inviteStaff;
   $('hiCancel').onclick=()=>$('hrInvitePanel').remove();
 }
@@ -295,7 +314,7 @@ async function inviteStaff(){
   const redirect_to=location.origin+'/staff-portal.html';
   const r=await db.functions.invoke('invite-staff-user',{body:{full_name,email,job_title,department,access_level:$('hiLevel').value,can_approve:$('hiApprove').checked,redirect_to}});
   if(r.error||r.data?.error)return alert(r.data?.error||r.error.message);
-  alert('Staff invitation sent. Staff code: '+r.data.staff_code);
+  alert('Staff invitation sent.\n\nStaff ID: '+r.data.staff_number+'\nOne-time Staff Access Code: '+r.data.access_code+'\n\nThe Access Code is shown once and stored by the Academy only as a secure hash. Share it securely with the staff member.');
   await open();
 }
 async function createContract(){
