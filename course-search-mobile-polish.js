@@ -80,7 +80,7 @@ function style(){
       body>section .text-xs{font-size:.84rem!important;line-height:1.35rem!important}
       body>section .text-sm{font-size:.98rem!important;line-height:1.58rem!important}
       body>section .text-base{font-size:1.03rem!important;line-height:1.68rem!important}
-      .hero>div{padding-top:30px!important;padding-bottom:32px!important}
+      .hero:not(.funda-course-hero)>div{padding-top:30px!important;padding-bottom:32px!important}
       .hero-title{font-size:2.05rem!important;line-height:1.08!important}
       .section-title{font-size:1.75rem!important;line-height:1.18!important}
       .csmpHeroBadge{font-size:12px!important;line-height:1.35!important;padding:8px 12px!important;letter-spacing:0!important}
@@ -189,6 +189,7 @@ function bindMobileMenuA11y(){
 function polishHero(){
   const hero=document.querySelector('.hero');
   if(!hero)return;
+  if(hero.classList.contains('funda-course-hero'))return;
   const outer=hero.firstElementChild;
   const content=outer?.firstElementChild;
   if(!outer||!content)return;
