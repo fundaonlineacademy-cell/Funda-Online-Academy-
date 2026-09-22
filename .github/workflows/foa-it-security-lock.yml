@@ -1,0 +1,56 @@
+name: FOA IT Security Lock Guard
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'admin-security-safe.js'
+      - 'admin-security-ui-fixes.js'
+      - 'IT_SECURITY_PLATFORM_*.sql'
+      - 'admin-v2.html'
+      - 'staff-access-code-login.js'
+      - 'supabase/functions/rotate-staff-access-code/**'
+      - 'supabase/functions/invite-staff-user/**'
+
+permissions:
+  contents: read
+
+jobs:
+  it-security-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enforce locked IT Security scope
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          BASE_REF: ${{ github.base_ref }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git diff --name-only "origin/${BASE_REF}...HEAD" > /tmp/foa-it-changed.txt
+          body="${PR_BODY:-}"
+
+          direct_it_regex='^(admin-security-safe\.js|admin-security-ui-fixes\.js|IT_SECURITY_PLATFORM_.*\.sql|supabase/functions/rotate-staff-access-code/.*|supabase/functions/invite-staff-user/.*)$'
+          shared_it_regex='^(admin-v2\.html|staff-access-code-login\.js)$'
+
+          if grep -Eq "$direct_it_regex" /tmp/foa-it-changed.txt; then
+            if ! grep -Eqi 'OWNER-APPROVED-IT-SECURITY-CHANGE:[[:space:]]*yes' <<< "$body"; then
+              echo "::error::IT, Security & Platform is owner-approved and locked. Explicit owner reopening is required: OWNER-APPROVED-IT-SECURITY-CHANGE: yes"
+              exit 1
+            fi
+          fi
+
+          if grep -Eq "$direct_it_regex|$shared_it_regex" /tmp/foa-it-changed.txt; then
+            if ! grep -Eqi 'IT-SECURITY-REGRESSION-CHECKED:[[:space:]]*yes' <<< "$body"; then
+              echo "::error::This change can affect the locked IT, Security & Platform workspace. Confirm its approved manual-refresh behaviour, data loading, controls and navigation with: IT-SECURITY-REGRESSION-CHECKED: yes"
+              exit 1
+            fi
+          fi
+
+          echo "IT, Security & Platform lock guard passed."
