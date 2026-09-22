@@ -26,7 +26,7 @@ async function load(force=false){
   const [lr,pr,ar]=await Promise.all([
    // Only fetch fields needed by the learner view. This avoids pulling every
    // structured lesson field into memory on mobile devices.
-   db.from('lessons').select('id,module_id,lesson_number,title,content,main_content,lesson_overview').in('module_id',mids).order('lesson_number',{ascending:true}),
+   db.from('lessons').select('id,module_id,lesson_number,title,main_content,lesson_overview').in('module_id',mids).order('lesson_number',{ascending:true}),
    db.from('lesson_progress').select('lesson_id,completed,completed_at').in('student_id',progressIds).eq('completed',true),
    db.from('assessments').select('id,module_id,title').eq('course_id',id).eq('active',true).in('status',['published','active'])
   ]);
@@ -71,7 +71,7 @@ function sidebar(){
 function lessonView(){
  const ls=lessons(state.module);let l=ls.find(x=>Number(x.lesson_number)===Number(state.unit));if(!l){state.unit=1;l=ls[0]}if(!l)return;
  const complete=doneSet().has(String(l.id));
- $('course-content').innerHTML=`<div class="mobiletools"><button id="openModulesInner">☰ Modules</button><button id="scrollNotesInner">✎ Notes</button></div><div class="crumb">${text(state.course.title)} / Module ${state.module} / Lesson ${l.lesson_number}</div><section class="lessonhead"><div class="course-label">MODULE ${state.module} · LESSON ${l.lesson_number} OF ${ls.length}</div><h1>${text(l.title)}</h1><div class="meta"><span class="pill">${complete?'Completed ✓':'In progress'}</span><span class="pill gold">Teaching Lesson</span></div></section><section class="card"><div>${bodyHtml(l.main_content||l.content||l.lesson_overview||'')}</div></section><div class="navbuttons"><button class="btn secondary" id="prevLesson">← Previous</button><button class="btn primary" id="completeLesson">${complete?'Continue →':'Complete Lesson & Continue →'}</button></div>`;
+ $('course-content').innerHTML=`<div class="mobiletools"><button id="openModulesInner">☰ Modules</button><button id="scrollNotesInner">✎ Notes</button></div><div class="crumb">${text(state.course.title)} / Module ${state.module} / Lesson ${l.lesson_number}</div><section class="lessonhead"><div class="course-label">MODULE ${state.module} · LESSON ${l.lesson_number} OF ${ls.length}</div><h1>${text(l.title)}</h1><div class="meta"><span class="pill">${complete?'Completed ✓':'In progress'}</span><span class="pill gold">Teaching Lesson</span></div></section><section class="card"><div>${bodyHtml(l.main_content||'')}</div></section><div class="navbuttons"><button class="btn secondary" id="prevLesson">← Previous</button><button class="btn primary" id="completeLesson">${complete?'Continue →':'Complete Lesson & Continue →'}</button></div>`;
  $('openModulesInner')?.addEventListener('click',()=>$('modulePanel')?.classList.toggle('open'));
  $('scrollNotesInner')?.addEventListener('click',()=>show('Your notes are available in the study tools panel on larger screens.'));
  $('keyTerms').innerHTML='<div class="term"><span>Key terminology is included in the lesson content.</span></div>';
