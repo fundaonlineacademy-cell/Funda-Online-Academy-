@@ -22,7 +22,7 @@ const attach=()=>{
   extra=document.createElement('div');
   extra.id='admin-extra';
   extra.className='hidden mt-5';
-  extra.innerHTML='<label for="staff_code" class="block text-sm font-bold text-[#06152f]">Staff access code</label><input id="staff_code" type="password" autocomplete="off" placeholder="Enter staff access code" class="input-field mt-2"><p class="mt-1.5 text-xs text-slate-500">Required for Staff / Admin access. The code is verified securely by the Academy server.</p>';
+  extra.innerHTML='<label for="staff_code" class="block text-sm font-bold text-[#06152f]">Staff access code</label><input id="staff_code" type="password" autocomplete="off" placeholder="Enter staff access code" class="input-field mt-2"><p class="mt-1.5 text-xs text-slate-500">Required for Staff / Admin access. Use your separate Staff Access Code, not your Staff ID. The code is verified securely by the Academy server.</p>';
   const note=document.getElementById('staffAccessNote');
   (note||loginBtn).insertAdjacentElement('beforebegin',extra);
  }
