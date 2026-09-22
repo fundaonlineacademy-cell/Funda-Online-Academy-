@@ -225,6 +225,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - Do not reintroduce legacy, retired, duplicated or cached Browse Courses content from older commits or previous overrides.
 - A direct change to `courses-public.html` requires explicit Browse Courses owner approval in the pull request.
 - **Owner-approved Browse Courses introduction amendment — 22 September 2026:** the owner explicitly reopened only the top Browse Courses introduction. The approved presentation uses the supplied learner image in the split hero, followed by the separate **Study with clarity. Grow with confidence.** section and the **Know what to expect before you enrol.** information board. The live course catalogue, course cards, filters, sorting, FAQs, contact section, routes and all other public-course behaviour remain protected and unchanged.
+- **Owner-approved desktop introduction refinement — 22 September 2026:** on desktop, the left side of the section beneath the learner image uses one general motivational message instead of the repeated learning pill, explanatory copy, Browse/Create actions and handwritten motto. The four approved values — **Practical Skills, Flexible Learning, Personal Growth, A Brighter Future** — remain and align with the bottom of the unchanged **Know what to expect before you enrol.** board. The restored mobile introduction remains text-based with no learner image and keeps this lower clarity section hidden.
 
 ### Approved portal typography
 
