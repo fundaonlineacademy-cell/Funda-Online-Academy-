@@ -19,7 +19,7 @@ const defs={
   enrolments:{label:'Enrolments & Courses',tables:['profiles','courses','enrollments','payments','legacy_verification_claims','legacy_student_records','course_change_requests','course_change_audit']},
   students:{label:'Students',tables:['profiles','ceo_account_control_state']},
   courses:{label:'Courses',tables:['courses']},
-  academic:{label:'Academic & Assessments',tables:['profiles','courses','assessment_attempts','certificates']},
+  academic:{label:'Academic, Assessments & Content',tables:['profiles','courses','course_modules','lessons','assessments','assessment_questions','assessment_attempts','assessment_submissions','course_results','certificates','academic_result_reviews','academic_transcripts','academic_course_qa_reviews','academic_audit_log','lesson_plan_register','academy_result_template_settings']},
   payments:{label:'Payments',tables:['profiles','payments']},
   support:{label:'Student Support & CRM',tables:['profiles','support_tickets','support_ticket_messages','support_ticket_events','student_consultations','consultation_events']},
   voice:{label:'Voice & Feedback',tables:['profiles','academy_voice_submissions','academy_voice_review_history']},
@@ -388,16 +388,105 @@ function build(type,data,from,to,scope){
   }
 
   if(type==='academic'){
+    const modules=data.course_modules||[],lessons=data.lessons||[],assessments=data.assessments||[],questions=data.assessment_questions||[];
+    const wordCount=v=>{const t=String(v||'').replace(/<[^>]+>/g,' ').replace(/\\s+/g,' ').trim();return t?t.split(' ').filter(Boolean).length:0};
+    const moduleMap=Object.fromEntries(modules.map(x=>[x.id,x]));
+    const assessmentMap=Object.fromEntries(assessments.map(x=>[x.id,x]));
+
+    const contentIssues=lessons.map(l=>{
+      const m=moduleMap[l.module_id]||{},co=c[m.course_id]||{},wc=wordCount(l.main_content);
+      if(wc>=500)return null;
+      return {
+        'Record Type':'Lesson Integrity Issue',
+        Course:co.title||m.course_id||'',
+        Module:m.module_number||'',
+        Reference:'Lesson '+(l.lesson_number||'')+' · '+(l.title||''),
+        Status:wc===0?'Blank main content':'Below 500 words',
+        Value:wc,
+        Date:fmtDate(l.updated_at||l.created_at),
+        Details:'Canonical main_content word count'
+      };
+    }).filter(Boolean);
+
+    const assessmentRows=assessments.filter(x=>x.active!==false&&['published','active'].includes(low(x.status))).map(x=>{
+      const m=moduleMap[x.module_id]||{},co=c[x.course_id]||{},type=/formative/i.test(x.title||'')?'Formative':/summative/i.test(x.title||'')?'Summative':'Other';
+      const count=questions.filter(q=>String(q.assessment_id)===String(x.id)).length,required=type==='Formative'?15:type==='Summative'?25:0;
+      return {
+        'Record Type':'Live Assessment',
+        Course:co.title||x.course_id,
+        Module:m.module_number||'',
+        Reference:x.title,
+        Status:required&&count<required?'Question bank incomplete':'Live',
+        Value:count,
+        Date:fmtDate(x.updated_at||x.created_at),
+        Details:[type,required?'Required bank '+required:'',x.pass_mark!=null?'Pass mark '+x.pass_mark+'%':''].filter(Boolean).join(' · ')
+      };
+    });
+
     const attempts=all(data.assessment_attempts,['submitted_at','created_at']).map(x=>({
-      'Record Type':'Assessment Attempt',Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
-      Reference:x.assessment_id,Score:x.score,Percentage:x.percentage,Status:x.passed?'Passed':'Not passed',Date:fmtDate(x.submitted_at||x.created_at)
+      'Record Type':'Assessment Attempt',
+      Course:c[assessmentMap[x.assessment_id]?.course_id]?.title||'',
+      Module:moduleMap[assessmentMap[x.assessment_id]?.module_id]?.module_number||'',
+      Reference:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+      Status:x.passed?'Passed':'Not passed',
+      Value:x.percentage,
+      Date:fmtDate(x.submitted_at||x.created_at),
+      Details:(assessmentMap[x.assessment_id]?.title||x.assessment_id)+' · Attempt '+(x.attempt_number||1)
     }));
+
+    const resultRows=all(data.course_results,['updated_at','calculated_at','finalised_at']).map(x=>({
+      'Record Type':'Academic Result',
+      Course:c[x.course_id]?.title||x.course_id,
+      Module:'',
+      Reference:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+      Status:x.result_status||'',
+      Value:x.final_percentage,
+      Date:fmtDate(x.finalised_at||x.calculated_at||x.updated_at),
+      Details:[x.result_number,x.ready_for_review?'Ready for review':'',x.statement_status?'Statement '+x.statement_status:''].filter(Boolean).join(' · ')
+    }));
+
     const certs=all(data.certificates,['issued_at']).map(x=>({
-      'Record Type':'Certificate',Student:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
-      Reference:x.certificate_number,Score:'',Percentage:'',Status:x.certificate_status,Date:fmtDate(x.issued_at)
+      'Record Type':'Certificate',
+      Course:c[x.course_id]?.title||x.course_id,
+      Module:'',
+      Reference:p[x.student_id]?.full_name||p[x.student_id]?.email||x.student_id,
+      Status:x.certificate_status||'issued',
+      Value:'',
+      Date:fmtDate(x.issued_at),
+      Details:x.certificate_number||''
     }));
-    rows=[...attempts,...certs];
-    summary=[['Assessment attempts',attempts.length],['Passed attempts',attempts.filter(x=>x.Status==='Passed').length],['Certificates',certs.length]];
+
+    const qaRows=all(data.academic_course_qa_reviews,['reviewed_at','created_at']).map(x=>({
+      'Record Type':'Course QA Review',
+      Course:c[x.course_id]?.title||x.course_id,
+      Module:'',
+      Reference:x.qa_version||x.id,
+      Status:x.review_status||'',
+      Value:'',
+      Date:fmtDate(x.reviewed_at||x.created_at),
+      Details:[x.summary,x.findings,x.actions_required].filter(Boolean).join(' · ')
+    }));
+
+    const template=(data.academy_result_template_settings||[]).find(x=>x.setting_key==='primary');
+    rows=[...contentIssues,...assessmentRows,...attempts,...resultRows,...certs,...qaRows];
+
+    summary=[
+      ['Active courses',(data.courses||[]).filter(x=>x.active!==false).length],
+      ['Structured modules',modules.length],
+      ['Lessons',lessons.length],
+      ['Blank canonical lesson bodies',contentIssues.filter(x=>x.Status==='Blank main content').length],
+      ['Lessons below 500 words',contentIssues.filter(x=>x.Status==='Below 500 words').length],
+      ['Live assessments',assessmentRows.length],
+      ['Incomplete live question banks',assessmentRows.filter(x=>x.Status==='Question bank incomplete').length],
+      ['Assessment attempts',attempts.length],
+      ['Passed attempts',attempts.filter(x=>x.Status==='Passed').length],
+      ['Academic results',resultRows.length],
+      ['Certificates',certs.length],
+      ['Course QA reviews',qaRows.length],
+      ['Academic audit events',(data.academic_audit_log||[]).length],
+      ['Lesson-plan register rows',(data.lesson_plan_register||[]).length],
+      ['Statement of Results template status',template?.template_status||'Not configured']
+    ];
   }
 
   if(type==='payments'){
