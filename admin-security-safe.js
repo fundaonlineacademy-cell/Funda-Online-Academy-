@@ -10,9 +10,12 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&
 const low=v=>String(v||'').toLowerCase();
 const fmt=v=>v?new Date(v).toLocaleString('en-ZA'):'—';
 
+function isSecurityLabel(text){
+  return /\bsecurity\b|\bplatform\b|\bit\b/i.test(String(text||''));
+}
 function active(){
   const b=document.querySelector('#nav button.on,#nav button.active,.nav button.on,.nav button.active');
-  return !!b&&/security|platform|it/i.test(b.textContent);
+  return !!b&&isSecurityLabel(b.textContent);
 }
 function isDeleted(p){
   return /@deleted\.funda\.invalid$/i.test(String(p?.email||''))||/^deleted\s+(student|staff)\s+account$/i.test(String(p?.full_name||'').trim());
@@ -60,16 +63,35 @@ async function load(){
   db=db||window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
   if(!db)return;
   loadErrors=[];
+
+  const previousProfiles=Array.isArray(D.profiles)?D.profiles:[];
+  const profileRows=[];
+  const pageSize=1000;
+  for(let from=0;;from+=pageSize){
+    const r=await db.from('profiles')
+      .select('id,full_name,email,role,student_number,job_title,department,created_at')
+      .order('created_at',{ascending:false})
+      .range(from,from+pageSize-1);
+    if(r.error){
+      loadErrors.push('profiles: '+r.error.message);
+      D.profiles=previousProfiles;
+      break;
+    }
+    profileRows.push(...(r.data||[]));
+    if((r.data||[]).length<pageSize){
+      D.profiles=profileRows;
+      break;
+    }
+  }
+
   const specs=[
-    ['profiles','created_at',1000],
-    ['staff_records','created_at',1000],
-    ['admin_audit_log','created_at',1000],
-    ['security_incidents','created_at',1000],
-    ['security_access_reviews','reviewed_at',1000],
-    ['platform_security_checks','checked_at',1000]
+    ['admin_audit_log','id,actor_id,action,department,entity_type,entity_id,details,created_at,source,status,responsible_person,occurred_on','created_at',1000],
+    ['security_incidents','id,title,severity,status,description,reported_by,assigned_to,resolution_notes,detected_at,resolved_at,created_at,updated_at','created_at',1000],
+    ['security_access_reviews','id,subject_profile_id,reviewed_by,role_snapshot,job_title_snapshot,department_snapshot,decision,notes,reviewed_at','reviewed_at',1000],
+    ['platform_security_checks','id,check_name,check_area,status,evidence,checked_by,checked_at','checked_at',1000]
   ];
-  await Promise.all(specs.map(async([name,order,limit])=>{
-    const r=await db.from(name).select('*').order(order,{ascending:false}).limit(limit);
+  await Promise.all(specs.map(async([name,fields,order,limit])=>{
+    const r=await db.from(name).select(fields).order(order,{ascending:false}).limit(limit);
     if(r.error){
       loadErrors.push(name+': '+r.error.message);
       if(!Array.isArray(D[name]))D[name]=[];
@@ -77,6 +99,13 @@ async function load(){
     }
     D[name]=r.data||[];
   }));
+
+  const auditCount=await db.from('admin_audit_log').select('id',{count:'exact',head:true});
+  if(auditCount.error){
+    loadErrors.push('admin_audit_log count: '+auditCount.error.message);
+  }else{
+    D._auditCount=Number(auditCount.count||0);
+  }
 }
 
 const profile=id=>(D.profiles||[]).find(x=>x.id===id)||{};
@@ -94,7 +123,7 @@ function filteredAccess(){
   let rows=accessGroups()[accessKind]||[];
   const q=low(accessSearch.trim());
   if(q)rows=rows.filter(p=>low([
-    p.full_name,p.email,p.role,p.student_number,p.staff_code,p.job_title,p.department
+    p.full_name,p.email,p.role,p.student_number,p.job_title,p.department
   ].join(' ')).includes(q));
   return rows;
 }
@@ -146,7 +175,7 @@ function drawAccess(){
 function accessBody(){
   const g=accessGroups();
   return `
-    <div class="sxMeta" style="margin-bottom:8px">Accounts are separated so Student, Staff/Admin and deleted-account evidence remain clear. Deleted accounts stay as archived records for historical accountability and cannot be access-reviewed here.</div>
+    <div class="sxMeta" style="margin-bottom:8px">Accounts are separated so Student, Staff/Admin and deleted-account evidence remain clear. Deleted accounts stay as archived records for historical accountability and cannot be access-reviewed here. Staff Access Codes are not loaded into this screen.</div>
     <div class="sxAccessTabs">
       <button class="sxBtn ${accessKind==='students'?'':'alt'}" data-access-kind="students">Students (${g.students.length})</button>
       <button class="sxBtn ${accessKind==='staff'?'':'alt'}" data-access-kind="staff">Staff & Admin (${g.staff.length})</button>
@@ -204,7 +233,7 @@ function render(tab=currentTab){
   const admins=groups.staff.filter(p=>low(p.role)==='admin').length;
   const staff=groups.staff.filter(p=>low(p.role)==='staff').length;
   const open=(D.security_incidents||[]).filter(i=>!['resolved','closed'].includes(low(i.status))).length;
-  const audits=(D.admin_audit_log||[]).length;
+  const audits=Number.isFinite(D._auditCount)?D._auditCount:(D.admin_audit_log||[]).length;
   let body='';
   if(tab==='access')body=accessBody();
   else if(tab==='incidents')body=`<div class="sxBar"><input class="sxInput" id="siTitle" placeholder="Incident title"><select class="sxSelect" id="siSeverity"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select><input class="sxInput" id="siDesc" placeholder="What happened / evidence"><button class="sxBtn bad" id="siAdd">Log Incident</button></div><table class="sxTable"><thead><tr><th>Incident</th><th>Severity</th><th>Status</th><th>Detected</th><th>Reported by</th><th>Action</th></tr></thead><tbody>${incidentRows()}</tbody></table>`;
@@ -267,7 +296,13 @@ function wire(tab){
 async function me(){const {data:{user}}=await db.auth.getUser();return user}
 async function log(action,entity,id,details){
   const u=await me();
-  await db.from('admin_audit_log').insert({actor_id:u?.id||null,action,department:'IT & Security',entity_type:entity,entity_id:String(id||''),details});
+  const r=await db.from('admin_audit_log').insert({actor_id:u?.id||null,action,department:'IT & Security',entity_type:entity,entity_id:String(id||''),details});
+  return r.error||null;
+}
+function warnAudit(error){
+  if(!error)return;
+  console.error('IT security audit-log write failed:',error);
+  alert('The main record was saved, but its Audit Activity entry could not be recorded. Please review the Audit Activity tab before making another security change.');
 }
 async function addIncident(){
   const title=$('siTitle').value.trim(),description=$('siDesc').value.trim();
@@ -276,7 +311,7 @@ async function addIncident(){
   const u=await me();
   const r=await db.from('security_incidents').insert({title,severity:$('siSeverity').value,description,reported_by:u?.id||null});
   if(r.error)return alert(r.error.message);
-  await log('Logged security incident','security_incident','',title);
+  warnAudit(await log('Logged security incident','security_incident','',title));
   await open();render('incidents');
 }
 async function setIncident(id,status){
@@ -292,7 +327,7 @@ async function setIncident(id,status){
   }
   const r=await db.from('security_incidents').update(patch).eq('id',id);
   if(r.error)return alert(r.error.message);
-  await log('Updated security incident','security_incident',id,status+(patch.resolution_notes?' · '+patch.resolution_notes:''));
+  warnAudit(await log('Updated security incident','security_incident',id,status+(patch.resolution_notes?' · '+patch.resolution_notes:'')));
   await open();render('incidents');
 }
 async function reviewAccess(id){
@@ -310,7 +345,7 @@ async function reviewAccess(id){
     department_snapshot:p.department,decision,notes
   });
   if(r.error)return alert(r.error.message);
-  await log('Completed access review','profile',id,decision+' · '+notes);
+  warnAudit(await log('Completed access review','profile',id,decision+' · '+notes));
   await open();render('access');
 }
 async function recordCheck(name,area){
@@ -323,7 +358,7 @@ async function recordCheck(name,area){
   const u=await me();
   const r=await db.from('platform_security_checks').insert({check_name:name,check_area:area,status,evidence,checked_by:u.id});
   if(r.error)return alert(r.error.message);
-  await log('Recorded platform security check','security_control','',name+' · '+status+' · '+evidence);
+  warnAudit(await log('Recorded platform security check','security_control','',name+' · '+status+' · '+evidence));
   await open();render('checks');
 }
 async function open(){
@@ -338,7 +373,7 @@ function install(){
   window.security=function(){try{old?.()}catch(e){}setTimeout(open,0)};
   document.addEventListener('click',e=>{
     const b=e.target.closest?.('#nav button,.nav button');
-    if(b&&/security|platform|IT/i.test(b.textContent))setTimeout(open,60);
+    if(b&&isSecurityLabel(b.textContent))setTimeout(open,60);
   },false);
   if(active())setTimeout(open,80);
 }
