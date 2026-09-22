@@ -106,7 +106,7 @@ async function refresh(){if(await load())renderPanel()}
 function live(){
  if(channel||!db)return;
  let ch=db.channel('admin-academic-integrity-live-v1');
- ['courses','course_modules','lessons','assessments','academic_course_qa_reviews'].forEach(table=>{ch=ch.on('postgres_changes',{event:'*',schema:'public',table},()=>{if(!active())return;clearTimeout(timer);timer=setTimeout(refresh,180)})});
+ ['courses','course_modules','lessons','assessments','assessment_questions','academic_course_qa_reviews'].forEach(table=>{ch=ch.on('postgres_changes',{event:'*',schema:'public',table},()=>{if(!active())return;clearTimeout(timer);timer=setTimeout(refresh,180)})});
  channel=ch.subscribe(status=>{window.__fundaAcademicIntegrityRealtimeStatus=status});
 }
 async function init(){
