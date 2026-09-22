@@ -18,9 +18,9 @@ async function load(){
  try{
   db=db||client();if(!db)throw new Error('Academic integrity connection is unavailable.');
   const rs=await Promise.all([
-   db.from('courses').select('id,title,duration,active').eq('active',true).order('title'),
+   db.from('courses').select('id,title,duration,active,modules').eq('active',true).order('title'),
    db.from('course_modules').select('id,course_id,module_number,module_name'),
-   db.from('lessons').select('id,module_id,lesson_number,title,main_content'),
+   db.from('lessons').select('id,module_id,lesson_number,title,main_content,content'),
    db.from('assessments').select('id,course_id,module_id,title,active,status'),
    db.from('academic_course_qa_reviews').select('id,course_id,review_status,reviewed_at,created_at').order('created_at',{ascending:false}),
    db.rpc('get_admin_assessment_bank_health')
@@ -47,8 +47,9 @@ function rows(){
   });
   const review=reviews.find(r=>r.course_id===c.id)||null;
   const shortBanks=bankHealth.filter(b=>b.course_id===c.id&&b.assessment_type!=='other'&&!b.bank_ok).length;
+  const legacyLessons=ls.filter(l=>String(l.content||'').trim()).length,legacyCourse=Array.isArray(c.modules)&&c.modules.length?1:0,legacy=legacyLessons+legacyCourse;
   const actionable=below+empty+missF+missS+shortBanks;
-  return {c,ms:ms.length,ls:ls.length,as:as.length,below,empty,missF,missS,shortBanks,review,actionable};
+  return {c,ms:ms.length,ls:ls.length,as:as.length,below,empty,missF,missS,shortBanks,review,actionable,legacy,legacyLessons,legacyCourse};
  });
 }
 function summary(){
@@ -58,12 +59,12 @@ function summary(){
   below:r.reduce((n,x)=>n+x.below,0),
   empty:r.reduce((n,x)=>n+x.empty,0),
   assessments:r.reduce((n,x)=>n+x.missF+x.missS+x.shortBanks,0),
-  legacy:0
+  legacy:r.reduce((n,x)=>n+x.legacy,0)
  };
 }
 function panel(){
  const s=summary();
- return '<section class="aiPanel" id="academicIntegrityPanel"><div class="aiHead"><div><h3>Content Integrity · Live</h3><p>Canonical lesson content, 500-word minimum, module assessment coverage and legacy-field conflicts across active courses.</p></div><button class="aiBtn" id="aiOpen">Open Integrity Register</button></div><div class="aiStats"><div class="aiStat"><b>'+s.issueCourses+'</b><span>COURSES REQUIRING ACTION</span></div><div class="aiStat"><b>'+s.below+'</b><span>LESSONS BELOW 500 WORDS</span></div><div class="aiStat"><b>'+s.empty+'</b><span>LESSONS WITHOUT TEACHING BODY</span></div><div class="aiStat"><b>'+s.assessments+'</b><span>ASSESSMENT CONFIGURATION ISSUES</span></div><div class="aiStat"><b>'+s.legacy+'</b><span>LIVE LEGACY FIELD CONFLICTS</span></div></div><div class="aiNote">Structured <b>main_content</b>, <b>course_modules</b> and the assessment question table are authoritative. Retired legacy lesson/module fields are no longer allowed to feed learner delivery.</div></section>';
+ return '<details class="aiPanel" id="academicIntegrityPanel"><summary style="cursor:pointer;font-weight:900;color:#071b31">Academic Integrity & Legacy Fields</summary><div style="margin-top:10px"><div class="aiHead"><div><h3>Canonical Academic Data Controls</h3><p>The Admin Academic workspace uses structured course modules, <b>main_content</b> and the assessment question table as its current sources. Retired values may remain in storage for historical traceability but must not be presented as current Admin content.</p><div class="aiNote"><b>'+s.legacy+'</b> retired lesson/module value'+(s.legacy===1?' is':'s are')+' currently retained in storage. Course-content completion and assessment completeness will be handled later during the separate course-development audit.</div></div><button class="aiBtn" id="aiOpen">Open Integrity Register</button></div></div></details>';
 }
 function renderPanel(){
  if(!active())return;
@@ -87,15 +88,15 @@ function openRegister(){
   if(x.missS)ass+=pill(x.missS+' missing summative','bad');
   if(x.shortBanks)ass+=pill(x.shortBanks+' undersized question bank'+(x.shortBanks===1?'':'s'),'bad');
   if(!ass)ass=pill('Required assessment types & bank sizes pass','good');
-  const legacy=pill('Canonical live fields','good');
+  const legacy=x.legacy?pill(x.legacy+' retired value'+(x.legacy===1?'':'s')+' retained','warn'):pill('No retired values','good');
   const recorded=x.review?String(x.review.review_status||'reviewed').replaceAll('_',' ').toUpperCase():'NO QA REVIEW';
   const qa=x.actionable>0
     ?pill((x.review?'RECORDED '+recorded+' · ':'')+'CURRENTLY REQUIRES ACTION','bad')
     :(x.review?pill(recorded,low(x.review.review_status)==='approved'?'good':'warn'):pill('Integrity pass · QA review not recorded','warn'));
-  const cats=[x.below||x.empty?'content':'',x.missF||x.missS||x.shortBanks?'assessment':''].filter(Boolean).join(' ');
+  const cats=[x.below||x.empty?'content':'',x.missF||x.missS||x.shortBanks?'assessment':'',x.legacy?'legacy':''].filter(Boolean).join(' ');
   return '<tr data-ai-row data-search="'+esc(low(x.c.title))+'" data-issues="'+(x.actionable>0?'1':'0')+'" data-cats="'+cats+'"><td><b>'+esc(x.c.title)+'</b><div class="aiNote">'+esc(x.c.duration||'Duration not set')+'</div></td><td>'+x.ms+' modules · '+x.ls+' lessons · '+x.as+' live assessments</td><td>'+content+'</td><td>'+ass+'</td><td>'+legacy+'</td><td>'+qa+'</td></tr>';
  }).join('');
- document.body.insertAdjacentHTML('beforeend','<div class="aiBack" id="academicIntegrityModal"><div class="aiModal"><div class="aiModalHead"><div><h3>Academic Content Integrity Register</h3><p>Live QA indicators; this register identifies work still required and does not auto-generate academic content.</p></div><button class="aiBtn alt" id="aiClose">Close</button></div><div class="aiBody"><div class="aiBar"><input class="aiInput" id="aiSearch" placeholder="Search course"><select class="aiInput" id="aiFilter"><option value="issues">Requires action only</option><option value="all">All active courses</option><option value="content">Content issues</option><option value="assessment">Assessment issues</option><option value="legacy">Legacy conflicts</option></select><span class="aiNote" id="aiCount"></span></div><div class="aiTableWrap"><table class="aiTable"><thead><tr><th>Course</th><th>Structure</th><th>Lesson integrity</th><th>Assessment integrity</th><th>Legacy status</th><th>QA status</th></tr></thead><tbody>'+body+'</tbody></table></div><div class="aiNote"><b>Important:</b> retired lesson/module fields and archived generic assessments are not used by live learner delivery. Live learner assessment delivery uses the canonical question table. The 500-word and assessment indicators show actual academic work still outstanding; they are not automatically filled with placeholder text.</div></div></div></div>');
+ document.body.insertAdjacentHTML('beforeend','<div class="aiBack" id="academicIntegrityModal"><div class="aiModal"><div class="aiModalHead"><div><h3>Academic Content Integrity Register</h3><p>Live QA indicators; this register identifies work still required and does not auto-generate academic content.</p></div><button class="aiBtn alt" id="aiClose">Close</button></div><div class="aiBody"><div class="aiBar"><input class="aiInput" id="aiSearch" placeholder="Search course"><select class="aiInput" id="aiFilter"><option value="issues">Requires action only</option><option value="all">All active courses</option><option value="content">Content issues</option><option value="assessment">Assessment issues</option><option value="legacy">Retired legacy values</option></select><span class="aiNote" id="aiCount"></span></div><div class="aiTableWrap"><table class="aiTable"><thead><tr><th>Course</th><th>Structure</th><th>Lesson integrity</th><th>Assessment integrity</th><th>Legacy storage</th><th>QA status</th></tr></thead><tbody>'+body+'</tbody></table></div><div class="aiNote"><b>Important:</b> this register separates current canonical Admin data from retired fields retained for historical traceability. Course-content and assessment-completeness indicators are informational only here; the separate course-development audit will address unfinished academic material.</div></div></div></div>');
  byId('aiClose').onclick=()=>byId('academicIntegrityModal')?.remove();
  byId('academicIntegrityModal').onclick=e=>{if(e.target.id==='academicIntegrityModal')byId('academicIntegrityModal')?.remove()};
  byId('aiSearch').oninput=filter;byId('aiFilter').onchange=filter;filter();
