@@ -9,9 +9,8 @@
 .funda-course-pill { display: inline-flex; align-items: center; gap: 9px; align-self: flex-start; padding: 8px 16px; border: 1px solid #e9d4a5; border-radius: 999px; background: #fffaf1; color: #16386d; font-size: 13px; line-height: 1.2; font-weight: 800; letter-spacing: .025em; }
 .funda-course-pill svg { width: 17px; height: 17px; flex: none; }
 .funda-course-title { margin: 25px 0 0; max-width: 660px; color: #0b2047; font-size: clamp(38px, 4.25vw, 66px); line-height: 1.035; letter-spacing: -.045em; font-weight: 800; }
-.funda-course-title span, .funda-course-clarity h2 span { color: #ac731b; }
-.funda-course-title span.funda-strong-text,
-.funda-course-clarity h2 span.funda-strong-text { color: #ac731b !important; --funda-strong-color: #ac731b !important; }
+.funda-course-title span { color: #ac731b; }
+.funda-course-title span.funda-strong-text { color: #ac731b !important; --funda-strong-color: #ac731b !important; }
 .funda-course-lead { margin: 19px 0 0; max-width: 630px; color: #344761; font-size: clamp(16px, 1.25vw, 19px); line-height: 1.52; }
 .funda-course-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
 .funda-course-actions a { display: inline-flex; justify-content: center; align-items: center; min-height: 52px; padding: 10px 24px; border-radius: 10px; text-decoration: none; font-size: 16px; line-height: 1.25; font-weight: 800; text-align: center; }
@@ -28,18 +27,16 @@
 .funda-course-visual { position: absolute; inset: 0 0 0 auto; z-index: 0; width: 65%; min-height: 540px; overflow: hidden; background: #eef1f0; -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.55) 7%, #000 18%); mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.55) 7%, #000 18%); }
 .funda-course-visual img { display: block; position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; filter: brightness(1.07) saturate(1.04) contrast(1.01); }
 .funda-course-clarity { padding: 24px 0 40px; border-bottom: 1px solid #e7edf5; }
-.funda-course-clarity-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(420px, .85fr); gap: clamp(28px, 4.5vw, 70px); max-width: 1536px; margin: auto; padding: 0 clamp(24px, 4.4vw, 68px); align-items: start; }
-.funda-course-clarity-copy { padding-top: 3px; min-width: 0; }
-.funda-course-clarity h2 { margin: 20px 0 0; color: #10254e; font-size: clamp(36px, 3.5vw, 54px); line-height: 1.08; letter-spacing: -.04em; font-weight: 800; }
-.funda-course-clarity h2 span { display: block; }
-.funda-course-clarity-copy > p { margin: 15px 0 0; max-width: 680px; color: #344761; font-size: 18px; line-height: 1.45; }
-.funda-course-clarity .funda-course-actions { margin-top: 18px; }
-.funda-course-values { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; max-width: 740px; margin-top: 25px; }
+.funda-course-clarity-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(420px, .85fr); gap: clamp(28px, 4.5vw, 70px); max-width: 1536px; margin: auto; padding: 0 clamp(24px, 4.4vw, 68px); align-items: stretch; }
+.funda-course-clarity-copy { display: flex; flex-direction: column; padding-top: 3px; min-width: 0; }
+.funda-course-motivation { max-width: 700px; padding: 7px 0 22px 25px; border-left: 4px solid #c99a2e; }
+.funda-course-motivation small { display: block; color: #ac731b; font-size: 12px; font-weight: 800; line-height: 1.2; letter-spacing: .14em; }
+.funda-course-motivation h2 { margin: 10px 0 0; color: #10254e; font-size: clamp(38px, 3.55vw, 55px); line-height: 1.06; letter-spacing: -.04em; font-weight: 800; }
+.funda-course-motivation p { margin: 17px 0 0; max-width: 670px; color: #344761; font-size: 18px; line-height: 1.5; }
+.funda-course-values { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; max-width: 740px; margin-top: auto; padding-top: 30px; }
 .funda-course-value { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 0 14px; border-left: 1px solid #ccdaed; color: #173461; font-size: 13px; line-height: 1.25; font-weight: 700; }
 .funda-course-value:first-child { padding-left: 0; border-left: 0; }
 .funda-course-value svg { width: 34px; height: 34px; flex: none; color: #17478e; }
-.funda-course-motto { margin-top: 16px; color: #10254e; font-family: Georgia, serif; font-size: clamp(24px, 2.8vw, 37px); font-style: italic; line-height: 1.15; transform: rotate(-2deg); transform-origin: left center; }
-.funda-course-motto::after { content: ''; display: block; width: 170px; height: 2px; margin: 4px 0 0 160px; background: #c99a2e; }
 .funda-course-board { border: 1px solid #d8e5f5; border-radius: 18px; background: #fff; padding: 20px 22px 16px; box-shadow: 0 8px 26px rgba(31, 65, 105, .045); min-width: 0; }
 .funda-course-board > small { color: #173461; font-size: 12px; font-weight: 800; line-height: 1.2; letter-spacing: .14em; }
 .funda-course-board h3 { margin: 7px 0 8px; color: #0b2f70; font-size: 24px; line-height: 1.2; font-weight: 800; }
