@@ -224,6 +224,7 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - Shared/global scripts that execute on or alter Browse Courses must preserve this final state. A change elsewhere is not permission to disturb Browse Courses indirectly.
 - Do not reintroduce legacy, retired, duplicated or cached Browse Courses content from older commits or previous overrides.
 - A direct change to `courses-public.html` requires explicit Browse Courses owner approval in the pull request.
+- **Owner-approved Browse Courses introduction amendment — 22 September 2026:** the owner explicitly reopened only the top Browse Courses introduction. The approved presentation uses the supplied learner image in the split hero, followed by the separate **Study with clarity. Grow with confidence.** section and the **Know what to expect before you enrol.** information board. The live course catalogue, course cards, filters, sorting, FAQs, contact section, routes and all other public-course behaviour remain protected and unchanged.
 
 ### Approved portal typography
 
@@ -587,4 +588,3 @@ The owner physically reviewed **Admin → Ambassador Programme** after the final
 - Dynamic Ambassador applications, referrals, earnings, payouts, challenges and correspondence are not frozen by this lock; the lock protects the approved workflow, controls and presentation.
 - Work in Academic, Assessments & Content or another Admin tab does **not** reopen Ambassador Programme.
 - A newly discovered Ambassador Programme defect is a change request and requires explicit owner approval before this locked workspace is changed.
-
