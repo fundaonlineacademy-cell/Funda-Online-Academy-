@@ -1,10 +1,25 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+const cors={
+  'Access-Control-Allow-Origin':'*',
+  'Access-Control-Allow-Headers':'authorization, x-client-info, apikey, content-type',
+  'Cache-Control':'no-store'
+};
+
+function json(body:unknown,status=200){
+  return new Response(JSON.stringify(body),{status,headers:{...cors,'Content-Type':'application/json'}});
+}
+
+function oneTimeAccessCode(){
+  const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const bytes=new Uint8Array(10);
+  crypto.getRandomValues(bytes);
+  let body='';
+  for(const b of bytes) body+=alphabet[b%alphabet.length];
+  return 'FOA-SEC-'+body.slice(0,5)+'-'+body.slice(5);
+}
+
 Deno.serve(async (req: Request) => {
-  const cors = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type'
-  };
   if (req.method === 'OPTIONS') return new Response('ok', { headers: cors });
 
   let admin: ReturnType<typeof createClient> | null = null;
@@ -13,19 +28,14 @@ Deno.serve(async (req: Request) => {
 
   try {
     const auth = req.headers.get('Authorization') || '';
-    if (!auth.startsWith('Bearer ')) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401,
-        headers: { ...cors, 'Content-Type': 'application/json' }
-      });
-    }
+    if (!auth.startsWith('Bearer ')) return json({ error: 'Unauthorized' },401);
 
     const url = Deno.env.get('SUPABASE_URL')!;
     const service = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     admin = createClient(url, service, { auth: { persistSession: false, autoRefreshToken: false } });
 
     const { data: { user }, error: userErr } = await admin.auth.getUser(auth.replace('Bearer ', ''));
-    if (userErr || !user) throw new Error('Invalid session');
+    if (userErr || !user) return json({error:'Invalid session'},401);
 
     const { data: actor, error: actorErr } = await admin
       .from('profiles')
@@ -34,10 +44,7 @@ Deno.serve(async (req: Request) => {
       .single();
 
     if (actorErr || !actor || actor.role !== 'admin') {
-      return new Response(JSON.stringify({ error: 'Only executive administration may create staff accounts' }), {
-        status: 403,
-        headers: { ...cors, 'Content-Type': 'application/json' }
-      });
+      return json({ error: 'Only executive administration may create staff accounts' },403);
     }
 
     const b = await req.json();
@@ -65,10 +72,12 @@ Deno.serve(async (req: Request) => {
       throw new Error('Choose one of the Academy’s approved staff departments');
     }
 
-    const { data: staff_code, error: codeErr } = await admin.rpc('next_staff_code', {
+    const { data: staff_number, error: numberErr } = await admin.rpc('next_staff_number', {
       p_department: department
     });
-    if (codeErr) throw codeErr;
+    if (numberErr) throw numberErr;
+
+    const access_code=oneTimeAccessCode();
 
     const options: Record<string, unknown> = {
       data: {
@@ -76,7 +85,7 @@ Deno.serve(async (req: Request) => {
         role: 'staff',
         account_type: 'staff',
         registration_source: 'admin_staff_invite',
-        staff_code,
+        staff_number,
         job_title,
         department
       }
@@ -92,11 +101,12 @@ Deno.serve(async (req: Request) => {
 
     createdUserId = invite.user.id;
 
-    const { data: finalData, error: finalErr } = await admin.rpc('finalize_staff_invitation', {
+    const { data: finalData, error: finalErr } = await admin.rpc('finalize_staff_invitation_v2', {
       p_user_id: createdUserId,
       p_email: email,
       p_full_name: full_name,
-      p_staff_code: staff_code,
+      p_staff_number: staff_number,
+      p_access_code: access_code,
       p_job_title: job_title,
       p_department: department,
       p_access_level: access_level,
@@ -109,30 +119,20 @@ Deno.serve(async (req: Request) => {
 
     finalised = true;
 
-    return new Response(JSON.stringify({
+    return json({
       ok: true,
       user_id: createdUserId,
-      staff_code,
+      staff_number,
+      access_code,
       department,
       access_level,
       can_approve,
       finalised: finalData?.ok === true
-    }), {
-      headers: { ...cors, 'Content-Type': 'application/json' }
     });
   } catch (e) {
     if (admin && createdUserId && !finalised) {
-      try {
-        await admin.auth.admin.deleteUser(createdUserId);
-      } catch (_) {
-        // If cleanup itself fails, the Admin receives the original error and
-        // the Academy can reconcile the failed invite from the audit trail.
-      }
+      try { await admin.auth.admin.deleteUser(createdUserId); } catch (_) {}
     }
-
-    return new Response(JSON.stringify({ error: e?.message || 'Unable to invite staff user' }), {
-      status: 400,
-      headers: { ...cors, 'Content-Type': 'application/json' }
-    });
+    return json({ error: e instanceof Error ? e.message : 'Unable to invite staff user' },400);
   }
 });
