@@ -39,7 +39,7 @@ async function sendInvite(){
       redirect_to
     }});
     if(r.error||r.data?.error)throw new Error(r.data?.error||r.error.message);
-    alert('Staff invitation sent. Staff code: '+r.data.staff_code+'\n\nThe invitation will open the Staff Portal at the correct Academy path.');
+    alert('Staff invitation sent.\n\nStaff ID: '+r.data.staff_number+'\nOne-time Staff Access Code: '+r.data.access_code+'\n\nThe Access Code is shown once and stored by the Academy only as a secure hash. The invitation will open the Staff Portal at the correct Academy path.');
     if(window.FundaHRCentre?.open)await window.FundaHRCentre.open();
     setTimeout(installPortalButton,120);
   }catch(e){
