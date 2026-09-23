@@ -706,6 +706,9 @@ function dtIso(v){
   return Number.isNaN(d.getTime())?null:d.toISOString();
 }
 function wireDisciplinary(){
+  $('hdActivateCode')?.addEventListener('click',activateDisciplinaryCode);
+  document.querySelectorAll('[data-code-issue]').forEach(b=>b.onclick=()=>issueDisciplinaryCode(b.dataset.codeIssue));
+  document.querySelectorAll('[data-code-ack]').forEach(b=>b.onclick=()=>acknowledgeDisciplinaryCode(b.dataset.codeAck));
   $('hdCreateCase')?.addEventListener('click',createDisciplinaryCase);
   document.querySelectorAll('[data-disciplinary-open]').forEach(b=>b.onclick=()=>{
     disciplinaryCaseId=b.dataset.disciplinaryOpen;pages.disciplinaryEvents=1;render('disciplinary');
@@ -722,6 +725,34 @@ function wireDisciplinary(){
   $('hdDecideReview')?.addEventListener('click',decideDisciplinaryReview);
   $('hdCloseCase')?.addEventListener('click',closeDisciplinaryCase);
   $('hdWithdraw')?.addEventListener('click',withdrawDisciplinaryCase);
+}
+async function activateDisciplinaryCode(){
+  const v=disciplinaryCodeVersion();if(!v||v.status!=='draft')return;
+  if(!confirm('Activate '+v.code_reference+' '+v.version_label+' as the official FOA Staff Disciplinary Code? Do this only after Aziwe Futhe has physically reviewed and approved the Code.'))return;
+  const {error}=await db.rpc('hr_activate_disciplinary_code_version',{p_code_version_id:v.id});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function issueDisciplinaryCode(profileId){
+  const v=disciplinaryCodeVersion(),p=prof(profileId);
+  if(!v||v.status!=='active')return alert('The FOA disciplinary code must be owner-approved and active before it is issued to Staff.');
+  if(!confirm('Record that '+(p.full_name||p.email||'this Staff member')+' received '+v.code_reference+' '+v.version_label+'?'))return;
+  const {error}=await db.rpc('hr_record_disciplinary_code_issue',{p_profile_id:profileId,p_code_version_id:v.id});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function acknowledgeDisciplinaryCode(profileId){
+  const v=disciplinaryCodeVersion(),p=prof(profileId);
+  if(!v||v.status!=='active')return alert('The FOA disciplinary code must be owner-approved and active before acknowledgement is recorded.');
+  const raw=(prompt('Acknowledgement method: portal, signed_document, email_confirmation, in_person, or other','in_person')||'').trim().toLowerCase();
+  if(!['portal','signed_document','email_confirmation','in_person','other'].includes(raw))return alert('Use portal, signed_document, email_confirmation, in_person, or other.');
+  const note=(prompt('Acknowledgement note / evidence reference (optional):','')||'').trim()||null;
+  if(!confirm('Record that '+(p.full_name||p.email||'this Staff member')+' acknowledged '+v.code_reference+' '+v.version_label+'?'))return;
+  const {error}=await db.rpc('hr_record_disciplinary_code_acknowledgement',{
+    p_profile_id:profileId,p_code_version_id:v.id,p_method:raw,p_note:note
+  });
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
 }
 async function createDisciplinaryCase(){
   const profile=$('hdStaff')?.value,rule=$('hdRule')?.value,title=$('hdTitle')?.value.trim(),incident=$('hdIncidentDate')?.value;
