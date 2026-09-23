@@ -873,15 +873,15 @@ function updateAmbassadorScenario(){
 }
 function ambassadorScenarioForm(){
   const edit=(S.ambassadorPlans||[]).find(x=>x.id===ambassadorEditId)||null;
-  return `<div class="acPanel" style="margin-top:10px"><div class="acBar" style="justify-content:space-between"><div><h3>${edit?'Edit':'Create'} Ambassador Profitability Scenario</h3><div class="acMeta">Planning only. Saving a scenario does not change Ambassador commission rules, approve an earning/payout, or change the monthly Finance budget.</div></div>${edit?'<button class="acBtn alt" id="ambCancelEdit">Cancel edit</button>':''}</div>
+  return `<div class="acPanel" style="margin-top:10px"><div class="acBar" style="justify-content:space-between"><div><h3>${edit?'Edit':'Create'} Ambassador Profitability Scenario</h3><div class="acMeta">Planning only. Saving a scenario does not change Ambassador commission rules, approve an earning/payout, or change the monthly Finance budget. Enter only additional Ambassador-specific programme costs that are not already included in another Finance budget line.</div></div>${edit?'<button class="acBtn alt" id="ambCancelEdit">Cancel edit</button>':''}</div>
     <div class="acForm">
       <input class="acInput" id="ambScenarioName" value="${esc(edit?.scenario_name||'')}" placeholder="Scenario name e.g. October base plan">
       <input class="acInput" id="ambProjRevenue" type="number" min="0" step="0.01" value="${n(edit?.projected_ambassador_revenue).toFixed(2)}" placeholder="Projected Ambassador-attributed revenue (R)">
       <input class="acInput" value="15.00%" disabled title="Current locked Ambassador commission rate">
-      <input class="acInput" id="ambProjBonus" type="number" min="0" step="0.01" value="${n(edit?.projected_achievement_bonuses).toFixed(2)}" placeholder="Projected achievement bonuses (R)">
+      <input class="acInput" id="ambProjBonus" type="number" min="0" step="0.01" value="${n(edit?.projected_achievement_bonuses).toFixed(2)}" placeholder="Projected incremental achievement bonuses (R)">
       <input class="acInput" id="ambProjPerf" type="number" min="0" step="0.01" value="${n(edit?.projected_monthly_performance).toFixed(2)}" placeholder="Projected performance payments (R)">
       <input class="acInput" id="ambProjOther" type="number" min="0" step="0.01" value="${n(edit?.projected_other_programme_cost).toFixed(2)}" placeholder="Other programme cost (R)">
-      <select class="acSelect" id="ambScenarioStatus"><option value="planning" ${edit?.status==='planning'?'selected':''}>Planning</option><option value="approved_plan" ${edit?.status==='approved_plan'?'selected':''}>Approved plan</option></select>
+      <select class="acSelect" id="ambScenarioStatus"><option value="planning" ${edit?.status==='planning'?'selected':''}>Planning</option><option value="approved_plan" ${edit?.status==='approved_plan'?'selected':''}>Approved planning scenario</option></select>
       <textarea class="acText acWide" id="ambScenarioNotes" placeholder="Assumptions / reason / controls">${esc(edit?.notes||'')}</textarea>
     </div>
     <div id="ambScenarioResult"></div>
