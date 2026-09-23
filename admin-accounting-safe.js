@@ -471,11 +471,38 @@ function reconciliation(){
   const body=pg.rows.map(x=>`<tr><td>${day(x.entry_date)}</td><td>${esc(x.reference_number||'—')}</td><td>${esc(x.description)}</td><td>${money(x.amount)}</td><td>${pill(x.reconciliation_status||'unreconciled')}</td><td>${x.reconciliation_status==='reconciled'?'<span class="acMeta">Reconciled '+fmt(x.reconciled_at)+'</span>':'<button class="acBtn ok" data-reconcile="'+x.id+'">Mark Reconciled</button>'}</td></tr>`).join('')||'<tr><td colspan="6"><div class="acMeta">No posted actual cashbook entries.</div></td></tr>';
   return `<div class="acPanel"><h3>Entry Reconciliation</h3><p class="acMeta">Reconcile actual posted cashbook records against supporting evidence or the bank statement. Reconciled accounting values cannot be silently rewritten.</p><div class="acTableWrap"><table class="acTable"><thead><tr><th>Date</th><th>Reference</th><th>Description</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length}</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="rePrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="reNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div></div>`;
 }
+function budgetInput(id,key,value,extra=''){
+  return '<input class="acInput" style="min-width:118px;width:118px" type="number" min="0" step="0.01" id="bud-'+key+'-'+id+'" value="'+Number(value||0).toFixed(2)+'" '+extra+'>';
+}
 function targetsPanel(){
-  const set=settings(),year=firstFyStart(),target=n(set.annual_turnover_target);
+  const set=settings(),year=firstFyStart(),target=n(set.annual_turnover_target),rows=budgetsForFy(year),pg=pageRows(rows,budgetPage);
+  budgetPage=pg.page;
+  const totals=budgetTotalsForFy(year),expenseBudget=totals.direct+totals.people+totals.operating+totals.ambassador+totals.other,plannedSurplus=totals.revenue-expenseBudget;
+  const body=pg.rows.map(b=>'<tr>'+
+    '<td><b>'+esc(budgetMonthLabel(b.month_start))+'</b><div class="acMeta">'+esc(b.month_start)+'</div></td>'+
+    '<td>'+budgetInput(b.id,'revenue',b.revenue_target)+'</td>'+
+    '<td>'+budgetInput(b.id,'direct',b.direct_cost_budget)+'</td>'+
+    '<td>'+budgetInput(b.id,'people',b.people_cost_budget)+'</td>'+
+    '<td>'+budgetInput(b.id,'operating',b.operating_expense_budget)+'</td>'+
+    '<td>'+budgetInput(b.id,'ambassador',b.ambassador_budget)+'</td>'+
+    '<td>'+budgetInput(b.id,'other',b.other_expense_budget)+'</td>'+
+    '<td>'+budgetInput(b.id,'minimum',b.minimum_surplus_target)+'</td>'+
+    '<td><b>'+money(budgetPlannedSurplus(b))+'</b><div class="acMeta">Revenue target less planned expenses</div></td>'+
+    '<td><input class="acInput" style="min-width:180px;width:180px" id="bud-notes-'+b.id+'" value="'+esc(b.notes||'')+'" placeholder="Planning note"></td>'+
+    '<td><button class="acBtn" data-budget-save="'+b.id+'">Save month</button></td>'+
+  '</tr>').join('')||'<tr><td colspan="11"><div class="acMeta">No monthly budget rows are available for this financial year.</div></td></tr>';
+
   return `<div class="acGrid">
     <div class="acPanel"><h3>Management Financial Year</h3><p class="acMeta">The Academy management year is configured from <b>1 October to 30 September</b>. The first configured management year begins <b>${day(set.financial_year_anchor)}</b>. This is an internal management period and should only be treated as the statutory company year if confirmed by the accountant.</p><div class="acForm"><label class="acMeta">First management year start<input id="fyAnchor" class="acInput" type="date" value="${esc(set.financial_year_anchor)}"></label><label class="acMeta">Annual turnover target<input id="fyTarget" class="acInput" type="number" min="0" step="0.01" value="${target}"></label><div class="acBar"><button class="acBtn" id="saveFinanceSettings">Save Management Settings</button></div></div></div>
-    <div class="acPanel"><h3>Turnover Planning</h3><div class="acMeta">Annual target: <b>${money(target)}</b></div><div class="acMeta">Monthly planning target: <b>${money(target/12)}</b></div><div class="acMeta">Quarterly planning target: <b>${money(target/4)}</b></div><div class="acMeta">FY ${year}/${String(year+1).slice(-2)} runs 1 Oct ${year} - 30 Sep ${year+1}.</div></div>
+    <div class="acPanel"><h3>Annual Planning Summary</h3><div class="acMeta">Annual revenue target: <b>${money(target)}</b></div><div class="acMeta">Monthly baseline: <b>${money(target/12)}</b></div><div class="acMeta">Budgeted revenue across 12 months: <b>${money(totals.revenue)}</b></div><div class="acMeta">Budgeted expenses: <b>${money(expenseBudget)}</b></div><div class="acMeta">Planned surplus: <b>${money(plannedSurplus)}</b></div><div class="acMeta">FY ${year}/${String(year+1).slice(-2)} runs 1 Oct ${year} - 30 Sep ${year+1}.</div><div class="acBar"><button class="acBtn alt" id="distributeAnnualTarget">Distribute Annual Target Across 12 Months</button></div><div class="acMeta">Distribution changes only monthly revenue targets. It does not overwrite expense, Ambassador, staff or surplus budgets.</div></div>
+  </div>
+  <div class="acPanel" style="margin-top:10px">
+    <div class="acBar" style="justify-content:space-between"><div><h3>Monthly Budget & Target Planner</h3><p class="acMeta">Plan revenue and cost limits before each month begins. Zero means no budget has been approved yet; it does not mean the future expense cannot occur.</p></div><span class="acPill">FY ${year}/${String(year+1).slice(-2)}</span></div>
+    <div class="acTableWrap"><table class="acTable">
+      <thead><tr><th>Month</th><th>Revenue Target</th><th>Direct Costs</th><th>Staff / People</th><th>Operating Expenses</th><th>Ambassador</th><th>Other Expenses</th><th>Minimum Surplus</th><th>Planned Surplus</th><th>Notes</th><th>Action</th></tr></thead>
+      <tbody>${body}</tbody>
+    </table></div>
+    <div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} months · Maximum 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="budPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="budNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>
   </div>`;
 }
 function reports(){
