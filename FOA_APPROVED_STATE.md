@@ -642,3 +642,20 @@ The owner explicitly reopened **only** the HR area required to add future **Work
 - Published market-reference ranges, legal wage-floor data and FOA affordability guidance may appear inside Workforce & Compensation Planning, but **no salary/rate is owner-approved merely because guidance is displayed or copied into a draft plan**. A saved Planning record remains an assumption; operational remuneration requires the approved employment/payroll workflow.
 - The new Workforce & Compensation Planning area remains **unlocked pending the owner's physical review and later approval**.
 
+### Admin HR & Team — FINAL OWNER-APPROVED AND RE-LOCKED (23 September 2026)
+
+After completing the approved Workforce & Compensation Planning additions and the final Staff Disciplinary & Conduct Management workflow, the owner explicitly authorised **HR & Team** to be locked again.
+
+- **HR & Team is fully re-locked as a change-controlled protected Admin surface.** No HR runtime, database, workflow, navigation, typography, pagination, Staff Portal handoff, compliance reference, compensation-planning or disciplinary-control change may be made unless Aziwe Futhe explicitly reopens the affected HR area.
+- The protected HR scope now includes: Team & Access; Staff Invitation History; Contracts & Documents; Leave & Attendance; Safety & Wellbeing; Training & Performance; Workforce & Compensation Planning; Compensation Guidance; Disciplinary & Conduct; SA Labour Compliance; HR Audit Trail; Staff Portal handoff; and HR data-loading behaviour.
+- Workforce & Compensation Planning remains a **planning-only** workspace. Guidance figures, lower-band or midpoint suggestions, draft workforce plans and affordability modelling do not create employees, contracts, payroll payments or P&L expenses and do not become approved remuneration merely by being displayed or saved as planning assumptions.
+- Approved non-contractor workforce plans retain the current wage-floor safeguard; formal Skills Development Act learnerships remain separate from ordinary graduate/intern planning.
+- Disciplinary & Conduct remains **Staff-only** and must preserve fair-process controls: allegation is not guilt; misconduct must be distinguished from poor performance/incapacity; minor matters may use informal corrective action; formal cases require adequate notice and a genuine opportunity to respond; representation/language assistance and relevant union consultation must remain available where applicable; findings/outcomes require recorded reasons, proportionality and consistency consideration.
+- A disciplinary outcome marked “dismissal” must **not** automatically disable a Staff account, terminate a contract, stop payroll or perform any other offboarding action. Any operational employment termination/offboarding remains a separate governed decision and workflow.
+- Internal disciplinary review/appeal does not replace or restrict any applicable statutory external dispute-referral right.
+- Staff invitations created from HR must remain Staff accounts, never Student accounts. Students remain outside the Staff disciplinary workspace and continue through the separate Student/academic governance paths.
+- All growing HR registers remain capped at **10 visible records per page**, with Previous / Next navigation when needed.
+- Existing HR records remain dynamic. Legitimate staff invitations, access assignments, contracts, leave records, safety cases, training, performance reviews, workforce plans, disciplinary cases/events, compliance reviews and audit entries may continue through their approved workflows; this lock protects the structure, rules and behaviour rather than freezing operational data.
+- Work in Finance, Petty Cash, Academic, CEO Account Control, Digital Library, IT/Security or another Admin area does **not** reopen HR & Team.
+- A newly discovered HR defect or requested enhancement is a protected change request and requires explicit owner approval before the locked HR workspace is altered.
+
