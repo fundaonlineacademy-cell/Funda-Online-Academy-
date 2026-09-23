@@ -142,8 +142,9 @@ function renderDashboardTrend(){
  if($('#trendRevenueTotal'))$('#trendRevenueTotal').textContent=money(revenueTotal);
  document.querySelectorAll('[data-trend-period]').forEach(b=>{const on=Number(b.dataset.trendPeriod)===dashboardTrendDays;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));b.onclick=()=>{dashboardTrendDays=Number(b.dataset.trendPeriod)||30;renderDashboardTrend()}});
  document.querySelectorAll('[data-trend-metric]').forEach(b=>{const on=b.dataset.trendMetric===dashboardTrendMetric;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));b.onclick=()=>{dashboardTrendMetric=b.dataset.trendMetric||'referrals';renderDashboardTrend()}});
- const values=buckets.map(x=>dashboardTrendMetric==='revenue'?x.revenue:x.referrals);
- const metricLabel=dashboardTrendMetric==='revenue'?'Confirmed qualifying revenue':'Eligible referrals';
+ const dailyValues=buckets.map(x=>dashboardTrendMetric==='revenue'?x.revenue:x.referrals);
+ let running=0;const values=dailyValues.map(v=>(running+=Number(v||0)));
+ const metricLabel=dashboardTrendMetric==='revenue'?'Cumulative confirmed qualifying revenue':'Cumulative eligible referrals';
  const yMax=niceChartMax(Math.max(...values,0),dashboardTrendMetric);
  const w=760,h=300,left=72,right=24,top=24,bottom=48,plotW=w-left-right,plotH=h-top-bottom;
  const xAt=i=>left+(buckets.length===1?0:(i/(buckets.length-1))*plotW),yAt=v=>top+plotH-(Number(v||0)/yMax)*plotH;
