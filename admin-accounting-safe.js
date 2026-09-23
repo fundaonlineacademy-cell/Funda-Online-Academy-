@@ -432,10 +432,12 @@ function pnlTableRows(x,comp){
 }
 function pnlMarkup(raw,rawComp,from,to,compFrom,compTo){
   const x=normalisePnl(raw),comp=normalisePnl(rawComp||{}),set=settings(),annual=n(set.annual_turnover_target),anchor=set.financial_year_anchor||'2026-10-01';
-  const monthlyTarget=annual/12;
+  const monthBudget=budgetForMonth(from),periodBudget=(pnlMode==='monthly'&&monthBudget)
+    ?{revenue:n(monthBudget.revenue_target),expenses:budgetExpenseTotal(monthBudget),plannedSurplus:budgetPlannedSurplus(monthBudget),minimumSurplus:n(monthBudget.minimum_surplus_target),months:1}
+    :(pnlMode==='financial_year'?budgetTotalsForPeriod(from,to):null);
   let target=null,label='';
-  if(from>=anchor&&pnlMode==='monthly'){target=monthlyTarget;label='Monthly turnover planning target'}
-  if(from>=anchor&&pnlMode==='financial_year'){target=annual;label='Annual turnover target'}
+  if(from>=anchor&&pnlMode==='monthly'){target=periodBudget?.months?periodBudget.revenue:annual/12;label='Monthly revenue target'}
+  if(from>=anchor&&pnlMode==='financial_year'){target=periodBudget?.months?periodBudget.revenue:annual;label='Annual revenue target'}
   const progress=target?targetProgress(n(x.turnover),target):0;
   const close=from===monthRange(from.slice(0,7))[0]&&to===monthRange(from.slice(0,7))[1]?monthClosed(from):null;
   const canClose=pnlMode==='monthly'&&to<today()&&!close;
@@ -457,7 +459,8 @@ function pnlMarkup(raw,rawComp,from,to,compFrom,compTo){
       <thead><tr><th>Account</th><th class="acNum">Current Period</th><th class="acNum">Comparison Period</th><th class="acNum">Variance</th><th class="acPct">% of Turnover</th></tr></thead>
       <tbody>${pnlTableRows(x,comp)}</tbody>
     </table></div>
-    ${target!==null?'<div class="acPanel" style="margin-top:10px"><div class="acMeta">'+label+': <b>'+money(target)+'</b> · Actual turnover: <b>'+money(x.turnover)+'</b> · Variance: <b>'+money(n(x.turnover)-target)+'</b></div><div class="acTarget"><i style="width:'+progress+'%"></i></div></div>':''}
+    ${target!==null?'<div class="acPanel" style="margin-top:10px"><div class="acMeta">'+label+': <b>'+money(target)+'</b> · Actual turnover: <b>'+money(x.turnover)+'</b> · Revenue variance: <b>'+money(n(x.turnover)-target)+'</b></div><div class="acTarget"><i style="width:'+progress+'%"></i></div></div>':''}
+    ${periodBudget?.months?'<div class="acGrid" style="margin-top:10px"><div class="acPanel"><h3>Budget vs Actual</h3><div class="acMeta">Revenue target: <b>'+money(periodBudget.revenue)+'</b></div><div class="acMeta">Actual turnover: <b>'+money(x.turnover)+'</b></div><div class="acMeta">Revenue variance: <b>'+money(n(x.turnover)-periodBudget.revenue)+'</b></div></div><div class="acPanel"><h3>Expense & Surplus Plan</h3><div class="acMeta">Expense budget: <b>'+money(periodBudget.expenses)+'</b></div><div class="acMeta">Actual expenses: <b>'+money(x.total_expenses)+'</b></div><div class="acMeta">Expense headroom / (overrun): <b>'+money(periodBudget.expenses-n(x.total_expenses))+'</b></div><div class="acMeta">Planned surplus: <b>'+money(periodBudget.plannedSurplus)+'</b> · Actual net profit/(loss): <b>'+money(x.net_result)+'</b></div><div class="acMeta">Minimum surplus target: <b>'+money(periodBudget.minimumSurplus)+'</b></div></div></div>':''}
     <div class="acMeta" style="margin-top:8px">Verified payment records: ${n(x.verified_payment_records)} · Pending/unverified collections excluded: ${money(x.pending_collections)} · Posted non-payment income records: ${n(x.cash_income_records)} · Posted expense/adjustment records: ${n(x.cash_expense_records)}</div>
     <div class="acBar"><button class="acBtn" id="acExcelPL">Download Excel (.xlsx)</button><button class="acBtn" id="acPdfPL">Download PDF</button>${canClose?'<button class="acBtn ok" id="acCloseMonth">Close Month</button>':''}${close?'<button class="acBtn alt" id="acReopenMonth">Reopen Month</button>':''}</div>
   </div>`;
