@@ -470,6 +470,7 @@ function wire(tab){
     $('hwBasis').onchange=syncWorkforceFields;
     syncWorkforceFields();
     document.querySelectorAll('[data-workforce-edit]').forEach(b=>b.onclick=()=>editWorkforcePlan(b.dataset.workforceEdit));
+    document.querySelectorAll('[data-comp-guide]').forEach(b=>b.onclick=()=>applyCompGuidance(b.dataset.compGuide,b.dataset.compMode));
   }
 }
 async function manageAccess(id){
@@ -587,7 +588,7 @@ function syncWorkforceFields(){
   const hourly=$('hwBasis')?.value==='hourly';
   if($('hwMonthlyRate'))$('hwMonthlyRate').disabled=hourly;
   if($('hwHourlyRate'))$('hwHourlyRate').disabled=!hourly;
-  if($('hwWeeklyHours'))$('hwWeeklyHours').disabled=!hourly;
+  if($('hwWeeklyHours'))$('hwWeeklyHours').disabled=false;
 }
 function editWorkforcePlan(id){
   const x=(D.hr_workforce_plans||[]).find(r=>r.id===id);
@@ -606,18 +607,23 @@ async function saveWorkforcePlan(){
   if(!startRaw)return alert('Choose the planned start month.');
   if(!Number.isInteger(planned_headcount)||planned_headcount<1)return alert('Planned headcount must be at least 1.');
   if([monthly_rate,hourly_rate,planned_weekly_hours,employer_cost_per_person,other_monthly_cost_per_person].some(v=>!Number.isFinite(v)||v<0))return alert('Rates, hours and on-costs must be zero or greater.');
-  if(planned_weekly_hours>168)return alert('Planned weekly hours cannot exceed 168.');
+  if(planned_weekly_hours<=0||planned_weekly_hours>168)return alert('Planned weekly hours must be greater than zero and cannot exceed 168.');
   if(endRaw&&endRaw<startRaw)return alert('Planned end month cannot be before the start month.');
   if(status==='approved_plan'){
     if(pay_basis==='monthly'&&monthly_rate<=0)return alert('Set the monthly rate before marking this as an Approved plan.');
-    if(pay_basis==='hourly'&&(hourly_rate<=0||planned_weekly_hours<=0))return alert('Set both the hourly rate and planned weekly hours before marking this as an Approved plan.');
+    if(pay_basis==='hourly'&&hourly_rate<=0)return alert('Set the hourly rate before marking this as an Approved plan.');
+    if(employment_model!=='contractor'){
+      const floor=compensationFloor(),requiredMonthly=n(floor.hourly_rate)*planned_weekly_hours*52/12;
+      if(pay_basis==='hourly'&&hourly_rate<n(floor.hourly_rate))return alert('This approved employee plan is below the current ordinary-worker minimum wage of '+moneyHR(floor.hourly_rate)+'/hour. Formal learnership allowances must be handled separately.');
+      if(pay_basis==='monthly'&&monthly_rate+0.005<requiredMonthly)return alert('At '+planned_weekly_hours.toFixed(1)+' planned hours/week, this approved monthly plan is below the current ordinary-worker minimum-wage equivalent of '+moneyHR(requiredMonthly)+'/month. Adjust the rate or the planned hours. Formal learnership allowances must be handled separately.');
+    }
   }
   const u=await me();
   const payload={
     role_title,department,employment_model,pay_basis,
     monthly_rate:pay_basis==='monthly'?monthly_rate:0,
     hourly_rate:pay_basis==='hourly'?hourly_rate:0,
-    planned_weekly_hours:pay_basis==='hourly'?planned_weekly_hours:0,
+    planned_weekly_hours,
     planned_headcount,employer_cost_per_person,other_monthly_cost_per_person,
     start_month:startRaw+'-01',end_month:endRaw?endRaw+'-01':null,status,notes,
     updated_by:u?.id||null,updated_at:new Date().toISOString()
