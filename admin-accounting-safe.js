@@ -1206,8 +1206,10 @@ function wire(){
   }
   if(tab==='petty'){
     bindPettyFundCreate();
+    bindPettyAccountCreate();
     $('pcFundSelect')?.addEventListener('change',e=>{pettyFundId=e.target.value;pettyVoucherPage=1;pettyMovementPage=1;pettyReconPage=1;render('petty')});
     $('pcNewFundShow')?.addEventListener('click',()=>{const h=$('pcNewFundHost');if(h){h.innerHTML=pettyFundSetup();bindPettyFundCreate()}});
+    $('pcNewAccountShow')?.addEventListener('click',()=>{const h=$('pcNewAccountHost');if(h){h.innerHTML=pettyAccountSetup();bindPettyAccountCreate()}});
     $('pcUpdateFund')?.addEventListener('click',updatePettyFund);
     $('pcRecordMove')?.addEventListener('click',recordPettyMovement);
     $('pcCreateVoucher')?.addEventListener('click',createPettyVoucher);
