@@ -10,6 +10,7 @@ let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settin
 let errors=[];
 let tab='overview',cashPage=1,plannedPage=1,reconPage=1,budgetPage=1,pettyVoucherPage=1,pettyMovementPage=1,pettyReconPage=1,ambassadorPlanPage=1;
 let pettyFundId=null,pettyReportMonth=new Date().toISOString().slice(0,7),ambassadorMonth=new Date().toISOString().slice(0,7),ambassadorData=null,ambassadorEditId=null;
+let managementReportMode='monthly',managementReportMonth=new Date().toISOString().slice(0,7),managementReportFyYear=null,managementReportFrom='',managementReportTo='',managementReportData=null;
 let pnlMode='monthly',pnlMonth=new Date().toISOString().slice(0,7),pnlDay=new Date().toISOString().slice(0,10),pnlFyYear=null,pnlFrom='',pnlTo='';
 let currentMonthPnl=null,currentFyPnl=null,currentPnl=null,currentPnlComparison=null,currentPnlComparisonRange=null;
 const PAGE_SIZE=10;
@@ -129,6 +130,7 @@ async function loadData(){
     loaded[key]=true;
   });
   if(!pnlFyYear)pnlFyYear=currentFyStartYear();
+  if(!managementReportFyYear)managementReportFyYear=currentFyStartYear();
   const anchorMonth=String(settings().financial_year_anchor||'').slice(0,7);if(anchorMonth&&ambassadorMonth<anchorMonth)ambassadorMonth=anchorMonth;
   if((S.pettyFunds||[]).length&&!S.pettyFunds.some(x=>x.id===pettyFundId))pettyFundId=(S.pettyFunds.find(x=>x.status==='active')||S.pettyFunds[0]).id;
 }
