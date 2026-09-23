@@ -172,6 +172,11 @@ function fyOptions(){
   for(let y=first;y<=Math.max(firstFyStart(),cur)+3;y++)years.push(y);
   return years.map(y=>'<option value="'+y+'" '+(Number(pnlFyYear)===y?'selected':'')+'>FY '+y+'/'+String(y+1).slice(-2)+' (1 Oct - 30 Sep)</option>').join('');
 }
+function managementFyOptions(){
+  const cur=currentFyStartYear(),first=Math.min(firstFyStart(),cur),years=[];
+  for(let y=first;y<=Math.max(firstFyStart(),cur)+3;y++)years.push(y);
+  return years.map(y=>'<option value="'+y+'" '+(Number(managementReportFyYear)===y?'selected':'')+'>FY '+y+'/'+String(y+1).slice(-2)+' (1 Oct - 30 Sep)</option>').join('');
+}
 function budgetMonthLabel(v){
   return v?new Date(v+'T12:00:00').toLocaleDateString('en-ZA',{month:'long',year:'numeric'}):'—';
 }
@@ -1092,6 +1097,7 @@ function managementCashbookRows(data){
     'Basis / Source':low(x.source_type)==='adjustment'?'Non-cash adjustment':low(x.source_type)==='petty_cash'?'Petty cash voucher':low(x.source_type)==='student_payment'?'Verified Student payment copy':'Cash / bank',
     'Amount (R)':n(x.amount),'Posting Status':x.posting_status||'posted',Recurrence:x.recurrence||'none',
     'Reconciliation Status':['adjustment','petty_cash'].includes(low(x.source_type))?'not applicable':(x.reconciliation_status||'unreconciled'),
+    Recognition:low(x.posting_status||'posted')==='voided'?'Voided / excluded':low(x.posting_status||'posted')==='planned'?'Planned / not actual':x.entry_date>today()?'Future-dated posted / excluded from live actuals':'Recognised actual',
     'Void Reason':x.void_reason||''
   }));
 }
@@ -1161,15 +1167,26 @@ function managementReportObject(type){
   }
   if(type==='budget')return {title:'Budget vs Actual Management Report',rows:managementBudgetRows(d),summary:[...common,['Budget comparison',d.budget?'Applied':'Not applied to Custom period'],['Budget months',d.budget?.months||0]]};
   if(type==='cashbook'){
-    const rows=managementCashbookRows(d),posted=rows.filter(x=>x['Posting Status']==='posted'),planned=rows.filter(x=>x['Posting Status']==='planned'),voided=rows.filter(x=>x['Posting Status']==='voided');
-    const postedIncome=posted.filter(x=>low(x.Type)==='income').reduce((a,x)=>a+n(x['Amount (R)']),0),postedExpenses=posted.filter(x=>low(x.Type)==='expense').reduce((a,x)=>a+n(x['Amount (R)']),0);
-    return {title:'Management Cashbook Report',rows,summary:[...common,['Cashbook records',rows.length],['Posted records',posted.length],['Planned records',planned.length],['Voided records',voided.length],['Posted cashbook income',money(postedIncome)],['Posted cashbook expenses',money(postedExpenses)],['Cashbook net movement',money(postedIncome-postedExpenses)]]};
+    const rows=managementCashbookRows(d),recognised=rows.filter(x=>x.Recognition==='Recognised actual'),planned=rows.filter(x=>x['Posting Status']==='planned'),voided=rows.filter(x=>x['Posting Status']==='voided'),future=rows.filter(x=>x.Recognition==='Future-dated posted / excluded from live actuals');
+    const postedIncome=recognised.filter(x=>low(x.Type)==='income').reduce((a,x)=>a+n(x['Amount (R)']),0),postedExpenses=recognised.filter(x=>low(x.Type)==='expense').reduce((a,x)=>a+n(x['Amount (R)']),0);
+    return {title:'Management Cashbook Report',rows,summary:[...common,['Cashbook records',rows.length],['Recognised actual records',recognised.length],['Future-dated posted records excluded from live actuals',future.length],['Planned records',planned.length],['Voided records',voided.length],['Recognised cashbook income',money(postedIncome)],['Recognised cashbook expenses',money(postedExpenses)],['Recognised cashbook net movement',money(postedIncome-postedExpenses)]]};
   }
   if(type==='petty'){
     const rows=managementPettyRows(d);
     return {title:'Petty Cash Management Report',rows,summary:[...common,['Petty cash funds',rows.length],['Closing petty cash balance',money(rows.reduce((a,x)=>a+n(x['Closing Balance (R)']),0))],['Posted petty cash spend',money(rows.reduce((a,x)=>a+n(x['Posted Voucher Spend (R)']),0))],['Pending petty cash vouchers',money(rows.reduce((a,x)=>a+n(x['Pending Vouchers (R)']),0))]]};
   }
-  if(type==='pnl')return {title:'Management Profit & Loss Statement',rows:pnlExportRows(x,normalisePnl(d.comparison||{})),summary:common};
+  if(type==='pnl'){
+    const grossMargin=ratio(x.gross_profit,x.turnover),operatingMargin=ratio(x.operating_profit,x.turnover),netMargin=ratio(x.net_result,x.turnover);
+    return {title:'Management Profit & Loss Statement',rows:pnlExportRows(x,normalisePnl(d.comparison||{})),summary:[
+      ...common,
+      ...(d.budget?[['Revenue target',money(d.budget.revenue)],['Revenue variance',money(n(x.turnover)-n(d.budget.revenue))],['Expense budget',money(n(d.budget.direct)+n(d.budget.people)+n(d.budget.operating)+n(d.budget.ambassador)+n(d.budget.other))],['Planned surplus',money(d.budget.plannedSurplus)],['Minimum surplus target',money(d.budget.minimumSurplus)]]:[]),
+      ['Gross profit',money(x.gross_profit)+' · '+pct(grossMargin)+' margin'],
+      ['Operating profit / (loss)',money(x.operating_profit)+' · '+pct(operatingMargin)+' margin'],
+      ['Profit / (loss) before tax',money(x.profit_before_tax)],
+      ['Net profit / (loss)',money(x.net_result)+' · '+pct(netMargin)+' margin'],
+      ['Pending/unverified collections excluded',money(x.pending_collections)]
+    ]};
+  }
   if(type==='pack')return {title:'Finance Management Pack',rows:managementPackRows(d),summary:[...common,['Budget comparison',d.budget?'Applied':'Not applied to Custom period'],['Purpose','Executive management view combining financial performance, budget control and P&L'] ]};
   return null;
 }
@@ -1250,7 +1267,7 @@ function reports(){
     <div class="acBar">
       <select id="mrMode" class="acSelect"><option value="monthly" ${managementReportMode==='monthly'?'selected':''}>Monthly management reports</option><option value="financial_year" ${managementReportMode==='financial_year'?'selected':''}>Financial Year reports</option><option value="custom" ${managementReportMode==='custom'?'selected':''}>Custom actuals period</option></select>
       ${managementReportMode==='monthly'?'<input id="mrMonth" class="acInput" type="month" value="'+esc(managementReportMonth)+'">':''}
-      ${managementReportMode==='financial_year'?'<select id="mrFy" class="acSelect">'+fyOptions().replaceAll('id="pnlFy"','')+'</select>':''}
+      ${managementReportMode==='financial_year'?'<select id="mrFy" class="acSelect">'+managementFyOptions()+'</select>':''}
       ${managementReportMode==='custom'?'<input id="mrFrom" class="acInput" type="date" value="'+esc(managementReportFrom)+'"><input id="mrTo" class="acInput" type="date" value="'+esc(managementReportTo)+'">':''}
       <button class="acBtn" id="mrGenerate">Generate Management Reports</button>
     </div>
