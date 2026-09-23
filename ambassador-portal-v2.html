@@ -452,6 +452,27 @@ button,input,select,textarea{font-family:inherit!important}
   .topLeft .portalLogo{width:32px!important;height:32px!important}
   .ambassadorGlobalSearch{font-size:12px}
 }
+</style><style id="ambassador-referral-pagination-v1">
+.referralPagination{
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  margin-top:14px;padding:12px 13px;border:1px solid #d9e2ef;border-radius:11px;
+  background:#f7f9fc;font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif
+}
+.referralPagination>div:first-child{display:flex;flex-direction:column;gap:2px}
+.referralPagination b{color:#07172f;font-size:12px;line-height:1.35}
+.referralPagination span{color:#64758a;font-size:10px;font-weight:700}
+.referralPageButtons{display:flex;align-items:center;gap:8px}
+.referralPageBtn{
+  min-width:92px;border:1px solid #cfd9e5;border-radius:9px;background:#fff;color:#173f62;
+  padding:8px 11px;font-family:inherit;font-size:11px;font-weight:900;cursor:pointer
+}
+.referralPageBtn:hover:not(:disabled){background:#eaf1ff;border-color:#b9c9df}
+.referralPageBtn:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:560px){
+  .referralPagination{align-items:stretch;flex-direction:column}
+  .referralPageButtons{display:grid;grid-template-columns:1fr 1fr}
+  .referralPageBtn{width:100%}
+}
 </style></head>
 <body>
 <header class="top">
@@ -676,6 +697,13 @@ button,input,select,textarea{font-family:inherit!important}
   <div class="referralTools"><div><h2>Referral Activity</h2><p class="muted">A referral remains R0 until both the payment and student enrolment are approved.</p></div><div class="referralSearch"><input id="refSearch" type="search" placeholder="Search student or course" aria-label="Search referrals"><select id="refStatus" aria-label="Filter referral status"><option value="">All statuses</option><option value="confirmed">Confirmed</option><option value="student_approved">Student approved</option><option value="enrolment_pending">Enrolment pending</option><option value="not_yet_earned">Not yet earned</option><option value="disqualified">Disqualified</option></select></div></div>
   <div id="referralMobile" class="referralMobile"></div>
   <div class="tablewrap referralDesktop"><table class="tbl"><thead><tr><th>Student</th><th>Course</th><th>Referral Date</th><th>Referral Status</th><th>Earning Status</th><th>Amount</th></tr></thead><tbody id="referralBody"></tbody></table></div>
+  <div id="referralPagination" class="referralPagination" aria-label="Referral list pagination">
+    <div><b id="referralPageSummary">Showing 0 referrals</b><span id="referralPageCount">Page 1 of 1</span></div>
+    <div class="referralPageButtons">
+      <button id="referralPrev" type="button" class="referralPageBtn" aria-label="Previous referral page">← Previous</button>
+      <button id="referralNext" type="button" class="referralPageBtn" aria-label="Next referral page">Next →</button>
+    </div>
+  </div>
   <div class="privacyNote"><b>Student privacy protected</b><span>Contact details, ID numbers, payment proofs, assessments and private student records are never exposed to Ambassadors.</span></div>
 </section>
 </section>
@@ -913,7 +941,7 @@ button,input,select,textarea{font-family:inherit!important}
   ['ambassadorFooterLogo','ambassadorHeaderLogo'].forEach(id=>{const el=document.getElementById(id);if(el)el.src=logo});
 })();
 </script>
-<script src="ambassador-portal-v2.js?v=20260923-header-search-v1"></script>
+<script src="ambassador-portal-v2.js?v=20260923-referrals-pagination-v1"></script>
 <script src="ambassador-your-voice.js?v=20260913-your-voice-v1"></script>
 <script src="academy-identity.js?v=20260905-master-identity"></script>
 <script src="ambassador-academy-identity-compact.js?v=20260923-compact-v1"></script>
