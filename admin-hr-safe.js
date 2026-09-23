@@ -436,7 +436,7 @@ function disciplinaryGuide(){
       <div class="hrProcessStep"><b>4 · Finding & sanction</b><span>Consider rule validity, awareness, harm, seriousness, progressive discipline, mitigation and consistency.</span></div>
       <div class="hrProcessStep"><b>5 · Written outcome & rights</b><span>Record reasons. Dismissal is not automatic and must not trigger system offboarding by itself.</span></div>
     </div>
-    <div class="hrMeta">Legal reference: South African <a href="https://www.gov.za/sites/default/files/gcis_document/202509/53294gen3470.pdf" target="_blank" rel="noopener">Code of Practice: Dismissal (4 September 2025) ↗</a>. External dispute-referral rights remain unaffected by an internal review/appeal.</div>`;
+    <div class="hrMeta">Legal reference: South African <a href="https://www.gov.za/sites/default/files/gcis_document/202509/53294gen3470.pdf" target="_blank" rel="noopener">Code of Practice: Dismissal (4 September 2025) ↗</a>. External dispute-referral rights remain unaffected by an internal review/appeal. CCMA guidance records the usual referral periods as 30 days for unfair dismissal and 90 days for unfair labour-practice disputes, subject to the LRA, jurisdiction and condonation rules; HR should verify the current facts and forum before giving case-specific advice.</div>`;
 }
 function disciplinarySelectedCase(){
   const x=(D.hr_disciplinary_cases||[]).find(r=>r.id===disciplinaryCaseId);
