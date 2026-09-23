@@ -19,9 +19,9 @@ async function load(){
    if(!db)throw new Error('Academic data connection is unavailable.');
    const u=await db.auth.getUser();actor=u.data?.user||null;if(!actor)throw new Error('Admin session is unavailable.');
    const rs=await Promise.all([...academicTables.map(n=>db.from(n).select('*').limit(5000)),db.rpc('get_admin_assessment_bank_health')]);
-   const bad=rs.find(x=>x.error);if(bad)throw bad.error;
-   academicTables.forEach((n,i)=>D[n]=rs[i].data||[]);
-   D.assessment_bank_health=rs[academicTables.length].data||[];
+   const tableResults=rs.slice(0,academicTables.length),bankResult=rs[academicTables.length];const bad=tableResults.find(x=>x.error);if(bad)throw bad.error;
+   academicTables.forEach((n,i)=>D[n]=tableResults[i].data||[]);
+   D.assessment_bank_health=bankResult?.error?[]:(bankResult?.data||[]);if(bankResult?.error)console.warn('Academic assessment bank health is temporarily unavailable',bankResult.error);
    actorProfile=D.profiles.find(p=>p.id===actor?.id)||{};
    lastGood={assessment_bank_health:[...(D.assessment_bank_health||[])]};academicTables.forEach(n=>lastGood[n]=[...(D[n]||[])]);
    lastError='';publishSnapshot();return true;
@@ -58,10 +58,9 @@ async function open(tab=currentTab,source='open'){css();const ok=await load();if
 async function install(){
  css();
  window.FundaAcademicQA={open};
- window.academic=function(){setTimeout(()=>open(currentTab,'legacy-open'),0)};
- document.addEventListener('click',e=>{let b=e.target.closest?.('#nav button,.nav button');if(b&&/academic/i.test(b.textContent))setTimeout(()=>open(currentTab,'navigation'),60)},false);
+ window.academic=function(){open(currentTab,'navigation')};
  document.addEventListener('funda:admin-manual-refresh',e=>{if(active()&&e.detail?.source==='manual'&&!editingAcademic())open(currentTab,'manual')});
- if(active())setTimeout(()=>open(currentTab,'restore'),80);
+ if(active()&&!$('view')?.querySelector('.aqHero'))open(currentTab,'restore');
 }
 if(document.readyState==='complete')setTimeout(install,0);else window.addEventListener('load',()=>setTimeout(install,0),{once:true});
 })();
