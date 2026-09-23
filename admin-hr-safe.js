@@ -4,6 +4,7 @@ if(!/admin-v2\.html$/i.test(location.pathname))return;
 window.__fundaHrAuthoritativeLoader=true;
 
 let db,D={},loadErrors=[],currentTab='team';
+const PAGE_SIZE=10,pages={team:1,invitations:1,contracts:1,documents:1,leave:1,safety:1,training:1,performance:1,audit:1};
 const $=x=>document.getElementById(x);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const low=v=>String(v||'').toLowerCase();
@@ -45,6 +46,7 @@ function css(){
   .hrAlert{margin:10px 0;padding:11px 13px;border:1px solid #efcaca;border-radius:9px;background:#fff3f3;color:#8b2626;font-size:13px;line-height:1.5}
   .hrEvidence{margin-top:4px;font-size:12px;line-height:1.45;color:#475569}
   .hrEvidence a{color:#164b84;font-weight:700}
+  .hrPager{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:10px 0 2px}.hrPager span{font-size:12px;color:#64748b}.hrPager .hrBtn{min-width:82px}.hrPager .hrBtn:disabled{opacity:.45;cursor:not-allowed}
   .hrDeptGuide{margin-top:14px;border-top:1px solid #e6e9ee;padding-top:14px}
   .hrDeptGuide h3{margin:0 0 5px;color:#071b31;font-size:18px}
   .hrDeptGuide>p{margin:0 0 11px;color:#64748b;font-size:13px;line-height:1.5}
@@ -68,6 +70,7 @@ async function load(){
     ['staff_access_assignments','*','granted_at'],
     ['staff_invitations','id,email,full_name,staff_number,job_title,department,invited_user_id,invited_by,invitation_status,invited_at,accepted_at,notes','invited_at'],
     ['hr_contracts','*','created_at'],
+    ['hr_documents','*','created_at'],
     ['hr_leave_requests','*','requested_at'],
     ['hr_safety_incidents','*','created_at'],
     ['hr_training_records','*','created_at'],
@@ -87,6 +90,25 @@ async function load(){
 const prof=id=>(D.profiles||[]).find(x=>x.id===id)||{};
 const staff=()=>(D.profiles||[]).filter(p=>['admin','staff'].includes(low(p.role)));
 async function me(){const {data:{user}}=await db.auth.getUser();return user}
+function paged(items,key){
+  const list=Array.isArray(items)?items:[];
+  const totalPages=Math.max(1,Math.ceil(list.length/PAGE_SIZE));
+  pages[key]=Math.min(Math.max(1,pages[key]||1),totalPages);
+  const start=(pages[key]-1)*PAGE_SIZE;
+  return list.slice(start,start+PAGE_SIZE);
+}
+function pager(key,total,label='records'){
+  const totalPages=Math.max(1,Math.ceil(Number(total||0)/PAGE_SIZE));
+  const page=Math.min(Math.max(1,pages[key]||1),totalPages);
+  if(total<=PAGE_SIZE)return '';
+  return `<div class="hrPager"><span>Showing page ${page} of ${totalPages} · ${total} ${esc(label)}</span><button class="hrBtn alt" data-hr-page="${key}" data-hr-dir="-1" ${page<=1?'disabled':''}>Previous</button><button class="hrBtn alt" data-hr-page="${key}" data-hr-dir="1" ${page>=totalPages?'disabled':''}>Next</button></div>`;
+}
+function safeUrl(v){const s=String(v||'').trim();return /^https?:\/\//i.test(s)?s:''}
+function evidenceText(v){
+  if(!v||typeof v!=='object')return esc(v||'—');
+  const parts=Object.entries(v).map(([k,val])=>`${esc(String(k).replaceAll('_',' '))}: ${esc(typeof val==='object'?JSON.stringify(val):val)}`);
+  return parts.join('<br>')||'—';
+}
 async function audit(action,entity,id,subject,details){
   const u=await me();
   await db.from('hr_audit_log').insert({
@@ -95,7 +117,7 @@ async function audit(action,entity,id,subject,details){
   });
 }
 function directory(){
-  return staff().map(p=>{
+  return paged(staff(),'team').map(p=>{
     const r=(D.staff_records||[]).find(x=>x.profile_id===p.id);
     const a=(D.staff_access_assignments||[]).filter(x=>x.profile_id===p.id&&x.active);
     const access=a.length
@@ -126,7 +148,7 @@ function departmentGuide(){
   return `<div class="hrDeptGuide"><h3>Department Responsibilities</h3><p>These are the Academy's existing operating departments. New functions are assigned into them rather than creating unnecessary new departments. A staff member's <b>job title</b> describes their role inside the selected department.</p><div class="hrDeptGrid">${departments.map(d=>`<div class="hrDeptCard"><h4>${esc(d[0])}</h4><p>${esc(d[1])}</p><small>${esc(d[2])}</small></div>`).join('')}</div><div class="hrMeta" style="margin-top:10px"><b>Executive / Management & Governance</b> remains an oversight function of the CEO/management rather than a new staff department. Reports, compliance and audit responsibilities stay with the department that owns the subject, with executive oversight.</div></div>`;
 }
 function contracts(){
-  return (D.hr_contracts||[]).map(c=>`<tr>
+  return paged(D.hr_contracts||[],'contracts').map(c=>`<tr>
     <td><b>${esc(c.contract_number)}</b><div class="hrMeta">${esc(c.title)}</div></td>
     <td>${esc(prof(c.profile_id).full_name||prof(c.profile_id).email||'Staff')}</td>
     <td>${esc(c.contract_type)}</td>
@@ -136,7 +158,7 @@ function contracts(){
   </tr>`).join('')||'<tr><td colspan="7">No employment contracts recorded.</td></tr>';
 }
 function leaves(){
-  return (D.hr_leave_requests||[]).map(x=>`<tr>
+  return paged(D.hr_leave_requests||[],'leave').map(x=>`<tr>
     <td><b>${esc(prof(x.profile_id).full_name||prof(x.profile_id).email||'Staff')}</b><div class="hrMeta">${esc(x.reason||'')}</div></td>
     <td>${esc(x.leave_type)}</td><td>${esc(x.start_date)} → ${esc(x.end_date)}</td>
     <td><span class="hrPill ${low(x.status)}">${esc(String(x.status).toUpperCase())}</span></td>
@@ -146,7 +168,7 @@ function leaves(){
   </tr>`).join('')||'<tr><td colspan="7">No leave requests recorded.</td></tr>';
 }
 function safety(){
-  return (D.hr_safety_incidents||[]).map(x=>{
+  return paged(D.hr_safety_incidents||[],'safety').map(x=>{
     const st=low(x.status);
     const actions=!['resolved','closed'].includes(st)
       ?`<button class="hrBtn alt" data-safety-status="investigating" data-id="${x.id}">Investigate</button> <button class="hrBtn" data-safety-status="resolved" data-id="${x.id}">Resolve</button>`
@@ -163,25 +185,50 @@ function safety(){
   }).join('')||'<tr><td colspan="7">No staff safety incidents recorded.</td></tr>';
 }
 function training(){
-  const tr=(D.hr_training_records||[]).map(x=>`<tr>
+  const tr=paged(D.hr_training_records||[],'training').map(x=>`<tr>
     <td>${esc(prof(x.profile_id).full_name||prof(x.profile_id).email||'Staff')}</td>
     <td><b>${esc(x.training_name)}</b><div class="hrMeta">${esc(x.provider||'')}</div></td>
     <td>${esc(x.status)}</td><td>${esc(x.completed_on||'—')}</td><td>${esc(x.expires_on||'—')}</td>
   </tr>`).join('');
-  const pr=(D.hr_performance_reviews||[]).map(x=>`<tr>
+  const pr=paged(D.hr_performance_reviews||[],'performance').map(x=>`<tr>
     <td>${esc(prof(x.profile_id).full_name||prof(x.profile_id).email||'Staff')}</td>
     <td>${esc(x.review_period)}</td><td>${esc(x.rating??'—')}</td><td>${esc(x.status)}</td><td>${fmt(x.reviewed_at)}</td>
   </tr>`).join('');
-  return `<h3>Training & Competency</h3><table class="hrTable"><tr><th>Staff</th><th>Training</th><th>Status</th><th>Completed</th><th>Expires</th></tr>${tr||'<tr><td colspan="5">No training records yet.</td></tr>'}</table><h3 style="margin-top:18px">Performance Reviews</h3><table class="hrTable"><tr><th>Staff</th><th>Period</th><th>Rating</th><th>Status</th><th>Reviewed</th></tr>${pr||'<tr><td colspan="5">No performance reviews yet.</td></tr>'}</table>`;
+  return `<h3>Training & Competency</h3><table class="hrTable"><tr><th>Staff</th><th>Training</th><th>Status</th><th>Completed</th><th>Expires</th></tr>${tr||'<tr><td colspan="5">No training records yet.</td></tr>'}</table>${pager('training',(D.hr_training_records||[]).length,'training records')}<h3 style="margin-top:18px">Performance Reviews</h3><table class="hrTable"><tr><th>Staff</th><th>Period</th><th>Rating</th><th>Status</th><th>Reviewed</th></tr>${pr||'<tr><td colspan="5">No performance reviews yet.</td></tr>'}</table>${pager('performance',(D.hr_performance_reviews||[]).length,'performance reviews')}`;
 }
 function audits(){
-  return (D.hr_audit_log||[]).map(a=>`<tr>
+  return paged(D.hr_audit_log||[],'audit').map(a=>`<tr>
     <td>${fmt(a.created_at)}</td>
     <td>${esc(prof(a.actor_id).full_name||prof(a.actor_id).email||'System')}</td>
     <td>${esc(a.action)}</td><td>${esc(a.entity_type)}</td>
     <td>${esc(prof(a.subject_profile_id).full_name||'—')}</td>
-    <td>${esc(JSON.stringify(a.details||{}))}</td>
+    <td><div class="hrEvidence">${evidenceText(a.details||{})}</div></td>
   </tr>`).join('')||'<tr><td colspan="6">No HR audit activity yet.</td></tr>';
+}
+function invitations(){
+  return paged(D.staff_invitations||[],'invitations').map(x=>`<tr>
+    <td><b>${esc(x.full_name||x.email||'Staff invitation')}</b><div class="hrMeta">${esc(x.email||'')}</div></td>
+    <td>${esc(x.staff_number||'—')}</td>
+    <td>${esc(x.job_title||'—')}</td>
+    <td>${esc(x.department||'—')}</td>
+    <td><span class="hrPill ${low(x.invitation_status)}">${esc(String(x.invitation_status||'invited').toUpperCase())}</span></td>
+    <td>${fmt(x.invited_at)}</td>
+    <td>${x.accepted_at?fmt(x.accepted_at):'—'}</td>
+  </tr>`).join('')||'<tr><td colspan="7">No staff invitations recorded.</td></tr>';
+}
+function documents(){
+  return paged(D.hr_documents||[],'documents').map(x=>{
+    const url=safeUrl(x.external_url);
+    const source=url?`<a href="${esc(url)}" target="_blank" rel="noopener">Open document ↗</a>`:x.storage_path?'Stored in Academy HR records':'No file/link recorded';
+    return `<tr>
+      <td><b>${esc(x.title||'HR document')}</b><div class="hrMeta">${esc(x.document_type||'Document')}</div></td>
+      <td>${esc(prof(x.profile_id).full_name||prof(x.profile_id).email||'Academy / General')}</td>
+      <td>${x.confidential===false?'General':'Confidential'}</td>
+      <td>${esc(x.expiry_date||'—')}</td>
+      <td>${source}</td>
+      <td>${fmt(x.created_at)}</td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="6">No HR documents recorded yet.</td></tr>';
 }
 function staffOpts(){
   return staff().map(p=>{
@@ -200,12 +247,12 @@ function render(tab=currentTab){
   const pendingLeave=(D.hr_leave_requests||[]).filter(x=>low(x.status)==='pending').length;
   const trainingDue=(D.hr_training_records||[]).filter(x=>low(x.status)!=='completed').length;
   let body='';
-  if(tab==='team')body=`<div class="hrBar"><button class="hrBtn" id="hrAddStaff">+ Invite Staff User</button></div><table class="hrTable"><tr><th>Staff member</th><th>Staff ID</th><th>Job title</th><th>Department</th><th>Status</th><th>Access</th><th>Action</th></tr>${directory()}</table>${departmentGuide()}`;
-  if(tab==='contracts')body=`<div class="hrBar"><select class="hrSelect" id="hcStaff"><option value="">Select staff member</option>${staffOpts()}</select><input class="hrInput" id="hcTitle" placeholder="Contract title e.g. Employment Agreement"><select class="hrSelect" id="hcType"><option>Employment</option><option>Fixed Term</option><option>Consultancy</option><option>Confidentiality</option><option>Policy Acknowledgement</option></select><button class="hrBtn" id="hcCreate">Create Contract</button></div><textarea class="hrText" id="hcBody" placeholder="Contract terms, duties, remuneration reference, confidentiality, conduct, termination, data protection and acceptance terms..."></textarea><table class="hrTable"><tr><th>Contract</th><th>Staff</th><th>Type</th><th>Status</th><th>Issued</th><th>Accepted</th><th>Action</th></tr>${contracts()}</table>`;
-  if(tab==='leave')body=`<div class="hrBar"><select class="hrSelect" id="hlStaff"><option value="">Select staff member</option>${staffOpts()}</select><select class="hrSelect" id="hlType"><option>Annual Leave</option><option>Sick Leave</option><option>Family Responsibility Leave</option><option>Unpaid Leave</option><option>Study Leave</option><option>Compassionate Leave</option><option>Other</option></select><input class="hrInput" id="hlStart" type="date"><input class="hrInput" id="hlEnd" type="date"><input class="hrInput" id="hlReason" placeholder="Reason / HR note"><button class="hrBtn" id="hlAdd">Add Leave Request</button></div><div class="hrMeta" style="margin-bottom:8px">HR can capture a request on behalf of a staff member. Staff self-service requests will also appear here. Every request records who submitted it, current status, and who approved or rejected it.</div><table class="hrTable"><tr><th>Staff</th><th>Leave type</th><th>Dates</th><th>Status</th><th>Requested by</th><th>Reviewed by</th><th>Action</th></tr>${leaves()}</table>`;
-  if(tab==='safety')body=`<div class="hrBar"><select class="hrSelect" id="hsStaff"><option value="">General workplace</option>${staffOpts()}</select><input class="hrInput" id="hsTitle" placeholder="Safety / wellbeing incident"><select class="hrSelect" id="hsSeverity"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select><input class="hrInput" id="hsDesc" placeholder="What happened / required action"><button class="hrBtn bad" id="hsAdd">Record Incident</button></div><table class="hrTable"><tr><th>Incident</th><th>Staff</th><th>Severity</th><th>Status</th><th>Date</th><th>Resolved</th><th>Action</th></tr>${safety()}</table>`;
+  if(tab==='team')body=`<div class="hrBar"><button class="hrBtn" id="hrAddStaff">+ Invite Staff User</button></div><h3>Team Directory</h3><table class="hrTable"><tr><th>Staff member</th><th>Staff ID</th><th>Job title</th><th>Department</th><th>Status</th><th>Access</th><th>Action</th></tr>${directory()}</table>${pager('team',ss.length,'team members')}<h3 style="margin-top:18px">Staff Invitation History</h3><div class="hrMeta" style="margin-bottom:8px">Shows recent staff invitations and whether each invitation is still pending, accepted, cancelled or expired.</div><table class="hrTable"><tr><th>Invitee</th><th>Staff ID</th><th>Job title</th><th>Department</th><th>Status</th><th>Invited</th><th>Accepted</th></tr>${invitations()}</table>${pager('invitations',(D.staff_invitations||[]).length,'invitations')}${departmentGuide()}`;
+  if(tab==='contracts')body=`<div class="hrBar"><select class="hrSelect" id="hcStaff"><option value="">Select staff member</option>${staffOpts()}</select><input class="hrInput" id="hcTitle" placeholder="Contract title e.g. Employment Agreement"><select class="hrSelect" id="hcType"><option>Employment</option><option>Fixed Term</option><option>Consultancy</option><option>Confidentiality</option><option>Policy Acknowledgement</option></select><button class="hrBtn" id="hcCreate">Create Contract</button></div><textarea class="hrText" id="hcBody" placeholder="Contract terms, duties, remuneration reference, confidentiality, conduct, termination, data protection and acceptance terms..."></textarea><h3>Employment Contracts</h3><table class="hrTable"><tr><th>Contract</th><th>Staff</th><th>Type</th><th>Status</th><th>Issued</th><th>Accepted</th><th>Action</th></tr>${contracts()}</table>${pager('contracts',(D.hr_contracts||[]).length,'contracts')}<h3 style="margin-top:18px">HR Document Register</h3><div class="hrMeta" style="margin-bottom:8px">Read-only register of HR documents already recorded in the Academy system. Document creation/storage remains with the existing governed document workflow.</div><table class="hrTable"><tr><th>Document</th><th>Staff / Scope</th><th>Privacy</th><th>Expiry</th><th>Source</th><th>Recorded</th></tr>${documents()}</table>${pager('documents',(D.hr_documents||[]).length,'documents')}`;
+  if(tab==='leave')body=`<div class="hrBar"><select class="hrSelect" id="hlStaff"><option value="">Select staff member</option>${staffOpts()}</select><select class="hrSelect" id="hlType"><option>Annual Leave</option><option>Sick Leave</option><option>Family Responsibility Leave</option><option>Unpaid Leave</option><option>Study Leave</option><option>Compassionate Leave</option><option>Other</option></select><input class="hrInput" id="hlStart" type="date"><input class="hrInput" id="hlEnd" type="date"><input class="hrInput" id="hlReason" placeholder="Reason / HR note"><button class="hrBtn" id="hlAdd">Add Leave Request</button></div><div class="hrMeta" style="margin-bottom:8px">HR can capture a request on behalf of a staff member. Staff self-service requests will also appear here. Every request records who submitted it, current status, and who approved or rejected it.</div><table class="hrTable"><tr><th>Staff</th><th>Leave type</th><th>Dates</th><th>Status</th><th>Requested by</th><th>Reviewed by</th><th>Action</th></tr>${leaves()}</table>${pager('leave',(D.hr_leave_requests||[]).length,'leave requests')}`;
+  if(tab==='safety')body=`<div class="hrBar"><select class="hrSelect" id="hsStaff"><option value="">General workplace</option>${staffOpts()}</select><input class="hrInput" id="hsTitle" placeholder="Safety / wellbeing incident"><select class="hrSelect" id="hsSeverity"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select><input class="hrInput" id="hsDesc" placeholder="What happened / required action"><button class="hrBtn bad" id="hsAdd">Record Incident</button></div><table class="hrTable"><tr><th>Incident</th><th>Staff</th><th>Severity</th><th>Status</th><th>Date</th><th>Resolved</th><th>Action</th></tr>${safety()}</table>${pager('safety',(D.hr_safety_incidents||[]).length,'safety cases')}`;
   if(tab==='development')body=training();
-  if(tab==='audit')body=`<table class="hrTable"><tr><th>Date</th><th>Actor</th><th>Action</th><th>Record</th><th>Staff</th><th>Evidence</th></tr>${audits()}</table>`;
+  if(tab==='audit')body=`<table class="hrTable"><tr><th>Date</th><th>Actor</th><th>Action</th><th>Record</th><th>Staff</th><th>Evidence</th></tr>${audits()}</table>${pager('audit',(D.hr_audit_log||[]).length,'audit events')}`;
 
   $('view').innerHTML=`
     <div class="hrHero"><b>PEOPLE, CULTURE & GOVERNANCE</b><h2>HR & Team Command Centre</h2><p>Staff onboarding, access control, employment records, contracts, wellbeing, leave, development and accountable people management.</p></div>
@@ -375,6 +422,13 @@ function install(){
   const old=window.hr;
   window.hr=function(){try{old?.()}catch(e){}setTimeout(open,0)};
   document.addEventListener('click',e=>{
+    const page=e.target.closest?.('[data-hr-page]');
+    if(page&&active()){
+      const key=page.dataset.hrPage,dir=Number(page.dataset.hrDir||0);
+      pages[key]=Math.max(1,(pages[key]||1)+dir);
+      render(currentTab);
+      return;
+    }
     const b=e.target.closest?.('#nav button,.nav button');
     if(b&&/hr|team|human resources/i.test(b.textContent||''))setTimeout(open,60);
   },false);
