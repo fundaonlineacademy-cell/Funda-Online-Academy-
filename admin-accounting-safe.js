@@ -5,10 +5,11 @@ if(window.__FUNDA_ACCOUNTING_SAFE__)return;
 window.__FUNDA_ACCOUNTING_SAFE__=true;
 
 let db;
-let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[]};
-let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false};
+let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[],pettyFunds:[],pettyMoves:[],pettyVouchers:[],pettyRecons:[]};
+let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false,pettyFunds:false,pettyMoves:false,pettyVouchers:false,pettyRecons:false};
 let errors=[];
-let tab='overview',cashPage=1,plannedPage=1,reconPage=1,budgetPage=1;
+let tab='overview',cashPage=1,plannedPage=1,reconPage=1,budgetPage=1,pettyVoucherPage=1,pettyMovementPage=1,pettyReconPage=1;
+let pettyFundId=null,pettyReportMonth=new Date().toISOString().slice(0,7);
 let pnlMode='monthly',pnlMonth=new Date().toISOString().slice(0,7),pnlDay=new Date().toISOString().slice(0,10),pnlFyYear=null,pnlFrom='',pnlTo='';
 let currentMonthPnl=null,currentFyPnl=null,currentPnl=null,currentPnlComparison=null,currentPnlComparisonRange=null;
 const PAGE_SIZE=10;
@@ -44,9 +45,9 @@ function css(){
   .acTableWrap{overflow:auto}.acTable{width:100%;border-collapse:collapse;font-size:13px;line-height:1.45}.acTable th,.acTable td{padding:10px;border-bottom:1px solid #edf0f3;text-align:left;vertical-align:top}.acTable th{font-size:11px;text-transform:uppercase;color:#64748b;letter-spacing:.04em;background:#f8fafc}
   .acPill{display:inline-block;padding:4px 8px;border-radius:99px;background:#edf2f7;font-size:11px;font-weight:800;text-transform:capitalize}.acPill.income,.acPill.reconciled,.acPill.posted,.acPill.closed{background:#e5f6ef;color:#176b50}.acPill.expense,.acPill.voided{background:#ffe7e7;color:#9d2828}.acPill.unreconciled,.acPill.planned,.acPill.reopened{background:#fff2d2;color:#8a5a05}
   .acSection h3{margin:4px 0 8px;color:#071b31;font-size:17px}.acPL{max-width:1280px}.acPL tr.total td{font-weight:900;border-top:2px solid #071b31}.acPL tr.subtotal td{font-weight:800;background:#f8fafc}.acPL tr.net td{font-size:15px;font-weight:900;background:#f8f4e8;border-top:2px solid #c7a13b}.acPL tr.section td{font-weight:900;color:#0b315c;background:#eef4fb}.acPL .acNum{text-align:right;white-space:nowrap}.acPL .acPct{text-align:right;white-space:nowrap;color:#536174}.acPLMetrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}.acPLMetric{border:1px solid #e1e7ef;border-radius:10px;background:#fbfcfe;padding:10px}.acPLMetric strong{display:block;font-size:17px;color:#071b31}.acPLMetric span{font-size:11px;color:#64748b}.acPLMetric small{display:block;margin-top:3px;font-size:11px;color:#64748b}
-  .acPager{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #edf0f3}.acTarget{height:9px;border-radius:99px;background:#e9eef5;overflow:hidden;margin-top:8px}.acTarget i{display:block;height:100%;background:#c7a13b}.acFuture{background:#fff7e7;color:#8a5a05;font-size:12px;padding:5px 7px;border-radius:7px;display:inline-block;margin-top:4px}
-  @media(max-width:1050px){.acK{grid-template-columns:repeat(3,1fr)}.acPLMetrics{grid-template-columns:repeat(3,1fr)}.acForm{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:760px){.acGrid,.acForm{grid-template-columns:1fr}.acWide{grid-column:auto}.acK{grid-template-columns:repeat(2,1fr)}.acPLMetrics{grid-template-columns:repeat(2,1fr)}.acHero h2{font-size:21px}}
+  .acPager{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #edf0f3}.acTarget{height:9px;border-radius:99px;background:#e9eef5;overflow:hidden;margin-top:8px}.acTarget i{display:block;height:100%;background:#c7a13b}.acFuture{background:#fff7e7;color:#8a5a05;font-size:12px;padding:5px 7px;border-radius:7px;display:inline-block;margin-top:4px}.acPettyK{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.acPettyCard{border:1px solid #e1e7ef;border-radius:10px;padding:11px;background:#fbfcfe}.acPettyCard strong{display:block;font-size:18px;color:#071b31}.acPettyCard span{font-size:11px;color:#64748b;line-height:1.4}
+  @media(max-width:1050px){.acK{grid-template-columns:repeat(3,1fr)}.acPLMetrics{grid-template-columns:repeat(3,1fr)}.acPettyK{grid-template-columns:repeat(2,1fr)}.acForm{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:760px){.acGrid,.acForm{grid-template-columns:1fr}.acWide{grid-column:auto}.acK{grid-template-columns:repeat(2,1fr)}.acPLMetrics{grid-template-columns:repeat(2,1fr)}.acPettyK{grid-template-columns:1fr}.acHero h2{font-size:21px}}
   `;
   document.head.appendChild(s);
 }
@@ -109,10 +110,14 @@ async function loadData(){
     ['cats',db.from('accounting_categories').select('*').order('category_type').order('name').limit(1000)],
     ['rec',db.from('finance_reconciliations').select('*').order('created_at',{ascending:false}).limit(3000)],
     ['payments',db.from('payments').select('*').order('created_at',{ascending:false}).limit(5000)],
-    ['profiles',db.from('profiles').select('id,full_name,email').limit(5000)],
+    ['profiles',db.from('profiles').select('id,full_name,email,role,staff_number,job_title,department').limit(5000)],
     ['settings',db.from('finance_management_settings').select('*').eq('singleton',true).maybeSingle()],
     ['closes',db.from('finance_month_closes').select('*').order('month_start',{ascending:false}).limit(500)],
-    ['budgets',db.from('finance_monthly_budgets').select('*').order('month_start',{ascending:true}).limit(240)]
+    ['budgets',db.from('finance_monthly_budgets').select('*').order('month_start',{ascending:true}).limit(240)],
+    ['pettyFunds',db.from('finance_petty_cash_funds').select('*').order('created_at',{ascending:true}).limit(200)],
+    ['pettyMoves',db.from('finance_petty_cash_movements').select('*').order('movement_date',{ascending:false}).order('created_at',{ascending:false}).limit(5000)],
+    ['pettyVouchers',db.from('finance_petty_cash_vouchers').select('*').order('expense_date',{ascending:false}).order('created_at',{ascending:false}).limit(5000)],
+    ['pettyRecons',db.from('finance_petty_cash_reconciliations').select('*').order('reconciliation_date',{ascending:false}).order('created_at',{ascending:false}).limit(2000)]
   ];
   const results=await Promise.all(jobs.map(x=>x[1]));
   results.forEach((r,i)=>{
@@ -122,6 +127,7 @@ async function loadData(){
     loaded[key]=true;
   });
   if(!pnlFyYear)pnlFyYear=currentFyStartYear();
+  if((S.pettyFunds||[]).length&&!S.pettyFunds.some(x=>x.id===pettyFundId))pettyFundId=(S.pettyFunds.find(x=>x.status==='active')||S.pettyFunds[0]).id;
 }
 async function fetchPnl(from,to){
   const {data,error}=await db.rpc('get_admin_management_pnl',{p_from:from,p_to:to});
