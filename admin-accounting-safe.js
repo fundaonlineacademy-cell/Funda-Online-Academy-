@@ -348,6 +348,8 @@ function normalisePnl(raw={}){
   const directCosts=n(raw.direct_costs??sumGroup(expense,'Direct Costs'));
   const peopleCosts=n(raw.people_costs??sumGroup(expense,'People Costs'));
   const operatingExpenses=n(raw.operating_expenses??sumGroup(expense,'Operating Expenses'));
+  const ambassadorCommission=n(raw.ambassador_commission_cost||0),ambassadorBonus=n(raw.ambassador_achievement_bonus_cost||0),ambassadorPerformance=n(raw.ambassador_monthly_performance_cost||0);
+  const ambassadorCosts=n(raw.ambassador_costs??(ambassadorCommission+ambassadorBonus+ambassadorPerformance));
   const depreciation=n(raw.depreciation_amortisation??sumGroup(expense,'Depreciation & Amortisation'));
   const financeCosts=n(raw.finance_costs??sumGroup(expense,'Finance Costs'));
   const taxExpense=n(raw.tax_expense??sumGroup(expense,'Tax Expense'));
@@ -356,7 +358,7 @@ function normalisePnl(raw={}){
   else if(raw.other_expenses!=null&&depreciation===0&&financeCosts===0&&taxExpense===0&&otherExpenses===0)otherExpenses=n(raw.other_expenses);
 
   const grossProfit=turnover-directCosts;
-  const operatingBeforeDA=grossProfit+otherOperatingIncome-peopleCosts-operatingExpenses;
+  const operatingBeforeDA=grossProfit+otherOperatingIncome-peopleCosts-operatingExpenses-ambassadorCosts;
   const operatingProfit=operatingBeforeDA-depreciation;
   const profitBeforeTax=operatingProfit+financeIncome+otherIncome-financeCosts-otherExpenses;
   const netResult=profitBeforeTax-taxExpense;
@@ -365,11 +367,12 @@ function normalisePnl(raw={}){
     other_operating_income:otherOperatingIncome,finance_income:financeIncome,non_operating_income:otherIncome,
     other_income:otherOperatingIncome+financeIncome+otherIncome,
     direct_costs:directCosts,gross_profit:grossProfit,people_costs:peopleCosts,operating_expenses:operatingExpenses,
+    ambassador_commission_cost:ambassadorCommission,ambassador_achievement_bonus_cost:ambassadorBonus,ambassador_monthly_performance_cost:ambassadorPerformance,ambassador_costs:ambassadorCosts,
     depreciation_amortisation:depreciation,finance_costs:financeCosts,tax_expense:taxExpense,non_operating_expenses:otherExpenses,
     other_expenses:depreciation+financeCosts+taxExpense+otherExpenses,
     operating_profit_before_da:operatingBeforeDA,operating_profit:operatingProfit,profit_before_tax:profitBeforeTax,
     total_income:turnover+otherOperatingIncome+financeIncome+otherIncome,
-    total_expenses:directCosts+peopleCosts+operatingExpenses+depreciation+financeCosts+taxExpense+otherExpenses,
+    total_expenses:directCosts+peopleCosts+operatingExpenses+ambassadorCosts+depreciation+financeCosts+taxExpense+otherExpenses,
     net_result:netResult
   };
 }
@@ -405,11 +408,16 @@ function pnlDataRows(x,comp){
 
   addCategories('Operating Expenses','Operating Expenses','expense');
   push('Operating Expenses','Total Other Operating Expenses',x.operating_expenses,comp.operating_expenses,'subtotal');
+
+  push('Ambassador Programme Costs','Confirmed referral commissions',x.ambassador_commission_cost,comp.ambassador_commission_cost);
+  push('Ambassador Programme Costs','Achievement bonuses',x.ambassador_achievement_bonus_cost,comp.ambassador_achievement_bonus_cost);
+  push('Ambassador Programme Costs','Monthly performance payments',x.ambassador_monthly_performance_cost,comp.ambassador_monthly_performance_cost);
+  push('Ambassador Programme Costs','Total Ambassador Programme Costs',x.ambassador_costs,comp.ambassador_costs,'subtotal');
   push('Operating Result','Operating Profit before Depreciation & Amortisation',x.operating_profit_before_da,comp.operating_profit_before_da,'subtotal');
 
   addCategories('Depreciation & Amortisation','Depreciation & Amortisation','expense');
   push('Depreciation & Amortisation','Total Depreciation & Amortisation',x.depreciation_amortisation,comp.depreciation_amortisation,'subtotal');
-  push('Operating Expense Summary','TOTAL OPERATING EXPENSES',n(x.people_costs)+n(x.operating_expenses)+n(x.depreciation_amortisation),n(comp.people_costs)+n(comp.operating_expenses)+n(comp.depreciation_amortisation),'total');
+  push('Operating Expense Summary','TOTAL OPERATING EXPENSES',n(x.people_costs)+n(x.operating_expenses)+n(x.ambassador_costs)+n(x.depreciation_amortisation),n(comp.people_costs)+n(comp.operating_expenses)+n(comp.ambassador_costs)+n(comp.depreciation_amortisation),'total');
   push('Operating Result','OPERATING PROFIT / (LOSS)',x.operating_profit,comp.operating_profit,'total');
 
   addCategories('Finance Income','Finance Income','income');
@@ -455,7 +463,7 @@ function pnlMarkup(raw,rawComp,from,to,compFrom,compTo){
   return `
   <div class="acPanel acPL">
     <div class="acBar" style="justify-content:space-between"><div><h3>Management Profit & Loss Statement</h3><div class="acMeta">${day(from)} - ${day(to)} · comparison ${compareLabel} · ${x.period_status==='closed'?'Closed monthly snapshot':'Live management basis'}</div></div><div>${pill(x.period_status||'live')}</div></div>
-    <div class="acInfo"><b>Basis:</b> verified Student receipts are recognised from the approved Payments workflow; other posted income/expenses and approved accounting adjustments are recognised by their transaction date. Planned, voided, duplicate Student-payment ledger copies and future-dated posted transactions are excluded. This is a management P&L and is not a statutory tax return or a substitute for accountant year-end adjustments.</div>
+    <div class="acInfo"><b>Basis:</b> verified Student receipts are recognised from the approved Payments workflow; confirmed Ambassador commissions/rewards are recognised from the controlled Ambassador earnings ledger when earned; other posted income/expenses and approved accounting adjustments are recognised by their transaction date. Ambassador payouts are settlement of an already-recognised earning and are not counted again as a second expense. Planned, voided, reversed Ambassador earnings, duplicate Student-payment ledger copies and future-dated posted transactions are excluded. This is a management P&L and is not a statutory tax return or a substitute for accountant year-end adjustments.</div>
     ${n(x.future_posted_records)?'<div class="acWarn"><b>Future-dated items excluded:</b> '+n(x.future_posted_records)+' posted record(s), '+money(x.future_posted_amount)+', fall after today and are not recognised yet.</div>':''}
     <div class="acPLMetrics">
       <div class="acPLMetric"><strong>${money(x.turnover)}</strong><span>Turnover</span><small>Comparison ${money(comp.turnover)}</small></div>
@@ -470,7 +478,7 @@ function pnlMarkup(raw,rawComp,from,to,compFrom,compTo){
     </table></div>
     ${target!==null?'<div class="acPanel" style="margin-top:10px"><div class="acMeta">'+label+': <b>'+money(target)+'</b> · Actual turnover: <b>'+money(x.turnover)+'</b> · Revenue variance: <b>'+money(n(x.turnover)-target)+'</b></div><div class="acTarget"><i style="width:'+progress+'%"></i></div></div>':''}
     ${periodBudget?.months?'<div class="acGrid" style="margin-top:10px"><div class="acPanel"><h3>Budget vs Actual</h3><div class="acMeta">Revenue target: <b>'+money(periodBudget.revenue)+'</b></div><div class="acMeta">Actual turnover: <b>'+money(x.turnover)+'</b></div><div class="acMeta">Revenue variance: <b>'+money(n(x.turnover)-periodBudget.revenue)+'</b></div></div><div class="acPanel"><h3>Expense & Surplus Plan</h3><div class="acMeta">Expense budget: <b>'+money(periodBudget.expenses)+'</b></div><div class="acMeta">Actual expenses: <b>'+money(x.total_expenses)+'</b></div><div class="acMeta">Expense headroom / (overrun): <b>'+money(periodBudget.expenses-n(x.total_expenses))+'</b></div><div class="acMeta">Planned surplus: <b>'+money(periodBudget.plannedSurplus)+'</b> · Actual net profit/(loss): <b>'+money(x.net_result)+'</b></div><div class="acMeta">Minimum surplus target: <b>'+money(periodBudget.minimumSurplus)+'</b></div></div></div>':''}
-    <div class="acMeta" style="margin-top:8px">Verified payment records: ${n(x.verified_payment_records)} · Pending/unverified collections excluded: ${money(x.pending_collections)} · Posted non-payment income records: ${n(x.cash_income_records)} · Posted expense/adjustment records: ${n(x.cash_expense_records)}</div>
+    <div class="acMeta" style="margin-top:8px">Verified payment records: ${n(x.verified_payment_records)} · Pending/unverified collections excluded: ${money(x.pending_collections)} · Confirmed Ambassador earning records: ${n(x.ambassador_earning_records)} · Posted non-payment income records: ${n(x.cash_income_records)} · Posted expense/adjustment records: ${n(x.cash_expense_records)}</div>
     <div class="acBar"><button class="acBtn" id="acExcelPL">Download Excel (.xlsx)</button><button class="acBtn" id="acPdfPL">Download PDF</button>${canClose?'<button class="acBtn ok" id="acCloseMonth">Close Month</button>':''}${close?'<button class="acBtn alt" id="acReopenMonth">Reopen Month</button>':''}</div>
   </div>`;
 }
