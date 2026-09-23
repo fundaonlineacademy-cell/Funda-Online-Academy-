@@ -733,6 +733,7 @@ function pettyReportRows(fund,month){
       sort:x.movement_date+'T'+(x.created_at||''),
       Date:day(x.movement_date),Record:'Fund movement',Reference:x.reference_number||'',Category:'',Payee:'',
       Description:String(x.movement_type||'').replaceAll('_',' ')+(x.notes?' · '+x.notes:''),
+      'Gross Amount (R)':0,'VAT Treatment':'Not applicable','VAT Component (R)':0,'Net Before VAT (R)':0,
       'Inflow (R)':Math.max(0,effect),'Outflow (R)':Math.max(0,-effect),Status:x.status,Evidence:'',effect
     });
   }
@@ -741,7 +742,9 @@ function pettyReportRows(fund,month){
     events.push({
       sort:x.expense_date+'T'+(x.created_at||''),
       Date:day(x.expense_date),Record:'Voucher',Reference:x.voucher_number,Category:x.category,Payee:x.payee||'',
-      Description:x.description,'Inflow (R)':0,'Outflow (R)':outflow,Status:x.status,Evidence:x.receipt_url||x.evidence_note||'',effect:-outflow
+      Description:x.description,'Gross Amount (R)':n(x.amount),'VAT Treatment':vatLabel(x.vat_treatment),
+      'VAT Component (R)':n(x.vat_amount),'Net Before VAT (R)':n(x.net_amount),
+      'Inflow (R)':0,'Outflow (R)':outflow,Status:x.status,Evidence:x.receipt_url||x.evidence_note||'',effect:-outflow
     });
   }
   let running=opening;
@@ -758,12 +761,16 @@ async function exportPettyCash(format){
   pettyReportMonth=$('pcReportMonth')?.value||pettyReportMonth;
   if(!pettyReportMonth)return alert('Choose the report month.');
   const api=window.FundaReportExports;if(!api)return alert('The formal report export service is still loading. Please try again.');
-  const data=pettyReportRows(fund,pettyReportMonth),closing=pettyBalance(fund.id,data.to);
-  const postedExpenses=(S.pettyVouchers||[]).filter(x=>x.fund_id===fund.id&&low(x.status)==='posted'&&x.expense_date>=data.from&&x.expense_date<=data.to).reduce((a,x)=>a+n(x.amount),0);
+  const data=pettyReportRows(fund,pettyReportMonth),closing=pettyBalance(fund.id,data.to),account=pettyAccount(fund.petty_account_id);
+  const posted=(S.pettyVouchers||[]).filter(x=>x.fund_id===fund.id&&low(x.status)==='posted'&&x.expense_date>=data.from&&x.expense_date<=data.to);
+  const postedExpenses=posted.reduce((a,x)=>a+n(x.amount),0),trackedVat=posted.reduce((a,x)=>a+n(x.vat_amount),0);
   const report={title:'Petty Cash Register — '+fund.fund_name,rows:data.rows,summary:[
-    ['Month',pettyReportMonth],['Custodian',fund.custodian_profile_id?pettyProfileName(fund.custodian_profile_id):(fund.custodian_name||'Not assigned')],
-    ['Authorised float',money(fund.authorized_float)],['Opening system balance',money(data.opening)],['Posted petty cash expenses',money(postedExpenses)],
-    ['Closing system balance',money(closing)],['Pending vouchers',money(pettyPendingTotal(fund.id))]
+    ['Month',pettyReportMonth],['Petty Cash Account',(account?.account_code||'')+' · '+(account?.account_name||'—')],
+    ['Cost Control Reference',fund.cost_control_reference||'—'],['Cost Owner',pettyOwnerLabel(fund)],
+    ['Purpose',fund.purpose_reason||'—'],['Default VAT Handling',vatLabel(fund.default_vat_treatment)],
+    ['Custodian',fund.custodian_profile_id?pettyProfileName(fund.custodian_profile_id):(fund.custodian_name||'Not assigned')],
+    ['Authorised Amount (ZAR)',money(fund.authorized_float)],['Opening system balance',money(data.opening)],['Posted petty cash expenses',money(postedExpenses)],
+    ['Tracked VAT component',money(trackedVat)],['Closing system balance',money(closing)],['Pending vouchers',money(pettyPendingTotal(fund.id))]
   ]};
   try{
     const fileName=format==='xlsx'?await api.exportExcel(report,{from:data.from,to:data.to,scope:'period'}):await api.exportPdf(report,{from:data.from,to:data.to,scope:'period'});
