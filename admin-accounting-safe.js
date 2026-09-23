@@ -1750,9 +1750,20 @@ function wire(){
     $('budNext').onclick=()=>{budgetPage++;render('targets')};
   }
   if(tab==='reports'){
-    $('cashExcel').onclick=()=>exportCashbook('xlsx');
-    $('cashPdf').onclick=()=>exportCashbook('pdf');
-    $('acReports2').onclick=()=>window.openFundaReportCentre?.('finance');
+    $('mrMode')?.addEventListener('change',()=>{
+      managementReportMode=$('mrMode').value;
+      managementReportData=null;
+      render('reports');
+    });
+    $('mrGenerate')?.addEventListener('click',async()=>{
+      if($('mrMonth'))managementReportMonth=$('mrMonth').value;
+      if($('mrFy'))managementReportFyYear=Number($('mrFy').value);
+      if($('mrFrom'))managementReportFrom=$('mrFrom').value;
+      if($('mrTo'))managementReportTo=$('mrTo').value;
+      await generateManagementReports();
+    });
+    $('acReports2')?.addEventListener('click',()=>window.openFundaReportCentre?.('finance'));
+    wireManagementReportDownloads();
   }
 }
 function wirePnl(from,to){
