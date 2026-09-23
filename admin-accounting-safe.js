@@ -10,7 +10,7 @@ let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settin
 let errors=[];
 let tab='overview',cashPage=1,plannedPage=1,reconPage=1;
 let pnlMode='monthly',pnlMonth=new Date().toISOString().slice(0,7),pnlDay=new Date().toISOString().slice(0,10),pnlFyYear=null,pnlFrom='',pnlTo='';
-let currentMonthPnl=null,currentFyPnl=null,currentPnl=null;
+let currentMonthPnl=null,currentFyPnl=null,currentPnl=null,currentPnlComparison=null,currentPnlComparisonRange=null;
 const PAGE_SIZE=10;
 const $=x=>document.getElementById(x);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -43,10 +43,10 @@ function css(){
   .acInput{min-width:150px;flex:1}.acText{min-height:78px;width:100%;resize:vertical}.acGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.acForm{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.acWide{grid-column:1/-1}
   .acTableWrap{overflow:auto}.acTable{width:100%;border-collapse:collapse;font-size:13px;line-height:1.45}.acTable th,.acTable td{padding:10px;border-bottom:1px solid #edf0f3;text-align:left;vertical-align:top}.acTable th{font-size:11px;text-transform:uppercase;color:#64748b;letter-spacing:.04em;background:#f8fafc}
   .acPill{display:inline-block;padding:4px 8px;border-radius:99px;background:#edf2f7;font-size:11px;font-weight:800;text-transform:capitalize}.acPill.income,.acPill.reconciled,.acPill.posted,.acPill.closed{background:#e5f6ef;color:#176b50}.acPill.expense,.acPill.voided{background:#ffe7e7;color:#9d2828}.acPill.unreconciled,.acPill.planned,.acPill.reopened{background:#fff2d2;color:#8a5a05}
-  .acSection h3{margin:4px 0 8px;color:#071b31;font-size:17px}.acPL{max-width:980px}.acPL tr.total td{font-weight:900;border-top:2px solid #071b31}.acPL tr.subtotal td{font-weight:800;background:#f8fafc}.acPL tr.net td{font-size:15px;font-weight:900;background:#f8f4e8}.acPL tr.section td{font-weight:900;color:#0b315c;background:#eef4fb}
+  .acSection h3{margin:4px 0 8px;color:#071b31;font-size:17px}.acPL{max-width:1280px}.acPL tr.total td{font-weight:900;border-top:2px solid #071b31}.acPL tr.subtotal td{font-weight:800;background:#f8fafc}.acPL tr.net td{font-size:15px;font-weight:900;background:#f8f4e8;border-top:2px solid #c7a13b}.acPL tr.section td{font-weight:900;color:#0b315c;background:#eef4fb}.acPL .acNum{text-align:right;white-space:nowrap}.acPL .acPct{text-align:right;white-space:nowrap;color:#536174}.acPLMetrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}.acPLMetric{border:1px solid #e1e7ef;border-radius:10px;background:#fbfcfe;padding:10px}.acPLMetric strong{display:block;font-size:17px;color:#071b31}.acPLMetric span{font-size:11px;color:#64748b}.acPLMetric small{display:block;margin-top:3px;font-size:11px;color:#64748b}
   .acPager{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #edf0f3}.acTarget{height:9px;border-radius:99px;background:#e9eef5;overflow:hidden;margin-top:8px}.acTarget i{display:block;height:100%;background:#c7a13b}.acFuture{background:#fff7e7;color:#8a5a05;font-size:12px;padding:5px 7px;border-radius:7px;display:inline-block;margin-top:4px}
   @media(max-width:1050px){.acK{grid-template-columns:repeat(3,1fr)}.acForm{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:760px){.acGrid,.acForm{grid-template-columns:1fr}.acWide{grid-column:auto}.acK{grid-template-columns:repeat(2,1fr)}.acHero h2{font-size:21px}}
+  @media(max-width:760px){.acGrid,.acForm{grid-template-columns:1fr}.acWide{grid-column:auto}.acK{grid-template-columns:repeat(2,1fr)}.acPLMetrics{grid-template-columns:repeat(2,1fr)}.acHero h2{font-size:21px}}
   `;
   document.head.appendChild(s);
 }
@@ -61,9 +61,8 @@ function firstFyStart(){
   const x=settings().financial_year_anchor||'2026-10-01';
   return Number(String(x).slice(0,4))||2026;
 }
-function currentFyStartYear(){
-  const anchorYear=firstFyStart(),m=settings().fiscal_year_start_month||10,d=new Date();
-  if(d.toISOString().slice(0,10)<(settings().financial_year_anchor||'2026-10-01'))return anchorYear;
+function currentFyStartYear(dateValue=new Date()){
+  const m=settings().fiscal_year_start_month||10,d=new Date(dateValue);
   return d.getMonth()+1>=m?d.getFullYear():d.getFullYear()-1;
 }
 function fyRange(year){
@@ -76,6 +75,21 @@ function monthRange(v){
   const [y,m]=String(v).split('-').map(Number);
   const a=new Date(y,m-1,1),b=new Date(y,m,0);
   return [a.toISOString().slice(0,10),b.toISOString().slice(0,10)];
+}
+function isoDate(d){return new Date(d).toISOString().slice(0,10)}
+function shiftDays(v,days){const d=new Date(v+'T12:00:00');d.setDate(d.getDate()+days);return isoDate(d)}
+function daysInclusive(from,to){return Math.max(1,Math.round((new Date(to+'T12:00:00')-new Date(from+'T12:00:00'))/86400000)+1)}
+function comparisonRange(from,to){
+  if(pnlMode==='monthly'){
+    const d=new Date(from+'T12:00:00');d.setMonth(d.getMonth()-1);
+    return monthRange(isoDate(d).slice(0,7));
+  }
+  if(pnlMode==='daily')return [shiftDays(from,-1),shiftDays(to,-1)];
+  if(pnlMode==='financial_year'){
+    const y=Number(String(from).slice(0,4));return fyRange(y-1);
+  }
+  const days=daysInclusive(from,to),end=shiftDays(from,-1);
+  return [shiftDays(end,-days+1),end];
 }
 function selectedPnlRange(){
   if(pnlMode==='monthly')return monthRange(pnlMonth);
@@ -135,11 +149,12 @@ function futurePosted(){
 function plannedRows(){return S.cash.filter(x=>low(x.posting_status)==='planned')}
 function voidedRows(){return S.cash.filter(x=>low(x.posting_status)==='voided')}
 function options(type){
-  return S.cats.filter(x=>x.active&&x.category_type===type).map(x=>'<option value="'+esc(x.name)+'">'+esc(x.name)+'</option>').join('');
+  const blockedIncome=new Set(['tuition fees','registration fees']);
+  return S.cats.filter(x=>x.active&&x.category_type===type&&!(type==='income'&&blockedIncome.has(low(x.name)))).map(x=>'<option value="'+esc(x.name)+'">'+esc(x.name)+'</option>').join('');
 }
 function fyOptions(){
-  const first=firstFyStart(),cur=Math.max(first,currentFyStartYear()),years=[];
-  for(let y=first;y<=cur+3;y++)years.push(y);
+  const cur=currentFyStartYear(),first=Math.min(firstFyStart(),cur),years=[];
+  for(let y=first;y<=Math.max(firstFyStart(),cur)+3;y++)years.push(y);
   return years.map(y=>'<option value="'+y+'" '+(Number(pnlFyYear)===y?'selected':'')+'>FY '+y+'/'+String(y+1).slice(-2)+' (1 Oct - 30 Sep)</option>').join('');
 }
 function loadWarning(){
