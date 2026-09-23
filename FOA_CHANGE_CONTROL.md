@@ -241,6 +241,11 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - No Student/Ambassador access is broadened accidentally.
 
 ### Ambassador
+- **System-wide audited lock — 23 September 2026:** the complete Ambassador system is protected at audited runtime checkpoint `57fa9d7f64ea1e710c8d184716f5019f1d0bbd0d`. See `AMBASSADOR_SYSTEM_LOCK_2026_09_23.md`.
+- Future Ambassador work requires explicit owner reopening of the exact affected area. Approval to work elsewhere in FOA is not permission to alter Ambassador programme/application/login/portal/referral/earnings/banking/support/security behaviour.
+- Preserve the canonical navigation with one destination each for My Earnings, My Banking and Announcements. Do not restore the removed duplicate Earnings Breakdown, Bank Details or Notifications entries.
+- Preserve the audited live-reconciliation architecture, Source Sans 3 professional presentation, privacy boundaries, direct Student Account Creation referral route, server-side eligibility chain and masked banking behaviour unless the owner explicitly changes that standard.
+- Dynamic records remain live; the lock protects structure, rules, security and behaviour rather than freezing business activity.
 - Public programme and dedicated application/agreement journey remain intact.
 - Application status keeps the approved pending/waitlisted/declined/approved boundaries.
 - Ambassador Login, Forgot Password, successful portal entry and Logout return paths remain correct.
