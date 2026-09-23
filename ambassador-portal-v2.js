@@ -40,7 +40,7 @@ const MARKETING_RESOURCES_PER_PAGE=6;
 
 let ambassadorLiveChannel=null,ambassadorLiveStarted=false,ambassadorRefreshTimer=null,ambassadorRefreshDebounce=null,ambassadorRefreshInFlight=false,ambassadorRefreshPending=false,ambassadorLastRefreshAt=0;
 const AMBASSADOR_AUTO_REFRESH_MS=300000;
-const AMBASSADOR_READ_ONLY_SECTIONS=new Set(['dashboard','guide','referrals','earnings','rank','compensation','payments','marketing','announcements','referral-link']);
+const AMBASSADOR_READ_ONLY_SECTIONS=new Set(['dashboard','guide','referrals','earnings','rank','compensation','payments','marketing','announcements','support','referral-link']);
 
 function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
 function fmt(v){if(!v)return '—';try{return new Date(v).toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'})}catch{return '—'}}
