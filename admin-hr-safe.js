@@ -3,8 +3,8 @@
 if(!/admin-v2\.html$/i.test(location.pathname))return;
 window.__fundaHrAuthoritativeLoader=true;
 
-let db,D={},loadErrors=[],currentTab='team',workforceMonth='2026-10-01',workforceSummary=null,workforceSummaryError='',workforceEditId=null;
-const PAGE_SIZE=10,pages={team:1,invitations:1,contracts:1,documents:1,leave:1,safety:1,training:1,performance:1,workforce:1,audit:1};
+let db,D={},loadErrors=[],currentTab='team',workforceMonth='2026-10-01',workforceSummary=null,workforceSummaryError='',workforceEditId=null,disciplinaryCaseId=null;
+const PAGE_SIZE=10,pages={team:1,invitations:1,contracts:1,documents:1,leave:1,safety:1,training:1,performance:1,workforce:1,disciplinary:1,disciplinaryEvents:1,audit:1};
 const $=x=>document.getElementById(x);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const low=v=>String(v||'').toLowerCase();
@@ -56,9 +56,9 @@ function css(){
   .hrDeptCard h4{margin:0 0 5px;color:#071b31;font-size:14px}
   .hrDeptCard p{margin:0;color:#526275;font-size:13px;line-height:1.5}
   .hrDeptCard small{display:block;margin-top:6px;color:#64748b;font-size:12px;line-height:1.45}
-  .hrMoney{text-align:right;white-space:nowrap}.hrPlanningGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:10px 0}.hrPlanCard{border:1px solid #e1dac9;border-radius:10px;padding:12px;background:#fbfcfe}.hrPlanCard strong{display:block;color:#071b31;font-size:18px}.hrPlanCard span{font-size:12px;color:#64748b;line-height:1.45}.hrConfidential{margin:10px 0;padding:10px 12px;border:1px solid #d7e3f0;border-radius:9px;background:#f6f9fd;color:#536174;font-size:13px;line-height:1.5}
-  @media(max-width:1050px){.hrK{grid-template-columns:repeat(3,1fr)}.hrPlanningGrid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:760px){.hrGrid{grid-template-columns:1fr}.hrK{grid-template-columns:repeat(2,1fr)}.hrDeptGrid,.hrPlanningGrid{grid-template-columns:1fr}.hrTable{font-size:12px}.hrHero h2{font-size:21px}}
+  .hrMoney{text-align:right;white-space:nowrap}.hrPlanningGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:10px 0}.hrPlanCard{border:1px solid #e1dac9;border-radius:10px;padding:12px;background:#fbfcfe}.hrPlanCard strong{display:block;color:#071b31;font-size:18px}.hrPlanCard span{font-size:12px;color:#64748b;line-height:1.45}.hrConfidential{margin:10px 0;padding:10px 12px;border:1px solid #d7e3f0;border-radius:9px;background:#f6f9fd;color:#536174;font-size:13px;line-height:1.5}.hrProcess{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:10px 0}.hrProcessStep{border:1px solid #dce5ef;border-radius:9px;background:#f8fbff;padding:10px}.hrProcessStep b{display:block;color:#0b315c;font-size:12px;margin-bottom:4px}.hrProcessStep span{font-size:11px;line-height:1.4;color:#64748b}.hrCaseBox{border:1px solid #d9d1bf;border-radius:10px;padding:12px;margin-top:10px;background:#fff}.hrCaseBox h4{margin:0 0 8px;color:#071b31;font-size:15px}.hrCaseTimeline{border-left:2px solid #dce5ef;margin:8px 0 8px 8px;padding-left:13px}.hrCaseEvent{margin:0 0 10px}.hrCaseEvent b{display:block;color:#071b31;font-size:12px}.hrCaseEvent span{display:block;color:#64748b;font-size:12px;line-height:1.45}
+  @media(max-width:1050px){.hrK{grid-template-columns:repeat(3,1fr)}.hrPlanningGrid{grid-template-columns:repeat(2,1fr)}.hrProcess{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:760px){.hrGrid{grid-template-columns:1fr}.hrK{grid-template-columns:repeat(2,1fr)}.hrDeptGrid,.hrPlanningGrid,.hrProcess{grid-template-columns:1fr}.hrTable{font-size:12px}.hrHero h2{font-size:21px}}
   `;
   document.head.appendChild(s);
 }
@@ -80,6 +80,9 @@ async function load(){
     ['hr_workforce_plans','*','created_at'],
     ['hr_compensation_guidance','*','department'],
     ['hr_compensation_floor','*','effective_date'],
+    ['hr_disciplinary_rules','*','sort_order'],
+    ['hr_disciplinary_cases','*','created_at'],
+    ['hr_disciplinary_events','*','event_at'],
     ['hr_audit_log','*','created_at']
   ];
   await Promise.all(specs.map(async([name,fields,order])=>{
@@ -380,6 +383,127 @@ function workforcePanel(){
     <table class="hrTable"><tr><th>Role / Department</th><th>Model</th><th>Rate Basis</th><th>Headcount</th><th>Base Cost</th><th>On-costs</th><th>Monthly Cost</th><th>Planned Period</th><th>Status</th><th>Notes</th><th>Action</th></tr>${workforceRows()}</table>
     ${pager('workforce',plans.length,'workforce plans')}`;
 }
+function disciplinaryRule(id){return (D.hr_disciplinary_rules||[]).find(x=>x.id===id)||null}
+function disciplinaryStaffOpts(selected=''){
+  return '<option value="">Select Staff member</option>'+(D.profiles||[]).filter(p=>low(p.role)==='staff').map(p=>'<option value="'+esc(p.id)+'" '+(p.id===selected?'selected':'')+'>'+esc(p.full_name||p.email)+' · '+esc(p.staff_number||p.job_title||'Staff')+'</option>').join('');
+}
+function disciplinaryRuleOpts(selected=''){
+  return '<option value="">Select alleged rule / category</option>'+(D.hr_disciplinary_rules||[]).filter(x=>x.active).sort((a,b)=>n(a.sort_order)-n(b.sort_order)).map(r=>'<option value="'+esc(r.id)+'" '+(r.id===selected?'selected':'')+'>'+esc(r.rule_code)+' · '+esc(r.category)+' — '+esc(r.rule_title)+'</option>').join('');
+}
+function disciplinaryStatus(v){return String(v||'').replaceAll('_',' ')}
+function disciplinaryNextStep(x){
+  const st=low(x.status);
+  if(st==='investigating')return x.process_route==='informal'?'Record response / informal correction or escalate to formal notice':'Complete investigation, then issue notice or withdraw';
+  if(st==='notice_issued')return 'Record employee response/opportunity';
+  if(st==='response_recorded')return 'Schedule meeting/enquiry or record outcome';
+  if(st==='meeting_scheduled'||st==='outcome_pending')return 'Record finding and fair outcome';
+  if(st==='outcome_issued')return 'Close case or record internal review/appeal if requested';
+  if(st==='review_requested')return 'Decide internal review/appeal';
+  if(st==='closed')return 'Closed';
+  if(st==='withdrawn')return 'Withdrawn';
+  return 'Review case';
+}
+function disciplinaryCaseRows(){
+  const rows=D.hr_disciplinary_cases||[];
+  return paged(rows,'disciplinary').map(x=>{
+    const rule=disciplinaryRule(x.rule_id),p=prof(x.profile_id);
+    return `<tr>
+      <td><b>${esc(x.case_number)}</b><div class="hrMeta">${esc(x.allegation_title)}</div></td>
+      <td>${esc(p.full_name||p.email||'Staff')}<div class="hrMeta">${esc(p.staff_number||p.job_title||'')}</div></td>
+      <td>${esc(rule?.category||'Other')}<div class="hrMeta">${esc(rule?.rule_code||'')}</div></td>
+      <td>${esc(x.severity_assessment)}</td>
+      <td><span class="hrPill ${low(x.status)}">${esc(disciplinaryStatus(x.status).toUpperCase())}</span><div class="hrMeta">${esc(x.process_route)} route</div></td>
+      <td>${esc(disciplinaryNextStep(x))}</td>
+      <td><button class="hrBtn alt" data-disciplinary-open="${x.id}">Open Case</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="7">No staff disciplinary cases recorded.</td></tr>';
+}
+function disciplinaryTimeline(caseId){
+  const rows=(D.hr_disciplinary_events||[]).filter(x=>x.case_id===caseId);
+  const pg=paged(rows,'disciplinaryEvents');
+  const html=pg.map(e=>{
+    const evidence=safeUrl(e.evidence_url);
+    return `<div class="hrCaseEvent"><b>${fmt(e.event_at)} · ${esc(String(e.event_type).replaceAll('_',' '))}</b><span>${esc(e.notes)}</span>${evidence?'<span><a href="'+esc(evidence)+'" target="_blank" rel="noopener">Open evidence ↗</a></span>':''}</div>`;
+  }).join('')||'<div class="hrMeta">No case-history events recorded yet.</div>';
+  return '<div class="hrCaseTimeline">'+html+'</div>'+pager('disciplinaryEvents',rows.length,'case events');
+}
+function disciplinaryGuide(){
+  return `<div class="hrConfidential"><b>Staff discipline only.</b> This workspace is for employees/Staff, not learners. An allegation is not a finding of guilt. Poor performance, illness, injury or other incapacity must not be disguised as misconduct; route those matters through the appropriate performance/incapacity process.</div>
+    <div class="hrProcess">
+      <div class="hrProcessStep"><b>1 · Establish facts</b><span>Record the alleged rule, facts, evidence and the employee explanation. Do not assume guilt.</span></div>
+      <div class="hrProcessStep"><b>2 · Choose proportionate route</b><span>Minor issues may be corrected informally. Repeated/serious allegations may require formal discipline.</span></div>
+      <div class="hrProcessStep"><b>3 · Fair notice & response</b><span>Explain the allegation, allow reasonable preparation, representation and reasonable language assistance.</span></div>
+      <div class="hrProcessStep"><b>4 · Finding & sanction</b><span>Consider rule validity, awareness, harm, seriousness, progressive discipline, mitigation and consistency.</span></div>
+      <div class="hrProcessStep"><b>5 · Written outcome & rights</b><span>Record reasons. Dismissal is not automatic and must not trigger system offboarding by itself.</span></div>
+    </div>
+    <div class="hrMeta">Legal reference: South African <a href="https://www.gov.za/sites/default/files/gcis_document/202509/53294gen3470.pdf" target="_blank" rel="noopener">Code of Practice: Dismissal (4 September 2025) ↗</a>. External dispute-referral rights remain unaffected by an internal review/appeal. CCMA guidance records the usual referral periods as 30 days for unfair dismissal and 90 days for unfair labour-practice disputes, subject to the LRA, jurisdiction and condonation rules; HR should verify the current facts and forum before giving case-specific advice.</div>`;
+}
+function disciplinarySelectedCase(){
+  const x=(D.hr_disciplinary_cases||[]).find(r=>r.id===disciplinaryCaseId);
+  if(!x)return '';
+  const rule=disciplinaryRule(x.rule_id),p=prof(x.profile_id),st=low(x.status);
+  const active=!['closed','withdrawn'].includes(st);
+  const noticeSection=st==='investigating'? `<div class="hrCaseBox"><h4>Formal Notice — if informal correction is not appropriate</h4><div class="hrGrid">
+      <textarea class="hrText" id="hdNotice" placeholder="Explain the allegation in enough detail for the employee to understand and answer it.">${esc(x.notice_details||'')}</textarea>
+      <div><label class="hrMeta">Preparation / response deadline<input class="hrInput" id="hdDeadline" type="datetime-local"></label><input class="hrInput" id="hdLanguage" placeholder="Preferred language / language assistance"></div>
+      <label class="hrMeta"><input type="checkbox" id="hdUnionRole"> Employee is a trade-union representative / office-bearer</label>
+      <label class="hrMeta">Union consultation date/time (required if above is ticked)<input class="hrInput" id="hdUnionConsult" type="datetime-local"></label>
+    </div><button class="hrBtn" id="hdIssueNotice">Issue Formal Notice</button></div>`:'';
+
+  const informalSection=st==='investigating'? `<div class="hrCaseBox"><h4>Informal Correction — minor matters only</h4><div class="hrMeta">Use when advice/correction is proportionate. Record the employee response first. This closes the case as corrective action, not as a formal warning.</div><div class="hrGrid"><textarea class="hrText" id="hdInformalResponse" placeholder="Employee explanation / response"></textarea><textarea class="hrText" id="hdInformalCorrection" placeholder="Advice, counselling or correction given"></textarea></div><button class="hrBtn alt" id="hdInformal">Record Informal Correction & Close</button></div>`:'';
+
+  const responseSection=st==='notice_issued'? `<div class="hrCaseBox"><h4>Employee Response & Representation</h4><div class="hrGrid">
+      <select class="hrSelect" id="hdResponseStatus"><option value="provided">Response provided</option><option value="declined">Employee declined to respond</option><option value="no_response_after_opportunity">No response after reasonable opportunity</option></select>
+      <select class="hrSelect" id="hdRepType"><option value="none">No representative</option><option value="fellow_employee">Fellow employee</option><option value="trade_union_representative">Trade union representative</option><option value="other_approved">Other approved representative</option></select>
+      <input class="hrInput" id="hdRepName" placeholder="Representative name, if any">
+      <input class="hrInput" id="hdRespLanguage" value="${esc(x.preferred_language||'')}" placeholder="Preferred language">
+      <label class="hrMeta"><input type="checkbox" id="hdInterpreter"> Interpreter / language assistance required</label>
+      <textarea class="hrText" id="hdResponse" placeholder="Employee response / representations"></textarea>
+    </div><button class="hrBtn" id="hdSaveResponse">Record Employee Response</button></div>`:'';
+
+  const meetingSection=['response_recorded','meeting_scheduled'].includes(st)? `<div class="hrCaseBox"><h4>Meeting / Enquiry</h4><div class="hrGrid"><label class="hrMeta">Meeting date/time<input class="hrInput" id="hdMeetingAt" type="datetime-local"></label><input class="hrInput" id="hdChair" value="${esc(x.chairperson_name||'')}" placeholder="Chairperson / decision-maker"><textarea class="hrText" id="hdMeetingNote" placeholder="Meeting/investigation note or evidence summary"></textarea><input class="hrInput" id="hdMeetingEvidence" placeholder="Evidence URL (https://...)"></div><div class="hrBar"><button class="hrBtn" id="hdSchedule">Schedule / Record Meeting</button><button class="hrBtn alt" id="hdAddMeetingNote">Add Meeting Note / Evidence</button></div></div>`:'';
+
+  const outcomeSection=['response_recorded','meeting_scheduled','outcome_pending'].includes(st)? `<div class="hrCaseBox"><h4>Finding & Outcome</h4><div class="hrGrid">
+      <select class="hrSelect" id="hdFinding"><option value="not_substantiated">Not substantiated</option><option value="partly_substantiated">Partly substantiated</option><option value="substantiated">Substantiated</option><option value="withdrawn">Withdrawn</option></select>
+      <select class="hrSelect" id="hdSanction"><option value="none">No sanction</option><option value="verbal_warning">Verbal warning</option><option value="written_warning">Written warning</option><option value="final_written_warning">Final written warning</option><option value="dismissal">Dismissal</option><option value="other">Other proportionate outcome</option></select>
+      <label class="hrMeta">Warning valid until (if applicable)<input class="hrInput" id="hdWarningUntil" type="date"></label>
+      <textarea class="hrText" id="hdOutcomeReason" placeholder="Written reasons: facts, rule, finding and why this outcome is proportionate"></textarea>
+      <textarea class="hrText" id="hdMitigating" placeholder="Mitigating factors: service, record, circumstances, acknowledgement/correction, etc."></textarea>
+      <textarea class="hrText" id="hdAggravating" placeholder="Aggravating factors / actual or potential harm"></textarea>
+      <textarea class="hrText" id="hdConsistency" placeholder="Consistency with comparable cases / why any difference is justified"></textarea>
+      <textarea class="hrText" id="hdRelationship" placeholder="If dismissal is considered: why continued employment is intolerable"></textarea>
+      <label class="hrMeta"><input type="checkbox" id="hdExternalRights"> Employee informed of applicable external dispute-referral rights</label>
+    </div><div class="hrAlert"><b>No automatic dismissal/offboarding:</b> recording “dismissal” here does not disable the Staff account, end a contract or stop payroll. Those actions remain separate and must only follow a lawful final employment decision.</div><button class="hrBtn bad" id="hdOutcome">Record Finding & Outcome</button></div>`:'';
+
+  const reviewSection=st==='outcome_issued'? `<div class="hrCaseBox"><h4>Internal Review / Appeal — if requested</h4><textarea class="hrText" id="hdReviewGrounds" placeholder="Employee's grounds for internal review / appeal"></textarea><div class="hrBar"><button class="hrBtn alt" id="hdReviewRequest">Record Review / Appeal Request</button><button class="hrBtn" id="hdCloseCase">Close Case Without Internal Review</button></div><div class="hrMeta">An internal review does not remove or delay any statutory right the employee may have to refer an external dispute.</div></div>`:'';
+
+  const reviewDecision=st==='review_requested'? `<div class="hrCaseBox"><h4>Internal Review Decision</h4><div class="hrGrid"><select class="hrSelect" id="hdReviewDecision"><option value="upheld">Outcome upheld</option><option value="varied">Outcome varied</option><option value="overturned">Outcome overturned</option><option value="remitted">Remit for reconsideration</option></select><textarea class="hrText" id="hdReviewNotes" placeholder="Reasons for review decision"></textarea></div><button class="hrBtn" id="hdDecideReview">Record Review Decision</button></div>`:'';
+
+  return `<div class="hrCaseBox"><div class="hrBar" style="justify-content:space-between"><div><h3 style="margin:0">${esc(x.case_number)} · ${esc(x.allegation_title)}</h3><div class="hrMeta">${esc(p.full_name||p.email||'Staff')} · incident ${esc(x.incident_date)} · ${esc(rule?.rule_code||'')} ${esc(rule?.category||'')}</div></div><span class="hrPill ${st}">${esc(disciplinaryStatus(x.status).toUpperCase())}</span></div>
+    <div class="hrGrid"><div><b>Alleged facts</b><div class="hrMeta">${esc(x.allegation_details)}</div></div><div><b>Rule / standard</b><div class="hrMeta">${esc(x.workplace_rule||rule?.rule_title||'Not recorded')}</div></div><div><b>Preliminary severity</b><div class="hrMeta">${esc(x.severity_assessment)}</div></div><div><b>Next step</b><div class="hrMeta">${esc(disciplinaryNextStep(x))}</div></div></div>
+    ${rule?.guidance?'<div class="hrConfidential"><b>Category guidance:</b> '+esc(rule.guidance)+'</div>':''}
+    <div class="hrBar"><button class="hrBtn alt" id="hdBack">← Back to case register</button>${active?'<button class="hrBtn bad" id="hdWithdraw">Withdraw Case</button>':''}</div>
+    <div class="hrCaseBox"><h4>Investigation / Evidence Note</h4><div class="hrGrid"><textarea class="hrText" id="hdEventNote" placeholder="Investigation fact, witness/evidence note, or other relevant case information"></textarea><input class="hrInput" id="hdEvidenceUrl" placeholder="Evidence URL (optional, https://...)"></div><button class="hrBtn alt" id="hdAddEvent">Add Case Note / Evidence</button></div>
+    ${informalSection}${noticeSection}${responseSection}${meetingSection}${outcomeSection}${reviewSection}${reviewDecision}
+    <div class="hrCaseBox"><h4>Case History</h4>${disciplinaryTimeline(x.id)}</div>
+  </div>`;
+}
+function disciplinaryPanel(){
+  const cases=D.hr_disciplinary_cases||[];
+  if(disciplinaryCaseId)return disciplinaryGuide()+disciplinarySelectedCase();
+  return `${disciplinaryGuide()}
+    <div class="hrCaseBox"><h3>Open Staff Conduct Case</h3><div class="hrAlert"><b>Attendance example:</b> use this only for alleged <i>unauthorised</i> absence, repeated lateness or failure to follow a known reporting procedure after checking the reason. Approved leave, illness or genuine incapacity is not automatically misconduct.</div><div class="hrGrid">
+      <select class="hrSelect" id="hdStaff">${disciplinaryStaffOpts()}</select>
+      <select class="hrSelect" id="hdRule">${disciplinaryRuleOpts()}</select>
+      <input class="hrInput" id="hdTitle" placeholder="Allegation title">
+      <label class="hrMeta">Incident date<input class="hrInput" id="hdIncidentDate" type="date"></label>
+      <select class="hrSelect" id="hdSeverity"><option value="minor">Minor</option><option value="moderate" selected>Moderate</option><option value="serious">Serious</option><option value="potentially_gross">Potentially gross — still requires fair process</option></select>
+      <select class="hrSelect" id="hdRoute"><option value="informal">Start with informal / corrective route</option><option value="formal" selected>Formal misconduct route</option></select>
+      <textarea class="hrText" id="hdRuleStandard" placeholder="Exact workplace rule / standard and how it was communicated"></textarea>
+      <textarea class="hrText" id="hdDetails" placeholder="Alleged facts — what happened, when, where, who was involved. Record facts, not conclusions."></textarea>
+    </div><button class="hrBtn" id="hdCreateCase">Open Case for Investigation</button></div>
+    <div class="hrCaseBox"><h3>Staff Conduct Case Register</h3><table class="hrTable"><tr><th>Case</th><th>Staff</th><th>Category</th><th>Severity</th><th>Status</th><th>Next Step</th><th>Action</th></tr>${disciplinaryCaseRows()}</table>${pager('disciplinary',cases.length,'disciplinary cases')}</div>`;
+}
 function render(tab=currentTab){
   if(!active())return;
   currentTab=tab;
@@ -397,10 +521,11 @@ function render(tab=currentTab){
   if(tab==='safety')body=`<div class="hrBar"><select class="hrSelect" id="hsStaff"><option value="">General workplace</option>${staffOpts()}</select><input class="hrInput" id="hsTitle" placeholder="Safety / wellbeing incident"><select class="hrSelect" id="hsSeverity"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select><input class="hrInput" id="hsDesc" placeholder="What happened / required action"><button class="hrBtn bad" id="hsAdd">Record Incident</button></div><table class="hrTable"><tr><th>Incident</th><th>Staff</th><th>Severity</th><th>Status</th><th>Date</th><th>Resolved</th><th>Action</th></tr>${safety()}</table>${pager('safety',(D.hr_safety_incidents||[]).length,'safety cases')}`;
   if(tab==='development')body=training();
   if(tab==='workforce')body=workforcePanel();
+  if(tab==='disciplinary')body=disciplinaryPanel();
   if(tab==='audit')body=`<table class="hrTable"><tr><th>Date</th><th>Actor</th><th>Action</th><th>Record</th><th>Staff</th><th>Evidence</th></tr>${audits()}</table>${pager('audit',(D.hr_audit_log||[]).length,'audit events')}`;
 
   $('view').innerHTML=`
-    <div class="hrHero"><b>PEOPLE, CULTURE & GOVERNANCE</b><h2>HR & Team Command Centre</h2><p>Staff onboarding, access control, employment records, contracts, wellbeing, leave, development, workforce affordability planning and accountable people management.</p></div>
+    <div class="hrHero"><b>PEOPLE, CULTURE & GOVERNANCE</b><h2>HR & Team Command Centre</h2><p>Staff onboarding, access control, employment records, contracts, wellbeing, leave, development, workforce affordability planning, fair conduct management and accountable people management.</p></div>
     ${loadErrors.length?'<div class="hrAlert"><b>HR data warning:</b> '+esc(loadErrors.join(' | '))+' The last successfully loaded information remains visible; failed queries are not shown as false zeroes.</div>':''}
     <div class="hrK">
       <div class="hrCard"><strong>${activeN}</strong><span>Active staff</span></div>
@@ -411,7 +536,7 @@ function render(tab=currentTab){
       <div class="hrCard"><strong>${trainingDue}</strong><span>Training actions</span></div>
     </div>
     <div class="hrTabs">
-      ${[['team','Team & Access'],['contracts','Contracts & Documents'],['leave','Leave & Attendance'],['safety','Safety & Wellbeing'],['development','Training & Performance'],['workforce','Workforce & Compensation'],['audit','HR Audit Trail']].map(x=>`<button class="hrBtn ${tab===x[0]?'':'alt'}" data-hr-tab="${x[0]}">${x[1]}</button>`).join('')}
+      ${[['team','Team & Access'],['contracts','Contracts & Documents'],['leave','Leave & Attendance'],['safety','Safety & Wellbeing'],['development','Training & Performance'],['workforce','Workforce & Compensation'],['disciplinary','Disciplinary & Conduct'],['audit','HR Audit Trail']].map(x=>`<button class="hrBtn ${tab===x[0]?'':'alt'}" data-hr-tab="${x[0]}">${x[1]}</button>`).join('')}
       <button class="hrBtn alt" id="hrRefresh">Refresh</button>
     </div>
     <div class="hrPanel" style="overflow:auto">${body}</div>`;
@@ -472,6 +597,168 @@ function wire(tab){
     document.querySelectorAll('[data-workforce-edit]').forEach(b=>b.onclick=()=>editWorkforcePlan(b.dataset.workforceEdit));
     document.querySelectorAll('[data-comp-guide]').forEach(b=>b.onclick=()=>applyCompGuidance(b.dataset.compGuide,b.dataset.compMode));
   }
+  if(tab==='disciplinary'){
+    wireDisciplinary();
+  }
+}
+function dtIso(v){
+  if(!v)return null;
+  const d=new Date(v);
+  return Number.isNaN(d.getTime())?null:d.toISOString();
+}
+function wireDisciplinary(){
+  $('hdCreateCase')?.addEventListener('click',createDisciplinaryCase);
+  document.querySelectorAll('[data-disciplinary-open]').forEach(b=>b.onclick=()=>{
+    disciplinaryCaseId=b.dataset.disciplinaryOpen;pages.disciplinaryEvents=1;render('disciplinary');
+  });
+  $('hdBack')?.addEventListener('click',()=>{disciplinaryCaseId=null;pages.disciplinaryEvents=1;render('disciplinary')});
+  $('hdAddEvent')?.addEventListener('click',addDisciplinaryEvent);
+  $('hdInformal')?.addEventListener('click',recordInformalCorrection);
+  $('hdIssueNotice')?.addEventListener('click',issueDisciplinaryNotice);
+  $('hdSaveResponse')?.addEventListener('click',recordDisciplinaryResponse);
+  $('hdSchedule')?.addEventListener('click',scheduleDisciplinaryMeeting);
+  $('hdAddMeetingNote')?.addEventListener('click',addDisciplinaryMeetingNote);
+  $('hdOutcome')?.addEventListener('click',recordDisciplinaryOutcome);
+  $('hdReviewRequest')?.addEventListener('click',requestDisciplinaryReview);
+  $('hdDecideReview')?.addEventListener('click',decideDisciplinaryReview);
+  $('hdCloseCase')?.addEventListener('click',closeDisciplinaryCase);
+  $('hdWithdraw')?.addEventListener('click',withdrawDisciplinaryCase);
+}
+async function createDisciplinaryCase(){
+  const profile=$('hdStaff')?.value,rule=$('hdRule')?.value,title=$('hdTitle')?.value.trim(),incident=$('hdIncidentDate')?.value;
+  const details=$('hdDetails')?.value.trim(),workplace=$('hdRuleStandard')?.value.trim()||null,severity=$('hdSeverity')?.value,route=$('hdRoute')?.value;
+  if(!profile)return alert('Select the Staff member.');
+  if(!rule)return alert('Select the alleged rule / category.');
+  if(!title||title.length<3)return alert('Enter a clear allegation title.');
+  if(!incident)return alert('Enter the incident date.');
+  if(!details||details.length<10)return alert('Record the alleged facts in sufficient detail.');
+  if(!confirm('Open this as an allegation for investigation? This does not record guilt or a disciplinary sanction.'))return;
+  const {data,error}=await db.rpc('hr_create_disciplinary_case',{
+    p_profile_id:profile,p_rule_id:rule,p_allegation_title:title,p_incident_date:incident,
+    p_allegation_details:details,p_workplace_rule:workplace,p_severity_assessment:severity,p_process_route:route
+  });
+  if(error)return alert(error.message);
+  disciplinaryCaseId=data?.id||null;
+  await load();render('disciplinary');
+}
+async function addDisciplinaryEvent(){
+  if(!disciplinaryCaseId)return;
+  const note=$('hdEventNote')?.value.trim(),url=$('hdEvidenceUrl')?.value.trim()||null;
+  if(!note||note.length<3)return alert('Enter an investigation/evidence note.');
+  if(url&&!safeUrl(url))return alert('Evidence URL must start with http:// or https://.');
+  const {error}=await db.rpc('hr_log_disciplinary_event',{
+    p_case_id:disciplinaryCaseId,p_event_type:url?'evidence_added':'investigation_note',
+    p_notes:note,p_evidence_url:url
+  });
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function recordInformalCorrection(){
+  if(!disciplinaryCaseId)return;
+  const response=$('hdInformalResponse')?.value.trim(),correction=$('hdInformalCorrection')?.value.trim();
+  if(!response||response.length<3)return alert('Record the employee explanation / response.');
+  if(!correction||correction.length<3)return alert('Record the advice or correction given.');
+  if(!confirm('Record this as informal corrective action and close the case? This is not a formal warning.'))return;
+  const {error}=await db.rpc('hr_record_informal_correction',{p_case_id:disciplinaryCaseId,p_employee_response:response,p_correction:correction});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function issueDisciplinaryNotice(){
+  if(!disciplinaryCaseId)return;
+  const notice=$('hdNotice')?.value.trim(),deadline=dtIso($('hdDeadline')?.value),language=$('hdLanguage')?.value.trim()||null;
+  const unionRole=!!$('hdUnionRole')?.checked,unionConsult=dtIso($('hdUnionConsult')?.value);
+  if(!notice||notice.length<10)return alert('Explain the allegation in sufficient detail.');
+  if(!deadline)return alert('Choose a reasonable future preparation / response deadline.');
+  if(unionRole&&!unionConsult)return alert('Record the union consultation date/time for a trade-union representative/office-bearer.');
+  if(!confirm('Issue the formal allegation notice? The employee must still be given a genuine opportunity to respond before any finding or sanction.'))return;
+  const {error}=await db.rpc('hr_issue_disciplinary_notice',{
+    p_case_id:disciplinaryCaseId,p_notice_details:notice,p_preparation_deadline:deadline,
+    p_preferred_language:language,p_trade_union_role_declared:unionRole,p_union_consulted_at:unionConsult
+  });
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function recordDisciplinaryResponse(){
+  if(!disciplinaryCaseId)return;
+  const status=$('hdResponseStatus')?.value,response=$('hdResponse')?.value.trim()||null,rep=$('hdRepType')?.value;
+  const repName=$('hdRepName')?.value.trim()||null,language=$('hdRespLanguage')?.value.trim()||null,interpreter=!!$('hdInterpreter')?.checked;
+  if(status==='provided'&&(!response||response.length<3))return alert('Record the employee response.');
+  if(rep!=='none'&&!repName)return alert('Record the representative name.');
+  const {error}=await db.rpc('hr_record_disciplinary_response',{
+    p_case_id:disciplinaryCaseId,p_response_status:status,p_employee_response:response,
+    p_representation_type:rep,p_representative_name:repName,p_preferred_language:language,p_interpreter_required:interpreter
+  });
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function scheduleDisciplinaryMeeting(){
+  if(!disciplinaryCaseId)return;
+  const at=dtIso($('hdMeetingAt')?.value),chair=$('hdChair')?.value.trim();
+  if(!at)return alert('Choose the meeting date/time.');
+  if(!chair||chair.length<2)return alert('Record the chairperson / decision-maker.');
+  const {error}=await db.rpc('hr_schedule_disciplinary_meeting',{p_case_id:disciplinaryCaseId,p_meeting_at:at,p_chairperson_name:chair});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function addDisciplinaryMeetingNote(){
+  if(!disciplinaryCaseId)return;
+  const note=$('hdMeetingNote')?.value.trim(),url=$('hdMeetingEvidence')?.value.trim()||null;
+  if(!note||note.length<3)return alert('Enter the meeting/evidence note.');
+  if(url&&!safeUrl(url))return alert('Evidence URL must start with http:// or https://.');
+  const {error}=await db.rpc('hr_log_disciplinary_event',{
+    p_case_id:disciplinaryCaseId,p_event_type:'meeting_note',p_notes:note,p_evidence_url:url
+  });
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function recordDisciplinaryOutcome(){
+  if(!disciplinaryCaseId)return;
+  const finding=$('hdFinding')?.value,sanction=$('hdSanction')?.value,reason=$('hdOutcomeReason')?.value.trim();
+  const mitigating=$('hdMitigating')?.value.trim()||null,aggravating=$('hdAggravating')?.value.trim()||null;
+  const consistency=$('hdConsistency')?.value.trim()||null,relationship=$('hdRelationship')?.value.trim()||null;
+  const warningUntil=$('hdWarningUntil')?.value||null,rights=!!$('hdExternalRights')?.checked;
+  if(!reason||reason.length<10)return alert('Record clear written reasons for the finding and proposed outcome.');
+  if(sanction==='dismissal'&&!confirm('You selected dismissal. Confirm that the case has been fully considered and that you want to record the HR finding only. This does NOT automatically terminate system access, contracts or payroll.'))return;
+  const {error}=await db.rpc('hr_record_disciplinary_outcome',{
+    p_case_id:disciplinaryCaseId,p_finding:finding,p_sanction:sanction,p_outcome_reason:reason,
+    p_mitigating_factors:mitigating,p_aggravating_factors:aggravating,p_consistency_notes:consistency,
+    p_relationship_assessment:relationship,p_warning_valid_until:warningUntil,p_external_rights_informed:rights
+  });
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function requestDisciplinaryReview(){
+  if(!disciplinaryCaseId)return;
+  const grounds=$('hdReviewGrounds')?.value.trim();
+  if(!grounds||grounds.length<5)return alert('Record the grounds for internal review / appeal.');
+  const {error}=await db.rpc('hr_request_disciplinary_review',{p_case_id:disciplinaryCaseId,p_review_grounds:grounds});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function decideDisciplinaryReview(){
+  if(!disciplinaryCaseId)return;
+  const decision=$('hdReviewDecision')?.value,notes=$('hdReviewNotes')?.value.trim();
+  if(!notes||notes.length<10)return alert('Record clear reasons for the review decision.');
+  const {error}=await db.rpc('hr_decide_disciplinary_review',{p_case_id:disciplinaryCaseId,p_review_decision:decision,p_review_notes:notes});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function closeDisciplinaryCase(){
+  if(!disciplinaryCaseId)return;
+  const note=(prompt('Closure note:','Outcome issued; no internal review recorded.')||'').trim();
+  if(note.length<5)return alert('Record a closure note.');
+  const {error}=await db.rpc('hr_close_disciplinary_case',{p_case_id:disciplinaryCaseId,p_closure_note:note});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function withdrawDisciplinaryCase(){
+  if(!disciplinaryCaseId)return;
+  const reason=(prompt('Reason for withdrawing the allegation/case:','')||'').trim();
+  if(reason.length<5)return alert('Record why the case is being withdrawn.');
+  if(!confirm('Withdraw this case? The history will remain in the HR audit record.'))return;
+  const {error}=await db.rpc('hr_withdraw_disciplinary_case',{p_case_id:disciplinaryCaseId,p_reason:reason});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
 }
 async function manageAccess(id){
   const p=prof(id);
