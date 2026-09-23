@@ -388,6 +388,33 @@ The Ambassador programme and portal are owner-approved as the final working Amba
 - Do not reintroduce retired, superseded, duplicate or cached Ambassador behaviour from older commits. A file name containing an older version/audit label is not by itself evidence that the file is obsolete; remove it only after proving it is not part of the approved runtime.
 - A direct change to an Ambassador programme/application/login/portal/admin-Ambassador file or Ambassador SQL requires explicit Ambassador owner approval in the pull request.
 
+### Ambassador system — SYSTEM-WIDE AUDITED LOCK (23 September 2026)
+
+The owner instructed that the complete Ambassador system be fully audited, repaired only where evidence showed a remaining defect, and locked once the system was confirmed operational and stable. The final audit found no remaining runtime defect requiring another Ambassador code or database change. The audited runtime checkpoint is `57fa9d7f64ea1e710c8d184716f5019f1d0bbd0d`.
+
+- **The complete Ambassador system is now a change-controlled protected surface.** The detailed lock record is `AMBASSADOR_SYSTEM_LOCK_2026_09_23.md`.
+- The protected canonical portal navigation is: **My Dashboard, Programme Guide, My Referrals, Rank Progress, Compensation Plan, My Earnings, Payment History, My Banking, Marketing Resources, Announcements, Help & Support, Programme Rules, My Referral Link, My Profile, Your Voice**. Removed duplicate navigation entries must not be restored.
+- The current professional Source Sans 3 presentation, header search, dark-navy header/footer, current boxed sidebar treatment, responsive behaviour and readable tab/card/table/form hierarchy are part of the lock.
+- The approved referral path remains **Ambassador referral link → Student Account Creation → working Student registration → secure new-Student referral claim → onboarding**. The portal referral URL remains `create-account.html?ref=CODE`.
+- Referral ownership remains permanent and server-controlled. A click alone is not authoritative attribution; cached codes cannot claim an established learner; self-referrals remain blocked; raw referral data remains unavailable to Ambassador accounts.
+- My Referrals retains search/status filtering and **10 visible referrals per page** with Previous / Next controls.
+- Direct commission remains **15%** of verified qualifying revenue and can be confirmed only after the protected referral + active Student + Admin-approved enrolment + Admin-verified payment eligibility chain passes.
+- The approved rank thresholds, one-time achievement bonuses and monthly-performance caps remain aligned between the portal and database and are protected from unilateral change.
+- The approved payday guidance remains the **5th of the following month**, moved backward to the previous business day when the 5th is a weekend or South African public holiday.
+- My Banking remains own-account only, Finance-verified and privacy-masked. The portal may display only the safe account ending/last four digits and must not expose the stored full account number.
+- Marketing Resources remains **Academy-issued materials only**. Ambassadors may not create unofficial Academy posters/adverts with AI or other design tools or invent discounts, promotions or unsupported Academy claims.
+- Marketing Resources retains the compact **6-resource-per-page** library and approved Preview & Details workflow.
+- Announcements remains the single canonical official communication area. The removed duplicate Notifications navigation entry must not be restored.
+- Support and Your Voice remain authenticated, private, traceable and account-bound.
+- The current safe live-reconciliation architecture is protected: RLS-safe Realtime where permitted, secure own-record RPC refresh, focus/pageshow/visibility reconciliation, edit-safe redraw protection and five-minute fallback reconciliation.
+- Security verification confirmed that an active Ambassador can access only the approved safe own-record data; an unrelated authenticated account and an anonymous account cannot read private Ambassador records. Raw referral and raw payout-detail rows remain unavailable to Ambassador accounts.
+- Relevant Ambassador tables remain protected by RLS, and the browser contains no privileged/service-role Supabase key.
+- The production relationship audit found no duplicate referral ownership, self-referral, broken confirmed-commission chain, duplicate commission-per-payment, orphan payout/banking/support records or unvalidated Ambassador constraints.
+- The audit changed **no production records**.
+- Dynamic operational data is not frozen by this lock. Legitimate applications, referrals, enrolments, verified payments, earnings, payouts, banking verification, announcements, marketing resources, support records and Your Voice activity continue through the approved workflows.
+- A future defect or improvement request does not automatically reopen this system. Aziwe Futhe must explicitly reopen the exact affected Ambassador area before implementation.
+- Shared/global files that can affect login, Student Account Creation, referral attribution or the Ambassador Portal must preserve this locked state and run the required adjacent regression checks.
+
 ## Explicit anti-regression rules
 
 The following patterns are not acceptable unless Aziwe explicitly asks for them:
