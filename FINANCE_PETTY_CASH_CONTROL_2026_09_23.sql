@@ -610,6 +610,73 @@ begin
 end;
 $$;
 
+create or replace function public.finance_void_petty_cash_movement(
+  p_movement_id uuid,
+  p_reason text
+)
+returns void
+language plpgsql
+security definer
+set search_path=''
+as $$
+declare
+  v_m public.finance_petty_cash_movements%rowtype;
+  v_f public.finance_petty_cash_funds%rowtype;
+  v_balance numeric;
+  v_resulting numeric;
+begin
+  if not (
+    public.is_admin()
+    or public.has_department_approval('Finance & Accounting')
+  ) then
+    raise exception 'Finance approval authority required' using errcode='42501';
+  end if;
+  if char_length(btrim(coalesce(p_reason,'')))<8 then
+    raise exception 'Enter a clear void reason of at least 8 characters' using errcode='22023';
+  end if;
+
+  select * into v_m
+  from public.finance_petty_cash_movements
+  where id=p_movement_id
+  for update;
+  if not found then raise exception 'Petty cash movement not found' using errcode='P0002'; end if;
+  if v_m.status<>'posted' then raise exception 'Only posted petty cash movements can be voided' using errcode='22023'; end if;
+
+  select * into v_f
+  from public.finance_petty_cash_funds
+  where id=v_m.fund_id
+  for update;
+
+  if v_m.movement_type='opening_float' and (
+    exists(select 1 from public.finance_petty_cash_movements where fund_id=v_m.fund_id and id<>v_m.id and status='posted')
+    or exists(select 1 from public.finance_petty_cash_vouchers where fund_id=v_m.fund_id and status='posted')
+  ) then
+    raise exception 'Opening float cannot be voided after later petty cash activity. Return or reconcile the cash instead.' using errcode='22023';
+  end if;
+
+  v_balance:=public.finance_petty_cash_balance_raw(v_m.fund_id,current_date);
+  v_resulting:=case
+    when v_m.movement_type in ('opening_float','replenishment') then v_balance-v_m.amount
+    when v_m.movement_type='return_to_bank' then v_balance+v_m.amount
+    else v_balance
+  end;
+
+  if v_resulting < -0.005 then
+    raise exception 'Voiding this movement would create a negative petty cash balance' using errcode='22023';
+  end if;
+  if v_f.authorized_float>0 and v_resulting>v_f.authorized_float+0.005 then
+    raise exception 'Voiding this movement would exceed the authorized petty cash float' using errcode='22023';
+  end if;
+
+  update public.finance_petty_cash_movements
+  set status='voided',
+      void_reason=btrim(p_reason),
+      voided_by=auth.uid(),
+      voided_at=now()
+  where id=p_movement_id;
+end;
+$$;
+
 revoke all on function public.finance_create_petty_cash_fund(text,uuid,text,numeric) from PUBLIC,anon;
 revoke all on function public.finance_update_petty_cash_fund(uuid,text,uuid,text,numeric,text) from PUBLIC,anon;
 revoke all on function public.finance_record_petty_cash_movement(uuid,text,numeric,date,text,text) from PUBLIC,anon;
@@ -618,6 +685,7 @@ revoke all on function public.finance_approve_petty_cash_voucher(uuid,text) from
 revoke all on function public.finance_reject_petty_cash_voucher(uuid,text) from PUBLIC,anon;
 revoke all on function public.finance_void_petty_cash_voucher(uuid,text) from PUBLIC,anon;
 revoke all on function public.finance_reconcile_petty_cash(uuid,date,numeric,text) from PUBLIC,anon;
+revoke all on function public.finance_void_petty_cash_movement(uuid,text) from PUBLIC,anon;
 
 grant execute on function public.finance_create_petty_cash_fund(text,uuid,text,numeric) to authenticated,service_role;
 grant execute on function public.finance_update_petty_cash_fund(uuid,text,uuid,text,numeric,text) to authenticated,service_role;
@@ -627,3 +695,4 @@ grant execute on function public.finance_approve_petty_cash_voucher(uuid,text) t
 grant execute on function public.finance_reject_petty_cash_voucher(uuid,text) to authenticated,service_role;
 grant execute on function public.finance_void_petty_cash_voucher(uuid,text) to authenticated,service_role;
 grant execute on function public.finance_reconcile_petty_cash(uuid,date,numeric,text) to authenticated,service_role;
+grant execute on function public.finance_void_petty_cash_movement(uuid,text) to authenticated,service_role;
