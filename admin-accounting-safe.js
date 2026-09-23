@@ -5,10 +5,11 @@ if(window.__FUNDA_ACCOUNTING_SAFE__)return;
 window.__FUNDA_ACCOUNTING_SAFE__=true;
 
 let db;
-let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[]};
-let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false};
+let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[],pettyFunds:[],pettyMoves:[],pettyVouchers:[],pettyRecons:[]};
+let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false,pettyFunds:false,pettyMoves:false,pettyVouchers:false,pettyRecons:false};
 let errors=[];
-let tab='overview',cashPage=1,plannedPage=1,reconPage=1,budgetPage=1;
+let tab='overview',cashPage=1,plannedPage=1,reconPage=1,budgetPage=1,pettyVoucherPage=1,pettyMovementPage=1,pettyReconPage=1;
+let pettyFundId=null,pettyReportMonth=new Date().toISOString().slice(0,7);
 let pnlMode='monthly',pnlMonth=new Date().toISOString().slice(0,7),pnlDay=new Date().toISOString().slice(0,10),pnlFyYear=null,pnlFrom='',pnlTo='';
 let currentMonthPnl=null,currentFyPnl=null,currentPnl=null,currentPnlComparison=null,currentPnlComparisonRange=null;
 const PAGE_SIZE=10;
@@ -44,9 +45,9 @@ function css(){
   .acTableWrap{overflow:auto}.acTable{width:100%;border-collapse:collapse;font-size:13px;line-height:1.45}.acTable th,.acTable td{padding:10px;border-bottom:1px solid #edf0f3;text-align:left;vertical-align:top}.acTable th{font-size:11px;text-transform:uppercase;color:#64748b;letter-spacing:.04em;background:#f8fafc}
   .acPill{display:inline-block;padding:4px 8px;border-radius:99px;background:#edf2f7;font-size:11px;font-weight:800;text-transform:capitalize}.acPill.income,.acPill.reconciled,.acPill.posted,.acPill.closed{background:#e5f6ef;color:#176b50}.acPill.expense,.acPill.voided{background:#ffe7e7;color:#9d2828}.acPill.unreconciled,.acPill.planned,.acPill.reopened{background:#fff2d2;color:#8a5a05}
   .acSection h3{margin:4px 0 8px;color:#071b31;font-size:17px}.acPL{max-width:1280px}.acPL tr.total td{font-weight:900;border-top:2px solid #071b31}.acPL tr.subtotal td{font-weight:800;background:#f8fafc}.acPL tr.net td{font-size:15px;font-weight:900;background:#f8f4e8;border-top:2px solid #c7a13b}.acPL tr.section td{font-weight:900;color:#0b315c;background:#eef4fb}.acPL .acNum{text-align:right;white-space:nowrap}.acPL .acPct{text-align:right;white-space:nowrap;color:#536174}.acPLMetrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}.acPLMetric{border:1px solid #e1e7ef;border-radius:10px;background:#fbfcfe;padding:10px}.acPLMetric strong{display:block;font-size:17px;color:#071b31}.acPLMetric span{font-size:11px;color:#64748b}.acPLMetric small{display:block;margin-top:3px;font-size:11px;color:#64748b}
-  .acPager{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #edf0f3}.acTarget{height:9px;border-radius:99px;background:#e9eef5;overflow:hidden;margin-top:8px}.acTarget i{display:block;height:100%;background:#c7a13b}.acFuture{background:#fff7e7;color:#8a5a05;font-size:12px;padding:5px 7px;border-radius:7px;display:inline-block;margin-top:4px}
-  @media(max-width:1050px){.acK{grid-template-columns:repeat(3,1fr)}.acPLMetrics{grid-template-columns:repeat(3,1fr)}.acForm{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:760px){.acGrid,.acForm{grid-template-columns:1fr}.acWide{grid-column:auto}.acK{grid-template-columns:repeat(2,1fr)}.acPLMetrics{grid-template-columns:repeat(2,1fr)}.acHero h2{font-size:21px}}
+  .acPager{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #edf0f3}.acTarget{height:9px;border-radius:99px;background:#e9eef5;overflow:hidden;margin-top:8px}.acTarget i{display:block;height:100%;background:#c7a13b}.acFuture{background:#fff7e7;color:#8a5a05;font-size:12px;padding:5px 7px;border-radius:7px;display:inline-block;margin-top:4px}.acPettyK{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.acPettyCard{border:1px solid #e1e7ef;border-radius:10px;padding:11px;background:#fbfcfe}.acPettyCard strong{display:block;font-size:18px;color:#071b31}.acPettyCard span{font-size:11px;color:#64748b;line-height:1.4}
+  @media(max-width:1050px){.acK{grid-template-columns:repeat(3,1fr)}.acPLMetrics{grid-template-columns:repeat(3,1fr)}.acPettyK{grid-template-columns:repeat(2,1fr)}.acForm{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:760px){.acGrid,.acForm{grid-template-columns:1fr}.acWide{grid-column:auto}.acK{grid-template-columns:repeat(2,1fr)}.acPLMetrics{grid-template-columns:repeat(2,1fr)}.acPettyK{grid-template-columns:1fr}.acHero h2{font-size:21px}}
   `;
   document.head.appendChild(s);
 }
@@ -109,10 +110,14 @@ async function loadData(){
     ['cats',db.from('accounting_categories').select('*').order('category_type').order('name').limit(1000)],
     ['rec',db.from('finance_reconciliations').select('*').order('created_at',{ascending:false}).limit(3000)],
     ['payments',db.from('payments').select('*').order('created_at',{ascending:false}).limit(5000)],
-    ['profiles',db.from('profiles').select('id,full_name,email').limit(5000)],
+    ['profiles',db.from('profiles').select('id,full_name,email,role,staff_number,job_title,department').limit(5000)],
     ['settings',db.from('finance_management_settings').select('*').eq('singleton',true).maybeSingle()],
     ['closes',db.from('finance_month_closes').select('*').order('month_start',{ascending:false}).limit(500)],
-    ['budgets',db.from('finance_monthly_budgets').select('*').order('month_start',{ascending:true}).limit(240)]
+    ['budgets',db.from('finance_monthly_budgets').select('*').order('month_start',{ascending:true}).limit(240)],
+    ['pettyFunds',db.from('finance_petty_cash_funds').select('*').order('created_at',{ascending:true}).limit(200)],
+    ['pettyMoves',db.from('finance_petty_cash_movements').select('*').order('movement_date',{ascending:false}).order('created_at',{ascending:false}).limit(5000)],
+    ['pettyVouchers',db.from('finance_petty_cash_vouchers').select('*').order('expense_date',{ascending:false}).order('created_at',{ascending:false}).limit(5000)],
+    ['pettyRecons',db.from('finance_petty_cash_reconciliations').select('*').order('reconciliation_date',{ascending:false}).order('created_at',{ascending:false}).limit(2000)]
   ];
   const results=await Promise.all(jobs.map(x=>x[1]));
   results.forEach((r,i)=>{
@@ -122,6 +127,7 @@ async function loadData(){
     loaded[key]=true;
   });
   if(!pnlFyYear)pnlFyYear=currentFyStartYear();
+  if((S.pettyFunds||[]).length&&!S.pettyFunds.some(x=>x.id===pettyFundId))pettyFundId=(S.pettyFunds.find(x=>x.status==='active')||S.pettyFunds[0]).id;
 }
 async function fetchPnl(from,to){
   const {data,error}=await db.rpc('get_admin_management_pnl',{p_from:from,p_to:to});
@@ -232,11 +238,11 @@ function overview(){
   <div class="acGrid" style="margin-top:9px">
     <div class="acPanel">
       <h3>Cashbook Controls</h3>
-      <div class="acMeta">Actual cash / bank entries to date: <b>${loaded.cash?actualCashRows().length:'—'}</b></div>
+      <div class="acMeta">Actual cash / bank / petty-cash entries to date: <b>${loaded.cash?actualCashRows().length:'—'}</b></div>
       <div class="acMeta">Accounting adjustments: <b>${loaded.cash?adjustmentRows().length:'—'}</b></div>
       <div class="acMeta">Planned / scheduled items: <b>${loaded.cash?plannedRows().length:'—'}</b></div>
       <div class="acMeta">Voided records retained for audit: <b>${loaded.cash?voidedRows().length:'—'}</b></div>
-      <div class="acMeta">Unreconciled actual entries: <b>${loaded.cash?actualCashRows().filter(x=>x.reconciliation_status!=='reconciled').length:'—'}</b></div>
+      <div class="acMeta">Unreconciled bank/cash entries: <b>${loaded.cash?actualCashRows().filter(x=>low(x.reconciliation_status)==='unreconciled').length:'—'}</b></div>
       ${future.length?'<div class="acFuture">'+future.length+' legacy future-dated posted item(s) require review. They are not automatically deleted or changed.</div>':''}
     </div>
     <div class="acPanel">
@@ -284,10 +290,10 @@ function cashbookPanel(type=''){
     <td>${day(x.entry_date)}${x.entry_date>today()&&low(x.posting_status||'posted')==='posted'?'<div class="acFuture">Future-dated posted</div>':''}</td>
     <td>${pill(x.entry_type)}</td><td>${esc(x.category)}</td><td>${esc(x.counterparty||'—')}</td>
     <td>${esc(x.description)}</td><td>${esc(x.reference_number||'—')}</td><td>${esc(x.department||'—')}</td>
-    <td>${low(x.source_type)==='adjustment'?'<span class="acPill">non-cash adjustment</span>':esc(x.source_type==='student_payment'?'verified student payment':'cash / bank')}</td>
+    <td>${low(x.source_type)==='adjustment'?'<span class="acPill">non-cash adjustment</span>':low(x.source_type)==='petty_cash'?'<span class="acPill">petty cash voucher</span>':esc(x.source_type==='student_payment'?'verified student payment':'cash / bank')}</td>
     <td><b>${money(x.amount)}</b></td><td>${pill(x.posting_status||'posted')}<div class="acMeta">${x.recurrence==='monthly'?'Monthly recurring':''}</div></td>
-    <td>${low(x.source_type)==='adjustment'?'<span class="acMeta">Not bank-reconciled</span>':pill(x.reconciliation_status||'unreconciled')}</td>
-    <td><div class="acBar" style="margin:0">${x.posting_status==='planned'?'<button class="acBtn ok" data-post="'+x.id+'">Post</button>':''}${x.posting_status!=='voided'?'<button class="acBtn bad" data-void="'+x.id+'">Void</button>':'<span class="acMeta">'+esc(x.void_reason||'Voided')+'</span>'}</div></td>
+    <td>${['adjustment','petty_cash'].includes(low(x.source_type))?'<span class="acMeta">Not bank-reconciled</span>':pill(x.reconciliation_status||'unreconciled')}</td>
+    <td><div class="acBar" style="margin:0">${x.posting_status==='planned'?'<button class="acBtn ok" data-post="'+x.id+'">Post</button>':''}${low(x.source_type)==='petty_cash'&&x.posting_status!=='voided'?'<button class="acBtn alt" data-open-petty="1">Manage in Petty Cash</button>':x.posting_status!=='voided'?'<button class="acBtn bad" data-void="'+x.id+'">Void</button>':'<span class="acMeta">'+esc(x.void_reason||'Voided')+'</span>'}</div></td>
   </tr>`).join('')||'<tr><td colspan="12"><div class="acMeta">No accounting entries match this view.</div></td></tr>';
   return `
   <div class="acPanel" style="margin-top:9px">
@@ -467,7 +473,7 @@ function pnlMarkup(raw,rawComp,from,to,compFrom,compTo){
 }
 function reconciliation(){
   if(!loaded.cash)return '<div class="acPanel"><div class="acMeta">Reconciliation data is currently unavailable. Use Refresh after checking the warning above.</div></div>';
-  const rows=actualCashRows(),pg=pageRows(rows,reconPage);reconPage=pg.page;
+  const rows=actualCashRows().filter(x=>low(x.reconciliation_status)!=='excluded'),pg=pageRows(rows,reconPage);reconPage=pg.page;
   const body=pg.rows.map(x=>`<tr><td>${day(x.entry_date)}</td><td>${esc(x.reference_number||'—')}</td><td>${esc(x.description)}</td><td>${money(x.amount)}</td><td>${pill(x.reconciliation_status||'unreconciled')}</td><td>${x.reconciliation_status==='reconciled'?'<span class="acMeta">Reconciled '+fmt(x.reconciled_at)+'</span>':'<button class="acBtn ok" data-reconcile="'+x.id+'">Mark Reconciled</button>'}</td></tr>`).join('')||'<tr><td colspan="6"><div class="acMeta">No posted actual cashbook entries.</div></td></tr>';
   return `<div class="acPanel"><h3>Entry Reconciliation</h3><p class="acMeta">Reconcile actual posted cashbook records against supporting evidence or the bank statement. Reconciled accounting values cannot be silently rewritten.</p><div class="acTableWrap"><table class="acTable"><thead><tr><th>Date</th><th>Reference</th><th>Description</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length}</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="rePrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="reNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div></div>`;
 }
@@ -505,25 +511,220 @@ function targetsPanel(){
     <div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} months · Maximum 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="budPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="budNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>
   </div>`;
 }
+
+function safeHttp(v){const s=String(v||'').trim();return /^https?:\/\//i.test(s)?s:''}
+function pettyFund(){
+  return (S.pettyFunds||[]).find(x=>x.id===pettyFundId)||null;
+}
+function pettyProfileName(id){
+  const p=(S.profiles||[]).find(x=>x.id===id);
+  return p?.full_name||p?.email||'—';
+}
+function pettyCustodianOptions(selected=''){
+  return '<option value="">No linked staff profile</option>'+(S.profiles||[])
+    .filter(p=>['admin','staff'].includes(low(p.role)))
+    .map(p=>'<option value="'+esc(p.id)+'" '+(p.id===selected?'selected':'')+'>'+esc(p.full_name||p.email)+' · '+esc(p.staff_number||p.job_title||p.role||'Staff')+'</option>').join('');
+}
+function pettyExpenseOptions(){
+  return (S.cats||[]).filter(x=>x.active&&x.category_type==='expense'&&low(x.name)!=='depreciation & amortisation')
+    .map(x=>'<option value="'+esc(x.name)+'">'+esc(x.name)+'</option>').join('');
+}
+function pettyMoveEffect(m){
+  if(low(m.status)!=='posted')return 0;
+  if(['opening_float','replenishment'].includes(low(m.movement_type)))return n(m.amount);
+  if(low(m.movement_type)==='return_to_bank')return -n(m.amount);
+  return 0;
+}
+function pettyBalance(fundId,asOf=today()){
+  const move=(S.pettyMoves||[]).filter(x=>x.fund_id===fundId&&x.movement_date<=asOf).reduce((a,x)=>a+pettyMoveEffect(x),0);
+  const spent=(S.pettyVouchers||[]).filter(x=>x.fund_id===fundId&&low(x.status)==='posted'&&x.expense_date<=asOf).reduce((a,x)=>a+n(x.amount),0);
+  return move-spent;
+}
+function pettyPendingTotal(fundId){
+  return (S.pettyVouchers||[]).filter(x=>x.fund_id===fundId&&low(x.status)==='pending').reduce((a,x)=>a+n(x.amount),0);
+}
+function pettyMovementRows(fundId){
+  const rows=(S.pettyMoves||[]).filter(x=>x.fund_id===fundId),pg=pageRows(rows,pettyMovementPage);pettyMovementPage=pg.page;
+  const body=pg.rows.map(x=>`<tr>
+    <td>${day(x.movement_date)}</td>
+    <td>${pill(String(x.movement_type||'').replaceAll('_',' '))}</td>
+    <td><b>${money(x.amount)}</b></td>
+    <td>${esc(x.reference_number||'—')}</td>
+    <td>${esc(x.notes||'—')}</td>
+    <td>${pill(x.status||'posted')}${x.void_reason?'<div class="acMeta">'+esc(x.void_reason)+'</div>':''}</td>
+    <td>${low(x.status)==='posted'?'<button class="acBtn bad" data-pc-void-move="'+x.id+'">Void</button>':'—'}</td>
+  </tr>`).join('')||'<tr><td colspan="7"><div class="acMeta">No petty cash funding movements recorded.</div></td></tr>';
+  return {rows,pg,html:`<div class="acTableWrap"><table class="acTable"><thead><tr><th>Date</th><th>Movement</th><th>Amount</th><th>Reference</th><th>Notes</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="pcMovePrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="pcMoveNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>`};
+}
+function pettyVoucherRows(fundId){
+  const rows=(S.pettyVouchers||[]).filter(x=>x.fund_id===fundId),pg=pageRows(rows,pettyVoucherPage);pettyVoucherPage=pg.page;
+  const body=pg.rows.map(x=>{
+    const evidence=safeHttp(x.receipt_url);
+    const action=low(x.status)==='pending'
+      ?'<button class="acBtn ok" data-pc-approve="'+x.id+'">Approve & Post</button> <button class="acBtn bad" data-pc-reject="'+x.id+'">Reject</button>'
+      :low(x.status)==='posted'
+        ?'<button class="acBtn bad" data-pc-void-voucher="'+x.id+'">Void</button>'
+        :'—';
+    return `<tr>
+      <td><b>${esc(x.voucher_number)}</b><div class="acMeta">${day(x.expense_date)}</div></td>
+      <td>${esc(x.category)}</td><td>${esc(x.payee||'—')}</td><td>${esc(x.description)}</td>
+      <td><b>${money(x.amount)}</b></td><td>${esc(x.department||'—')}</td>
+      <td>${evidence?'<a href="'+esc(evidence)+'" target="_blank" rel="noopener">Open receipt ↗</a>':esc(x.evidence_note||'—')}</td>
+      <td>${pill(x.status)}${x.review_note?'<div class="acMeta">'+esc(x.review_note)+'</div>':''}${x.void_reason?'<div class="acMeta">'+esc(x.void_reason)+'</div>':''}</td>
+      <td>${action}</td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="9"><div class="acMeta">No petty cash vouchers recorded.</div></td></tr>';
+  return {rows,pg,html:`<div class="acTableWrap"><table class="acTable"><thead><tr><th>Voucher / Date</th><th>Expense Category</th><th>Payee</th><th>Description</th><th>Amount</th><th>Department</th><th>Evidence</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="pcVoucherPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="pcVoucherNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>`};
+}
+function pettyReconRows(fundId){
+  const rows=(S.pettyRecons||[]).filter(x=>x.fund_id===fundId),pg=pageRows(rows,pettyReconPage);pettyReconPage=pg.page;
+  const body=pg.rows.map(x=>`<tr><td>${day(x.reconciliation_date)}</td><td>${money(x.system_balance)}</td><td>${money(x.counted_cash)}</td><td><b>${money(x.variance)}</b></td><td>${esc(x.notes||'—')}</td><td>${fmt(x.created_at)}</td></tr>`).join('')||'<tr><td colspan="6"><div class="acMeta">No petty cash reconciliations recorded.</div></td></tr>';
+  return {rows,pg,html:`<div class="acTableWrap"><table class="acTable"><thead><tr><th>Reconciliation Date</th><th>System Balance</th><th>Counted Cash</th><th>Variance</th><th>Notes</th><th>Recorded</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="pcReconPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="pcReconNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>`};
+}
+function pettyFundSetup(){
+  return `<div class="acPanel"><h3>Create Petty Cash Fund</h3><div class="acInfo">Creating a fund does not create cash or an expense. Set the authorised maximum float, then record the actual opening float separately when cash is placed in the fund.</div><div class="acForm">
+    <input class="acInput" id="pcNewName" placeholder="Fund name e.g. Main Petty Cash">
+    <select class="acSelect" id="pcNewCustodian">${pettyCustodianOptions()}</select>
+    <input class="acInput" id="pcNewCustodianName" placeholder="Custodian name if not linked to staff">
+    <input class="acInput" id="pcNewFloat" type="number" min="0" step="0.01" placeholder="Authorised float">
+    <button class="acBtn" id="pcCreateFund">Create Fund</button>
+  </div></div>`;
+}
+function pettyCashPanel(){
+  const funds=S.pettyFunds||[];
+  if(!loaded.pettyFunds)return '<div class="acPanel"><div class="acMeta">Petty cash data is unavailable. Use Refresh after checking the Finance warning.</div></div>';
+  if(!funds.length)return `<div class="acInfo"><b>Petty Cash Control</b><br>No petty cash fund has been created yet. No cash amount has been assumed.</div>${pettyFundSetup()}`;
+
+  const f=pettyFund()||funds[0],balance=pettyBalance(f.id),pending=pettyPendingTotal(f.id),headroom=n(f.authorized_float)-balance;
+  const lastRecon=(S.pettyRecons||[]).find(x=>x.fund_id===f.id);
+  const moves=pettyMovementRows(f.id),vouchers=pettyVoucherRows(f.id),recons=pettyReconRows(f.id);
+  const fundOpts=funds.map(x=>'<option value="'+esc(x.id)+'" '+(x.id===f.id?'selected':'')+'>'+esc(x.fund_name)+' · '+esc(x.status)+'</option>').join('');
+  return `
+    <div class="acInfo"><b>Petty Cash Control.</b> Opening float, replenishments and returns are cash transfers and do not affect profit. Only an approved petty-cash voucher posts an expense to the P&L, using the voucher's real accounting category.</div>
+    <div class="acBar"><select class="acSelect" id="pcFundSelect">${fundOpts}</select><button class="acBtn alt" id="pcNewFundShow">Create Another Fund</button></div>
+    <div id="pcNewFundHost"></div>
+    <div class="acPettyK">
+      <div class="acPettyCard"><strong>${money(f.authorized_float)}</strong><span>Authorised float</span></div>
+      <div class="acPettyCard"><strong>${money(balance)}</strong><span>Current system cash balance</span></div>
+      <div class="acPettyCard"><strong>${money(headroom)}</strong><span>Float headroom</span></div>
+      <div class="acPettyCard"><strong>${money(pending)}</strong><span>Pending voucher requests</span></div>
+    </div>
+    ${lastRecon?'<div class="'+(Math.abs(n(lastRecon.variance))>0.005?'acWarn':'acInfo')+'"><b>Last cash count:</b> '+day(lastRecon.reconciliation_date)+' · system '+money(lastRecon.system_balance)+' · counted '+money(lastRecon.counted_cash)+' · variance '+money(lastRecon.variance)+'</div>':''}
+
+    <div class="acGrid">
+      <div class="acPanel"><h3>Fund Control</h3><div class="acForm">
+        <input class="acInput" id="pcFundName" value="${esc(f.fund_name)}" placeholder="Fund name">
+        <select class="acSelect" id="pcCustodian">${pettyCustodianOptions(f.custodian_profile_id||'')}</select>
+        <input class="acInput" id="pcCustodianName" value="${esc(f.custodian_name||'')}" placeholder="Custodian name if not linked">
+        <input class="acInput" id="pcAuthFloat" type="number" min="0" step="0.01" value="${n(f.authorized_float).toFixed(2)}" placeholder="Authorised float">
+        <select class="acSelect" id="pcFundStatus"><option value="active" ${f.status==='active'?'selected':''}>Active</option><option value="closed" ${f.status==='closed'?'selected':''}>Closed</option></select>
+        <button class="acBtn" id="pcUpdateFund">Update Fund</button>
+      </div><div class="acMeta">Custodian: <b>${esc(f.custodian_profile_id?pettyProfileName(f.custodian_profile_id):(f.custodian_name||'Not assigned'))}</b>. A fund can be closed only after its balance is zero.</div></div>
+
+      <div class="acPanel"><h3>Fund / Replenish / Return Cash</h3><div class="acForm">
+        <select class="acSelect" id="pcMoveType"><option value="opening_float">Opening float</option><option value="replenishment">Replenishment</option><option value="return_to_bank">Return to bank</option></select>
+        <input class="acInput" id="pcMoveAmount" type="number" min="0" step="0.01" placeholder="Amount">
+        <input class="acInput" id="pcMoveDate" type="date" value="${today()}">
+        <input class="acInput" id="pcMoveRef" placeholder="Bank / cash reference">
+        <input class="acInput" id="pcMoveNotes" placeholder="Movement notes">
+        <button class="acBtn" id="pcRecordMove">Record Movement</button>
+      </div><div class="acMeta">Replenishment cannot take the system balance above the authorised float. These movements do not enter the P&L.</div></div>
+    </div>
+
+    <div class="acPanel" style="margin-top:10px"><h3>Petty Cash Voucher</h3><div class="acInfo">Create the voucher first. A Finance approver must then use <b>Approve & Post</b> before the purchase reduces petty cash and appears as a P&L expense.</div><div class="acForm">
+      <input class="acInput" id="pcVoucherDate" type="date" value="${today()}">
+      <select class="acSelect" id="pcVoucherCategory">${pettyExpenseOptions()}</select>
+      <input class="acInput" id="pcVoucherPayee" placeholder="Payee / supplier">
+      <input class="acInput" id="pcVoucherDept" placeholder="Department / purpose">
+      <input class="acInput" id="pcVoucherAmount" type="number" min="0" step="0.01" placeholder="Amount">
+      <input class="acInput" id="pcVoucherReceipt" type="url" placeholder="Receipt / evidence URL (optional)">
+      <input class="acInput acWide" id="pcVoucherEvidence" placeholder="Evidence note / explanation if no receipt URL">
+      <textarea class="acText acWide" id="pcVoucherDesc" placeholder="What was purchased and why"></textarea>
+      <button class="acBtn" id="pcCreateVoucher">Create Voucher Request</button>
+    </div></div>
+
+    <div class="acPanel" style="margin-top:10px"><h3>Voucher Register</h3>${vouchers.html}</div>
+    <div class="acPanel" style="margin-top:10px"><h3>Funding & Cash Movement Register</h3>${moves.html}</div>
+
+    <div class="acGrid" style="margin-top:10px">
+      <div class="acPanel"><h3>Cash Count & Reconciliation</h3><div class="acForm">
+        <input class="acInput" id="pcReconDate" type="date" value="${today()}">
+        <input class="acInput" id="pcCountedCash" type="number" min="0" step="0.01" placeholder="Physical cash counted">
+        <input class="acInput acWide" id="pcReconNotes" placeholder="Reconciliation note; required if there is a variance">
+        <button class="acBtn" id="pcReconcile">Record Reconciliation</button>
+      </div><div class="acMeta">System balance now: <b>${money(balance)}</b>. A reconciliation records any difference; it does not silently create an adjustment.</div></div>
+
+      <div class="acPanel"><h3>Petty Cash Report</h3><input class="acInput" id="pcReportMonth" type="month" value="${esc(pettyReportMonth)}"><div class="acBar"><button class="acBtn" id="pcExcel">Download Excel</button><button class="acBtn" id="pcPdf">Download PDF</button></div><div class="acMeta">The report includes fund movements, voucher status, actual inflows/outflows and the running petty cash balance for the selected month.</div></div>
+    </div>
+    <div class="acPanel" style="margin-top:10px"><h3>Reconciliation History</h3>${recons.html}</div>
+  `;
+}
+function pettyReportRows(fund,month){
+  const [from,to]=monthRange(month),opening=pettyBalance(fund.id,shiftDays(from,-1));
+  const events=[];
+  for(const x of (S.pettyMoves||[]).filter(x=>x.fund_id===fund.id&&x.movement_date>=from&&x.movement_date<=to)){
+    const posted=low(x.status)==='posted',effect=posted?pettyMoveEffect(x):0;
+    events.push({
+      sort:x.movement_date+'T'+(x.created_at||''),
+      Date:day(x.movement_date),Record:'Fund movement',Reference:x.reference_number||'',Category:'',Payee:'',
+      Description:String(x.movement_type||'').replaceAll('_',' ')+(x.notes?' · '+x.notes:''),
+      'Inflow (R)':Math.max(0,effect),'Outflow (R)':Math.max(0,-effect),Status:x.status,Evidence:'',effect
+    });
+  }
+  for(const x of (S.pettyVouchers||[]).filter(x=>x.fund_id===fund.id&&x.expense_date>=from&&x.expense_date<=to)){
+    const outflow=low(x.status)==='posted'?n(x.amount):0;
+    events.push({
+      sort:x.expense_date+'T'+(x.created_at||''),
+      Date:day(x.expense_date),Record:'Voucher',Reference:x.voucher_number,Category:x.category,Payee:x.payee||'',
+      Description:x.description,'Inflow (R)':0,'Outflow (R)':outflow,Status:x.status,Evidence:x.receipt_url||x.evidence_note||'',effect:-outflow
+    });
+  }
+  let running=opening;
+  const rows=events.sort((a,b)=>a.sort.localeCompare(b.sort)).map(x=>{
+    running+=x.effect;
+    const {sort,effect,...r}=x;
+    r['Running Balance (R)']=running;
+    return r;
+  });
+  return {opening,rows,from,to};
+}
+async function exportPettyCash(format){
+  const fund=pettyFund();if(!fund)return alert('Choose a petty cash fund.');
+  pettyReportMonth=$('pcReportMonth')?.value||pettyReportMonth;
+  if(!pettyReportMonth)return alert('Choose the report month.');
+  const api=window.FundaReportExports;if(!api)return alert('The formal report export service is still loading. Please try again.');
+  const data=pettyReportRows(fund,pettyReportMonth),closing=pettyBalance(fund.id,data.to);
+  const postedExpenses=(S.pettyVouchers||[]).filter(x=>x.fund_id===fund.id&&low(x.status)==='posted'&&x.expense_date>=data.from&&x.expense_date<=data.to).reduce((a,x)=>a+n(x.amount),0);
+  const report={title:'Petty Cash Register — '+fund.fund_name,rows:data.rows,summary:[
+    ['Month',pettyReportMonth],['Custodian',fund.custodian_profile_id?pettyProfileName(fund.custodian_profile_id):(fund.custodian_name||'Not assigned')],
+    ['Authorised float',money(fund.authorized_float)],['Opening system balance',money(data.opening)],['Posted petty cash expenses',money(postedExpenses)],
+    ['Closing system balance',money(closing)],['Pending vouchers',money(pettyPendingTotal(fund.id))]
+  ]};
+  try{
+    const fileName=format==='xlsx'?await api.exportExcel(report,{from:data.from,to:data.to,scope:'period'}):await api.exportPdf(report,{from:data.from,to:data.to,scope:'period'});
+    await api.logRun?.('petty_cash',data.from,data.to,'period',format,data.rows.length,fileName);
+  }catch(e){alert(e.message||'The petty cash report could not be generated.')}
+}
 function reports(){
   return `<div class="acGrid"><div class="acPanel"><h3>Financial Exports</h3><p class="acMeta">Use the formal FOA Excel/PDF templates. CSV is no longer the primary management-report format.</p><div class="acBar"><button class="acBtn" id="cashExcel">Cashbook Excel</button><button class="acBtn" id="cashPdf">Cashbook PDF</button><button class="acBtn alt" id="acReports2">Open Report Centre</button></div></div><div class="acPanel"><h3>Export Month</h3><input class="acInput" type="month" id="reportMonth" value="${esc(new Date().toISOString().slice(0,7))}"><p class="acMeta">The export includes posted, planned and voided records for audit visibility, with posting and reconciliation status clearly shown.</p></div></div>`;
 }
 function render(t=tab){
   if(!active())return;
   tab=t;
-  const mp=currentMonthPnl||{},future=futurePosted(),un=loaded.cash?actualCashRows().filter(x=>x.reconciliation_status!=='reconciled').length:null;
+  const mp=currentMonthPnl||{},future=futurePosted(),un=loaded.cash?actualCashRows().filter(x=>low(x.reconciliation_status)==='unreconciled').length:null;
   let body='';
   if(t==='overview')body=overview();
   if(t==='income')body=entryForm('income');
   if(t==='expenses')body=entryForm('expense');
   if(t==='cashbook')body=cashbookPanel('');
+  if(t==='petty')body=pettyCashPanel();
   if(t==='planned')body=plannedPanel();
   if(t==='pnl')body=pnlControls();
   if(t==='reconciliation')body=reconciliation();
   if(t==='targets')body=targetsPanel();
   if(t==='reports')body=reports();
   $('view').innerHTML=`<div class="acRoot">
-    <div class="acHero"><b>FINANCIAL OPERATIONS & CONTROL</b><h2>Expenses, Income & Management P&L</h2><p>Daily cashbook control, planned items, monthly management P&L, reconciliation, financial-year targets and formal reporting from one governed finance workspace.</p></div>
+    <div class="acHero"><b>FINANCIAL OPERATIONS & CONTROL</b><h2>Expenses, Income & Management P&L</h2><p>Daily cashbook control, petty cash, planned items, monthly management P&L, reconciliation, financial-year targets and formal reporting from one governed finance workspace.</p></div>
     ${loadWarning()}
     <div class="acK">
       <div class="acCard"><strong>${currentMonthPnl?money(mp.turnover):'—'}</strong><span>Current month turnover to date</span></div>
@@ -534,7 +735,7 @@ function render(t=tab){
     </div>
     ${future.length?'<div class="acWarn"><b>Review required:</b> '+future.length+' existing posted cashbook item(s) are dated in the future. They have not been altered, but live P&L calculations now exclude them until their date arrives.</div>':''}
     <div class="acTabs">${[
-      ['overview','Overview'],['income','Income'],['expenses','Expenses'],['cashbook','Cashbook'],['planned','Planned / Recurring'],['pnl','P&L'],['reconciliation','Reconciliation'],['targets','Targets & FY'],['reports','Reports']
+      ['overview','Overview'],['income','Income'],['expenses','Expenses'],['cashbook','Cashbook'],['petty','Petty Cash'],['planned','Planned / Recurring'],['pnl','P&L'],['reconciliation','Reconciliation'],['targets','Targets & FY'],['reports','Reports']
     ].map(x=>'<button class="acBtn '+(t===x[0]?'':'alt')+'" data-ac-tab="'+x[0]+'">'+x[1]+'</button>').join('')}<button class="acBtn alt" id="acRefresh">Refresh</button></div>
     <div class="acSection">${body}</div>
   </div>`;
@@ -722,13 +923,125 @@ async function distributeAnnualTarget(){
   await audit('Annual finance target distributed to monthly budgets',anchor,{annual_target:target},'recorded','finance_budget');
   budgetPage=1;await open();render('targets');
 }
+
+function bindPettyFundCreate(){
+  const b=$('pcCreateFund');if(!b)return;
+  b.onclick=createPettyFund;
+}
+async function createPettyFund(){
+  const name=$('pcNewName')?.value.trim(),custodian=$('pcNewCustodian')?.value||null,custodianName=$('pcNewCustodianName')?.value.trim()||null,float=Number($('pcNewFloat')?.value||0);
+  if(!name)return alert('Enter the petty cash fund name.');
+  if(!Number.isFinite(float)||float<0)return alert('Authorised float must be zero or greater.');
+  const {data,error}=await db.rpc('finance_create_petty_cash_fund',{p_fund_name:name,p_custodian_profile_id:custodian||null,p_custodian_name:custodianName,p_authorized_float:float});
+  if(error)return alert(error.message);
+  pettyFundId=data;
+  await audit('Petty cash fund created',data,{fund_name:name,authorized_float:float},'recorded','petty_cash_fund');
+  await open();render('petty');
+}
+async function updatePettyFund(){
+  const f=pettyFund();if(!f)return;
+  const name=$('pcFundName').value.trim(),float=Number($('pcAuthFloat').value||0),status=$('pcFundStatus').value;
+  if(!name)return alert('Enter the petty cash fund name.');
+  if(!Number.isFinite(float)||float<0)return alert('Authorised float must be zero or greater.');
+  const {error}=await db.rpc('finance_update_petty_cash_fund',{
+    p_fund_id:f.id,p_fund_name:name,p_custodian_profile_id:$('pcCustodian').value||null,
+    p_custodian_name:$('pcCustodianName').value.trim()||null,p_authorized_float:float,p_status:status
+  });
+  if(error)return alert(error.message);
+  await audit('Petty cash fund updated',f.id,{fund_name:name,authorized_float:float,status},'recorded','petty_cash_fund');
+  await open();render('petty');
+}
+async function recordPettyMovement(){
+  const f=pettyFund();if(!f)return;
+  const type=$('pcMoveType').value,amount=Number($('pcMoveAmount').value),date=$('pcMoveDate').value||today();
+  if(!(amount>0))return alert('Enter a petty cash movement amount greater than zero.');
+  const labels={opening_float:'opening float',replenishment:'replenishment',return_to_bank:'return to bank'};
+  if(!confirm('Record '+labels[type]+' of '+money(amount)+' on '+day(date)+'? Funding movements do not enter the P&L.'))return;
+  const {data,error}=await db.rpc('finance_record_petty_cash_movement',{
+    p_fund_id:f.id,p_movement_type:type,p_amount:amount,p_movement_date:date,
+    p_reference_number:$('pcMoveRef').value.trim()||null,p_notes:$('pcMoveNotes').value.trim()||null
+  });
+  if(error)return alert(error.message);
+  await audit('Petty cash movement recorded',data,{fund_id:f.id,movement_type:type,amount,date},'recorded','petty_cash_movement');
+  await open();render('petty');
+}
+async function createPettyVoucher(){
+  const f=pettyFund();if(!f)return;
+  const receipt=$('pcVoucherReceipt').value.trim(),evidence=$('pcVoucherEvidence').value.trim(),description=$('pcVoucherDesc').value.trim(),amount=Number($('pcVoucherAmount').value);
+  if(receipt&&!safeHttp(receipt))return alert('Receipt/evidence link must start with http:// or https://.');
+  if(!receipt&&!evidence)return alert('Add a receipt/evidence URL or explain why evidence is unavailable.');
+  if(!description)return alert('Describe what was purchased and why.');
+  if(!(amount>0))return alert('Enter a voucher amount greater than zero.');
+  const {data,error}=await db.rpc('finance_create_petty_cash_voucher',{
+    p_fund_id:f.id,p_expense_date:$('pcVoucherDate').value||today(),p_category:$('pcVoucherCategory').value,
+    p_payee:$('pcVoucherPayee').value.trim()||null,p_department:$('pcVoucherDept').value.trim()||null,
+    p_description:description,p_amount:amount,p_receipt_url:receipt||null,p_evidence_note:evidence||null
+  });
+  if(error)return alert(error.message);
+  await audit('Petty cash voucher requested',data?.id||'',{fund_id:f.id,voucher_number:data?.voucher_number,amount,category:$('pcVoucherCategory').value},'pending','petty_cash_voucher');
+  await open();render('petty');
+}
+async function approvePettyVoucher(id){
+  const v=(S.pettyVouchers||[]).find(x=>x.id===id);if(!v)return;
+  if(!confirm('Approve and post '+v.voucher_number+' for '+money(v.amount)+'? This will reduce petty cash and post the expense to the P&L under '+v.category+'.'))return;
+  const note=prompt('Approval note (optional):','')??null;
+  if(note===null)return;
+  const {data,error}=await db.rpc('finance_approve_petty_cash_voucher',{p_voucher_id:id,p_review_note:note.trim()||null});
+  if(error)return alert(error.message);
+  await audit('Petty cash voucher approved and posted',id,{voucher_number:v.voucher_number,amount:v.amount,category:v.category,cashbook_entry_id:data},'recorded','petty_cash_voucher');
+  await open();render('petty');
+}
+async function rejectPettyVoucher(id){
+  const v=(S.pettyVouchers||[]).find(x=>x.id===id);if(!v)return;
+  const reason=prompt('Reason for rejecting '+v.voucher_number+':','');
+  if(reason===null)return;
+  if(reason.trim().length<5)return alert('Enter a clear rejection reason.');
+  const {error}=await db.rpc('finance_reject_petty_cash_voucher',{p_voucher_id:id,p_reason:reason.trim()});
+  if(error)return alert(error.message);
+  await audit('Petty cash voucher rejected',id,{voucher_number:v.voucher_number,reason:reason.trim()},'rejected','petty_cash_voucher');
+  await open();render('petty');
+}
+async function voidPettyVoucher(id){
+  const v=(S.pettyVouchers||[]).find(x=>x.id===id);if(!v)return;
+  const reason=prompt('Reason for voiding '+v.voucher_number+' (minimum 8 characters):','');
+  if(reason===null)return;
+  if(reason.trim().length<8)return alert('Enter a clear void reason of at least 8 characters.');
+  if(!confirm('Void this posted petty cash voucher? Its linked P&L/cashbook expense will also be voided and the petty cash balance restored.'))return;
+  const {error}=await db.rpc('finance_void_petty_cash_voucher',{p_voucher_id:id,p_reason:reason.trim()});
+  if(error)return alert(error.message);
+  await audit('Petty cash voucher voided',id,{voucher_number:v.voucher_number,amount:v.amount,reason:reason.trim()},'voided','petty_cash_voucher');
+  await open();render('petty');
+}
+async function voidPettyMovement(id){
+  const m=(S.pettyMoves||[]).find(x=>x.id===id);if(!m)return;
+  const reason=prompt('Reason for voiding this petty cash movement (minimum 8 characters):','');
+  if(reason===null)return;
+  if(reason.trim().length<8)return alert('Enter a clear void reason of at least 8 characters.');
+  if(!confirm('Void this '+String(m.movement_type).replaceAll('_',' ')+' of '+money(m.amount)+'? The record will remain in the audit register.'))return;
+  const {error}=await db.rpc('finance_void_petty_cash_movement',{p_movement_id:id,p_reason:reason.trim()});
+  if(error)return alert(error.message);
+  await audit('Petty cash movement voided',id,{movement_type:m.movement_type,amount:m.amount,reason:reason.trim()},'voided','petty_cash_movement');
+  await open();render('petty');
+}
+async function reconcilePettyCash(){
+  const f=pettyFund();if(!f)return;
+  const counted=Number($('pcCountedCash').value),date=$('pcReconDate').value||today(),notes=$('pcReconNotes').value.trim();
+  if(!Number.isFinite(counted)||counted<0)return alert('Enter the physical cash amount counted.');
+  const expected=pettyBalance(f.id,date),variance=counted-expected;
+  if(Math.abs(variance)>0.005&&!notes)return alert('Explain the reconciliation variance before recording the cash count.');
+  if(!confirm('Record petty cash count of '+money(counted)+' against system balance '+money(expected)+'? Variance: '+money(variance)+'.'))return;
+  const {data,error}=await db.rpc('finance_reconcile_petty_cash',{p_fund_id:f.id,p_reconciliation_date:date,p_counted_cash:counted,p_notes:notes||null});
+  if(error)return alert(error.message);
+  await audit('Petty cash reconciled',data?.id||'',{fund_id:f.id,reconciliation_date:date,system_balance:data?.system_balance,counted_cash:counted,variance:data?.variance},'recorded','petty_cash_reconciliation');
+  await open();render('petty');
+}
 function cashbookReportRows(month){
   const [from,to]=monthRange(month);
   return S.cash.filter(x=>x.entry_date>=from&&x.entry_date<=to).map(x=>({
     Date:day(x.entry_date),Type:x.entry_type,Category:x.category,Counterparty:x.counterparty||'',Description:x.description,
     Reference:x.reference_number||'','Payment Method':x.payment_method||'',Department:x.department||'',Amount:n(x.amount),
-    'Basis / Source':x.source_type==='adjustment'?'Non-cash adjustment':x.source_type==='student_payment'?'Verified student payment':'Cash / bank',
-    'Posting Status':x.posting_status||'posted',Recurrence:x.recurrence||'none','Reconciliation Status':x.source_type==='adjustment'?'not applicable':(x.reconciliation_status||'unreconciled'),
+    'Basis / Source':x.source_type==='adjustment'?'Non-cash adjustment':x.source_type==='petty_cash'?'Petty cash voucher':x.source_type==='student_payment'?'Verified student payment':'Cash / bank',
+    'Posting Status':x.posting_status||'posted',Recurrence:x.recurrence||'none','Reconciliation Status':['adjustment','petty_cash'].includes(x.source_type)?'not applicable':(x.reconciliation_status||'unreconciled'),
     'Void Reason':x.void_reason||''
   }));
 }
@@ -743,10 +1056,11 @@ async function exportCashbook(format){
   }catch(e){alert(e.message||'The cashbook export could not be generated.')}
 }
 function wire(){
-  document.querySelectorAll('[data-ac-tab]').forEach(b=>b.onclick=()=>{cashPage=1;plannedPage=1;reconPage=1;render(b.dataset.acTab)});
+  document.querySelectorAll('[data-ac-tab]').forEach(b=>b.onclick=()=>{cashPage=1;plannedPage=1;reconPage=1;budgetPage=1;pettyVoucherPage=1;pettyMovementPage=1;pettyReconPage=1;render(b.dataset.acTab)});
   $('acRefresh').onclick=async()=>{await open();render(tab)};
   document.querySelectorAll('[data-post]').forEach(b=>b.onclick=()=>postPlanned(b.dataset.post));
   document.querySelectorAll('[data-void]').forEach(b=>b.onclick=()=>voidEntry(b.dataset.void));
+  document.querySelectorAll('[data-open-petty]').forEach(b=>b.onclick=()=>render('petty'));
   if(['income','expenses'].includes(tab)){
     $('aeSave').onclick=()=>saveEntry(tab==='income'?'income':'expense');
     const syncEntryControls=()=>{
@@ -766,6 +1080,27 @@ function wire(){
   if(tab==='overview'){
     $('acImportPayments').onclick=importPayments;
     $('acReports').onclick=()=>window.openFundaReportCentre?.('finance');
+  }
+  if(tab==='petty'){
+    bindPettyFundCreate();
+    $('pcFundSelect')?.addEventListener('change',e=>{pettyFundId=e.target.value;pettyVoucherPage=1;pettyMovementPage=1;pettyReconPage=1;render('petty')});
+    $('pcNewFundShow')?.addEventListener('click',()=>{const h=$('pcNewFundHost');if(h){h.innerHTML=pettyFundSetup();bindPettyFundCreate()}});
+    $('pcUpdateFund')?.addEventListener('click',updatePettyFund);
+    $('pcRecordMove')?.addEventListener('click',recordPettyMovement);
+    $('pcCreateVoucher')?.addEventListener('click',createPettyVoucher);
+    $('pcReconcile')?.addEventListener('click',reconcilePettyCash);
+    $('pcExcel')?.addEventListener('click',()=>exportPettyCash('xlsx'));
+    $('pcPdf')?.addEventListener('click',()=>exportPettyCash('pdf'));
+    $('pcVoucherPrev')?.addEventListener('click',()=>{pettyVoucherPage=Math.max(1,pettyVoucherPage-1);render('petty')});
+    $('pcVoucherNext')?.addEventListener('click',()=>{pettyVoucherPage++;render('petty')});
+    $('pcMovePrev')?.addEventListener('click',()=>{pettyMovementPage=Math.max(1,pettyMovementPage-1);render('petty')});
+    $('pcMoveNext')?.addEventListener('click',()=>{pettyMovementPage++;render('petty')});
+    $('pcReconPrev')?.addEventListener('click',()=>{pettyReconPage=Math.max(1,pettyReconPage-1);render('petty')});
+    $('pcReconNext')?.addEventListener('click',()=>{pettyReconPage++;render('petty')});
+    document.querySelectorAll('[data-pc-approve]').forEach(b=>b.onclick=()=>approvePettyVoucher(b.dataset.pcApprove));
+    document.querySelectorAll('[data-pc-reject]').forEach(b=>b.onclick=()=>rejectPettyVoucher(b.dataset.pcReject));
+    document.querySelectorAll('[data-pc-void-voucher]').forEach(b=>b.onclick=()=>voidPettyVoucher(b.dataset.pcVoidVoucher));
+    document.querySelectorAll('[data-pc-void-move]').forEach(b=>b.onclick=()=>voidPettyMovement(b.dataset.pcVoidMove));
   }
   if(tab==='planned'){
     $('plPrev').onclick=()=>{plannedPage=Math.max(1,plannedPage-1);render('planned')};
