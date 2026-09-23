@@ -3,8 +3,8 @@
 if(!/admin-v2\.html$/i.test(location.pathname))return;
 window.__fundaHrAuthoritativeLoader=true;
 
-let db,D={},loadErrors=[],currentTab='team',workforceMonth='2026-10-01',workforceSummary=null,workforceSummaryError='',workforceEditId=null;
-const PAGE_SIZE=10,pages={team:1,invitations:1,contracts:1,documents:1,leave:1,safety:1,training:1,performance:1,workforce:1,audit:1};
+let db,D={},loadErrors=[],currentTab='team',workforceMonth='2026-10-01',workforceSummary=null,workforceSummaryError='',workforceEditId=null,disciplinaryCaseId=null;
+const PAGE_SIZE=10,pages={team:1,invitations:1,contracts:1,documents:1,leave:1,safety:1,training:1,performance:1,workforce:1,disciplinary:1,disciplinaryEvents:1,audit:1};
 const $=x=>document.getElementById(x);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const low=v=>String(v||'').toLowerCase();
@@ -56,9 +56,9 @@ function css(){
   .hrDeptCard h4{margin:0 0 5px;color:#071b31;font-size:14px}
   .hrDeptCard p{margin:0;color:#526275;font-size:13px;line-height:1.5}
   .hrDeptCard small{display:block;margin-top:6px;color:#64748b;font-size:12px;line-height:1.45}
-  .hrMoney{text-align:right;white-space:nowrap}.hrPlanningGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:10px 0}.hrPlanCard{border:1px solid #e1dac9;border-radius:10px;padding:12px;background:#fbfcfe}.hrPlanCard strong{display:block;color:#071b31;font-size:18px}.hrPlanCard span{font-size:12px;color:#64748b;line-height:1.45}.hrConfidential{margin:10px 0;padding:10px 12px;border:1px solid #d7e3f0;border-radius:9px;background:#f6f9fd;color:#536174;font-size:13px;line-height:1.5}
-  @media(max-width:1050px){.hrK{grid-template-columns:repeat(3,1fr)}.hrPlanningGrid{grid-template-columns:repeat(2,1fr)}}
-  @media(max-width:760px){.hrGrid{grid-template-columns:1fr}.hrK{grid-template-columns:repeat(2,1fr)}.hrDeptGrid,.hrPlanningGrid{grid-template-columns:1fr}.hrTable{font-size:12px}.hrHero h2{font-size:21px}}
+  .hrMoney{text-align:right;white-space:nowrap}.hrPlanningGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:10px 0}.hrPlanCard{border:1px solid #e1dac9;border-radius:10px;padding:12px;background:#fbfcfe}.hrPlanCard strong{display:block;color:#071b31;font-size:18px}.hrPlanCard span{font-size:12px;color:#64748b;line-height:1.45}.hrConfidential{margin:10px 0;padding:10px 12px;border:1px solid #d7e3f0;border-radius:9px;background:#f6f9fd;color:#536174;font-size:13px;line-height:1.5}.hrProcess{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:10px 0}.hrProcessStep{border:1px solid #dce5ef;border-radius:9px;background:#f8fbff;padding:10px}.hrProcessStep b{display:block;color:#0b315c;font-size:12px;margin-bottom:4px}.hrProcessStep span{font-size:11px;line-height:1.4;color:#64748b}.hrCaseBox{border:1px solid #d9d1bf;border-radius:10px;padding:12px;margin-top:10px;background:#fff}.hrCaseBox h4{margin:0 0 8px;color:#071b31;font-size:15px}.hrCaseTimeline{border-left:2px solid #dce5ef;margin:8px 0 8px 8px;padding-left:13px}.hrCaseEvent{margin:0 0 10px}.hrCaseEvent b{display:block;color:#071b31;font-size:12px}.hrCaseEvent span{display:block;color:#64748b;font-size:12px;line-height:1.45}
+  @media(max-width:1050px){.hrK{grid-template-columns:repeat(3,1fr)}.hrPlanningGrid{grid-template-columns:repeat(2,1fr)}.hrProcess{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:760px){.hrGrid{grid-template-columns:1fr}.hrK{grid-template-columns:repeat(2,1fr)}.hrDeptGrid,.hrPlanningGrid,.hrProcess{grid-template-columns:1fr}.hrTable{font-size:12px}.hrHero h2{font-size:21px}}
   `;
   document.head.appendChild(s);
 }
@@ -80,6 +80,9 @@ async function load(){
     ['hr_workforce_plans','*','created_at'],
     ['hr_compensation_guidance','*','department'],
     ['hr_compensation_floor','*','effective_date'],
+    ['hr_disciplinary_rules','*','sort_order'],
+    ['hr_disciplinary_cases','*','created_at'],
+    ['hr_disciplinary_events','*','event_at'],
     ['hr_audit_log','*','created_at']
   ];
   await Promise.all(specs.map(async([name,fields,order])=>{
