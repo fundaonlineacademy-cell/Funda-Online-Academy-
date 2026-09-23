@@ -12,6 +12,53 @@ alter table public.hr_workforce_plans
 -- 2026-09-23
 -- Guidance only: does not approve salaries, create payroll, or alter workforce plans.
 
+create or replace function public.guard_hr_workforce_approved_compensation()
+returns trigger
+language plpgsql
+security definer
+set search_path=''
+as $$
+declare
+  v_floor numeric(12,2);
+  v_required_monthly numeric(14,2);
+begin
+  if new.status<>'approved_plan' or new.employment_model='contractor' then
+    return new;
+  end if;
+
+  if coalesce(new.planned_weekly_hours,0)<=0 then
+    raise exception 'Approved employee plans require planned weekly hours' using errcode='22023';
+  end if;
+
+  select hourly_rate into v_floor
+  from public.hr_compensation_floor
+  where singleton=true;
+
+  v_floor:=coalesce(v_floor,30.23);
+
+  if new.pay_basis='hourly' and coalesce(new.hourly_rate,0)<v_floor then
+    raise exception 'Approved employee hourly rate is below the current ordinary-worker minimum wage' using errcode='22023';
+  end if;
+
+  if new.pay_basis='monthly' then
+    v_required_monthly:=round(v_floor*new.planned_weekly_hours*52/12,2);
+    if coalesce(new.monthly_rate,0)<v_required_monthly then
+      raise exception 'Approved employee monthly rate is below the current ordinary-worker minimum-wage equivalent for the planned hours' using errcode='22023';
+    end if;
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_guard_hr_workforce_approved_compensation on public.hr_workforce_plans;
+create trigger trg_guard_hr_workforce_approved_compensation
+before insert or update on public.hr_workforce_plans
+for each row execute function public.guard_hr_workforce_approved_compensation();
+
+revoke all on function public.guard_hr_workforce_approved_compensation() from PUBLIC,anon,authenticated;
+grant execute on function public.guard_hr_workforce_approved_compensation() to service_role;
+
 create table if not exists public.hr_compensation_floor (
   singleton boolean primary key default true check (singleton),
   effective_date date not null,
