@@ -601,6 +601,165 @@ function wire(tab){
     wireDisciplinary();
   }
 }
+function dtIso(v){
+  if(!v)return null;
+  const d=new Date(v);
+  return Number.isNaN(d.getTime())?null:d.toISOString();
+}
+function wireDisciplinary(){
+  $('hdCreateCase')?.addEventListener('click',createDisciplinaryCase);
+  document.querySelectorAll('[data-disciplinary-open]').forEach(b=>b.onclick=()=>{
+    disciplinaryCaseId=b.dataset.disciplinaryOpen;pages.disciplinaryEvents=1;render('disciplinary');
+  });
+  $('hdBack')?.addEventListener('click',()=>{disciplinaryCaseId=null;pages.disciplinaryEvents=1;render('disciplinary')});
+  $('hdAddEvent')?.addEventListener('click',addDisciplinaryEvent);
+  $('hdInformal')?.addEventListener('click',recordInformalCorrection);
+  $('hdIssueNotice')?.addEventListener('click',issueDisciplinaryNotice);
+  $('hdSaveResponse')?.addEventListener('click',recordDisciplinaryResponse);
+  $('hdSchedule')?.addEventListener('click',scheduleDisciplinaryMeeting);
+  $('hdAddMeetingNote')?.addEventListener('click',addDisciplinaryMeetingNote);
+  $('hdOutcome')?.addEventListener('click',recordDisciplinaryOutcome);
+  $('hdReviewRequest')?.addEventListener('click',requestDisciplinaryReview);
+  $('hdDecideReview')?.addEventListener('click',decideDisciplinaryReview);
+  $('hdCloseCase')?.addEventListener('click',closeDisciplinaryCase);
+  $('hdWithdraw')?.addEventListener('click',withdrawDisciplinaryCase);
+}
+async function createDisciplinaryCase(){
+  const profile=$('hdStaff')?.value,rule=$('hdRule')?.value,title=$('hdTitle')?.value.trim(),incident=$('hdIncidentDate')?.value;
+  const details=$('hdDetails')?.value.trim(),workplace=$('hdRuleStandard')?.value.trim()||null,severity=$('hdSeverity')?.value,route=$('hdRoute')?.value;
+  if(!profile)return alert('Select the Staff member.');
+  if(!rule)return alert('Select the alleged rule / category.');
+  if(!title||title.length<3)return alert('Enter a clear allegation title.');
+  if(!incident)return alert('Enter the incident date.');
+  if(!details||details.length<10)return alert('Record the alleged facts in sufficient detail.');
+  if(!confirm('Open this as an allegation for investigation? This does not record guilt or a disciplinary sanction.'))return;
+  const {data,error}=await db.rpc('hr_create_disciplinary_case',{
+    p_profile_id:profile,p_rule_id:rule,p_allegation_title:title,p_incident_date:incident,
+    p_allegation_details:details,p_workplace_rule:workplace,p_severity_assessment:severity,p_process_route:route
+  });
+  if(error)return alert(error.message);
+  disciplinaryCaseId=data?.id||null;
+  await load();render('disciplinary');
+}
+async function addDisciplinaryEvent(){
+  if(!disciplinaryCaseId)return;
+  const note=$('hdEventNote')?.value.trim(),url=$('hdEvidenceUrl')?.value.trim()||null;
+  if(!note||note.length<3)return alert('Enter an investigation/evidence note.');
+  if(url&&!safeUrl(url))return alert('Evidence URL must start with http:// or https://.');
+  const {error}=await db.rpc('hr_log_disciplinary_event',{
+    p_case_id:disciplinaryCaseId,p_event_type:url?'evidence_added':'investigation_note',
+    p_notes:note,p_evidence_url:url
+  });
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function recordInformalCorrection(){
+  if(!disciplinaryCaseId)return;
+  const response=$('hdInformalResponse')?.value.trim(),correction=$('hdInformalCorrection')?.value.trim();
+  if(!response||response.length<3)return alert('Record the employee explanation / response.');
+  if(!correction||correction.length<3)return alert('Record the advice or correction given.');
+  if(!confirm('Record this as informal corrective action and close the case? This is not a formal warning.'))return;
+  const {error}=await db.rpc('hr_record_informal_correction',{p_case_id:disciplinaryCaseId,p_employee_response:response,p_correction:correction});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function issueDisciplinaryNotice(){
+  if(!disciplinaryCaseId)return;
+  const notice=$('hdNotice')?.value.trim(),deadline=dtIso($('hdDeadline')?.value),language=$('hdLanguage')?.value.trim()||null;
+  const unionRole=!!$('hdUnionRole')?.checked,unionConsult=dtIso($('hdUnionConsult')?.value);
+  if(!notice||notice.length<10)return alert('Explain the allegation in sufficient detail.');
+  if(!deadline)return alert('Choose a reasonable future preparation / response deadline.');
+  if(unionRole&&!unionConsult)return alert('Record the union consultation date/time for a trade-union representative/office-bearer.');
+  if(!confirm('Issue the formal allegation notice? The employee must still be given a genuine opportunity to respond before any finding or sanction.'))return;
+  const {error}=await db.rpc('hr_issue_disciplinary_notice',{
+    p_case_id:disciplinaryCaseId,p_notice_details:notice,p_preparation_deadline:deadline,
+    p_preferred_language:language,p_trade_union_role_declared:unionRole,p_union_consulted_at:unionConsult
+  });
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function recordDisciplinaryResponse(){
+  if(!disciplinaryCaseId)return;
+  const status=$('hdResponseStatus')?.value,response=$('hdResponse')?.value.trim()||null,rep=$('hdRepType')?.value;
+  const repName=$('hdRepName')?.value.trim()||null,language=$('hdRespLanguage')?.value.trim()||null,interpreter=!!$('hdInterpreter')?.checked;
+  if(status==='provided'&&(!response||response.length<3))return alert('Record the employee response.');
+  if(rep!=='none'&&!repName)return alert('Record the representative name.');
+  const {error}=await db.rpc('hr_record_disciplinary_response',{
+    p_case_id:disciplinaryCaseId,p_response_status:status,p_employee_response:response,
+    p_representation_type:rep,p_representative_name:repName,p_preferred_language:language,p_interpreter_required:interpreter
+  });
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function scheduleDisciplinaryMeeting(){
+  if(!disciplinaryCaseId)return;
+  const at=dtIso($('hdMeetingAt')?.value),chair=$('hdChair')?.value.trim();
+  if(!at)return alert('Choose the meeting date/time.');
+  if(!chair||chair.length<2)return alert('Record the chairperson / decision-maker.');
+  const {error}=await db.rpc('hr_schedule_disciplinary_meeting',{p_case_id:disciplinaryCaseId,p_meeting_at:at,p_chairperson_name:chair});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function addDisciplinaryMeetingNote(){
+  if(!disciplinaryCaseId)return;
+  const note=$('hdMeetingNote')?.value.trim(),url=$('hdMeetingEvidence')?.value.trim()||null;
+  if(!note||note.length<3)return alert('Enter the meeting/evidence note.');
+  if(url&&!safeUrl(url))return alert('Evidence URL must start with http:// or https://.');
+  const {error}=await db.rpc('hr_log_disciplinary_event',{
+    p_case_id:disciplinaryCaseId,p_event_type:'meeting_note',p_notes:note,p_evidence_url:url
+  });
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function recordDisciplinaryOutcome(){
+  if(!disciplinaryCaseId)return;
+  const finding=$('hdFinding')?.value,sanction=$('hdSanction')?.value,reason=$('hdOutcomeReason')?.value.trim();
+  const mitigating=$('hdMitigating')?.value.trim()||null,aggravating=$('hdAggravating')?.value.trim()||null;
+  const consistency=$('hdConsistency')?.value.trim()||null,relationship=$('hdRelationship')?.value.trim()||null;
+  const warningUntil=$('hdWarningUntil')?.value||null,rights=!!$('hdExternalRights')?.checked;
+  if(!reason||reason.length<10)return alert('Record clear written reasons for the finding and proposed outcome.');
+  if(sanction==='dismissal'&&!confirm('You selected dismissal. Confirm that the case has been fully considered and that you want to record the HR finding only. This does NOT automatically terminate system access, contracts or payroll.'))return;
+  const {error}=await db.rpc('hr_record_disciplinary_outcome',{
+    p_case_id:disciplinaryCaseId,p_finding:finding,p_sanction:sanction,p_outcome_reason:reason,
+    p_mitigating_factors:mitigating,p_aggravating_factors:aggravating,p_consistency_notes:consistency,
+    p_relationship_assessment:relationship,p_warning_valid_until:warningUntil,p_external_rights_informed:rights
+  });
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function requestDisciplinaryReview(){
+  if(!disciplinaryCaseId)return;
+  const grounds=$('hdReviewGrounds')?.value.trim();
+  if(!grounds||grounds.length<5)return alert('Record the grounds for internal review / appeal.');
+  const {error}=await db.rpc('hr_request_disciplinary_review',{p_case_id:disciplinaryCaseId,p_review_grounds:grounds});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function decideDisciplinaryReview(){
+  if(!disciplinaryCaseId)return;
+  const decision=$('hdReviewDecision')?.value,notes=$('hdReviewNotes')?.value.trim();
+  if(!notes||notes.length<10)return alert('Record clear reasons for the review decision.');
+  const {error}=await db.rpc('hr_decide_disciplinary_review',{p_case_id:disciplinaryCaseId,p_review_decision:decision,p_review_notes:notes});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function closeDisciplinaryCase(){
+  if(!disciplinaryCaseId)return;
+  const note=(prompt('Closure note:','Outcome issued; no internal review recorded.')||'').trim();
+  if(note.length<5)return alert('Record a closure note.');
+  const {error}=await db.rpc('hr_close_disciplinary_case',{p_case_id:disciplinaryCaseId,p_closure_note:note});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
+async function withdrawDisciplinaryCase(){
+  if(!disciplinaryCaseId)return;
+  const reason=(prompt('Reason for withdrawing the allegation/case:','')||'').trim();
+  if(reason.length<5)return alert('Record why the case is being withdrawn.');
+  if(!confirm('Withdraw this case? The history will remain in the HR audit record.'))return;
+  const {error}=await db.rpc('hr_withdraw_disciplinary_case',{p_case_id:disciplinaryCaseId,p_reason:reason});
+  if(error)return alert(error.message);
+  await load();render('disciplinary');
+}
 async function manageAccess(id){
   const p=prof(id);
   if(!p?.id||low(p.role)!=='staff')return;
