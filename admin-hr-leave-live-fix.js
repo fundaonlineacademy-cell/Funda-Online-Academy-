@@ -1,6 +1,16 @@
 (()=>{
-if(!/admin-v2\.html$/i.test(location.pathname)||window.__fundaHrLeaveLiveFix||window.__fundaHrAuthoritativeLoader)return;
-window.__fundaHrLeaveLiveFix=true;
+if(!/admin-v2\.html$/i.test(location.pathname)||window.__fundaHrLeaveLiveFix)return;
+window.__fundaHrLeaveLiveFix='pending';
+let bootAttempts=0;
+function waitForAuthoritative(){
+  if(window.__fundaHrAuthoritativeLoader){window.__fundaHrLeaveLiveFix='skipped';return true}
+  bootAttempts++;
+  if(bootAttempts<20){setTimeout(waitForAuthoritative,100);return true}
+  window.__fundaHrLeaveLiveFix=true;
+  startCompatibility();
+  return true;
+}
+function startCompatibility(){
 let db,busy=false;
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const low=v=>String(v||'').toLowerCase();
@@ -57,4 +67,6 @@ document.addEventListener('click',e=>{
 window.addEventListener('focus',()=>setTimeout(patch,120));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(patch,120)});
 setTimeout(patch,900);
+}
+waitForAuthoritative();
 })();
