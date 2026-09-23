@@ -28,7 +28,7 @@ body{background:var(--page)}
 .card{padding:20px}.card h2{font-size:19px}.sectionHead{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.eyebrow.dark{color:#9b721c}
 .compensationSteps .earning{min-height:150px;background:linear-gradient(180deg,#fff,#fbfcfe)}.compensationSteps .earning b{font-size:25px;color:#0d3557}.compensationSteps .earning p{margin-bottom:0}
 .compHero{background:linear-gradient(135deg,#fffaf0,#fff,#edf5fb)}.compTable td:nth-child(4),.compTable td:nth-child(5),.compTable td:nth-child(6){font-weight:800;color:#173f62}
-.portalFooter{margin-left:230px;background:#fff;border-top:1px solid #dce4ea;padding:30px 28px 18px}.footerGrid{max-width:1320px;margin:auto;display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr;gap:24px}.footerBrand{display:flex;align-items:center;gap:12px}.footerBrand img{width:54px;height:54px;object-fit:contain}.footerBrand b,.footerItem b{color:#123955}.footerBrand span{display:block;font-size:11px;color:#71808d;margin-top:4px}.footerItem{display:flex;gap:10px}.footerIcon{font-size:23px;color:#c99a2e}.footerItem p{font-size:11px;line-height:1.6;color:#6c7a86;margin:5px 0 0}.footerBottom{max-width:1320px;margin:24px auto 0;padding-top:14px;border-top:1px solid #edf0f2;display:flex;justify-content:space-between;gap:12px;color:#75818c;font-size:10px}
+.portalFooter{margin-left:230px;background:linear-gradient(180deg,#fff,#f8fafc);border-top:1px solid #dce4ea;padding:30px 28px 18px}.footerGrid{max-width:1320px;margin:auto;display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr;gap:24px;align-items:start}.footerBrand{display:flex;align-items:center;gap:12px}.footerBrand img{width:54px;height:54px;object-fit:contain}.footerBrand b,.footerItem b{color:#123955}.footerBrand b{font-size:13px;letter-spacing:.02em}.footerBrand span{display:block;font-size:11px;color:#71808d;margin-top:4px}.footerItem{display:flex;gap:10px;align-items:flex-start}.footerItem b{display:block;font-size:12px;line-height:1.35}.footerIcon{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:10px;background:#fff7e4;border:1px solid #ecd8a5;font-size:17px;color:#9b721c;font-weight:900}.footerItem p{font-size:11px;line-height:1.6;color:#6c7a86;margin:5px 0 0}.footerBottom{max-width:1320px;margin:24px auto 0;padding-top:14px;border-top:1px solid #edf0f2;display:flex;justify-content:space-between;gap:12px;color:#75818c;font-size:10px}
 .mobileNav{display:none!important}
 @media(max-width:900px){
  .topin{padding:0 12px}.portalLogo{width:34px;height:34px}.brand{font-size:13px}.brandSub{font-size:7px}
@@ -487,14 +487,21 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 </div>
 </div>
 </main>
-<footer class="portalFooter">
+<footer class="portalFooter" aria-label="Ambassador Portal footer">
   <div class="footerGrid">
-    <div class="footerBrand"><img src="logo.png" alt="Funda Online Academy"><div><b>FUNDA ONLINE ACADEMY</b><span>Learn. Grow. Achieve.</span></div></div>
+    <div class="footerBrand">
+      <img src="logo.png" alt="Funda Online Academy">
+      <div><b>FUNDA ONLINE ACADEMY</b><span>Learn. Grow. Achieve.</span><span>Ambassador Portal</span></div>
+    </div>
+    <div class="footerItem"><span class="footerIcon">◎</span><div><b>Ambassador Programme</b><p>Represent Funda Online Academy professionally and guide prospective students using accurate, approved information.</p></div></div>
+    <div class="footerItem"><span class="footerIcon">▣</span><div><b>Approved Resources</b><p>Use your tracked referral link and Academy-approved marketing resources when promoting courses.</p></div></div>
+    <div class="footerItem"><span class="footerIcon">?</span><div><b>Ambassador Support</b><p>Use the Support area in your portal for programme, referral, earnings or account assistance.</p></div></div>
   </div>
   <div class="footerBottom"><span>© 2026 Funda Online Academy. All rights reserved.</span><span>Ambassador Portal · Learn · Grow · Achieve.</span></div>
 </footer>
 <script src="ambassador-portal-v2.js?v=20260921-agreement-version-v1"></script>
 <script src="ambassador-your-voice.js?v=20260913-your-voice-v1"></script>
 <script src="academy-identity.js?v=20260905-master-identity"></script>
+<script src="ambassador-academy-identity-compact.js?v=20260923-compact-v1"></script>
 <script src="funda-sidebar-controls.js?v=20260912-collapsible-portals"></script>
 </body></html>
