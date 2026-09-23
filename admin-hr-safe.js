@@ -3,11 +3,12 @@
 if(!/admin-v2\.html$/i.test(location.pathname))return;
 window.__fundaHrAuthoritativeLoader=true;
 
-let db,D={},loadErrors=[],currentTab='team';
-const PAGE_SIZE=10,pages={team:1,invitations:1,contracts:1,documents:1,leave:1,safety:1,training:1,performance:1,audit:1};
+let db,D={},loadErrors=[],currentTab='team',workforceMonth='2026-10-01',workforceSummary=null,workforceSummaryError='',workforceEditId=null;
+const PAGE_SIZE=10,pages={team:1,invitations:1,contracts:1,documents:1,leave:1,safety:1,training:1,performance:1,workforce:1,audit:1};
 const $=x=>document.getElementById(x);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const low=v=>String(v||'').toLowerCase();
+const n=v=>Number(v||0);
 const fmt=v=>v?new Date(v).toLocaleString('en-ZA'):'—';
 
 function active(){
@@ -40,8 +41,8 @@ function css(){
   .hrTable th,.hrTable td{padding:10px;border-bottom:1px solid #edf0f3;text-align:left;vertical-align:top}
   .hrTable th{font-size:11px;line-height:1.3;text-transform:uppercase;color:#64748b;letter-spacing:.03em}
   .hrPill{display:inline-block;padding:4px 8px;border-radius:99px;background:#edf2f7;font-size:11px;font-weight:800;line-height:1.2}
-  .hrPill.active,.hrPill.accepted,.hrPill.approved,.hrPill.completed,.hrPill.closed,.hrPill.resolved{background:#e5f6ef;color:#176b50}
-  .hrPill.pending,.hrPill.issued,.hrPill.in_progress,.hrPill.investigating,.hrPill.shared{background:#fff2d2;color:#8a5a05}
+  .hrPill.active,.hrPill.accepted,.hrPill.approved,.hrPill.approved_plan,.hrPill.completed,.hrPill.closed,.hrPill.resolved{background:#e5f6ef;color:#176b50}
+  .hrPill.pending,.hrPill.issued,.hrPill.in_progress,.hrPill.investigating,.hrPill.shared,.hrPill.planning,.hrPill.on_hold{background:#fff2d2;color:#8a5a05}
   .hrPill.rejected,.hrPill.declined,.hrPill.critical,.hrPill.high,.hrPill.terminated,.hrPill.open{background:#ffe7e7;color:#9d2828}
   .hrAlert{margin:10px 0;padding:11px 13px;border:1px solid #efcaca;border-radius:9px;background:#fff3f3;color:#8b2626;font-size:13px;line-height:1.5}
   .hrEvidence{margin-top:4px;font-size:12px;line-height:1.45;color:#475569}
@@ -55,8 +56,9 @@ function css(){
   .hrDeptCard h4{margin:0 0 5px;color:#071b31;font-size:14px}
   .hrDeptCard p{margin:0;color:#526275;font-size:13px;line-height:1.5}
   .hrDeptCard small{display:block;margin-top:6px;color:#64748b;font-size:12px;line-height:1.45}
-  @media(max-width:1050px){.hrK{grid-template-columns:repeat(3,1fr)}}
-  @media(max-width:760px){.hrGrid{grid-template-columns:1fr}.hrK{grid-template-columns:repeat(2,1fr)}.hrDeptGrid{grid-template-columns:1fr}.hrTable{font-size:12px}.hrHero h2{font-size:21px}}
+  .hrMoney{text-align:right;white-space:nowrap}.hrPlanningGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:10px 0}.hrPlanCard{border:1px solid #e1dac9;border-radius:10px;padding:12px;background:#fbfcfe}.hrPlanCard strong{display:block;color:#071b31;font-size:18px}.hrPlanCard span{font-size:12px;color:#64748b;line-height:1.45}.hrConfidential{margin:10px 0;padding:10px 12px;border:1px solid #d7e3f0;border-radius:9px;background:#f6f9fd;color:#536174;font-size:13px;line-height:1.5}
+  @media(max-width:1050px){.hrK{grid-template-columns:repeat(3,1fr)}.hrPlanningGrid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:760px){.hrGrid{grid-template-columns:1fr}.hrK{grid-template-columns:repeat(2,1fr)}.hrDeptGrid,.hrPlanningGrid{grid-template-columns:1fr}.hrTable{font-size:12px}.hrHero h2{font-size:21px}}
   `;
   document.head.appendChild(s);
 }
@@ -75,6 +77,7 @@ async function load(){
     ['hr_safety_incidents','*','created_at'],
     ['hr_training_records','*','created_at'],
     ['hr_performance_reviews','*','created_at'],
+    ['hr_workforce_plans','*','created_at'],
     ['hr_audit_log','*','created_at']
   ];
   await Promise.all(specs.map(async([name,fields,order])=>{
@@ -236,6 +239,100 @@ function staffOpts(){
     return `<option value="${p.id}">${esc(p.full_name||p.email)} · ${esc(tag)}</option>`;
   }).join('');
 }
+const workforceDepartments=[
+  'Human Resources','Finance & Accounting','Academic, Assessments & Content','Enrolments & Courses',
+  'Student Support & CRM','Marketing & Admissions','Communication Hub','IT, Security & Platform'
+];
+function workforceDeptOpts(selected=''){
+  return workforceDepartments.map(x=>'<option '+(x===selected?'selected':'')+'>'+esc(x)+'</option>').join('');
+}
+function workforceBasePerPerson(x){
+  return low(x.pay_basis)==='hourly'
+    ? n(x.hourly_rate)*n(x.planned_weekly_hours)*52/12
+    : n(x.monthly_rate);
+}
+function workforceMonthlyCost(x){
+  return n(x.planned_headcount)*(workforceBasePerPerson(x)+n(x.employer_cost_per_person)+n(x.other_monthly_cost_per_person));
+}
+function workforceStatusLabel(v){
+  return String(v||'planning').replaceAll('_',' ');
+}
+async function loadWorkforceSummary(month=workforceMonth){
+  workforceSummary=null;workforceSummaryError='';
+  const {data,error}=await db.rpc('get_hr_workforce_affordability',{p_month:month});
+  if(error){workforceSummaryError=error.message||String(error);return}
+  workforceSummary=data||null;
+}
+function workforceRows(){
+  const plans=D.hr_workforce_plans||[];
+  return paged(plans,'workforce').map(x=>{
+    const base=workforceBasePerPerson(x),total=workforceMonthlyCost(x);
+    const rateSet=low(x.pay_basis)==='hourly'?n(x.hourly_rate)>0:n(x.monthly_rate)>0;
+    return `<tr>
+      <td><b>${esc(x.role_title)}</b><div class="hrMeta">${esc(x.department)}</div></td>
+      <td>${esc(String(x.employment_model||'').replaceAll('_',' '))}</td>
+      <td>${low(x.pay_basis)==='hourly'
+        ?'<b>'+moneyHR(x.hourly_rate)+'/hour</b><div class="hrMeta">'+n(x.planned_weekly_hours).toFixed(1)+' planned hours/week</div>'
+        :'<b>'+moneyHR(x.monthly_rate)+'/month</b>'}
+        ${!rateSet?'<div class="hrMeta">Rate not set yet</div>':''}</td>
+      <td>${n(x.planned_headcount)}</td>
+      <td class="hrMoney">${moneyHR(base*n(x.planned_headcount))}</td>
+      <td class="hrMoney">${moneyHR((n(x.employer_cost_per_person)+n(x.other_monthly_cost_per_person))*n(x.planned_headcount))}</td>
+      <td class="hrMoney"><b>${moneyHR(total)}</b></td>
+      <td>${esc(x.start_month||'—')}<div class="hrMeta">to ${esc(x.end_month||'Open-ended')}</div></td>
+      <td><span class="hrPill ${low(x.status)}">${esc(workforceStatusLabel(x.status))}</span></td>
+      <td>${esc(x.notes||'—')}</td>
+      <td><button class="hrBtn alt" data-workforce-edit="${x.id}">Edit plan</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="11">No workforce plans yet. Add future roles when you are ready to model staffing costs.</td></tr>';
+}
+function moneyHR(v){return 'R'+n(v).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function workforcePanel(){
+  const plans=D.hr_workforce_plans||[],s=workforceSummary,edit=(D.hr_workforce_plans||[]).find(x=>x.id===workforceEditId)||null;
+  const basis=edit?.pay_basis||'monthly',start=(edit?.start_month||workforceMonth).slice(0,7),end=edit?.end_month?edit.end_month.slice(0,7):'';
+  const summary=workforceSummaryError
+    ?'<div class="hrAlert"><b>Affordability summary unavailable:</b> '+esc(workforceSummaryError)+'. No budget value has been substituted.</div>'
+    :s?`<div class="hrPlanningGrid">
+      <div class="hrPlanCard"><strong>${n(s.planned_headcount)}</strong><span>Planned headcount for ${esc(workforceMonth.slice(0,7))}</span></div>
+      <div class="hrPlanCard"><strong>${moneyHR(s.planned_workforce_cost)}</strong><span>Planned monthly workforce cost</span></div>
+      <div class="hrPlanCard"><strong>${moneyHR(s.finance_people_budget)}</strong><span>Finance Staff / People budget</span></div>
+      <div class="hrPlanCard"><strong>${moneyHR(s.people_budget_gap)}</strong><span>People-budget gap / headroom</span></div>
+      <div class="hrPlanCard"><strong>${moneyHR(s.monthly_revenue_target)}</strong><span>Monthly revenue target</span></div>
+      <div class="hrPlanCard"><strong>${n(s.workforce_cost_pct_of_revenue).toFixed(2)}%</strong><span>Workforce cost as % of target revenue · remaining ${moneyHR(s.revenue_remaining_after_workforce)}</span></div>
+    </div>`:'<div class="hrMeta">Choose a month to calculate workforce affordability.</div>';
+
+  return `
+    <div class="hrConfidential"><b>Confidential workforce planning.</b> This area models future staffing affordability only. It does not invite staff, create employment contracts, run payroll or post expenses to the P&L. Zero rates mean a role has not yet been costed.</div>
+    <div class="hrBar"><label class="hrMeta">Affordability month <input class="hrInput" id="hwMonth" type="month" value="${esc(workforceMonth.slice(0,7))}"></label><button class="hrBtn alt" id="hwMonthApply">Check Month</button></div>
+    ${summary}
+    <h3 style="margin-top:18px">${edit?'Edit Workforce Plan':'Add Future Role Plan'}</h3>
+    <div class="hrGrid">
+      <input class="hrInput" id="hwRole" placeholder="Role title" value="${esc(edit?.role_title||'')}">
+      <select class="hrSelect" id="hwDept">${workforceDeptOpts(edit?.department||'Human Resources')}</select>
+      <select class="hrSelect" id="hwModel">
+        ${[['full_time','Full-time'],['part_time','Part-time'],['contractor','Contractor'],['hourly_casual','Hourly / casual']].map(([v,l])=>'<option value="'+v+'" '+((edit?.employment_model||'full_time')===v?'selected':'')+'>'+l+'</option>').join('')}
+      </select>
+      <select class="hrSelect" id="hwBasis"><option value="monthly" ${basis==='monthly'?'selected':''}>Monthly rate</option><option value="hourly" ${basis==='hourly'?'selected':''}>Hourly rate</option></select>
+      <input class="hrInput" id="hwMonthlyRate" type="number" min="0" step="0.01" placeholder="Monthly rate" value="${n(edit?.monthly_rate).toFixed(2)}">
+      <input class="hrInput" id="hwHourlyRate" type="number" min="0" step="0.01" placeholder="Hourly rate" value="${n(edit?.hourly_rate).toFixed(2)}">
+      <input class="hrInput" id="hwWeeklyHours" type="number" min="0" max="168" step="0.5" placeholder="Planned hours per week" value="${n(edit?.planned_weekly_hours).toFixed(1)}">
+      <input class="hrInput" id="hwHeadcount" type="number" min="1" step="1" placeholder="Headcount" value="${n(edit?.planned_headcount||1)}">
+      <input class="hrInput" id="hwEmployerCost" type="number" min="0" step="0.01" placeholder="Employer/benefit cost per person / month" value="${n(edit?.employer_cost_per_person).toFixed(2)}">
+      <input class="hrInput" id="hwOtherCost" type="number" min="0" step="0.01" placeholder="Other monthly cost per person" value="${n(edit?.other_monthly_cost_per_person).toFixed(2)}">
+      <label class="hrMeta">Planned start month<input class="hrInput" id="hwStart" type="month" value="${esc(start)}"></label>
+      <label class="hrMeta">Planned end month (optional)<input class="hrInput" id="hwEnd" type="month" value="${esc(end)}"></label>
+      <select class="hrSelect" id="hwStatus">
+        ${[['planning','Planning'],['approved_plan','Approved plan'],['on_hold','On hold'],['retired','Retired']].map(([v,l])=>'<option value="'+v+'" '+((edit?.status||'planning')===v?'selected':'')+'>'+l+'</option>').join('')}
+      </select>
+      <input class="hrInput" id="hwNotes" placeholder="Planning notes / assumptions" value="${esc(edit?.notes||'')}">
+    </div>
+    <div class="hrBar"><button class="hrBtn" id="hwSave">${edit?'Update Plan':'Add Plan'}</button>${edit?'<button class="hrBtn alt" id="hwCancel">Cancel Edit</button>':''}</div>
+    <div class="hrMeta">Hourly plans use planned weekly hours × 52 ÷ 12 for the monthly affordability estimate. Employer/benefit and other costs are added per planned person.</div>
+
+    <h3 style="margin-top:18px">Workforce Cost Plans</h3>
+    <table class="hrTable"><tr><th>Role / Department</th><th>Model</th><th>Rate Basis</th><th>Headcount</th><th>Base Cost</th><th>On-costs</th><th>Monthly Cost</th><th>Planned Period</th><th>Status</th><th>Notes</th><th>Action</th></tr>${workforceRows()}</table>
+    ${pager('workforce',plans.length,'workforce plans')}`;
+}
 function render(tab=currentTab){
   if(!active())return;
   currentTab=tab;
@@ -252,10 +349,11 @@ function render(tab=currentTab){
   if(tab==='leave')body=`<div class="hrBar"><select class="hrSelect" id="hlStaff"><option value="">Select staff member</option>${staffOpts()}</select><select class="hrSelect" id="hlType"><option>Annual Leave</option><option>Sick Leave</option><option>Family Responsibility Leave</option><option>Unpaid Leave</option><option>Study Leave</option><option>Compassionate Leave</option><option>Other</option></select><input class="hrInput" id="hlStart" type="date"><input class="hrInput" id="hlEnd" type="date"><input class="hrInput" id="hlReason" placeholder="Reason / HR note"><button class="hrBtn" id="hlAdd">Add Leave Request</button></div><div class="hrMeta" style="margin-bottom:8px">HR can capture a request on behalf of a staff member. Staff self-service requests will also appear here. Every request records who submitted it, current status, and who approved or rejected it.</div><table class="hrTable"><tr><th>Staff</th><th>Leave type</th><th>Dates</th><th>Status</th><th>Requested by</th><th>Reviewed by</th><th>Action</th></tr>${leaves()}</table>${pager('leave',(D.hr_leave_requests||[]).length,'leave requests')}`;
   if(tab==='safety')body=`<div class="hrBar"><select class="hrSelect" id="hsStaff"><option value="">General workplace</option>${staffOpts()}</select><input class="hrInput" id="hsTitle" placeholder="Safety / wellbeing incident"><select class="hrSelect" id="hsSeverity"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select><input class="hrInput" id="hsDesc" placeholder="What happened / required action"><button class="hrBtn bad" id="hsAdd">Record Incident</button></div><table class="hrTable"><tr><th>Incident</th><th>Staff</th><th>Severity</th><th>Status</th><th>Date</th><th>Resolved</th><th>Action</th></tr>${safety()}</table>${pager('safety',(D.hr_safety_incidents||[]).length,'safety cases')}`;
   if(tab==='development')body=training();
+  if(tab==='workforce')body=workforcePanel();
   if(tab==='audit')body=`<table class="hrTable"><tr><th>Date</th><th>Actor</th><th>Action</th><th>Record</th><th>Staff</th><th>Evidence</th></tr>${audits()}</table>${pager('audit',(D.hr_audit_log||[]).length,'audit events')}`;
 
   $('view').innerHTML=`
-    <div class="hrHero"><b>PEOPLE, CULTURE & GOVERNANCE</b><h2>HR & Team Command Centre</h2><p>Staff onboarding, access control, employment records, contracts, wellbeing, leave, development and accountable people management.</p></div>
+    <div class="hrHero"><b>PEOPLE, CULTURE & GOVERNANCE</b><h2>HR & Team Command Centre</h2><p>Staff onboarding, access control, employment records, contracts, wellbeing, leave, development, workforce affordability planning and accountable people management.</p></div>
     ${loadErrors.length?'<div class="hrAlert"><b>HR data warning:</b> '+esc(loadErrors.join(' | '))+' The last successfully loaded information remains visible; failed queries are not shown as false zeroes.</div>':''}
     <div class="hrK">
       <div class="hrCard"><strong>${activeN}</strong><span>Active staff</span></div>
@@ -266,14 +364,23 @@ function render(tab=currentTab){
       <div class="hrCard"><strong>${trainingDue}</strong><span>Training actions</span></div>
     </div>
     <div class="hrTabs">
-      ${[['team','Team & Access'],['contracts','Contracts & Documents'],['leave','Leave & Attendance'],['safety','Safety & Wellbeing'],['development','Training & Performance'],['audit','HR Audit Trail']].map(x=>`<button class="hrBtn ${tab===x[0]?'':'alt'}" data-hr-tab="${x[0]}">${x[1]}</button>`).join('')}
+      ${[['team','Team & Access'],['contracts','Contracts & Documents'],['leave','Leave & Attendance'],['safety','Safety & Wellbeing'],['development','Training & Performance'],['workforce','Workforce & Compensation'],['audit','HR Audit Trail']].map(x=>`<button class="hrBtn ${tab===x[0]?'':'alt'}" data-hr-tab="${x[0]}">${x[1]}</button>`).join('')}
       <button class="hrBtn alt" id="hrRefresh">Refresh</button>
     </div>
     <div class="hrPanel" style="overflow:auto">${body}</div>`;
   wire(tab);
 }
 function wire(tab){
-  document.querySelectorAll('[data-hr-tab]').forEach(b=>b.onclick=()=>render(b.dataset.hrTab));
+  document.querySelectorAll('[data-hr-tab]').forEach(b=>b.onclick=async()=>{
+    const next=b.dataset.hrTab;
+    if(next==='workforce'){
+      currentTab='workforce';
+      await loadWorkforceSummary(workforceMonth);
+      render('workforce');
+      return;
+    }
+    render(next);
+  });
   $('hrRefresh').onclick=open;
   if(tab==='team'){
     $('hrAddStaff').onclick=inviteForm;
@@ -302,6 +409,20 @@ function wire(tab){
       const b=e.target.closest('[data-safety-status]');
       if(b)setSafety(b.dataset.id,b.dataset.safetyStatus);
     };
+  }
+  if(tab==='workforce'){
+    $('hwSave').onclick=saveWorkforcePlan;
+    $('hwMonthApply').onclick=async()=>{
+      const v=$('hwMonth').value;
+      if(!v)return alert('Choose a planning month.');
+      workforceMonth=v+'-01';
+      await loadWorkforceSummary(workforceMonth);
+      render('workforce');
+    };
+    $('hwCancel')?.addEventListener('click',()=>{workforceEditId=null;render('workforce')});
+    $('hwBasis').onchange=syncWorkforceFields;
+    syncWorkforceFields();
+    document.querySelectorAll('[data-workforce-edit]').forEach(b=>b.onclick=()=>editWorkforcePlan(b.dataset.workforceEdit));
   }
 }
 async function manageAccess(id){
@@ -415,7 +536,66 @@ async function setSafety(id,status){
   await audit('safety_incident_'+status,'hr_safety_incident',id,x.profile_id,{from:x.status,to:status,action_taken:patch.action_taken||x.action_taken||null});
   await open();render('safety');
 }
-async function open(){css();await load();render(currentTab)}
+function syncWorkforceFields(){
+  const hourly=$('hwBasis')?.value==='hourly';
+  if($('hwMonthlyRate'))$('hwMonthlyRate').disabled=hourly;
+  if($('hwHourlyRate'))$('hwHourlyRate').disabled=!hourly;
+  if($('hwWeeklyHours'))$('hwWeeklyHours').disabled=!hourly;
+}
+function editWorkforcePlan(id){
+  const x=(D.hr_workforce_plans||[]).find(r=>r.id===id);
+  if(!x)return;
+  workforceEditId=id;
+  render('workforce');
+  setTimeout(()=>document.getElementById('hwRole')?.scrollIntoView({behavior:'smooth',block:'center'}),20);
+}
+async function saveWorkforcePlan(){
+  const role_title=$('hwRole').value.trim(),department=$('hwDept').value,employment_model=$('hwModel').value,pay_basis=$('hwBasis').value;
+  const monthly_rate=Number($('hwMonthlyRate').value||0),hourly_rate=Number($('hwHourlyRate').value||0),planned_weekly_hours=Number($('hwWeeklyHours').value||0);
+  const planned_headcount=Number($('hwHeadcount').value||0),employer_cost_per_person=Number($('hwEmployerCost').value||0),other_monthly_cost_per_person=Number($('hwOtherCost').value||0);
+  const startRaw=$('hwStart').value,endRaw=$('hwEnd').value,status=$('hwStatus').value,notes=$('hwNotes').value.trim()||null;
+  if(!role_title)return alert('Enter the future role title.');
+  if(!department)return alert('Choose the department.');
+  if(!startRaw)return alert('Choose the planned start month.');
+  if(!Number.isInteger(planned_headcount)||planned_headcount<1)return alert('Planned headcount must be at least 1.');
+  if([monthly_rate,hourly_rate,planned_weekly_hours,employer_cost_per_person,other_monthly_cost_per_person].some(v=>!Number.isFinite(v)||v<0))return alert('Rates, hours and on-costs must be zero or greater.');
+  if(planned_weekly_hours>168)return alert('Planned weekly hours cannot exceed 168.');
+  if(endRaw&&endRaw<startRaw)return alert('Planned end month cannot be before the start month.');
+  if(status==='approved_plan'){
+    if(pay_basis==='monthly'&&monthly_rate<=0)return alert('Set the monthly rate before marking this as an Approved plan.');
+    if(pay_basis==='hourly'&&(hourly_rate<=0||planned_weekly_hours<=0))return alert('Set both the hourly rate and planned weekly hours before marking this as an Approved plan.');
+  }
+  const u=await me();
+  const payload={
+    role_title,department,employment_model,pay_basis,
+    monthly_rate:pay_basis==='monthly'?monthly_rate:0,
+    hourly_rate:pay_basis==='hourly'?hourly_rate:0,
+    planned_weekly_hours:pay_basis==='hourly'?planned_weekly_hours:0,
+    planned_headcount,employer_cost_per_person,other_monthly_cost_per_person,
+    start_month:startRaw+'-01',end_month:endRaw?endRaw+'-01':null,status,notes,
+    updated_by:u?.id||null,updated_at:new Date().toISOString()
+  };
+  let r;
+  if(workforceEditId){
+    r=await db.from('hr_workforce_plans').update(payload).eq('id',workforceEditId).select('id').single();
+  }else{
+    payload.created_by=u?.id||null;
+    r=await db.from('hr_workforce_plans').insert(payload).select('id').single();
+  }
+  if(r.error)return alert('Workforce plan could not be saved: '+r.error.message);
+  await audit(workforceEditId?'workforce_plan_updated':'workforce_plan_created','hr_workforce_plan',r.data.id,null,{
+    role_title,department,employment_model,pay_basis,
+    monthly_rate:payload.monthly_rate,hourly_rate:payload.hourly_rate,
+    planned_weekly_hours:payload.planned_weekly_hours,planned_headcount,
+    employer_cost_per_person,other_monthly_cost_per_person,
+    start_month:payload.start_month,end_month:payload.end_month,status
+  });
+  workforceEditId=null;
+  await load();
+  await loadWorkforceSummary(workforceMonth);
+  render('workforce');
+}
+async function open(){css();await load();if(currentTab==='workforce')await loadWorkforceSummary(workforceMonth);render(currentTab)}
 function install(){
   css();
   window.FundaHRCentre={open};

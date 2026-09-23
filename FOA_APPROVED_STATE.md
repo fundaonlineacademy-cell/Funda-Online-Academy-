@@ -630,3 +630,15 @@ The owner physically reviewed **Admin → CEO Account Control**, approved the co
 - Work in Expenses & Income, HR & Team, Academic, IT/Security or another Admin tab does **not** reopen CEO Account Control.
 - A newly discovered defect is a change request and requires explicit owner approval before the locked workspace is changed.
 
+### Admin HR & Team — FOCUSED REOPENING FOR WORKFORCE & COMPENSATION PLANNING (23 September 2026)
+
+The owner explicitly reopened **only** the HR area required to add future **Workforce & Compensation Planning** after approving the monthly Finance Budget & Target Planner.
+
+- The previously approved and locked HR areas remain protected: Team & Access, staff invitations, Contracts & Documents, Leave & Attendance, Safety & Wellbeing, Training & Performance, SA Labour Compliance, HR Audit Trail and existing Staff Portal behaviour are not reopened by this work.
+- The authorised new scope is a planning-only HR workspace for future roles, compensation assumptions, planned hours, headcount, employer/on-costs, monthly workforce cost and affordability against the Finance Staff/People budget and monthly revenue target.
+- This planner must **not** create staff accounts, contracts, payroll payments or P&L expenses. Operational employment/payroll actions require their own approved workflows.
+- Individual workforce rates are HR-confidential. Finance may use the approved aggregate affordability result without requiring exposure of individual planned rates.
+- Workforce-plan registers remain subject to the Academy maximum of **10 visible records per page**.
+- No salary/rate figures are owner-approved merely because the planning structure exists. Rates and staffing assumptions will be planned separately.
+- The new Workforce & Compensation Planning area remains **unlocked pending the owner's physical review and later approval**.
+
