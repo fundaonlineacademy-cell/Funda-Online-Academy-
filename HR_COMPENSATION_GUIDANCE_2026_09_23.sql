@@ -1,3 +1,13 @@
+alter table public.hr_workforce_plans
+  drop constraint if exists hr_workforce_plans_employment_model_check;
+
+alter table public.hr_workforce_plans
+  add constraint hr_workforce_plans_employment_model_check
+  check (employment_model = any (array[
+    'full_time'::text,'part_time'::text,'contractor'::text,
+    'hourly_casual'::text,'graduate_intern'::text
+  ]));
+
 -- Funda Online Academy — Workforce Compensation Guidance
 -- 2026-09-23
 -- Guidance only: does not approve salaries, create payroll, or alter workforce plans.
