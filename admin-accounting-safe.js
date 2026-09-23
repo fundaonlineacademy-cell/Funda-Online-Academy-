@@ -1085,22 +1085,28 @@ async function recordPettyMovement(){
 async function createPettyVoucher(){
   const f=pettyFund();if(!f)return;
   const receipt=$('pcVoucherReceipt').value.trim(),evidence=$('pcVoucherEvidence').value.trim(),description=$('pcVoucherDesc').value.trim(),amount=Number($('pcVoucherAmount').value);
+  const vat=$('pcVoucherVat').value||f.default_vat_treatment||'not_confirmed';
   if(receipt&&!safeHttp(receipt))return alert('Receipt/evidence link must start with http:// or https://.');
   if(!receipt&&!evidence)return alert('Add a receipt/evidence URL or explain why evidence is unavailable.');
-  if(!description)return alert('Describe what was purchased and why.');
-  if(!(amount>0))return alert('Enter a voucher amount greater than zero.');
-  const {data,error}=await db.rpc('finance_create_petty_cash_voucher',{
+  if(!description||description.length<3)return alert('Describe what was purchased and why.');
+  if(!(amount>0))return alert('Enter the total petty cash amount in Rands.');
+  const {data,error}=await db.rpc('finance_create_petty_cash_voucher_v2',{
     p_fund_id:f.id,p_expense_date:$('pcVoucherDate').value||today(),p_category:$('pcVoucherCategory').value,
     p_payee:$('pcVoucherPayee').value.trim()||null,p_department:$('pcVoucherDept').value.trim()||null,
-    p_description:description,p_amount:amount,p_receipt_url:receipt||null,p_evidence_note:evidence||null
+    p_description:description,p_amount:amount,p_vat_treatment:vat,
+    p_receipt_url:receipt||null,p_evidence_note:evidence||null
   });
   if(error)return alert(error.message);
-  await audit('Petty cash voucher requested',data?.id||'',{fund_id:f.id,voucher_number:data?.voucher_number,amount,category:$('pcVoucherCategory').value},'pending','petty_cash_voucher');
+  await audit('Petty cash voucher requested',data?.id||'',{
+    fund_id:f.id,cost_control_reference:f.cost_control_reference,voucher_number:data?.voucher_number,
+    gross_amount_zar:amount,vat_treatment:vat,vat_amount:data?.vat_amount,net_amount:data?.net_amount,
+    category:$('pcVoucherCategory').value
+  },'pending','petty_cash_voucher');
   await open();render('petty');
 }
 async function approvePettyVoucher(id){
   const v=(S.pettyVouchers||[]).find(x=>x.id===id);if(!v)return;
-  if(!confirm('Approve and post '+v.voucher_number+' for '+money(v.amount)+'? This will reduce petty cash and post the expense to the P&L under '+v.category+'.'))return;
+  const f=(S.pettyFunds||[]).find(x=>x.id===v.fund_id);if(!confirm('Approve and post '+v.voucher_number+' for '+money(v.amount)+' under cost control '+(f?.cost_control_reference||'—')+'? This will reduce petty cash and post the expense to the P&L under '+v.category+'.'))return;
   const note=prompt('Approval note (optional):','')??null;
   if(note===null)return;
   const {data,error}=await db.rpc('finance_approve_petty_cash_voucher',{p_voucher_id:id,p_review_note:note.trim()||null});
