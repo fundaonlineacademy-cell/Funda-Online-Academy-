@@ -3,10 +3,10 @@
 const $=s=>document.querySelector(s), money=n=>'R'+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:0,maximumFractionDigits:2}), low=v=>String(v||'').toLowerCase(), esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[m]));
 const ranks=[{n:'Ambassador',min:0,max:10000,pay:0},{n:'Bronze',min:10000,max:25000,pay:0},{n:'Silver',min:25000,max:50000,pay:0},{n:'Gold',min:50000,max:100000,pay:5000},{n:'Platinum',min:100000,max:250000,pay:8000},{n:'Diamond',min:250000,max:500000,pay:12000},{n:'Executive',min:500000,max:1000000,pay:18000},{n:'Elite',min:1000000,max:Infinity,pay:25000}];
 const navGroups=[
- {label:'MAIN',items:[['dashboard','⌂','My Dashboard'],['guide','◈','Programme Guide'],['referrals','◎','My Referrals'],['earnings','R','My Earnings'],['rank','◒','Rank Progress'],['compensation','▣','Compensation Plan']]},
- {label:'FINANCE',items:[['earnings','◫','Earnings Breakdown'],['payments','▤','Payment History'],['banking','▧','My Banking']]},
+ {label:'MAIN',items:[['dashboard','⌂','My Dashboard'],['guide','◈','Programme Guide'],['referrals','◎','My Referrals'],['rank','◒','Rank Progress'],['compensation','▣','Compensation Plan']]},
+ {label:'FINANCE',items:[['earnings','R','My Earnings'],['payments','▤','Payment History'],['banking','▧','My Banking']]},
  {label:'RESOURCES',items:[['marketing','◆','Marketing Resources'],['announcements','◉','Announcements'],['support','?','Help & Support'],['programme','▥','Programme Rules']]},
- {label:'ACCOUNT',items:[['referral-link','↗','My Referral Link'],['profile','♙','My Profile'],['banking','⌁','Bank Details'],['announcements','●','Notifications']]},
+ {label:'ACCOUNT',items:[['referral-link','↗','My Referral Link'],['profile','♙','My Profile']]},
  {label:'YOUR VOICE',items:[['voice','✦','Your Voice']]}
 ];
 const saBanks=[
