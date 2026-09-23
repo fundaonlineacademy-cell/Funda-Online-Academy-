@@ -78,6 +78,8 @@ async function load(){
     ['hr_training_records','*','created_at'],
     ['hr_performance_reviews','*','created_at'],
     ['hr_workforce_plans','*','created_at'],
+    ['hr_compensation_guidance','*','department'],
+    ['hr_compensation_floor','*','effective_date'],
     ['hr_audit_log','*','created_at']
   ];
   await Promise.all(specs.map(async([name,fields,order])=>{
@@ -241,10 +243,50 @@ function staffOpts(){
 }
 const workforceDepartments=[
   'Human Resources','Finance & Accounting','Academic, Assessments & Content','Enrolments & Courses',
-  'Student Support & CRM','Marketing & Admissions','Communication Hub','IT, Security & Platform'
+  'Student Support & CRM','Marketing & Admissions','Communication Hub','IT, Security & Platform','Executive / CEO'
 ];
 function workforceDeptOpts(selected=''){
   return workforceDepartments.map(x=>'<option '+(x===selected?'selected':'')+'>'+esc(x)+'</option>').join('');
+}
+function compensationFloor(){
+  return (D.hr_compensation_floor||[])[0]||{
+    hourly_rate:30.23,monthly_equivalent_40h:5239.46,effective_date:'2026-03-01',
+    source_label:'South Africa National Minimum Wage 2026'
+  };
+}
+function guidanceMonthlyBand(g){
+  if(!g)return {min:0,max:0};
+  if(g.guidance_type==='revenue_percentage'){
+    const target=n(workforceSummary?.monthly_revenue_target);
+    return {min:target*n(g.revenue_pct_min)/100,max:target*n(g.revenue_pct_max)/100};
+  }
+  return {min:n(g.monthly_min),max:n(g.monthly_max)};
+}
+function monthlyToHourly(v){return n(v)/(40*52/12)}
+function compensationGuidanceRows(){
+  const rows=(D.hr_compensation_guidance||[]).filter(x=>x.active);
+  return rows.map(g=>{
+    const band=guidanceMonthlyBand(g),mid=(band.min+band.max)/2;
+    const sourceDate=g.source_as_of?new Date(g.source_as_of+'T12:00:00').toLocaleDateString('en-ZA',{month:'short',year:'numeric'}):'';
+    return `<tr>
+      <td><b>${esc(g.department)}</b><div class="hrMeta">${esc(g.suggested_role)}</div></td>
+      <td>${esc(g.profile_level||'Junior / graduate')}</td>
+      <td><b>${moneyHR(band.min)} – ${moneyHR(band.max)}</b><div class="hrMeta">${g.guidance_type==='revenue_percentage'?'FOA internal affordability envelope':'Market-reference monthly planning band'}</div></td>
+      <td><b>${moneyHR(monthlyToHourly(band.min))} – ${moneyHR(monthlyToHourly(band.max))}/hour</b><div class="hrMeta">40-hour-week equivalent for planning only</div></td>
+      <td><div class="hrMeta"><b>${esc(g.source_label)}</b>${sourceDate?' · '+esc(sourceDate):''}</div><div class="hrEvidence">${esc(g.source_note||'')}</div></td>
+      <td><button class="hrBtn alt" data-comp-guide="${g.id}" data-comp-mode="low">Use lower</button> <button class="hrBtn alt" data-comp-guide="${g.id}" data-comp-mode="mid">Use midpoint</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="6">Compensation guidance is currently unavailable.</td></tr>';
+}
+function applyCompGuidance(id,mode='mid'){
+  const g=(D.hr_compensation_guidance||[]).find(x=>x.id===id);if(!g)return;
+  const band=guidanceMonthlyBand(g),rate=mode==='low'?band.min:(band.min+band.max)/2;
+  if($('hwDept'))$('hwDept').value=g.department;
+  if($('hwRole'))$('hwRole').value=g.suggested_role;
+  if($('hwBasis'))$('hwBasis').value='monthly';
+  if($('hwMonthlyRate'))$('hwMonthlyRate').value=n(rate).toFixed(2);
+  syncWorkforceFields();
+  $('hwRole')?.scrollIntoView({behavior:'smooth',block:'center'});
 }
 function workforceBasePerPerson(x){
   return low(x.pay_basis)==='hourly'
@@ -289,7 +331,7 @@ function workforceRows(){
 function moneyHR(v){return 'R'+n(v).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function workforcePanel(){
   const plans=D.hr_workforce_plans||[],s=workforceSummary,edit=(D.hr_workforce_plans||[]).find(x=>x.id===workforceEditId)||null;
-  const basis=edit?.pay_basis||'monthly',start=(edit?.start_month||workforceMonth).slice(0,7),end=edit?.end_month?edit.end_month.slice(0,7):'';
+  const basis=edit?.pay_basis||'monthly',start=(edit?.start_month||workforceMonth).slice(0,7),end=edit?.end_month?edit.end_month.slice(0,7):'',floor=compensationFloor();
   const summary=workforceSummaryError
     ?'<div class="hrAlert"><b>Affordability summary unavailable:</b> '+esc(workforceSummaryError)+'. No budget value has been substituted.</div>'
     :s?`<div class="hrPlanningGrid">
@@ -305,17 +347,22 @@ function workforcePanel(){
     <div class="hrConfidential"><b>Confidential workforce planning.</b> This area models future staffing affordability only. It does not invite staff, create employment contracts, run payroll or post expenses to the P&L. Zero rates mean a role has not yet been costed.</div>
     <div class="hrBar"><label class="hrMeta">Affordability month <input class="hrInput" id="hwMonth" type="month" value="${esc(workforceMonth.slice(0,7))}"></label><button class="hrBtn alt" id="hwMonthApply">Check Month</button></div>
     ${summary}
+    <div class="hrDeptGuide">
+      <h3>Compensation Guidance — Junior / Graduate Planning</h3>
+      <p>These are planning references, not approved salaries or promises to future employees. The current South African ordinary-worker wage floor in this planner is <b>${moneyHR(floor.hourly_rate)}/hour</b> from ${esc(floor.effective_date||'2026-03-01')}. At 40 hours/week that is approximately <b>${moneyHR(floor.monthly_equivalent_40h)}/month</b>. Ordinary graduate/intern employees should not be planned below the applicable minimum wage. Formal Skills Development Act learnerships use a separate allowance schedule and are not treated as ordinary internships here.</p>
+      <div class="hrTableWrap"><table class="hrTable"><tr><th>Department / Suggested Starter Role</th><th>Profile</th><th>Monthly Guidance</th><th>Hourly Equivalent</th><th>Reference / Note</th><th>Use in Planner</th></tr>${compensationGuidanceRows()}</table></div>
+    </div>
     <h3 style="margin-top:18px">${edit?'Edit Workforce Plan':'Add Future Role Plan'}</h3>
     <div class="hrGrid">
       <input class="hrInput" id="hwRole" placeholder="Role title" value="${esc(edit?.role_title||'')}">
       <select class="hrSelect" id="hwDept">${workforceDeptOpts(edit?.department||'Human Resources')}</select>
       <select class="hrSelect" id="hwModel">
-        ${[['full_time','Full-time'],['part_time','Part-time'],['contractor','Contractor'],['hourly_casual','Hourly / casual']].map(([v,l])=>'<option value="'+v+'" '+((edit?.employment_model||'full_time')===v?'selected':'')+'>'+l+'</option>').join('')}
+        ${[['full_time','Full-time'],['part_time','Part-time'],['graduate_intern','Graduate / intern'],['contractor','Contractor'],['hourly_casual','Hourly / casual']].map(([v,l])=>'<option value="'+v+'" '+((edit?.employment_model||'full_time')===v?'selected':'')+'>'+l+'</option>').join('')}
       </select>
       <select class="hrSelect" id="hwBasis"><option value="monthly" ${basis==='monthly'?'selected':''}>Monthly rate</option><option value="hourly" ${basis==='hourly'?'selected':''}>Hourly rate</option></select>
       <input class="hrInput" id="hwMonthlyRate" type="number" min="0" step="0.01" placeholder="Monthly rate" value="${n(edit?.monthly_rate).toFixed(2)}">
       <input class="hrInput" id="hwHourlyRate" type="number" min="0" step="0.01" placeholder="Hourly rate" value="${n(edit?.hourly_rate).toFixed(2)}">
-      <input class="hrInput" id="hwWeeklyHours" type="number" min="0" max="168" step="0.5" placeholder="Planned hours per week" value="${n(edit?.planned_weekly_hours).toFixed(1)}">
+      <input class="hrInput" id="hwWeeklyHours" type="number" min="0.5" max="168" step="0.5" placeholder="Planned hours per week" value="${n(edit?.planned_weekly_hours||40).toFixed(1)}">
       <input class="hrInput" id="hwHeadcount" type="number" min="1" step="1" placeholder="Headcount" value="${n(edit?.planned_headcount||1)}">
       <input class="hrInput" id="hwEmployerCost" type="number" min="0" step="0.01" placeholder="Employer/benefit cost per person / month" value="${n(edit?.employer_cost_per_person).toFixed(2)}">
       <input class="hrInput" id="hwOtherCost" type="number" min="0" step="0.01" placeholder="Other monthly cost per person" value="${n(edit?.other_monthly_cost_per_person).toFixed(2)}">
@@ -327,7 +374,7 @@ function workforcePanel(){
       <input class="hrInput" id="hwNotes" placeholder="Planning notes / assumptions" value="${esc(edit?.notes||'')}">
     </div>
     <div class="hrBar"><button class="hrBtn" id="hwSave">${edit?'Update Plan':'Add Plan'}</button>${edit?'<button class="hrBtn alt" id="hwCancel">Cancel Edit</button>':''}</div>
-    <div class="hrMeta">Hourly plans use planned weekly hours × 52 ÷ 12 for the monthly affordability estimate. Employer/benefit and other costs are added per planned person.</div>
+    <div class="hrMeta">Planned weekly hours are used for legal-rate checking on employee plans. Hourly plans use hours × 52 ÷ 12 for the monthly affordability estimate; monthly plans use the entered monthly rate. Employer/benefit and other costs are added per planned person.</div>
 
     <h3 style="margin-top:18px">Workforce Cost Plans</h3>
     <table class="hrTable"><tr><th>Role / Department</th><th>Model</th><th>Rate Basis</th><th>Headcount</th><th>Base Cost</th><th>On-costs</th><th>Monthly Cost</th><th>Planned Period</th><th>Status</th><th>Notes</th><th>Action</th></tr>${workforceRows()}</table>
@@ -423,6 +470,7 @@ function wire(tab){
     $('hwBasis').onchange=syncWorkforceFields;
     syncWorkforceFields();
     document.querySelectorAll('[data-workforce-edit]').forEach(b=>b.onclick=()=>editWorkforcePlan(b.dataset.workforceEdit));
+    document.querySelectorAll('[data-comp-guide]').forEach(b=>b.onclick=()=>applyCompGuidance(b.dataset.compGuide,b.dataset.compMode));
   }
 }
 async function manageAccess(id){
@@ -540,7 +588,7 @@ function syncWorkforceFields(){
   const hourly=$('hwBasis')?.value==='hourly';
   if($('hwMonthlyRate'))$('hwMonthlyRate').disabled=hourly;
   if($('hwHourlyRate'))$('hwHourlyRate').disabled=!hourly;
-  if($('hwWeeklyHours'))$('hwWeeklyHours').disabled=!hourly;
+  if($('hwWeeklyHours'))$('hwWeeklyHours').disabled=false;
 }
 function editWorkforcePlan(id){
   const x=(D.hr_workforce_plans||[]).find(r=>r.id===id);
@@ -559,18 +607,23 @@ async function saveWorkforcePlan(){
   if(!startRaw)return alert('Choose the planned start month.');
   if(!Number.isInteger(planned_headcount)||planned_headcount<1)return alert('Planned headcount must be at least 1.');
   if([monthly_rate,hourly_rate,planned_weekly_hours,employer_cost_per_person,other_monthly_cost_per_person].some(v=>!Number.isFinite(v)||v<0))return alert('Rates, hours and on-costs must be zero or greater.');
-  if(planned_weekly_hours>168)return alert('Planned weekly hours cannot exceed 168.');
+  if(planned_weekly_hours<=0||planned_weekly_hours>168)return alert('Planned weekly hours must be greater than zero and cannot exceed 168.');
   if(endRaw&&endRaw<startRaw)return alert('Planned end month cannot be before the start month.');
   if(status==='approved_plan'){
     if(pay_basis==='monthly'&&monthly_rate<=0)return alert('Set the monthly rate before marking this as an Approved plan.');
-    if(pay_basis==='hourly'&&(hourly_rate<=0||planned_weekly_hours<=0))return alert('Set both the hourly rate and planned weekly hours before marking this as an Approved plan.');
+    if(pay_basis==='hourly'&&hourly_rate<=0)return alert('Set the hourly rate before marking this as an Approved plan.');
+    if(employment_model!=='contractor'){
+      const floor=compensationFloor(),requiredMonthly=n(floor.hourly_rate)*planned_weekly_hours*52/12;
+      if(pay_basis==='hourly'&&hourly_rate<n(floor.hourly_rate))return alert('This approved employee plan is below the current ordinary-worker minimum wage of '+moneyHR(floor.hourly_rate)+'/hour. Formal learnership allowances must be handled separately.');
+      if(pay_basis==='monthly'&&monthly_rate+0.005<requiredMonthly)return alert('At '+planned_weekly_hours.toFixed(1)+' planned hours/week, this approved monthly plan is below the current ordinary-worker minimum-wage equivalent of '+moneyHR(requiredMonthly)+'/month. Adjust the rate or the planned hours. Formal learnership allowances must be handled separately.');
+    }
   }
   const u=await me();
   const payload={
     role_title,department,employment_model,pay_basis,
     monthly_rate:pay_basis==='monthly'?monthly_rate:0,
     hourly_rate:pay_basis==='hourly'?hourly_rate:0,
-    planned_weekly_hours:pay_basis==='hourly'?planned_weekly_hours:0,
+    planned_weekly_hours,
     planned_headcount,employer_cost_per_person,other_monthly_cost_per_person,
     start_month:startRaw+'-01',end_month:endRaw?endRaw+'-01':null,status,notes,
     updated_by:u?.id||null,updated_at:new Date().toISOString()

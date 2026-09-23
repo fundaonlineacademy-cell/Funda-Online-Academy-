@@ -639,6 +639,6 @@ The owner explicitly reopened **only** the HR area required to add future **Work
 - This planner must **not** create staff accounts, contracts, payroll payments or P&L expenses. Operational employment/payroll actions require their own approved workflows.
 - Individual workforce rates are HR-confidential. Finance may use the approved aggregate affordability result without requiring exposure of individual planned rates.
 - Workforce-plan registers remain subject to the Academy maximum of **10 visible records per page**.
-- No salary/rate figures are owner-approved merely because the planning structure exists. Rates and staffing assumptions will be planned separately.
+- Published market-reference ranges, legal wage-floor data and FOA affordability guidance may appear inside Workforce & Compensation Planning, but **no salary/rate is owner-approved merely because guidance is displayed or copied into a draft plan**. A saved Planning record remains an assumption; operational remuneration requires the approved employment/payroll workflow.
 - The new Workforce & Compensation Planning area remains **unlocked pending the owner's physical review and later approval**.
 
