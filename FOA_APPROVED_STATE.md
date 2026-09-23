@@ -16,6 +16,21 @@ This file exists to prevent regressions and the reintroduction of previously cor
 ## Protected current decisions
 
 
+### Admin Command Center — SYSTEM-WIDE BEHAVIOUR & INTEGRATION LOCK (23 September 2026)
+
+Aziwe Futhe explicitly directed a final whole-Admin audit and lock so the Admin Command Center operates as one connected, traceable and protected Academy office.
+
+- All current Admin sections are protected under the system lock, including **Academic, Assessments & Content** even though that area was not previously logged as a standalone final section.
+- A normal browser refresh must preserve the current valid Admin section. A new Admin navigation from the approved Login page must start at **My Dashboard** rather than restoring a section from the prior signed-out session.
+- The Admin shell must not produce competing browser scroll restoration on hard refresh, and shared Admin modules already owned by `supabase-config.js` must not also be injected by the wrapper.
+- Source Sans 3 remains the locked Admin interface typeface. Existing area-specific readability standards remain authoritative.
+- Existing section-specific refresh rules remain authoritative: Academic remains manual-refresh-only; Realtime/edit-safe sections remain Realtime/edit-safe; no new competing short polling loops may be introduced.
+- Dynamic Academy records remain live and operational. The lock protects system behaviour and governance, not the creation of legitimate business records.
+- This system lock does **not** approve the rejected Statement of Results template. Its generation remains on hold until separately reopened and approved; the approved Certificate Template remains unchanged.
+- See `ADMIN_COMMAND_CENTER_SYSTEM_LOCK_2026_09_23.md` for the audit checkpoint and regression requirements.
+
+
+
 ### Admin My Dashboard — FINAL OWNER-APPROVED AND LOCKED (21 September 2026)
 
 The owner physically reviewed **Admin → My Dashboard** after the final live-data corrections and explicitly approved it for lock. The approved functional checkpoint is `c8e24ceb7721b3d4c188a2816c907deb1c696fdc`.
