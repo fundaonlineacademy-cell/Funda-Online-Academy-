@@ -8,6 +8,7 @@ const PAGE_SIZE=10,pages={team:1,invitations:1,contracts:1,documents:1,leave:1,s
 const $=x=>document.getElementById(x);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const low=v=>String(v||'').toLowerCase();
+const n=v=>Number(v||0);
 const fmt=v=>v?new Date(v).toLocaleString('en-ZA'):'—';
 
 function active(){
@@ -40,8 +41,8 @@ function css(){
   .hrTable th,.hrTable td{padding:10px;border-bottom:1px solid #edf0f3;text-align:left;vertical-align:top}
   .hrTable th{font-size:11px;line-height:1.3;text-transform:uppercase;color:#64748b;letter-spacing:.03em}
   .hrPill{display:inline-block;padding:4px 8px;border-radius:99px;background:#edf2f7;font-size:11px;font-weight:800;line-height:1.2}
-  .hrPill.active,.hrPill.accepted,.hrPill.approved,.hrPill.completed,.hrPill.closed,.hrPill.resolved{background:#e5f6ef;color:#176b50}
-  .hrPill.pending,.hrPill.issued,.hrPill.in_progress,.hrPill.investigating,.hrPill.shared{background:#fff2d2;color:#8a5a05}
+  .hrPill.active,.hrPill.accepted,.hrPill.approved,.hrPill.approved_plan,.hrPill.completed,.hrPill.closed,.hrPill.resolved{background:#e5f6ef;color:#176b50}
+  .hrPill.pending,.hrPill.issued,.hrPill.in_progress,.hrPill.investigating,.hrPill.shared,.hrPill.planning,.hrPill.on_hold{background:#fff2d2;color:#8a5a05}
   .hrPill.rejected,.hrPill.declined,.hrPill.critical,.hrPill.high,.hrPill.terminated,.hrPill.open{background:#ffe7e7;color:#9d2828}
   .hrAlert{margin:10px 0;padding:11px 13px;border:1px solid #efcaca;border-radius:9px;background:#fff3f3;color:#8b2626;font-size:13px;line-height:1.5}
   .hrEvidence{margin-top:4px;font-size:12px;line-height:1.45;color:#475569}
@@ -348,10 +349,11 @@ function render(tab=currentTab){
   if(tab==='leave')body=`<div class="hrBar"><select class="hrSelect" id="hlStaff"><option value="">Select staff member</option>${staffOpts()}</select><select class="hrSelect" id="hlType"><option>Annual Leave</option><option>Sick Leave</option><option>Family Responsibility Leave</option><option>Unpaid Leave</option><option>Study Leave</option><option>Compassionate Leave</option><option>Other</option></select><input class="hrInput" id="hlStart" type="date"><input class="hrInput" id="hlEnd" type="date"><input class="hrInput" id="hlReason" placeholder="Reason / HR note"><button class="hrBtn" id="hlAdd">Add Leave Request</button></div><div class="hrMeta" style="margin-bottom:8px">HR can capture a request on behalf of a staff member. Staff self-service requests will also appear here. Every request records who submitted it, current status, and who approved or rejected it.</div><table class="hrTable"><tr><th>Staff</th><th>Leave type</th><th>Dates</th><th>Status</th><th>Requested by</th><th>Reviewed by</th><th>Action</th></tr>${leaves()}</table>${pager('leave',(D.hr_leave_requests||[]).length,'leave requests')}`;
   if(tab==='safety')body=`<div class="hrBar"><select class="hrSelect" id="hsStaff"><option value="">General workplace</option>${staffOpts()}</select><input class="hrInput" id="hsTitle" placeholder="Safety / wellbeing incident"><select class="hrSelect" id="hsSeverity"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select><input class="hrInput" id="hsDesc" placeholder="What happened / required action"><button class="hrBtn bad" id="hsAdd">Record Incident</button></div><table class="hrTable"><tr><th>Incident</th><th>Staff</th><th>Severity</th><th>Status</th><th>Date</th><th>Resolved</th><th>Action</th></tr>${safety()}</table>${pager('safety',(D.hr_safety_incidents||[]).length,'safety cases')}`;
   if(tab==='development')body=training();
+  if(tab==='workforce')body=workforcePanel();
   if(tab==='audit')body=`<table class="hrTable"><tr><th>Date</th><th>Actor</th><th>Action</th><th>Record</th><th>Staff</th><th>Evidence</th></tr>${audits()}</table>${pager('audit',(D.hr_audit_log||[]).length,'audit events')}`;
 
   $('view').innerHTML=`
-    <div class="hrHero"><b>PEOPLE, CULTURE & GOVERNANCE</b><h2>HR & Team Command Centre</h2><p>Staff onboarding, access control, employment records, contracts, wellbeing, leave, development and accountable people management.</p></div>
+    <div class="hrHero"><b>PEOPLE, CULTURE & GOVERNANCE</b><h2>HR & Team Command Centre</h2><p>Staff onboarding, access control, employment records, contracts, wellbeing, leave, development, workforce affordability planning and accountable people management.</p></div>
     ${loadErrors.length?'<div class="hrAlert"><b>HR data warning:</b> '+esc(loadErrors.join(' | '))+' The last successfully loaded information remains visible; failed queries are not shown as false zeroes.</div>':''}
     <div class="hrK">
       <div class="hrCard"><strong>${activeN}</strong><span>Active staff</span></div>
@@ -362,14 +364,23 @@ function render(tab=currentTab){
       <div class="hrCard"><strong>${trainingDue}</strong><span>Training actions</span></div>
     </div>
     <div class="hrTabs">
-      ${[['team','Team & Access'],['contracts','Contracts & Documents'],['leave','Leave & Attendance'],['safety','Safety & Wellbeing'],['development','Training & Performance'],['audit','HR Audit Trail']].map(x=>`<button class="hrBtn ${tab===x[0]?'':'alt'}" data-hr-tab="${x[0]}">${x[1]}</button>`).join('')}
+      ${[['team','Team & Access'],['contracts','Contracts & Documents'],['leave','Leave & Attendance'],['safety','Safety & Wellbeing'],['development','Training & Performance'],['workforce','Workforce & Compensation'],['audit','HR Audit Trail']].map(x=>`<button class="hrBtn ${tab===x[0]?'':'alt'}" data-hr-tab="${x[0]}">${x[1]}</button>`).join('')}
       <button class="hrBtn alt" id="hrRefresh">Refresh</button>
     </div>
     <div class="hrPanel" style="overflow:auto">${body}</div>`;
   wire(tab);
 }
 function wire(tab){
-  document.querySelectorAll('[data-hr-tab]').forEach(b=>b.onclick=()=>render(b.dataset.hrTab));
+  document.querySelectorAll('[data-hr-tab]').forEach(b=>b.onclick=async()=>{
+    const next=b.dataset.hrTab;
+    if(next==='workforce'){
+      currentTab='workforce';
+      await loadWorkforceSummary(workforceMonth);
+      render('workforce');
+      return;
+    }
+    render(next);
+  });
   $('hrRefresh').onclick=open;
   if(tab==='team'){
     $('hrAddStaff').onclick=inviteForm;
@@ -398,6 +409,20 @@ function wire(tab){
       const b=e.target.closest('[data-safety-status]');
       if(b)setSafety(b.dataset.id,b.dataset.safetyStatus);
     };
+  }
+  if(tab==='workforce'){
+    $('hwSave').onclick=saveWorkforcePlan;
+    $('hwMonthApply').onclick=async()=>{
+      const v=$('hwMonth').value;
+      if(!v)return alert('Choose a planning month.');
+      workforceMonth=v+'-01';
+      await loadWorkforceSummary(workforceMonth);
+      render('workforce');
+    };
+    $('hwCancel')?.addEventListener('click',()=>{workforceEditId=null;render('workforce')});
+    $('hwBasis').onchange=syncWorkforceFields;
+    syncWorkforceFields();
+    document.querySelectorAll('[data-workforce-edit]').forEach(b=>b.onclick=()=>editWorkforcePlan(b.dataset.workforceEdit));
   }
 }
 async function manageAccess(id){
@@ -511,7 +536,7 @@ async function setSafety(id,status){
   await audit('safety_incident_'+status,'hr_safety_incident',id,x.profile_id,{from:x.status,to:status,action_taken:patch.action_taken||x.action_taken||null});
   await open();render('safety');
 }
-async function open(){css();await load();render(currentTab)}
+async function open(){css();await load();if(currentTab==='workforce')await loadWorkforceSummary(workforceMonth);render(currentTab)}
 function install(){
   css();
   window.FundaHRCentre={open};
