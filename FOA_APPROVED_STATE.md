@@ -677,3 +677,23 @@ The owner explicitly reopened **only Admin → HR & Team → Disciplinary & Cond
 - No real disciplinary case, sanction, acknowledgement or policy activation is authorised by this focused reopening.
 - The Disciplinary & Conduct area remains **unlocked pending owner physical review of FOA-HR-DISC-001 v1.0**. Do not re-lock this specific area until the owner explicitly approves the Code.
 
+### Admin HR & Team — FINAL OWNER-APPROVED AND LOCKED (23 September 2026)
+
+The owner explicitly approved **HR & Team / HRM 2** for final lock after completing Workforce & Compensation Planning, Staff Disciplinary & Conduct Management, and the FOA Staff Disciplinary Code.
+
+- **HR & Team is fully locked as a change-controlled protected Admin surface.** No HR runtime, database, workflow, navigation, typography, pagination, compliance reference, Staff Portal handoff, compensation-planning, disciplinary-code or conduct-management change may be made unless Aziwe Futhe explicitly reopens the affected HR area.
+- The protected HR & Team scope includes: Team & Access; Staff Invitation History; Contracts & Documents; Leave & Attendance; Safety & Wellbeing; Training & Performance; Workforce & Compensation Planning; Compensation Guidance; Disciplinary & Conduct; FOA Staff Disciplinary Code; Staff policy issue/acknowledgement tracking; SA Labour Compliance; HR Audit Trail; Staff Portal handoff; and HR data-loading behaviour.
+- **FOA-HR-DISC-001 v1.0 is owner-approved and ACTIVE from 23 September 2026.** It is the Academy's current Staff Disciplinary Code until a later version is explicitly approved and activated.
+- The progressive-discipline ladder remains guidance rather than an automatic penalty tariff: documented discussion/counselling → verbal warning → written warning → final written warning → possible dismissal. Every case remains fact-specific, proportionate and subject to the approved fair-process safeguards.
+- Serious proven misconduct may justify a stronger first response where the facts support it; appropriate minor matters may remain corrective. Any departure from the normal guide must be reasoned and recorded.
+- Poor performance, inadequate training, illness, injury, protected leave or other incapacity must not be automatically classified as misconduct.
+- Small-business flexibility may support a practical or less formal process where appropriate, but does not remove the requirement for fair reason, genuine opportunity to respond, proportionality, consistency or non-arbitrary treatment.
+- Staff policy acknowledgement records prove communication of the Code only; they do not waive any Staff member's right to respond to allegations, challenge an outcome or use applicable statutory dispute processes.
+- A disciplinary outcome marked “dismissal” must **not** automatically disable a Staff account, terminate a contract, stop payroll or perform offboarding. Operational termination/offboarding remains a separate governed decision and workflow.
+- Workforce & Compensation Planning remains planning-only. Draft assumptions, market guidance or affordability calculations do not create employment, payroll, contracts or approved remuneration.
+- Staff invitations created from HR remain Staff accounts, never Student accounts.
+- All growing HR & Team registers remain capped at **10 visible records per page**, with Previous / Next navigation where required.
+- Legitimate HR operational records remain dynamic. This lock protects the approved structure, permissions, rules and behaviour rather than freezing valid staff, workforce, disciplinary, compliance or audit activity.
+- Work in Finance, Expenses & Income, Petty Cash, Academic, CEO Account Control, Digital Library, IT/Security or any other Admin area does **not** reopen HR & Team.
+- A newly discovered HR & Team defect, legal-reference update or requested enhancement is a protected change request and requires explicit owner approval before modification.
+
