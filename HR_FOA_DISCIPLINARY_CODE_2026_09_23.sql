@@ -342,8 +342,8 @@ begin
     raise exception 'The disciplinary code may only be issued through this Staff acknowledgement register to Staff profiles' using errcode='22023';
   end if;
 
-  if not exists(select 1 from public.hr_disciplinary_code_versions where id=p_code_version_id) then
-    raise exception 'Disciplinary code version not found' using errcode='P0002';
+  if not exists(select 1 from public.hr_disciplinary_code_versions where id=p_code_version_id and status='active') then
+    raise exception 'Only the active owner-approved disciplinary code may be issued to Staff' using errcode='22023';
   end if;
 
   insert into public.hr_disciplinary_code_acknowledgements(
@@ -390,6 +390,10 @@ begin
   select lower(role) into v_role from public.profiles where id=p_profile_id;
   if v_role is distinct from 'staff' then
     raise exception 'Acknowledgement may only be recorded for Staff profiles' using errcode='22023';
+  end if;
+
+  if not exists(select 1 from public.hr_disciplinary_code_versions where id=p_code_version_id and status='active') then
+    raise exception 'Only the active owner-approved disciplinary code may be acknowledged by Staff' using errcode='22023';
   end if;
 
   if p_method not in ('portal','signed_document','email_confirmation','in_person','other') then
