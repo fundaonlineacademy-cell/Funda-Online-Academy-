@@ -3,7 +3,7 @@
 if(!/admin-v2\.html$/i.test(location.pathname))return;
 window.__fundaHrAuthoritativeLoader=true;
 
-let db,D={},loadErrors=[],currentTab='team',workforceMonth='2026-10-01',workforceSummary=null,workforceEditId=null;
+let db,D={},loadErrors=[],currentTab='team',workforceMonth='2026-10-01',workforceSummary=null,workforceSummaryError='',workforceEditId=null;
 const PAGE_SIZE=10,pages={team:1,invitations:1,contracts:1,documents:1,leave:1,safety:1,training:1,performance:1,workforce:1,audit:1};
 const $=x=>document.getElementById(x);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
@@ -237,6 +237,100 @@ function staffOpts(){
     const tag=low(p.role)==='admin'?'Executive/Admin':(p.staff_number||'Staff');
     return `<option value="${p.id}">${esc(p.full_name||p.email)} · ${esc(tag)}</option>`;
   }).join('');
+}
+const workforceDepartments=[
+  'Human Resources','Finance & Accounting','Academic, Assessments & Content','Enrolments & Courses',
+  'Student Support & CRM','Marketing & Admissions','Communication Hub','IT, Security & Platform'
+];
+function workforceDeptOpts(selected=''){
+  return workforceDepartments.map(x=>'<option '+(x===selected?'selected':'')+'>'+esc(x)+'</option>').join('');
+}
+function workforceBasePerPerson(x){
+  return low(x.pay_basis)==='hourly'
+    ? n(x.hourly_rate)*n(x.planned_weekly_hours)*52/12
+    : n(x.monthly_rate);
+}
+function workforceMonthlyCost(x){
+  return n(x.planned_headcount)*(workforceBasePerPerson(x)+n(x.employer_cost_per_person)+n(x.other_monthly_cost_per_person));
+}
+function workforceStatusLabel(v){
+  return String(v||'planning').replaceAll('_',' ');
+}
+async function loadWorkforceSummary(month=workforceMonth){
+  workforceSummary=null;workforceSummaryError='';
+  const {data,error}=await db.rpc('get_hr_workforce_affordability',{p_month:month});
+  if(error){workforceSummaryError=error.message||String(error);return}
+  workforceSummary=data||null;
+}
+function workforceRows(){
+  const plans=D.hr_workforce_plans||[];
+  return paged(plans,'workforce').map(x=>{
+    const base=workforceBasePerPerson(x),total=workforceMonthlyCost(x);
+    const rateSet=low(x.pay_basis)==='hourly'?n(x.hourly_rate)>0:n(x.monthly_rate)>0;
+    return `<tr>
+      <td><b>${esc(x.role_title)}</b><div class="hrMeta">${esc(x.department)}</div></td>
+      <td>${esc(String(x.employment_model||'').replaceAll('_',' '))}</td>
+      <td>${low(x.pay_basis)==='hourly'
+        ?'<b>'+moneyHR(x.hourly_rate)+'/hour</b><div class="hrMeta">'+n(x.planned_weekly_hours).toFixed(1)+' planned hours/week</div>'
+        :'<b>'+moneyHR(x.monthly_rate)+'/month</b>'}
+        ${!rateSet?'<div class="hrMeta">Rate not set yet</div>':''}</td>
+      <td>${n(x.planned_headcount)}</td>
+      <td class="hrMoney">${moneyHR(base*n(x.planned_headcount))}</td>
+      <td class="hrMoney">${moneyHR((n(x.employer_cost_per_person)+n(x.other_monthly_cost_per_person))*n(x.planned_headcount))}</td>
+      <td class="hrMoney"><b>${moneyHR(total)}</b></td>
+      <td>${esc(x.start_month||'—')}<div class="hrMeta">to ${esc(x.end_month||'Open-ended')}</div></td>
+      <td><span class="hrPill ${low(x.status)}">${esc(workforceStatusLabel(x.status))}</span></td>
+      <td>${esc(x.notes||'—')}</td>
+      <td><button class="hrBtn alt" data-workforce-edit="${x.id}">Edit plan</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="11">No workforce plans yet. Add future roles when you are ready to model staffing costs.</td></tr>';
+}
+function moneyHR(v){return 'R'+n(v).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function workforcePanel(){
+  const plans=D.hr_workforce_plans||[],s=workforceSummary,edit=(D.hr_workforce_plans||[]).find(x=>x.id===workforceEditId)||null;
+  const basis=edit?.pay_basis||'monthly',start=(edit?.start_month||workforceMonth).slice(0,7),end=edit?.end_month?edit.end_month.slice(0,7):'';
+  const summary=workforceSummaryError
+    ?'<div class="hrAlert"><b>Affordability summary unavailable:</b> '+esc(workforceSummaryError)+'. No budget value has been substituted.</div>'
+    :s?`<div class="hrPlanningGrid">
+      <div class="hrPlanCard"><strong>${n(s.planned_headcount)}</strong><span>Planned headcount for ${esc(workforceMonth.slice(0,7))}</span></div>
+      <div class="hrPlanCard"><strong>${moneyHR(s.planned_workforce_cost)}</strong><span>Planned monthly workforce cost</span></div>
+      <div class="hrPlanCard"><strong>${moneyHR(s.finance_people_budget)}</strong><span>Finance Staff / People budget</span></div>
+      <div class="hrPlanCard"><strong>${moneyHR(s.people_budget_gap)}</strong><span>People-budget gap / headroom</span></div>
+      <div class="hrPlanCard"><strong>${moneyHR(s.monthly_revenue_target)}</strong><span>Monthly revenue target</span></div>
+      <div class="hrPlanCard"><strong>${n(s.workforce_cost_pct_of_revenue).toFixed(2)}%</strong><span>Workforce cost as % of target revenue · remaining ${moneyHR(s.revenue_remaining_after_workforce)}</span></div>
+    </div>`:'<div class="hrMeta">Choose a month to calculate workforce affordability.</div>';
+
+  return `
+    <div class="hrConfidential"><b>Confidential workforce planning.</b> This area models future staffing affordability only. It does not invite staff, create employment contracts, run payroll or post expenses to the P&L. Zero rates mean a role has not yet been costed.</div>
+    <div class="hrBar"><label class="hrMeta">Affordability month <input class="hrInput" id="hwMonth" type="month" value="${esc(workforceMonth.slice(0,7))}"></label><button class="hrBtn alt" id="hwMonthApply">Check Month</button></div>
+    ${summary}
+    <h3 style="margin-top:18px">${edit?'Edit Workforce Plan':'Add Future Role Plan'}</h3>
+    <div class="hrGrid">
+      <input class="hrInput" id="hwRole" placeholder="Role title" value="${esc(edit?.role_title||'')}">
+      <select class="hrSelect" id="hwDept">${workforceDeptOpts(edit?.department||'Human Resources')}</select>
+      <select class="hrSelect" id="hwModel">
+        ${[['full_time','Full-time'],['part_time','Part-time'],['contractor','Contractor'],['hourly_casual','Hourly / casual']].map(([v,l])=>'<option value="'+v+'" '+((edit?.employment_model||'full_time')===v?'selected':'')+'>'+l+'</option>').join('')}
+      </select>
+      <select class="hrSelect" id="hwBasis"><option value="monthly" ${basis==='monthly'?'selected':''}>Monthly rate</option><option value="hourly" ${basis==='hourly'?'selected':''}>Hourly rate</option></select>
+      <input class="hrInput" id="hwMonthlyRate" type="number" min="0" step="0.01" placeholder="Monthly rate" value="${n(edit?.monthly_rate).toFixed(2)}">
+      <input class="hrInput" id="hwHourlyRate" type="number" min="0" step="0.01" placeholder="Hourly rate" value="${n(edit?.hourly_rate).toFixed(2)}">
+      <input class="hrInput" id="hwWeeklyHours" type="number" min="0" max="168" step="0.5" placeholder="Planned hours per week" value="${n(edit?.planned_weekly_hours).toFixed(1)}">
+      <input class="hrInput" id="hwHeadcount" type="number" min="1" step="1" placeholder="Headcount" value="${n(edit?.planned_headcount||1)}">
+      <input class="hrInput" id="hwEmployerCost" type="number" min="0" step="0.01" placeholder="Employer/benefit cost per person / month" value="${n(edit?.employer_cost_per_person).toFixed(2)}">
+      <input class="hrInput" id="hwOtherCost" type="number" min="0" step="0.01" placeholder="Other monthly cost per person" value="${n(edit?.other_monthly_cost_per_person).toFixed(2)}">
+      <label class="hrMeta">Planned start month<input class="hrInput" id="hwStart" type="month" value="${esc(start)}"></label>
+      <label class="hrMeta">Planned end month (optional)<input class="hrInput" id="hwEnd" type="month" value="${esc(end)}"></label>
+      <select class="hrSelect" id="hwStatus">
+        ${[['planning','Planning'],['approved_plan','Approved plan'],['on_hold','On hold'],['retired','Retired']].map(([v,l])=>'<option value="'+v+'" '+((edit?.status||'planning')===v?'selected':'')+'>'+l+'</option>').join('')}
+      </select>
+      <input class="hrInput" id="hwNotes" placeholder="Planning notes / assumptions" value="${esc(edit?.notes||'')}">
+    </div>
+    <div class="hrBar"><button class="hrBtn" id="hwSave">${edit?'Update Plan':'Add Plan'}</button>${edit?'<button class="hrBtn alt" id="hwCancel">Cancel Edit</button>':''}</div>
+    <div class="hrMeta">Hourly plans use planned weekly hours × 52 ÷ 12 for the monthly affordability estimate. Employer/benefit and other costs are added per planned person.</div>
+
+    <h3 style="margin-top:18px">Workforce Cost Plans</h3>
+    <table class="hrTable"><tr><th>Role / Department</th><th>Model</th><th>Rate Basis</th><th>Headcount</th><th>Base Cost</th><th>On-costs</th><th>Monthly Cost</th><th>Planned Period</th><th>Status</th><th>Notes</th><th>Action</th></tr>${workforceRows()}</table>
+    ${pager('workforce',plans.length,'workforce plans')}`;
 }
 function render(tab=currentTab){
   if(!active())return;
