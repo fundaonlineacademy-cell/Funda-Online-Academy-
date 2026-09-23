@@ -617,3 +617,16 @@ The owner explicitly approved **Admin → Reports, Compliance & Audit** as it cu
 - Work in CEO Account Control, Digital Library, HR & Team, Academic, or another Admin tab does **not** reopen Reports, Compliance & Audit.
 - A newly discovered defect is a change request and requires explicit owner approval before the locked workspace is changed.
 
+### Admin CEO Account Control — FINAL OWNER-APPROVED AND LOCKED (23 September 2026)
+
+The owner physically reviewed **Admin → CEO Account Control**, approved the corrected Action History presentation and Account Created record, and explicitly authorised the section to be locked.
+
+- **CEO Account Control is a change-controlled protected Admin surface.** Do not alter CEO authority, Student/Staff/Deleted account views, account creation-date visibility, search, pagination, manual Refresh, deactivate/reactivate/permanent-delete controls, typed deletion confirmation, mandatory reasons, session revocation, anonymisation/retention rules, Staff access revocation, Action History or audit behaviour unless Aziwe Futhe explicitly reopens the affected area.
+- The account registers remain capped at **10 visible records per page** with Previous / Next navigation.
+- **Account Created** remains based on the original authentication-account creation timestamp, with the approved profile-date fallback.
+- Permanent deletion remains irreversible from this control, cannot target the CEO's own account, and must retain the approved reason/confirmation safeguards and historical audit evidence.
+- Action History Reason and Outcome text must continue to wrap cleanly and remain readable.
+- Dynamic Student/Staff accounts and legitimate CEO account-control actions are not frozen by this lock; the lock protects the approved security boundaries, structure and behaviour.
+- Work in Expenses & Income, HR & Team, Academic, IT/Security or another Admin tab does **not** reopen CEO Account Control.
+- A newly discovered defect is a change request and requires explicit owner approval before the locked workspace is changed.
+
