@@ -556,31 +556,43 @@ async function refreshPnl(){
   const [from,to]=selectedPnlRange();
   if(!from||!to){wrap.innerHTML='<div class="acWarn">Choose a complete P&L period.</div>';return}
   if(from>to){wrap.innerHTML='<div class="acWarn">Start date cannot be after end date.</div>';return}
-  wrap.innerHTML='<div class="acPanel"><div class="acMeta">Generating management P&L…</div></div>';
+  const [compFrom,compTo]=comparisonRange(from,to);
+  wrap.innerHTML='<div class="acPanel"><div class="acMeta">Generating management P&L and comparison…</div></div>';
   try{
-    currentPnl=await fetchPnl(from,to);
-    wrap.innerHTML=pnlMarkup(currentPnl,from,to);
+    const [cur,comp]=await Promise.all([fetchPnl(from,to),fetchPnl(compFrom,compTo)]);
+    currentPnl=normalisePnl(cur);currentPnlComparison=normalisePnl(comp);currentPnlComparisonRange=[compFrom,compTo];
+    wrap.innerHTML=pnlMarkup(currentPnl,currentPnlComparison,from,to,compFrom,compTo);
     wirePnl(from,to);
   }catch(e){wrap.innerHTML='<div class="acWarn"><b>P&L unavailable:</b> '+esc(e.message||e)+'. No zero-value statement has been substituted.</div>'}
 }
-function pnlExportRows(x){
-  const rows=[];
-  rows.push({Section:'Revenue / Turnover',Account:'Verified tuition / training revenue',Amount:n(x.tuition_revenue)});
-  (x.income_lines||[]).filter(i=>i.group==='Operating Income').forEach(i=>rows.push({Section:'Revenue / Turnover',Account:i.category,Amount:n(i.amount)}));
-  rows.push({Section:'Revenue / Turnover',Account:'TOTAL TURNOVER',Amount:n(x.turnover)});
-  (x.income_lines||[]).filter(i=>i.group!=='Operating Income').forEach(i=>rows.push({Section:'Other Income',Account:i.category,Amount:n(i.amount)}));
-  rows.push({Section:'Income',Account:'TOTAL INCOME',Amount:n(x.total_income)});
-  (x.expense_lines||[]).forEach(i=>rows.push({Section:i.group||'Expenses',Account:i.category,Amount:n(i.amount)}));
-  rows.push({Section:'Expenses',Account:'TOTAL EXPENSES',Amount:n(x.total_expenses)});
-  rows.push({Section:'Result',Account:'NET SURPLUS / (LOSS)',Amount:n(x.net_result)});
-  return rows;
+function pnlExportRows(x,comp){
+  x=normalisePnl(x);comp=normalisePnl(comp||{});
+  const turnover=n(x.turnover);
+  return pnlDataRows(x,comp).map(r=>({
+    Section:r.section,
+    Account:r.account,
+    'Current Period (R)':n(r.current),
+    'Comparison Period (R)':n(r.comparison),
+    'Variance (R)':n(r.current)-n(r.comparison),
+    '% of Turnover':turnover?Number(r.current)/turnover:0
+  }));
 }
 async function exportPnl(format,from,to){
   const api=window.FundaReportExports;if(!api)return alert('The formal report export service is still loading. Please try again.');
-  const report={title:'Management Profit & Loss Statement',rows:pnlExportRows(currentPnl),summary:[
-    ['Reporting period',day(from)+' - '+day(to)],['Turnover',money(currentPnl.turnover)],['Total income',money(currentPnl.total_income)],
-    ['Total expenses',money(currentPnl.total_expenses)],['Net surplus / (loss)',money(currentPnl.net_result)],
-    ['Statement status',currentPnl.period_status||'live']
+  const x=normalisePnl(currentPnl||{}),comp=normalisePnl(currentPnlComparison||{}),compRange=currentPnlComparisonRange||comparisonRange(from,to);
+  const grossMargin=ratio(x.gross_profit,x.turnover),operatingMargin=ratio(x.operating_profit,x.turnover),netMargin=ratio(x.net_result,x.turnover);
+  const report={title:'Management Profit & Loss Statement',rows:pnlExportRows(x,comp),summary:[
+    ['Reporting period',day(from)+' - '+day(to)],
+    ['Comparison period',day(compRange[0])+' - '+day(compRange[1])],
+    ['Statement basis','Management basis · verified Student receipts + posted income/expenses + approved accounting adjustments'],
+    ['Turnover',money(x.turnover)],
+    ['Gross profit',money(x.gross_profit)+' · '+pct(grossMargin)+' margin'],
+    ['Operating profit / (loss)',money(x.operating_profit)+' · '+pct(operatingMargin)+' margin'],
+    ['Profit / (loss) before tax',money(x.profit_before_tax)],
+    ['Total expenses',money(x.total_expenses)],
+    ['Net profit / (loss)',money(x.net_result)+' · '+pct(netMargin)+' margin'],
+    ['Pending/unverified collections excluded',money(x.pending_collections)],
+    ['Statement status',x.period_status||'live']
   ]};
   try{
     const fileName=format==='xlsx'?await api.exportExcel(report,{from,to,scope:'period'}):await api.exportPdf(report,{from,to,scope:'period'});
