@@ -591,3 +591,19 @@ The owner physically reviewed **Admin → Ambassador Programme** after the final
 - Dynamic Ambassador applications, referrals, earnings, payouts, challenges and correspondence are not frozen by this lock; the lock protects the approved workflow, controls and presentation.
 - Work in Academic, Assessments & Content or another Admin tab does **not** reopen Ambassador Programme.
 - A newly discovered Ambassador Programme defect is a change request and requires explicit owner approval before this locked workspace is changed.
+
+### Admin HR & Team — FINAL OWNER-APPROVED AND LOCKED (23 September 2026)
+
+The owner physically reviewed **Admin → HR & Team** after the HR audit corrections and explicitly approved it for lock. The approved HR checkpoint includes the audit fixes merged at `496af6177ad1e60d1d67c36110fcc82d3fdff010`, together with the existing live HR database controls.
+
+- **HR & Team is a change-controlled protected Admin surface.** Do not alter Team & Access, Staff Invitation History, Contracts & Documents, Leave & Attendance, Safety & Wellbeing, Training & Performance, HR Audit Trail, SA Labour Compliance, typography/readability, pagination, Staff Portal handoff or HR data-loading behaviour unless Aziwe Futhe explicitly reopens the affected HR area.
+- All growing HR registers must remain capped at **10 visible records per page**, with **Previous / Next** navigation used when more than 10 records exist.
+- Staff invitations created from HR must remain **Staff accounts, never Student accounts**. The approved invite path sends `role: 'staff'` and `account_type: 'staff'`, finalises the profile as Staff, creates/updates the Staff record and access assignment, and removes any Student row for that invited user.
+- Students are not created or invited from the HR workspace; normal Students continue to register through the approved Student registration journey.
+- Staff Invitation History and the HR Document Register remain visible as approved audit/information registers.
+- Existing staff invitation, one-time Staff Access Code, Staff ID, department-access, contract, leave, safety, training, performance, compliance and audit workflows remain unchanged unless explicitly reopened.
+- The authoritative HR module remains the approved source. The legacy leave compatibility path must not race with or overwrite the authoritative HR view.
+- Dynamic HR records are not frozen by this lock. Legitimate staff invitations, access changes, contracts, leave requests, safety cases, training, performance reviews, compliance reviews and audit events continue through approved workflows.
+- Work in CEO Account Control, Academic, or another Admin tab does **not** reopen HR & Team. Shared Admin files touched elsewhere must regression-check this locked HR surface when relevant.
+- A newly discovered HR defect is a change request and requires explicit owner approval before the locked workspace is changed.
+
