@@ -2,7 +2,7 @@
 'use strict';
 if(!/admin-v2\.html$/i.test(location.pathname)||window.__fundaAcademicIntegrity)return;
 window.__fundaAcademicIntegrity=true;
-let db=null,courses=[],modules=[],lessons=[],assessments=[],reviews=[],bankHealth=[],lastGood=null,busy=false,channel=null,timer=null;
+let db=null,courses=[],modules=[],lessons=[],assessments=[],reviews=[],bankHealth=[],lastGood=null,busy=false;
 const byId=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const low=v=>String(v||'').toLowerCase();
@@ -17,16 +17,21 @@ async function load(){
  if(busy)return !!lastGood;busy=true;
  try{
   db=db||client();if(!db)throw new Error('Academic integrity connection is unavailable.');
-  const rs=await Promise.all([
-   db.from('courses').select('id,title,duration,active,modules').eq('active',true).order('title').limit(5000),
-   db.from('course_modules').select('id,course_id,module_number,module_name').limit(5000),
-   db.from('lessons').select('id,module_id,lesson_number,title,main_content,content').limit(5000),
-   db.from('assessments').select('id,course_id,module_id,title,active,status').limit(5000),
-   db.from('academic_course_qa_reviews').select('id,course_id,review_status,reviewed_at,created_at').order('created_at',{ascending:false}).limit(5000),
-   db.rpc('get_admin_assessment_bank_health')
-  ]);
-  const bad=rs.find(x=>x.error);if(bad)throw bad.error;
-  courses=rs[0].data||[];modules=rs[1].data||[];lessons=rs[2].data||[];assessments=rs[3].data||[];reviews=rs[4].data||[];bankHealth=rs[5].data||[];
+  const snap=window.__fundaAcademicDataSnapshot;
+  if(snap){
+   courses=[...(snap.courses||[])].filter(c=>c.active!==false);modules=[...(snap.course_modules||[])];lessons=[...(snap.lessons||[])];assessments=[...(snap.assessments||[])];reviews=[...(snap.academic_course_qa_reviews||[])].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));bankHealth=[...(snap.assessment_bank_health||[])];
+  }else{
+   const rs=await Promise.all([
+    db.from('courses').select('id,title,duration,active,modules').eq('active',true).order('title').limit(5000),
+    db.from('course_modules').select('id,course_id,module_number,module_name').limit(5000),
+    db.from('lessons').select('id,module_id,lesson_number,title,main_content,content').limit(5000),
+    db.from('assessments').select('id,course_id,module_id,title,active,status').limit(5000),
+    db.from('academic_course_qa_reviews').select('id,course_id,review_status,reviewed_at,created_at').order('created_at',{ascending:false}).limit(5000),
+    db.rpc('get_admin_assessment_bank_health')
+   ]);
+   const bad=rs.find(x=>x.error);if(bad)throw bad.error;
+   courses=rs[0].data||[];modules=rs[1].data||[];lessons=rs[2].data||[];assessments=rs[3].data||[];reviews=rs[4].data||[];bankHealth=rs[5].data||[];
+  }
   lastGood={courses:[...courses],modules:[...modules],lessons:[...lessons],assessments:[...assessments],reviews:[...reviews],bankHealth:[...bankHealth]};return true;
  }catch(e){
   console.error('Academic integrity load failed',e);
@@ -107,17 +112,10 @@ function filter(){
  if(byId('aiCount'))byId('aiCount').textContent=shown+' of '+total+' courses';
 }
 async function refresh(){if(await load())renderPanel()}
-function live(){
- if(channel||!db)return;
- let ch=db.channel('admin-academic-integrity-live-v1');
- ['courses','course_modules','lessons','assessments','assessment_questions','academic_course_qa_reviews'].forEach(table=>{ch=ch.on('postgres_changes',{event:'*',schema:'public',table},()=>{if(!active())return;clearTimeout(timer);timer=setTimeout(refresh,180)})});
- channel=ch.subscribe(status=>{window.__fundaAcademicIntegrityRealtimeStatus=status});
-}
 async function init(){
- style();await load();renderPanel();live();
- const view=byId('view');if(view)new MutationObserver(()=>{if(active()&&view.querySelector('.aqHero')&&!byId('academicIntegrityPanel'))setTimeout(renderPanel,100)}).observe(view,{childList:true,subtree:false});
- document.addEventListener('click',e=>{const b=e.target.closest?.('#nav button,.nav button');if(b&&/academic/i.test(b.textContent||''))setTimeout(refresh,350)},true);
- document.addEventListener('funda:admin-manual-refresh',()=>{if(active())refresh()});
+ style();
+ document.addEventListener('funda:academic-core-ready',()=>refresh());
+ if(active()&&byId('view')?.querySelector('.aqHero'))refresh();
 }
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(init,650));else setTimeout(init,650);
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
