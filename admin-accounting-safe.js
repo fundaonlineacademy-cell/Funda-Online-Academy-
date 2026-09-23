@@ -5,11 +5,11 @@ if(window.__FUNDA_ACCOUNTING_SAFE__)return;
 window.__FUNDA_ACCOUNTING_SAFE__=true;
 
 let db;
-let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[],pettyAccounts:[],pettyFunds:[],pettyMoves:[],pettyVouchers:[],pettyRecons:[]};
-let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false,pettyAccounts:false,pettyFunds:false,pettyMoves:false,pettyVouchers:false,pettyRecons:false};
+let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[],pettyAccounts:[],pettyFunds:[],pettyMoves:[],pettyVouchers:[],pettyRecons:[],ambassadorPlans:[]};
+let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false,pettyAccounts:false,pettyFunds:false,pettyMoves:false,pettyVouchers:false,pettyRecons:false,ambassadorPlans:false};
 let errors=[];
-let tab='overview',cashPage=1,plannedPage=1,reconPage=1,budgetPage=1,pettyVoucherPage=1,pettyMovementPage=1,pettyReconPage=1;
-let pettyFundId=null,pettyReportMonth=new Date().toISOString().slice(0,7);
+let tab='overview',cashPage=1,plannedPage=1,reconPage=1,budgetPage=1,pettyVoucherPage=1,pettyMovementPage=1,pettyReconPage=1,ambassadorPlanPage=1;
+let pettyFundId=null,pettyReportMonth=new Date().toISOString().slice(0,7),ambassadorMonth=new Date().toISOString().slice(0,7),ambassadorData=null,ambassadorEditId=null;
 let pnlMode='monthly',pnlMonth=new Date().toISOString().slice(0,7),pnlDay=new Date().toISOString().slice(0,10),pnlFyYear=null,pnlFrom='',pnlTo='';
 let currentMonthPnl=null,currentFyPnl=null,currentPnl=null,currentPnlComparison=null,currentPnlComparisonRange=null;
 const PAGE_SIZE=10;
@@ -118,7 +118,8 @@ async function loadData(){
     ['pettyFunds',db.from('finance_petty_cash_funds').select('*').order('created_at',{ascending:true}).limit(200)],
     ['pettyMoves',db.from('finance_petty_cash_movements').select('*').order('movement_date',{ascending:false}).order('created_at',{ascending:false}).limit(5000)],
     ['pettyVouchers',db.from('finance_petty_cash_vouchers').select('*').order('expense_date',{ascending:false}).order('created_at',{ascending:false}).limit(5000)],
-    ['pettyRecons',db.from('finance_petty_cash_reconciliations').select('*').order('reconciliation_date',{ascending:false}).order('created_at',{ascending:false}).limit(2000)]
+    ['pettyRecons',db.from('finance_petty_cash_reconciliations').select('*').order('reconciliation_date',{ascending:false}).order('created_at',{ascending:false}).limit(2000)],
+    ['ambassadorPlans',db.from('finance_ambassador_profitability_plans').select('*').order('month_start',{ascending:false}).order('updated_at',{ascending:false}).limit(1000)]
   ];
   const results=await Promise.all(jobs.map(x=>x[1]));
   results.forEach((r,i)=>{
@@ -128,6 +129,7 @@ async function loadData(){
     loaded[key]=true;
   });
   if(!pnlFyYear)pnlFyYear=currentFyStartYear();
+  const anchorMonth=String(settings().financial_year_anchor||'').slice(0,7);if(anchorMonth&&ambassadorMonth<anchorMonth)ambassadorMonth=anchorMonth;
   if((S.pettyFunds||[]).length&&!S.pettyFunds.some(x=>x.id===pettyFundId))pettyFundId=(S.pettyFunds.find(x=>x.status==='active')||S.pettyFunds[0]).id;
 }
 async function fetchPnl(from,to){
@@ -346,6 +348,8 @@ function normalisePnl(raw={}){
   const directCosts=n(raw.direct_costs??sumGroup(expense,'Direct Costs'));
   const peopleCosts=n(raw.people_costs??sumGroup(expense,'People Costs'));
   const operatingExpenses=n(raw.operating_expenses??sumGroup(expense,'Operating Expenses'));
+  const ambassadorCommission=n(raw.ambassador_commission_cost||0),ambassadorBonus=n(raw.ambassador_achievement_bonus_cost||0),ambassadorPerformance=n(raw.ambassador_monthly_performance_cost||0);
+  const ambassadorCosts=n(raw.ambassador_costs??(ambassadorCommission+ambassadorBonus+ambassadorPerformance));
   const depreciation=n(raw.depreciation_amortisation??sumGroup(expense,'Depreciation & Amortisation'));
   const financeCosts=n(raw.finance_costs??sumGroup(expense,'Finance Costs'));
   const taxExpense=n(raw.tax_expense??sumGroup(expense,'Tax Expense'));
@@ -354,7 +358,7 @@ function normalisePnl(raw={}){
   else if(raw.other_expenses!=null&&depreciation===0&&financeCosts===0&&taxExpense===0&&otherExpenses===0)otherExpenses=n(raw.other_expenses);
 
   const grossProfit=turnover-directCosts;
-  const operatingBeforeDA=grossProfit+otherOperatingIncome-peopleCosts-operatingExpenses;
+  const operatingBeforeDA=grossProfit+otherOperatingIncome-peopleCosts-operatingExpenses-ambassadorCosts;
   const operatingProfit=operatingBeforeDA-depreciation;
   const profitBeforeTax=operatingProfit+financeIncome+otherIncome-financeCosts-otherExpenses;
   const netResult=profitBeforeTax-taxExpense;
@@ -363,11 +367,12 @@ function normalisePnl(raw={}){
     other_operating_income:otherOperatingIncome,finance_income:financeIncome,non_operating_income:otherIncome,
     other_income:otherOperatingIncome+financeIncome+otherIncome,
     direct_costs:directCosts,gross_profit:grossProfit,people_costs:peopleCosts,operating_expenses:operatingExpenses,
+    ambassador_commission_cost:ambassadorCommission,ambassador_achievement_bonus_cost:ambassadorBonus,ambassador_monthly_performance_cost:ambassadorPerformance,ambassador_costs:ambassadorCosts,
     depreciation_amortisation:depreciation,finance_costs:financeCosts,tax_expense:taxExpense,non_operating_expenses:otherExpenses,
     other_expenses:depreciation+financeCosts+taxExpense+otherExpenses,
     operating_profit_before_da:operatingBeforeDA,operating_profit:operatingProfit,profit_before_tax:profitBeforeTax,
     total_income:turnover+otherOperatingIncome+financeIncome+otherIncome,
-    total_expenses:directCosts+peopleCosts+operatingExpenses+depreciation+financeCosts+taxExpense+otherExpenses,
+    total_expenses:directCosts+peopleCosts+operatingExpenses+ambassadorCosts+depreciation+financeCosts+taxExpense+otherExpenses,
     net_result:netResult
   };
 }
@@ -403,11 +408,16 @@ function pnlDataRows(x,comp){
 
   addCategories('Operating Expenses','Operating Expenses','expense');
   push('Operating Expenses','Total Other Operating Expenses',x.operating_expenses,comp.operating_expenses,'subtotal');
+
+  push('Ambassador Programme Costs','Confirmed referral commissions',x.ambassador_commission_cost,comp.ambassador_commission_cost);
+  push('Ambassador Programme Costs','Achievement bonuses',x.ambassador_achievement_bonus_cost,comp.ambassador_achievement_bonus_cost);
+  push('Ambassador Programme Costs','Monthly performance payments',x.ambassador_monthly_performance_cost,comp.ambassador_monthly_performance_cost);
+  push('Ambassador Programme Costs','Total Ambassador Programme Costs',x.ambassador_costs,comp.ambassador_costs,'subtotal');
   push('Operating Result','Operating Profit before Depreciation & Amortisation',x.operating_profit_before_da,comp.operating_profit_before_da,'subtotal');
 
   addCategories('Depreciation & Amortisation','Depreciation & Amortisation','expense');
   push('Depreciation & Amortisation','Total Depreciation & Amortisation',x.depreciation_amortisation,comp.depreciation_amortisation,'subtotal');
-  push('Operating Expense Summary','TOTAL OPERATING EXPENSES',n(x.people_costs)+n(x.operating_expenses)+n(x.depreciation_amortisation),n(comp.people_costs)+n(comp.operating_expenses)+n(comp.depreciation_amortisation),'total');
+  push('Operating Expense Summary','TOTAL OPERATING EXPENSES',n(x.people_costs)+n(x.operating_expenses)+n(x.ambassador_costs)+n(x.depreciation_amortisation),n(comp.people_costs)+n(comp.operating_expenses)+n(comp.ambassador_costs)+n(comp.depreciation_amortisation),'total');
   push('Operating Result','OPERATING PROFIT / (LOSS)',x.operating_profit,comp.operating_profit,'total');
 
   addCategories('Finance Income','Finance Income','income');
@@ -453,7 +463,7 @@ function pnlMarkup(raw,rawComp,from,to,compFrom,compTo){
   return `
   <div class="acPanel acPL">
     <div class="acBar" style="justify-content:space-between"><div><h3>Management Profit & Loss Statement</h3><div class="acMeta">${day(from)} - ${day(to)} · comparison ${compareLabel} · ${x.period_status==='closed'?'Closed monthly snapshot':'Live management basis'}</div></div><div>${pill(x.period_status||'live')}</div></div>
-    <div class="acInfo"><b>Basis:</b> verified Student receipts are recognised from the approved Payments workflow; other posted income/expenses and approved accounting adjustments are recognised by their transaction date. Planned, voided, duplicate Student-payment ledger copies and future-dated posted transactions are excluded. This is a management P&L and is not a statutory tax return or a substitute for accountant year-end adjustments.</div>
+    <div class="acInfo"><b>Basis:</b> verified Student receipts are recognised from the approved Payments workflow; confirmed Ambassador commissions/rewards are recognised from the controlled Ambassador earnings ledger when earned; other posted income/expenses and approved accounting adjustments are recognised by their transaction date. Ambassador payouts are settlement of an already-recognised earning and are not counted again as a second expense. Planned, voided, reversed Ambassador earnings, duplicate Student-payment ledger copies and future-dated posted transactions are excluded. This is a management P&L and is not a statutory tax return or a substitute for accountant year-end adjustments.</div>
     ${n(x.future_posted_records)?'<div class="acWarn"><b>Future-dated items excluded:</b> '+n(x.future_posted_records)+' posted record(s), '+money(x.future_posted_amount)+', fall after today and are not recognised yet.</div>':''}
     <div class="acPLMetrics">
       <div class="acPLMetric"><strong>${money(x.turnover)}</strong><span>Turnover</span><small>Comparison ${money(comp.turnover)}</small></div>
@@ -468,7 +478,7 @@ function pnlMarkup(raw,rawComp,from,to,compFrom,compTo){
     </table></div>
     ${target!==null?'<div class="acPanel" style="margin-top:10px"><div class="acMeta">'+label+': <b>'+money(target)+'</b> · Actual turnover: <b>'+money(x.turnover)+'</b> · Revenue variance: <b>'+money(n(x.turnover)-target)+'</b></div><div class="acTarget"><i style="width:'+progress+'%"></i></div></div>':''}
     ${periodBudget?.months?'<div class="acGrid" style="margin-top:10px"><div class="acPanel"><h3>Budget vs Actual</h3><div class="acMeta">Revenue target: <b>'+money(periodBudget.revenue)+'</b></div><div class="acMeta">Actual turnover: <b>'+money(x.turnover)+'</b></div><div class="acMeta">Revenue variance: <b>'+money(n(x.turnover)-periodBudget.revenue)+'</b></div></div><div class="acPanel"><h3>Expense & Surplus Plan</h3><div class="acMeta">Expense budget: <b>'+money(periodBudget.expenses)+'</b></div><div class="acMeta">Actual expenses: <b>'+money(x.total_expenses)+'</b></div><div class="acMeta">Expense headroom / (overrun): <b>'+money(periodBudget.expenses-n(x.total_expenses))+'</b></div><div class="acMeta">Planned surplus: <b>'+money(periodBudget.plannedSurplus)+'</b> · Actual net profit/(loss): <b>'+money(x.net_result)+'</b></div><div class="acMeta">Minimum surplus target: <b>'+money(periodBudget.minimumSurplus)+'</b></div></div></div>':''}
-    <div class="acMeta" style="margin-top:8px">Verified payment records: ${n(x.verified_payment_records)} · Pending/unverified collections excluded: ${money(x.pending_collections)} · Posted non-payment income records: ${n(x.cash_income_records)} · Posted expense/adjustment records: ${n(x.cash_expense_records)}</div>
+    <div class="acMeta" style="margin-top:8px">Verified payment records: ${n(x.verified_payment_records)} · Pending/unverified collections excluded: ${money(x.pending_collections)} · Confirmed Ambassador earning records: ${n(x.ambassador_earning_records)} · Posted non-payment income records: ${n(x.cash_income_records)} · Posted expense/adjustment records: ${n(x.cash_expense_records)}</div>
     <div class="acBar"><button class="acBtn" id="acExcelPL">Download Excel (.xlsx)</button><button class="acBtn" id="acPdfPL">Download PDF</button>${canClose?'<button class="acBtn ok" id="acCloseMonth">Close Month</button>':''}${close?'<button class="acBtn alt" id="acReopenMonth">Reopen Month</button>':''}</div>
   </div>`;
 }
@@ -777,6 +787,162 @@ async function exportPettyCash(format){
     await api.logRun?.('petty_cash',data.from,data.to,'period',format,data.rows.length,fileName);
   }catch(e){alert(e.message||'The petty cash report could not be generated.')}
 }
+
+function ambassadorPlansForMonth(){
+  return (S.ambassadorPlans||[]).filter(x=>x.month_start===ambassadorMonth+'-01'&&x.status!=='archived').sort((a,b)=>String(b.updated_at||'').localeCompare(String(a.updated_at||'')));
+}
+function ambassadorRankCount(name){
+  return n((ambassadorData?.rank_counts||[]).find(x=>x.rank===name)?.count);
+}
+function ambassadorPlanTerms(){
+  const rows=ambassadorData?.plan_terms||[];
+  return rows.map(x=>`<tr>
+    <td><b>${esc(x.rank)}</b><div class="acMeta">Current active Ambassadors at rank: ${ambassadorRankCount(x.rank)}</div></td>
+    <td>${money(x.lifetime_revenue_threshold)}</td>
+    <td>${money(x.cumulative_achievement_bonus)}<div class="acMeta">Cumulative lifetime level; only the incremental difference is added on promotion.</div></td>
+    <td>${money(x.monthly_performance_cap)}<div class="acMeta">${n(x.monthly_performance_cap)>0?'Maximum only; separate monthly verification/approval required.':'No monthly performance payment at this rank.'}</div></td>
+  </tr>`).join('')||'<tr><td colspan="4"><div class="acMeta">Programme terms could not be loaded.</div></td></tr>';
+}
+function ambassadorActualPanel(){
+  const d=ambassadorData;
+  if(!d)return '<div class="acPanel"><div class="acMeta">Loading Ambassador profitability data…</div></div>';
+  const cost=n(d.actual_total_earning_cost),rev=n(d.actual_attributed_revenue),contribution=n(d.actual_academy_contribution),rate=rev?cost/rev*100:0;
+  const budget=n(d.ambassador_budget),budgetGap=budget-cost;
+  return `
+    <div class="acInfo"><b>Accounting treatment:</b> confirmed Ambassador commissions, achievement bonuses and approved monthly performance payments are recognised as programme expenses when earned. A later payout is settlement of that liability and is not counted again as another P&L expense.</div>
+    <div class="acPettyK">
+      <div class="acPettyCard"><strong>${money(rev)}</strong><span>Verified Ambassador-attributed revenue · selected month</span></div>
+      <div class="acPettyCard"><strong>${money(cost)}</strong><span>Confirmed Ambassador earning cost</span></div>
+      <div class="acPettyCard"><strong>${money(contribution)}</strong><span>Academy contribution after Ambassador earnings</span></div>
+      <div class="acPettyCard"><strong>${pct(rate)}</strong><span>Ambassador earning cost as % of attributed revenue</span></div>
+    </div>
+    <div class="acGrid">
+      <div class="acPanel"><h3>Actual Cost Breakdown</h3>
+        <div class="acMeta">Referral commissions: <b>${money(d.actual_commission_cost)}</b> · current engine rate <b>${pct(n(d.commission_rate)*100)}</b></div>
+        <div class="acMeta">Achievement bonuses: <b>${money(d.actual_achievement_bonus_cost)}</b></div>
+        <div class="acMeta">Monthly performance payments: <b>${money(d.actual_monthly_performance_cost)}</b></div>
+        <div class="acMeta">Confirmed earning records: <b>${n(d.confirmed_earning_records)}</b></div>
+        <div class="acMeta">Cash payouts paid this month: <b>${money(d.payouts_paid_cash)}</b> · ${n(d.payouts_paid_records)} payout record(s)</div>
+      </div>
+      <div class="acPanel"><h3>Budget & Control Position</h3>
+        <div class="acMeta">Academy revenue target: <b>${money(d.revenue_target)}</b></div>
+        <div class="acMeta">Approved Ambassador budget: <b>${money(budget)}</b></div>
+        <div class="acMeta">Actual earning cost vs budget: <b>${money(budgetGap)}</b> headroom / (overrun)</div>
+        <div class="acMeta">Active / introductory Ambassadors: <b>${n(d.active_ambassadors)}</b></div>
+        ${budget===0?'<div class="acWarn"><b>No Ambassador cost budget has been approved for this month yet.</b> Zero means unbudgeted, not that Ambassador costs cannot occur.</div>':''}
+      </div>
+    </div>
+    ${n(d.review_exposure_records)?'<div class="acWarn"><b>Under review:</b> '+n(d.review_exposure_records)+' pending/held earning record(s), '+money(d.review_exposure_amount)+', are not included as confirmed cost yet.</div>':''}
+    ${n(d.reversed_records)?'<div class="acInfo"><b>Excluded reversals:</b> '+n(d.reversed_records)+' reversed earning record(s), '+money(d.reversed_amount)+' on '+money(d.reversed_qualifying_revenue)+' previously attributed revenue, are excluded from current confirmed cost.</div>':''}
+  `;
+}
+function ambassadorScenarioValues(){
+  const rev=n($('ambProjRevenue')?.value),bonus=n($('ambProjBonus')?.value),perf=n($('ambProjPerf')?.value),other=n($('ambProjOther')?.value);
+  const rate=n(ambassadorData?.commission_rate||0.15),commission=rev*rate,total=commission+bonus+perf+other,contribution=rev-total;
+  const d=ambassadorData||{},otherBudget=n(d.direct_cost_budget)+n(d.people_cost_budget)+n(d.operating_expense_budget)+n(d.other_expense_budget);
+  const businessSurplus=n(d.revenue_target)-otherBudget-total,budgetGap=n(d.ambassador_budget)-total,minGap=businessSurplus-n(d.minimum_surplus_target);
+  const breakEven=(bonus+perf+other)>0&&rate<1?(bonus+perf+other)/(1-rate):0;
+  return {rev,bonus,perf,other,rate,commission,total,contribution,otherBudget,businessSurplus,budgetGap,minGap,breakEven};
+}
+function updateAmbassadorScenario(){
+  const h=$('ambScenarioResult');if(!h)return;
+  const x=ambassadorScenarioValues(),d=ambassadorData||{},ratio=x.rev?x.total/x.rev*100:0,targetShare=n(d.revenue_target)?x.rev/n(d.revenue_target)*100:0;
+  h.innerHTML=`
+    <div class="acPettyK">
+      <div class="acPettyCard"><strong>${money(x.commission)}</strong><span>Projected 15% commission</span></div>
+      <div class="acPettyCard"><strong>${money(x.total)}</strong><span>Total projected Ambassador programme cost</span></div>
+      <div class="acPettyCard"><strong>${money(x.contribution)}</strong><span>Attributed revenue remaining after programme cost</span></div>
+      <div class="acPettyCard"><strong>${pct(ratio)}</strong><span>Total programme cost as % of projected attributed revenue</span></div>
+    </div>
+    <div class="acGrid">
+      <div class="acPanel"><h3>Ambassador Scenario</h3>
+        <div class="acMeta">Projected attributed revenue: <b>${money(x.rev)}</b> · ${pct(targetShare)} of the Academy monthly revenue target</div>
+        <div class="acMeta">Commission: <b>${money(x.commission)}</b></div>
+        <div class="acMeta">Achievement bonuses: <b>${money(x.bonus)}</b> · performance payments: <b>${money(x.perf)}</b> · other programme cost: <b>${money(x.other)}</b></div>
+        <div class="acMeta">Attributed revenue contribution after all entered Ambassador costs: <b>${money(x.contribution)}</b></div>
+        ${x.breakEven?'<div class="acMeta">Attributed revenue required to cover the entered non-commission programme costs at the current 15% commission rate: <b>'+money(x.breakEven)+'</b></div>':''}
+      </div>
+      <div class="acPanel"><h3>Whole-Academy Affordability View</h3>
+        <div class="acMeta">Monthly Academy revenue target: <b>${money(d.revenue_target)}</b></div>
+        <div class="acMeta">Other planned expenses before Ambassador costs: <b>${money(x.otherBudget)}</b></div>
+        <div class="acMeta">Projected surplus after this Ambassador scenario: <b>${money(x.businessSurplus)}</b></div>
+        <div class="acMeta">Minimum surplus target: <b>${money(d.minimum_surplus_target)}</b> · gap: <b>${money(x.minGap)}</b></div>
+        <div class="acMeta">Current Ambassador budget: <b>${money(d.ambassador_budget)}</b> · scenario budget headroom / (shortfall): <b>${money(x.budgetGap)}</b></div>
+      </div>
+    </div>`;
+}
+function ambassadorScenarioForm(){
+  const edit=(S.ambassadorPlans||[]).find(x=>x.id===ambassadorEditId)||null;
+  return `<div class="acPanel" style="margin-top:10px"><div class="acBar" style="justify-content:space-between"><div><h3>${edit?'Edit':'Create'} Ambassador Profitability Scenario</h3><div class="acMeta">Planning only. Saving a scenario does not change Ambassador commission rules, approve an earning/payout, or change the monthly Finance budget. Enter only additional Ambassador-specific programme costs that are not already included in another Finance budget line.</div></div>${edit?'<button class="acBtn alt" id="ambCancelEdit">Cancel edit</button>':''}</div>
+    <div class="acForm">
+      <input class="acInput" id="ambScenarioName" value="${esc(edit?.scenario_name||'')}" placeholder="Scenario name e.g. October base plan">
+      <input class="acInput" id="ambProjRevenue" type="number" min="0" step="0.01" value="${n(edit?.projected_ambassador_revenue).toFixed(2)}" placeholder="Projected Ambassador-attributed revenue (R)">
+      <input class="acInput" value="15.00%" disabled title="Current locked Ambassador commission rate">
+      <input class="acInput" id="ambProjBonus" type="number" min="0" step="0.01" value="${n(edit?.projected_achievement_bonuses).toFixed(2)}" placeholder="Projected incremental achievement bonuses (R)">
+      <input class="acInput" id="ambProjPerf" type="number" min="0" step="0.01" value="${n(edit?.projected_monthly_performance).toFixed(2)}" placeholder="Projected performance payments (R)">
+      <input class="acInput" id="ambProjOther" type="number" min="0" step="0.01" value="${n(edit?.projected_other_programme_cost).toFixed(2)}" placeholder="Other programme cost (R)">
+      <select class="acSelect" id="ambScenarioStatus"><option value="planning" ${edit?.status==='planning'?'selected':''}>Planning</option><option value="approved_plan" ${edit?.status==='approved_plan'?'selected':''}>Approved planning scenario</option></select>
+      <textarea class="acText acWide" id="ambScenarioNotes" placeholder="Assumptions / reason / controls">${esc(edit?.notes||'')}</textarea>
+    </div>
+    <div id="ambScenarioResult"></div>
+    <div class="acBar"><button class="acBtn" id="ambSaveScenario">${edit?'Update':'Save'} Scenario</button><button class="acBtn alt" id="ambOpenTargets">Open Targets & FY</button></div>
+  </div>`;
+}
+function ambassadorPlanRegister(){
+  const rows=ambassadorPlansForMonth(),pg=pageRows(rows,ambassadorPlanPage);ambassadorPlanPage=pg.page;
+  const body=pg.rows.map(x=>{
+    const commission=n(x.projected_ambassador_revenue)*n(x.commission_rate_snapshot||0.15);
+    const total=commission+n(x.projected_achievement_bonuses)+n(x.projected_monthly_performance)+n(x.projected_other_programme_cost);
+    const contribution=n(x.projected_ambassador_revenue)-total;
+    return `<tr>
+      <td><b>${esc(x.scenario_name)}</b><div class="acMeta">${day(x.month_start)} · ${pill(x.status)}</div></td>
+      <td>${money(x.projected_ambassador_revenue)}</td>
+      <td>${money(commission)}<div class="acMeta">${pct(n(x.commission_rate_snapshot)*100)}</div></td>
+      <td>${money(n(x.projected_achievement_bonuses)+n(x.projected_monthly_performance)+n(x.projected_other_programme_cost))}</td>
+      <td><b>${money(total)}</b></td>
+      <td><b>${money(contribution)}</b></td>
+      <td>${esc(x.notes||'—')}</td>
+      <td><button class="acBtn alt" data-amb-edit="${x.id}">Edit</button> <button class="acBtn bad" data-amb-archive="${x.id}">Archive</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="8"><div class="acMeta">No saved Ambassador profitability scenarios for this month.</div></td></tr>';
+  return `<div class="acPanel" style="margin-top:10px"><h3>Saved Ambassador Profitability Scenarios</h3><div class="acTableWrap"><table class="acTable"><thead><tr><th>Scenario</th><th>Projected Attributed Revenue</th><th>15% Commission</th><th>Bonuses / Performance / Other</th><th>Total Programme Cost</th><th>Academy Contribution</th><th>Notes</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div>
+    <div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} scenarios · Maximum 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="ambPlanPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="ambPlanNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>
+  </div>`;
+}
+function ambassadorProfitabilityPanel(){
+  return `<div class="acPanel"><div class="acBar" style="justify-content:space-between"><div><h3>Ambassador Cost & Profitability</h3><p class="acMeta">Finance-side control for actual Ambassador revenue/cost, current programme exposure and forward affordability planning. The locked Ambassador programme remains authoritative for commission, ranks, rewards and payout approval.</p></div><div class="acBar"><input class="acInput" id="ambMonth" type="month" value="${esc(ambassadorMonth)}"><button class="acBtn" id="ambApplyMonth">Apply Month</button></div></div></div>
+    ${ambassadorActualPanel()}
+    ${ambassadorScenarioForm()}
+    <div class="acPanel" style="margin-top:10px"><h3>Current Ambassador Programme Cost Reference</h3><div class="acInfo"><b>Current commission:</b> 15% of verified attributed Student payments. Achievement bonuses are cumulative lifetime rank values, so only the incremental difference is added when a higher rank is reached. Gold-and-above monthly performance values are caps only and require separate monthly verification/approval.</div><div class="acTableWrap"><table class="acTable"><thead><tr><th>Rank</th><th>Lifetime Revenue Threshold</th><th>Cumulative Achievement Bonus</th><th>Monthly Performance Cap</th></tr></thead><tbody>${ambassadorPlanTerms()}</tbody></table></div></div>
+    ${ambassadorPlanRegister()}`;
+}
+async function loadAmbassadorProfitability(){
+  const month=ambassadorMonth+'-01';
+  const {data,error}=await db.rpc('finance_get_ambassador_profitability',{p_month:month});
+  if(error){ambassadorData=null;errors.push('Ambassador profitability: '+error.message);return false}
+  ambassadorData=data||{};return true;
+}
+async function saveAmbassadorScenario(){
+  const name=$('ambScenarioName')?.value.trim(),v=ambassadorScenarioValues(),status=$('ambScenarioStatus')?.value,notes=$('ambScenarioNotes')?.value.trim()||null;
+  if(!name||name.length<3)return alert('Enter a clear scenario name.');
+  const {data,error}=await db.rpc('finance_save_ambassador_profitability_plan',{
+    p_id:ambassadorEditId||null,p_month_start:ambassadorMonth+'-01',p_scenario_name:name,
+    p_projected_ambassador_revenue:v.rev,p_projected_achievement_bonuses:v.bonus,
+    p_projected_monthly_performance:v.perf,p_projected_other_programme_cost:v.other,
+    p_notes:notes,p_status:status
+  });
+  if(error)return alert(error.message);
+  await audit(ambassadorEditId?'Ambassador profitability scenario updated':'Ambassador profitability scenario created',data,{month:ambassadorMonth,name,status,projected_revenue:v.rev,total_programme_cost:v.total},'recorded','finance_ambassador_profitability_plan');
+  ambassadorEditId=null;await loadData();await loadAmbassadorProfitability();render('ambassador');
+}
+async function archiveAmbassadorScenario(id){
+  const x=(S.ambassadorPlans||[]).find(r=>r.id===id);if(!x)return;
+  if(!confirm('Archive this Ambassador profitability scenario? It will remain in the database audit history but leave the active planning register.'))return;
+  const {error}=await db.rpc('finance_archive_ambassador_profitability_plan',{p_id:id});
+  if(error)return alert(error.message);
+  await audit('Ambassador profitability scenario archived',id,{scenario_name:x.scenario_name,month:x.month_start},'archived','finance_ambassador_profitability_plan');
+  if(ambassadorEditId===id)ambassadorEditId=null;await loadData();await loadAmbassadorProfitability();render('ambassador');
+}
 function reports(){
   return `<div class="acGrid"><div class="acPanel"><h3>Financial Exports</h3><p class="acMeta">Use the formal FOA Excel/PDF templates. CSV is no longer the primary management-report format.</p><div class="acBar"><button class="acBtn" id="cashExcel">Cashbook Excel</button><button class="acBtn" id="cashPdf">Cashbook PDF</button><button class="acBtn alt" id="acReports2">Open Report Centre</button></div></div><div class="acPanel"><h3>Export Month</h3><input class="acInput" type="month" id="reportMonth" value="${esc(new Date().toISOString().slice(0,7))}"><p class="acMeta">The export includes posted, planned and voided records for audit visibility, with posting and reconciliation status clearly shown.</p></div></div>`;
 }
@@ -790,13 +956,14 @@ function render(t=tab){
   if(t==='expenses')body=entryForm('expense');
   if(t==='cashbook')body=cashbookPanel('');
   if(t==='petty')body=pettyCashPanel();
+  if(t==='ambassador')body=ambassadorProfitabilityPanel();
   if(t==='planned')body=plannedPanel();
   if(t==='pnl')body=pnlControls();
   if(t==='reconciliation')body=reconciliation();
   if(t==='targets')body=targetsPanel();
   if(t==='reports')body=reports();
   $('view').innerHTML=`<div class="acRoot">
-    <div class="acHero"><b>FINANCIAL OPERATIONS & CONTROL</b><h2>Expenses, Income & Management P&L</h2><p>Daily cashbook control, petty cash, planned items, monthly management P&L, reconciliation, financial-year targets and formal reporting from one governed finance workspace.</p></div>
+    <div class="acHero"><b>FINANCIAL OPERATIONS & CONTROL</b><h2>Expenses, Income & Management P&L</h2><p>Daily cashbook control, petty cash, Ambassador profitability planning, planned items, monthly management P&L, reconciliation, financial-year targets and formal reporting from one governed finance workspace.</p></div>
     ${loadWarning()}
     <div class="acK">
       <div class="acCard"><strong>${currentMonthPnl?money(mp.turnover):'—'}</strong><span>Current month turnover to date</span></div>
@@ -807,7 +974,7 @@ function render(t=tab){
     </div>
     ${future.length?'<div class="acWarn"><b>Review required:</b> '+future.length+' existing posted cashbook item(s) are dated in the future. They have not been altered, but live P&L calculations now exclude them until their date arrives.</div>':''}
     <div class="acTabs">${[
-      ['overview','Overview'],['income','Income'],['expenses','Expenses'],['cashbook','Cashbook'],['petty','Petty Cash'],['planned','Planned / Recurring'],['pnl','P&L'],['reconciliation','Reconciliation'],['targets','Targets & FY'],['reports','Reports']
+      ['overview','Overview'],['income','Income'],['expenses','Expenses'],['cashbook','Cashbook'],['petty','Petty Cash'],['ambassador','Ambassador Profitability'],['planned','Planned / Recurring'],['pnl','P&L'],['reconciliation','Reconciliation'],['targets','Targets & FY'],['reports','Reports']
     ].map(x=>'<button class="acBtn '+(t===x[0]?'':'alt')+'" data-ac-tab="'+x[0]+'">'+x[1]+'</button>').join('')}<button class="acBtn alt" id="acRefresh">Refresh</button></div>
     <div class="acSection">${body}</div>
   </div>`;
@@ -1179,7 +1346,7 @@ async function exportCashbook(format){
   }catch(e){alert(e.message||'The cashbook export could not be generated.')}
 }
 function wire(){
-  document.querySelectorAll('[data-ac-tab]').forEach(b=>b.onclick=()=>{cashPage=1;plannedPage=1;reconPage=1;budgetPage=1;pettyVoucherPage=1;pettyMovementPage=1;pettyReconPage=1;render(b.dataset.acTab)});
+  document.querySelectorAll('[data-ac-tab]').forEach(b=>b.onclick=async()=>{cashPage=1;plannedPage=1;reconPage=1;budgetPage=1;pettyVoucherPage=1;pettyMovementPage=1;pettyReconPage=1;ambassadorPlanPage=1;const next=b.dataset.acTab;if(next==='ambassador'){tab='ambassador';await loadAmbassadorProfitability();render('ambassador');return}render(next)});
   $('acRefresh').onclick=async()=>{await open();render(tab)};
   document.querySelectorAll('[data-post]').forEach(b=>b.onclick=()=>postPlanned(b.dataset.post));
   document.querySelectorAll('[data-void]').forEach(b=>b.onclick=()=>voidEntry(b.dataset.void));
@@ -1227,6 +1394,22 @@ function wire(){
     document.querySelectorAll('[data-pc-void-voucher]').forEach(b=>b.onclick=()=>voidPettyVoucher(b.dataset.pcVoidVoucher));
     document.querySelectorAll('[data-pc-void-move]').forEach(b=>b.onclick=()=>voidPettyMovement(b.dataset.pcVoidMove));
   }
+  if(tab==='ambassador'){
+    $('ambApplyMonth')?.addEventListener('click',async()=>{
+      const v=$('ambMonth')?.value;if(!v)return alert('Choose a month.');
+      ambassadorMonth=v;ambassadorEditId=null;ambassadorPlanPage=1;
+      await loadAmbassadorProfitability();render('ambassador');
+    });
+    ['ambProjRevenue','ambProjBonus','ambProjPerf','ambProjOther'].forEach(id=>$(id)?.addEventListener('input',updateAmbassadorScenario));
+    $('ambSaveScenario')?.addEventListener('click',saveAmbassadorScenario);
+    $('ambCancelEdit')?.addEventListener('click',()=>{ambassadorEditId=null;render('ambassador')});
+    $('ambOpenTargets')?.addEventListener('click',()=>render('targets'));
+    $('ambPlanPrev')?.addEventListener('click',()=>{ambassadorPlanPage=Math.max(1,ambassadorPlanPage-1);render('ambassador')});
+    $('ambPlanNext')?.addEventListener('click',()=>{ambassadorPlanPage++;render('ambassador')});
+    document.querySelectorAll('[data-amb-edit]').forEach(b=>b.onclick=()=>{ambassadorEditId=b.dataset.ambEdit;render('ambassador')});
+    document.querySelectorAll('[data-amb-archive]').forEach(b=>b.onclick=()=>archiveAmbassadorScenario(b.dataset.ambArchive));
+    updateAmbassadorScenario();
+  }
   if(tab==='planned'){
     $('plPrev').onclick=()=>{plannedPage=Math.max(1,plannedPage-1);render('planned')};
     $('plNext').onclick=()=>{plannedPage++;render('planned')};
@@ -1269,6 +1452,7 @@ function wirePnl(from,to){
 async function open(){
   await loadData();
   await refreshSummaryPnls();
+  if(tab==='ambassador')await loadAmbassadorProfitability();
   render(tab);
 }
 function install(){
