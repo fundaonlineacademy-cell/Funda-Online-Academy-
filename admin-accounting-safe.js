@@ -45,7 +45,7 @@ function css(){
   .acPill{display:inline-block;padding:4px 8px;border-radius:99px;background:#edf2f7;font-size:11px;font-weight:800;text-transform:capitalize}.acPill.income,.acPill.reconciled,.acPill.posted,.acPill.closed{background:#e5f6ef;color:#176b50}.acPill.expense,.acPill.voided{background:#ffe7e7;color:#9d2828}.acPill.unreconciled,.acPill.planned,.acPill.reopened{background:#fff2d2;color:#8a5a05}
   .acSection h3{margin:4px 0 8px;color:#071b31;font-size:17px}.acPL{max-width:1280px}.acPL tr.total td{font-weight:900;border-top:2px solid #071b31}.acPL tr.subtotal td{font-weight:800;background:#f8fafc}.acPL tr.net td{font-size:15px;font-weight:900;background:#f8f4e8;border-top:2px solid #c7a13b}.acPL tr.section td{font-weight:900;color:#0b315c;background:#eef4fb}.acPL .acNum{text-align:right;white-space:nowrap}.acPL .acPct{text-align:right;white-space:nowrap;color:#536174}.acPLMetrics{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0}.acPLMetric{border:1px solid #e1e7ef;border-radius:10px;background:#fbfcfe;padding:10px}.acPLMetric strong{display:block;font-size:17px;color:#071b31}.acPLMetric span{font-size:11px;color:#64748b}.acPLMetric small{display:block;margin-top:3px;font-size:11px;color:#64748b}
   .acPager{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid #edf0f3}.acTarget{height:9px;border-radius:99px;background:#e9eef5;overflow:hidden;margin-top:8px}.acTarget i{display:block;height:100%;background:#c7a13b}.acFuture{background:#fff7e7;color:#8a5a05;font-size:12px;padding:5px 7px;border-radius:7px;display:inline-block;margin-top:4px}
-  @media(max-width:1050px){.acK{grid-template-columns:repeat(3,1fr)}.acForm{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:1050px){.acK{grid-template-columns:repeat(3,1fr)}.acPLMetrics{grid-template-columns:repeat(3,1fr)}.acForm{grid-template-columns:repeat(2,1fr)}}
   @media(max-width:760px){.acGrid,.acForm{grid-template-columns:1fr}.acWide{grid-column:auto}.acK{grid-template-columns:repeat(2,1fr)}.acPLMetrics{grid-template-columns:repeat(2,1fr)}.acHero h2{font-size:21px}}
   `;
   document.head.appendChild(s);
@@ -228,7 +228,7 @@ function entryForm(type){
       <input class="acInput" id="aeParty" placeholder="${type==='income'?'Source / payer':'Supplier / payee'}">
       <input class="acInput" id="aeRef" placeholder="Reference / receipt no.">
       <select class="acSelect" id="aeMethod"><option>EFT</option><option>Bank Transfer</option><option>Card</option><option>Cash</option><option>Bank Deposit</option><option>Other</option><option hidden>Non-cash Adjustment</option></select>
-      <input class="acInput" id="aeDept" placeholder="Department / cost centre">
+      <input class="acInput" id="aeDept" placeholder="Department">
       <input class="acInput" id="aeTax" placeholder="Tax treatment / accountant note (optional)">
       <input class="acInput" id="aeAmount" type="number" min="0" step="0.01" placeholder="Amount">
       <input class="acInput" id="aeReceipt" placeholder="Receipt / evidence URL (optional)">
@@ -464,7 +464,7 @@ function render(t=tab){
       <div class="acCard"><strong>${currentMonthPnl?money(mp.turnover):'—'}</strong><span>Current month turnover to date</span></div>
       <div class="acCard"><strong>${currentMonthPnl?money(mp.total_income):'—'}</strong><span>Current month total income</span></div>
       <div class="acCard"><strong>${currentMonthPnl?money(mp.total_expenses):'—'}</strong><span>Current month expenses</span></div>
-      <div class="acCard"><strong>${currentMonthPnl?money(mp.net_result):'—'}</strong><span>Current month net result</span></div>
+      <div class="acCard"><strong>${currentMonthPnl?money(mp.net_result):'—'}</strong><span>Current month net profit / (loss)</span></div>
       <div class="acCard"><strong>${un??'—'}</strong><span>Unreconciled actual entries</span></div>
     </div>
     ${future.length?'<div class="acWarn"><b>Review required:</b> '+future.length+' existing posted cashbook item(s) are dated in the future. They have not been altered, but live P&L calculations now exclude them until their date arrives.</div>':''}
@@ -486,6 +486,7 @@ async function saveEntry(type){
   const amount=Number($('aeAmount').value),category=$('aeCat').value,description=$('aeDesc').value.trim(),date=$('aeDate').value||today(),basis=$('aeBasis').value;
   let posting=$('aePosting').value,recurrence=$('aeRecurrence').value;
   if(!category||!description||!(amount>0))return alert('Category, description and a valid amount are required.');
+  if(type==='expense'&&low(category)==='depreciation & amortisation'&&basis!=='adjustment')return alert('Depreciation & Amortisation is non-cash. Record it as an Accounting adjustment.');
   if(basis==='adjustment'){posting='posted';recurrence='none'}
   if(posting==='posted'&&date>today())return alert('A future-dated transaction must be saved as Planned / scheduled. It cannot be posted as an actual transaction yet.');
   if(posting==='posted'&&recurrence==='monthly')return alert('Monthly recurrence belongs to Planned / scheduled items. Choose Planned / scheduled for recurring transactions.');
