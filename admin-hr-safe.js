@@ -331,7 +331,7 @@ function workforceRows(){
 function moneyHR(v){return 'R'+n(v).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2})}
 function workforcePanel(){
   const plans=D.hr_workforce_plans||[],s=workforceSummary,edit=(D.hr_workforce_plans||[]).find(x=>x.id===workforceEditId)||null;
-  const basis=edit?.pay_basis||'monthly',start=(edit?.start_month||workforceMonth).slice(0,7),end=edit?.end_month?edit.end_month.slice(0,7):'';
+  const basis=edit?.pay_basis||'monthly',start=(edit?.start_month||workforceMonth).slice(0,7),end=edit?.end_month?edit.end_month.slice(0,7):'',floor=compensationFloor();
   const summary=workforceSummaryError
     ?'<div class="hrAlert"><b>Affordability summary unavailable:</b> '+esc(workforceSummaryError)+'. No budget value has been substituted.</div>'
     :s?`<div class="hrPlanningGrid">
@@ -347,17 +347,22 @@ function workforcePanel(){
     <div class="hrConfidential"><b>Confidential workforce planning.</b> This area models future staffing affordability only. It does not invite staff, create employment contracts, run payroll or post expenses to the P&L. Zero rates mean a role has not yet been costed.</div>
     <div class="hrBar"><label class="hrMeta">Affordability month <input class="hrInput" id="hwMonth" type="month" value="${esc(workforceMonth.slice(0,7))}"></label><button class="hrBtn alt" id="hwMonthApply">Check Month</button></div>
     ${summary}
+    <div class="hrDeptGuide">
+      <h3>Compensation Guidance — Junior / Graduate Planning</h3>
+      <p>These are planning references, not approved salaries or promises to future employees. The current South African ordinary-worker wage floor in this planner is <b>${moneyHR(floor.hourly_rate)}/hour</b> from ${esc(floor.effective_date||'2026-03-01')}. At 40 hours/week that is approximately <b>${moneyHR(floor.monthly_equivalent_40h)}/month</b>. Ordinary graduate/intern employees should not be planned below the applicable minimum wage. Formal Skills Development Act learnerships use a separate allowance schedule and are not treated as ordinary internships here.</p>
+      <div class="hrTableWrap"><table class="hrTable"><tr><th>Department / Suggested Starter Role</th><th>Profile</th><th>Monthly Guidance</th><th>Hourly Equivalent</th><th>Reference / Note</th><th>Use in Planner</th></tr>${compensationGuidanceRows()}</table></div>
+    </div>
     <h3 style="margin-top:18px">${edit?'Edit Workforce Plan':'Add Future Role Plan'}</h3>
     <div class="hrGrid">
       <input class="hrInput" id="hwRole" placeholder="Role title" value="${esc(edit?.role_title||'')}">
       <select class="hrSelect" id="hwDept">${workforceDeptOpts(edit?.department||'Human Resources')}</select>
       <select class="hrSelect" id="hwModel">
-        ${[['full_time','Full-time'],['part_time','Part-time'],['contractor','Contractor'],['hourly_casual','Hourly / casual']].map(([v,l])=>'<option value="'+v+'" '+((edit?.employment_model||'full_time')===v?'selected':'')+'>'+l+'</option>').join('')}
+        ${[['full_time','Full-time'],['part_time','Part-time'],['graduate_intern','Graduate / intern'],['contractor','Contractor'],['hourly_casual','Hourly / casual']].map(([v,l])=>'<option value="'+v+'" '+((edit?.employment_model||'full_time')===v?'selected':'')+'>'+l+'</option>').join('')}
       </select>
       <select class="hrSelect" id="hwBasis"><option value="monthly" ${basis==='monthly'?'selected':''}>Monthly rate</option><option value="hourly" ${basis==='hourly'?'selected':''}>Hourly rate</option></select>
       <input class="hrInput" id="hwMonthlyRate" type="number" min="0" step="0.01" placeholder="Monthly rate" value="${n(edit?.monthly_rate).toFixed(2)}">
       <input class="hrInput" id="hwHourlyRate" type="number" min="0" step="0.01" placeholder="Hourly rate" value="${n(edit?.hourly_rate).toFixed(2)}">
-      <input class="hrInput" id="hwWeeklyHours" type="number" min="0" max="168" step="0.5" placeholder="Planned hours per week" value="${n(edit?.planned_weekly_hours).toFixed(1)}">
+      <input class="hrInput" id="hwWeeklyHours" type="number" min="0.5" max="168" step="0.5" placeholder="Planned hours per week" value="${n(edit?.planned_weekly_hours||40).toFixed(1)}">
       <input class="hrInput" id="hwHeadcount" type="number" min="1" step="1" placeholder="Headcount" value="${n(edit?.planned_headcount||1)}">
       <input class="hrInput" id="hwEmployerCost" type="number" min="0" step="0.01" placeholder="Employer/benefit cost per person / month" value="${n(edit?.employer_cost_per_person).toFixed(2)}">
       <input class="hrInput" id="hwOtherCost" type="number" min="0" step="0.01" placeholder="Other monthly cost per person" value="${n(edit?.other_monthly_cost_per_person).toFixed(2)}">
@@ -369,7 +374,7 @@ function workforcePanel(){
       <input class="hrInput" id="hwNotes" placeholder="Planning notes / assumptions" value="${esc(edit?.notes||'')}">
     </div>
     <div class="hrBar"><button class="hrBtn" id="hwSave">${edit?'Update Plan':'Add Plan'}</button>${edit?'<button class="hrBtn alt" id="hwCancel">Cancel Edit</button>':''}</div>
-    <div class="hrMeta">Hourly plans use planned weekly hours × 52 ÷ 12 for the monthly affordability estimate. Employer/benefit and other costs are added per planned person.</div>
+    <div class="hrMeta">Planned weekly hours are used for legal-rate checking on employee plans. Hourly plans use hours × 52 ÷ 12 for the monthly affordability estimate; monthly plans use the entered monthly rate. Employer/benefit and other costs are added per planned person.</div>
 
     <h3 style="margin-top:18px">Workforce Cost Plans</h3>
     <table class="hrTable"><tr><th>Role / Department</th><th>Model</th><th>Rate Basis</th><th>Headcount</th><th>Base Cost</th><th>On-costs</th><th>Monthly Cost</th><th>Planned Period</th><th>Status</th><th>Notes</th><th>Action</th></tr>${workforceRows()}</table>
