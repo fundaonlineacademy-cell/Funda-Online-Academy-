@@ -448,6 +448,11 @@ function disciplinaryCodeAck(profileId){
 function foaGuideForRule(ruleCode){
   return disciplinaryCodeGuideRows().filter(x=>x.related_rule_code===ruleCode);
 }
+function disciplinaryCaseCodeGuidance(ruleCode){
+  const rows=foaGuideForRule(ruleCode);
+  if(!rows.length)return '';
+  return '<div class="hrCaseBox"><h4>FOA Code Guidance for This Allegation</h4>'+rows.map(x=>'<div class="hrEvidence"><b>'+esc(x.offence_code)+' · '+esc(x.category)+'</b><br><b>Example:</b> '+esc(x.misconduct_example)+'<br><b>First response:</b> '+esc(x.first_occurrence_guidance)+'<br><b>If repeated:</b> '+esc(x.repeated_occurrence_guidance)+'<br><b>If serious:</b> '+esc(x.serious_case_guidance)+'<br><b>Fairness note:</b> '+esc(x.important_note||'Each case remains fact-specific.')+'</div>').join('')+'</div>';
+}
 function disciplinaryCodeMatrix(){
   const rows=disciplinaryCodeGuideRows(),pg=paged(rows,'disciplinaryCode');
   const body=pg.map(x=>`<tr>
@@ -575,7 +580,7 @@ function disciplinarySelectedCase(){
 
   return `<div class="hrCaseBox"><div class="hrBar" style="justify-content:space-between"><div><h3 style="margin:0">${esc(x.case_number)} · ${esc(x.allegation_title)}</h3><div class="hrMeta">${esc(p.full_name||p.email||'Staff')} · incident ${esc(x.incident_date)} · ${esc(rule?.rule_code||'')} ${esc(rule?.category||'')}</div></div><span class="hrPill ${st}">${esc(disciplinaryStatus(x.status).toUpperCase())}</span></div>
     <div class="hrGrid"><div><b>Alleged facts</b><div class="hrMeta">${esc(x.allegation_details)}</div></div><div><b>Rule / standard</b><div class="hrMeta">${esc(x.workplace_rule||rule?.rule_title||'Not recorded')}</div></div><div><b>Preliminary severity</b><div class="hrMeta">${esc(x.severity_assessment)}</div></div><div><b>Next step</b><div class="hrMeta">${esc(disciplinaryNextStep(x))}</div></div></div>
-    ${rule?.guidance?'<div class="hrConfidential"><b>Category guidance:</b> '+esc(rule.guidance)+'</div>':''}
+    ${rule?.guidance?'<div class="hrConfidential"><b>Category guidance:</b> '+esc(rule.guidance)+'</div>':''}${disciplinaryCaseCodeGuidance(rule?.rule_code)}
     <div class="hrBar"><button class="hrBtn alt" id="hdBack">← Back to case register</button>${active?'<button class="hrBtn bad" id="hdWithdraw">Withdraw Case</button>':''}</div>
     <div class="hrCaseBox"><h4>Investigation / Evidence Note</h4><div class="hrGrid"><textarea class="hrText" id="hdEventNote" placeholder="Investigation fact, witness/evidence note, or other relevant case information"></textarea><input class="hrInput" id="hdEvidenceUrl" placeholder="Evidence URL (optional, https://...)"></div><button class="hrBtn alt" id="hdAddEvent">Add Case Note / Evidence</button></div>
     ${informalSection}${noticeSection}${responseSection}${meetingSection}${outcomeSection}${reviewSection}${reviewDecision}
@@ -585,7 +590,7 @@ function disciplinarySelectedCase(){
 function disciplinaryPanel(){
   const cases=D.hr_disciplinary_cases||[];
   if(disciplinaryCaseId)return disciplinaryGuide()+disciplinarySelectedCase();
-  return `${disciplinaryGuide()}
+  return `${disciplinaryGuide()}${disciplinaryCodePanel()}
     <div class="hrCaseBox"><h3>Open Staff Conduct Case</h3><div class="hrAlert"><b>Attendance example:</b> use this only for alleged <i>unauthorised</i> absence, repeated lateness or failure to follow a known reporting procedure after checking the reason. Approved leave, illness or genuine incapacity is not automatically misconduct.</div><div class="hrGrid">
       <select class="hrSelect" id="hdStaff">${disciplinaryStaffOpts()}</select>
       <select class="hrSelect" id="hdRule">${disciplinaryRuleOpts()}</select>
