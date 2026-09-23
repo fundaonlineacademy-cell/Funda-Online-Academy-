@@ -303,8 +303,10 @@ async function open(){
 function install(){
   css();
   window.FundaAuditComplianceCentre={open};
-  const old=window.audits;
-  window.audits=function(){try{old?.()}catch(e){}setTimeout(open,0)};
+  window.audits=function(){
+    const v=$('view');if(v)v.innerHTML='<div class="rcaPanel"><b>Loading Reports, Compliance &amp; Audit…</b></div>';
+    setTimeout(()=>open().catch(e=>{console.error('Reports Compliance Audit open failed',e);if(v)v.innerHTML='<div class="rcaPanel"><b>Reports, Compliance &amp; Audit could not load.</b><div class="rcaMeta">Use the Admin Refresh control or try again shortly.</div></div>'}),0)
+  };
   document.addEventListener('click',e=>{
     const b=e.target.closest?.('#nav button,.nav button');
     if(b&&/reports|compliance|audit/i.test(b.textContent||''))setTimeout(open,70);
