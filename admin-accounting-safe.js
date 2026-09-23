@@ -511,6 +511,186 @@ function targetsPanel(){
     <div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} months · Maximum 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="budPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="budNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>
   </div>`;
 }
+
+function safeHttp(v){const s=String(v||'').trim();return /^https?:\/\//i.test(s)?s:''}
+function pettyFund(){
+  return (S.pettyFunds||[]).find(x=>x.id===pettyFundId)||null;
+}
+function pettyProfileName(id){
+  const p=(S.profiles||[]).find(x=>x.id===id);
+  return p?.full_name||p?.email||'—';
+}
+function pettyCustodianOptions(selected=''){
+  return '<option value="">No linked staff profile</option>'+(S.profiles||[])
+    .filter(p=>['admin','staff'].includes(low(p.role)))
+    .map(p=>'<option value="'+esc(p.id)+'" '+(p.id===selected?'selected':'')+'>'+esc(p.full_name||p.email)+' · '+esc(p.staff_number||p.job_title||p.role||'Staff')+'</option>').join('');
+}
+function pettyExpenseOptions(){
+  return (S.cats||[]).filter(x=>x.active&&x.category_type==='expense'&&low(x.name)!=='depreciation & amortisation')
+    .map(x=>'<option value="'+esc(x.name)+'">'+esc(x.name)+'</option>').join('');
+}
+function pettyMoveEffect(m){
+  if(low(m.status)!=='posted')return 0;
+  if(['opening_float','replenishment'].includes(low(m.movement_type)))return n(m.amount);
+  if(low(m.movement_type)==='return_to_bank')return -n(m.amount);
+  return 0;
+}
+function pettyBalance(fundId,asOf=today()){
+  const move=(S.pettyMoves||[]).filter(x=>x.fund_id===fundId&&x.movement_date<=asOf).reduce((a,x)=>a+pettyMoveEffect(x),0);
+  const spent=(S.pettyVouchers||[]).filter(x=>x.fund_id===fundId&&low(x.status)==='posted'&&x.expense_date<=asOf).reduce((a,x)=>a+n(x.amount),0);
+  return move-spent;
+}
+function pettyPendingTotal(fundId){
+  return (S.pettyVouchers||[]).filter(x=>x.fund_id===fundId&&low(x.status)==='pending').reduce((a,x)=>a+n(x.amount),0);
+}
+function pettyMovementRows(fundId){
+  const rows=(S.pettyMoves||[]).filter(x=>x.fund_id===fundId),pg=pageRows(rows,pettyMovementPage);pettyMovementPage=pg.page;
+  const body=pg.rows.map(x=>`<tr>
+    <td>${day(x.movement_date)}</td>
+    <td>${pill(String(x.movement_type||'').replaceAll('_',' '))}</td>
+    <td><b>${money(x.amount)}</b></td>
+    <td>${esc(x.reference_number||'—')}</td>
+    <td>${esc(x.notes||'—')}</td>
+    <td>${pill(x.status||'posted')}${x.void_reason?'<div class="acMeta">'+esc(x.void_reason)+'</div>':''}</td>
+    <td>${low(x.status)==='posted'?'<button class="acBtn bad" data-pc-void-move="'+x.id+'">Void</button>':'—'}</td>
+  </tr>`).join('')||'<tr><td colspan="7"><div class="acMeta">No petty cash funding movements recorded.</div></td></tr>';
+  return {rows,pg,html:`<div class="acTableWrap"><table class="acTable"><thead><tr><th>Date</th><th>Movement</th><th>Amount</th><th>Reference</th><th>Notes</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="pcMovePrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="pcMoveNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>`};
+}
+function pettyVoucherRows(fundId){
+  const rows=(S.pettyVouchers||[]).filter(x=>x.fund_id===fundId),pg=pageRows(rows,pettyVoucherPage);pettyVoucherPage=pg.page;
+  const body=pg.rows.map(x=>{
+    const evidence=safeHttp(x.receipt_url);
+    const action=low(x.status)==='pending'
+      ?'<button class="acBtn ok" data-pc-approve="'+x.id+'">Approve & Post</button> <button class="acBtn bad" data-pc-reject="'+x.id+'">Reject</button>'
+      :low(x.status)==='posted'
+        ?'<button class="acBtn bad" data-pc-void-voucher="'+x.id+'">Void</button>'
+        :'—';
+    return `<tr>
+      <td><b>${esc(x.voucher_number)}</b><div class="acMeta">${day(x.expense_date)}</div></td>
+      <td>${esc(x.category)}</td><td>${esc(x.payee||'—')}</td><td>${esc(x.description)}</td>
+      <td><b>${money(x.amount)}</b></td><td>${esc(x.department||'—')}</td>
+      <td>${evidence?'<a href="'+esc(evidence)+'" target="_blank" rel="noopener">Open receipt ↗</a>':esc(x.evidence_note||'—')}</td>
+      <td>${pill(x.status)}${x.review_note?'<div class="acMeta">'+esc(x.review_note)+'</div>':''}${x.void_reason?'<div class="acMeta">'+esc(x.void_reason)+'</div>':''}</td>
+      <td>${action}</td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="9"><div class="acMeta">No petty cash vouchers recorded.</div></td></tr>';
+  return {rows,pg,html:`<div class="acTableWrap"><table class="acTable"><thead><tr><th>Voucher / Date</th><th>Expense Category</th><th>Payee</th><th>Description</th><th>Amount</th><th>Department</th><th>Evidence</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="pcVoucherPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="pcVoucherNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>`};
+}
+function pettyReconRows(fundId){
+  const rows=(S.pettyRecons||[]).filter(x=>x.fund_id===fundId),pg=pageRows(rows,pettyReconPage);pettyReconPage=pg.page;
+  const body=pg.rows.map(x=>`<tr><td>${day(x.reconciliation_date)}</td><td>${money(x.system_balance)}</td><td>${money(x.counted_cash)}</td><td><b>${money(x.variance)}</b></td><td>${esc(x.notes||'—')}</td><td>${fmt(x.created_at)}</td></tr>`).join('')||'<tr><td colspan="6"><div class="acMeta">No petty cash reconciliations recorded.</div></td></tr>';
+  return {rows,pg,html:`<div class="acTableWrap"><table class="acTable"><thead><tr><th>Reconciliation Date</th><th>System Balance</th><th>Counted Cash</th><th>Variance</th><th>Notes</th><th>Recorded</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="pcReconPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="pcReconNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>`};
+}
+function pettyFundSetup(){
+  return `<div class="acPanel"><h3>Create Petty Cash Fund</h3><div class="acInfo">Creating a fund does not create cash or an expense. Set the authorised maximum float, then record the actual opening float separately when cash is placed in the fund.</div><div class="acForm">
+    <input class="acInput" id="pcNewName" placeholder="Fund name e.g. Main Petty Cash">
+    <select class="acSelect" id="pcNewCustodian">${pettyCustodianOptions()}</select>
+    <input class="acInput" id="pcNewCustodianName" placeholder="Custodian name if not linked to staff">
+    <input class="acInput" id="pcNewFloat" type="number" min="0" step="0.01" placeholder="Authorised float">
+    <button class="acBtn" id="pcCreateFund">Create Fund</button>
+  </div></div>`;
+}
+function pettyCashPanel(){
+  const funds=S.pettyFunds||[];
+  if(!loaded.pettyFunds)return '<div class="acPanel"><div class="acMeta">Petty cash data is unavailable. Use Refresh after checking the Finance warning.</div></div>';
+  if(!funds.length)return `<div class="acInfo"><b>Petty Cash Control</b><br>No petty cash fund has been created yet. No cash amount has been assumed.</div>${pettyFundSetup()}`;
+
+  const f=pettyFund()||funds[0],balance=pettyBalance(f.id),pending=pettyPendingTotal(f.id),headroom=n(f.authorized_float)-balance;
+  const lastRecon=(S.pettyRecons||[]).find(x=>x.fund_id===f.id);
+  const moves=pettyMovementRows(f.id),vouchers=pettyVoucherRows(f.id),recons=pettyReconRows(f.id);
+  const fundOpts=funds.map(x=>'<option value="'+esc(x.id)+'" '+(x.id===f.id?'selected':'')+'>'+esc(x.fund_name)+' · '+esc(x.status)+'</option>').join('');
+  return `
+    <div class="acInfo"><b>Petty Cash Control.</b> Opening float, replenishments and returns are cash transfers and do not affect profit. Only an approved petty-cash voucher posts an expense to the P&L, using the voucher's real accounting category.</div>
+    <div class="acBar"><select class="acSelect" id="pcFundSelect">${fundOpts}</select><button class="acBtn alt" id="pcNewFundShow">Create Another Fund</button></div>
+    <div id="pcNewFundHost"></div>
+    <div class="acPettyK">
+      <div class="acPettyCard"><strong>${money(f.authorized_float)}</strong><span>Authorised float</span></div>
+      <div class="acPettyCard"><strong>${money(balance)}</strong><span>Current system cash balance</span></div>
+      <div class="acPettyCard"><strong>${money(headroom)}</strong><span>Float headroom</span></div>
+      <div class="acPettyCard"><strong>${money(pending)}</strong><span>Pending voucher requests</span></div>
+    </div>
+    ${lastRecon?'<div class="'+(Math.abs(n(lastRecon.variance))>0.005?'acWarn':'acInfo')+'"><b>Last cash count:</b> '+day(lastRecon.reconciliation_date)+' · system '+money(lastRecon.system_balance)+' · counted '+money(lastRecon.counted_cash)+' · variance '+money(lastRecon.variance)+'</div>':''}
+
+    <div class="acGrid">
+      <div class="acPanel"><h3>Fund Control</h3><div class="acForm">
+        <input class="acInput" id="pcFundName" value="${esc(f.fund_name)}" placeholder="Fund name">
+        <select class="acSelect" id="pcCustodian">${pettyCustodianOptions(f.custodian_profile_id||'')}</select>
+        <input class="acInput" id="pcCustodianName" value="${esc(f.custodian_name||'')}" placeholder="Custodian name if not linked">
+        <input class="acInput" id="pcAuthFloat" type="number" min="0" step="0.01" value="${n(f.authorized_float).toFixed(2)}" placeholder="Authorised float">
+        <select class="acSelect" id="pcFundStatus"><option value="active" ${f.status==='active'?'selected':''}>Active</option><option value="closed" ${f.status==='closed'?'selected':''}>Closed</option></select>
+        <button class="acBtn" id="pcUpdateFund">Update Fund</button>
+      </div><div class="acMeta">Custodian: <b>${esc(f.custodian_profile_id?pettyProfileName(f.custodian_profile_id):(f.custodian_name||'Not assigned'))}</b>. A fund can be closed only after its balance is zero.</div></div>
+
+      <div class="acPanel"><h3>Fund / Replenish / Return Cash</h3><div class="acForm">
+        <select class="acSelect" id="pcMoveType"><option value="opening_float">Opening float</option><option value="replenishment">Replenishment</option><option value="return_to_bank">Return to bank</option></select>
+        <input class="acInput" id="pcMoveAmount" type="number" min="0" step="0.01" placeholder="Amount">
+        <input class="acInput" id="pcMoveDate" type="date" value="${today()}">
+        <input class="acInput" id="pcMoveRef" placeholder="Bank / cash reference">
+        <input class="acInput" id="pcMoveNotes" placeholder="Movement notes">
+        <button class="acBtn" id="pcRecordMove">Record Movement</button>
+      </div><div class="acMeta">Replenishment cannot take the system balance above the authorised float. These movements do not enter the P&L.</div></div>
+    </div>
+
+    <div class="acPanel" style="margin-top:10px"><h3>Petty Cash Voucher</h3><div class="acInfo">Create the voucher first. A Finance approver must then use <b>Approve & Post</b> before the purchase reduces petty cash and appears as a P&L expense.</div><div class="acForm">
+      <input class="acInput" id="pcVoucherDate" type="date" value="${today()}">
+      <select class="acSelect" id="pcVoucherCategory">${pettyExpenseOptions()}</select>
+      <input class="acInput" id="pcVoucherPayee" placeholder="Payee / supplier">
+      <input class="acInput" id="pcVoucherDept" placeholder="Department / purpose">
+      <input class="acInput" id="pcVoucherAmount" type="number" min="0" step="0.01" placeholder="Amount">
+      <input class="acInput" id="pcVoucherReceipt" type="url" placeholder="Receipt / evidence URL (optional)">
+      <input class="acInput acWide" id="pcVoucherEvidence" placeholder="Evidence note / explanation if no receipt URL">
+      <textarea class="acText acWide" id="pcVoucherDesc" placeholder="What was purchased and why"></textarea>
+      <button class="acBtn" id="pcCreateVoucher">Create Voucher Request</button>
+    </div></div>
+
+    <div class="acPanel" style="margin-top:10px"><h3>Voucher Register</h3>${vouchers.html}</div>
+    <div class="acPanel" style="margin-top:10px"><h3>Funding & Cash Movement Register</h3>${moves.html}</div>
+
+    <div class="acGrid" style="margin-top:10px">
+      <div class="acPanel"><h3>Cash Count & Reconciliation</h3><div class="acForm">
+        <input class="acInput" id="pcReconDate" type="date" value="${today()}">
+        <input class="acInput" id="pcCountedCash" type="number" min="0" step="0.01" placeholder="Physical cash counted">
+        <input class="acInput acWide" id="pcReconNotes" placeholder="Reconciliation note; required if there is a variance">
+        <button class="acBtn" id="pcReconcile">Record Reconciliation</button>
+      </div><div class="acMeta">System balance now: <b>${money(balance)}</b>. A reconciliation records any difference; it does not silently create an adjustment.</div></div>
+
+      <div class="acPanel"><h3>Petty Cash Report</h3><input class="acInput" id="pcReportMonth" type="month" value="${esc(pettyReportMonth)}"><div class="acBar"><button class="acBtn" id="pcExcel">Download Excel</button><button class="acBtn" id="pcPdf">Download PDF</button></div><div class="acMeta">The report includes fund movements, voucher status, actual inflows/outflows and the running petty cash balance for the selected month.</div></div>
+    </div>
+    <div class="acPanel" style="margin-top:10px"><h3>Reconciliation History</h3>${recons.html}</div>
+  `;
+}
+function pettyReportRows(fund,month){
+  const [from,to]=monthRange(month),opening=pettyBalance(fund.id,shiftDays(from,-1));
+  let running=opening;
+  const rows=[];
+  for(const x of (S.pettyMoves||[]).filter(x=>x.fund_id===fund.id&&x.movement_date>=from&&x.movement_date<=to)){
+    const posted=low(x.status)==='posted',effect=posted?pettyMoveEffect(x):0;
+    const inflow=Math.max(0,effect),outflow=Math.max(0,-effect);running+=effect;
+    rows.push({sort:x.movement_date+'T'+(x.created_at||''),Date:day(x.movement_date),Record:'Fund movement',Reference:x.reference_number||'',Category:'',Payee:'',Description:String(x.movement_type||'').replaceAll('_',' ')+(x.notes?' · '+x.notes:''),'Inflow (R)':inflow,'Outflow (R)':outflow,Status:x.status,'Running Balance (R)':running,Evidence:''});
+  }
+  for(const x of (S.pettyVouchers||[]).filter(x=>x.fund_id===fund.id&&x.expense_date>=from&&x.expense_date<=to)){
+    const outflow=low(x.status)==='posted'?n(x.amount):0;running-=outflow;
+    rows.push({sort:x.expense_date+'T'+(x.created_at||''),Date:day(x.expense_date),Record:'Voucher',Reference:x.voucher_number,Category:x.category,Payee:x.payee||'',Description:x.description,'Inflow (R)':0,'Outflow (R)':outflow,Status:x.status,'Running Balance (R)':running,Evidence:x.receipt_url||x.evidence_note||''});
+  }
+  return {opening,rows:rows.sort((a,b)=>a.sort.localeCompare(b.sort)).map(({sort,...r})=>r),from,to};
+}
+async function exportPettyCash(format){
+  const fund=pettyFund();if(!fund)return alert('Choose a petty cash fund.');
+  pettyReportMonth=$('pcReportMonth')?.value||pettyReportMonth;
+  if(!pettyReportMonth)return alert('Choose the report month.');
+  const api=window.FundaReportExports;if(!api)return alert('The formal report export service is still loading. Please try again.');
+  const data=pettyReportRows(fund,pettyReportMonth),closing=pettyBalance(fund.id,data.to);
+  const postedExpenses=(S.pettyVouchers||[]).filter(x=>x.fund_id===fund.id&&low(x.status)==='posted'&&x.expense_date>=data.from&&x.expense_date<=data.to).reduce((a,x)=>a+n(x.amount),0);
+  const report={title:'Petty Cash Register — '+fund.fund_name,rows:data.rows,summary:[
+    ['Month',pettyReportMonth],['Custodian',fund.custodian_profile_id?pettyProfileName(fund.custodian_profile_id):(fund.custodian_name||'Not assigned')],
+    ['Authorised float',money(fund.authorized_float)],['Opening system balance',money(data.opening)],['Posted petty cash expenses',money(postedExpenses)],
+    ['Closing system balance',money(closing)],['Pending vouchers',money(pettyPendingTotal(fund.id))]
+  ]};
+  try{
+    const fileName=format==='xlsx'?await api.exportExcel(report,{from:data.from,to:data.to,scope:'period'}):await api.exportPdf(report,{from:data.from,to:data.to,scope:'period'});
+    await api.logRun?.('petty_cash',data.from,data.to,'period',format,data.rows.length,fileName);
+  }catch(e){alert(e.message||'The petty cash report could not be generated.')}
+}
 function reports(){
   return `<div class="acGrid"><div class="acPanel"><h3>Financial Exports</h3><p class="acMeta">Use the formal FOA Excel/PDF templates. CSV is no longer the primary management-report format.</p><div class="acBar"><button class="acBtn" id="cashExcel">Cashbook Excel</button><button class="acBtn" id="cashPdf">Cashbook PDF</button><button class="acBtn alt" id="acReports2">Open Report Centre</button></div></div><div class="acPanel"><h3>Export Month</h3><input class="acInput" type="month" id="reportMonth" value="${esc(new Date().toISOString().slice(0,7))}"><p class="acMeta">The export includes posted, planned and voided records for audit visibility, with posting and reconciliation status clearly shown.</p></div></div>`;
 }
