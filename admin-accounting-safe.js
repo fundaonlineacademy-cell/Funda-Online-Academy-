@@ -283,53 +283,145 @@ function pnlControls(){
     </div>
   </div><div id="acPLWrap"><div class="acPanel"><div class="acMeta">Choose a period and generate the management P&L.</div></div></div>`;
 }
-function lineRows(lines,groups){
-  return (lines||[]).filter(x=>groups.includes(x.group)).map(x=>'<tr><td>'+esc(x.category)+'</td><td>'+money(x.amount)+'</td></tr>').join('');
+function sumGroup(lines,groups){
+  const set=new Set(Array.isArray(groups)?groups:[groups]);
+  return (lines||[]).filter(x=>set.has(x.group)).reduce((a,x)=>a+n(x.amount),0);
 }
-function pnlMarkup(x,from,to){
-  const set=settings(),annual=n(set.annual_turnover_target);
+function sumOtherGroups(lines,known){
+  const set=new Set(known);
+  return (lines||[]).filter(x=>!set.has(x.group)).reduce((a,x)=>a+n(x.amount),0);
+}
+function normalisePnl(raw={}){
+  const income=Array.isArray(raw.income_lines)?raw.income_lines:[],expense=Array.isArray(raw.expense_lines)?raw.expense_lines:[];
+  const operatingIncome=n(raw.operating_cash_income??sumGroup(income,'Operating Income'));
+  const turnover=n(raw.turnover??(n(raw.tuition_revenue)+operatingIncome));
+  const otherOperatingIncome=n(raw.other_operating_income??sumGroup(income,'Other Operating Income'));
+  const financeIncome=n(raw.finance_income??sumGroup(income,'Finance Income'));
+  let otherIncome=sumGroup(income,'Other Income')+sumOtherGroups(income,['Operating Income','Other Operating Income','Finance Income','Other Income']);
+  if(raw.non_operating_income!=null)otherIncome=n(raw.non_operating_income);
+  else if(raw.other_income!=null&&otherOperatingIncome===0&&financeIncome===0&&otherIncome===0)otherIncome=n(raw.other_income);
+
+  const directCosts=n(raw.direct_costs??sumGroup(expense,'Direct Costs'));
+  const peopleCosts=n(raw.people_costs??sumGroup(expense,'People Costs'));
+  const operatingExpenses=n(raw.operating_expenses??sumGroup(expense,'Operating Expenses'));
+  const depreciation=n(raw.depreciation_amortisation??sumGroup(expense,'Depreciation & Amortisation'));
+  const financeCosts=n(raw.finance_costs??sumGroup(expense,'Finance Costs'));
+  const taxExpense=n(raw.tax_expense??sumGroup(expense,'Tax Expense'));
+  let otherExpenses=sumGroup(expense,'Other Expenses')+sumOtherGroups(expense,['Direct Costs','People Costs','Operating Expenses','Depreciation & Amortisation','Finance Costs','Tax Expense','Other Expenses']);
+  if(raw.non_operating_expenses!=null)otherExpenses=n(raw.non_operating_expenses);
+  else if(raw.other_expenses!=null&&depreciation===0&&financeCosts===0&&taxExpense===0&&otherExpenses===0)otherExpenses=n(raw.other_expenses);
+
+  const grossProfit=turnover-directCosts;
+  const operatingBeforeDA=grossProfit+otherOperatingIncome-peopleCosts-operatingExpenses;
+  const operatingProfit=operatingBeforeDA-depreciation;
+  const profitBeforeTax=operatingProfit+financeIncome+otherIncome-financeCosts-otherExpenses;
+  const netResult=profitBeforeTax-taxExpense;
+  return {...raw,
+    income_lines:income,expense_lines:expense,operating_cash_income:operatingIncome,turnover,
+    other_operating_income:otherOperatingIncome,finance_income:financeIncome,non_operating_income:otherIncome,
+    other_income:otherOperatingIncome+financeIncome+otherIncome,
+    direct_costs:directCosts,gross_profit:grossProfit,people_costs:peopleCosts,operating_expenses:operatingExpenses,
+    depreciation_amortisation:depreciation,finance_costs:financeCosts,tax_expense:taxExpense,non_operating_expenses:otherExpenses,
+    other_expenses:depreciation+financeCosts+taxExpense+otherExpenses,
+    operating_profit_before_da:operatingBeforeDA,operating_profit:operatingProfit,profit_before_tax:profitBeforeTax,
+    total_income:turnover+otherOperatingIncome+financeIncome+otherIncome,
+    total_expenses:directCosts+peopleCosts+operatingExpenses+depreciation+financeCosts+taxExpense+otherExpenses,
+    net_result:netResult
+  };
+}
+function ratio(v,base){return base?Number(v||0)/Number(base)*100:0}
+function pct(v){return Number.isFinite(Number(v))?Number(v).toFixed(1)+'%':'—'}
+function categoryPairs(currentLines,comparisonLines,groups){
+  const allowed=new Set(Array.isArray(groups)?groups:[groups]),map=new Map();
+  for(const x of currentLines||[]){if(!allowed.has(x.group))continue;const k=x.category||'Uncategorised';const row=map.get(k)||{category:k,current:0,comparison:0};row.current+=n(x.amount);map.set(k,row)}
+  for(const x of comparisonLines||[]){if(!allowed.has(x.group))continue;const k=x.category||'Uncategorised';const row=map.get(k)||{category:k,current:0,comparison:0};row.comparison+=n(x.amount);map.set(k,row)}
+  return [...map.values()].sort((a,b)=>Math.abs(b.current)-Math.abs(a.current)||a.category.localeCompare(b.category));
+}
+function pnlDataRows(x,comp){
+  x=normalisePnl(x);comp=normalisePnl(comp||{});
+  const rows=[],push=(section,account,current,comparison,type='line')=>rows.push({section,account,current:n(current),comparison:n(comparison),type});
+  const addCategories=(section,groups,kind)=>{
+    const a=kind==='income'?x.income_lines:x.expense_lines,b=kind==='income'?comp.income_lines:comp.expense_lines;
+    categoryPairs(a,b,groups).forEach(r=>push(section,r.category,r.current,r.comparison,'line'));
+  };
+
+  push('Revenue / Turnover','Verified tuition / training revenue',x.tuition_revenue,comp.tuition_revenue);
+  addCategories('Revenue / Turnover','Operating Income','income');
+  push('Revenue / Turnover','Total Turnover',x.turnover,comp.turnover,'total');
+
+  addCategories('Cost of Sales / Direct Costs','Direct Costs','expense');
+  push('Cost of Sales / Direct Costs','Total Direct Costs',x.direct_costs,comp.direct_costs,'subtotal');
+  push('Gross Profit','GROSS PROFIT',x.gross_profit,comp.gross_profit,'total');
+
+  addCategories('Other Operating Income','Other Operating Income','income');
+  push('Other Operating Income','Total Other Operating Income',x.other_operating_income,comp.other_operating_income,'subtotal');
+
+  addCategories('People Costs','People Costs','expense');
+  push('People Costs','Total People Costs',x.people_costs,comp.people_costs,'subtotal');
+
+  addCategories('Operating Expenses','Operating Expenses','expense');
+  push('Operating Expenses','Total Other Operating Expenses',x.operating_expenses,comp.operating_expenses,'subtotal');
+  push('Operating Result','Operating Profit before Depreciation & Amortisation',x.operating_profit_before_da,comp.operating_profit_before_da,'subtotal');
+
+  addCategories('Depreciation & Amortisation','Depreciation & Amortisation','expense');
+  push('Depreciation & Amortisation','Total Depreciation & Amortisation',x.depreciation_amortisation,comp.depreciation_amortisation,'subtotal');
+  push('Operating Result','OPERATING PROFIT / (LOSS)',x.operating_profit,comp.operating_profit,'total');
+
+  addCategories('Finance Income','Finance Income','income');
+  push('Finance Income','Total Finance Income',x.finance_income,comp.finance_income,'subtotal');
+  addCategories('Finance Costs','Finance Costs','expense');
+  push('Finance Costs','Total Finance Costs',x.finance_costs,comp.finance_costs,'subtotal');
+
+  addCategories('Other Income','Other Income','income');
+  push('Other Income','Total Other Income',x.non_operating_income,comp.non_operating_income,'subtotal');
+  addCategories('Other Expenses','Other Expenses','expense');
+  push('Other Expenses','Total Other Expenses',x.non_operating_expenses,comp.non_operating_expenses,'subtotal');
+
+  push('Profit Before Tax','PROFIT / (LOSS) BEFORE TAX',x.profit_before_tax,comp.profit_before_tax,'total');
+  addCategories('Income Tax','Tax Expense','expense');
+  push('Income Tax','Income Tax Expense',x.tax_expense,comp.tax_expense,'subtotal');
+  push('Net Result','NET PROFIT / (LOSS)',x.net_result,comp.net_result,'net');
+  return rows;
+}
+function pnlTableRows(x,comp){
+  const turnover=n(x.turnover),rows=pnlDataRows(x,comp);
+  let section='';
+  return rows.map(r=>{
+    const heading=r.section!==section?(section=r.section,'<tr class="section"><td colspan="5">'+esc(section)+'</td></tr>'):'';
+    const variance=r.current-r.comparison,cls=r.type==='net'?'net':r.type==='total'?'total':r.type==='subtotal'?'subtotal':'';
+    return heading+'<tr class="'+cls+'"><td>'+esc(r.account)+'</td><td class="acNum">'+money(r.current)+'</td><td class="acNum">'+money(r.comparison)+'</td><td class="acNum">'+money(variance)+'</td><td class="acPct">'+pct(ratio(r.current,turnover))+'</td></tr>';
+  }).join('');
+}
+function pnlMarkup(raw,rawComp,from,to,compFrom,compTo){
+  const x=normalisePnl(raw),comp=normalisePnl(rawComp||{}),set=settings(),annual=n(set.annual_turnover_target),anchor=set.financial_year_anchor||'2026-10-01';
   const monthlyTarget=annual/12;
   let target=null,label='';
-  if(pnlMode==='monthly'){target=monthlyTarget;label='Monthly turnover planning target'}
-  if(pnlMode==='financial_year'){target=annual;label='Annual turnover target'}
-  const pct=target?targetProgress(n(x.turnover),target):0;
+  if(from>=anchor&&pnlMode==='monthly'){target=monthlyTarget;label='Monthly turnover planning target'}
+  if(from>=anchor&&pnlMode==='financial_year'){target=annual;label='Annual turnover target'}
+  const progress=target?targetProgress(n(x.turnover),target):0;
   const close=from===monthRange(from.slice(0,7))[0]&&to===monthRange(from.slice(0,7))[1]?monthClosed(from):null;
   const canClose=pnlMode==='monthly'&&to<today()&&!close;
-  const operatingLines=lineRows(x.income_lines||[],['Operating Income']);
-  const otherIncomeLines=lineRows(x.income_lines||[],['Other Income']);
-  const directLines=lineRows(x.expense_lines||[],['Direct Costs']);
-  const peopleLines=lineRows(x.expense_lines||[],['People Costs']);
-  const opExLines=lineRows(x.expense_lines||[],['Operating Expenses']);
-  const otherExLines=(x.expense_lines||[]).filter(i=>!['Direct Costs','People Costs','Operating Expenses'].includes(i.group)).map(i=>'<tr><td>'+esc(i.category)+'</td><td>'+money(i.amount)+'</td></tr>').join('');
+  const grossMargin=ratio(x.gross_profit,x.turnover),operatingMargin=ratio(x.operating_profit,x.turnover),netMargin=ratio(x.net_result,x.turnover);
+  const compareLabel=day(compFrom)+' - '+day(compTo);
   return `
   <div class="acPanel acPL">
-    <div class="acBar" style="justify-content:space-between"><div><h3>Management Profit & Loss Statement</h3><div class="acMeta">${day(from)} - ${day(to)} · ${x.period_status==='closed'?'Closed monthly snapshot':'Live management basis'}</div></div><div>${pill(x.period_status||'live')}</div></div>
-    <div class="acInfo"><b>Basis:</b> verified student receipts are recognised as tuition/training revenue; non-payment posted cashbook income is added separately; planned, voided and future-dated transactions are excluded. This is a management statement, not a statutory tax calculation.</div>
+    <div class="acBar" style="justify-content:space-between"><div><h3>Management Profit & Loss Statement</h3><div class="acMeta">${day(from)} - ${day(to)} · comparison ${compareLabel} · ${x.period_status==='closed'?'Closed monthly snapshot':'Live management basis'}</div></div><div>${pill(x.period_status||'live')}</div></div>
+    <div class="acInfo"><b>Basis:</b> verified Student receipts are recognised from the approved Payments workflow; other posted income/expenses and approved accounting adjustments are recognised by their transaction date. Planned, voided, duplicate Student-payment ledger copies and future-dated posted transactions are excluded. This is a management P&L and is not a statutory tax return or a substitute for accountant year-end adjustments.</div>
     ${n(x.future_posted_records)?'<div class="acWarn"><b>Future-dated items excluded:</b> '+n(x.future_posted_records)+' posted record(s), '+money(x.future_posted_amount)+', fall after today and are not recognised yet.</div>':''}
-    <table class="acTable">
-      <thead><tr><th>Account</th><th>Amount</th></tr></thead><tbody>
-      <tr class="section"><td colspan="2">Revenue / Turnover</td></tr>
-      <tr><td>Verified tuition / training revenue</td><td>${money(x.tuition_revenue)}</td></tr>
-      ${operatingLines}
-      <tr class="total"><td>Total Turnover</td><td>${money(x.turnover)}</td></tr>
-      <tr class="section"><td colspan="2">Other Income</td></tr>
-      ${otherIncomeLines||'<tr><td>Other income</td><td>'+money(x.other_income)+'</td></tr>'}
-      <tr class="subtotal"><td>Total Income</td><td>${money(x.total_income)}</td></tr>
-      <tr class="section"><td colspan="2">Direct Costs</td></tr>
-      ${directLines||'<tr><td>Direct costs</td><td>'+money(x.direct_costs)+'</td></tr>'}
-      <tr class="subtotal"><td>Gross Profit</td><td>${money(x.gross_profit)}</td></tr>
-      <tr class="section"><td colspan="2">People Costs</td></tr>
-      ${peopleLines||'<tr><td>People costs</td><td>'+money(x.people_costs)+'</td></tr>'}
-      <tr class="section"><td colspan="2">Operating Expenses</td></tr>
-      ${opExLines||'<tr><td>Operating expenses</td><td>'+money(x.operating_expenses)+'</td></tr>'}
-      ${otherExLines?'<tr class="section"><td colspan="2">Other Expenses</td></tr>'+otherExLines:''}
-      <tr class="total"><td>Total Expenses</td><td>${money(x.total_expenses)}</td></tr>
-      <tr class="net"><td>NET SURPLUS / (LOSS)</td><td>${money(x.net_result)}</td></tr>
-      </tbody>
-    </table>
-    ${target!==null?'<div class="acPanel" style="margin-top:10px"><div class="acMeta">'+label+': <b>'+money(target)+'</b> · Actual turnover: <b>'+money(x.turnover)+'</b> · Variance: <b>'+money(n(x.turnover)-target)+'</b></div><div class="acTarget"><i style="width:'+pct+'%"></i></div></div>':''}
-    <div class="acMeta" style="margin-top:8px">Verified payment records: ${n(x.verified_payment_records)} · Pending/unverified collections excluded: ${money(x.pending_collections)} · Posted cashbook income records: ${n(x.cash_income_records)} · Posted cashbook expense records: ${n(x.cash_expense_records)}</div>
-    <div class="acBar"><button class="acBtn" id="acExcelPL">Download Excel (.xlsx)</button><button class="acBtn" id="acPdfPL">Download PDF</button>${canClose?'<button class="acBtn good" id="acCloseMonth">Close Month</button>':''}${close?'<button class="acBtn alt" id="acReopenMonth">Reopen Month</button>':''}</div>
+    <div class="acPLMetrics">
+      <div class="acPLMetric"><strong>${money(x.turnover)}</strong><span>Turnover</span><small>Comparison ${money(comp.turnover)}</small></div>
+      <div class="acPLMetric"><strong>${money(x.gross_profit)}</strong><span>Gross profit</span><small>Gross margin ${pct(grossMargin)}</small></div>
+      <div class="acPLMetric"><strong>${money(x.operating_profit)}</strong><span>Operating profit / (loss)</span><small>Operating margin ${pct(operatingMargin)}</small></div>
+      <div class="acPLMetric"><strong>${money(x.profit_before_tax)}</strong><span>Profit / (loss) before tax</span><small>Comparison ${money(comp.profit_before_tax)}</small></div>
+      <div class="acPLMetric"><strong>${money(x.net_result)}</strong><span>Net profit / (loss)</span><small>Net margin ${pct(netMargin)}</small></div>
+    </div>
+    <div class="acTableWrap"><table class="acTable">
+      <thead><tr><th>Account</th><th class="acNum">Current Period</th><th class="acNum">Comparison Period</th><th class="acNum">Variance</th><th class="acPct">% of Turnover</th></tr></thead>
+      <tbody>${pnlTableRows(x,comp)}</tbody>
+    </table></div>
+    ${target!==null?'<div class="acPanel" style="margin-top:10px"><div class="acMeta">'+label+': <b>'+money(target)+'</b> · Actual turnover: <b>'+money(x.turnover)+'</b> · Variance: <b>'+money(n(x.turnover)-target)+'</b></div><div class="acTarget"><i style="width:'+progress+'%"></i></div></div>':''}
+    <div class="acMeta" style="margin-top:8px">Verified payment records: ${n(x.verified_payment_records)} · Pending/unverified collections excluded: ${money(x.pending_collections)} · Posted non-payment income records: ${n(x.cash_income_records)} · Posted expense/adjustment records: ${n(x.cash_expense_records)}</div>
+    <div class="acBar"><button class="acBtn" id="acExcelPL">Download Excel (.xlsx)</button><button class="acBtn" id="acPdfPL">Download PDF</button>${canClose?'<button class="acBtn ok" id="acCloseMonth">Close Month</button>':''}${close?'<button class="acBtn alt" id="acReopenMonth">Reopen Month</button>':''}</div>
   </div>`;
 }
 function reconciliation(){
