@@ -52,7 +52,8 @@ function installStyles(){
     .ceoAcctField{display:grid;gap:5px;margin-top:12px}.ceoAcctField label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;color:#66758a}
     .ceoAcctField textarea,.ceoAcctField input{width:100%;box-sizing:border-box;border:1px solid #d6dee8;border-radius:9px;padding:10px 11px;font:400 14px/1.4 "Source Sans 3","Segoe UI",Arial,sans-serif}.ceoAcctField textarea{min-height:95px;resize:vertical}
     .ceoAcctModalActions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
-    .ceoAcctAuditReason{max-width:380px;white-space:normal;line-height:1.45}
+    .ceoAcctAuditReason{min-width:300px;max-width:520px;white-space:normal;line-height:1.45;overflow-wrap:anywhere;word-break:normal}
+    .ceoAcctAuditOutcome{min-width:120px;max-width:180px;white-space:normal;line-height:1.45;overflow-wrap:anywhere}
     @media(max-width:820px){.ceoAcctHero h1{font-size:21px}.ceoAcctToolbar{align-items:stretch}.ceoAcctSearch{min-width:100%;order:5}.ceoAcctTable th,.ceoAcctTable td{padding:9px}}
   `;
   document.head.appendChild(s);
@@ -92,10 +93,14 @@ function ensureNavButton(){
 
 async function loadData(){
   const c=await getClient();
-  const [a,l]=await Promise.all([
-    c.rpc('ceo_list_manageable_accounts'),
+  let [a,l]=await Promise.all([
+    c.rpc('ceo_list_manageable_accounts_v2'),
     c.rpc('ceo_list_account_actions',{p_limit:500})
   ]);
+  if(a.error){
+    const legacy=await c.rpc('ceo_list_manageable_accounts');
+    if(!legacy.error)a=legacy;
+  }
   if(a.error)throw a.error;
   if(l.error)throw l.error;
   accounts=a.data||[];
@@ -153,7 +158,7 @@ function accountRows(){
   const slice=list.slice(st.start,st.end);
   if(!slice.length){
     const label=activeKind==='deleted'?'deleted / archived':activeKind==='staff'?'Staff':'Student';
-    return '<tr><td colspan="6"><div class="ceoAcctEmpty">No matching '+label+' accounts.</div></td></tr>';
+    return '<tr><td colspan="7"><div class="ceoAcctEmpty">No matching '+label+' accounts.</div></td></tr>';
   }
   return slice.map(a=>{
     const role=low(a.role);
@@ -164,6 +169,7 @@ function accountRows(){
       <td>${esc(identity)}</td>
       <td>${esc(context)}</td>
       <td>${statusLabel(a)}${a.status_reason?'<div class="ceoAcctMeta">Reason: '+esc(a.status_reason)+'</div>':''}</td>
+      <td>${a.account_created_at?fmt(a.account_created_at):'—'}</td>
       <td>${a.status_changed_at?fmt(a.status_changed_at):'—'}</td>
       <td>${actionButtons(a)}</td>
     </tr>`;
@@ -174,14 +180,14 @@ function auditRows(){
   const list=filteredActions();
   const st=pageState(list.length);
   const slice=list.slice(st.start,st.end);
-  if(!slice.length)return '<tr><td colspan="6"><div class="ceoAcctEmpty">No matching CEO account-control actions.</div></td></tr>';
+  if(!slice.length)return '<tr><td colspan="7"><div class="ceoAcctEmpty">No matching CEO account-control actions.</div></td></tr>';
   return slice.map(a=>`<tr>
     <td>${fmt(a.created_at)}</td>
     <td><div class="ceoAcctName">${esc(a.target_name||'Account')}</div><div class="ceoAcctMeta">${esc(a.target_email||'')}</div></td>
     <td>${esc(cap(a.target_role))}</td>
     <td>${esc(cap(a.action))}</td>
     <td class="ceoAcctAuditReason">${esc(a.reason)}</td>
-    <td>${esc(a.outcome)}</td>
+    <td class="ceoAcctAuditOutcome">${esc(a.outcome)}</td>
   </tr>`).join('');
 }
 
@@ -248,7 +254,7 @@ function render(){
       <div class="ceoAcctTableWrap">
         ${activeKind==='audit'
           ?'<table class="ceoAcctTable"><thead><tr><th>Date</th><th>Account</th><th>Role</th><th>Action</th><th>Reason</th><th>Outcome</th></tr></thead><tbody id="ceoAcctRows">'+auditRows()+'</tbody></table>'
-          :'<table class="ceoAcctTable"><thead><tr><th>Account</th><th>Role / Identifier</th><th>Department</th><th>Status</th><th>Last Changed</th><th>CEO Action</th></tr></thead><tbody id="ceoAcctRows">'+accountRows()+'</tbody></table>'
+          :'<table class="ceoAcctTable"><thead><tr><th>Account</th><th>Role / Identifier</th><th>Department</th><th>Status</th><th>Account Created</th><th>Last Changed</th><th>CEO Action</th></tr></thead><tbody id="ceoAcctRows">'+accountRows()+'</tbody></table>'
         }
       </div>
       <div class="ceoAcctPager" id="ceoAcctPager">${pagerHtml()}</div>
