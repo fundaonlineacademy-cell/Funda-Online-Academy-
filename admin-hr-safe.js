@@ -132,7 +132,7 @@ function directory(){
       <td>${access}</td>
       <td>${low(p.role)==='staff'?'<button class="hrBtn alt" data-manage-access="'+p.id+'">'+(a.length?'Update Access':'Set Access')+'</button>':'Executive / Admin'}</td>
     </tr>`;
-  }).join('')||'<tr><td colspan="6">No staff records yet.</td></tr>';
+  }).join('')||'<tr><td colspan="7">No staff records yet.</td></tr>';
 }
 function departmentGuide(){
   const departments=[
