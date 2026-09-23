@@ -38,11 +38,15 @@ const REFERRALS_PER_PAGE=10;
 let marketingPage=1;
 const MARKETING_RESOURCES_PER_PAGE=6;
 
+let ambassadorLiveChannel=null,ambassadorLiveStarted=false,ambassadorRefreshTimer=null,ambassadorRefreshDebounce=null,ambassadorRefreshInFlight=false,ambassadorRefreshPending=false,ambassadorLastRefreshAt=0;
+const AMBASSADOR_AUTO_REFRESH_MS=300000;
+const AMBASSADOR_READ_ONLY_SECTIONS=new Set(['dashboard','guide','referrals','earnings','rank','compensation','payments','marketing','announcements','referral-link']);
+
 function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
 function fmt(v){if(!v)return '—';try{return new Date(v).toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'})}catch{return '—'}}
 function badgeStatus(v){let s=low(v),cls=['active','approved','paid','verified','completed','introductory'].some(x=>s.includes(x))?'ok':['declined','rejected','failed','terminated','reversed','suspended'].some(x=>s.includes(x))?'bad':'warn';return '<span class="badge '+cls+'">'+esc(String(v||'pending').replaceAll('_',' ').toUpperCase())+'</span>'}
 function closeSide(){document.body.classList.remove('amb-nav-open')}
-function showSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('on',x.dataset.section===name));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('on',x.dataset.go===name));if(name==='voice')window.FundaAmbassadorVoice?.show?.();closeSide();scrollTo({top:0,behavior:'auto'})}
+function showSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('on',x.dataset.section===name));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('on',x.dataset.go===name));if(name==='voice')window.FundaAmbassadorVoice?.show?.();closeSide();scrollTo({top:0,behavior:'auto'});if(ambassadorRefreshPending)scheduleAmbassadorRefresh('section-change')}
 
 function buildAmbassadorSearchIndex(){
  const items=[],seen=new Set();
@@ -364,6 +368,95 @@ async function restoreAuthUser(){
  return null;
 }
 
+function currentAmbassadorSection(){return document.querySelector('.section.on')?.dataset?.section||'dashboard'}
+function ambassadorAutoRefreshSafe(){
+ if(!db||!user||!app||document.hidden)return false;
+ if(!AMBASSADOR_READ_ONLY_SECTIONS.has(currentAmbassadorSection()))return false;
+ if(document.querySelector('#ambSupportModal,#ambMarketingPreview'))return false;
+ const active=document.activeElement;
+ if(active&&['INPUT','TEXTAREA','SELECT'].includes(active.tagName))return false;
+ return true;
+}
+function scheduleAmbassadorRefresh(reason='sync'){
+ if(!db||!app)return;
+ if(!ambassadorAutoRefreshSafe()){ambassadorRefreshPending=true;return}
+ clearTimeout(ambassadorRefreshDebounce);
+ ambassadorRefreshDebounce=setTimeout(()=>refreshAmbassadorRecords(reason),320);
+}
+async function refreshAmbassadorRecords(reason='sync'){
+ if(ambassadorRefreshInFlight||!db||!user||!app)return;
+ if(!ambassadorAutoRefreshSafe()){ambassadorRefreshPending=true;return}
+ ambassadorRefreshInFlight=true;ambassadorRefreshPending=false;
+ const section=currentAmbassadorSection(),scrollYBefore=window.scrollY;
+ const appColumns='id,auth_user_id,full_name,email,phone,province,country,best_platform,status,agreement_status,agreement_accepted_at,account_status,referral_code,introductory_started_at,introductory_ends_at,updated_at';
+ try{
+   const [a,agreementState,l,r,p,b,m,n,t]=await Promise.all([
+     db.from('ambassador_programme_applications').select(appColumns).eq('auth_user_id',user.id).maybeSingle(),
+     db.rpc('get_own_ambassador_agreement_status'),
+     db.rpc('get_own_ambassador_earnings'),
+     db.rpc('get_own_ambassador_referrals'),
+     db.from('ambassador_payouts').select('id,application_id,amount,payment_reference,payment_date,status,notes,created_at').eq('application_id',app.id).order('created_at',{ascending:false}),
+     db.rpc('get_own_ambassador_payout_details'),
+     db.from('ambassador_marketing_resources').select('id,title,description,resource_type,file_url,original_filename,mime_type,approved_caption,action_url,status,starts_at,expires_at,created_at').eq('status','active').order('created_at',{ascending:false}),
+     db.rpc('get_own_ambassador_announcements'),
+     db.from('ambassador_support_tickets').select('id,application_id,subject,category,priority,notes,status,created_at,updated_at').eq('application_id',app.id).order('created_at',{ascending:false})
+   ]);
+   if(a.error||!a.data||l.error||p.error||b.error||t.error)throw new Error(a.error?.message||l.error?.message||p.error?.message||b.error?.message||t.error?.message||'Ambassador live refresh failed');
+   if(a.data.status!=='approved'||!['introductory','active'].includes(a.data.account_status)){location.reload();return}
+   app=a.data;
+   if(!agreementState.error)currentAgreement=Array.isArray(agreementState.data)?agreementState.data[0]||null:agreementState.data||null;
+   ledger=l.data||[];
+   if(!r.error)referrals=r.data||[];else console.warn('Ambassador live referrals refresh failed',r.error);
+   payouts=p.data||[];
+   bank=b.data?.[0]||null;
+   if(!m.error){const now=Date.now();resources=(m.data||[]).filter(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=now)&&(!x.expires_at||new Date(x.expires_at).getTime()>=now))}else console.warn('Ambassador live resources refresh failed',m.error);
+   if(!n.error)notifications=n.data||[];else console.warn('Ambassador live announcements refresh failed',n.error);
+   supportTickets=t.data||[];
+   const ticketIds=supportTickets.map(x=>x.id);
+   if(ticketIds.length){
+     const sm=await db.from('ambassador_support_messages').select('id,ticket_id,author_id,author_role,message,created_at').in('ticket_id',ticketIds).order('created_at',{ascending:true});
+     if(!sm.error)supportMessages=sm.data||[];else console.warn('Ambassador live support replies refresh failed',sm.error);
+   }else supportMessages=[];
+   render();
+   ambassadorLastRefreshAt=Date.now();
+   window.__fundaAmbassadorLastLiveRefresh={reason,at:new Date(ambassadorLastRefreshAt).toISOString()};
+   requestAnimationFrame(()=>{if(currentAmbassadorSection()===section)window.scrollTo({top:scrollYBefore,behavior:'auto'})});
+ }catch(error){
+   console.warn('Ambassador live reconciliation failed',reason,error);
+ }finally{
+   ambassadorRefreshInFlight=false;
+ }
+}
+function startAmbassadorLiveSync(){
+ if(ambassadorLiveStarted||!db||!app)return;
+ ambassadorLiveStarted=true;
+ const signal=(source)=>scheduleAmbassadorRefresh(source);
+ try{
+   let ch=db.channel('ambassador-portal-live-v1');
+   [
+     ['ambassador_programme_applications','id=eq.'+app.id],
+     ['ambassador_earnings_ledger','application_id=eq.'+app.id],
+     ['ambassador_payouts','application_id=eq.'+app.id]
+   ].forEach(([table,filter])=>{ch=ch.on('postgres_changes',{event:'*',schema:'public',table,filter},()=>signal('realtime:'+table))});
+   ['ambassador_marketing_resources','ambassador_notifications'].forEach(table=>{ch=ch.on('postgres_changes',{event:'*',schema:'public',table},()=>signal('realtime:'+table))});
+   ambassadorLiveChannel=ch.subscribe(status=>{
+     window.__fundaAmbassadorRealtimeStatus=status;
+     if(status==='CHANNEL_ERROR'||status==='TIMED_OUT')console.warn('Ambassador Portal Realtime status:',status);
+   });
+ }catch(error){
+   console.warn('Ambassador Portal Realtime could not start',error);
+ }
+ window.addEventListener('focus',()=>signal('window-focus'));
+ window.addEventListener('pageshow',()=>signal('page-show'));
+ document.addEventListener('visibilitychange',()=>{if(!document.hidden)signal('window-visible')});
+ ambassadorRefreshTimer=setInterval(()=>signal('five-minute-reconciliation'),AMBASSADOR_AUTO_REFRESH_MS);
+ window.addEventListener('beforeunload',()=>{
+   clearTimeout(ambassadorRefreshDebounce);
+   clearInterval(ambassadorRefreshTimer);
+   if(ambassadorLiveChannel&&db)db.removeChannel(ambassadorLiveChannel);
+ });
+}
+
 async function init(){
  installNav();
  db=window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
@@ -422,7 +515,7 @@ async function init(){
  payouts=p.data||[];bank=b.data?.[0]||null;{const now=Date.now();resources=(m.data||[]).filter(x=>(!x.starts_at||new Date(x.starts_at).getTime()<=now)&&(!x.expires_at||new Date(x.expires_at).getTime()>=now));}if(n.error)console.error('Ambassador announcements failed to load',n.error);notifications=n.data||[];supportTickets=t.data||[];
  const ticketIds=supportTickets.map(x=>x.id);
  if(ticketIds.length){const sm=await db.from('ambassador_support_messages').select('id,ticket_id,author_id,author_role,message,created_at').in('ticket_id',ticketIds).order('created_at',{ascending:true});if(sm.error)console.error('Ambassador support replies failed to load',sm.error);supportMessages=sm.data||[]}else supportMessages=[];
- $('#loading').classList.add('hide');$('#portal').classList.remove('hide');render();
+ $('#loading').classList.add('hide');$('#portal').classList.remove('hide');render();startAmbassadorLiveSync();
  if(r.error){
    const box=$('#referralMobile');
    if(box)box.innerHTML='<div class="notice bad"><b>Referral records could not be loaded.</b><br>Please refresh the page. If this continues, contact Ambassador Support.</div>';
