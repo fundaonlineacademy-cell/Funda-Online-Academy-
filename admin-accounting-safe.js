@@ -521,14 +521,36 @@ function pettyProfileName(id){
   const p=(S.profiles||[]).find(x=>x.id===id);
   return p?.full_name||p?.email||'—';
 }
+function pettyAccount(id){return (S.pettyAccounts||[]).find(x=>x.id===id)||null}
+function pettyAccountOptions(selected=''){
+  return '<option value="">Select petty cash account</option>'+(S.pettyAccounts||[]).filter(x=>x.active)
+    .map(x=>'<option value="'+esc(x.id)+'" '+(x.id===selected?'selected':'')+'>'+esc(x.account_code)+' · '+esc(x.account_name)+'</option>').join('');
+}
+function pettyStaffOwnerOptions(selected=''){
+  return '<option value="">Select staff cost owner</option>'+(S.profiles||[]).filter(p=>low(p.role)==='staff')
+    .map(p=>'<option value="'+esc(p.id)+'" '+(p.id===selected?'selected':'')+'>'+esc(p.full_name||p.email)+' · '+esc(p.staff_number||p.job_title||'Staff')+'</option>').join('');
+}
 function pettyCustodianOptions(selected=''){
   return '<option value="">No linked staff profile</option>'+(S.profiles||[])
     .filter(p=>['admin','staff'].includes(low(p.role)))
     .map(p=>'<option value="'+esc(p.id)+'" '+(p.id===selected?'selected':'')+'>'+esc(p.full_name||p.email)+' · '+esc(p.staff_number||p.job_title||p.role||'Staff')+'</option>').join('');
 }
-function pettyExpenseOptions(){
+function pettyOwnerLabel(f){
+  if(!f)return '—';
+  if(f.cost_owner_type==='business')return 'Funda Online Academy';
+  if(f.cost_owner_type==='ceo')return 'Founder & CEO · '+pettyProfileName(f.cost_owner_profile_id);
+  if(f.cost_owner_type==='staff')return pettyProfileName(f.cost_owner_profile_id);
+  return '—';
+}
+function vatLabel(v){
+  return v==='vat_included'?'VAT included in amount':v==='no_vat'?'No VAT / non-VAT':v==='not_confirmed'?'VAT status not confirmed':'—';
+}
+function vatOptions(selected='not_confirmed'){
+  return [['not_confirmed','VAT status not confirmed'],['vat_included','VAT included in amount (15%)'],['no_vat','No VAT / non-VAT']].map(([v,l])=>'<option value="'+v+'" '+(v===selected?'selected':'')+'>'+l+'</option>').join('');
+}
+function pettyExpenseOptions(selected=''){
   return (S.cats||[]).filter(x=>x.active&&x.category_type==='expense'&&low(x.name)!=='depreciation & amortisation')
-    .map(x=>'<option value="'+esc(x.name)+'">'+esc(x.name)+'</option>').join('');
+    .map(x=>'<option value="'+esc(x.name)+'" '+(x.name===selected?'selected':'')+'>'+esc(x.name)+'</option>').join('');
 }
 function pettyMoveEffect(m){
   if(low(m.status)!=='posted')return 0;
