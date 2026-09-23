@@ -996,31 +996,76 @@ async function distributeAnnualTarget(){
   budgetPage=1;await open();render('targets');
 }
 
+function bindPettyAccountCreate(){
+  const b=$('pcCreateAccount');if(!b)return;
+  b.onclick=createPettyAccount;
+}
 function bindPettyFundCreate(){
   const b=$('pcCreateFund');if(!b)return;
   b.onclick=createPettyFund;
+  const owner=$('pcNewOwnerType'),account=$('pcNewAccount');
+  const sync=()=>{
+    if($('pcNewOwnerStaff'))$('pcNewOwnerStaff').disabled=owner?.value!=='staff';
+    const a=pettyAccount(account?.value);
+    if($('pcNewAccountInfo'))$('pcNewAccountInfo').innerHTML=a
+      ?'<b>'+esc(a.account_code)+' · '+esc(a.account_name)+'</b><br>Default accounting category: <b>'+esc(a.default_expense_category)+'</b><br>'+esc(a.description||'')
+      :'Choose an account to see its default accounting category. Cost-control reference will be generated automatically when the fund is created.';
+  };
+  owner?.addEventListener('change',sync);
+  account?.addEventListener('change',sync);
+  sync();
+}
+async function createPettyAccount(){
+  const name=$('pcAccountName')?.value.trim(),category=$('pcAccountCategory')?.value,description=$('pcAccountDesc')?.value.trim()||null;
+  if(!name)return alert('Enter the petty cash account name.');
+  if(!category)return alert('Choose the default accounting expense category.');
+  const {data,error}=await db.rpc('finance_create_petty_cash_account',{
+    p_account_name:name,p_default_expense_category:category,p_description:description
+  });
+  if(error)return alert(error.message);
+  await audit('Petty cash account created',data?.id||'',{account_name:name,account_code:data?.account_code,default_expense_category:category},'recorded','petty_cash_account');
+  await open();render('petty');
 }
 async function createPettyFund(){
-  const name=$('pcNewName')?.value.trim(),custodian=$('pcNewCustodian')?.value||null,custodianName=$('pcNewCustodianName')?.value.trim()||null,float=Number($('pcNewFloat')?.value||0);
-  if(!name)return alert('Enter the petty cash fund name.');
-  if(!Number.isFinite(float)||float<0)return alert('Authorised float must be zero or greater.');
-  const {data,error}=await db.rpc('finance_create_petty_cash_fund',{p_fund_name:name,p_custodian_profile_id:custodian||null,p_custodian_name:custodianName,p_authorized_float:float});
+  const accountId=$('pcNewAccount')?.value,ownerType=$('pcNewOwnerType')?.value,ownerStaff=$('pcNewOwnerStaff')?.value||null;
+  const name=$('pcNewName')?.value.trim()||null,custodian=$('pcNewCustodian')?.value||null,custodianName=$('pcNewCustodianName')?.value.trim()||null;
+  const float=Number($('pcNewFloat')?.value||0),vat=$('pcNewVat')?.value||'not_confirmed',purpose=$('pcNewPurpose')?.value.trim();
+  if(!accountId)return alert('Choose the petty cash account.');
+  if(!ownerType)return alert('Choose who owns this cost control.');
+  if(ownerType==='staff'&&!ownerStaff)return alert('Choose the Staff member linked to this cost control.');
+  if(!Number.isFinite(float)||float<0)return alert('Authorised petty cash amount must be zero or greater.');
+  if(!purpose||purpose.length<5)return alert('Enter a clear reason / purpose for this petty cash fund.');
+  const {data,error}=await db.rpc('finance_create_petty_cash_fund_v2',{
+    p_petty_account_id:accountId,p_cost_owner_type:ownerType,p_cost_owner_profile_id:ownerStaff,
+    p_fund_name:name,p_custodian_profile_id:custodian,p_custodian_name:custodianName,
+    p_authorized_float:float,p_default_vat_treatment:vat,p_purpose_reason:purpose
+  });
   if(error)return alert(error.message);
-  pettyFundId=data;
-  await audit('Petty cash fund created',data,{fund_name:name,authorized_float:float},'recorded','petty_cash_fund');
+  pettyFundId=data?.id||null;
+  await audit('Petty cash fund and cost control created',data?.id||'',{
+    account_id:accountId,account_code:data?.account_code,account_name:data?.account_name,
+    cost_control_reference:data?.cost_control_reference,cost_owner_type:ownerType,cost_owner_profile_id:ownerStaff,
+    authorized_amount_zar:float,default_vat_treatment:vat,purpose_reason:purpose
+  },'recorded','petty_cash_fund');
   await open();render('petty');
 }
 async function updatePettyFund(){
   const f=pettyFund();if(!f)return;
   const name=$('pcFundName').value.trim(),float=Number($('pcAuthFloat').value||0),status=$('pcFundStatus').value;
-  if(!name)return alert('Enter the petty cash fund name.');
-  if(!Number.isFinite(float)||float<0)return alert('Authorised float must be zero or greater.');
-  const {error}=await db.rpc('finance_update_petty_cash_fund',{
+  const vat=$('pcFundVat').value,purpose=$('pcFundPurpose').value.trim();
+  if(!name)return alert('Enter the petty cash fund label.');
+  if(!Number.isFinite(float)||float<0)return alert('Authorised petty cash amount must be zero or greater.');
+  if(!purpose||purpose.length<5)return alert('Enter a clear reason / purpose for this petty cash fund.');
+  const {error}=await db.rpc('finance_update_petty_cash_fund_v2',{
     p_fund_id:f.id,p_fund_name:name,p_custodian_profile_id:$('pcCustodian').value||null,
-    p_custodian_name:$('pcCustodianName').value.trim()||null,p_authorized_float:float,p_status:status
+    p_custodian_name:$('pcCustodianName').value.trim()||null,p_authorized_float:float,
+    p_default_vat_treatment:vat,p_purpose_reason:purpose,p_status:status
   });
   if(error)return alert(error.message);
-  await audit('Petty cash fund updated',f.id,{fund_name:name,authorized_float:float,status},'recorded','petty_cash_fund');
+  await audit('Petty cash fund updated',f.id,{
+    fund_name:name,authorized_amount_zar:float,status,default_vat_treatment:vat,purpose_reason:purpose,
+    cost_control_reference:f.cost_control_reference
+  },'recorded','petty_cash_fund');
   await open();render('petty');
 }
 async function recordPettyMovement(){
