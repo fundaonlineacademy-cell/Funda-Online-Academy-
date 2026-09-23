@@ -39,6 +39,118 @@ function fmt(v){if(!v)return '—';try{return new Date(v).toLocaleDateString('en
 function badgeStatus(v){let s=low(v),cls=['active','approved','paid','verified','completed','introductory'].some(x=>s.includes(x))?'ok':['declined','rejected','failed','terminated','reversed','suspended'].some(x=>s.includes(x))?'bad':'warn';return '<span class="badge '+cls+'">'+esc(String(v||'pending').replaceAll('_',' ').toUpperCase())+'</span>'}
 function closeSide(){document.body.classList.remove('amb-nav-open')}
 function showSection(name){document.querySelectorAll('.section').forEach(x=>x.classList.toggle('on',x.dataset.section===name));document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('on',x.dataset.go===name));if(name==='voice')window.FundaAmbassadorVoice?.show?.();closeSide();scrollTo({top:0,behavior:'auto'})}
+
+function buildAmbassadorSearchIndex(){
+ const items=[],seen=new Set();
+ const add=(title,section,detail,terms='')=>{
+   const key=section+'|'+title;
+   if(seen.has(key))return;
+   seen.add(key);
+   items.push({title,section,detail,haystack:low([title,detail,terms].filter(Boolean).join(' '))});
+ };
+ const aliases={
+   dashboard:'home overview snapshot calendar payday holiday performance graph trend academy identity',
+   guide:'how it works getting started steps programme guide',
+   referrals:'referral referred student course referral status',
+   earnings:'earnings commission income approved paid breakdown ledger',
+   rank:'rank progress bronze silver gold platinum diamond executive elite qualifying revenue',
+   compensation:'compensation plan commission rate bonus monthly performance level',
+   payments:'payment history payout paid reference payday',
+   banking:'bank banking bank details account branch code',
+   marketing:'marketing resources posters flyers social media approved resources',
+   announcements:'announcements notifications news notices updates',
+   support:'help support ticket query assistance',
+   programme:'programme rules agreement policy rules conduct',
+   'referral-link':'referral link code account creation invite student tracked link',
+   profile:'profile personal details phone email province',
+   voice:'your voice suggestion complaint compliment feedback'
+ };
+ navGroups.forEach(group=>group.items.forEach(([section,_icon,title])=>add(title,section,group.label,aliases[section]||'')));
+ [
+   ['Ambassador Calendar','dashboard','My Dashboard','calendar payday public holiday month today'],
+   ['Performance Overview','dashboard','My Dashboard','earnings overview referral growth my performance'],
+   ['Referral & Revenue Performance','dashboard','My Dashboard','line graph chart 7 days 30 days 90 days revenue'],
+   ['My Ambassador Snapshot','dashboard','My Dashboard','eligible referrals approved paid earnings awaiting approval direct commission'],
+   ['Academy Identity','dashboard','My Dashboard','vision mission purpose values objectives commitment']
+ ].forEach(x=>add(...x));
+
+ referrals.slice(0,20).forEach(x=>add(
+   'Referral: '+(x.student_display||'Referred student'),
+   'referrals',
+   x.course_title||'Referral record',
+   [x.referral_status,x.earning_status].join(' ')
+ ));
+ confirmedLedger().slice(0,20).forEach(x=>add(
+   'Earning: '+String(x.earning_type||'earning').replaceAll('_',' '),
+   'earnings',
+   money(x.commission_amount)+' · '+String(x.earning_status||'approved').replaceAll('_',' '),
+   [x.notes,x.earning_month].join(' ')
+ ));
+ payouts.slice(0,20).forEach(x=>add(
+   'Payment: '+money(x.amount),
+   'payments',
+   String(x.status||'recorded').replaceAll('_',' ')+(x.payment_reference?' · '+x.payment_reference:''),
+   [x.payment_date,x.notes].join(' ')
+ ));
+ resources.slice(0,20).forEach(x=>add(
+   'Resource: '+(x.title||'Marketing resource'),
+   'marketing',
+   x.resource_type||'Approved resource',
+   [x.description,x.approved_caption].join(' ')
+ ));
+ notifications.slice(0,20).forEach(x=>add(
+   'Announcement: '+(x.title||'Announcement'),
+   'announcements',
+   'Ambassador announcement',
+   [x.message,x.body,x.content].join(' ')
+ ));
+ supportTickets.slice(0,20).forEach(x=>add(
+   'Support: '+(x.subject||'Support ticket'),
+   'support',
+   String(x.status||'open').replaceAll('_',' '),
+   [x.category,x.priority,x.notes].join(' ')
+ ));
+ return items;
+}
+
+function installHeaderSearch(){
+ const input=$('#ambassadorGlobalSearch'),box=$('#ambassadorSearchResults');
+ if(!input||!box||input.dataset.ready==='1')return;
+ input.dataset.ready='1';
+ let current=[];
+ const close=()=>{box.classList.remove('open');box.innerHTML='';input.setAttribute('aria-expanded','false');current=[]};
+ const openItem=item=>{
+   if(!item)return;
+   showSection(item.section);
+   input.value='';
+   close();
+   setTimeout(()=>input.blur(),0);
+ };
+ const render=()=>{
+   const q=low(input.value).trim();
+   if(!q){close();return}
+   const terms=q.split(/\s+/).filter(Boolean);
+   current=buildAmbassadorSearchIndex().filter(item=>terms.every(term=>item.haystack.includes(term))).slice(0,8);
+   if(!current.length){
+     box.innerHTML='<div class="ambassadorSearchEmpty">No matching Ambassador Portal item found.</div>';
+   }else{
+     box.innerHTML=current.map((item,i)=>'<button class="ambassadorSearchResult" type="button" role="option" data-search-index="'+i+'"><b>'+esc(item.title)+'</b><span>'+esc(item.detail||'Ambassador Portal')+'</span></button>').join('');
+     box.querySelectorAll('[data-search-index]').forEach(btn=>btn.onclick=()=>openItem(current[Number(btn.dataset.searchIndex)]));
+   }
+   box.classList.add('open');
+   input.setAttribute('aria-expanded','true');
+ };
+ input.addEventListener('input',render);
+ input.addEventListener('focus',()=>{if(input.value.trim())render()});
+ input.addEventListener('keydown',event=>{
+   if(event.key==='Enter'){
+     event.preventDefault();
+     if(current[0])openItem(current[0]);else render();
+   }else if(event.key==='Escape')close();
+ });
+ document.addEventListener('click',event=>{if(!event.target.closest('.ambassadorSearchWrap'))close()});
+}
+
 function installNav(){
  const html=navGroups.map(g=>'<div class="navGroup"><div class="navGroupLabel">'+g.label+'</div>'+g.items.map(([k,i,t],idx)=>'<button class="navbtn '+(k==='dashboard'&&g.label==='MAIN'&&idx===0?'on':'')+'" data-go="'+k+'"><span class="navIcon">'+i+'</span><span>'+t+'</span></button>').join('')+'</div>').join('');
  $('#sideNav').innerHTML=html;
@@ -49,6 +161,7 @@ function installNav(){
  if(toggle)toggle.onclick=()=>document.body.classList.toggle('amb-nav-open');
  if(overlay)overlay.onclick=closeSide;
  if(close)close.onclick=closeSide;
+ installHeaderSearch();
 }
 function fail(msg){$('#loading')?.classList.add('hide');$('#notFound')?.classList.remove('hide');if(msg){const el=$('#notFound .accessLead')||$('#notFound .muted');if(el)el.textContent=msg}}
 function sum(type,statuses){return ledger.filter(x=>(!type||x.earning_type===type)&&(!statuses||statuses.includes(x.earning_status))).reduce((s,x)=>s+Number(x.commission_amount||0),0)}
