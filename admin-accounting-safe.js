@@ -541,10 +541,10 @@ function render(t=tab){
   wire();
   if(t==='pnl')refreshPnl();
 }
-async function audit(action,id,details,status='recorded'){
+async function audit(action,id,details,status='recorded',entityType='cashbook'){
   try{
     const u=(await db.auth.getUser()).data.user;
-    await db.from('admin_audit_log').insert({actor_id:u?.id||null,action,department:'Finance & Accounting',entity_type:'cashbook',entity_id:String(id||''),details:JSON.stringify(details||{}),source:'system',status});
+    await db.from('admin_audit_log').insert({actor_id:u?.id||null,action,department:'Finance & Accounting',entity_type:entityType,entity_id:String(id||''),details:JSON.stringify(details||{}),source:'system',status});
   }catch(e){console.warn('Finance audit log',e)}
 }
 async function saveEntry(type){
@@ -650,11 +650,13 @@ async function exportPnl(format,from,to){
   const api=window.FundaReportExports;if(!api)return alert('The formal report export service is still loading. Please try again.');
   const x=normalisePnl(currentPnl||{}),comp=normalisePnl(currentPnlComparison||{}),compRange=currentPnlComparisonRange||comparisonRange(from,to);
   const grossMargin=ratio(x.gross_profit,x.turnover),operatingMargin=ratio(x.operating_profit,x.turnover),netMargin=ratio(x.net_result,x.turnover);
+  const monthBudget=budgetForMonth(from),plan=(pnlMode==='monthly'&&monthBudget)?{revenue:n(monthBudget.revenue_target),expenses:budgetExpenseTotal(monthBudget),plannedSurplus:budgetPlannedSurplus(monthBudget),minimumSurplus:n(monthBudget.minimum_surplus_target),months:1}:(pnlMode==='financial_year'?budgetTotalsForPeriod(from,to):null);
   const report={title:'Management Profit & Loss Statement',rows:pnlExportRows(x,comp),summary:[
     ['Reporting period',day(from)+' - '+day(to)],
     ['Comparison period',day(compRange[0])+' - '+day(compRange[1])],
     ['Statement basis','Management basis · verified Student receipts + posted income/expenses + approved accounting adjustments'],
     ['Turnover',money(x.turnover)],
+    ...(plan?.months?[[pnlMode==='monthly'?'Monthly revenue target':'Annual revenue target',money(plan.revenue)],['Revenue variance',money(n(x.turnover)-plan.revenue)],['Expense budget',money(plan.expenses)],['Expense headroom / (overrun)',money(plan.expenses-n(x.total_expenses))],['Planned surplus',money(plan.plannedSurplus)],['Minimum surplus target',money(plan.minimumSurplus||0)]]:[]),
     ['Gross profit',money(x.gross_profit)+' · '+pct(grossMargin)+' margin'],
     ['Operating profit / (loss)',money(x.operating_profit)+' · '+pct(operatingMargin)+' margin'],
     ['Profit / (loss) before tax',money(x.profit_before_tax)],
@@ -695,6 +697,30 @@ async function saveSettings(){
   if(error)return alert(error.message);
   await audit('Finance management settings updated','settings',{financial_year_anchor:anchor,annual_turnover_target:target});
   await open();render('targets');
+}
+async function saveBudgetMonth(id){
+  const row=(S.budgets||[]).find(x=>x.id===id);if(!row)return;
+  const read=key=>Number($('bud-'+key+'-'+id)?.value||0);
+  const payload={
+    revenue_target:read('revenue'),direct_cost_budget:read('direct'),people_cost_budget:read('people'),
+    operating_expense_budget:read('operating'),ambassador_budget:read('ambassador'),other_expense_budget:read('other'),
+    minimum_surplus_target:read('minimum'),notes:$('bud-notes-'+id)?.value.trim()||null
+  };
+  if(Object.entries(payload).some(([k,v])=>k!=='notes'&&(!Number.isFinite(v)||v<0)))return alert('All budget amounts must be zero or greater.');
+  const u=(await db.auth.getUser()).data.user;
+  payload.updated_by=u?.id||null;payload.updated_at=new Date().toISOString();
+  const {error}=await db.from('finance_monthly_budgets').update(payload).eq('id',id);
+  if(error)return alert(error.message);
+  await audit('Monthly finance budget updated',row.month_start,{...payload,updated_by:undefined,updated_at:undefined},'recorded','finance_budget');
+  await open();render('targets');
+}
+async function distributeAnnualTarget(){
+  const set=settings(),anchor=set.financial_year_anchor,target=n(set.annual_turnover_target);
+  if(!confirm('Distribute '+money(target)+' evenly across the 12 months from '+day(anchor)+'? This changes monthly revenue targets only and keeps all expense budgets unchanged.'))return;
+  const {error}=await db.rpc('finance_distribute_annual_target',{p_fy_start:anchor,p_annual_target:target});
+  if(error)return alert(error.message);
+  await audit('Annual finance target distributed to monthly budgets',anchor,{annual_target:target},'recorded','finance_budget');
+  budgetPage=1;await open();render('targets');
 }
 function cashbookReportRows(month){
   const [from,to]=monthRange(month);
@@ -761,7 +787,13 @@ function wire(){
     $('rePrev').onclick=()=>{reconPage=Math.max(1,reconPage-1);render('reconciliation')};
     $('reNext').onclick=()=>{reconPage++;render('reconciliation')};
   }
-  if(tab==='targets')$('saveFinanceSettings').onclick=saveSettings;
+  if(tab==='targets'){
+    $('saveFinanceSettings').onclick=saveSettings;
+    $('distributeAnnualTarget').onclick=distributeAnnualTarget;
+    document.querySelectorAll('[data-budget-save]').forEach(b=>b.onclick=()=>saveBudgetMonth(b.dataset.budgetSave));
+    $('budPrev').onclick=()=>{budgetPage=Math.max(1,budgetPage-1);render('targets')};
+    $('budNext').onclick=()=>{budgetPage++;render('targets')};
+  }
   if(tab==='reports'){
     $('cashExcel').onclick=()=>exportCashbook('xlsx');
     $('cashPdf').onclick=()=>exportCashbook('pdf');
