@@ -928,7 +928,7 @@ revoke all on function public.hr_record_disciplinary_response(uuid,text,text,tex
 revoke all on function public.hr_schedule_disciplinary_meeting(uuid,timestamptz,text) from PUBLIC,anon;
 revoke all on function public.hr_record_disciplinary_outcome(uuid,text,text,text,text,text,text,text,date,boolean) from PUBLIC,anon;
 revoke all on function public.hr_request_disciplinary_review(uuid,text) from PUBLIC,anon;
-revoke all on function public.hr_decide_disciplinary_review(uuid,text,text) from PUBLIC,anon;
+revoke all on function public.hr_decide_disciplinary_review(uuid,text,text) from PUBLIC,anon,authenticated;
 revoke all on function public.hr_close_disciplinary_case(uuid,text) from PUBLIC,anon;
 revoke all on function public.hr_withdraw_disciplinary_case(uuid,text) from PUBLIC,anon;
 
@@ -940,6 +940,6 @@ grant execute on function public.hr_record_disciplinary_response(uuid,text,text,
 grant execute on function public.hr_schedule_disciplinary_meeting(uuid,timestamptz,text) to authenticated,service_role;
 grant execute on function public.hr_record_disciplinary_outcome(uuid,text,text,text,text,text,text,text,date,boolean) to authenticated,service_role;
 grant execute on function public.hr_request_disciplinary_review(uuid,text) to authenticated,service_role;
-grant execute on function public.hr_decide_disciplinary_review(uuid,text,text) to authenticated,service_role;
+grant execute on function public.hr_decide_disciplinary_review(uuid,text,text) to service_role;
 grant execute on function public.hr_close_disciplinary_case(uuid,text) to authenticated,service_role;
 grant execute on function public.hr_withdraw_disciplinary_case(uuid,text) to authenticated,service_role;
