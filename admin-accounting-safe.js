@@ -909,6 +909,118 @@ async function distributeAnnualTarget(){
   await audit('Annual finance target distributed to monthly budgets',anchor,{annual_target:target},'recorded','finance_budget');
   budgetPage=1;await open();render('targets');
 }
+
+function bindPettyFundCreate(){
+  const b=$('pcCreateFund');if(!b)return;
+  b.onclick=createPettyFund;
+}
+async function createPettyFund(){
+  const name=$('pcNewName')?.value.trim(),custodian=$('pcNewCustodian')?.value||null,custodianName=$('pcNewCustodianName')?.value.trim()||null,float=Number($('pcNewFloat')?.value||0);
+  if(!name)return alert('Enter the petty cash fund name.');
+  if(!Number.isFinite(float)||float<0)return alert('Authorised float must be zero or greater.');
+  const {data,error}=await db.rpc('finance_create_petty_cash_fund',{p_fund_name:name,p_custodian_profile_id:custodian||null,p_custodian_name:custodianName,p_authorized_float:float});
+  if(error)return alert(error.message);
+  pettyFundId=data;
+  await audit('Petty cash fund created',data,{fund_name:name,authorized_float:float},'recorded','petty_cash_fund');
+  await open();render('petty');
+}
+async function updatePettyFund(){
+  const f=pettyFund();if(!f)return;
+  const name=$('pcFundName').value.trim(),float=Number($('pcAuthFloat').value||0),status=$('pcFundStatus').value;
+  if(!name)return alert('Enter the petty cash fund name.');
+  if(!Number.isFinite(float)||float<0)return alert('Authorised float must be zero or greater.');
+  const {error}=await db.rpc('finance_update_petty_cash_fund',{
+    p_fund_id:f.id,p_fund_name:name,p_custodian_profile_id:$('pcCustodian').value||null,
+    p_custodian_name:$('pcCustodianName').value.trim()||null,p_authorized_float:float,p_status:status
+  });
+  if(error)return alert(error.message);
+  await audit('Petty cash fund updated',f.id,{fund_name:name,authorized_float:float,status},'recorded','petty_cash_fund');
+  await open();render('petty');
+}
+async function recordPettyMovement(){
+  const f=pettyFund();if(!f)return;
+  const type=$('pcMoveType').value,amount=Number($('pcMoveAmount').value),date=$('pcMoveDate').value||today();
+  if(!(amount>0))return alert('Enter a petty cash movement amount greater than zero.');
+  const labels={opening_float:'opening float',replenishment:'replenishment',return_to_bank:'return to bank'};
+  if(!confirm('Record '+labels[type]+' of '+money(amount)+' on '+day(date)+'? Funding movements do not enter the P&L.'))return;
+  const {data,error}=await db.rpc('finance_record_petty_cash_movement',{
+    p_fund_id:f.id,p_movement_type:type,p_amount:amount,p_movement_date:date,
+    p_reference_number:$('pcMoveRef').value.trim()||null,p_notes:$('pcMoveNotes').value.trim()||null
+  });
+  if(error)return alert(error.message);
+  await audit('Petty cash movement recorded',data,{fund_id:f.id,movement_type:type,amount,date},'recorded','petty_cash_movement');
+  await open();render('petty');
+}
+async function createPettyVoucher(){
+  const f=pettyFund();if(!f)return;
+  const receipt=$('pcVoucherReceipt').value.trim(),evidence=$('pcVoucherEvidence').value.trim(),description=$('pcVoucherDesc').value.trim(),amount=Number($('pcVoucherAmount').value);
+  if(receipt&&!safeHttp(receipt))return alert('Receipt/evidence link must start with http:// or https://.');
+  if(!receipt&&!evidence)return alert('Add a receipt/evidence URL or explain why evidence is unavailable.');
+  if(!description)return alert('Describe what was purchased and why.');
+  if(!(amount>0))return alert('Enter a voucher amount greater than zero.');
+  const {data,error}=await db.rpc('finance_create_petty_cash_voucher',{
+    p_fund_id:f.id,p_expense_date:$('pcVoucherDate').value||today(),p_category:$('pcVoucherCategory').value,
+    p_payee:$('pcVoucherPayee').value.trim()||null,p_department:$('pcVoucherDept').value.trim()||null,
+    p_description:description,p_amount:amount,p_receipt_url:receipt||null,p_evidence_note:evidence||null
+  });
+  if(error)return alert(error.message);
+  await audit('Petty cash voucher requested',data?.id||'',{fund_id:f.id,voucher_number:data?.voucher_number,amount,category:$('pcVoucherCategory').value},'pending','petty_cash_voucher');
+  await open();render('petty');
+}
+async function approvePettyVoucher(id){
+  const v=(S.pettyVouchers||[]).find(x=>x.id===id);if(!v)return;
+  if(!confirm('Approve and post '+v.voucher_number+' for '+money(v.amount)+'? This will reduce petty cash and post the expense to the P&L under '+v.category+'.'))return;
+  const note=prompt('Approval note (optional):','')??null;
+  if(note===null)return;
+  const {data,error}=await db.rpc('finance_approve_petty_cash_voucher',{p_voucher_id:id,p_review_note:note.trim()||null});
+  if(error)return alert(error.message);
+  await audit('Petty cash voucher approved and posted',id,{voucher_number:v.voucher_number,amount:v.amount,category:v.category,cashbook_entry_id:data},'recorded','petty_cash_voucher');
+  await open();render('petty');
+}
+async function rejectPettyVoucher(id){
+  const v=(S.pettyVouchers||[]).find(x=>x.id===id);if(!v)return;
+  const reason=prompt('Reason for rejecting '+v.voucher_number+':','');
+  if(reason===null)return;
+  if(reason.trim().length<5)return alert('Enter a clear rejection reason.');
+  const {error}=await db.rpc('finance_reject_petty_cash_voucher',{p_voucher_id:id,p_reason:reason.trim()});
+  if(error)return alert(error.message);
+  await audit('Petty cash voucher rejected',id,{voucher_number:v.voucher_number,reason:reason.trim()},'rejected','petty_cash_voucher');
+  await open();render('petty');
+}
+async function voidPettyVoucher(id){
+  const v=(S.pettyVouchers||[]).find(x=>x.id===id);if(!v)return;
+  const reason=prompt('Reason for voiding '+v.voucher_number+' (minimum 8 characters):','');
+  if(reason===null)return;
+  if(reason.trim().length<8)return alert('Enter a clear void reason of at least 8 characters.');
+  if(!confirm('Void this posted petty cash voucher? Its linked P&L/cashbook expense will also be voided and the petty cash balance restored.'))return;
+  const {error}=await db.rpc('finance_void_petty_cash_voucher',{p_voucher_id:id,p_reason:reason.trim()});
+  if(error)return alert(error.message);
+  await audit('Petty cash voucher voided',id,{voucher_number:v.voucher_number,amount:v.amount,reason:reason.trim()},'voided','petty_cash_voucher');
+  await open();render('petty');
+}
+async function voidPettyMovement(id){
+  const m=(S.pettyMoves||[]).find(x=>x.id===id);if(!m)return;
+  const reason=prompt('Reason for voiding this petty cash movement (minimum 8 characters):','');
+  if(reason===null)return;
+  if(reason.trim().length<8)return alert('Enter a clear void reason of at least 8 characters.');
+  if(!confirm('Void this '+String(m.movement_type).replaceAll('_',' ')+' of '+money(m.amount)+'? The record will remain in the audit register.'))return;
+  const {error}=await db.rpc('finance_void_petty_cash_movement',{p_movement_id:id,p_reason:reason.trim()});
+  if(error)return alert(error.message);
+  await audit('Petty cash movement voided',id,{movement_type:m.movement_type,amount:m.amount,reason:reason.trim()},'voided','petty_cash_movement');
+  await open();render('petty');
+}
+async function reconcilePettyCash(){
+  const f=pettyFund();if(!f)return;
+  const counted=Number($('pcCountedCash').value),date=$('pcReconDate').value||today(),notes=$('pcReconNotes').value.trim();
+  if(!Number.isFinite(counted)||counted<0)return alert('Enter the physical cash amount counted.');
+  const expected=pettyBalance(f.id,date),variance=counted-expected;
+  if(Math.abs(variance)>0.005&&!notes)return alert('Explain the reconciliation variance before recording the cash count.');
+  if(!confirm('Record petty cash count of '+money(counted)+' against system balance '+money(expected)+'? Variance: '+money(variance)+'.'))return;
+  const {data,error}=await db.rpc('finance_reconcile_petty_cash',{p_fund_id:f.id,p_reconciliation_date:date,p_counted_cash:counted,p_notes:notes||null});
+  if(error)return alert(error.message);
+  await audit('Petty cash reconciled',data?.id||'',{fund_id:f.id,reconciliation_date:date,system_balance:data?.system_balance,counted_cash:counted,variance:data?.variance},'recorded','petty_cash_reconciliation');
+  await open();render('petty');
+}
 function cashbookReportRows(month){
   const [from,to]=monthRange(month);
   return S.cash.filter(x=>x.entry_date>=from&&x.entry_date<=to).map(x=>({
