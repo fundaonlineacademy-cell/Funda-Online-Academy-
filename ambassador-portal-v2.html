@@ -174,6 +174,157 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 @media(min-width:901px){.navbtn{font-size:14px}.muted{font-size:14px}.tbl{font-size:13px}.tbl th{font-size:11px}.stat small,.sideMoney span{font-size:10px}.ruleItem b{font-size:13px}.ruleItem span{font-size:12px}.resourceCard p,.announcementCard p,.ticketCard p{font-size:13px}}
 @media(max-width:900px){.guideSteps{grid-template-columns:repeat(2,minmax(0,1fr))}.guideMap{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.guideHero h2{font-size:24px}.guideSteps,.guideTruth,.guideMap{grid-template-columns:1fr}.guideStep{min-height:0}.guideStep p{font-size:13px}}
+</style><style id="ambassador-admin-palette-polish-v1">
+:root{
+  --amb-admin-navy:#07172f;
+  --amb-admin-blue:#2454c7;
+  --amb-admin-gold:#c7a13b;
+  --amb-admin-bg:#f3f6fb;
+  --amb-admin-line:#d9e2ef;
+  --amb-admin-muted:#6f7f94;
+}
+body{
+  font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important;
+  background:var(--amb-admin-bg)!important;
+  color:#17233b;
+}
+button,input,select,textarea{font-family:inherit!important}
+
+/* Keep the strong brand navy only at the top and bottom. */
+.top{background:linear-gradient(90deg,#07172f,#0b2f59)!important}
+.portalFooter{background:linear-gradient(135deg,#06152f,#081d42 62%,#0b2b49)!important}
+
+/* Admin-style light Ambassador navigation. */
+.side{
+  background:#fff!important;
+  border-right:1px solid var(--amb-admin-line)!important;
+  box-shadow:8px 0 22px rgba(7,23,47,.07)!important;
+}
+.sideBackOffice{
+  color:var(--amb-admin-navy)!important;
+  border-bottom:1px solid var(--amb-admin-line)!important;
+}
+.sideBackOffice strong{color:var(--amb-admin-navy)!important}
+.sideBackOffice small{color:var(--amb-admin-gold)!important}
+.sideClose{
+  background:#edf2f7!important;
+  color:var(--amb-admin-navy)!important;
+  border:1px solid var(--amb-admin-line)!important;
+}
+.sideProfile{border-bottom:0}
+.sideAvatar{
+  background:#eaf1ff!important;
+  color:#2454c7!important;
+  box-shadow:none!important;
+  border:1px solid #d6e2f5;
+}
+.sideIdentity b{
+  color:var(--amb-admin-navy)!important;
+  font-size:15px!important;
+  font-weight:800!important;
+}
+.sideMeta{
+  color:#607289!important;
+  font-size:11px!important;
+}
+.sideFinance{
+  background:#f7f9fc!important;
+  border:1px solid var(--amb-admin-line)!important;
+  box-shadow:none!important;
+}
+.sideMoney span{
+  color:#728298!important;
+  font-size:9px!important;
+}
+.sideMoney b{
+  color:var(--amb-admin-navy)!important;
+  font-size:16px!important;
+}
+.sideMoney + .sideMoney{border-left:1px solid var(--amb-admin-line)!important}
+.navGroupLabel{
+  color:#7b8ca0!important;
+  font-size:10px!important;
+  font-weight:800!important;
+  letter-spacing:.14em!important;
+}
+.navbtn{
+  color:#34455f!important;
+  font-size:14px!important;
+  line-height:1.35!important;
+  font-weight:700!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.navIcon{color:#647994!important}
+.navbtn:hover{
+  background:#eaf1ff!important;
+  color:#17324a!important;
+}
+.navbtn:hover .navIcon{color:#2454c7!important}
+.navbtn.on{
+  background:#2454c7!important;
+  color:#fff!important;
+  box-shadow:0 4px 12px rgba(36,84,199,.18)!important;
+}
+.navbtn.on .navIcon{color:#fff!important}
+.sideLogout{
+  border-top:1px solid var(--amb-admin-line)!important;
+}
+.sideLogout .navbtn{color:#526171!important}
+
+/* Lighter My Dashboard welcome area; navy remains an accent, not a large dark block. */
+.dashboardHero{
+  background:linear-gradient(135deg,#fff,#f7faff)!important;
+  color:#17233b!important;
+  border:1px solid var(--amb-admin-line)!important;
+  box-shadow:0 7px 20px rgba(23,54,93,.06)!important;
+}
+.dashboardHero:before{
+  content:"";
+  display:block;
+  height:4px;
+  margin:-24px -26px 20px;
+  background:linear-gradient(90deg,#2454c7,#c7a13b);
+}
+.dashboardHero .eyebrow{color:#9a741e!important}
+.dashboardHero h1{color:var(--amb-admin-navy)!important}
+.dashboardHero .muted{color:#607086!important}
+
+/* Improve general readability without changing layouts or data behaviour. */
+.content,.card,.stat,.performanceCard,.quickAction{
+  font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important;
+}
+.card h2,.dashboardSectionIntro h2{color:var(--amb-admin-navy)!important}
+.muted{color:#64758a}
+.dashboardSectionIntro p{font-size:12px!important}
+.performanceCard .performanceLabel{font-size:10px!important}
+.performanceCard .performanceMeta{font-size:12px!important}
+.performanceCard .performanceFoot{font-size:11px!important}
+.quickAction b{font-size:14px!important}
+.quickAction small{font-size:11px!important}
+.activityText b{font-size:13px!important}
+.activityText span{font-size:11px!important}
+
+@media(max-width:900px){
+  .side{
+    background:#fff!important;
+    border-right:1px solid var(--amb-admin-line)!important;
+  }
+  .side .navbtn{
+    border:0!important;
+    color:#34455f!important;
+  }
+  .side .navbtn.on{
+    background:#2454c7!important;
+    color:#fff!important;
+  }
+  .side .navbtn.on .navIcon{color:#fff!important}
+}
+@media(max-width:560px){
+  .dashboardHero:before{margin:-20px -20px 18px}
+  .navbtn{font-size:14px!important}
+}
 </style></head>
 <body>
 <header class="top"><div class="topin"><button id="sideToggle" class="menuToggle" aria-label="Open Ambassador menu">☰</button><div class="brandWrap"><img src="logo.png" alt="Funda Online Academy" class="portalLogo"><div class="brand">FUNDA <span>ONLINE ACADEMY</span><div class="brandSub">AMBASSADOR PORTAL</div></div></div><div class="topActions"><button id="profileTop" class="topBtn"><span class="label">My Profile</span> 👤</button><button id="logout" class="topBtn"><span class="label">Logout</span> ↗</button></div></div></header>
