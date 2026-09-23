@@ -1042,10 +1042,11 @@ async function exportCashbook(format){
   }catch(e){alert(e.message||'The cashbook export could not be generated.')}
 }
 function wire(){
-  document.querySelectorAll('[data-ac-tab]').forEach(b=>b.onclick=()=>{cashPage=1;plannedPage=1;reconPage=1;render(b.dataset.acTab)});
+  document.querySelectorAll('[data-ac-tab]').forEach(b=>b.onclick=()=>{cashPage=1;plannedPage=1;reconPage=1;budgetPage=1;pettyVoucherPage=1;pettyMovementPage=1;pettyReconPage=1;render(b.dataset.acTab)});
   $('acRefresh').onclick=async()=>{await open();render(tab)};
   document.querySelectorAll('[data-post]').forEach(b=>b.onclick=()=>postPlanned(b.dataset.post));
   document.querySelectorAll('[data-void]').forEach(b=>b.onclick=()=>voidEntry(b.dataset.void));
+  document.querySelectorAll('[data-open-petty]').forEach(b=>b.onclick=()=>render('petty'));
   if(['income','expenses'].includes(tab)){
     $('aeSave').onclick=()=>saveEntry(tab==='income'?'income':'expense');
     const syncEntryControls=()=>{
@@ -1065,6 +1066,27 @@ function wire(){
   if(tab==='overview'){
     $('acImportPayments').onclick=importPayments;
     $('acReports').onclick=()=>window.openFundaReportCentre?.('finance');
+  }
+  if(tab==='petty'){
+    bindPettyFundCreate();
+    $('pcFundSelect')?.addEventListener('change',e=>{pettyFundId=e.target.value;pettyVoucherPage=1;pettyMovementPage=1;pettyReconPage=1;render('petty')});
+    $('pcNewFundShow')?.addEventListener('click',()=>{const h=$('pcNewFundHost');if(h){h.innerHTML=pettyFundSetup();bindPettyFundCreate()}});
+    $('pcUpdateFund')?.addEventListener('click',updatePettyFund);
+    $('pcRecordMove')?.addEventListener('click',recordPettyMovement);
+    $('pcCreateVoucher')?.addEventListener('click',createPettyVoucher);
+    $('pcReconcile')?.addEventListener('click',reconcilePettyCash);
+    $('pcExcel')?.addEventListener('click',()=>exportPettyCash('xlsx'));
+    $('pcPdf')?.addEventListener('click',()=>exportPettyCash('pdf'));
+    $('pcVoucherPrev')?.addEventListener('click',()=>{pettyVoucherPage=Math.max(1,pettyVoucherPage-1);render('petty')});
+    $('pcVoucherNext')?.addEventListener('click',()=>{pettyVoucherPage++;render('petty')});
+    $('pcMovePrev')?.addEventListener('click',()=>{pettyMovementPage=Math.max(1,pettyMovementPage-1);render('petty')});
+    $('pcMoveNext')?.addEventListener('click',()=>{pettyMovementPage++;render('petty')});
+    $('pcReconPrev')?.addEventListener('click',()=>{pettyReconPage=Math.max(1,pettyReconPage-1);render('petty')});
+    $('pcReconNext')?.addEventListener('click',()=>{pettyReconPage++;render('petty')});
+    document.querySelectorAll('[data-pc-approve]').forEach(b=>b.onclick=()=>approvePettyVoucher(b.dataset.pcApprove));
+    document.querySelectorAll('[data-pc-reject]').forEach(b=>b.onclick=()=>rejectPettyVoucher(b.dataset.pcReject));
+    document.querySelectorAll('[data-pc-void-voucher]').forEach(b=>b.onclick=()=>voidPettyVoucher(b.dataset.pcVoidVoucher));
+    document.querySelectorAll('[data-pc-void-move]').forEach(b=>b.onclick=()=>voidPettyMovement(b.dataset.pcVoidMove));
   }
   if(tab==='planned'){
     $('plPrev').onclick=()=>{plannedPage=Math.max(1,plannedPage-1);render('planned')};
