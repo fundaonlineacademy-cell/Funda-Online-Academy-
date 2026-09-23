@@ -8,7 +8,7 @@
   const TABLES=[
     'profiles','courses','enrollments','payments','admin_cashbook',
     'support_tickets','communications','certificates','course_results',
-    'governance_actions','ambassador_programme_applications',
+    'governance_actions','ambassador_programme_applications','ambassador_earnings_ledger',
     'academy_calendar_events','student_consultations'
   ];
   let db=null,channel=null,timer=null,lastTable='';
