@@ -35,6 +35,8 @@ let db,user,app,currentAgreement=null,ledger=[],referrals=[],payouts=[],bank=nul
 let dashboardTrendDays=30,dashboardTrendMetric='referrals',dashboardCalendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 let referralPage=1;
 const REFERRALS_PER_PAGE=10;
+let marketingPage=1;
+const MARKETING_RESOURCES_PER_PAGE=6;
 
 function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
 function fmt(v){if(!v)return '—';try{return new Date(v).toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'})}catch{return '—'}}
@@ -642,12 +644,97 @@ async function acceptAgreement(){
  setTimeout(()=>location.reload(),700);
 }
 
-function renderSupportHub(){
- const mr=$('#marketingResources'),al=$('#announcementList'),tl=$('#supportTicketList');
- if(mr)mr.innerHTML=resources.length?resources.map(x=>'<article class="resourceCard">'+(x.file_url&&/^image\//i.test(x.mime_type||'')?'<img src="'+esc(x.file_url)+'" alt="'+esc(x.title)+'" class="resourceThumb" loading="lazy">':'')+'<b>'+esc(x.title)+'</b><span class="meta">'+esc(String(x.resource_type||'resource').toUpperCase())+(x.expires_at?' · Expires '+fmt(x.expires_at):'')+'</span><p>'+esc(x.description||'')+'</p>'+(x.approved_caption?'<div class="approvedCaption"><strong>Approved caption</strong><span>'+esc(x.approved_caption)+'</span><button class="btn alt" data-copy-caption="'+esc(x.id)+'">Copy Caption</button></div>':'')+'<div class="resourceActions">'+(x.file_url?'<button class="btn" type="button" data-download-resource="'+esc(x.id)+'">Download</button>':'')+(x.file_url?'<a class="btn alt" href="'+esc(x.file_url)+'" target="_blank" rel="noopener">Preview</a>':'')+(x.action_url?'<a class="btn alt" href="'+esc(x.action_url)+'" target="_blank" rel="noopener">Open Link</a>':'')+'<button class="btn alt" data-resource-ref="'+esc(x.id)+'">Copy My Referral Link</button></div></article>').join(''):'<div class="empty">No Ambassador marketing resources are published yet.</div>';
- document.querySelectorAll('[data-copy-caption]').forEach(b=>b.onclick=()=>{let x=resources.find(r=>String(r.id)===String(b.dataset.copyCaption));if(x)copy(x.approved_caption,b)});
+function marketingFileIcon(resource){
+ const mime=low(resource?.mime_type||'');
+ if(mime.includes('pdf'))return 'PDF';
+ if(mime.includes('video'))return '▶';
+ if(mime.includes('image'))return '▧';
+ return 'FILE';
+}
+function closeMarketingPreview(){
+ const modal=$('#ambMarketingPreview');
+ if(modal)modal.remove();
+ document.body.style.overflow='';
+}
+function openMarketingPreview(id){
+ const x=resources.find(r=>String(r.id)===String(id));if(!x)return;
+ closeMarketingPreview();
+ const mime=low(x.mime_type||'');
+ let media='<div class="resourceFileIcon">'+esc(marketingFileIcon(x))+'</div>';
+ if(x.file_url&&mime.startsWith('image/'))media='<img src="'+esc(x.file_url)+'" alt="'+esc(x.title||'Marketing resource')+'">';
+ else if(x.file_url&&mime==='application/pdf')media='<iframe src="'+esc(x.file_url)+'" title="'+esc(x.title||'Marketing resource')+'"></iframe>';
+ else if(x.file_url&&mime.startsWith('video/'))media='<video controls preload="metadata" src="'+esc(x.file_url)+'"></video>';
+
+ const html='<div id="ambMarketingPreview" role="dialog" aria-modal="true" aria-labelledby="ambMarketingPreviewTitle">'+
+  '<div class="marketingPreviewShell">'+
+   '<div class="marketingPreviewHead"><b id="ambMarketingPreviewTitle">'+esc(x.title||'Marketing Resource')+'</b><button id="ambMarketingPreviewClose" class="marketingPreviewClose" type="button">Close</button></div>'+
+   '<div class="marketingPreviewMedia">'+media+'</div>'+
+   '<div class="marketingPreviewInfo"><h3>'+esc(x.title||'Marketing Resource')+'</h3>'+
+    '<p>'+esc(x.description||'Official Funda Online Academy marketing resource.')+'</p>'+
+    (x.expires_at?'<p><b>Available until:</b> '+esc(fmt(x.expires_at))+'</p>':'')+
+    (x.approved_caption?'<div class="marketingPreviewCaption"><b>Approved caption</b><span>'+esc(x.approved_caption)+'</span></div>':'')+
+    '<div class="marketingPreviewActions">'+
+     (x.file_url?'<button class="btn" type="button" id="ambMarketingPreviewDownload">Download</button>':'')+
+     (x.file_url?'<a class="btn alt" href="'+esc(x.file_url)+'" target="_blank" rel="noopener">Open Original</a>':'')+
+     (x.approved_caption?'<button class="btn alt" type="button" id="ambMarketingPreviewCaption">Copy Approved Caption</button>':'')+
+     (x.action_url?'<a class="btn alt" href="'+esc(x.action_url)+'" target="_blank" rel="noopener">Open Campaign Link</a>':'')+
+     '<button class="btn alt" type="button" id="ambMarketingPreviewReferral">Copy My Referral Link</button>'+
+    '</div>'+
+   '</div>'+
+  '</div>'+
+ '</div>';
+ document.body.insertAdjacentHTML('beforeend',html);
+ document.body.style.overflow='hidden';
+ $('#ambMarketingPreviewClose').onclick=closeMarketingPreview;
+ $('#ambMarketingPreview').onclick=e=>{if(e.target.id==='ambMarketingPreview')closeMarketingPreview()};
+ $('#ambMarketingPreview').onkeydown=e=>{if(e.key==='Escape')closeMarketingPreview()};
+ if($('#ambMarketingPreviewDownload'))$('#ambMarketingPreviewDownload').onclick=()=>downloadResource(x,$('#ambMarketingPreviewDownload'));
+ if($('#ambMarketingPreviewCaption'))$('#ambMarketingPreviewCaption').onclick=()=>copy(x.approved_caption,$('#ambMarketingPreviewCaption'));
+ if($('#ambMarketingPreviewReferral'))$('#ambMarketingPreviewReferral').onclick=()=>copy(referralLink(),$('#ambMarketingPreviewReferral'));
+ setTimeout(()=>$('#ambMarketingPreviewClose')?.focus(),0);
+}
+function renderMarketingLibrary(){
+ const mr=$('#marketingResources');
+ if(!mr)return;
+ const pages=Math.max(1,Math.ceil(resources.length/MARKETING_RESOURCES_PER_PAGE));
+ marketingPage=Math.min(Math.max(1,marketingPage),pages);
+ const offset=(marketingPage-1)*MARKETING_RESOURCES_PER_PAGE;
+ const pageRows=resources.slice(offset,offset+MARKETING_RESOURCES_PER_PAGE);
+
+ mr.innerHTML=pageRows.length?pageRows.map(x=>{
+   const mime=low(x.mime_type||''),image=x.file_url&&mime.startsWith('image/');
+   return '<article class="marketingResourceCard">'+
+     '<div class="marketingResourceThumb">'+
+       (image?'<img src="'+esc(x.file_url)+'" alt="'+esc(x.title||'Marketing resource')+'" loading="lazy">':'<span class="resourceFileIcon">'+esc(marketingFileIcon(x))+'</span>')+
+       '<span class="marketingResourceType">'+esc(String(x.resource_type||'RESOURCE').toUpperCase())+'</span>'+
+     '</div>'+
+     '<div class="marketingResourceBody">'+
+       '<h3>'+esc(x.title||'Marketing Resource')+'</h3>'+
+       '<span class="marketingResourceMeta">'+(x.expires_at?'EXPIRES '+esc(fmt(x.expires_at)):'CURRENT ACADEMY RESOURCE')+'</span>'+
+       '<p>'+esc(x.description||'Official Funda Online Academy marketing material.')+'</p>'+
+       '<div class="marketingResourceActions">'+
+         '<button class="btn" type="button" data-marketing-preview="'+esc(x.id)+'">Preview & Details</button>'+
+         (x.file_url?'<button class="btn alt" type="button" data-download-resource="'+esc(x.id)+'">Download</button>':'')+
+       '</div>'+
+     '</div>'+
+   '</article>';
+ }).join(''):'<div class="empty">No Ambassador marketing resources are published yet.</div>';
+
+ if($('#marketingResourceCount'))$('#marketingResourceCount').textContent=resources.length+' RESOURCE'+(resources.length===1?'':'S');
+ const summary=$('#marketingPageSummary'),count=$('#marketingPageCount'),prev=$('#marketingPrev'),next=$('#marketingNext');
+ const from=resources.length?offset+1:0,to=Math.min(offset+MARKETING_RESOURCES_PER_PAGE,resources.length);
+ if(summary)summary.textContent=resources.length?'Showing '+from+'–'+to+' of '+resources.length+' resources':'Showing 0 resources';
+ if(count)count.textContent='Page '+marketingPage+' of '+pages;
+ if(prev)prev.disabled=marketingPage<=1||!resources.length;
+ if(next)next.disabled=marketingPage>=pages||!resources.length;
+ if(prev)prev.onclick=()=>{if(marketingPage>1){marketingPage--;renderMarketingLibrary();document.querySelector('.marketingLibraryCard')?.scrollIntoView({behavior:'smooth',block:'start'})}};
+ if(next)next.onclick=()=>{if(marketingPage<pages){marketingPage++;renderMarketingLibrary();document.querySelector('.marketingLibraryCard')?.scrollIntoView({behavior:'smooth',block:'start'})}};
+ document.querySelectorAll('[data-marketing-preview]').forEach(b=>b.onclick=()=>openMarketingPreview(b.dataset.marketingPreview));
  document.querySelectorAll('[data-download-resource]').forEach(b=>b.onclick=()=>{let x=resources.find(r=>String(r.id)===String(b.dataset.downloadResource));if(x)downloadResource(x,b)});
- document.querySelectorAll('[data-resource-ref]').forEach(b=>b.onclick=()=>copy(referralLink(),b));
+}
+function renderSupportHub(){
+ const al=$('#announcementList'),tl=$('#supportTicketList');
+ renderMarketingLibrary();
  if($('#announcementCount'))$('#announcementCount').textContent=notifications.length+' UPDATE'+(notifications.length===1?'':'S');
  if(al)al.innerHTML=notifications.length?notifications.map(x=>{
    const dept=x.sender_department||'Administration',name=x.sender_name||'Funda Online Academy',title=x.sender_title||'';
