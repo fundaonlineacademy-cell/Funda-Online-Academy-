@@ -599,6 +599,68 @@ body{
     border-color:#2454c7!important;
   }
 }
+</style><style id="ambassador-announcements-readability-v3">
+.announcementHub{overflow:hidden}
+.announcementHeadMeta{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.announcementOfficialBadge{display:inline-flex;align-items:center;min-height:28px;padding:6px 9px;border-radius:999px;background:#07172f;color:#fff;font-size:8.5px;font-weight:900;letter-spacing:.08em}
+.announcementReadNotice{display:flex;gap:6px;align-items:flex-start;margin-top:14px;padding:12px 14px;border-left:4px solid #2454c7;border-radius:0 10px 10px 0;background:#eef4ff}
+.announcementReadNotice b{color:#07172f;font-size:11.5px;white-space:nowrap}
+.announcementReadNotice span{color:#52657a;font-size:11.5px;line-height:1.55}
+.announcementList{gap:14px!important;margin-top:16px!important}
+.announcementCard{
+  position:relative;overflow:hidden;
+  border:1px solid #ccd8e5!important;border-radius:15px!important;
+  padding:0!important;background:#fff!important;
+  box-shadow:0 7px 20px rgba(7,23,47,.06)
+}
+.announcementCard:before{content:"";display:block;height:4px;background:linear-gradient(90deg,#173f62,#2454c7)}
+.announcementCard.pinnedAnnouncement:before{background:linear-gradient(90deg,#c7a13b,#e2bd62)}
+.announcementTop{padding:16px 17px 12px!important;border-bottom:1px solid #e6ebf0;background:#fbfcfe}
+.announcementTop>div{min-width:0}
+.announcementTop b{color:#07172f!important;font-size:16px!important;font-weight:900!important;line-height:1.35!important}
+.announcementTop .meta{color:#5e7085!important;font-size:10px!important;font-weight:800!important;letter-spacing:.04em!important;margin-top:5px!important}
+.announcementFrom{
+  display:grid;grid-template-columns:auto 1fr;column-gap:10px;row-gap:1px;
+  margin:14px 17px 0!important;padding:12px 13px!important;
+  border:1px solid #d7e1eb!important;border-left:4px solid #c7a13b!important;
+  border-radius:10px!important;background:#f7f9fc!important
+}
+.announcementFrom>span{
+  grid-row:1/3;display:grid!important;place-items:center;align-self:stretch;
+  min-width:46px;padding:5px;border-radius:8px;background:#07172f;color:#fff!important;
+  font-size:8px!important;letter-spacing:.12em!important;font-weight:900!important
+}
+.announcementFrom>strong{
+  display:block!important;margin:0!important;color:#07172f!important;
+  font-size:13px!important;font-weight:900!important;line-height:1.35
+}
+.announcementFrom>small{
+  display:block!important;margin-top:2px!important;color:#53677c!important;
+  font-size:11px!important;font-weight:700!important;line-height:1.4
+}
+.announcementMessage{
+  margin:0!important;padding:16px 17px 15px!important;
+  color:#17233b!important;font-size:14px!important;line-height:1.72!important;
+  font-weight:500!important;white-space:pre-line
+}
+.announcementScope{
+  margin:0!important;padding:10px 17px 13px!important;border-top:1px solid #edf1f5;
+  background:#fafbfd;color:#53677c!important;font-size:9.5px!important;
+  font-weight:900!important;letter-spacing:.07em!important
+}
+.pinnedAnnouncement{border-color:#d9bd6d!important;background:#fff!important}
+.pinnedAnnouncement .announcementTop{background:#fffaf0!important}
+@media(max-width:700px){
+  .announcementHeadMeta{justify-content:flex-start}
+  .announcementReadNotice{display:block}.announcementReadNotice b{white-space:normal;display:block;margin-bottom:4px}
+}
+@media(max-width:560px){
+  .announcementTop{display:block!important}
+  .announcementTop .badge{display:inline-flex;margin-top:8px}
+  .announcementFrom{grid-template-columns:1fr}
+  .announcementFrom>span{grid-row:auto;justify-self:start;min-width:0;padding:5px 8px}
+  .announcementMessage{font-size:13.5px!important;line-height:1.65!important}
+}
 </style></head>
 <body>
 <header class="top">
@@ -1021,7 +1083,21 @@ body{
 </section>
 
 <section class="section" data-section="announcements">
-<section class="card"><div class="sectionHead"><div><div class="eyebrow dark">PROGRAMME UPDATES</div><h2>Announcements</h2><p class="muted">Official Ambassador notices, programme updates and operational announcements from Funda Online Academy.</p></div><span id="announcementCount" class="badge">0 UPDATES</span></div><div id="announcementList" class="announcementList"></div></section>
+<section class="card announcementHub">
+  <div class="sectionHead">
+    <div>
+      <div class="eyebrow dark">PROGRAMME UPDATES</div>
+      <h2>Announcements</h2>
+      <p class="muted">Official Ambassador notices, leadership messages, programme updates and operational communication from Funda Online Academy.</p>
+    </div>
+    <div class="announcementHeadMeta">
+      <span class="announcementOfficialBadge">OFFICIAL ACADEMY COMMUNICATION</span>
+      <span id="announcementCount" class="badge">0 UPDATES</span>
+    </div>
+  </div>
+  <div class="announcementReadNotice"><b>Read official notices carefully.</b><span>Messages shown here come from Funda Online Academy. Important leadership, programme and operational updates should be read before acting or communicating information to prospective students.</span></div>
+  <div id="announcementList" class="announcementList"></div>
+</section>
 </section>
 
 <section class="section" data-section="support">
