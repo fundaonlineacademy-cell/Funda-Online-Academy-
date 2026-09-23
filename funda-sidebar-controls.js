@@ -273,6 +273,10 @@
       );
       if(client?.auth){
         await writeAdminLogoutAudit(client);
+        try{
+          localStorage.removeItem('funda_admin_current_section_v1');
+          sessionStorage.removeItem('funda_admin_scroll_v1');
+        }catch(_){}
         const result=await client.auth.signOut();
         if(result?.error)throw result.error;
         window.location.replace('login.html');
