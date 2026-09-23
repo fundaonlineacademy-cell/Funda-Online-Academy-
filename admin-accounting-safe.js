@@ -1798,8 +1798,8 @@ async function open(){
 }
 function install(){
   css();
-  const old=window.expenses;
-  window.expenses=function(){open().catch(e=>{console.error('Accounting & Cashbook',e);if(old)old()})};
+  window.FundaAccountingCentre={open};
+  window.expenses=function(){open().catch(e=>{console.error('Accounting & Cashbook',e);const v=$('view');if(v)v.innerHTML='<div class="acPanel"><b>Expenses &amp; Income could not load.</b><div class="acMeta" style="margin-top:5px">Use the Admin Refresh control or try again shortly.</div></div>'})};
   document.addEventListener('funda:admin-manual-refresh',e=>{if(e.detail?.source==='manual'&&active())open().catch(console.error)});
   if(active())open().catch(console.error);
 }
