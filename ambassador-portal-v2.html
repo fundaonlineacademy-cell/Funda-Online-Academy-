@@ -204,8 +204,18 @@ button,input,select,textarea{font-family:inherit!important}
   color:var(--amb-admin-navy)!important;
   border-bottom:1px solid var(--amb-admin-line)!important;
 }
-.sideBackOffice strong{color:var(--amb-admin-navy)!important}
-.sideBackOffice small{color:var(--amb-admin-gold)!important}
+.sideBackOffice strong{
+  color:var(--amb-admin-navy)!important;
+  font-size:18px!important;
+  font-weight:900!important;
+  letter-spacing:.025em!important;
+}
+.sideBackOffice small{
+  color:#173f62!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  letter-spacing:.18em!important;
+}
 .sideClose{
   background:#edf2f7!important;
   color:var(--amb-admin-navy)!important;
@@ -220,12 +230,14 @@ button,input,select,textarea{font-family:inherit!important}
 }
 .sideIdentity b{
   color:var(--amb-admin-navy)!important;
-  font-size:15px!important;
-  font-weight:800!important;
+  font-size:17px!important;
+  font-weight:900!important;
+  letter-spacing:.005em!important;
 }
 .sideMeta{
-  color:#607289!important;
-  font-size:11px!important;
+  color:#40536a!important;
+  font-size:12px!important;
+  font-weight:700!important;
 }
 .sideFinance{
   background:#f7f9fc!important;
@@ -233,41 +245,60 @@ button,input,select,textarea{font-family:inherit!important}
   box-shadow:none!important;
 }
 .sideMoney span{
-  color:#728298!important;
-  font-size:9px!important;
+  color:#40536a!important;
+  font-size:10px!important;
+  font-weight:900!important;
 }
 .sideMoney b{
   color:var(--amb-admin-navy)!important;
-  font-size:16px!important;
+  font-size:17px!important;
+  font-weight:900!important;
 }
 .sideMoney + .sideMoney{border-left:1px solid var(--amb-admin-line)!important}
 .navGroupLabel{
-  color:#7b8ca0!important;
+  color:#4f647b!important;
   font-size:10px!important;
-  font-weight:800!important;
+  font-weight:900!important;
   letter-spacing:.14em!important;
 }
 .navbtn{
-  color:#34455f!important;
+  color:var(--amb-admin-navy)!important;
+  -webkit-text-fill-color:var(--amb-admin-navy)!important;
   font-size:14px!important;
   line-height:1.35!important;
-  font-weight:700!important;
-  background:transparent!important;
-  border:0!important;
+  font-weight:800!important;
+  background:#f7f9fc!important;
+  border:1px solid #e2e8f0!important;
   box-shadow:none!important;
+  opacity:1!important;
 }
-.navIcon{color:#647994!important}
+.navIcon{
+  color:#173f62!important;
+  -webkit-text-fill-color:#173f62!important;
+  opacity:1!important;
+}
 .navbtn:hover{
   background:#eaf1ff!important;
-  color:#17324a!important;
+  color:#0b2f59!important;
+  -webkit-text-fill-color:#0b2f59!important;
+  border-color:#cfdbee!important;
 }
-.navbtn:hover .navIcon{color:#2454c7!important}
+.navbtn:hover .navIcon{
+  color:#2454c7!important;
+  -webkit-text-fill-color:#2454c7!important;
+}
 .navbtn.on{
   background:#2454c7!important;
   color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-color:#2454c7!important;
   box-shadow:0 4px 12px rgba(36,84,199,.18)!important;
+  opacity:1!important;
 }
-.navbtn.on .navIcon{color:#fff!important}
+.navbtn.on .navIcon{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
 .sideLogout{
   border-top:1px solid var(--amb-admin-line)!important;
 }
@@ -312,14 +343,26 @@ button,input,select,textarea{font-family:inherit!important}
     border-right:1px solid var(--amb-admin-line)!important;
   }
   .side .navbtn{
-    border:0!important;
-    color:#34455f!important;
+    background:#f7f9fc!important;
+    border:1px solid #e2e8f0!important;
+    color:var(--amb-admin-navy)!important;
+    -webkit-text-fill-color:var(--amb-admin-navy)!important;
+    opacity:1!important;
+  }
+  .side .navbtn .navIcon{
+    color:#173f62!important;
+    -webkit-text-fill-color:#173f62!important;
   }
   .side .navbtn.on{
     background:#2454c7!important;
+    border-color:#2454c7!important;
     color:#fff!important;
+    -webkit-text-fill-color:#fff!important;
   }
-  .side .navbtn.on .navIcon{color:#fff!important}
+  .side .navbtn.on .navIcon{
+    color:#fff!important;
+    -webkit-text-fill-color:#fff!important;
+  }
 }
 @media(max-width:560px){
   .dashboardHero:before{margin:-20px -20px 18px}
