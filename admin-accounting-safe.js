@@ -956,13 +956,14 @@ function render(t=tab){
   if(t==='expenses')body=entryForm('expense');
   if(t==='cashbook')body=cashbookPanel('');
   if(t==='petty')body=pettyCashPanel();
+  if(t==='ambassador')body=ambassadorProfitabilityPanel();
   if(t==='planned')body=plannedPanel();
   if(t==='pnl')body=pnlControls();
   if(t==='reconciliation')body=reconciliation();
   if(t==='targets')body=targetsPanel();
   if(t==='reports')body=reports();
   $('view').innerHTML=`<div class="acRoot">
-    <div class="acHero"><b>FINANCIAL OPERATIONS & CONTROL</b><h2>Expenses, Income & Management P&L</h2><p>Daily cashbook control, petty cash, planned items, monthly management P&L, reconciliation, financial-year targets and formal reporting from one governed finance workspace.</p></div>
+    <div class="acHero"><b>FINANCIAL OPERATIONS & CONTROL</b><h2>Expenses, Income & Management P&L</h2><p>Daily cashbook control, petty cash, Ambassador profitability planning, planned items, monthly management P&L, reconciliation, financial-year targets and formal reporting from one governed finance workspace.</p></div>
     ${loadWarning()}
     <div class="acK">
       <div class="acCard"><strong>${currentMonthPnl?money(mp.turnover):'—'}</strong><span>Current month turnover to date</span></div>
@@ -973,7 +974,7 @@ function render(t=tab){
     </div>
     ${future.length?'<div class="acWarn"><b>Review required:</b> '+future.length+' existing posted cashbook item(s) are dated in the future. They have not been altered, but live P&L calculations now exclude them until their date arrives.</div>':''}
     <div class="acTabs">${[
-      ['overview','Overview'],['income','Income'],['expenses','Expenses'],['cashbook','Cashbook'],['petty','Petty Cash'],['planned','Planned / Recurring'],['pnl','P&L'],['reconciliation','Reconciliation'],['targets','Targets & FY'],['reports','Reports']
+      ['overview','Overview'],['income','Income'],['expenses','Expenses'],['cashbook','Cashbook'],['petty','Petty Cash'],['ambassador','Ambassador Profitability'],['planned','Planned / Recurring'],['pnl','P&L'],['reconciliation','Reconciliation'],['targets','Targets & FY'],['reports','Reports']
     ].map(x=>'<button class="acBtn '+(t===x[0]?'':'alt')+'" data-ac-tab="'+x[0]+'">'+x[1]+'</button>').join('')}<button class="acBtn alt" id="acRefresh">Refresh</button></div>
     <div class="acSection">${body}</div>
   </div>`;
@@ -1345,7 +1346,7 @@ async function exportCashbook(format){
   }catch(e){alert(e.message||'The cashbook export could not be generated.')}
 }
 function wire(){
-  document.querySelectorAll('[data-ac-tab]').forEach(b=>b.onclick=()=>{cashPage=1;plannedPage=1;reconPage=1;budgetPage=1;pettyVoucherPage=1;pettyMovementPage=1;pettyReconPage=1;render(b.dataset.acTab)});
+  document.querySelectorAll('[data-ac-tab]').forEach(b=>b.onclick=async()=>{cashPage=1;plannedPage=1;reconPage=1;budgetPage=1;pettyVoucherPage=1;pettyMovementPage=1;pettyReconPage=1;ambassadorPlanPage=1;const next=b.dataset.acTab;if(next==='ambassador'){tab='ambassador';await loadAmbassadorProfitability();render('ambassador');return}render(next)});
   $('acRefresh').onclick=async()=>{await open();render(tab)};
   document.querySelectorAll('[data-post]').forEach(b=>b.onclick=()=>postPlanned(b.dataset.post));
   document.querySelectorAll('[data-void]').forEach(b=>b.onclick=()=>voidEntry(b.dataset.void));
@@ -1393,6 +1394,22 @@ function wire(){
     document.querySelectorAll('[data-pc-void-voucher]').forEach(b=>b.onclick=()=>voidPettyVoucher(b.dataset.pcVoidVoucher));
     document.querySelectorAll('[data-pc-void-move]').forEach(b=>b.onclick=()=>voidPettyMovement(b.dataset.pcVoidMove));
   }
+  if(tab==='ambassador'){
+    $('ambApplyMonth')?.addEventListener('click',async()=>{
+      const v=$('ambMonth')?.value;if(!v)return alert('Choose a month.');
+      ambassadorMonth=v;ambassadorEditId=null;ambassadorPlanPage=1;
+      await loadAmbassadorProfitability();render('ambassador');
+    });
+    ['ambProjRevenue','ambProjBonus','ambProjPerf','ambProjOther'].forEach(id=>$(id)?.addEventListener('input',updateAmbassadorScenario));
+    $('ambSaveScenario')?.addEventListener('click',saveAmbassadorScenario);
+    $('ambCancelEdit')?.addEventListener('click',()=>{ambassadorEditId=null;render('ambassador')});
+    $('ambOpenTargets')?.addEventListener('click',()=>render('targets'));
+    $('ambPlanPrev')?.addEventListener('click',()=>{ambassadorPlanPage=Math.max(1,ambassadorPlanPage-1);render('ambassador')});
+    $('ambPlanNext')?.addEventListener('click',()=>{ambassadorPlanPage++;render('ambassador')});
+    document.querySelectorAll('[data-amb-edit]').forEach(b=>b.onclick=()=>{ambassadorEditId=b.dataset.ambEdit;render('ambassador')});
+    document.querySelectorAll('[data-amb-archive]').forEach(b=>b.onclick=()=>archiveAmbassadorScenario(b.dataset.ambArchive));
+    updateAmbassadorScenario();
+  }
   if(tab==='planned'){
     $('plPrev').onclick=()=>{plannedPage=Math.max(1,plannedPage-1);render('planned')};
     $('plNext').onclick=()=>{plannedPage++;render('planned')};
@@ -1435,6 +1452,7 @@ function wirePnl(from,to){
 async function open(){
   await loadData();
   await refreshSummaryPnls();
+  if(tab==='ambassador')await loadAmbassadorProfitability();
   render(tab);
 }
 function install(){
