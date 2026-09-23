@@ -807,6 +807,119 @@ begin
 end;
 $$;
 
+create or replace function public.hr_decide_disciplinary_review_v2(
+  p_case_id uuid,
+  p_review_decision text,
+  p_review_notes text,
+  p_revised_finding text default null,
+  p_revised_sanction text default null,
+  p_revised_warning_valid_until date default null
+)
+returns void
+language plpgsql
+security definer
+set search_path=''
+as $$
+declare
+  v_case public.hr_disciplinary_cases%rowtype;
+  v_finding text;
+  v_sanction text;
+  v_warning date;
+begin
+  if not (
+    public.is_admin()
+    or public.has_department_approval('Human Resources')
+  ) then raise exception 'Human Resources approval authority required' using errcode='42501'; end if;
+
+  select * into v_case from public.hr_disciplinary_cases where id=p_case_id for update;
+  if not found then raise exception 'Disciplinary case not found' using errcode='P0002'; end if;
+  if v_case.status<>'review_requested' then
+    raise exception 'No internal review/appeal is pending' using errcode='22023';
+  end if;
+  if p_review_decision not in ('upheld','varied','overturned','remitted') then
+    raise exception 'Choose a valid internal review decision' using errcode='22023';
+  end if;
+  if char_length(btrim(coalesce(p_review_notes,'')))<10 then
+    raise exception 'Record clear reasons for the review decision' using errcode='22023';
+  end if;
+
+  v_finding:=v_case.finding;
+  v_sanction:=v_case.sanction;
+  v_warning:=v_case.warning_valid_until;
+
+  if p_review_decision='overturned' then
+    v_finding:='not_substantiated';
+    v_sanction:='none';
+    v_warning:=null;
+  elsif p_review_decision='varied' then
+    if p_revised_finding not in ('not_substantiated','partly_substantiated','substantiated','withdrawn') then
+      raise exception 'A varied review requires the revised finding' using errcode='22023';
+    end if;
+    if p_revised_sanction not in ('none','verbal_warning','written_warning','final_written_warning','dismissal','other') then
+      raise exception 'A varied review requires the revised sanction' using errcode='22023';
+    end if;
+    if p_revised_finding in ('not_substantiated','withdrawn') and p_revised_sanction<>'none' then
+      raise exception 'A not-substantiated/withdrawn revised finding cannot carry a sanction' using errcode='22023';
+    end if;
+    if p_revised_sanction='dismissal' then
+      raise exception 'A review may not newly impose dismissal through the variation shortcut. Remit the matter for a properly considered outcome instead.' using errcode='22023';
+    end if;
+    if p_revised_sanction in ('written_warning','final_written_warning')
+       and p_revised_warning_valid_until is not null
+       and p_revised_warning_valid_until<current_date then
+      raise exception 'Revised warning validity date cannot be in the past' using errcode='22023';
+    end if;
+    v_finding:=p_revised_finding;
+    v_sanction:=p_revised_sanction;
+    v_warning:=case when p_revised_sanction in ('written_warning','final_written_warning') then p_revised_warning_valid_until else null end;
+  end if;
+
+  update public.hr_disciplinary_cases
+  set status=case when p_review_decision='remitted' then 'outcome_pending' else 'closed' end,
+      review_decision=p_review_decision,
+      review_notes=btrim(p_review_notes),
+      review_decided_at=now(),
+      finding=case when p_review_decision='remitted' then finding else v_finding end,
+      sanction=case when p_review_decision='remitted' then sanction else v_sanction end,
+      warning_valid_until=case when p_review_decision='remitted' then warning_valid_until else v_warning end,
+      closure_note=case
+        when p_review_decision='remitted' then null
+        when p_review_decision='overturned' then 'Closed after internal review: original outcome overturned.'
+        when p_review_decision='varied' then 'Closed after internal review: original outcome varied.'
+        else 'Closed after internal review: original outcome upheld.'
+      end,
+      updated_by=auth.uid(),
+      updated_at=now()
+  where id=p_case_id;
+
+  insert into public.hr_disciplinary_events(case_id,event_type,notes,recorded_by)
+  values(
+    p_case_id,'review_decided',
+    'Internal review decision: '||p_review_decision||
+    case when p_review_decision='varied' then E'\nRevised finding: '||v_finding||E'\nRevised sanction: '||v_sanction else '' end||
+    E'\nReasons: '||btrim(p_review_notes),
+    auth.uid()
+  );
+
+  insert into public.hr_audit_log(actor_id,action,entity_type,entity_id,subject_profile_id,details)
+  values(
+    auth.uid(),'disciplinary_review_decided','hr_disciplinary_case',p_case_id::text,v_case.profile_id,
+    jsonb_build_object(
+      'case_number',v_case.case_number,
+      'review_decision',p_review_decision,
+      'revised_finding',case when p_review_decision in ('varied','overturned') then v_finding else null end,
+      'revised_sanction',case when p_review_decision in ('varied','overturned') then v_sanction else null end
+    )
+  );
+end;
+$$;
+
+revoke all on function public.hr_decide_disciplinary_review(uuid,text,text) from PUBLIC,anon,authenticated;
+grant execute on function public.hr_decide_disciplinary_review(uuid,text,text) to service_role;
+
+revoke all on function public.hr_decide_disciplinary_review_v2(uuid,text,text,text,text,date) from PUBLIC,anon;
+grant execute on function public.hr_decide_disciplinary_review_v2(uuid,text,text,text,text,date) to authenticated,service_role;
+
 revoke all on function public.hr_log_disciplinary_event(uuid,text,text,text) from PUBLIC,anon;
 revoke all on function public.hr_create_disciplinary_case(uuid,uuid,text,date,text,text,text,text) from PUBLIC,anon;
 revoke all on function public.hr_record_informal_correction(uuid,text,text) from PUBLIC,anon;
