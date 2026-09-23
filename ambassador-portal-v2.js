@@ -33,6 +33,8 @@ function installBankOptions(){
 }
 let db,user,app,currentAgreement=null,ledger=[],referrals=[],payouts=[],bank=null,resources=[],notifications=[],supportTickets=[],supportMessages=[];
 let dashboardTrendDays=30,dashboardTrendMetric='referrals',dashboardCalendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+let referralPage=1;
+const REFERRALS_PER_PAGE=10;
 
 function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
 function fmt(v){if(!v)return '—';try{return new Date(v).toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'})}catch{return '—'}}
@@ -495,16 +497,51 @@ function renderReferrals(){
  const approved=referrals.filter(x=>low(x.earning_status)==='confirmed').length;
  const pending=awaitingReferralCount();
  const earned=referrals.reduce((n,x)=>n+Number(x.earning_amount||0),0);
- if($('#refTotal'))$('#refTotal').textContent=total;if($('#refApproved'))$('#refApproved').textContent=approved;if($('#refPending'))$('#refPending').textContent=pending;if($('#refEarnings'))$('#refEarnings').textContent=money(earned);
+ if($('#refTotal'))$('#refTotal').textContent=total;
+ if($('#refApproved'))$('#refApproved').textContent=approved;
+ if($('#refPending'))$('#refPending').textContent=pending;
+ if($('#refEarnings'))$('#refEarnings').textContent=money(earned);
+
  const search=$('#refSearch'),status=$('#refStatus'),copyBtn=$('#refCopyLink');
+ const prevBtn=$('#referralPrev'),nextBtn=$('#referralNext');
  if(copyBtn)copyBtn.onclick=()=>copy(referralLink(),copyBtn);
+
  const paint=()=>{
    const q=low(search?.value||''),st=low(status?.value||'');
-   const rows=referrals.filter(x=>(!q||low(x.student_display).includes(q)||low(x.course_title).includes(q))&&(!st||low(x.referral_status).includes(st)||low(x.earning_status).includes(st)));
-   $('#referralBody').innerHTML=rows.length?rows.map(x=>'<tr><td>'+esc(x.student_display)+'</td><td>'+esc(x.course_title)+'</td><td>'+fmt(x.referral_date)+'</td><td>'+badgeStatus(x.referral_status)+'</td><td>'+badgeStatus(x.earning_status)+'</td><td>'+money(x.earning_amount)+'</td></tr>').join(''):'<tr><td colspan="6" class="empty">'+(referrals.length?'No referrals match this filter.':'No referrals have been attributed to your code yet.')+'</td></tr>';
-   const mobile=$('#referralMobile');if(mobile)mobile.innerHTML=rows.length?rows.map(x=>'<article class="refCard"><div class="refCardTop"><div><b>'+esc(x.student_display||'Student')+'</b><small>'+esc(x.course_title||'Course')+'</small></div><b class="refCardAmt">'+money(x.earning_amount)+'</b></div><div class="refCardMeta">'+badgeStatus(x.referral_status)+badgeStatus(x.earning_status)+'</div><div class="refCardDate">Referral recorded · '+fmt(x.referral_date)+'</div></article>').join(''):'<div class="empty">'+(referrals.length?'No referrals match this filter.':'No referrals have been attributed to your code yet.')+'</div>';
+   const filtered=referrals.filter(x=>
+     (!q||low(x.student_display).includes(q)||low(x.course_title).includes(q)) &&
+     (!st||low(x.referral_status).includes(st)||low(x.earning_status).includes(st))
+   );
+
+   const pages=Math.max(1,Math.ceil(filtered.length/REFERRALS_PER_PAGE));
+   referralPage=Math.min(Math.max(1,referralPage),pages);
+   const offset=(referralPage-1)*REFERRALS_PER_PAGE;
+   const rows=filtered.slice(offset,offset+REFERRALS_PER_PAGE);
+
+   const body=$('#referralBody');
+   if(body)body.innerHTML=rows.length
+     ?rows.map(x=>'<tr><td>'+esc(x.student_display)+'</td><td>'+esc(x.course_title)+'</td><td>'+fmt(x.referral_date)+'</td><td>'+badgeStatus(x.referral_status)+'</td><td>'+badgeStatus(x.earning_status)+'</td><td>'+money(x.earning_amount)+'</td></tr>').join('')
+     :'<tr><td colspan="6" class="empty">'+(referrals.length?'No referrals match this filter.':'No referrals have been attributed to your code yet.')+'</td></tr>';
+
+   const mobile=$('#referralMobile');
+   if(mobile)mobile.innerHTML=rows.length
+     ?rows.map(x=>'<article class="refCard"><div class="refCardTop"><div><b>'+esc(x.student_display||'Student')+'</b><small>'+esc(x.course_title||'Course')+'</small></div><b class="refCardAmt">'+money(x.earning_amount)+'</b></div><div class="refCardMeta">'+badgeStatus(x.referral_status)+badgeStatus(x.earning_status)+'</div><div class="refCardDate">Referral recorded · '+fmt(x.referral_date)+'</div></article>').join('')
+     :'<div class="empty">'+(referrals.length?'No referrals match this filter.':'No referrals have been attributed to your code yet.')+'</div>';
+
+   const from=filtered.length?offset+1:0;
+   const to=Math.min(offset+REFERRALS_PER_PAGE,filtered.length);
+   const summary=$('#referralPageSummary'),count=$('#referralPageCount');
+   if(summary)summary.textContent=filtered.length?('Showing '+from+'–'+to+' of '+filtered.length+' referrals'):'Showing 0 referrals';
+   if(count)count.textContent='Page '+referralPage+' of '+pages;
+   if(prevBtn)prevBtn.disabled=referralPage<=1||!filtered.length;
+   if(nextBtn)nextBtn.disabled=referralPage>=pages||!filtered.length;
  };
- if(search)search.oninput=paint;if(status)status.onchange=paint;paint();
+
+ if(search)search.oninput=()=>{referralPage=1;paint()};
+ if(status)status.onchange=()=>{referralPage=1;paint()};
+ if(prevBtn)prevBtn.onclick=()=>{if(referralPage>1){referralPage-=1;paint();document.querySelector('[data-section="referrals"] .referralTools')?.scrollIntoView({behavior:'smooth',block:'start'})}};
+ if(nextBtn)nextBtn.onclick=()=>{const q=low(search?.value||''),st=low(status?.value||'');const filtered=referrals.filter(x=>(!q||low(x.student_display).includes(q)||low(x.course_title).includes(q))&&(!st||low(x.referral_status).includes(st)||low(x.earning_status).includes(st)));const pages=Math.max(1,Math.ceil(filtered.length/REFERRALS_PER_PAGE));if(referralPage<pages){referralPage+=1;paint();document.querySelector('[data-section="referrals"] .referralTools')?.scrollIntoView({behavior:'smooth',block:'start'})}};
+ paint();
 }
 function renderLedger(){
  const approvedStatuses=['approved','paid'];
