@@ -40,9 +40,8 @@ function patchClient(client){
   return client;
 }
 
-// The Academic modules use the shared client created by supabase-config.js.
-// Patch that existing client first; the previous implementation only patched
-// future createClient() calls and therefore did not actually stop Realtime.
+// Academic data is manual-only. Patch the shared client and every future client,
+// but do not schedule, nudge, poll or redraw the Academic workspace.
 patchClient(window.__fundaSharedSupabaseClient);
 
 const supa=window.supabase;
@@ -53,71 +52,8 @@ if(supa?.createClient&&!supa.createClient.__fundaAcademicManualWrapped){
   supa.createClient=wrappedCreateClient;
 }
 
-function academicActive(){
-  const b=document.querySelector('#nav button.on,#nav button.active,.nav button.on,.nav button.active');
-  return !!b&&/academic/i.test(String(b.textContent||''));
-}
-
-function displayedCourseCount(){
-  const cards=[...document.querySelectorAll('#view .aqCard')];
-  const card=cards.find(c=>/\bcourses\b/i.test(c.textContent||''));
-  const n=Number(String(card?.querySelector('strong')?.textContent||'').replace(/[^0-9.-]/g,''));
-  return Number.isFinite(n)?n:null;
-}
-
-function nudgeMissingPanels(){
-  if(!academicActive())return;
-  const view=document.getElementById('view');
-  if(!view||!view.querySelector('.aqHero'))return;
-  const expected=['cqaWorkspace','aciWorkspace','academicIntegrityPanel','academicDocumentsPanel','academicDocumentStudios'];
-  if(expected.every(id=>document.getElementById(id)))return;
-  // Existing Academic modules already know how to mount themselves when the
-  // Academic view changes. Trigger that mount path once without redrawing UI.
-  const marker=document.createComment('academic-stable-mount');
-  view.appendChild(marker);
-  marker.remove();
-}
-
-let cycle=0;
-async function stabiliseAcademic(myCycle){
-  if(myCycle!==cycle||!academicActive())return;
-  patchClient(window.__fundaSharedSupabaseClient);
-  const db=window.__fundaSharedSupabaseClient;
-  let actualCourses=null;
-  if(db){
-    try{
-      const r=await db.from('courses').select('id',{count:'exact',head:true});
-      if(!r.error)actualCourses=Number(r.count||0);
-    }catch(_){ }
-  }
-  if(myCycle!==cycle||!academicActive())return;
-  const hero=document.querySelector('#view .aqHero');
-  const shown=displayedCourseCount();
-  const badZero=actualCourses>0&&shown===0;
-  if((!hero||badZero)&&window.FundaAcademicQA?.open){
-    try{await window.FundaAcademicQA.open()}catch(e){console.error('Academic initial load recovery failed',e)}
-  }
-  if(myCycle!==cycle||!academicActive())return;
-  nudgeMissingPanels();
-  setTimeout(()=>{if(myCycle===cycle)nudgeMissingPanels()},350);
-}
-
-function queueStability(){
-  const my=++cycle;
-  setTimeout(()=>stabiliseAcademic(my),650);
-  setTimeout(()=>stabiliseAcademic(my),1500);
-}
-
-document.addEventListener('click',e=>{
-  const b=e.target.closest?.('#nav button,.nav button');
-  if(b&&/academic/i.test(String(b.textContent||'')))queueStability();
-},true);
-
-document.addEventListener('funda:admin-manual-refresh',()=>{
-  if(academicActive())queueStability();
-});
-
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',()=>{if(academicActive())queueStability()},{once:true});
-}else if(academicActive())queueStability();
+window.FundaAcademicManualRefreshPolicy={
+  patchClient,
+  isManualEvent(event){return event?.detail?.source==='manual'}
+};
 })();
