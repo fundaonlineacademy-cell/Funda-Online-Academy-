@@ -521,10 +521,11 @@ function render(tab=currentTab){
   if(tab==='safety')body=`<div class="hrBar"><select class="hrSelect" id="hsStaff"><option value="">General workplace</option>${staffOpts()}</select><input class="hrInput" id="hsTitle" placeholder="Safety / wellbeing incident"><select class="hrSelect" id="hsSeverity"><option>low</option><option selected>medium</option><option>high</option><option>critical</option></select><input class="hrInput" id="hsDesc" placeholder="What happened / required action"><button class="hrBtn bad" id="hsAdd">Record Incident</button></div><table class="hrTable"><tr><th>Incident</th><th>Staff</th><th>Severity</th><th>Status</th><th>Date</th><th>Resolved</th><th>Action</th></tr>${safety()}</table>${pager('safety',(D.hr_safety_incidents||[]).length,'safety cases')}`;
   if(tab==='development')body=training();
   if(tab==='workforce')body=workforcePanel();
+  if(tab==='disciplinary')body=disciplinaryPanel();
   if(tab==='audit')body=`<table class="hrTable"><tr><th>Date</th><th>Actor</th><th>Action</th><th>Record</th><th>Staff</th><th>Evidence</th></tr>${audits()}</table>${pager('audit',(D.hr_audit_log||[]).length,'audit events')}`;
 
   $('view').innerHTML=`
-    <div class="hrHero"><b>PEOPLE, CULTURE & GOVERNANCE</b><h2>HR & Team Command Centre</h2><p>Staff onboarding, access control, employment records, contracts, wellbeing, leave, development, workforce affordability planning and accountable people management.</p></div>
+    <div class="hrHero"><b>PEOPLE, CULTURE & GOVERNANCE</b><h2>HR & Team Command Centre</h2><p>Staff onboarding, access control, employment records, contracts, wellbeing, leave, development, workforce affordability planning, fair conduct management and accountable people management.</p></div>
     ${loadErrors.length?'<div class="hrAlert"><b>HR data warning:</b> '+esc(loadErrors.join(' | '))+' The last successfully loaded information remains visible; failed queries are not shown as false zeroes.</div>':''}
     <div class="hrK">
       <div class="hrCard"><strong>${activeN}</strong><span>Active staff</span></div>
@@ -535,7 +536,7 @@ function render(tab=currentTab){
       <div class="hrCard"><strong>${trainingDue}</strong><span>Training actions</span></div>
     </div>
     <div class="hrTabs">
-      ${[['team','Team & Access'],['contracts','Contracts & Documents'],['leave','Leave & Attendance'],['safety','Safety & Wellbeing'],['development','Training & Performance'],['workforce','Workforce & Compensation'],['audit','HR Audit Trail']].map(x=>`<button class="hrBtn ${tab===x[0]?'':'alt'}" data-hr-tab="${x[0]}">${x[1]}</button>`).join('')}
+      ${[['team','Team & Access'],['contracts','Contracts & Documents'],['leave','Leave & Attendance'],['safety','Safety & Wellbeing'],['development','Training & Performance'],['workforce','Workforce & Compensation'],['disciplinary','Disciplinary & Conduct'],['audit','HR Audit Trail']].map(x=>`<button class="hrBtn ${tab===x[0]?'':'alt'}" data-hr-tab="${x[0]}">${x[1]}</button>`).join('')}
       <button class="hrBtn alt" id="hrRefresh">Refresh</button>
     </div>
     <div class="hrPanel" style="overflow:auto">${body}</div>`;
@@ -595,6 +596,9 @@ function wire(tab){
     syncWorkforceFields();
     document.querySelectorAll('[data-workforce-edit]').forEach(b=>b.onclick=()=>editWorkforcePlan(b.dataset.workforceEdit));
     document.querySelectorAll('[data-comp-guide]').forEach(b=>b.onclick=()=>applyCompGuidance(b.dataset.compGuide,b.dataset.compMode));
+  }
+  if(tab==='disciplinary'){
+    wireDisciplinary();
   }
 }
 async function manageAccess(id){
