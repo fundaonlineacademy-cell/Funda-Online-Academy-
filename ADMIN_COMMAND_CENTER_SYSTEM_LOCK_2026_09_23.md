@@ -84,4 +84,6 @@ Any shared loader/shell change must regression-check:
 - Marketing Realtime/edit-safe behaviour
 - protected Ambassador/Enrolment/Finance/Communication/Support/HR/Audit workspaces
 
+The shared-shell lock does not modify Ambassador programme/application/login/referral/earnings/banking/support code or permissions; those boundaries remain under their existing lock.
+
 **Fix up; do not break up.**
