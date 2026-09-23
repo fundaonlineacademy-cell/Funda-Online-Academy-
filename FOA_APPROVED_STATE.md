@@ -659,3 +659,21 @@ After completing the approved Workforce & Compensation Planning additions and th
 - Work in Finance, Petty Cash, Academic, CEO Account Control, Digital Library, IT/Security or another Admin area does **not** reopen HR & Team.
 - A newly discovered HR defect or requested enhancement is a protected change request and requires explicit owner approval before the locked HR workspace is altered.
 
+### Admin HR & Team — FOCUSED REOPENING FOR FOA STAFF DISCIPLINARY CODE v1.0 (23 September 2026)
+
+The owner explicitly reopened **only Admin → HR & Team → Disciplinary & Conduct** to add Funda Online Academy's own written Staff Disciplinary Code and staff-awareness structure before the HR section is treated as finally complete.
+
+- All other previously locked HR & Team areas remain protected and are not reopened by this work.
+- The authorised scope is limited to: the FOA disciplinary-code version, progressive-discipline ladder, practical misconduct/sanction guidance, staff policy-issue/acknowledgement tracking, and the connection of that guidance to the existing Staff disciplinary case workflow.
+- **FOA-HR-DISC-001 v1.0 remains DRAFT pending the owner's physical review.** It has no effective date and must not be represented as an issued Staff policy until Aziwe Futhe explicitly approves it.
+- Only the active CEO authority may activate a draft disciplinary-code version after owner approval. HR may not self-approve the policy.
+- A draft code cannot be issued or acknowledged through the Staff awareness register.
+- The progressive sequence is guidance rather than an automatic penalty tariff: documented discussion/counselling → verbal warning → written warning → final written warning → possible dismissal. The appropriate step remains fact-specific, proportionate and subject to the existing fair-process controls.
+- Serious misconduct may justify a stronger first response where the facts support it; minor misconduct may remain corrective. Any departure from the normal guide must be justified and recorded.
+- The Code must continue to distinguish deliberate/refusable misconduct from poor performance, inadequate training, illness, injury, protected leave or other incapacity.
+- Small-business flexibility means a simpler/less formal process may be used where appropriate; it does **not** remove the requirement for a fair reason, genuine opportunity to respond, proportionality, consistency or non-arbitrary treatment.
+- Staff awareness must be evidenced when the Code is eventually activated: HR may record issue and acknowledgement per Staff profile and policy version. Acknowledgement proves communication, not agreement with an allegation or waiver of labour-law rights.
+- Disciplinary-code and acknowledgement registers remain subject to the Academy maximum of **10 visible records per page**.
+- No real disciplinary case, sanction, acknowledgement or policy activation is authorised by this focused reopening.
+- The Disciplinary & Conduct area remains **unlocked pending owner physical review of FOA-HR-DISC-001 v1.0**. Do not re-lock this specific area until the owner explicitly approves the Code.
+
