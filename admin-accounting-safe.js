@@ -5,10 +5,10 @@ if(window.__FUNDA_ACCOUNTING_SAFE__)return;
 window.__FUNDA_ACCOUNTING_SAFE__=true;
 
 let db;
-let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[]};
-let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false};
+let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[]};
+let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false};
 let errors=[];
-let tab='overview',cashPage=1,plannedPage=1,reconPage=1;
+let tab='overview',cashPage=1,plannedPage=1,reconPage=1,budgetPage=1;
 let pnlMode='monthly',pnlMonth=new Date().toISOString().slice(0,7),pnlDay=new Date().toISOString().slice(0,10),pnlFyYear=null,pnlFrom='',pnlTo='';
 let currentMonthPnl=null,currentFyPnl=null,currentPnl=null,currentPnlComparison=null,currentPnlComparisonRange=null;
 const PAGE_SIZE=10;
@@ -111,7 +111,8 @@ async function loadData(){
     ['payments',db.from('payments').select('*').order('created_at',{ascending:false}).limit(5000)],
     ['profiles',db.from('profiles').select('id,full_name,email').limit(5000)],
     ['settings',db.from('finance_management_settings').select('*').eq('singleton',true).maybeSingle()],
-    ['closes',db.from('finance_month_closes').select('*').order('month_start',{ascending:false}).limit(500)]
+    ['closes',db.from('finance_month_closes').select('*').order('month_start',{ascending:false}).limit(500)],
+    ['budgets',db.from('finance_monthly_budgets').select('*').order('month_start',{ascending:true}).limit(240)]
   ];
   const results=await Promise.all(jobs.map(x=>x[1]));
   results.forEach((r,i)=>{
@@ -159,6 +160,40 @@ function fyOptions(){
   const cur=currentFyStartYear(),first=Math.min(firstFyStart(),cur),years=[];
   for(let y=first;y<=Math.max(firstFyStart(),cur)+3;y++)years.push(y);
   return years.map(y=>'<option value="'+y+'" '+(Number(pnlFyYear)===y?'selected':'')+'>FY '+y+'/'+String(y+1).slice(-2)+' (1 Oct - 30 Sep)</option>').join('');
+}
+function budgetMonthLabel(v){
+  return v?new Date(v+'T12:00:00').toLocaleDateString('en-ZA',{month:'long',year:'numeric'}):'—';
+}
+function budgetForMonth(monthStart){
+  return (S.budgets||[]).find(x=>x.month_start===monthStart)||null;
+}
+function budgetExpenseTotal(b){
+  if(!b)return 0;
+  return n(b.direct_cost_budget)+n(b.people_cost_budget)+n(b.operating_expense_budget)+n(b.ambassador_budget)+n(b.other_expense_budget);
+}
+function budgetPlannedSurplus(b){
+  return b?n(b.revenue_target)-budgetExpenseTotal(b):0;
+}
+function budgetsForFy(year){
+  const [from,to]=fyRange(Number(year));
+  return (S.budgets||[]).filter(x=>x.month_start>=from&&x.month_start<=to).sort((a,b)=>a.month_start.localeCompare(b.month_start));
+}
+function budgetTotalsForFy(year){
+  const rows=budgetsForFy(year);
+  return rows.reduce((a,b)=>{
+    a.revenue+=n(b.revenue_target);a.direct+=n(b.direct_cost_budget);a.people+=n(b.people_cost_budget);
+    a.operating+=n(b.operating_expense_budget);a.ambassador+=n(b.ambassador_budget);a.other+=n(b.other_expense_budget);
+    a.minimumSurplus+=n(b.minimum_surplus_target);return a;
+  },{revenue:0,direct:0,people:0,operating:0,ambassador:0,other:0,minimumSurplus:0});
+}
+function budgetTotalsForPeriod(from,to){
+  const rows=(S.budgets||[]).filter(x=>x.month_start>=from&&x.month_start<=to);
+  const total=rows.reduce((a,b)=>{
+    a.revenue+=n(b.revenue_target);a.expenses+=budgetExpenseTotal(b);a.minimumSurplus+=n(b.minimum_surplus_target);return a;
+  },{revenue:0,expenses:0,minimumSurplus:0});
+  total.plannedSurplus=total.revenue-total.expenses;
+  total.months=rows.length;
+  return total;
 }
 function loadWarning(){
   return errors.length?'<div class="acWarn"><b>Finance data warning:</b> '+esc(errors.join(' | '))+' Failed sources are not being shown as zero.</div>':'';
