@@ -85,6 +85,49 @@ function renderPerformanceOverview(total,commission,bonus,performance,life,curre
  if($('#overviewPerformanceMeta'))$('#overviewPerformanceMeta').textContent=money(life)+' lifetime qualifying revenue';
  if($('#overviewPerformanceFoot'))$('#overviewPerformanceFoot').textContent=next?money(remain)+' to reach '+next.n:'Highest published Ambassador level reached';
 }
+function addCalendarDays(date,days){const d=new Date(date);d.setDate(d.getDate()+days);return d}
+function easterSunday(year){
+ const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),month=Math.floor((h+l-7*m+114)/31),day=((h+l-7*m+114)%31)+1;
+ return new Date(year,month-1,day);
+}
+function southAfricanPublicHolidays(year){
+ const fixed=[
+   [0,1,"New Year's Day"],[2,21,'Human Rights Day'],[3,27,'Freedom Day'],[4,1,"Workers' Day"],
+   [5,16,'Youth Day'],[7,9,"National Women's Day"],[8,24,'Heritage Day'],[11,16,'Day of Reconciliation'],
+   [11,25,'Christmas Day'],[11,26,'Day of Goodwill']
+ ];
+ const list=fixed.map(([month,day,name])=>({date:new Date(year,month,day),name}));
+ const easter=easterSunday(year);
+ list.push({date:addCalendarDays(easter,-2),name:'Good Friday'},{date:addCalendarDays(easter,1),name:'Family Day'});
+ const observed=[];
+ list.forEach(h=>{if(h.date.getDay()===0)observed.push({date:addCalendarDays(h.date,1),name:h.name+' (Observed)'})});
+ const map=new Map();
+ [...list,...observed].forEach(h=>{const k=localDateKey(h.date),names=map.get(k)||[];if(!names.includes(h.name))names.push(h.name);map.set(k,names)});
+ return map;
+}
+function isSouthAfricanBusinessDay(date){
+ const day=date.getDay();if(day===0||day===6)return false;
+ return !southAfricanPublicHolidays(date.getFullYear()).has(localDateKey(date));
+}
+function ambassadorPayday(year,month){
+ let d=new Date(year,month,5);
+ while(!isSouthAfricanBusinessDay(d))d=addCalendarDays(d,-1);
+ return d;
+}
+function compactAxisMoney(value){
+ const n=Number(value||0);
+ if(Math.abs(n)>=1000000)return 'R'+(n/1000000).toFixed(n%1000000===0?0:1)+'m';
+ if(Math.abs(n)>=1000)return 'R'+(n/1000).toFixed(n%1000===0?0:1)+'k';
+ return 'R'+Math.round(n);
+}
+function niceChartMax(value,metric){
+ const n=Math.max(metric==='referrals'?4:1,Number(value||0));
+ if(metric==='referrals')return Math.max(4,Math.ceil(n/4)*4);
+ const magnitude=Math.pow(10,Math.floor(Math.log10(n)));
+ const scaled=n/magnitude;
+ const nice=scaled<=1?1:scaled<=2?2:scaled<=5?5:10;
+ return nice*magnitude;
+}
 function renderDashboardTrend(){
  const host=$('#ambassadorTrendChart');if(!host)return;
  const today=new Date(),start=new Date(today.getFullYear(),today.getMonth(),today.getDate()-dashboardTrendDays+1);
@@ -99,41 +142,53 @@ function renderDashboardTrend(){
  if($('#trendRevenueTotal'))$('#trendRevenueTotal').textContent=money(revenueTotal);
  document.querySelectorAll('[data-trend-period]').forEach(b=>{const on=Number(b.dataset.trendPeriod)===dashboardTrendDays;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));b.onclick=()=>{dashboardTrendDays=Number(b.dataset.trendPeriod)||30;renderDashboardTrend()}});
  document.querySelectorAll('[data-trend-metric]').forEach(b=>{const on=b.dataset.trendMetric===dashboardTrendMetric;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));b.onclick=()=>{dashboardTrendMetric=b.dataset.trendMetric||'referrals';renderDashboardTrend()}});
- const values=buckets.map(x=>dashboardTrendMetric==='revenue'?x.revenue:x.referrals);
- const max=Math.max(1,...values),w=680,h=220,left=42,right=14,top=18,bottom=32,plotW=w-left-right,plotH=h-top-bottom;
- const xAt=i=>left+(buckets.length===1?0:(i/(buckets.length-1))*plotW),yAt=v=>top+plotH-(Number(v||0)/max)*plotH;
- const pts=values.map((v,i)=>[xAt(i),yAt(v)]),line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
- const labelIdx=[0,Math.floor((buckets.length-1)/2),buckets.length-1].filter((v,i,a)=>a.indexOf(v)===i);
- const topLabel=dashboardTrendMetric==='revenue'?money(max):String(max);
- const metricLabel=dashboardTrendMetric==='revenue'?'Confirmed qualifying revenue':'Eligible referrals';
+ const dailyValues=buckets.map(x=>dashboardTrendMetric==='revenue'?x.revenue:x.referrals);
+ let running=0;const values=dailyValues.map(v=>(running+=Number(v||0)));
+ const metricLabel=dashboardTrendMetric==='revenue'?'Cumulative confirmed qualifying revenue':'Cumulative eligible referrals';
+ const yMax=niceChartMax(Math.max(...values,0),dashboardTrendMetric);
+ const w=760,h=300,left=72,right=24,top=24,bottom=48,plotW=w-left-right,plotH=h-top-bottom;
+ const xAt=i=>left+(buckets.length===1?0:(i/(buckets.length-1))*plotW),yAt=v=>top+plotH-(Number(v||0)/yMax)*plotH;
+ const points=values.map((v,i)=>[xAt(i),yAt(v)]);
+ const line=points.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+ const yTicks=Array.from({length:5},(_,i)=>i*yMax/4);
+ const xIndexes=[0,Math.round((buckets.length-1)*.25),Math.round((buckets.length-1)*.5),Math.round((buckets.length-1)*.75),buckets.length-1].filter((v,i,a)=>a.indexOf(v)===i);
+ const yLabel=v=>dashboardTrendMetric==='revenue'?compactAxisMoney(v):String(Math.round(v));
  const hasActivity=values.some(v=>Number(v)>0);
- host.innerHTML='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(metricLabel)+' trend for the last '+dashboardTrendDays+' days">'+
-   '<line x1="'+left+'" y1="'+(top+plotH)+'" x2="'+(w-right)+'" y2="'+(top+plotH)+'" stroke="#dfe6ec" stroke-width="1"/>'+
-   '<line x1="'+left+'" y1="'+top+'" x2="'+(w-right)+'" y2="'+top+'" stroke="#eef2f5" stroke-width="1"/>'+
-   '<text x="4" y="'+(top+4)+'" font-size="10" fill="#73818e">'+esc(topLabel)+'</text>'+
-   '<text x="20" y="'+(top+plotH+4)+'" font-size="10" fill="#73818e">0</text>'+
+ const grid=yTicks.map(v=>{const y=yAt(v);return '<line x1="'+left+'" y1="'+y.toFixed(1)+'" x2="'+(w-right)+'" y2="'+y.toFixed(1)+'" stroke="#e5e9ed" stroke-width="1"/><text x="'+(left-10)+'" y="'+(y+4).toFixed(1)+'" text-anchor="end" font-size="11" font-weight="700" fill="#667787">'+esc(yLabel(v))+'</text>'}).join('');
+ const markers=points.map((p,i)=>((values[i]>0||i===points.length-1)&&dashboardTrendDays<=30?'<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3.8" fill="#c99a2e" stroke="#fff" stroke-width="1.5"/>':'')).join('');
+ const xLabels=xIndexes.map(i=>'<line x1="'+xAt(i).toFixed(1)+'" y1="'+(top+plotH)+'" x2="'+xAt(i).toFixed(1)+'" y2="'+(top+plotH+5)+'" stroke="#9aa8b5" stroke-width="1"/><text x="'+xAt(i).toFixed(1)+'" y="'+(h-16)+'" text-anchor="'+(i===0?'start':i===buckets.length-1?'end':'middle')+'" font-size="11" font-weight="700" fill="#667787">'+esc(buckets[i].date.toLocaleDateString('en-ZA',{day:'2-digit',month:'short'}))+'</text>').join('');
+ host.innerHTML='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(metricLabel)+' line graph for the last '+dashboardTrendDays+' days">'+
+   '<rect x="'+left+'" y="'+top+'" width="'+plotW+'" height="'+plotH+'" fill="#fff" stroke="#cfd8df" stroke-width="1"/>'+
+   grid+
+   '<line x1="'+left+'" y1="'+(top+plotH)+'" x2="'+(w-right)+'" y2="'+(top+plotH)+'" stroke="#8f9eaa" stroke-width="1.2"/>'+
+   '<line x1="'+left+'" y1="'+top+'" x2="'+left+'" y2="'+(top+plotH)+'" stroke="#8f9eaa" stroke-width="1.2"/>'+
    '<path d="'+line+'" fill="none" stroke="#173f62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
-   pts.map((p,i)=>((i===pts.length-1||values[i]>0)&&dashboardTrendDays<=30?'<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3.5" fill="#c99a2e" stroke="#fff" stroke-width="1.5"/>':'')).join('')+
-   labelIdx.map(i=>'<text x="'+xAt(i).toFixed(1)+'" y="'+(h-8)+'" text-anchor="'+(i===0?'start':i===buckets.length-1?'end':'middle')+'" font-size="10" fill="#73818e">'+esc(buckets[i].date.toLocaleDateString('en-ZA',{day:'2-digit',month:'short'}))+'</text>').join('')+
+   markers+xLabels+
+   '<text x="'+left+'" y="14" font-size="11" font-weight="900" fill="#17324a">'+esc(metricLabel)+'</text>'+
    '</svg>'+(hasActivity?'':'<div class="trendEmpty">No '+(dashboardTrendMetric==='revenue'?'confirmed qualifying revenue':'eligible referral')+' activity is recorded in this period yet.</div>');
 }
 function renderAmbassadorCalendar(){
  const host=$('#ambassadorCalendarGrid');if(!host)return;
  const cursor=dashboardCalendarCursor,y=cursor.getFullYear(),m=cursor.getMonth(),first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),start=(first.getDay()+6)%7;
- const activity=new Map();
- const mark=(v,type)=>{const k=localDateKey(v);if(!k||!k.startsWith(y+'-'+String(m+1).padStart(2,'0')))return;const set=activity.get(k)||new Set();set.add(type);activity.set(k,set)};
- eligibleReferrals().forEach(x=>mark(x.referral_date,'referral'));
- ledger.forEach(x=>mark(x.created_at||x.earning_month,'earning'));
- payouts.forEach(x=>mark(x.payment_date||x.created_at,'payment'));
+ const holidays=southAfricanPublicHolidays(y),payday=ambassadorPayday(y,m),paydayKey=localDateKey(payday),todayKey=localDateKey(new Date());
+ const previousMonth=new Date(y,m-1,1);
+ const earningsMonth=previousMonth.toLocaleDateString('en-ZA',{month:'long',year:'numeric'});
  if($('#ambCalendarTitle'))$('#ambCalendarTitle').textContent=cursor.toLocaleDateString('en-ZA',{month:'long',year:'numeric'});
+ if($('#ambassadorPaydaySummary'))$('#ambassadorPaydaySummary').innerHTML='<b>Scheduled Ambassador payday: '+esc(payday.toLocaleDateString('en-ZA',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}))+'</b><br>'+esc(earningsMonth)+' qualifying earnings are scheduled for this payday. Standard payday is the 5th of the following month; if the 5th falls on a weekend or South African public holiday, the date moves to the previous business day.';
+ const monthHolidayItems=[...holidays.entries()].filter(([date])=>date.startsWith(y+'-'+String(m+1).padStart(2,'0'))).sort((a,b)=>a[0].localeCompare(b[0]));
+ if($('#ambassadorCalendarMonthNote'))$('#ambassadorCalendarMonthNote').innerHTML=monthHolidayItems.length?'<b>Public holidays this month:</b> '+monthHolidayItems.map(([date,names])=>esc(names.join(' / '))+' · '+esc(new Date(date+'T12:00:00').toLocaleDateString('en-ZA',{day:'2-digit',month:'short'}))).join(' &nbsp;•&nbsp; '):'<b>Public holidays this month:</b> None.';
  const cells=[];
  for(let i=0;i<start;i++)cells.push('<span class="ambCalendarDate muted" aria-hidden="true"></span>');
- const todayKey=localDateKey(new Date());
  for(let day=1;day<=days;day++){
-   const d=new Date(y,m,day),k=localDateKey(d),types=[...(activity.get(k)||[])];
-   const dots=types.slice(0,3).map(type=>'<i class="ambCalDot '+(type==='referral'?'':type)+'"></i>').join('');
-   const label=types.length?' · '+types.map(x=>x==='referral'?'Referral':x==='earning'?'Earning':'Payment').join(', '):'';
-   cells.push('<span class="ambCalendarDate'+(k===todayKey?' today':'')+'" title="'+esc(d.toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'})+label)+'">'+day+(dots?'<span class="ambCalDots">'+dots+'</span>':'')+'</span>');
+   const d=new Date(y,m,day),k=localDateKey(d),holidayNames=holidays.get(k)||[],isPayday=k===paydayKey;
+   const classes=['ambCalendarDate'];
+   if(k===todayKey)classes.push('today');
+   if(holidayNames.length)classes.push('holiday');
+   if(isPayday)classes.push('payday');
+   const details=[d.toLocaleDateString('en-ZA',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})];
+   if(holidayNames.length)details.push('Public holiday: '+holidayNames.join(', '));
+   if(isPayday)details.push('Scheduled Ambassador payday for '+earningsMonth+' qualifying earnings');
+   cells.push('<span class="'+classes.join(' ')+'" title="'+esc(details.join(' · '))+'">'+day+'</span>');
  }
  host.innerHTML='<div class="ambCalendarGrid">'+['Mo','Tu','We','Th','Fr','Sa','Su'].map(x=>'<span class="ambCalendarDow">'+x+'</span>').join('')+cells.join('')+'</div>';
  const prev=$('#ambCalPrev'),next=$('#ambCalNext'),today=$('#ambCalToday');
