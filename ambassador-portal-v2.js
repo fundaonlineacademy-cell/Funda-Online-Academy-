@@ -32,6 +32,7 @@ function installBankOptions(){
  s.onchange=apply;apply();
 }
 let db,user,app,currentAgreement=null,ledger=[],referrals=[],payouts=[],bank=null,resources=[],notifications=[],supportTickets=[],supportMessages=[];
+let dashboardTrendDays=30,dashboardTrendMetric='referrals',dashboardCalendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 
 function rank(rev){return [...ranks].reverse().find(r=>rev>=r.min)||ranks[0]}
 function fmt(v){if(!v)return '—';try{return new Date(v).toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'})}catch{return '—'}}
@@ -54,6 +55,92 @@ function sum(type,statuses){return ledger.filter(x=>(!type||x.earning_type===typ
 function confirmedLedger(){return ledger.filter(x=>['approved','paid'].includes(low(x.earning_status)))}
 function awaitingReferralCount(){return referrals.filter(x=>!['confirmed','disqualified'].includes(low(x.earning_status))).length}
 function referralLink(){if(!app?.referral_code)return '';return location.origin+'/courses-public.html?ref='+encodeURIComponent(app.referral_code)+'#courses'}
+function localDateKey(v){
+ if(!v)return '';
+ const d=new Date(v);if(Number.isNaN(d.getTime()))return '';
+ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function eligibleReferrals(){return referrals.filter(x=>low(x.earning_status)!=='disqualified')}
+function arrangeDashboard(){
+ const perf=document.getElementById('ambassadorPerformanceOverview'),ceo=document.getElementById('ambassador-ceo-message');
+ if(perf&&ceo&&perf.parentNode===ceo.parentNode&&ceo.nextElementSibling!==perf)perf.parentNode.insertBefore(ceo,perf);
+}
+function renderPerformanceOverview(total,commission,bonus,performance,life,current,next,awaiting){
+ const eligible=eligibleReferrals(),paidOut=payouts.filter(x=>low(x.status)==='paid').reduce((s,x)=>s+Number(x.amount||0),0);
+ const now=new Date(),thisMonth=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+ const prev=new Date(now.getFullYear(),now.getMonth()-1,1),prevMonth=prev.getFullYear()+'-'+String(prev.getMonth()+1).padStart(2,'0');
+ const monthOf=v=>{const k=localDateKey(v);return k?k.slice(0,7):''};
+ const currentMonthCount=eligible.filter(x=>monthOf(x.referral_date)===thisMonth).length;
+ const previousMonthCount=eligible.filter(x=>monthOf(x.referral_date)===prevMonth).length;
+ const confirmed=referrals.filter(x=>low(x.earning_status)==='confirmed').length;
+ const delta=currentMonthCount-previousMonthCount;
+ const remain=next?Math.max(0,next.min-life):0;
+ if($('#overviewEarnings'))$('#overviewEarnings').textContent=money(total);
+ if($('#overviewEarningsMeta'))$('#overviewEarningsMeta').textContent=money(commission)+' direct commission · '+money(bonus+performance)+' bonuses / performance';
+ if($('#overviewEarningsFoot'))$('#overviewEarningsFoot').textContent=money(paidOut)+' paid out to date';
+ if($('#overviewReferralGrowth'))$('#overviewReferralGrowth').textContent=eligible.length;
+ if($('#overviewReferralMeta'))$('#overviewReferralMeta').textContent=currentMonthCount+' recorded this month · '+confirmed+' confirmed';
+ if($('#overviewReferralFoot'))$('#overviewReferralFoot').textContent=previousMonthCount?((delta>=0?'+':'')+delta+' vs previous month'):(currentMonthCount?'First recorded activity in this comparison period':'No referral activity this month yet');
+ if($('#overviewPerformance'))$('#overviewPerformance').textContent=current.n;
+ if($('#overviewPerformanceMeta'))$('#overviewPerformanceMeta').textContent=money(life)+' lifetime qualifying revenue';
+ if($('#overviewPerformanceFoot'))$('#overviewPerformanceFoot').textContent=next?money(remain)+' to reach '+next.n:'Highest published Ambassador level reached';
+}
+function renderDashboardTrend(){
+ const host=$('#ambassadorTrendChart');if(!host)return;
+ const today=new Date(),start=new Date(today.getFullYear(),today.getMonth(),today.getDate()-dashboardTrendDays+1);
+ const buckets=Array.from({length:dashboardTrendDays},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);return {date:d,key:localDateKey(d),referrals:0,revenue:0}});
+ const byKey=new Map(buckets.map(x=>[x.key,x]));
+ eligibleReferrals().forEach(x=>{const b=byKey.get(localDateKey(x.referral_date));if(b)b.referrals+=1});
+ ledger.filter(x=>x.earning_type==='commission'&&['approved','paid'].includes(low(x.earning_status))).forEach(x=>{
+   const b=byKey.get(localDateKey(x.created_at||x.earning_month));if(b)b.revenue+=Number(x.qualifying_revenue||0);
+ });
+ const referralTotal=buckets.reduce((s,x)=>s+x.referrals,0),revenueTotal=buckets.reduce((s,x)=>s+x.revenue,0);
+ if($('#trendReferralTotal'))$('#trendReferralTotal').textContent=referralTotal;
+ if($('#trendRevenueTotal'))$('#trendRevenueTotal').textContent=money(revenueTotal);
+ document.querySelectorAll('[data-trend-period]').forEach(b=>{const on=Number(b.dataset.trendPeriod)===dashboardTrendDays;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));b.onclick=()=>{dashboardTrendDays=Number(b.dataset.trendPeriod)||30;renderDashboardTrend()}});
+ document.querySelectorAll('[data-trend-metric]').forEach(b=>{const on=b.dataset.trendMetric===dashboardTrendMetric;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));b.onclick=()=>{dashboardTrendMetric=b.dataset.trendMetric||'referrals';renderDashboardTrend()}});
+ const values=buckets.map(x=>dashboardTrendMetric==='revenue'?x.revenue:x.referrals);
+ const max=Math.max(1,...values),w=680,h=220,left=42,right=14,top=18,bottom=32,plotW=w-left-right,plotH=h-top-bottom;
+ const xAt=i=>left+(buckets.length===1?0:(i/(buckets.length-1))*plotW),yAt=v=>top+plotH-(Number(v||0)/max)*plotH;
+ const pts=values.map((v,i)=>[xAt(i),yAt(v)]),line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+ const labelIdx=[0,Math.floor((buckets.length-1)/2),buckets.length-1].filter((v,i,a)=>a.indexOf(v)===i);
+ const topLabel=dashboardTrendMetric==='revenue'?money(max):String(max);
+ const metricLabel=dashboardTrendMetric==='revenue'?'Confirmed qualifying revenue':'Eligible referrals';
+ const hasActivity=values.some(v=>Number(v)>0);
+ host.innerHTML='<svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(metricLabel)+' trend for the last '+dashboardTrendDays+' days">'+
+   '<line x1="'+left+'" y1="'+(top+plotH)+'" x2="'+(w-right)+'" y2="'+(top+plotH)+'" stroke="#dfe6ec" stroke-width="1"/>'+
+   '<line x1="'+left+'" y1="'+top+'" x2="'+(w-right)+'" y2="'+top+'" stroke="#eef2f5" stroke-width="1"/>'+
+   '<text x="4" y="'+(top+4)+'" font-size="10" fill="#73818e">'+esc(topLabel)+'</text>'+
+   '<text x="20" y="'+(top+plotH+4)+'" font-size="10" fill="#73818e">0</text>'+
+   '<path d="'+line+'" fill="none" stroke="#173f62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
+   pts.map((p,i)=>((i===pts.length-1||values[i]>0)&&dashboardTrendDays<=30?'<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="3.5" fill="#c99a2e" stroke="#fff" stroke-width="1.5"/>':'')).join('')+
+   labelIdx.map(i=>'<text x="'+xAt(i).toFixed(1)+'" y="'+(h-8)+'" text-anchor="'+(i===0?'start':i===buckets.length-1?'end':'middle')+'" font-size="10" fill="#73818e">'+esc(buckets[i].date.toLocaleDateString('en-ZA',{day:'2-digit',month:'short'}))+'</text>').join('')+
+   '</svg>'+(hasActivity?'':'<div class="trendEmpty">No '+(dashboardTrendMetric==='revenue'?'confirmed qualifying revenue':'eligible referral')+' activity is recorded in this period yet.</div>');
+}
+function renderAmbassadorCalendar(){
+ const host=$('#ambassadorCalendarGrid');if(!host)return;
+ const cursor=dashboardCalendarCursor,y=cursor.getFullYear(),m=cursor.getMonth(),first=new Date(y,m,1),days=new Date(y,m+1,0).getDate(),start=(first.getDay()+6)%7;
+ const activity=new Map();
+ const mark=(v,type)=>{const k=localDateKey(v);if(!k||!k.startsWith(y+'-'+String(m+1).padStart(2,'0')))return;const set=activity.get(k)||new Set();set.add(type);activity.set(k,set)};
+ eligibleReferrals().forEach(x=>mark(x.referral_date,'referral'));
+ ledger.forEach(x=>mark(x.created_at||x.earning_month,'earning'));
+ payouts.forEach(x=>mark(x.payment_date||x.created_at,'payment'));
+ if($('#ambCalendarTitle'))$('#ambCalendarTitle').textContent=cursor.toLocaleDateString('en-ZA',{month:'long',year:'numeric'});
+ const cells=[];
+ for(let i=0;i<start;i++)cells.push('<span class="ambCalendarDate muted" aria-hidden="true"></span>');
+ const todayKey=localDateKey(new Date());
+ for(let day=1;day<=days;day++){
+   const d=new Date(y,m,day),k=localDateKey(d),types=[...(activity.get(k)||[])];
+   const dots=types.slice(0,3).map(type=>'<i class="ambCalDot '+(type==='referral'?'':type)+'"></i>').join('');
+   const label=types.length?' · '+types.map(x=>x==='referral'?'Referral':x==='earning'?'Earning':'Payment').join(', '):'';
+   cells.push('<span class="ambCalendarDate'+(k===todayKey?' today':'')+'" title="'+esc(d.toLocaleDateString('en-ZA',{day:'2-digit',month:'long',year:'numeric'})+label)+'">'+day+(dots?'<span class="ambCalDots">'+dots+'</span>':'')+'</span>');
+ }
+ host.innerHTML='<div class="ambCalendarGrid">'+['Mo','Tu','We','Th','Fr','Sa','Su'].map(x=>'<span class="ambCalendarDow">'+x+'</span>').join('')+cells.join('')+'</div>';
+ const prev=$('#ambCalPrev'),next=$('#ambCalNext'),today=$('#ambCalToday');
+ if(prev)prev.onclick=()=>{dashboardCalendarCursor=new Date(y,m-1,1);renderAmbassadorCalendar()};
+ if(next)next.onclick=()=>{dashboardCalendarCursor=new Date(y,m+1,1);renderAmbassadorCalendar()};
+ if(today)today.onclick=()=>{const n=new Date();dashboardCalendarCursor=new Date(n.getFullYear(),n.getMonth(),1);renderAmbassadorCalendar()};
+}
 async function copy(text,btn){if(!text)return;try{await navigator.clipboard.writeText(text);let old=btn.textContent;btn.textContent='Copied ✓';setTimeout(()=>btn.textContent=old,1200)}catch{alert(text)}}
 async function downloadResource(resource,btn){
  if(!resource?.file_url)return;
@@ -197,6 +284,10 @@ function render(){
  $('#copyCode').onclick=()=>copy(app.referral_code,$('#copyCode'));$('#copyLink').onclick=()=>copy(referralLink(),$('#copyLink'));
  if(next){let remain=Math.max(0,next.min-life),pct=Math.max(0,Math.min(100,(life-r.min)/(next.min-r.min)*100));$('#nextRank').textContent='Current rank: '+r.n+'. '+money(remain)+' more lifetime qualifying revenue to reach '+next.n+'.';$('#progressBar').style.width=pct+'%'}else{$('#nextRank').textContent='Elite rank achieved.';$('#progressBar').style.width='100%'}
  $('#monthlyTarget').textContent=r.pay?'Monthly Performance Payment eligibility at this rank: up to '+money(r.pay)+', subject to monthly performance verification.':'Monthly Performance Payments begin at Gold / Level 4.';
+ renderPerformanceOverview(total,commission,bonus,performance,life,r,next,awaiting);
+ renderDashboardTrend();
+ renderAmbassadorCalendar();
+ arrangeDashboard();
  document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>showSection(b.dataset.go));const qcl=$('#quickCopyLink');if(qcl)qcl.onclick=()=>copy(referralLink(),qcl);renderReferrals();renderLedger();renderPayouts();renderProfile();renderAgreement();renderSupportHub();renderRecentActivity();renderRankProgress();renderReferralAccount();
 }
 
