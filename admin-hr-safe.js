@@ -430,6 +430,91 @@ function disciplinaryTimeline(caseId){
   }).join('')||'<div class="hrMeta">No case-history events recorded yet.</div>';
   return '<div class="hrCaseTimeline">'+html+'</div>'+pager('disciplinaryEvents',rows.length,'case events');
 }
+
+function disciplinaryCodeVersion(){
+  return (D.hr_disciplinary_code_versions||[]).find(x=>x.code_reference==='FOA-HR-DISC-001'&&x.status==='active')
+    ||(D.hr_disciplinary_code_versions||[]).find(x=>x.code_reference==='FOA-HR-DISC-001'&&x.status==='draft')
+    ||(D.hr_disciplinary_code_versions||[]).find(x=>x.code_reference==='FOA-HR-DISC-001')
+    ||null;
+}
+function disciplinaryCodeGuideRows(){
+  const v=disciplinaryCodeVersion();
+  return (D.hr_disciplinary_sanction_guide||[]).filter(x=>x.active&&x.code_version_id===v?.id).sort((a,b)=>n(a.sort_order)-n(b.sort_order));
+}
+function disciplinaryCodeAck(profileId){
+  const v=disciplinaryCodeVersion();
+  return (D.hr_disciplinary_code_acknowledgements||[]).find(x=>x.code_version_id===v?.id&&x.profile_id===profileId)||null;
+}
+function foaGuideForRule(ruleCode){
+  return disciplinaryCodeGuideRows().filter(x=>x.related_rule_code===ruleCode);
+}
+function disciplinaryCodeMatrix(){
+  const rows=disciplinaryCodeGuideRows(),pg=paged(rows,'disciplinaryCode');
+  const body=pg.map(x=>`<tr>
+    <td><b>${esc(x.offence_code)}</b><div class="hrMeta">${esc(x.category)}</div></td>
+    <td>${esc(x.misconduct_example)}</td>
+    <td>${esc(x.first_occurrence_guidance)}</td>
+    <td>${esc(x.repeated_occurrence_guidance)}</td>
+    <td>${esc(x.serious_case_guidance)}</td>
+    <td>${esc(x.important_note||'—')}</td>
+  </tr>`).join('')||'<tr><td colspan="6">No FOA disciplinary-code guidance loaded.</td></tr>';
+  return `<div class="hrTableWrap"><table class="hrTable"><tr><th>FOA Code</th><th>Example / Standard</th><th>Normal First Response</th><th>If Repeated</th><th>If Serious</th><th>Important Fairness Note</th></tr>${body}</table></div>${pager('disciplinaryCode',rows.length,'FOA code items')}`;
+}
+function disciplinaryAcknowledgementRegister(){
+  const v=disciplinaryCodeVersion(),rows=(D.profiles||[]).filter(p=>low(p.role)==='staff'),pg=paged(rows,'disciplinaryAck');
+  const body=pg.map(p=>{
+    const a=disciplinaryCodeAck(p.id),active=v?.status==='active';
+    const action=!active
+      ?'<span class="hrMeta">Available after owner activates this code version.</span>'
+      :a?.acknowledged_at
+        ?'<span class="hrPill completed">ACKNOWLEDGED</span>'
+        :`<button class="hrBtn alt" data-code-issue="${p.id}">${a?.issued_at?'Re-issue':'Record Issued'}</button> <button class="hrBtn" data-code-ack="${p.id}">Record Acknowledgement</button>`;
+    return `<tr>
+      <td><b>${esc(p.full_name||p.email)}</b><div class="hrMeta">${esc(p.staff_number||p.job_title||'Staff')}</div></td>
+      <td>${a?.issued_at?fmt(a.issued_at):'Not issued'}</td>
+      <td>${a?.acknowledged_at?fmt(a.acknowledged_at):'Not acknowledged'}</td>
+      <td>${esc(a?.acknowledgement_method?String(a.acknowledgement_method).replaceAll('_',' '):'—')}</td>
+      <td>${esc(a?.acknowledgement_note||'—')}</td>
+      <td>${action}</td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="6">No Staff profiles currently require a disciplinary-code acknowledgement.</td></tr>';
+  return `<div class="hrTableWrap"><table class="hrTable"><tr><th>Staff Member</th><th>Code Issued</th><th>Acknowledged</th><th>Method</th><th>Note</th><th>Action</th></tr>${body}</table></div>${pager('disciplinaryAck',rows.length,'staff acknowledgements')}`;
+}
+function disciplinaryCodePanel(){
+  const v=disciplinaryCodeVersion();
+  if(!v)return '<div class="hrCaseBox"><h3>FOA Staff Disciplinary Code</h3><div class="hrAlert">FOA disciplinary-code data is unavailable. Refresh and check the HR loading warning.</div></div>';
+  const draft=v.status==='draft';
+  return `<div class="hrCaseBox">
+    <div class="hrBar" style="justify-content:space-between;align-items:flex-start">
+      <div><h3 style="margin:0">Funda Online Academy Staff Disciplinary Code</h3><div class="hrMeta"><b>${esc(v.code_reference)} · ${esc(v.version_label)}</b> · Status: ${esc(String(v.status).toUpperCase())}${v.effective_date?' · Effective '+esc(v.effective_date):''}</div></div>
+      ${draft?'<button class="hrBtn" id="hdActivateCode">Activate After Owner Approval</button>':''}
+    </div>
+    ${draft?'<div class="hrWarn"><b>Draft v1.0 — pending owner physical review.</b> It cannot yet be treated as the issued Staff policy or used to mark staff acknowledgements.</div>':''}
+    <div class="hrConfidential"><b>Purpose:</b> ${esc(v.purpose)}</div>
+    <div class="hrGrid">
+      <div><b>Small-business approach</b><div class="hrMeta">${esc(v.small_business_statement)}</div></div>
+      <div><b>Legal basis</b><div class="hrMeta">${esc(v.legal_basis)}</div></div>
+    </div>
+    <div class="hrConfidential"><b>How to read this Code:</b> ${esc(v.employee_notice)}</div>
+
+    <h4 style="margin:14px 0 8px">FOA Progressive Discipline Ladder</h4>
+    <div class="hrProcess">
+      <div class="hrProcessStep"><b>1 · Documented discussion / counselling</b><span>For suitable minor first issues. Clarify the rule, hear the explanation and correct behaviour. This is not a formal warning.</span></div>
+      <div class="hrProcessStep"><b>2 · Verbal warning</b><span>A formal but proportionate warning that is recorded where informal correction was insufficient or the first breach warrants a warning.</span></div>
+      <div class="hrProcessStep"><b>3 · Written warning</b><span>For repeated or more significant misconduct after facts, response, circumstances and consistency have been considered.</span></div>
+      <div class="hrProcessStep"><b>4 · Final written warning</b><span>For serious or repeated misconduct where a final corrective opportunity is appropriate.</span></div>
+      <div class="hrProcessStep"><b>5 · Possible dismissal</b><span>Only after a fair process where serious/repeated proven misconduct makes continued employment intolerable. It is never automatic.</span></div>
+    </div>
+    <div class="hrMeta">The steps are guidance, not a rigid tariff. FOA may use a lighter or stronger step where the facts justify it, and must record why. Warning validity is set in the individual outcome; it is not assumed automatically by this table.</div>
+
+    <h4 style="margin:14px 0 8px">FOA Misconduct & Sanction Guidance</h4>
+    ${disciplinaryCodeMatrix()}
+
+    <h4 style="margin:14px 0 8px">Staff Awareness & Acknowledgement</h4>
+    <div class="hrMeta" style="margin-bottom:8px">Once this version is owner-approved and activated, HR can record when each Staff member received the Code and how acknowledgement was obtained. Acknowledgement proves communication of the policy; it does not remove the employee's right to challenge an allegation or sanction.</div>
+    ${disciplinaryAcknowledgementRegister()}
+  </div>`;
+}
 function disciplinaryGuide(){
   return `<div class="hrConfidential"><b>Staff discipline only.</b> This workspace is for employees/Staff, not learners. An allegation is not a finding of guilt. Poor performance, illness, injury or other incapacity must not be disguised as misconduct; route those matters through the appropriate performance/incapacity process.</div>
     <div class="hrProcess">
