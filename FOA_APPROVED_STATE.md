@@ -642,3 +642,20 @@ The owner explicitly reopened **only** the HR area required to add future **Work
 - Published market-reference ranges, legal wage-floor data and FOA affordability guidance may appear inside Workforce & Compensation Planning, but **no salary/rate is owner-approved merely because guidance is displayed or copied into a draft plan**. A saved Planning record remains an assumption; operational remuneration requires the approved employment/payroll workflow.
 - The new Workforce & Compensation Planning area remains **unlocked pending the owner's physical review and later approval**.
 
+### Admin HR & Team — FINAL OWNER-APPROVED AND RELOCKED AFTER WORKFORCE & DISCIPLINARY COMPLETION (23 September 2026)
+
+The owner explicitly approved **Admin → HR & Team** for final lock, then paused that lock only to complete the new Workforce & Compensation planning and Staff Disciplinary & Conduct controls. Those additions are now part of the owner-approved HR checkpoint.
+
+- **HR & Team is again a fully change-controlled protected Admin surface.** Do not alter Team & Access, Staff Invitation History, Contracts & Documents, Leave & Attendance, Safety & Wellbeing, Training & Performance, Workforce & Compensation, Disciplinary & Conduct, HR Audit Trail, SA Labour Compliance, Staff Portal handoff, typography/readability, pagination or HR data-loading behaviour unless Aziwe Futhe explicitly reopens the affected HR area.
+- Workforce & Compensation remains a **planning-only** workspace. Market/legal compensation guidance and affordability calculations do not create staff, contracts, payroll, P&L expenses or owner-approved salaries merely by being displayed or copied into a draft plan.
+- Staff disciplinary records are **Staff-only**, not Student discipline. A case begins as an allegation, not a finding of guilt.
+- The Disciplinary & Conduct workflow must preserve fact-finding, proportionate informal/progressive correction for appropriate minor matters, fair notice, reasonable preparation/opportunity to respond, permitted representation, reasonable language assistance, evidence/history, written reasons, mitigation/aggravation/consistency considerations, and the guarded internal review record.
+- Where a Staff member is identified as a trade-union representative/office-bearer, the workflow must preserve the consultation safeguard before formal discipline proceeds.
+- Poor performance, illness, injury or other incapacity must not be automatically classified as misconduct; those matters remain separate from the misconduct workflow.
+- A recorded dismissal outcome must **never automatically deactivate the Staff account, terminate a contract or trigger payroll/offboarding**. Operational employment termination actions remain separate governed decisions/workflows.
+- Internal review/appeal records must remain authoritative: an overturned outcome clears the disciplinary sanction, and a varied outcome must record the revised finding/sanction rather than leaving the original outcome looking active.
+- Dynamic HR records may continue through the approved workflows. The lock protects the structure, permissions, rules and behaviour, not legitimate operational HR data.
+- Growing HR registers, including Workforce plans, disciplinary cases and disciplinary case-history events, remain subject to the Academy maximum of **10 visible records per page** with Previous/Next where needed.
+- Work in Finance, Petty Cash, Academic, CEO Account Control, Digital Library or any other Admin area does **not** reopen HR & Team.
+- A newly discovered HR defect or a required legal-reference update is a change request and requires explicit owner approval before changing this locked workspace.
+
