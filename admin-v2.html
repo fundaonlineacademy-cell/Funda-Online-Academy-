@@ -18,8 +18,9 @@
       // perform a second late scroll restoration that makes the shell jump.
       if('scrollRestoration' in history)history.scrollRestoration='manual';
       try{
+        const navType=performance.getEntriesByType('navigation')[0]?.type||'navigate';
         const fromLogin=new URL(document.referrer||'',location.href);
-        if(fromLogin.origin===location.origin&&/\/login\.html$/i.test(fromLogin.pathname)){
+        if(navType==='navigate'&&fromLogin.origin===location.origin&&/\/login\.html$/i.test(fromLogin.pathname)){
           localStorage.removeItem('funda_admin_current_section_v1');
           if(location.hash)history.replaceState(history.state,'',location.pathname+location.search);
         }
