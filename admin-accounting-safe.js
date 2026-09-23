@@ -591,13 +591,15 @@ function pettyVoucherRows(fundId){
     return `<tr>
       <td><b>${esc(x.voucher_number)}</b><div class="acMeta">${day(x.expense_date)}</div></td>
       <td>${esc(x.category)}</td><td>${esc(x.payee||'—')}</td><td>${esc(x.description)}</td>
-      <td><b>${money(x.amount)}</b></td><td>${esc(x.department||'—')}</td>
+      <td><b>${money(x.amount)}</b><div class="acMeta">ZAR</div></td>
+      <td>${esc(vatLabel(x.vat_treatment))}<div class="acMeta">${x.vat_treatment==='vat_included'?'VAT component '+money(x.vat_amount)+' · Net '+money(x.net_amount):'VAT tracked '+money(x.vat_amount)}</div></td>
+      <td>${esc(x.department||'—')}</td>
       <td>${evidence?'<a href="'+esc(evidence)+'" target="_blank" rel="noopener">Open receipt ↗</a>':esc(x.evidence_note||'—')}</td>
       <td>${pill(x.status)}${x.review_note?'<div class="acMeta">'+esc(x.review_note)+'</div>':''}${x.void_reason?'<div class="acMeta">'+esc(x.void_reason)+'</div>':''}</td>
       <td>${action}</td>
     </tr>`;
-  }).join('')||'<tr><td colspan="9"><div class="acMeta">No petty cash vouchers recorded.</div></td></tr>';
-  return {rows,pg,html:`<div class="acTableWrap"><table class="acTable"><thead><tr><th>Voucher / Date</th><th>Expense Category</th><th>Payee</th><th>Description</th><th>Amount</th><th>Department</th><th>Evidence</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="pcVoucherPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="pcVoucherNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>`};
+  }).join('')||'<tr><td colspan="10"><div class="acMeta">No petty cash vouchers recorded.</div></td></tr>';
+  return {rows,pg,html:`<div class="acTableWrap"><table class="acTable"><thead><tr><th>Voucher / Date</th><th>Expense Category</th><th>Payee</th><th>Reason</th><th>Total Amount</th><th>VAT</th><th>Department</th><th>Evidence</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="pcVoucherPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="pcVoucherNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>`};
 }
 function pettyReconRows(fundId){
   const rows=(S.pettyRecons||[]).filter(x=>x.fund_id===fundId),pg=pageRows(rows,pettyReconPage);pettyReconPage=pg.page;
