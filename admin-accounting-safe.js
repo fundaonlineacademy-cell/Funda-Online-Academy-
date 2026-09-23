@@ -141,7 +141,10 @@ function pageRows(rows,page){
   return {page,max,start,end:Math.min(start+PAGE_SIZE,rows.length),rows:rows.slice(start,start+PAGE_SIZE)};
 }
 function actualCashRows(type=''){
-  return S.cash.filter(x=>(!type||low(x.entry_type)===type)&&low(x.posting_status||'posted')==='posted'&&x.entry_date<=today());
+  return S.cash.filter(x=>(!type||low(x.entry_type)===type)&&low(x.posting_status||'posted')==='posted'&&x.entry_date<=today()&&low(x.source_type||'manual')!=='adjustment');
+}
+function adjustmentRows(){
+  return S.cash.filter(x=>low(x.posting_status||'posted')==='posted'&&x.entry_date<=today()&&low(x.source_type||'manual')==='adjustment');
 }
 function futurePosted(){
   return S.cash.filter(x=>low(x.posting_status||'posted')==='posted'&&x.entry_date>today());
@@ -165,7 +168,8 @@ function targetProgress(actual,target){
   return Math.max(0,Math.min(100,actual/target*100));
 }
 function overview(){
-  const m=currentMonthPnl||{},fy=currentFyPnl||{},set=settings(),target=n(set.annual_turnover_target),pct=targetProgress(n(fy.turnover),target);
+  const m=normalisePnl(currentMonthPnl||{}),fy=normalisePnl(currentFyPnl||{}),set=settings(),target=n(set.annual_turnover_target);
+  const fyRangeNow=fyRange(currentFyStartYear()),targetActive=fyRangeNow[0]>=(set.financial_year_anchor||'2026-10-01'),pct=targetActive?targetProgress(n(fy.turnover),target):0;
   const future=loaded.cash?futurePosted():[];
   const duplicateKeys=new Map();
   if(loaded.cash)for(const x of S.cash){
@@ -178,24 +182,23 @@ function overview(){
     <div class="acPanel">
       <h3>Current Month Management Result</h3>
       <div class="acMeta">Verified tuition / training receipts: <b>${money(m.tuition_revenue)}</b></div>
-      <div class="acMeta">Other confirmed income: <b>${money(n(m.operating_cash_income)+n(m.other_income))}</b></div>
+      <div class="acMeta">Other recognised income: <b>${money(n(m.total_income)-n(m.turnover))}</b></div>
       <div class="acMeta">Expenses recognised to date: <b>${money(m.total_expenses)}</b></div>
-      <div class="acMeta">Net surplus / (loss): <b>${money(m.net_result)}</b></div>
+      <div class="acMeta">Net profit / (loss): <b>${money(m.net_result)}</b></div>
       ${n(m.future_posted_records)?'<div class="acFuture">'+n(m.future_posted_records)+' future-dated posted item(s), '+money(m.future_posted_amount)+', excluded until their date arrives.</div>':''}
     </div>
     <div class="acPanel">
       <h3>Annual Turnover Target</h3>
       <div class="acMeta">Management financial year: <b>1 October - 30 September</b></div>
-      <div class="acMeta">FY target: <b>${money(target)}</b></div>
-      <div class="acMeta">Actual turnover so far: <b>${money(fy.turnover)}</b> · ${pct.toFixed(1)}%</div>
-      <div class="acTarget"><i style="width:${pct}%"></i></div>
-      <div class="acMeta" style="margin-top:6px">Remaining to target: <b>${money(Math.max(0,target-n(fy.turnover)))}</b> · Monthly planning target: <b>${money(target/12)}</b></div>
+      <div class="acMeta">Actual turnover in current FY: <b>${money(fy.turnover)}</b></div>
+      ${targetActive?'<div class="acMeta">FY target: <b>'+money(target)+'</b> · '+pct.toFixed(1)+'%</div><div class="acTarget"><i style="width:'+pct+'%"></i></div><div class="acMeta" style="margin-top:6px">Remaining to target: <b>'+money(Math.max(0,target-n(fy.turnover)))+'</b> · Monthly planning target: <b>'+money(target/12)+'</b></div>':'<div class="acInfo" style="margin-top:8px">The configured annual turnover target begins on <b>'+day(set.financial_year_anchor)+'</b>. Current pre-anchor turnover is shown without applying that future target.</div>'}
     </div>
   </div>
   <div class="acGrid" style="margin-top:9px">
     <div class="acPanel">
       <h3>Cashbook Controls</h3>
-      <div class="acMeta">Actual posted entries to date: <b>${loaded.cash?actualCashRows().length:'—'}</b></div>
+      <div class="acMeta">Actual cash / bank entries to date: <b>${loaded.cash?actualCashRows().length:'—'}</b></div>
+      <div class="acMeta">Accounting adjustments: <b>${loaded.cash?adjustmentRows().length:'—'}</b></div>
       <div class="acMeta">Planned / scheduled items: <b>${loaded.cash?plannedRows().length:'—'}</b></div>
       <div class="acMeta">Voided records retained for audit: <b>${loaded.cash?voidedRows().length:'—'}</b></div>
       <div class="acMeta">Unreconciled actual entries: <b>${loaded.cash?actualCashRows().filter(x=>x.reconciliation_status!=='reconciled').length:'—'}</b></div>
@@ -214,20 +217,21 @@ function entryForm(type){
   return `
   <div class="acPanel">
     <h3>Add ${type==='income'?'Income':'Expense'}</h3>
-    <p class="acMeta">Use <b>Posted actual</b> only for transactions that have happened. Use <b>Planned / scheduled</b> for future or recurring items.</p>
+    <p class="acMeta">Use <b>Posted actual</b> only for transactions that have happened. Use <b>Planned / scheduled</b> for future or recurring cash items. Use <b>Accounting adjustment</b> only for approved non-cash journals such as depreciation or accountant-approved adjustments.</p>
+    ${type==='income'?'<div class="acInfo"><b>Student receipts:</b> verified Student tuition/registration payments are recognised automatically from Payments. Do not duplicate them as manual Income.</div>':''}
     <div class="acForm">
+      <select class="acSelect" id="aeBasis"><option value="cash">Cash / bank transaction</option><option value="adjustment">Accounting adjustment (non-cash)</option></select>
       <select class="acSelect" id="aePosting"><option value="posted">Posted actual</option><option value="planned">Planned / scheduled</option></select>
       <select class="acSelect" id="aeRecurrence"><option value="none">One-off</option><option value="monthly">Monthly recurring</option></select>
       <input type="date" class="acInput" id="aeDate" value="${today()}">
       <select class="acSelect" id="aeCat">${options(type)}</select>
       <input class="acInput" id="aeParty" placeholder="${type==='income'?'Source / payer':'Supplier / payee'}">
       <input class="acInput" id="aeRef" placeholder="Reference / receipt no.">
-      <select class="acSelect" id="aeMethod"><option>EFT</option><option>Bank Transfer</option><option>Card</option><option>Cash</option><option>Bank Deposit</option><option>Other</option></select>
-      <input class="acInput" id="aeDept" placeholder="Department">
+      <select class="acSelect" id="aeMethod"><option>EFT</option><option>Bank Transfer</option><option>Card</option><option>Cash</option><option>Bank Deposit</option><option>Other</option><option>Non-cash Adjustment</option></select>
+      <input class="acInput" id="aeDept" placeholder="Department / cost centre">
       <input class="acInput" id="aeTax" placeholder="Tax treatment / accountant note (optional)">
       <input class="acInput" id="aeAmount" type="number" min="0" step="0.01" placeholder="Amount">
       <input class="acInput" id="aeReceipt" placeholder="Receipt / evidence URL (optional)">
-      <div></div>
       <textarea class="acText acWide" id="aeDesc" placeholder="Description / accounting note"></textarea>
     </div>
     <div class="acBar"><button class="acBtn ${type==='expense'?'bad':'ok'}" id="aeSave">Save ${type==='income'?'Income':'Expense'}</button></div>
@@ -245,16 +249,17 @@ function cashbookPanel(type=''){
     <td>${day(x.entry_date)}${x.entry_date>today()&&low(x.posting_status||'posted')==='posted'?'<div class="acFuture">Future-dated posted</div>':''}</td>
     <td>${pill(x.entry_type)}</td><td>${esc(x.category)}</td><td>${esc(x.counterparty||'—')}</td>
     <td>${esc(x.description)}</td><td>${esc(x.reference_number||'—')}</td><td>${esc(x.department||'—')}</td>
+    <td>${low(x.source_type)==='adjustment'?'<span class="acPill">non-cash adjustment</span>':esc(x.source_type==='student_payment'?'verified student payment':'cash / bank')}</td>
     <td><b>${money(x.amount)}</b></td><td>${pill(x.posting_status||'posted')}<div class="acMeta">${x.recurrence==='monthly'?'Monthly recurring':''}</div></td>
-    <td>${pill(x.reconciliation_status||'unreconciled')}</td>
+    <td>${low(x.source_type)==='adjustment'?'<span class="acMeta">Not bank-reconciled</span>':pill(x.reconciliation_status||'unreconciled')}</td>
     <td><div class="acBar" style="margin:0">${x.posting_status==='planned'?'<button class="acBtn ok" data-post="'+x.id+'">Post</button>':''}${x.posting_status!=='voided'?'<button class="acBtn bad" data-void="'+x.id+'">Void</button>':'<span class="acMeta">'+esc(x.void_reason||'Voided')+'</span>'}</div></td>
-  </tr>`).join('')||'<tr><td colspan="11"><div class="acMeta">No accounting entries match this view.</div></td></tr>';
+  </tr>`).join('')||'<tr><td colspan="12"><div class="acMeta">No accounting entries match this view.</div></td></tr>';
   return `
   <div class="acPanel" style="margin-top:9px">
     <div class="acBar" style="justify-content:space-between"><div><h3>${type==='income'?'Income Register':type==='expense'?'Expense Register':'Cashbook Register'}</h3><p class="acMeta">Posted, planned and voided records remain visible for audit integrity.</p></div>
       <select id="acStatusFilter" class="acSelect"><option value="">All posting states</option><option value="posted" ${status==='posted'?'selected':''}>Posted</option><option value="planned" ${status==='planned'?'selected':''}>Planned</option><option value="voided" ${status==='voided'?'selected':''}>Voided</option></select>
     </div>
-    <div class="acTableWrap"><table class="acTable"><thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Counterparty</th><th>Description</th><th>Reference</th><th>Department</th><th>Amount</th><th>Posting</th><th>Recon</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div>
+    <div class="acTableWrap"><table class="acTable"><thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Counterparty</th><th>Description</th><th>Reference</th><th>Department</th><th>Basis</th><th>Amount</th><th>Posting</th><th>Recon</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div>
     <div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="acPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="acNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>
   </div>`;
 }
@@ -383,25 +388,27 @@ async function audit(action,id,details,status='recorded'){
   }catch(e){console.warn('Finance audit log',e)}
 }
 async function saveEntry(type){
-  const amount=Number($('aeAmount').value),category=$('aeCat').value,description=$('aeDesc').value.trim(),date=$('aeDate').value||today(),posting=$('aePosting').value,recurrence=$('aeRecurrence').value;
+  const amount=Number($('aeAmount').value),category=$('aeCat').value,description=$('aeDesc').value.trim(),date=$('aeDate').value||today(),basis=$('aeBasis').value;
+  let posting=$('aePosting').value,recurrence=$('aeRecurrence').value;
   if(!category||!description||!(amount>0))return alert('Category, description and a valid amount are required.');
+  if(basis==='adjustment'){posting='posted';recurrence='none'}
   if(posting==='posted'&&date>today())return alert('A future-dated transaction must be saved as Planned / scheduled. It cannot be posted as an actual transaction yet.');
   if(posting==='posted'&&recurrence==='monthly')return alert('Monthly recurrence belongs to Planned / scheduled items. Choose Planned / scheduled for recurring transactions.');
 
   const ref=$('aeRef').value.trim(),party=$('aeParty').value.trim();
   const dup=S.cash.find(x=>low(x.posting_status||'posted')!=='voided'&&x.entry_date===date&&low(x.entry_type)===type&&Number(x.amount||0).toFixed(2)===amount.toFixed(2)&&low(x.category)===low(category)&&((ref&&low(x.reference_number)===low(ref))||(!ref&&low(x.counterparty)===low(party)&&low(x.description)===low(description))));
-  if(dup&&!confirm('A very similar cashbook record already exists for '+day(dup.entry_date)+' at '+money(dup.amount)+'. Save another record anyway?'))return;
+  if(dup&&!confirm('A very similar accounting record already exists for '+day(dup.entry_date)+' at '+money(dup.amount)+'. Save another record anyway?'))return;
 
   const u=(await db.auth.getUser()).data.user;
   const payload={
     entry_type:type,category,description,amount,entry_date:date,counterparty:party||null,reference_number:ref||null,
-    payment_method:$('aeMethod').value,department:$('aeDept').value.trim()||'Finance & Accounting',
+    payment_method:basis==='adjustment'?'Non-cash Adjustment':$('aeMethod').value,department:$('aeDept').value.trim()||'Finance & Accounting',
     tax_treatment:$('aeTax').value.trim()||null,receipt_url:$('aeReceipt').value.trim()||null,
-    created_by:u?.id||null,source_type:'manual',posting_status:posting,recurrence:posting==='planned'?recurrence:'none'
+    created_by:u?.id||null,source_type:basis==='adjustment'?'adjustment':'manual',posting_status:posting,recurrence:posting==='planned'?recurrence:'none'
   };
   const q=await db.from('admin_cashbook').insert(payload).select().single();
   if(q.error)return alert(q.error.message);
-  await audit('Accounting '+type+' '+(posting==='planned'?'planned':'recorded'),q.data.id,{amount,category,date,posting,recurrence});
+  await audit('Accounting '+type+' '+(posting==='planned'?'planned':basis==='adjustment'?'adjustment recorded':'recorded'),q.data.id,{amount,category,date,posting,recurrence,basis});
   await open();render(type==='income'?'income':'expenses');
 }
 async function postPlanned(id){
@@ -521,7 +528,8 @@ function cashbookReportRows(month){
   return S.cash.filter(x=>x.entry_date>=from&&x.entry_date<=to).map(x=>({
     Date:day(x.entry_date),Type:x.entry_type,Category:x.category,Counterparty:x.counterparty||'',Description:x.description,
     Reference:x.reference_number||'','Payment Method':x.payment_method||'',Department:x.department||'',Amount:n(x.amount),
-    'Posting Status':x.posting_status||'posted',Recurrence:x.recurrence||'none','Reconciliation Status':x.reconciliation_status||'unreconciled',
+    'Basis / Source':x.source_type==='adjustment'?'Non-cash adjustment':x.source_type==='student_payment'?'Verified student payment':'Cash / bank',
+    'Posting Status':x.posting_status||'posted',Recurrence:x.recurrence||'none','Reconciliation Status':x.source_type==='adjustment'?'not applicable':(x.reconciliation_status||'unreconciled'),
     'Void Reason':x.void_reason||''
   }));
 }
@@ -542,8 +550,14 @@ function wire(){
   document.querySelectorAll('[data-void]').forEach(b=>b.onclick=()=>voidEntry(b.dataset.void));
   if(['income','expenses'].includes(tab)){
     $('aeSave').onclick=()=>saveEntry(tab==='income'?'income':'expense');
-    $('aePosting').onchange=()=>{$('aeRecurrence').disabled=$('aePosting').value!=='planned';if($('aePosting').value!=='planned')$('aeRecurrence').value='none'};
-    $('aeRecurrence').disabled=true;
+    const syncEntryControls=()=>{
+      const adj=$('aeBasis').value==='adjustment';
+      if(adj){$('aePosting').value='posted';$('aePosting').disabled=true;$('aeRecurrence').value='none';$('aeRecurrence').disabled=true;$('aeMethod').value='Non-cash Adjustment';$('aeMethod').disabled=true}
+      else{$('aePosting').disabled=false;$('aeMethod').disabled=false;if($('aeMethod').value==='Non-cash Adjustment')$('aeMethod').value='EFT';$('aeRecurrence').disabled=$('aePosting').value!=='planned';if($('aePosting').value!=='planned')$('aeRecurrence').value='none'}
+    };
+    $('aeBasis').onchange=syncEntryControls;
+    $('aePosting').onchange=syncEntryControls;
+    syncEntryControls();
   }
   if(['income','expenses','cashbook'].includes(tab)){
     $('acStatusFilter')?.addEventListener('change',()=>{cashPage=1;render(tab)});
