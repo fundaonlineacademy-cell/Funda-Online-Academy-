@@ -536,6 +536,65 @@ async function setSafety(id,status){
   await audit('safety_incident_'+status,'hr_safety_incident',id,x.profile_id,{from:x.status,to:status,action_taken:patch.action_taken||x.action_taken||null});
   await open();render('safety');
 }
+function syncWorkforceFields(){
+  const hourly=$('hwBasis')?.value==='hourly';
+  if($('hwMonthlyRate'))$('hwMonthlyRate').disabled=hourly;
+  if($('hwHourlyRate'))$('hwHourlyRate').disabled=!hourly;
+  if($('hwWeeklyHours'))$('hwWeeklyHours').disabled=!hourly;
+}
+function editWorkforcePlan(id){
+  const x=(D.hr_workforce_plans||[]).find(r=>r.id===id);
+  if(!x)return;
+  workforceEditId=id;
+  render('workforce');
+  setTimeout(()=>document.getElementById('hwRole')?.scrollIntoView({behavior:'smooth',block:'center'}),20);
+}
+async function saveWorkforcePlan(){
+  const role_title=$('hwRole').value.trim(),department=$('hwDept').value,employment_model=$('hwModel').value,pay_basis=$('hwBasis').value;
+  const monthly_rate=Number($('hwMonthlyRate').value||0),hourly_rate=Number($('hwHourlyRate').value||0),planned_weekly_hours=Number($('hwWeeklyHours').value||0);
+  const planned_headcount=Number($('hwHeadcount').value||0),employer_cost_per_person=Number($('hwEmployerCost').value||0),other_monthly_cost_per_person=Number($('hwOtherCost').value||0);
+  const startRaw=$('hwStart').value,endRaw=$('hwEnd').value,status=$('hwStatus').value,notes=$('hwNotes').value.trim()||null;
+  if(!role_title)return alert('Enter the future role title.');
+  if(!department)return alert('Choose the department.');
+  if(!startRaw)return alert('Choose the planned start month.');
+  if(!Number.isInteger(planned_headcount)||planned_headcount<1)return alert('Planned headcount must be at least 1.');
+  if([monthly_rate,hourly_rate,planned_weekly_hours,employer_cost_per_person,other_monthly_cost_per_person].some(v=>!Number.isFinite(v)||v<0))return alert('Rates, hours and on-costs must be zero or greater.');
+  if(planned_weekly_hours>168)return alert('Planned weekly hours cannot exceed 168.');
+  if(endRaw&&endRaw<startRaw)return alert('Planned end month cannot be before the start month.');
+  if(status==='approved_plan'){
+    if(pay_basis==='monthly'&&monthly_rate<=0)return alert('Set the monthly rate before marking this as an Approved plan.');
+    if(pay_basis==='hourly'&&(hourly_rate<=0||planned_weekly_hours<=0))return alert('Set both the hourly rate and planned weekly hours before marking this as an Approved plan.');
+  }
+  const u=await me();
+  const payload={
+    role_title,department,employment_model,pay_basis,
+    monthly_rate:pay_basis==='monthly'?monthly_rate:0,
+    hourly_rate:pay_basis==='hourly'?hourly_rate:0,
+    planned_weekly_hours:pay_basis==='hourly'?planned_weekly_hours:0,
+    planned_headcount,employer_cost_per_person,other_monthly_cost_per_person,
+    start_month:startRaw+'-01',end_month:endRaw?endRaw+'-01':null,status,notes,
+    updated_by:u?.id||null,updated_at:new Date().toISOString()
+  };
+  let r;
+  if(workforceEditId){
+    r=await db.from('hr_workforce_plans').update(payload).eq('id',workforceEditId).select('id').single();
+  }else{
+    payload.created_by=u?.id||null;
+    r=await db.from('hr_workforce_plans').insert(payload).select('id').single();
+  }
+  if(r.error)return alert('Workforce plan could not be saved: '+r.error.message);
+  await audit(workforceEditId?'workforce_plan_updated':'workforce_plan_created','hr_workforce_plan',r.data.id,null,{
+    role_title,department,employment_model,pay_basis,
+    monthly_rate:payload.monthly_rate,hourly_rate:payload.hourly_rate,
+    planned_weekly_hours:payload.planned_weekly_hours,planned_headcount,
+    employer_cost_per_person,other_monthly_cost_per_person,
+    start_month:payload.start_month,end_month:payload.end_month,status
+  });
+  workforceEditId=null;
+  await load();
+  await loadWorkforceSummary(workforceMonth);
+  render('workforce');
+}
 async function open(){css();await load();if(currentTab==='workforce')await loadWorkforceSummary(workforceMonth);render(currentTab)}
 function install(){
   css();
