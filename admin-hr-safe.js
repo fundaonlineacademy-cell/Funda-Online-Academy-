@@ -4,7 +4,7 @@ if(!/admin-v2\.html$/i.test(location.pathname))return;
 window.__fundaHrAuthoritativeLoader=true;
 
 let db,D={},loadErrors=[],currentTab='team',workforceMonth='2026-10-01',workforceSummary=null,workforceSummaryError='',workforceEditId=null,disciplinaryCaseId=null;
-const PAGE_SIZE=10,pages={team:1,invitations:1,contracts:1,documents:1,leave:1,safety:1,training:1,performance:1,workforce:1,disciplinary:1,disciplinaryEvents:1,audit:1};
+const PAGE_SIZE=10,pages={team:1,invitations:1,contracts:1,documents:1,leave:1,safety:1,training:1,performance:1,workforce:1,disciplinary:1,disciplinaryEvents:1,disciplinaryCode:1,disciplinaryAck:1,audit:1};
 const $=x=>document.getElementById(x);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const low=v=>String(v||'').toLowerCase();
@@ -83,6 +83,9 @@ async function load(){
     ['hr_disciplinary_rules','*','sort_order'],
     ['hr_disciplinary_cases','*','created_at'],
     ['hr_disciplinary_events','*','event_at'],
+    ['hr_disciplinary_code_versions','*','created_at'],
+    ['hr_disciplinary_sanction_guide','*','sort_order'],
+    ['hr_disciplinary_code_acknowledgements','*','created_at'],
     ['hr_audit_log','*','created_at']
   ];
   await Promise.all(specs.map(async([name,fields,order])=>{
