@@ -147,7 +147,7 @@ function adjustmentRows(){
   return S.cash.filter(x=>low(x.posting_status||'posted')==='posted'&&x.entry_date<=today()&&low(x.source_type||'manual')==='adjustment');
 }
 function futurePosted(){
-  return S.cash.filter(x=>low(x.posting_status||'posted')==='posted'&&x.entry_date>today());
+  return S.cash.filter(x=>low(x.posting_status||'posted')==='posted'&&x.entry_date>today()&&!['payment','student_payment'].includes(low(x.source_type||'manual')));
 }
 function plannedRows(){return S.cash.filter(x=>low(x.posting_status)==='planned')}
 function voidedRows(){return S.cash.filter(x=>low(x.posting_status)==='voided')}
@@ -227,7 +227,7 @@ function entryForm(type){
       <select class="acSelect" id="aeCat">${options(type)}</select>
       <input class="acInput" id="aeParty" placeholder="${type==='income'?'Source / payer':'Supplier / payee'}">
       <input class="acInput" id="aeRef" placeholder="Reference / receipt no.">
-      <select class="acSelect" id="aeMethod"><option>EFT</option><option>Bank Transfer</option><option>Card</option><option>Cash</option><option>Bank Deposit</option><option>Other</option><option>Non-cash Adjustment</option></select>
+      <select class="acSelect" id="aeMethod"><option>EFT</option><option>Bank Transfer</option><option>Card</option><option>Cash</option><option>Bank Deposit</option><option>Other</option><option hidden>Non-cash Adjustment</option></select>
       <input class="acInput" id="aeDept" placeholder="Department / cost centre">
       <input class="acInput" id="aeTax" placeholder="Tax treatment / accountant note (optional)">
       <input class="acInput" id="aeAmount" type="number" min="0" step="0.01" placeholder="Amount">
@@ -365,6 +365,7 @@ function pnlDataRows(x,comp){
 
   addCategories('Depreciation & Amortisation','Depreciation & Amortisation','expense');
   push('Depreciation & Amortisation','Total Depreciation & Amortisation',x.depreciation_amortisation,comp.depreciation_amortisation,'subtotal');
+  push('Operating Expense Summary','TOTAL OPERATING EXPENSES',n(x.people_costs)+n(x.operating_expenses)+n(x.depreciation_amortisation),n(comp.people_costs)+n(comp.operating_expenses)+n(comp.depreciation_amortisation),'total');
   push('Operating Result','OPERATING PROFIT / (LOSS)',x.operating_profit,comp.operating_profit,'total');
 
   addCategories('Finance Income','Finance Income','income');
@@ -377,9 +378,11 @@ function pnlDataRows(x,comp){
   addCategories('Other Expenses','Other Expenses','expense');
   push('Other Expenses','Total Other Expenses',x.non_operating_expenses,comp.non_operating_expenses,'subtotal');
 
+  push('Income Summary','TOTAL INCOME',x.total_income,comp.total_income,'total');
   push('Profit Before Tax','PROFIT / (LOSS) BEFORE TAX',x.profit_before_tax,comp.profit_before_tax,'total');
   addCategories('Income Tax','Tax Expense','expense');
-  push('Income Tax','Income Tax Expense',x.tax_expense,comp.tax_expense,'subtotal');
+  push('Income Tax','Total Income Tax Expense',x.tax_expense,comp.tax_expense,'subtotal');
+  push('Expense Summary','TOTAL EXPENSES',x.total_expenses,comp.total_expenses,'total');
   push('Net Result','NET PROFIT / (LOSS)',x.net_result,comp.net_result,'net');
   return rows;
 }
@@ -574,7 +577,7 @@ function pnlExportRows(x,comp){
     'Current Period (R)':n(r.current),
     'Comparison Period (R)':n(r.comparison),
     'Variance (R)':n(r.current)-n(r.comparison),
-    '% of Turnover':turnover?Number(r.current)/turnover:0
+    '% of Turnover':pct(ratio(r.current,turnover))
   }));
 }
 async function exportPnl(format,from,to){
