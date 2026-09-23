@@ -54,7 +54,7 @@ function fail(msg){$('#loading')?.classList.add('hide');$('#notFound')?.classLis
 function sum(type,statuses){return ledger.filter(x=>(!type||x.earning_type===type)&&(!statuses||statuses.includes(x.earning_status))).reduce((s,x)=>s+Number(x.commission_amount||0),0)}
 function confirmedLedger(){return ledger.filter(x=>['approved','paid'].includes(low(x.earning_status)))}
 function awaitingReferralCount(){return referrals.filter(x=>!['confirmed','disqualified'].includes(low(x.earning_status))).length}
-function referralLink(){if(!app?.referral_code)return '';return location.origin+'/courses-public.html?ref='+encodeURIComponent(app.referral_code)+'#courses'}
+function referralLink(){if(!app?.referral_code)return '';return location.origin+'/create-account.html?ref='+encodeURIComponent(app.referral_code)}
 function localDateKey(v){
  if(!v)return '';
  const d=new Date(v);if(Number.isNaN(d.getTime()))return '';
