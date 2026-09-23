@@ -274,6 +274,49 @@ on conflict(code_version_id,offence_code) do update set
   sort_order=excluded.sort_order,
   active=true;
 
+create or replace function public.hr_activate_disciplinary_code_version(p_code_version_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path=''
+as $$
+begin
+  if not exists(
+    select 1
+    from public.ceo_authority_assignments c
+    where c.user_id=auth.uid() and c.active=true
+  ) then
+    raise exception 'Only the active CEO authority may approve the FOA disciplinary code' using errcode='42501';
+  end if;
+
+  if not exists(
+    select 1 from public.hr_disciplinary_code_versions
+    where id=p_code_version_id and status='draft'
+  ) then
+    raise exception 'Draft disciplinary code version not found' using errcode='P0002';
+  end if;
+
+  update public.hr_disciplinary_code_versions
+  set status='superseded',updated_at=now()
+  where status='active' and id<>p_code_version_id;
+
+  update public.hr_disciplinary_code_versions
+  set status='active',
+      effective_date=current_date,
+      approved_by=auth.uid(),
+      approved_at=now(),
+      updated_at=now()
+  where id=p_code_version_id;
+
+  insert into public.hr_audit_log(actor_id,action,entity_type,entity_id,details)
+  values(auth.uid(),'disciplinary_code_activated','hr_disciplinary_code_version',p_code_version_id::text,
+    jsonb_build_object('effective_date',current_date));
+end;
+$$;
+
+revoke all on function public.hr_activate_disciplinary_code_version(uuid) from PUBLIC,anon;
+grant execute on function public.hr_activate_disciplinary_code_version(uuid) to authenticated,service_role;
+
 create or replace function public.hr_record_disciplinary_code_issue(
   p_profile_id uuid,
   p_code_version_id uuid
