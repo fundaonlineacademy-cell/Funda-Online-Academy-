@@ -661,6 +661,301 @@ body{
   .announcementFrom>span{grid-row:auto;justify-self:start;min-width:0;padding:5px 8px}
   .announcementMessage{font-size:13.5px!important;line-height:1.65!important}
 }
+</style><style id="ambassador-professional-system-polish-v1">
+/* Ambassador Portal professional system polish — presentation only. */
+:root{
+  --amb-pro-navy:#07172f;
+  --amb-pro-navy2:#173f62;
+  --amb-pro-blue:#2454c7;
+  --amb-pro-gold:#c7a13b;
+  --amb-pro-text:#1b2b3f;
+  --amb-pro-muted:#5f7186;
+  --amb-pro-line:#d6e0eb;
+  --amb-pro-soft:#f7f9fc;
+}
+.section,
+.section button,
+.section input,
+.section select,
+.section textarea,
+.section table{
+  font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important;
+}
+.section{color:var(--amb-pro-text)}
+.section>.card:not(.guideHero):not(.avHero),
+.section>.split>.card{
+  border-color:var(--amb-pro-line)!important;
+  border-radius:16px!important;
+  box-shadow:0 7px 22px rgba(7,23,47,.055)!important;
+}
+.section:not([data-section="dashboard"])>.card:first-child:not(.guideHero):not(.avHero){
+  border-top:3px solid var(--amb-pro-blue)!important;
+}
+.sectionHead{
+  align-items:flex-start!important;
+  gap:16px!important;
+  margin-bottom:4px;
+}
+.section h1,.section h2,.section h3{color:var(--amb-pro-navy)}
+.section h2{
+  font-size:21px!important;
+  line-height:1.28!important;
+  font-weight:900!important;
+  letter-spacing:-.01em;
+}
+.section h3{
+  font-size:16px!important;
+  line-height:1.35!important;
+  font-weight:850!important;
+}
+.section p{
+  font-size:12.5px;
+  line-height:1.62;
+}
+.section .muted{
+  color:var(--amb-pro-muted)!important;
+  font-size:12px!important;
+  line-height:1.58!important;
+}
+.section .eyebrow{
+  font-size:10px!important;
+  line-height:1.3!important;
+  font-weight:900!important;
+  letter-spacing:.13em!important;
+}
+.section .eyebrow.dark{color:#6e5620!important}
+.section .badge{
+  font-size:9.5px!important;
+  line-height:1.25!important;
+  font-weight:900!important;
+  letter-spacing:.055em!important;
+  padding:6px 9px!important;
+}
+.section .btn{
+  min-height:42px;
+  border-radius:10px!important;
+  font-size:12px!important;
+  line-height:1.3!important;
+  font-weight:900!important;
+  padding:10px 14px!important;
+}
+.section .textAction{
+  color:var(--amb-pro-navy2)!important;
+  font-size:11.5px!important;
+  font-weight:900!important;
+}
+.section .notice{
+  font-size:11.8px!important;
+  line-height:1.58!important;
+}
+.section .notice b{color:var(--amb-pro-navy);font-weight:900}
+.section .empty{
+  color:#68798b!important;
+  font-size:12px!important;
+  line-height:1.55!important;
+  padding:18px!important;
+}
+
+/* My Dashboard */
+.dashboardHero{
+  border-radius:18px!important;
+  padding:26px 28px!important;
+}
+.dashboardHero h1{
+  color:var(--amb-pro-navy)!important;
+  font-size:31px!important;
+  line-height:1.15!important;
+  font-weight:900!important;
+}
+.dashboardHero .muted{font-size:13px!important}
+.dashboardSectionIntro{margin-top:20px!important}
+.dashboardSectionIntro h2{font-size:18px!important}
+.dashboardSectionIntro p{font-size:12px!important;color:var(--amb-pro-muted)!important}
+.dashboardSectionHint{font-size:10px!important;color:#715718!important}
+.stat{
+  border-color:var(--amb-pro-line)!important;
+  border-radius:14px!important;
+  box-shadow:0 5px 16px rgba(7,23,47,.045)!important;
+}
+.stat b{font-size:27px!important;color:var(--amb-pro-navy)!important}
+.stat small{
+  color:#53667b!important;
+  font-size:10px!important;
+  line-height:1.42!important;
+  font-weight:900!important;
+  letter-spacing:.055em!important;
+}
+.performanceCard{border-color:var(--amb-pro-line)!important}
+.performanceCard .performanceLabel{font-size:10px!important}
+.performanceCard .performanceValue{font-size:28px!important}
+.performanceCard .performanceMeta{font-size:12px!important;color:var(--amb-pro-muted)!important}
+.performanceCard .performanceFoot{font-size:11.5px!important}
+.quickAction{border-color:var(--amb-pro-line)!important;border-radius:13px!important}
+.quickAction b{font-size:14px!important}
+.quickAction small{font-size:11.5px!important;line-height:1.5!important;color:var(--amb-pro-muted)!important}
+.trendHead .muted,.ambCalendarHint{font-size:11.5px!important}
+.trendTotal{font-size:10.5px!important}
+.ambCalendarDate{font-size:11.5px!important}
+
+/* Programme Guide */
+.guideHero{border-radius:18px!important;padding:25px!important}
+.guideHero h2{font-size:29px!important;line-height:1.2!important}
+.guideHero .muted{font-size:13px!important;line-height:1.62!important;color:#e7eef4!important}
+.guideStep{border-color:var(--amb-pro-line)!important;box-shadow:0 4px 14px rgba(7,23,47,.04)}
+.guideStep b{font-size:14px!important}
+.guideStep p{font-size:12px!important;line-height:1.58!important;color:var(--amb-pro-muted)!important}
+.guideStep i{font-size:12px!important}
+.guideExample p,.guideExample li{font-size:12px!important;line-height:1.6!important}
+
+/* Referrals, earnings and finance lists */
+.referralSummary{gap:10px!important}
+.miniMetric{
+  border-color:var(--amb-pro-line)!important;
+  background:#fbfcfe!important;
+  border-radius:12px!important;
+}
+.miniMetric span{
+  color:#53667b!important;
+  font-size:9.8px!important;
+  line-height:1.42!important;
+  font-weight:900!important;
+  letter-spacing:.055em!important;
+}
+.miniMetric b{color:var(--amb-pro-navy)!important;font-size:21px!important}
+.referralTools{gap:15px!important}
+.referralTools h2{font-size:18px!important}
+.referralTools .muted{font-size:11.8px!important}
+.referralSearch input,.referralSearch select,
+.field{
+  min-height:43px!important;
+  border-color:#cfd9e5!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  color:#203248!important;
+  font-size:13px!important;
+  line-height:1.35!important;
+}
+.referralSearch input::placeholder,.field::placeholder{color:#7b8998!important}
+.fieldLabel{
+  color:#42566d!important;
+  font-size:10.5px!important;
+  font-weight:900!important;
+  letter-spacing:.035em!important;
+}
+.tbl{font-size:12px!important}
+.tbl th{
+  background:#f2f6fb!important;
+  color:#31465d!important;
+  font-size:10px!important;
+  line-height:1.35!important;
+  font-weight:900!important;
+  letter-spacing:.045em!important;
+  padding:11px 10px!important;
+}
+.tbl td{
+  color:#263a50!important;
+  font-size:12px!important;
+  line-height:1.48!important;
+  padding:12px 10px!important;
+}
+.tbl tbody tr:hover{background:#f8fbff}
+.refCard{border-color:var(--amb-pro-line)!important}
+.refCard b{font-size:13px!important}
+.refCard small,.refCardDate{font-size:10.5px!important;color:var(--amb-pro-muted)!important}
+.privacyNote{
+  border-color:#d8e1ea!important;
+  background:#f7f9fc!important;
+}
+.privacyNote b{font-size:11.5px!important;color:var(--amb-pro-navy)!important}
+.privacyNote span{font-size:11.2px!important;line-height:1.55!important;color:#5d7084!important}
+.referralPagination,.marketingPagination{font-size:11px!important}
+
+/* Rank and compensation */
+.rankNumbers>div{
+  border-color:var(--amb-pro-line)!important;
+  background:#fbfcfe!important;
+}
+.rankNumbers span{font-size:9.8px!important;color:#53667b!important}
+.rankNumbers b{font-size:21px!important;color:var(--amb-pro-navy)!important}
+.rankPath article,.rankPath>div{border-color:var(--amb-pro-line)!important}
+.rankPath b{font-size:12.5px!important}
+.rankPath span,.rankPath small{font-size:11px!important;line-height:1.5!important}
+.compHeadline .earning{border-color:var(--amb-pro-line)!important}
+.compHeadline .earning>b{font-size:24px!important}
+.compHeadline .earning>span{font-size:10px!important}
+.compHeadline .earning p{font-size:11.8px!important}
+.compFlowStep{border-color:var(--amb-pro-line)!important}
+.compFlowStep b{font-size:12.5px!important}
+.compFlowStep span{font-size:11.5px!important;line-height:1.52!important}
+.compRules .notice,.compRules>div{font-size:11.8px!important}
+.compMobile b{font-size:13px!important}
+.compMobile span{font-size:10.5px!important}
+.compMobile em{font-size:11px!important}
+.compMobile small{font-size:10.5px!important;line-height:1.48!important}
+
+/* Payment History and Banking */
+.paymentGuideStep,.bankingChecklist>div{border-color:var(--amb-pro-line)!important}
+.paymentGuideStep b,.bankingChecklist b{font-size:12.5px!important}
+.paymentGuideStep span,.bankingChecklist span{font-size:11.8px!important;line-height:1.58!important}
+.paymentGuideNotice span,.paymentTimingNote span{font-size:11.5px!important}
+.paymentRef{font-size:10.5px!important;color:var(--amb-pro-muted)!important}
+
+/* Marketing and announcements */
+.marketingPolicyBlock b{font-size:13px!important}
+.marketingPolicyBlock span{font-size:11.8px!important}
+.marketingPolicyNotice span{font-size:11.5px!important}
+.marketingResourceBody h3{font-size:14.5px!important}
+.marketingResourceBody p{font-size:11.8px!important}
+.announcementMessage{font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important}
+
+/* Support */
+.supportQuick .notice{font-size:11.8px!important}
+.ticketCard{border-color:var(--amb-pro-line)!important}
+.ticketCard b{font-size:13.5px!important}
+.ticketCard .meta{font-size:10px!important;color:#755b1c!important}
+.ticketCard p{font-size:12px!important;color:var(--amb-pro-muted)!important}
+
+/* Programme rules */
+.agreementStatusGrid .miniMetric span{font-size:9.5px!important}
+.ruleItem{
+  border-color:var(--amb-pro-line)!important;
+  background:#fbfcfe!important;
+  box-shadow:0 3px 12px rgba(7,23,47,.03);
+}
+.ruleItem b{font-size:12.5px!important;color:var(--amb-pro-navy)!important}
+.ruleItem span{font-size:11.8px!important;line-height:1.58!important;color:var(--amb-pro-muted)!important}
+
+/* Referral link and Profile */
+.refLinkBox{
+  border-color:var(--amb-pro-line)!important;
+  background:#f8fafc!important;
+}
+.refLinkBox>span{font-size:9.5px!important;color:#52667c!important}
+.refLinkBox>b{font-size:27px!important;color:var(--amb-pro-navy)!important}
+.refLinkBox>p{font-size:12px!important;line-height:1.55!important;color:#53677b!important}
+#profileMeta{font-size:11.8px!important}
+
+/* Your Voice */
+.avHero{border-radius:18px!important}
+.avHero h2{font-size:28px!important;line-height:1.2!important}
+.avHero p{font-size:12.5px!important;line-height:1.62!important}
+.avPurpose b{font-size:13px!important}
+.avPurpose span{font-size:11.5px!important;line-height:1.55!important}
+.avField{font-size:11px!important;font-weight:800!important;color:#42566d!important}
+.avField input,.avField select,.avField textarea{font-size:13px!important}
+.avSteps b{font-size:12px!important}
+.avSteps small{font-size:10.8px!important;line-height:1.5!important}
+
+/* Responsive readability */
+@media(max-width:700px){
+  .section>.card:not(.guideHero):not(.avHero),.section>.split>.card{border-radius:14px!important}
+  .section h2{font-size:19px!important}
+  .dashboardHero h1{font-size:27px!important}
+  .guideHero h2,.avHero h2{font-size:24px!important}
+  .section p,.section .muted{font-size:11.8px!important}
+  .tbl th{font-size:9.5px!important}
+  .tbl td{font-size:11.5px!important}
+}
 </style></head>
 <body>
 <header class="top">
