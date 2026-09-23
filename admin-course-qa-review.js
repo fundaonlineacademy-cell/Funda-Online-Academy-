@@ -1,12 +1,26 @@
 (()=>{
 if(!/admin-v2\.html$/i.test(location.pathname))return;
-let db=null,user=null,courses=[],modules=[],lessons=[],assessments=[],reviews=[],profiles=[],bankHealth=[],channel=null,liveTimer=null,pendingLive=false;
+let db=null,user=null,courses=[],modules=[],lessons=[],assessments=[],reviews=[],profiles=[],bankHealth=[];
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 const fmt=v=>v?new Date(v).toLocaleDateString('en-ZA'):'—';const low=v=>String(v||'').toLowerCase();const words=v=>{const t=String(v||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();return t?t.split(' ').filter(Boolean).length:0};const weeks=c=>{const m=String(c?.duration||'').match(/(\d+)/);return m?Number(m[1]):0};
 function isAcademic(){const b=document.querySelector('#nav button.on,#nav button.active,.nav button.on,.nav button.active');return !!b&&/academic/i.test(b.textContent)}
 function css(){if($('cqaCss'))return;const s=document.createElement('style');s.id='cqaCss';s.textContent=`.cqaWrap{margin:10px 0}.cqaGrid{display:grid;grid-template-columns:1.05fr .95fr;gap:10px}.cqaPanel{background:#fff;border:1px solid #e1dac9;border-radius:11px;padding:12px}.cqaPanel h3{margin:0 0 4px;color:#071b31;font-size:13px}.cqaPanel p{font-size:10px;color:#718096;margin:0 0 8px}.cqaForm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.cqaField{width:100%;border:1px solid #d9d1bf;border-radius:8px;padding:8px 9px;background:#fff;font-size:10px;color:#17233b}.cqaForm textarea{min-height:70px;resize:vertical}.cqaWide{grid-column:1/-1}.cqaBtn{border:0;border-radius:7px;padding:9px 11px;background:#071b31;color:#efd78e;font-size:9px;font-weight:900;cursor:pointer}.cqaBtn:disabled{opacity:.55;cursor:not-allowed}.cqaStat{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}.cqaStat div{background:#f7f9fc;border:1px solid #e5eaf0;border-radius:8px;padding:8px}.cqaStat strong{display:block;color:#071b31;font-size:15px}.cqaStat span{font-size:8px;color:#718096}.cqaTable{width:100%;border-collapse:collapse;font-size:9px}.cqaTable th,.cqaTable td{padding:8px;border-bottom:1px solid #edf0f3;text-align:left;vertical-align:top}.cqaTable th{font-size:8px;color:#7b8796;text-transform:uppercase}.cqaPill{display:inline-block;padding:4px 7px;border-radius:99px;background:#edf2f7;font-size:8px;font-weight:900}.cqaPill.approved,.cqaPill.complete{background:#e5f6ef;color:#176b50}.cqaPill.in_review,.cqaPill.draft,.cqaPill.requires_action{background:#fff2d2;color:#8a5a05}.cqaMsg{display:none;margin-top:7px;padding:8px;border-radius:7px;font-size:9px}.cqaMsg.ok{display:block;background:#e5f6ef;color:#176b50}.cqaMsg.bad{display:block;background:#ffe7e7;color:#9d2828}@media(max-width:900px){.cqaGrid{grid-template-columns:1fr}.cqaForm{grid-template-columns:1fr}.cqaWide{grid-column:auto}.cqaStat{grid-template-columns:repeat(2,1fr)}}`;document.head.appendChild(s)}
-async function load(){db=db||window.__fundaSharedSupabaseClient||window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);if(!db)return false;const u=await db.auth.getUser();user=u.data?.user||null;if(!user)return false;const p=await db.from('profiles').select('id,role,full_name,email').eq('id',user.id).maybeSingle();if(p.data?.role!=='admin')return false;const names=['courses','course_modules','lessons','assessments','academic_course_qa_reviews','profiles'];const rs=await Promise.all([...names.map(n=>db.from(n).select('*').limit(5000)),db.rpc('get_admin_assessment_bank_health')]);const bad=rs.find(r=>r.error);if(bad)throw bad.error;[courses,modules,lessons,assessments,reviews,profiles]=rs.slice(0,6).map(r=>r.data||[]);bankHealth=rs[6].data||[];return true}
+async function load(){
+ db=db||window.__fundaSharedSupabaseClient||window.supabase?.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);if(!db)return false;
+ const snap=window.__fundaAcademicDataSnapshot;
+ if(snap){
+  user=snap.actorId?{id:snap.actorId}:user;
+  courses=[...(snap.courses||[])];modules=[...(snap.course_modules||[])];lessons=[...(snap.lessons||[])];assessments=[...(snap.assessments||[])];reviews=[...(snap.academic_course_qa_reviews||[])];profiles=[...(snap.profiles||[])];bankHealth=[...(snap.assessment_bank_health||[])];
+  return true;
+ }
+ const u=await db.auth.getUser();user=u.data?.user||null;if(!user)return false;
+ const p=await db.from('profiles').select('id,role,full_name,email').eq('id',user.id).maybeSingle();if(p.data?.role!=='admin')return false;
+ const names=['courses','course_modules','lessons','assessments','academic_course_qa_reviews','profiles'];
+ const rs=await Promise.all([...names.map(n=>db.from(n).select('*').limit(5000)),db.rpc('get_admin_assessment_bank_health')]);
+ const bad=rs.find(r=>r.error);if(bad)throw bad.error;
+ [courses,modules,lessons,assessments,reviews,profiles]=rs.slice(0,6).map(r=>r.data||[]);bankHealth=rs[6].data||[];return true
+}
 function latestFor(courseId){return reviews.filter(r=>r.course_id===courseId).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0]||null}
 function reviewer(id){const p=profiles.find(x=>x.id===id);return p?.full_name||p?.email||'Admin'}
 function counts(courseId){const ms=modules.filter(m=>m.course_id===courseId),ids=new Set(ms.map(m=>m.id)),ls=lessons.filter(l=>ids.has(l.module_id)),as=assessments.filter(a=>a.course_id===courseId);return {modules:ms.length,lessons:ls.length,assessments:as.length,reviews:reviews.filter(r=>r.course_id===courseId).length}}
@@ -27,9 +41,19 @@ async function save(){const courseId=$('cqaCourse')?.value;if(!courseId)return m
 function wire(){const c=$('cqaCourse'),s=$('cqaSave');if(c)c.onchange=refreshCourse;if(s)s.onclick=save}
 async function inject(){if(!isAcademic()||$('cqaWorkspace'))return;css();if(await load())panel()}
 function editingQa(){const a=document.activeElement;return !!a&&!!a.closest?.('#cqaWorkspace')&&['INPUT','TEXTAREA','SELECT'].includes(a.tagName)}
-async function refreshLive(){if(!isAcademic())return;const selected=$('cqaCourse')?.value||'';try{if(!await load())return;if(!$('cqaWorkspace')){panel();return}if(selected&&$('cqaCourse')){$('cqaCourse').value=selected;refreshCourse()}if(pendingLive){pendingLive=false;msg('Live Academic data refreshed.',true)}}catch(e){console.error('Course QA live refresh',e)}}
-function scheduleLive(){if(!isAcademic())return;clearTimeout(liveTimer);liveTimer=setTimeout(()=>{if(editingQa()){pendingLive=true;const el=$('cqaMsg');if(el){el.textContent='A live Academic update is available. Finish the current QA edit before refreshing.';el.className='cqaMsg ok'}return}refreshLive()},180)}
-function live(){if(channel||!db)return;let ch=db.channel('admin-course-qa-review-live-v1');['courses','course_modules','lessons','assessments','assessment_questions','academic_course_qa_reviews','profiles'].forEach(table=>{ch=ch.on('postgres_changes',{event:'*',schema:'public',table},scheduleLive)});channel=ch.subscribe(status=>{window.__fundaCourseQaRealtimeStatus=status})}
-async function install(){css();document.addEventListener('click',e=>{const b=e.target.closest?.('#nav button,.nav button,[data-aq-tab]');if(b&&(/academic/i.test(b.textContent)||b.dataset?.aqTab))setTimeout(inject,180)},false);document.addEventListener('funda:admin-manual-refresh',()=>{if(isAcademic()&&!editingQa())refreshLive()});document.addEventListener('focusout',()=>{if(pendingLive)setTimeout(()=>{if(!editingQa())refreshLive()},120)},true);const target=$('view');if(target)new MutationObserver(()=>{if(isAcademic()&&!$('cqaWorkspace'))setTimeout(inject,80)}).observe(target,{childList:true,subtree:false});try{await load();live()}catch(e){console.error('Course QA realtime init',e)}setTimeout(inject,300)}
+async function refreshFromCore(){
+ if(!isAcademic())return;
+ const selected=$('cqaCourse')?.value||'';
+ try{
+  if(!await load())return;
+  $('cqaWorkspace')?.remove();panel();
+  if(selected&&$('cqaCourse')){$('cqaCourse').value=selected;refreshCourse()}
+ }catch(e){console.error('Course QA refresh',e)}
+}
+async function install(){
+ css();
+ document.addEventListener('funda:academic-core-ready',()=>refreshFromCore());
+ if(isAcademic()&&$('view')?.querySelector('.aqHero'))refreshFromCore();
+}
 if(document.readyState==='complete')install();else window.addEventListener('load',install,{once:true});
 })();
