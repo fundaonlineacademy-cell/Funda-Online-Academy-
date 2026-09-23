@@ -5,8 +5,8 @@ if(window.__FUNDA_ACCOUNTING_SAFE__)return;
 window.__FUNDA_ACCOUNTING_SAFE__=true;
 
 let db;
-let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[],pettyFunds:[],pettyMoves:[],pettyVouchers:[],pettyRecons:[]};
-let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false,pettyFunds:false,pettyMoves:false,pettyVouchers:false,pettyRecons:false};
+let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[],pettyAccounts:[],pettyFunds:[],pettyMoves:[],pettyVouchers:[],pettyRecons:[]};
+let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false,pettyAccounts:false,pettyFunds:false,pettyMoves:false,pettyVouchers:false,pettyRecons:false};
 let errors=[];
 let tab='overview',cashPage=1,plannedPage=1,reconPage=1,budgetPage=1,pettyVoucherPage=1,pettyMovementPage=1,pettyReconPage=1;
 let pettyFundId=null,pettyReportMonth=new Date().toISOString().slice(0,7);
@@ -114,6 +114,7 @@ async function loadData(){
     ['settings',db.from('finance_management_settings').select('*').eq('singleton',true).maybeSingle()],
     ['closes',db.from('finance_month_closes').select('*').order('month_start',{ascending:false}).limit(500)],
     ['budgets',db.from('finance_monthly_budgets').select('*').order('month_start',{ascending:true}).limit(240)],
+    ['pettyAccounts',db.from('finance_petty_cash_accounts').select('*').order('sort_order',{ascending:true}).order('account_name',{ascending:true}).limit(500)],
     ['pettyFunds',db.from('finance_petty_cash_funds').select('*').order('created_at',{ascending:true}).limit(200)],
     ['pettyMoves',db.from('finance_petty_cash_movements').select('*').order('movement_date',{ascending:false}).order('created_at',{ascending:false}).limit(5000)],
     ['pettyVouchers',db.from('finance_petty_cash_vouchers').select('*').order('expense_date',{ascending:false}).order('created_at',{ascending:false}).limit(5000)],
