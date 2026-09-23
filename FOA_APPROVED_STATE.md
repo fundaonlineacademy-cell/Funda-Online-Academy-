@@ -607,3 +607,13 @@ The owner physically reviewed **Admin → HR & Team** after the HR audit correct
 - Work in CEO Account Control, Academic, or another Admin tab does **not** reopen HR & Team. Shared Admin files touched elsewhere must regression-check this locked HR surface when relevant.
 - A newly discovered HR defect is a change request and requires explicit owner approval before the locked workspace is changed.
 
+### Admin Reports, Compliance & Audit — FINAL OWNER-APPROVED AND LOCKED (23 September 2026)
+
+The owner explicitly approved **Admin → Reports, Compliance & Audit** as it currently stands and instructed that it be locked **without any further audit or runtime changes**.
+
+- **Reports, Compliance & Audit is a change-controlled protected Admin surface.** Do not alter its reporting, Audit Activity Register, Compliance Register, report history, filters, exports, evidence capture, pagination, data-loading behaviour, typography/readability, responsive treatment, or related report/compliance workflows unless Aziwe Futhe explicitly reopens the affected area.
+- This lock records the owner-approved current state only. No redesign, audit, correction or runtime change is authorised by this lock action.
+- Existing live records remain dynamic. Legitimate audit events, compliance records, report runs and evidence may continue through the approved workflows; the lock protects the approved structure, rules and behaviour rather than freezing operational data.
+- Work in CEO Account Control, Digital Library, HR & Team, Academic, or another Admin tab does **not** reopen Reports, Compliance & Audit.
+- A newly discovered defect is a change request and requires explicit owner approval before the locked workspace is changed.
+
