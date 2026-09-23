@@ -175,6 +175,8 @@ function renderAmbassadorCalendar(){
  const earningsMonth=previousMonth.toLocaleDateString('en-ZA',{month:'long',year:'numeric'});
  if($('#ambCalendarTitle'))$('#ambCalendarTitle').textContent=cursor.toLocaleDateString('en-ZA',{month:'long',year:'numeric'});
  if($('#ambassadorPaydaySummary'))$('#ambassadorPaydaySummary').innerHTML='<b>Scheduled Ambassador payday: '+esc(payday.toLocaleDateString('en-ZA',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}))+'</b><br>'+esc(earningsMonth)+' qualifying earnings are scheduled for this payday. Standard payday is the 5th of the following month; if the 5th falls on a weekend or South African public holiday, the date moves to the previous business day.';
+ const monthHolidayItems=[...holidays.entries()].filter(([date])=>date.startsWith(y+'-'+String(m+1).padStart(2,'0'))).sort((a,b)=>a[0].localeCompare(b[0]));
+ if($('#ambassadorCalendarMonthNote'))$('#ambassadorCalendarMonthNote').innerHTML=monthHolidayItems.length?'<b>Public holidays this month:</b> '+monthHolidayItems.map(([date,names])=>esc(names.join(' / '))+' · '+esc(new Date(date+'T12:00:00').toLocaleDateString('en-ZA',{day:'2-digit',month:'short'}))).join(' &nbsp;•&nbsp; '):'<b>Public holidays this month:</b> None.';
  const cells=[];
  for(let i=0;i<start;i++)cells.push('<span class="ambCalendarDate muted" aria-hidden="true"></span>');
  for(let day=1;day<=days;day++){
