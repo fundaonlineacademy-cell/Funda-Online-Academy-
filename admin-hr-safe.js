@@ -1077,8 +1077,10 @@ async function open(){css();await load();if(currentTab==='workforce')await loadW
 function install(){
   css();
   window.FundaHRCentre={open};
-  const old=window.hr;
-  window.hr=function(){try{old?.()}catch(e){}setTimeout(open,0)};
+  window.hr=function(){
+    const v=$('view');if(v)v.innerHTML='<div class="hrPanel"><b>Loading HR &amp; Team…</b><div class="hrMeta" style="margin-top:5px">Connecting to the governed HR workspace.</div></div>';
+    setTimeout(()=>open().catch(e=>{console.error('HR & Team open failed',e);if(v)v.innerHTML='<div class="hrPanel"><b>HR &amp; Team could not load.</b><div class="hrMeta" style="margin-top:5px">Use the Admin Refresh control or try again shortly.</div></div>'}),0)
+  };
   document.addEventListener('click',e=>{
     const page=e.target.closest?.('[data-hr-page]');
     if(page&&active()){
