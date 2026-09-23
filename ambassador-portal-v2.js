@@ -675,6 +675,7 @@ function openMarketingPreview(id){
     (x.approved_caption?'<div class="marketingPreviewCaption"><b>Approved caption</b><span>'+esc(x.approved_caption)+'</span></div>':'')+
     '<div class="marketingPreviewActions">'+
      (x.file_url?'<button class="btn" type="button" id="ambMarketingPreviewDownload">Download</button>':'')+
+     (x.file_url?'<a class="btn alt" href="'+esc(x.file_url)+'" target="_blank" rel="noopener">Open Original</a>':'')+
      (x.approved_caption?'<button class="btn alt" type="button" id="ambMarketingPreviewCaption">Copy Approved Caption</button>':'')+
      (x.action_url?'<a class="btn alt" href="'+esc(x.action_url)+'" target="_blank" rel="noopener">Open Campaign Link</a>':'')+
      '<button class="btn alt" type="button" id="ambMarketingPreviewReferral">Copy My Referral Link</button>'+
@@ -686,6 +687,7 @@ function openMarketingPreview(id){
  document.body.style.overflow='hidden';
  $('#ambMarketingPreviewClose').onclick=closeMarketingPreview;
  $('#ambMarketingPreview').onclick=e=>{if(e.target.id==='ambMarketingPreview')closeMarketingPreview()};
+ $('#ambMarketingPreview').onkeydown=e=>{if(e.key==='Escape')closeMarketingPreview()};
  if($('#ambMarketingPreviewDownload'))$('#ambMarketingPreviewDownload').onclick=()=>downloadResource(x,$('#ambMarketingPreviewDownload'));
  if($('#ambMarketingPreviewCaption'))$('#ambMarketingPreviewCaption').onclick=()=>copy(x.approved_caption,$('#ambMarketingPreviewCaption'));
  if($('#ambMarketingPreviewReferral'))$('#ambMarketingPreviewReferral').onclick=()=>copy(referralLink(),$('#ambMarketingPreviewReferral'));
