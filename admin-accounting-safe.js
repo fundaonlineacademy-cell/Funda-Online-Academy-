@@ -5,10 +5,10 @@ if(window.__FUNDA_ACCOUNTING_SAFE__)return;
 window.__FUNDA_ACCOUNTING_SAFE__=true;
 
 let db;
-let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[]};
-let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false};
+let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[]};
+let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false};
 let errors=[];
-let tab='overview',cashPage=1,plannedPage=1,reconPage=1;
+let tab='overview',cashPage=1,plannedPage=1,reconPage=1,budgetPage=1;
 let pnlMode='monthly',pnlMonth=new Date().toISOString().slice(0,7),pnlDay=new Date().toISOString().slice(0,10),pnlFyYear=null,pnlFrom='',pnlTo='';
 let currentMonthPnl=null,currentFyPnl=null,currentPnl=null,currentPnlComparison=null,currentPnlComparisonRange=null;
 const PAGE_SIZE=10;
@@ -111,7 +111,8 @@ async function loadData(){
     ['payments',db.from('payments').select('*').order('created_at',{ascending:false}).limit(5000)],
     ['profiles',db.from('profiles').select('id,full_name,email').limit(5000)],
     ['settings',db.from('finance_management_settings').select('*').eq('singleton',true).maybeSingle()],
-    ['closes',db.from('finance_month_closes').select('*').order('month_start',{ascending:false}).limit(500)]
+    ['closes',db.from('finance_month_closes').select('*').order('month_start',{ascending:false}).limit(500)],
+    ['budgets',db.from('finance_monthly_budgets').select('*').order('month_start',{ascending:true}).limit(240)]
   ];
   const results=await Promise.all(jobs.map(x=>x[1]));
   results.forEach((r,i)=>{
@@ -159,6 +160,40 @@ function fyOptions(){
   const cur=currentFyStartYear(),first=Math.min(firstFyStart(),cur),years=[];
   for(let y=first;y<=Math.max(firstFyStart(),cur)+3;y++)years.push(y);
   return years.map(y=>'<option value="'+y+'" '+(Number(pnlFyYear)===y?'selected':'')+'>FY '+y+'/'+String(y+1).slice(-2)+' (1 Oct - 30 Sep)</option>').join('');
+}
+function budgetMonthLabel(v){
+  return v?new Date(v+'T12:00:00').toLocaleDateString('en-ZA',{month:'long',year:'numeric'}):'—';
+}
+function budgetForMonth(monthStart){
+  return (S.budgets||[]).find(x=>x.month_start===monthStart)||null;
+}
+function budgetExpenseTotal(b){
+  if(!b)return 0;
+  return n(b.direct_cost_budget)+n(b.people_cost_budget)+n(b.operating_expense_budget)+n(b.ambassador_budget)+n(b.other_expense_budget);
+}
+function budgetPlannedSurplus(b){
+  return b?n(b.revenue_target)-budgetExpenseTotal(b):0;
+}
+function budgetsForFy(year){
+  const [from,to]=fyRange(Number(year));
+  return (S.budgets||[]).filter(x=>x.month_start>=from&&x.month_start<=to).sort((a,b)=>a.month_start.localeCompare(b.month_start));
+}
+function budgetTotalsForFy(year){
+  const rows=budgetsForFy(year);
+  return rows.reduce((a,b)=>{
+    a.revenue+=n(b.revenue_target);a.direct+=n(b.direct_cost_budget);a.people+=n(b.people_cost_budget);
+    a.operating+=n(b.operating_expense_budget);a.ambassador+=n(b.ambassador_budget);a.other+=n(b.other_expense_budget);
+    a.minimumSurplus+=n(b.minimum_surplus_target);return a;
+  },{revenue:0,direct:0,people:0,operating:0,ambassador:0,other:0,minimumSurplus:0});
+}
+function budgetTotalsForPeriod(from,to){
+  const rows=(S.budgets||[]).filter(x=>x.month_start>=from&&x.month_start<=to);
+  const total=rows.reduce((a,b)=>{
+    a.revenue+=n(b.revenue_target);a.expenses+=budgetExpenseTotal(b);a.minimumSurplus+=n(b.minimum_surplus_target);return a;
+  },{revenue:0,expenses:0,minimumSurplus:0});
+  total.plannedSurplus=total.revenue-total.expenses;
+  total.months=rows.length;
+  return total;
 }
 function loadWarning(){
   return errors.length?'<div class="acWarn"><b>Finance data warning:</b> '+esc(errors.join(' | '))+' Failed sources are not being shown as zero.</div>':'';
@@ -397,10 +432,12 @@ function pnlTableRows(x,comp){
 }
 function pnlMarkup(raw,rawComp,from,to,compFrom,compTo){
   const x=normalisePnl(raw),comp=normalisePnl(rawComp||{}),set=settings(),annual=n(set.annual_turnover_target),anchor=set.financial_year_anchor||'2026-10-01';
-  const monthlyTarget=annual/12;
+  const monthBudget=budgetForMonth(from),periodBudget=(pnlMode==='monthly'&&monthBudget)
+    ?{revenue:n(monthBudget.revenue_target),expenses:budgetExpenseTotal(monthBudget),plannedSurplus:budgetPlannedSurplus(monthBudget),minimumSurplus:n(monthBudget.minimum_surplus_target),months:1}
+    :(pnlMode==='financial_year'?budgetTotalsForPeriod(from,to):null);
   let target=null,label='';
-  if(from>=anchor&&pnlMode==='monthly'){target=monthlyTarget;label='Monthly turnover planning target'}
-  if(from>=anchor&&pnlMode==='financial_year'){target=annual;label='Annual turnover target'}
+  if(from>=anchor&&pnlMode==='monthly'){target=periodBudget?.months?periodBudget.revenue:annual/12;label='Monthly revenue target'}
+  if(from>=anchor&&pnlMode==='financial_year'){target=periodBudget?.months?periodBudget.revenue:annual;label='Annual revenue target'}
   const progress=target?targetProgress(n(x.turnover),target):0;
   const close=from===monthRange(from.slice(0,7))[0]&&to===monthRange(from.slice(0,7))[1]?monthClosed(from):null;
   const canClose=pnlMode==='monthly'&&to<today()&&!close;
@@ -422,7 +459,8 @@ function pnlMarkup(raw,rawComp,from,to,compFrom,compTo){
       <thead><tr><th>Account</th><th class="acNum">Current Period</th><th class="acNum">Comparison Period</th><th class="acNum">Variance</th><th class="acPct">% of Turnover</th></tr></thead>
       <tbody>${pnlTableRows(x,comp)}</tbody>
     </table></div>
-    ${target!==null?'<div class="acPanel" style="margin-top:10px"><div class="acMeta">'+label+': <b>'+money(target)+'</b> · Actual turnover: <b>'+money(x.turnover)+'</b> · Variance: <b>'+money(n(x.turnover)-target)+'</b></div><div class="acTarget"><i style="width:'+progress+'%"></i></div></div>':''}
+    ${target!==null?'<div class="acPanel" style="margin-top:10px"><div class="acMeta">'+label+': <b>'+money(target)+'</b> · Actual turnover: <b>'+money(x.turnover)+'</b> · Revenue variance: <b>'+money(n(x.turnover)-target)+'</b></div><div class="acTarget"><i style="width:'+progress+'%"></i></div></div>':''}
+    ${periodBudget?.months?'<div class="acGrid" style="margin-top:10px"><div class="acPanel"><h3>Budget vs Actual</h3><div class="acMeta">Revenue target: <b>'+money(periodBudget.revenue)+'</b></div><div class="acMeta">Actual turnover: <b>'+money(x.turnover)+'</b></div><div class="acMeta">Revenue variance: <b>'+money(n(x.turnover)-periodBudget.revenue)+'</b></div></div><div class="acPanel"><h3>Expense & Surplus Plan</h3><div class="acMeta">Expense budget: <b>'+money(periodBudget.expenses)+'</b></div><div class="acMeta">Actual expenses: <b>'+money(x.total_expenses)+'</b></div><div class="acMeta">Expense headroom / (overrun): <b>'+money(periodBudget.expenses-n(x.total_expenses))+'</b></div><div class="acMeta">Planned surplus: <b>'+money(periodBudget.plannedSurplus)+'</b> · Actual net profit/(loss): <b>'+money(x.net_result)+'</b></div><div class="acMeta">Minimum surplus target: <b>'+money(periodBudget.minimumSurplus)+'</b></div></div></div>':''}
     <div class="acMeta" style="margin-top:8px">Verified payment records: ${n(x.verified_payment_records)} · Pending/unverified collections excluded: ${money(x.pending_collections)} · Posted non-payment income records: ${n(x.cash_income_records)} · Posted expense/adjustment records: ${n(x.cash_expense_records)}</div>
     <div class="acBar"><button class="acBtn" id="acExcelPL">Download Excel (.xlsx)</button><button class="acBtn" id="acPdfPL">Download PDF</button>${canClose?'<button class="acBtn ok" id="acCloseMonth">Close Month</button>':''}${close?'<button class="acBtn alt" id="acReopenMonth">Reopen Month</button>':''}</div>
   </div>`;
@@ -433,11 +471,38 @@ function reconciliation(){
   const body=pg.rows.map(x=>`<tr><td>${day(x.entry_date)}</td><td>${esc(x.reference_number||'—')}</td><td>${esc(x.description)}</td><td>${money(x.amount)}</td><td>${pill(x.reconciliation_status||'unreconciled')}</td><td>${x.reconciliation_status==='reconciled'?'<span class="acMeta">Reconciled '+fmt(x.reconciled_at)+'</span>':'<button class="acBtn ok" data-reconcile="'+x.id+'">Mark Reconciled</button>'}</td></tr>`).join('')||'<tr><td colspan="6"><div class="acMeta">No posted actual cashbook entries.</div></td></tr>';
   return `<div class="acPanel"><h3>Entry Reconciliation</h3><p class="acMeta">Reconcile actual posted cashbook records against supporting evidence or the bank statement. Reconciled accounting values cannot be silently rewritten.</p><div class="acTableWrap"><table class="acTable"><thead><tr><th>Date</th><th>Reference</th><th>Description</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length}</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="rePrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="reNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div></div>`;
 }
+function budgetInput(id,key,value,extra=''){
+  return '<input class="acInput" style="min-width:118px;width:118px" type="number" min="0" step="0.01" id="bud-'+key+'-'+id+'" value="'+Number(value||0).toFixed(2)+'" '+extra+'>';
+}
 function targetsPanel(){
-  const set=settings(),year=firstFyStart(),target=n(set.annual_turnover_target);
+  const set=settings(),year=firstFyStart(),target=n(set.annual_turnover_target),rows=budgetsForFy(year),pg=pageRows(rows,budgetPage);
+  budgetPage=pg.page;
+  const totals=budgetTotalsForFy(year),expenseBudget=totals.direct+totals.people+totals.operating+totals.ambassador+totals.other,plannedSurplus=totals.revenue-expenseBudget;
+  const body=pg.rows.map(b=>'<tr>'+
+    '<td><b>'+esc(budgetMonthLabel(b.month_start))+'</b><div class="acMeta">'+esc(b.month_start)+'</div></td>'+
+    '<td>'+budgetInput(b.id,'revenue',b.revenue_target)+'</td>'+
+    '<td>'+budgetInput(b.id,'direct',b.direct_cost_budget)+'</td>'+
+    '<td>'+budgetInput(b.id,'people',b.people_cost_budget)+'</td>'+
+    '<td>'+budgetInput(b.id,'operating',b.operating_expense_budget)+'</td>'+
+    '<td>'+budgetInput(b.id,'ambassador',b.ambassador_budget)+'</td>'+
+    '<td>'+budgetInput(b.id,'other',b.other_expense_budget)+'</td>'+
+    '<td>'+budgetInput(b.id,'minimum',b.minimum_surplus_target)+'</td>'+
+    '<td><b>'+money(budgetPlannedSurplus(b))+'</b><div class="acMeta">Revenue target less planned expenses</div></td>'+
+    '<td><input class="acInput" style="min-width:180px;width:180px" id="bud-notes-'+b.id+'" value="'+esc(b.notes||'')+'" placeholder="Planning note"></td>'+
+    '<td><button class="acBtn" data-budget-save="'+b.id+'">Save month</button></td>'+
+  '</tr>').join('')||'<tr><td colspan="11"><div class="acMeta">No monthly budget rows are available for this financial year.</div></td></tr>';
+
   return `<div class="acGrid">
     <div class="acPanel"><h3>Management Financial Year</h3><p class="acMeta">The Academy management year is configured from <b>1 October to 30 September</b>. The first configured management year begins <b>${day(set.financial_year_anchor)}</b>. This is an internal management period and should only be treated as the statutory company year if confirmed by the accountant.</p><div class="acForm"><label class="acMeta">First management year start<input id="fyAnchor" class="acInput" type="date" value="${esc(set.financial_year_anchor)}"></label><label class="acMeta">Annual turnover target<input id="fyTarget" class="acInput" type="number" min="0" step="0.01" value="${target}"></label><div class="acBar"><button class="acBtn" id="saveFinanceSettings">Save Management Settings</button></div></div></div>
-    <div class="acPanel"><h3>Turnover Planning</h3><div class="acMeta">Annual target: <b>${money(target)}</b></div><div class="acMeta">Monthly planning target: <b>${money(target/12)}</b></div><div class="acMeta">Quarterly planning target: <b>${money(target/4)}</b></div><div class="acMeta">FY ${year}/${String(year+1).slice(-2)} runs 1 Oct ${year} - 30 Sep ${year+1}.</div></div>
+    <div class="acPanel"><h3>Annual Planning Summary</h3><div class="acMeta">Annual revenue target: <b>${money(target)}</b></div><div class="acMeta">Monthly baseline: <b>${money(target/12)}</b></div><div class="acMeta">Budgeted revenue across 12 months: <b>${money(totals.revenue)}</b></div><div class="acMeta">Budgeted expenses: <b>${money(expenseBudget)}</b></div><div class="acMeta">Planned surplus: <b>${money(plannedSurplus)}</b></div><div class="acMeta">FY ${year}/${String(year+1).slice(-2)} runs 1 Oct ${year} - 30 Sep ${year+1}.</div><div class="acBar"><button class="acBtn alt" id="distributeAnnualTarget">Distribute Annual Target Across 12 Months</button></div><div class="acMeta">Distribution changes only monthly revenue targets. It does not overwrite expense, Ambassador, staff or surplus budgets.</div></div>
+  </div>
+  <div class="acPanel" style="margin-top:10px">
+    <div class="acBar" style="justify-content:space-between"><div><h3>Monthly Budget & Target Planner</h3><p class="acMeta">Plan revenue and cost limits before each month begins. Zero means no budget has been approved yet; it does not mean the future expense cannot occur.</p></div><span class="acPill">FY ${year}/${String(year+1).slice(-2)}</span></div>
+    <div class="acTableWrap"><table class="acTable">
+      <thead><tr><th>Month</th><th>Revenue Target</th><th>Direct Costs</th><th>Staff / People</th><th>Operating Expenses</th><th>Ambassador</th><th>Other Expenses</th><th>Minimum Surplus</th><th>Planned Surplus</th><th>Notes</th><th>Action</th></tr></thead>
+      <tbody>${body}</tbody>
+    </table></div>
+    <div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} months · Maximum 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="budPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="budNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>
   </div>`;
 }
 function reports(){
@@ -476,10 +541,10 @@ function render(t=tab){
   wire();
   if(t==='pnl')refreshPnl();
 }
-async function audit(action,id,details,status='recorded'){
+async function audit(action,id,details,status='recorded',entityType='cashbook'){
   try{
     const u=(await db.auth.getUser()).data.user;
-    await db.from('admin_audit_log').insert({actor_id:u?.id||null,action,department:'Finance & Accounting',entity_type:'cashbook',entity_id:String(id||''),details:JSON.stringify(details||{}),source:'system',status});
+    await db.from('admin_audit_log').insert({actor_id:u?.id||null,action,department:'Finance & Accounting',entity_type:entityType,entity_id:String(id||''),details:JSON.stringify(details||{}),source:'system',status});
   }catch(e){console.warn('Finance audit log',e)}
 }
 async function saveEntry(type){
@@ -585,11 +650,13 @@ async function exportPnl(format,from,to){
   const api=window.FundaReportExports;if(!api)return alert('The formal report export service is still loading. Please try again.');
   const x=normalisePnl(currentPnl||{}),comp=normalisePnl(currentPnlComparison||{}),compRange=currentPnlComparisonRange||comparisonRange(from,to);
   const grossMargin=ratio(x.gross_profit,x.turnover),operatingMargin=ratio(x.operating_profit,x.turnover),netMargin=ratio(x.net_result,x.turnover);
+  const monthBudget=budgetForMonth(from),plan=(pnlMode==='monthly'&&monthBudget)?{revenue:n(monthBudget.revenue_target),expenses:budgetExpenseTotal(monthBudget),plannedSurplus:budgetPlannedSurplus(monthBudget),minimumSurplus:n(monthBudget.minimum_surplus_target),months:1}:(pnlMode==='financial_year'?budgetTotalsForPeriod(from,to):null);
   const report={title:'Management Profit & Loss Statement',rows:pnlExportRows(x,comp),summary:[
     ['Reporting period',day(from)+' - '+day(to)],
     ['Comparison period',day(compRange[0])+' - '+day(compRange[1])],
     ['Statement basis','Management basis · verified Student receipts + posted income/expenses + approved accounting adjustments'],
     ['Turnover',money(x.turnover)],
+    ...(plan?.months?[[pnlMode==='monthly'?'Monthly revenue target':'Annual revenue target',money(plan.revenue)],['Revenue variance',money(n(x.turnover)-plan.revenue)],['Expense budget',money(plan.expenses)],['Expense headroom / (overrun)',money(plan.expenses-n(x.total_expenses))],['Planned surplus',money(plan.plannedSurplus)],['Minimum surplus target',money(plan.minimumSurplus||0)]]:[]),
     ['Gross profit',money(x.gross_profit)+' · '+pct(grossMargin)+' margin'],
     ['Operating profit / (loss)',money(x.operating_profit)+' · '+pct(operatingMargin)+' margin'],
     ['Profit / (loss) before tax',money(x.profit_before_tax)],
@@ -630,6 +697,30 @@ async function saveSettings(){
   if(error)return alert(error.message);
   await audit('Finance management settings updated','settings',{financial_year_anchor:anchor,annual_turnover_target:target});
   await open();render('targets');
+}
+async function saveBudgetMonth(id){
+  const row=(S.budgets||[]).find(x=>x.id===id);if(!row)return;
+  const read=key=>Number($('bud-'+key+'-'+id)?.value||0);
+  const payload={
+    revenue_target:read('revenue'),direct_cost_budget:read('direct'),people_cost_budget:read('people'),
+    operating_expense_budget:read('operating'),ambassador_budget:read('ambassador'),other_expense_budget:read('other'),
+    minimum_surplus_target:read('minimum'),notes:$('bud-notes-'+id)?.value.trim()||null
+  };
+  if(Object.entries(payload).some(([k,v])=>k!=='notes'&&(!Number.isFinite(v)||v<0)))return alert('All budget amounts must be zero or greater.');
+  const u=(await db.auth.getUser()).data.user;
+  payload.updated_by=u?.id||null;payload.updated_at=new Date().toISOString();
+  const {error}=await db.from('finance_monthly_budgets').update(payload).eq('id',id);
+  if(error)return alert(error.message);
+  await audit('Monthly finance budget updated',row.month_start,{...payload,updated_by:undefined,updated_at:undefined},'recorded','finance_budget');
+  await open();render('targets');
+}
+async function distributeAnnualTarget(){
+  const set=settings(),anchor=set.financial_year_anchor,target=n(set.annual_turnover_target);
+  if(!confirm('Distribute '+money(target)+' evenly across the 12 months from '+day(anchor)+'? This changes monthly revenue targets only and keeps all expense budgets unchanged.'))return;
+  const {error}=await db.rpc('finance_distribute_annual_target',{p_fy_start:anchor,p_annual_target:target});
+  if(error)return alert(error.message);
+  await audit('Annual finance target distributed to monthly budgets',anchor,{annual_target:target},'recorded','finance_budget');
+  budgetPage=1;await open();render('targets');
 }
 function cashbookReportRows(month){
   const [from,to]=monthRange(month);
@@ -696,7 +787,13 @@ function wire(){
     $('rePrev').onclick=()=>{reconPage=Math.max(1,reconPage-1);render('reconciliation')};
     $('reNext').onclick=()=>{reconPage++;render('reconciliation')};
   }
-  if(tab==='targets')$('saveFinanceSettings').onclick=saveSettings;
+  if(tab==='targets'){
+    $('saveFinanceSettings').onclick=saveSettings;
+    $('distributeAnnualTarget').onclick=distributeAnnualTarget;
+    document.querySelectorAll('[data-budget-save]').forEach(b=>b.onclick=()=>saveBudgetMonth(b.dataset.budgetSave));
+    $('budPrev').onclick=()=>{budgetPage=Math.max(1,budgetPage-1);render('targets')};
+    $('budNext').onclick=()=>{budgetPage++;render('targets')};
+  }
   if(tab==='reports'){
     $('cashExcel').onclick=()=>exportCashbook('xlsx');
     $('cashPdf').onclick=()=>exportCashbook('pdf');
