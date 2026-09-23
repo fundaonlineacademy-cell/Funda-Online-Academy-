@@ -389,8 +389,10 @@ async function open(){
 function install(){
   css();
   window.FundaSecurityCentre={open};
-  const old=window.security;
-  window.security=function(){try{old?.()}catch(e){}setTimeout(open,0)};
+  window.security=function(){
+    const v=$('view');if(v)v.innerHTML='<div class="sxPanel"><b>Loading IT, Security &amp; Platform…</b></div>';
+    setTimeout(()=>open().catch(e=>{console.error('IT Security open failed',e);if(v)v.innerHTML='<div class="sxPanel"><b>IT, Security &amp; Platform could not load.</b><div class="sxMeta">Use the Admin Refresh control or try again shortly.</div></div>'}),0)
+  };
   document.addEventListener('click',e=>{
     const b=e.target.closest?.('#nav button,.nav button');
     if(b&&isSecurityLabel(b.textContent))setTimeout(open,60);
