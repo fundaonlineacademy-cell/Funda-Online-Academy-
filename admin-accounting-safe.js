@@ -945,8 +945,318 @@ async function archiveAmbassadorScenario(id){
   await audit('Ambassador profitability scenario archived',id,{scenario_name:x.scenario_name,month:x.month_start},'archived','finance_ambassador_profitability_plan');
   if(ambassadorEditId===id)ambassadorEditId=null;await loadData();await loadAmbassadorProfitability();render('ambassador');
 }
+
+function managementReportRange(){
+  if(managementReportMode==='monthly')return monthRange(managementReportMonth);
+  if(managementReportMode==='financial_year')return fyRange(Number(managementReportFyYear||currentFyStartYear()));
+  return [managementReportFrom,managementReportTo];
+}
+function managementComparisonRange(from,to){
+  if(managementReportMode==='monthly'){
+    const d=new Date(from+'T12:00:00');d.setMonth(d.getMonth()-1);
+    return monthRange(isoDate(d).slice(0,7));
+  }
+  if(managementReportMode==='financial_year'){
+    return fyRange(Number(String(from).slice(0,4))-1);
+  }
+  const days=daysInclusive(from,to),end=shiftDays(from,-1);
+  return [shiftDays(end,-days+1),end];
+}
+function managementBudgetForRange(from,to){
+  if(managementReportMode==='monthly'){
+    const b=budgetForMonth(from);
+    return b?{
+      months:1,revenue:n(b.revenue_target),direct:n(b.direct_cost_budget),people:n(b.people_cost_budget),
+      operating:n(b.operating_expense_budget),ambassador:n(b.ambassador_budget),other:n(b.other_expense_budget),
+      minimumSurplus:n(b.minimum_surplus_target),plannedSurplus:budgetPlannedSurplus(b)
+    }:null;
+  }
+  if(managementReportMode==='financial_year'){
+    const t=budgetTotalsForFy(Number(String(from).slice(0,4)));
+    return {
+      months:budgetsForFy(Number(String(from).slice(0,4))).length,revenue:n(t.revenue),direct:n(t.direct),people:n(t.people),
+      operating:n(t.operating),ambassador:n(t.ambassador),other:n(t.other),minimumSurplus:n(t.minimumSurplus),
+      plannedSurplus:n(t.revenue)-n(t.direct)-n(t.people)-n(t.operating)-n(t.ambassador)-n(t.other)
+    };
+  }
+  return null;
+}
+function managementPeriodLabel(from,to){
+  if(managementReportMode==='monthly')return new Date(from+'T12:00:00').toLocaleDateString('en-ZA',{month:'long',year:'numeric'});
+  if(managementReportMode==='financial_year')return 'FY '+String(from).slice(0,4)+'/'+String(Number(String(from).slice(0,4))+1);
+  return day(from)+' - '+day(to);
+}
+function paymentEffectiveDate(p){return String(p.verified_at||p.submitted_at||p.created_at||'').slice(0,10)}
+function verifiedPaymentsForRange(from,to){
+  return (S.payments||[]).filter(p=>{
+    const d=paymentEffectiveDate(p);
+    return d>=from&&d<=to&&['verified','paid','approved','completed'].includes(low(p.status));
+  });
+}
+function reportCashRows(from,to,entryType=''){
+  return (S.cash||[]).filter(x=>{
+    const st=low(x.posting_status||'posted'),type=low(x.entry_type),source=low(x.source_type||'manual');
+    return x.entry_date>=from&&x.entry_date<=to&&x.entry_date<=today()&&st==='posted'
+      &&(!entryType||type===entryType)&&!['payment','student_payment'].includes(source);
+  });
+}
+function managementIncomeRows(data){
+  const rows=[];
+  verifiedPaymentsForRange(data.from,data.to).forEach(p=>{
+    const person=(S.profiles||[]).find(x=>x.id===p.student_id);
+    rows.push({
+      Date:day(paymentEffectiveDate(p)),
+      'Income Source':'Verified Student Payment',
+      Category:'Tuition / Training Revenue',
+      Payer:person?.full_name||person?.email||'Student',
+      Description:'Verified Student tuition / registration receipt',
+      Reference:p.payment_reference||String(p.id||'').slice(0,8),
+      'Basis / Source':'Verified Payments workflow',
+      'Amount (R)':n(p.amount)
+    });
+  });
+  reportCashRows(data.from,data.to,'income').forEach(x=>rows.push({
+    Date:day(x.entry_date),
+    'Income Source':low(x.source_type)==='adjustment'?'Accounting Adjustment':'Other Posted Income',
+    Category:x.category,
+    Payer:x.counterparty||'',
+    Description:x.description||'',
+    Reference:x.reference_number||'',
+    'Basis / Source':low(x.source_type)==='adjustment'?'Non-cash adjustment':'Cash / bank',
+    'Amount (R)':n(x.amount)
+  }));
+  return rows.sort((a,b)=>String(a.Date).localeCompare(String(b.Date)));
+}
+function managementExpenseRows(data){
+  const rows=reportCashRows(data.from,data.to,'expense').map(x=>({
+    Date:day(x.entry_date),
+    'Expense Source':low(x.source_type)==='petty_cash'?'Petty Cash Voucher':low(x.source_type)==='adjustment'?'Accounting Adjustment':'Posted Expense',
+    Category:x.category,
+    Payee:x.counterparty||'',
+    Description:x.description||'',
+    Reference:x.reference_number||'',
+    Department:x.department||'Finance & Accounting',
+    'Basis / Source':low(x.source_type)==='petty_cash'?'Petty cash':low(x.source_type)==='adjustment'?'Non-cash adjustment':'Cash / bank',
+    'Amount (R)':n(x.amount)
+  }));
+  const p=normalisePnl(data.pnl||{});
+  if(n(p.ambassador_commission_cost))rows.push({Date:'Period total','Expense Source':'Ambassador Earnings Ledger',Category:'Ambassador Commissions',Payee:'Ambassador Programme',Description:'Confirmed referral commissions earned in the period',Reference:'Controlled earnings ledger',Department:'Marketing / Finance','Basis / Source':'Accrued programme cost','Amount (R)':n(p.ambassador_commission_cost)});
+  if(n(p.ambassador_achievement_bonus_cost))rows.push({Date:'Period total','Expense Source':'Ambassador Earnings Ledger',Category:'Ambassador Achievement Bonuses',Payee:'Ambassador Programme',Description:'Confirmed incremental achievement bonuses earned in the period',Reference:'Controlled earnings ledger',Department:'Marketing / Finance','Basis / Source':'Accrued programme cost','Amount (R)':n(p.ambassador_achievement_bonus_cost)});
+  if(n(p.ambassador_monthly_performance_cost))rows.push({Date:'Period total','Expense Source':'Ambassador Earnings Ledger',Category:'Ambassador Monthly Performance',Payee:'Ambassador Programme',Description:'Approved monthly performance payments earned in the period',Reference:'Controlled earnings ledger',Department:'Marketing / Finance','Basis / Source':'Accrued programme cost','Amount (R)':n(p.ambassador_monthly_performance_cost)});
+  return rows;
+}
+function managementBudgetRows(data){
+  const x=normalisePnl(data.pnl||{}),b=data.budget;
+  if(!b)return [{
+    Line:'Budget comparison unavailable for this period type',
+    'Budget / Target (R)':'—','Actual (R)':n(x.turnover),'Variance / Headroom (R)':'—','Usage / Achievement':'—',
+    Note:'Use Monthly or Financial Year reporting for direct budget-vs-actual comparisons.'
+  }];
+  const rows=[];
+  const revenue=(label,budget,actual,note='')=>rows.push({
+    Line:label,'Budget / Target (R)':n(budget),'Actual (R)':n(actual),
+    'Variance / Headroom (R)':n(actual)-n(budget),
+    'Usage / Achievement':budget?pct(n(actual)/n(budget)*100):'—',
+    Note:note||'Positive variance means actual revenue is above target.'
+  });
+  const expense=(label,budget,actual,note='')=>rows.push({
+    Line:label,'Budget / Target (R)':n(budget),'Actual (R)':n(actual),
+    'Variance / Headroom (R)':n(budget)-n(actual),
+    'Usage / Achievement':budget?pct(n(actual)/n(budget)*100):'—',
+    Note:note||'Positive variance means budget headroom remains.'
+  });
+  revenue('Revenue / Turnover Target',b.revenue,x.turnover);
+  expense('Direct Costs',b.direct,x.direct_costs);
+  expense('People Costs',b.people,x.people_costs);
+  expense('Operating Expenses',b.operating,x.operating_expenses);
+  expense('Ambassador Programme',b.ambassador,x.ambassador_costs,'Confirmed Ambassador earnings compared with the approved Ambassador budget.');
+  expense('Other / Non-operating / Tax / D&A',b.other,n(x.depreciation_amortisation)+n(x.finance_costs)+n(x.non_operating_expenses)+n(x.tax_expense));
+  const totalBudget=n(b.direct)+n(b.people)+n(b.operating)+n(b.ambassador)+n(b.other);
+  expense('TOTAL EXPENSES',totalBudget,x.total_expenses);
+  rows.push({
+    Line:'Planned Surplus vs Actual Net Result','Budget / Target (R)':n(b.plannedSurplus),'Actual (R)':n(x.net_result),
+    'Variance / Headroom (R)':n(x.net_result)-n(b.plannedSurplus),'Usage / Achievement':b.plannedSurplus?pct(n(x.net_result)/n(b.plannedSurplus)*100):'—',
+    Note:'Positive variance means the actual net result is above planned surplus.'
+  });
+  rows.push({
+    Line:'Minimum Surplus Target','Budget / Target (R)':n(b.minimumSurplus),'Actual (R)':n(x.net_result),
+    'Variance / Headroom (R)':n(x.net_result)-n(b.minimumSurplus),'Usage / Achievement':b.minimumSurplus?pct(n(x.net_result)/n(b.minimumSurplus)*100):'—',
+    Note:'Management floor for the selected month / financial year.'
+  });
+  return rows;
+}
+function managementCashbookRows(data){
+  return (S.cash||[]).filter(x=>x.entry_date>=data.from&&x.entry_date<=data.to).map(x=>({
+    Date:day(x.entry_date),Type:x.entry_type,Category:x.category,Counterparty:x.counterparty||'',Description:x.description||'',
+    Reference:x.reference_number||'','Payment Method':x.payment_method||'',Department:x.department||'',
+    'Basis / Source':low(x.source_type)==='adjustment'?'Non-cash adjustment':low(x.source_type)==='petty_cash'?'Petty cash voucher':low(x.source_type)==='student_payment'?'Verified Student payment copy':'Cash / bank',
+    'Amount (R)':n(x.amount),'Posting Status':x.posting_status||'posted',Recurrence:x.recurrence||'none',
+    'Reconciliation Status':['adjustment','petty_cash'].includes(low(x.source_type))?'not applicable':(x.reconciliation_status||'unreconciled'),
+    'Void Reason':x.void_reason||''
+  }));
+}
+function managementPettyRows(data){
+  return (S.pettyFunds||[]).map(f=>{
+    const a=pettyAccount(f.petty_account_id),opening=pettyBalance(f.id,shiftDays(data.from,-1)),closing=pettyBalance(f.id,data.to);
+    const moves=(S.pettyMoves||[]).filter(x=>x.fund_id===f.id&&x.movement_date>=data.from&&x.movement_date<=data.to);
+    const vouchers=(S.pettyVouchers||[]).filter(x=>x.fund_id===f.id&&x.expense_date>=data.from&&x.expense_date<=data.to&&low(x.status)==='posted');
+    const latestRecon=(S.pettyRecons||[]).filter(x=>x.fund_id===f.id&&x.reconciliation_date<=data.to).sort((x,y)=>String(y.reconciliation_date).localeCompare(String(x.reconciliation_date)))[0];
+    return {
+      'Petty Cash Account':(a?.account_code||'')+' · '+(a?.account_name||f.fund_name),
+      'Cost Control':f.cost_control_reference||'—','Cost Owner':pettyOwnerLabel(f),
+      'Opening Balance (R)':opening,
+      'Funding / Replenishment Net (R)':moves.reduce((sum,x)=>sum+pettyMoveEffect(x),0),
+      'Posted Voucher Spend (R)':vouchers.reduce((sum,x)=>sum+n(x.amount),0),
+      'Tracked VAT (R)':vouchers.reduce((sum,x)=>sum+n(x.vat_amount),0),
+      'Closing Balance (R)':closing,
+      'Pending Vouchers (R)':(S.pettyVouchers||[]).filter(x=>x.fund_id===f.id&&low(x.status)==='pending').reduce((sum,x)=>sum+n(x.amount),0),
+      'Last Cash Count':latestRecon?day(latestRecon.reconciliation_date):'—',
+      'Last Variance (R)':latestRecon?n(latestRecon.variance):0,
+      Status:f.status
+    };
+  });
+}
+function managementSummaryRows(data){
+  const x=normalisePnl(data.pnl||{}),comp=normalisePnl(data.comparison||{}),b=data.budget;
+  const planned=(S.cash||[]).filter(r=>r.entry_date>=data.from&&r.entry_date<=data.to&&low(r.posting_status)==='planned').reduce((a,r)=>a+n(r.amount),0);
+  const unrec=(S.cash||[]).filter(r=>r.entry_date>=data.from&&r.entry_date<=data.to&&low(r.posting_status||'posted')==='posted'&&!['adjustment','petty_cash'].includes(low(r.source_type))&&low(r.reconciliation_status||'unreconciled')==='unreconciled').length;
+  const pettyClosing=(S.pettyFunds||[]).reduce((a,f)=>a+pettyBalance(f.id,data.to),0);
+  return [
+    {Metric:'Turnover','Current Period':money(x.turnover),'Comparison Period':money(comp.turnover),'Budget / Target':b?money(b.revenue):'Not applied',Variance:b?money(n(x.turnover)-n(b.revenue)):money(n(x.turnover)-n(comp.turnover))},
+    {Metric:'Gross Profit','Current Period':money(x.gross_profit),'Comparison Period':money(comp.gross_profit),'Budget / Target':'—',Variance:money(n(x.gross_profit)-n(comp.gross_profit))},
+    {Metric:'Total Expenses','Current Period':money(x.total_expenses),'Comparison Period':money(comp.total_expenses),'Budget / Target':b?money(n(b.direct)+n(b.people)+n(b.operating)+n(b.ambassador)+n(b.other)):'Not applied',Variance:b?money((n(b.direct)+n(b.people)+n(b.operating)+n(b.ambassador)+n(b.other))-n(x.total_expenses)):money(n(comp.total_expenses)-n(x.total_expenses))},
+    {Metric:'Net Profit / (Loss)','Current Period':money(x.net_result),'Comparison Period':money(comp.net_result),'Budget / Target':b?money(b.plannedSurplus):'Not applied',Variance:b?money(n(x.net_result)-n(b.plannedSurplus)):money(n(x.net_result)-n(comp.net_result))},
+    {Metric:'Ambassador Programme Cost','Current Period':money(x.ambassador_costs),'Comparison Period':money(comp.ambassador_costs),'Budget / Target':b?money(b.ambassador):'Not applied',Variance:b?money(n(b.ambassador)-n(x.ambassador_costs)):money(n(comp.ambassador_costs)-n(x.ambassador_costs))},
+    {Metric:'Pending / Unverified Student Collections','Current Period':money(x.pending_collections),'Comparison Period':money(comp.pending_collections),'Budget / Target':'Excluded from recognised income',Variance:'—'},
+    {Metric:'Planned / Scheduled Cash Items','Current Period':money(planned),'Comparison Period':'—','Budget / Target':'Not yet actual','Variance':'—'},
+    {Metric:'Unreconciled Actual Cash/Bank Entries','Current Period':String(unrec),'Comparison Period':'—','Budget / Target':'Control item','Variance':unrec?'Review required':'Clear'},
+    {Metric:'Petty Cash Closing Balance','Current Period':money(pettyClosing),'Comparison Period':'—','Budget / Target':'Across all funds','Variance':'—'}
+  ];
+}
+function managementPackRows(data){
+  const rows=[];
+  managementSummaryRows(data).forEach(x=>rows.push({Section:'Executive Finance Summary',Line:x.Metric,'Current / Actual':x['Current Period'],'Comparison / Budget':x['Budget / Target'],Variance:x.Variance,Note:''}));
+  managementBudgetRows(data).forEach(x=>rows.push({Section:'Budget vs Actual',Line:x.Line,'Current / Actual':x['Actual (R)'],'Comparison / Budget':x['Budget / Target (R)'],Variance:x['Variance / Headroom (R)'],Note:x.Note}));
+  pnlExportRows(normalisePnl(data.pnl||{}),normalisePnl(data.comparison||{})).forEach(x=>rows.push({Section:'Management P&L · '+x.Section,Line:x.Account,'Current / Actual':x['Current Period (R)'],'Comparison / Budget':x['Comparison Period (R)'],Variance:x['Variance (R)'],Note:x['% of Turnover']+' of turnover'}));
+  return rows;
+}
+function managementReportObject(type){
+  const d=managementReportData;if(!d)return null;
+  const x=normalisePnl(d.pnl||{}),period=managementPeriodLabel(d.from,d.to),compLabel=day(d.compFrom)+' - '+day(d.compTo);
+  const common=[
+    ['Reporting period',period+' · '+day(d.from)+' - '+day(d.to)],
+    ['Comparison period',compLabel],
+    ['Management basis','Verified Student receipts + confirmed Ambassador earnings + posted income/expenses + approved accounting adjustments'],
+    ['Turnover',money(x.turnover)],['Total expenses',money(x.total_expenses)],['Net profit / (loss)',money(x.net_result)],
+    ['Statement status',x.period_status||'live']
+  ];
+  if(type==='summary')return {title:'Finance Management Summary',rows:managementSummaryRows(d),summary:common};
+  if(type==='income'){
+    const rows=managementIncomeRows(d);
+    return {title:'Management Income Report',rows,summary:[...common,['Recognised total income',money(x.total_income)],['Verified Student receipts',money(x.tuition_revenue)],['Other operating income',money(x.other_operating_income)],['Finance income',money(x.finance_income)],['Other income',money(x.non_operating_income)],['Detailed income records',rows.length]]};
+  }
+  if(type==='expenses'){
+    const rows=managementExpenseRows(d);
+    return {title:'Management Expense Report',rows,summary:[...common,['Direct costs',money(x.direct_costs)],['People costs',money(x.people_costs)],['Operating expenses',money(x.operating_expenses)],['Ambassador programme costs',money(x.ambassador_costs)],['Depreciation & amortisation',money(x.depreciation_amortisation)],['Finance / other / tax',money(n(x.finance_costs)+n(x.non_operating_expenses)+n(x.tax_expense))],['Detailed expense records / programme lines',rows.length]]};
+  }
+  if(type==='budget')return {title:'Budget vs Actual Management Report',rows:managementBudgetRows(d),summary:[...common,['Budget comparison',d.budget?'Applied':'Not applied to Custom period'],['Budget months',d.budget?.months||0]]};
+  if(type==='cashbook'){
+    const rows=managementCashbookRows(d),posted=rows.filter(x=>x['Posting Status']==='posted'),planned=rows.filter(x=>x['Posting Status']==='planned'),voided=rows.filter(x=>x['Posting Status']==='voided');
+    const postedIncome=posted.filter(x=>low(x.Type)==='income').reduce((a,x)=>a+n(x['Amount (R)']),0),postedExpenses=posted.filter(x=>low(x.Type)==='expense').reduce((a,x)=>a+n(x['Amount (R)']),0);
+    return {title:'Management Cashbook Report',rows,summary:[...common,['Cashbook records',rows.length],['Posted records',posted.length],['Planned records',planned.length],['Voided records',voided.length],['Posted cashbook income',money(postedIncome)],['Posted cashbook expenses',money(postedExpenses)],['Cashbook net movement',money(postedIncome-postedExpenses)]]};
+  }
+  if(type==='petty'){
+    const rows=managementPettyRows(d);
+    return {title:'Petty Cash Management Report',rows,summary:[...common,['Petty cash funds',rows.length],['Closing petty cash balance',money(rows.reduce((a,x)=>a+n(x['Closing Balance (R)']),0))],['Posted petty cash spend',money(rows.reduce((a,x)=>a+n(x['Posted Voucher Spend (R)']),0))],['Pending petty cash vouchers',money(rows.reduce((a,x)=>a+n(x['Pending Vouchers (R)']),0))]]};
+  }
+  if(type==='pnl')return {title:'Management Profit & Loss Statement',rows:pnlExportRows(x,normalisePnl(d.comparison||{})),summary:common};
+  if(type==='pack')return {title:'Finance Management Pack',rows:managementPackRows(d),summary:[...common,['Budget comparison',d.budget?'Applied':'Not applied to Custom period'],['Purpose','Executive management view combining financial performance, budget control and P&L'] ]};
+  return null;
+}
+async function generateManagementReports(){
+  const [from,to]=managementReportRange();
+  const host=$('managementReportPreview');
+  if(!from||!to){if(host)host.innerHTML='<div class="acWarn">Choose a complete reporting period.</div>';return false}
+  if(from>to){if(host)host.innerHTML='<div class="acWarn">Report start date cannot be after end date.</div>';return false}
+  const [compFrom,compTo]=managementComparisonRange(from,to);
+  if(host)host.innerHTML='<div class="acPanel"><div class="acMeta">Generating management reports…</div></div>';
+  try{
+    const [raw,rawComp]=await Promise.all([fetchPnl(from,to),fetchPnl(compFrom,compTo)]);
+    managementReportData={
+      from,to,compFrom,compTo,pnl:normalisePnl(raw),comparison:normalisePnl(rawComp),
+      budget:managementBudgetForRange(from,to),generatedAt:new Date().toISOString()
+    };
+    if(host)host.innerHTML=managementReportPreview();
+    wireManagementReportDownloads();
+    return true;
+  }catch(e){
+    managementReportData=null;
+    if(host)host.innerHTML='<div class="acWarn"><b>Management reports unavailable:</b> '+esc(e.message||e)+'. No zero-value report has been substituted.</div>';
+    return false;
+  }
+}
+function managementReportPreview(){
+  const d=managementReportData;if(!d)return '<div class="acPanel"><div class="acMeta">Choose a period and generate the management reports.</div></div>';
+  const x=normalisePnl(d.pnl||{}),b=d.budget,budgetRows=managementBudgetRows(d);
+  const expenseBudget=b?n(b.direct)+n(b.people)+n(b.operating)+n(b.ambassador)+n(b.other):0;
+  return `<div class="acPLMetrics">
+      <div class="acPLMetric"><strong>${money(x.turnover)}</strong><span>Turnover</span><small>${b?'Target '+money(b.revenue)+' · variance '+money(n(x.turnover)-n(b.revenue)):'Comparison '+money(d.comparison?.turnover)}</small></div>
+      <div class="acPLMetric"><strong>${money(x.gross_profit)}</strong><span>Gross profit</span><small>${pct(ratio(x.gross_profit,x.turnover))} margin</small></div>
+      <div class="acPLMetric"><strong>${money(x.total_expenses)}</strong><span>Total expenses</span><small>${b?'Budget '+money(expenseBudget)+' · headroom '+money(expenseBudget-n(x.total_expenses)):'Comparison '+money(d.comparison?.total_expenses)}</small></div>
+      <div class="acPLMetric"><strong>${money(x.net_result)}</strong><span>Net profit / (loss)</span><small>${b?'Planned surplus '+money(b.plannedSurplus):'Comparison '+money(d.comparison?.net_result)}</small></div>
+      <div class="acPLMetric"><strong>${money(x.ambassador_costs)}</strong><span>Ambassador costs</span><small>${b?'Budget '+money(b.ambassador):'Confirmed programme cost'}</small></div>
+    </div>
+    <div class="acGrid">
+      <div class="acPanel"><h3>Management Reporting Basis</h3><div class="acMeta">Period: <b>${esc(managementPeriodLabel(d.from,d.to))}</b></div><div class="acMeta">Comparison: <b>${day(d.compFrom)} - ${day(d.compTo)}</b></div><div class="acMeta">Recognises verified Student receipts, confirmed Ambassador earnings, posted income/expenses and approved non-cash adjustments. Planned/voided/future items remain outside recognised actuals.</div>${managementReportMode==='custom'?'<div class="acInfo">Custom periods show actuals and comparison. Direct budget-vs-actual is intentionally not applied because monthly budgets are not automatically prorated.</div>':''}</div>
+      <div class="acPanel"><h3>Control Signals</h3><div class="acMeta">Pending/unverified collections excluded: <b>${money(x.pending_collections)}</b></div><div class="acMeta">Future-dated posted items excluded: <b>${n(x.future_posted_records)} · ${money(x.future_posted_amount)}</b></div><div class="acMeta">Confirmed Ambassador programme costs: <b>${money(x.ambassador_costs)}</b></div><div class="acMeta">Report generated: <b>${fmt(d.generatedAt)}</b></div></div>
+    </div>
+    <div class="acPanel" style="margin-top:10px"><h3>Budget vs Actual Preview</h3><div class="acTableWrap"><table class="acTable"><thead><tr><th>Line</th><th>Budget / Target</th><th>Actual</th><th>Variance / Headroom</th><th>%</th><th>Interpretation</th></tr></thead><tbody>${budgetRows.map(r=>'<tr><td><b>'+esc(r.Line)+'</b></td><td>'+esc(typeof r['Budget / Target (R)']==='number'?money(r['Budget / Target (R)']):r['Budget / Target (R)'])+'</td><td>'+esc(typeof r['Actual (R)']==='number'?money(r['Actual (R)']):r['Actual (R)'])+'</td><td>'+esc(typeof r['Variance / Headroom (R)']==='number'?money(r['Variance / Headroom (R)']):r['Variance / Headroom (R)'])+'</td><td>'+esc(r['Usage / Achievement'])+'</td><td>'+esc(r.Note)+'</td></tr>').join('')}</tbody></table></div></div>
+    ${managementReportDownloadCards()}`;
+}
+function managementReportDownloadCards(){
+  const defs=[
+    ['pack','Finance Management Pack','Executive summary + budget control + management P&L in one report.'],
+    ['summary','Management Summary','Key management KPIs, comparisons and control signals.'],
+    ['income','Income Report','Verified Student receipts and other recognised income with source detail.'],
+    ['expenses','Expense Report','Recognised operating, petty cash, adjustment and Ambassador programme costs.'],
+    ['budget','Budget vs Actual','Targets and expense budgets compared with recognised actuals.'],
+    ['cashbook','Cashbook Report','Posted, planned and voided cashbook records with reconciliation status.'],
+    ['petty','Petty Cash Report','All petty cash funds, cost controls, movements, spend, VAT tracking and balances.'],
+    ['pnl','P&L','Strategic management Profit & Loss with comparison-period variance and % of turnover.']
+  ];
+  return '<div class="acPanel" style="margin-top:10px"><h3>Formal Finance Reports</h3><div class="acInfo">Excel is best for analysis and filtering; PDF is best for review, meetings and formal management records. These reports reuse the Academy formal report exporter and do not duplicate the locked Report Centre.</div><div class="acGrid">'+defs.map(d=>'<div class="acPanel"><h3>'+esc(d[1])+'</h3><p class="acMeta">'+esc(d[2])+'</p><div class="acBar"><button class="acBtn" data-mr-type="'+d[0]+'" data-mr-format="xlsx">Excel</button><button class="acBtn alt" data-mr-type="'+d[0]+'" data-mr-format="pdf">PDF</button></div></div>').join('')+'</div></div>';
+}
+function wireManagementReportDownloads(){
+  document.querySelectorAll('[data-mr-type]').forEach(b=>b.onclick=()=>exportManagementReport(b.dataset.mrType,b.dataset.mrFormat));
+}
+async function exportManagementReport(type,format){
+  if(!managementReportData){
+    const ok=await generateManagementReports();
+    if(!ok)return;
+  }
+  const api=window.FundaReportExports;if(!api)return alert('The formal report export service is still loading. Please try again.');
+  const report=managementReportObject(type);if(!report)return alert('Choose a valid management report.');
+  const d=managementReportData;
+  try{
+    const fileName=format==='xlsx'
+      ?await api.exportExcel(report,{from:d.from,to:d.to,scope:'period'})
+      :await api.exportPdf(report,{from:d.from,to:d.to,scope:'period'});
+    await api.logRun?.('finance',d.from,d.to,'period',format,report.rows?.length||0,fileName);
+  }catch(e){alert(e.message||'The management report could not be generated.')}
+}
 function reports(){
-  return `<div class="acGrid"><div class="acPanel"><h3>Financial Exports</h3><p class="acMeta">Use the formal FOA Excel/PDF templates. CSV is no longer the primary management-report format.</p><div class="acBar"><button class="acBtn" id="cashExcel">Cashbook Excel</button><button class="acBtn" id="cashPdf">Cashbook PDF</button><button class="acBtn alt" id="acReports2">Open Report Centre</button></div></div><div class="acPanel"><h3>Export Month</h3><input class="acInput" type="month" id="reportMonth" value="${esc(new Date().toISOString().slice(0,7))}"><p class="acMeta">The export includes posted, planned and voided records for audit visibility, with posting and reconciliation status clearly shown.</p></div></div>`;
+  return `<div class="acPanel">
+    <div class="acBar" style="justify-content:space-between;align-items:flex-start"><div><h3>Finance Management Reporting</h3><p class="acMeta">Generate management-quality Income, Expense, Budget-vs-Actual, Cashbook, Petty Cash and P&L reports from the same governed Finance data.</p></div><button class="acBtn alt" id="acReports2">Open Locked Report Centre</button></div>
+    <div class="acBar">
+      <select id="mrMode" class="acSelect"><option value="monthly" ${managementReportMode==='monthly'?'selected':''}>Monthly management reports</option><option value="financial_year" ${managementReportMode==='financial_year'?'selected':''}>Financial Year reports</option><option value="custom" ${managementReportMode==='custom'?'selected':''}>Custom actuals period</option></select>
+      ${managementReportMode==='monthly'?'<input id="mrMonth" class="acInput" type="month" value="'+esc(managementReportMonth)+'">':''}
+      ${managementReportMode==='financial_year'?'<select id="mrFy" class="acSelect">'+fyOptions().replaceAll('id="pnlFy"','')+'</select>':''}
+      ${managementReportMode==='custom'?'<input id="mrFrom" class="acInput" type="date" value="'+esc(managementReportFrom)+'"><input id="mrTo" class="acInput" type="date" value="'+esc(managementReportTo)+'">':''}
+      <button class="acBtn" id="mrGenerate">Generate Management Reports</button>
+    </div>
+    <div class="acInfo"><b>Reporting discipline:</b> actual performance, budgets/targets and cash controls remain separate concepts. The reports connect them for management analysis without turning a budget into an actual transaction or treating planned cash as recognised income/expense.</div>
+  </div>
+  <div id="managementReportPreview">${managementReportData?managementReportPreview():'<div class="acPanel" style="margin-top:10px"><div class="acMeta">Choose a reporting period and generate the management reports.</div></div>'}</div>`;
 }
 function render(t=tab){
   if(!active())return;
