@@ -238,11 +238,11 @@ function overview(){
   <div class="acGrid" style="margin-top:9px">
     <div class="acPanel">
       <h3>Cashbook Controls</h3>
-      <div class="acMeta">Actual cash / bank entries to date: <b>${loaded.cash?actualCashRows().length:'—'}</b></div>
+      <div class="acMeta">Actual cash / bank / petty-cash entries to date: <b>${loaded.cash?actualCashRows().length:'—'}</b></div>
       <div class="acMeta">Accounting adjustments: <b>${loaded.cash?adjustmentRows().length:'—'}</b></div>
       <div class="acMeta">Planned / scheduled items: <b>${loaded.cash?plannedRows().length:'—'}</b></div>
       <div class="acMeta">Voided records retained for audit: <b>${loaded.cash?voidedRows().length:'—'}</b></div>
-      <div class="acMeta">Unreconciled actual entries: <b>${loaded.cash?actualCashRows().filter(x=>x.reconciliation_status!=='reconciled').length:'—'}</b></div>
+      <div class="acMeta">Unreconciled bank/cash entries: <b>${loaded.cash?actualCashRows().filter(x=>low(x.reconciliation_status)==='unreconciled').length:'—'}</b></div>
       ${future.length?'<div class="acFuture">'+future.length+' legacy future-dated posted item(s) require review. They are not automatically deleted or changed.</div>':''}
     </div>
     <div class="acPanel">
@@ -290,10 +290,10 @@ function cashbookPanel(type=''){
     <td>${day(x.entry_date)}${x.entry_date>today()&&low(x.posting_status||'posted')==='posted'?'<div class="acFuture">Future-dated posted</div>':''}</td>
     <td>${pill(x.entry_type)}</td><td>${esc(x.category)}</td><td>${esc(x.counterparty||'—')}</td>
     <td>${esc(x.description)}</td><td>${esc(x.reference_number||'—')}</td><td>${esc(x.department||'—')}</td>
-    <td>${low(x.source_type)==='adjustment'?'<span class="acPill">non-cash adjustment</span>':esc(x.source_type==='student_payment'?'verified student payment':'cash / bank')}</td>
+    <td>${low(x.source_type)==='adjustment'?'<span class="acPill">non-cash adjustment</span>':low(x.source_type)==='petty_cash'?'<span class="acPill">petty cash voucher</span>':esc(x.source_type==='student_payment'?'verified student payment':'cash / bank')}</td>
     <td><b>${money(x.amount)}</b></td><td>${pill(x.posting_status||'posted')}<div class="acMeta">${x.recurrence==='monthly'?'Monthly recurring':''}</div></td>
-    <td>${low(x.source_type)==='adjustment'?'<span class="acMeta">Not bank-reconciled</span>':pill(x.reconciliation_status||'unreconciled')}</td>
-    <td><div class="acBar" style="margin:0">${x.posting_status==='planned'?'<button class="acBtn ok" data-post="'+x.id+'">Post</button>':''}${x.posting_status!=='voided'?'<button class="acBtn bad" data-void="'+x.id+'">Void</button>':'<span class="acMeta">'+esc(x.void_reason||'Voided')+'</span>'}</div></td>
+    <td>${['adjustment','petty_cash'].includes(low(x.source_type))?'<span class="acMeta">Not bank-reconciled</span>':pill(x.reconciliation_status||'unreconciled')}</td>
+    <td><div class="acBar" style="margin:0">${x.posting_status==='planned'?'<button class="acBtn ok" data-post="'+x.id+'">Post</button>':''}${low(x.source_type)==='petty_cash'&&x.posting_status!=='voided'?'<button class="acBtn alt" data-open-petty="1">Manage in Petty Cash</button>':x.posting_status!=='voided'?'<button class="acBtn bad" data-void="'+x.id+'">Void</button>':'<span class="acMeta">'+esc(x.void_reason||'Voided')+'</span>'}</div></td>
   </tr>`).join('')||'<tr><td colspan="12"><div class="acMeta">No accounting entries match this view.</div></td></tr>';
   return `
   <div class="acPanel" style="margin-top:9px">
@@ -473,7 +473,7 @@ function pnlMarkup(raw,rawComp,from,to,compFrom,compTo){
 }
 function reconciliation(){
   if(!loaded.cash)return '<div class="acPanel"><div class="acMeta">Reconciliation data is currently unavailable. Use Refresh after checking the warning above.</div></div>';
-  const rows=actualCashRows(),pg=pageRows(rows,reconPage);reconPage=pg.page;
+  const rows=actualCashRows().filter(x=>low(x.reconciliation_status)!=='excluded'),pg=pageRows(rows,reconPage);reconPage=pg.page;
   const body=pg.rows.map(x=>`<tr><td>${day(x.entry_date)}</td><td>${esc(x.reference_number||'—')}</td><td>${esc(x.description)}</td><td>${money(x.amount)}</td><td>${pill(x.reconciliation_status||'unreconciled')}</td><td>${x.reconciliation_status==='reconciled'?'<span class="acMeta">Reconciled '+fmt(x.reconciled_at)+'</span>':'<button class="acBtn ok" data-reconcile="'+x.id+'">Mark Reconciled</button>'}</td></tr>`).join('')||'<tr><td colspan="6"><div class="acMeta">No posted actual cashbook entries.</div></td></tr>';
   return `<div class="acPanel"><h3>Entry Reconciliation</h3><p class="acMeta">Reconcile actual posted cashbook records against supporting evidence or the bank statement. Reconciled accounting values cannot be silently rewritten.</p><div class="acTableWrap"><table class="acTable"><thead><tr><th>Date</th><th>Reference</th><th>Description</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length}</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="rePrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="reNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div></div>`;
 }
@@ -697,19 +697,20 @@ function reports(){
 function render(t=tab){
   if(!active())return;
   tab=t;
-  const mp=currentMonthPnl||{},future=futurePosted(),un=loaded.cash?actualCashRows().filter(x=>x.reconciliation_status!=='reconciled').length:null;
+  const mp=currentMonthPnl||{},future=futurePosted(),un=loaded.cash?actualCashRows().filter(x=>low(x.reconciliation_status)==='unreconciled').length:null;
   let body='';
   if(t==='overview')body=overview();
   if(t==='income')body=entryForm('income');
   if(t==='expenses')body=entryForm('expense');
   if(t==='cashbook')body=cashbookPanel('');
+  if(t==='petty')body=pettyCashPanel();
   if(t==='planned')body=plannedPanel();
   if(t==='pnl')body=pnlControls();
   if(t==='reconciliation')body=reconciliation();
   if(t==='targets')body=targetsPanel();
   if(t==='reports')body=reports();
   $('view').innerHTML=`<div class="acRoot">
-    <div class="acHero"><b>FINANCIAL OPERATIONS & CONTROL</b><h2>Expenses, Income & Management P&L</h2><p>Daily cashbook control, planned items, monthly management P&L, reconciliation, financial-year targets and formal reporting from one governed finance workspace.</p></div>
+    <div class="acHero"><b>FINANCIAL OPERATIONS & CONTROL</b><h2>Expenses, Income & Management P&L</h2><p>Daily cashbook control, petty cash, planned items, monthly management P&L, reconciliation, financial-year targets and formal reporting from one governed finance workspace.</p></div>
     ${loadWarning()}
     <div class="acK">
       <div class="acCard"><strong>${currentMonthPnl?money(mp.turnover):'—'}</strong><span>Current month turnover to date</span></div>
@@ -720,7 +721,7 @@ function render(t=tab){
     </div>
     ${future.length?'<div class="acWarn"><b>Review required:</b> '+future.length+' existing posted cashbook item(s) are dated in the future. They have not been altered, but live P&L calculations now exclude them until their date arrives.</div>':''}
     <div class="acTabs">${[
-      ['overview','Overview'],['income','Income'],['expenses','Expenses'],['cashbook','Cashbook'],['planned','Planned / Recurring'],['pnl','P&L'],['reconciliation','Reconciliation'],['targets','Targets & FY'],['reports','Reports']
+      ['overview','Overview'],['income','Income'],['expenses','Expenses'],['cashbook','Cashbook'],['petty','Petty Cash'],['planned','Planned / Recurring'],['pnl','P&L'],['reconciliation','Reconciliation'],['targets','Targets & FY'],['reports','Reports']
     ].map(x=>'<button class="acBtn '+(t===x[0]?'':'alt')+'" data-ac-tab="'+x[0]+'">'+x[1]+'</button>').join('')}<button class="acBtn alt" id="acRefresh">Refresh</button></div>
     <div class="acSection">${body}</div>
   </div>`;
@@ -913,8 +914,8 @@ function cashbookReportRows(month){
   return S.cash.filter(x=>x.entry_date>=from&&x.entry_date<=to).map(x=>({
     Date:day(x.entry_date),Type:x.entry_type,Category:x.category,Counterparty:x.counterparty||'',Description:x.description,
     Reference:x.reference_number||'','Payment Method':x.payment_method||'',Department:x.department||'',Amount:n(x.amount),
-    'Basis / Source':x.source_type==='adjustment'?'Non-cash adjustment':x.source_type==='student_payment'?'Verified student payment':'Cash / bank',
-    'Posting Status':x.posting_status||'posted',Recurrence:x.recurrence||'none','Reconciliation Status':x.source_type==='adjustment'?'not applicable':(x.reconciliation_status||'unreconciled'),
+    'Basis / Source':x.source_type==='adjustment'?'Non-cash adjustment':x.source_type==='petty_cash'?'Petty cash voucher':x.source_type==='student_payment'?'Verified student payment':'Cash / bank',
+    'Posting Status':x.posting_status||'posted',Recurrence:x.recurrence||'none','Reconciliation Status':['adjustment','petty_cash'].includes(x.source_type)?'not applicable':(x.reconciliation_status||'unreconciled'),
     'Void Reason':x.void_reason||''
   }));
 }
