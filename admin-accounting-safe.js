@@ -661,18 +661,32 @@ function pettyCashPanel(){
 }
 function pettyReportRows(fund,month){
   const [from,to]=monthRange(month),opening=pettyBalance(fund.id,shiftDays(from,-1));
-  let running=opening;
-  const rows=[];
+  const events=[];
   for(const x of (S.pettyMoves||[]).filter(x=>x.fund_id===fund.id&&x.movement_date>=from&&x.movement_date<=to)){
     const posted=low(x.status)==='posted',effect=posted?pettyMoveEffect(x):0;
-    const inflow=Math.max(0,effect),outflow=Math.max(0,-effect);running+=effect;
-    rows.push({sort:x.movement_date+'T'+(x.created_at||''),Date:day(x.movement_date),Record:'Fund movement',Reference:x.reference_number||'',Category:'',Payee:'',Description:String(x.movement_type||'').replaceAll('_',' ')+(x.notes?' · '+x.notes:''),'Inflow (R)':inflow,'Outflow (R)':outflow,Status:x.status,'Running Balance (R)':running,Evidence:''});
+    events.push({
+      sort:x.movement_date+'T'+(x.created_at||''),
+      Date:day(x.movement_date),Record:'Fund movement',Reference:x.reference_number||'',Category:'',Payee:'',
+      Description:String(x.movement_type||'').replaceAll('_',' ')+(x.notes?' · '+x.notes:''),
+      'Inflow (R)':Math.max(0,effect),'Outflow (R)':Math.max(0,-effect),Status:x.status,Evidence:'',effect
+    });
   }
   for(const x of (S.pettyVouchers||[]).filter(x=>x.fund_id===fund.id&&x.expense_date>=from&&x.expense_date<=to)){
-    const outflow=low(x.status)==='posted'?n(x.amount):0;running-=outflow;
-    rows.push({sort:x.expense_date+'T'+(x.created_at||''),Date:day(x.expense_date),Record:'Voucher',Reference:x.voucher_number,Category:x.category,Payee:x.payee||'',Description:x.description,'Inflow (R)':0,'Outflow (R)':outflow,Status:x.status,'Running Balance (R)':running,Evidence:x.receipt_url||x.evidence_note||''});
+    const outflow=low(x.status)==='posted'?n(x.amount):0;
+    events.push({
+      sort:x.expense_date+'T'+(x.created_at||''),
+      Date:day(x.expense_date),Record:'Voucher',Reference:x.voucher_number,Category:x.category,Payee:x.payee||'',
+      Description:x.description,'Inflow (R)':0,'Outflow (R)':outflow,Status:x.status,Evidence:x.receipt_url||x.evidence_note||'',effect:-outflow
+    });
   }
-  return {opening,rows:rows.sort((a,b)=>a.sort.localeCompare(b.sort)).map(({sort,...r})=>r),from,to};
+  let running=opening;
+  const rows=events.sort((a,b)=>a.sort.localeCompare(b.sort)).map(x=>{
+    running+=x.effect;
+    const {sort,effect,...r}=x;
+    r['Running Balance (R)']=running;
+    return r;
+  });
+  return {opening,rows,from,to};
 }
 async function exportPettyCash(format){
   const fund=pettyFund();if(!fund)return alert('Choose a petty cash fund.');
