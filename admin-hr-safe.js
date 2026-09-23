@@ -477,7 +477,13 @@ function disciplinarySelectedCase(){
 
   const reviewSection=st==='outcome_issued'? `<div class="hrCaseBox"><h4>Internal Review / Appeal — if requested</h4><textarea class="hrText" id="hdReviewGrounds" placeholder="Employee's grounds for internal review / appeal"></textarea><div class="hrBar"><button class="hrBtn alt" id="hdReviewRequest">Record Review / Appeal Request</button><button class="hrBtn" id="hdCloseCase">Close Case Without Internal Review</button></div><div class="hrMeta">An internal review does not remove or delay any statutory right the employee may have to refer an external dispute.</div></div>`:'';
 
-  const reviewDecision=st==='review_requested'? `<div class="hrCaseBox"><h4>Internal Review Decision</h4><div class="hrGrid"><select class="hrSelect" id="hdReviewDecision"><option value="upheld">Outcome upheld</option><option value="varied">Outcome varied</option><option value="overturned">Outcome overturned</option><option value="remitted">Remit for reconsideration</option></select><textarea class="hrText" id="hdReviewNotes" placeholder="Reasons for review decision"></textarea></div><button class="hrBtn" id="hdDecideReview">Record Review Decision</button></div>`:'';
+  const reviewDecision=st==='review_requested'? `<div class="hrCaseBox"><h4>Internal Review Decision</h4><div class="hrGrid">
+      <select class="hrSelect" id="hdReviewDecision"><option value="upheld">Outcome upheld</option><option value="varied">Outcome varied</option><option value="overturned">Outcome overturned</option><option value="remitted">Remit for reconsideration</option></select>
+      <select class="hrSelect" id="hdReviewFinding"><option value="not_substantiated">Revised: not substantiated</option><option value="partly_substantiated">Revised: partly substantiated</option><option value="substantiated">Revised: substantiated</option><option value="withdrawn">Revised: withdrawn</option></select>
+      <select class="hrSelect" id="hdReviewSanction"><option value="none">Revised: no sanction</option><option value="verbal_warning">Revised: verbal warning</option><option value="written_warning">Revised: written warning</option><option value="final_written_warning">Revised: final written warning</option><option value="other">Revised: other proportionate outcome</option></select>
+      <label class="hrMeta">Revised warning valid until, if applicable<input class="hrInput" id="hdReviewWarningUntil" type="date"></label>
+      <textarea class="hrText" id="hdReviewNotes" placeholder="Reasons for review decision"></textarea>
+    </div><div class="hrMeta">Revised finding/sanction fields are used only when “Outcome varied” is selected. “Overturned” automatically clears the sanction. A review cannot newly impose dismissal through this shortcut; remit the matter for reconsideration instead.</div><button class="hrBtn" id="hdDecideReview">Record Review Decision</button></div>`:'';
 
   return `<div class="hrCaseBox"><div class="hrBar" style="justify-content:space-between"><div><h3 style="margin:0">${esc(x.case_number)} · ${esc(x.allegation_title)}</h3><div class="hrMeta">${esc(p.full_name||p.email||'Staff')} · incident ${esc(x.incident_date)} · ${esc(rule?.rule_code||'')} ${esc(rule?.category||'')}</div></div><span class="hrPill ${st}">${esc(disciplinaryStatus(x.status).toUpperCase())}</span></div>
     <div class="hrGrid"><div><b>Alleged facts</b><div class="hrMeta">${esc(x.allegation_details)}</div></div><div><b>Rule / standard</b><div class="hrMeta">${esc(x.workplace_rule||rule?.rule_title||'Not recorded')}</div></div><div><b>Preliminary severity</b><div class="hrMeta">${esc(x.severity_assessment)}</div></div><div><b>Next step</b><div class="hrMeta">${esc(disciplinaryNextStep(x))}</div></div></div>
@@ -738,8 +744,16 @@ async function requestDisciplinaryReview(){
 async function decideDisciplinaryReview(){
   if(!disciplinaryCaseId)return;
   const decision=$('hdReviewDecision')?.value,notes=$('hdReviewNotes')?.value.trim();
+  const revisedFinding=$('hdReviewFinding')?.value||null,revisedSanction=$('hdReviewSanction')?.value||null,revisedWarning=$('hdReviewWarningUntil')?.value||null;
   if(!notes||notes.length<10)return alert('Record clear reasons for the review decision.');
-  const {error}=await db.rpc('hr_decide_disciplinary_review',{p_case_id:disciplinaryCaseId,p_review_decision:decision,p_review_notes:notes});
+  if(decision==='varied'&&!confirm('Record a varied internal review outcome? The revised finding/sanction will become the authoritative case outcome.'))return;
+  if(decision==='overturned'&&!confirm('Overturn the original outcome? The case will close with no disciplinary sanction.'))return;
+  const {error}=await db.rpc('hr_decide_disciplinary_review_v2',{
+    p_case_id:disciplinaryCaseId,p_review_decision:decision,p_review_notes:notes,
+    p_revised_finding:decision==='varied'?revisedFinding:null,
+    p_revised_sanction:decision==='varied'?revisedSanction:null,
+    p_revised_warning_valid_until:decision==='varied'?revisedWarning:null
+  });
   if(error)return alert(error.message);
   await load();render('disciplinary');
 }
