@@ -5,8 +5,8 @@ if(window.__FUNDA_ACCOUNTING_SAFE__)return;
 window.__FUNDA_ACCOUNTING_SAFE__=true;
 
 let db;
-let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[],pettyFunds:[],pettyMoves:[],pettyVouchers:[],pettyRecons:[]};
-let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false,pettyFunds:false,pettyMoves:false,pettyVouchers:false,pettyRecons:false};
+let S={cash:[],cats:[],rec:[],payments:[],profiles:[],settings:null,closes:[],budgets:[],pettyAccounts:[],pettyFunds:[],pettyMoves:[],pettyVouchers:[],pettyRecons:[]};
+let loaded={cash:false,cats:false,rec:false,payments:false,profiles:false,settings:false,closes:false,budgets:false,pettyAccounts:false,pettyFunds:false,pettyMoves:false,pettyVouchers:false,pettyRecons:false};
 let errors=[];
 let tab='overview',cashPage=1,plannedPage=1,reconPage=1,budgetPage=1,pettyVoucherPage=1,pettyMovementPage=1,pettyReconPage=1;
 let pettyFundId=null,pettyReportMonth=new Date().toISOString().slice(0,7);
@@ -114,6 +114,7 @@ async function loadData(){
     ['settings',db.from('finance_management_settings').select('*').eq('singleton',true).maybeSingle()],
     ['closes',db.from('finance_month_closes').select('*').order('month_start',{ascending:false}).limit(500)],
     ['budgets',db.from('finance_monthly_budgets').select('*').order('month_start',{ascending:true}).limit(240)],
+    ['pettyAccounts',db.from('finance_petty_cash_accounts').select('*').order('sort_order',{ascending:true}).order('account_name',{ascending:true}).limit(500)],
     ['pettyFunds',db.from('finance_petty_cash_funds').select('*').order('created_at',{ascending:true}).limit(200)],
     ['pettyMoves',db.from('finance_petty_cash_movements').select('*').order('movement_date',{ascending:false}).order('created_at',{ascending:false}).limit(5000)],
     ['pettyVouchers',db.from('finance_petty_cash_vouchers').select('*').order('expense_date',{ascending:false}).order('created_at',{ascending:false}).limit(5000)],
@@ -520,14 +521,36 @@ function pettyProfileName(id){
   const p=(S.profiles||[]).find(x=>x.id===id);
   return p?.full_name||p?.email||'—';
 }
+function pettyAccount(id){return (S.pettyAccounts||[]).find(x=>x.id===id)||null}
+function pettyAccountOptions(selected=''){
+  return '<option value="">Select petty cash account</option>'+(S.pettyAccounts||[]).filter(x=>x.active)
+    .map(x=>'<option value="'+esc(x.id)+'" '+(x.id===selected?'selected':'')+'>'+esc(x.account_code)+' · '+esc(x.account_name)+'</option>').join('');
+}
+function pettyStaffOwnerOptions(selected=''){
+  return '<option value="">Select staff cost owner</option>'+(S.profiles||[]).filter(p=>low(p.role)==='staff')
+    .map(p=>'<option value="'+esc(p.id)+'" '+(p.id===selected?'selected':'')+'>'+esc(p.full_name||p.email)+' · '+esc(p.staff_number||p.job_title||'Staff')+'</option>').join('');
+}
 function pettyCustodianOptions(selected=''){
   return '<option value="">No linked staff profile</option>'+(S.profiles||[])
     .filter(p=>['admin','staff'].includes(low(p.role)))
     .map(p=>'<option value="'+esc(p.id)+'" '+(p.id===selected?'selected':'')+'>'+esc(p.full_name||p.email)+' · '+esc(p.staff_number||p.job_title||p.role||'Staff')+'</option>').join('');
 }
-function pettyExpenseOptions(){
+function pettyOwnerLabel(f){
+  if(!f)return '—';
+  if(f.cost_owner_type==='business')return 'Funda Online Academy';
+  if(f.cost_owner_type==='ceo')return 'Founder & CEO · '+pettyProfileName(f.cost_owner_profile_id);
+  if(f.cost_owner_type==='staff')return pettyProfileName(f.cost_owner_profile_id);
+  return '—';
+}
+function vatLabel(v){
+  return v==='vat_included'?'VAT included in amount':v==='no_vat'?'No VAT / non-VAT':v==='not_confirmed'?'VAT status not confirmed':'—';
+}
+function vatOptions(selected='not_confirmed'){
+  return [['not_confirmed','VAT status not confirmed'],['vat_included','VAT included in amount (15%)'],['no_vat','No VAT / non-VAT']].map(([v,l])=>'<option value="'+v+'" '+(v===selected?'selected':'')+'>'+l+'</option>').join('');
+}
+function pettyExpenseOptions(selected=''){
   return (S.cats||[]).filter(x=>x.active&&x.category_type==='expense'&&low(x.name)!=='depreciation & amortisation')
-    .map(x=>'<option value="'+esc(x.name)+'">'+esc(x.name)+'</option>').join('');
+    .map(x=>'<option value="'+esc(x.name)+'" '+(x.name===selected?'selected':'')+'>'+esc(x.name)+'</option>').join('');
 }
 function pettyMoveEffect(m){
   if(low(m.status)!=='posted')return 0;
@@ -568,78 +591,120 @@ function pettyVoucherRows(fundId){
     return `<tr>
       <td><b>${esc(x.voucher_number)}</b><div class="acMeta">${day(x.expense_date)}</div></td>
       <td>${esc(x.category)}</td><td>${esc(x.payee||'—')}</td><td>${esc(x.description)}</td>
-      <td><b>${money(x.amount)}</b></td><td>${esc(x.department||'—')}</td>
+      <td><b>${money(x.amount)}</b><div class="acMeta">ZAR</div></td>
+      <td>${esc(vatLabel(x.vat_treatment))}<div class="acMeta">${x.vat_treatment==='vat_included'?'VAT component '+money(x.vat_amount)+' · Net '+money(x.net_amount):'VAT tracked '+money(x.vat_amount)}</div></td>
+      <td>${esc(x.department||'—')}</td>
       <td>${evidence?'<a href="'+esc(evidence)+'" target="_blank" rel="noopener">Open receipt ↗</a>':esc(x.evidence_note||'—')}</td>
       <td>${pill(x.status)}${x.review_note?'<div class="acMeta">'+esc(x.review_note)+'</div>':''}${x.void_reason?'<div class="acMeta">'+esc(x.void_reason)+'</div>':''}</td>
       <td>${action}</td>
     </tr>`;
-  }).join('')||'<tr><td colspan="9"><div class="acMeta">No petty cash vouchers recorded.</div></td></tr>';
-  return {rows,pg,html:`<div class="acTableWrap"><table class="acTable"><thead><tr><th>Voucher / Date</th><th>Expense Category</th><th>Payee</th><th>Description</th><th>Amount</th><th>Department</th><th>Evidence</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="pcVoucherPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="pcVoucherNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>`};
+  }).join('')||'<tr><td colspan="10"><div class="acMeta">No petty cash vouchers recorded.</div></td></tr>';
+  return {rows,pg,html:`<div class="acTableWrap"><table class="acTable"><thead><tr><th>Voucher / Date</th><th>Expense Category</th><th>Payee</th><th>Reason</th><th>Total Amount</th><th>VAT</th><th>Department</th><th>Evidence</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="pcVoucherPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="pcVoucherNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>`};
 }
 function pettyReconRows(fundId){
   const rows=(S.pettyRecons||[]).filter(x=>x.fund_id===fundId),pg=pageRows(rows,pettyReconPage);pettyReconPage=pg.page;
   const body=pg.rows.map(x=>`<tr><td>${day(x.reconciliation_date)}</td><td>${money(x.system_balance)}</td><td>${money(x.counted_cash)}</td><td><b>${money(x.variance)}</b></td><td>${esc(x.notes||'—')}</td><td>${fmt(x.created_at)}</td></tr>`).join('')||'<tr><td colspan="6"><div class="acMeta">No petty cash reconciliations recorded.</div></td></tr>';
   return {rows,pg,html:`<div class="acTableWrap"><table class="acTable"><thead><tr><th>Reconciliation Date</th><th>System Balance</th><th>Counted Cash</th><th>Variance</th><th>Notes</th><th>Recorded</th></tr></thead><tbody>${body}</tbody></table></div><div class="acPager"><span class="acMeta">Showing ${rows.length?pg.start+1:0}–${pg.end} of ${rows.length} · 10 per page</span><div class="acBar" style="margin:0"><button class="acBtn alt" id="pcReconPrev" ${pg.page<=1?'disabled':''}>Previous</button><span class="acMeta">Page ${pg.page} of ${pg.max}</span><button class="acBtn alt" id="pcReconNext" ${pg.page>=pg.max?'disabled':''}>Next</button></div></div>`};
 }
-function pettyFundSetup(){
-  return `<div class="acPanel"><h3>Create Petty Cash Fund</h3><div class="acInfo">Creating a fund does not create cash or an expense. Set the authorised maximum float, then record the actual opening float separately when cash is placed in the fund.</div><div class="acForm">
-    <input class="acInput" id="pcNewName" placeholder="Fund name e.g. Main Petty Cash">
-    <select class="acSelect" id="pcNewCustodian">${pettyCustodianOptions()}</select>
-    <input class="acInput" id="pcNewCustodianName" placeholder="Custodian name if not linked to staff">
-    <input class="acInput" id="pcNewFloat" type="number" min="0" step="0.01" placeholder="Authorised float">
-    <button class="acBtn" id="pcCreateFund">Create Fund</button>
+function pettyAccountSetup(){
+  return `<div class="acPanel"><h3>Add Petty Cash Account</h3><div class="acInfo">Use this only when the required petty-cash purpose is not already listed. The account is a cost-control envelope; each later voucher still posts to its actual accounting expense category.</div><div class="acForm">
+    <input class="acInput" id="pcAccountName" placeholder="Account name e.g. Training Event Sundries">
+    <select class="acSelect" id="pcAccountCategory">${pettyExpenseOptions()}</select>
+    <input class="acInput acWide" id="pcAccountDesc" placeholder="What this petty cash account may be used for">
+    <button class="acBtn" id="pcCreateAccount">Add Petty Cash Account</button>
   </div></div>`;
+}
+function pettyFundSetup(){
+  return `<div class="acPanel"><h3>Create Petty Cash Fund / Cost Control</h3>
+    <div class="acInfo"><b>Step 1:</b> choose the petty-cash account. <b>Step 2:</b> choose who owns the cost — the Academy, the CEO, or a specific Staff member. The system then generates a permanent cost-control reference. The custodian is separate: the person holding the cash does not have to be the cost owner.</div>
+    <div class="acForm">
+      <select class="acSelect" id="pcNewAccount">${pettyAccountOptions()}</select>
+      <select class="acSelect" id="pcNewOwnerType"><option value="business">Business — Funda Online Academy</option><option value="ceo">Founder & CEO</option><option value="staff">Specific Staff member</option></select>
+      <select class="acSelect" id="pcNewOwnerStaff" disabled>${pettyStaffOwnerOptions()}</select>
+      <input class="acInput" id="pcNewName" placeholder="Optional fund label; account name is used if blank">
+      <select class="acSelect" id="pcNewCustodian">${pettyCustodianOptions()}</select>
+      <input class="acInput" id="pcNewCustodianName" placeholder="Custodian name if not linked to a profile">
+      <input class="acInput" id="pcNewFloat" type="number" min="0" step="0.01" placeholder="Authorised petty cash amount (R)">
+      <select class="acSelect" id="pcNewVat">${vatOptions('not_confirmed')}</select>
+      <textarea class="acText acWide" id="pcNewPurpose" placeholder="Required business reason / purpose — e.g. approved staff refreshments for monthly team meeting"></textarea>
+      <div class="acInfo acWide" id="pcNewAccountInfo">Choose an account to see its default accounting category. Cost-control reference will be generated automatically when the fund is created.</div>
+      <button class="acBtn" id="pcCreateFund">Create Fund & Cost Control</button>
+    </div>
+    <div class="acMeta">All monetary amounts in this Petty Cash control are recorded in South African Rand (ZAR). VAT tracking is informational until the Academy's VAT registration/tax treatment is confirmed; it does not itself create a VAT claim.</div>
+  </div>`;
 }
 function pettyCashPanel(){
   const funds=S.pettyFunds||[];
-  if(!loaded.pettyFunds)return '<div class="acPanel"><div class="acMeta">Petty cash data is unavailable. Use Refresh after checking the Finance warning.</div></div>';
-  if(!funds.length)return `<div class="acInfo"><b>Petty Cash Control</b><br>No petty cash fund has been created yet. No cash amount has been assumed.</div>${pettyFundSetup()}`;
+  if(!loaded.pettyFunds||!loaded.pettyAccounts)return '<div class="acPanel"><div class="acMeta">Petty cash control data is unavailable. Use Refresh after checking the Finance warning.</div></div>';
+  if(!funds.length)return `<div class="acInfo"><b>Petty Cash Control</b><br>No real petty cash fund has been created yet. Select a petty-cash account, cost owner, Rand amount, VAT treatment and reason before creating the first cost control.</div>
+    <div class="acBar"><button class="acBtn alt" id="pcNewAccountShow">+ Add Petty Cash Account</button></div><div id="pcNewAccountHost"></div>${pettyFundSetup()}`;
 
-  const f=pettyFund()||funds[0],balance=pettyBalance(f.id),pending=pettyPendingTotal(f.id),headroom=n(f.authorized_float)-balance;
+  const f=pettyFund()||funds[0],account=pettyAccount(f.petty_account_id),balance=pettyBalance(f.id),pending=pettyPendingTotal(f.id),headroom=n(f.authorized_float)-balance;
   const lastRecon=(S.pettyRecons||[]).find(x=>x.fund_id===f.id);
   const moves=pettyMovementRows(f.id),vouchers=pettyVoucherRows(f.id),recons=pettyReconRows(f.id);
-  const fundOpts=funds.map(x=>'<option value="'+esc(x.id)+'" '+(x.id===f.id?'selected':'')+'>'+esc(x.fund_name)+' · '+esc(x.status)+'</option>').join('');
+  const fundOpts=funds.map(x=>{
+    const a=pettyAccount(x.petty_account_id);
+    return '<option value="'+esc(x.id)+'" '+(x.id===f.id?'selected':'')+'>'+esc(a?.account_name||x.fund_name)+' · '+esc(x.cost_control_reference||'No cost control')+' · '+esc(x.status)+'</option>';
+  }).join('');
+  const defaultCat=account?.default_expense_category||'';
   return `
-    <div class="acInfo"><b>Petty Cash Control.</b> Opening float, replenishments and returns are cash transfers and do not affect profit. Only an approved petty-cash voucher posts an expense to the P&L, using the voucher's real accounting category.</div>
-    <div class="acBar"><select class="acSelect" id="pcFundSelect">${fundOpts}</select><button class="acBtn alt" id="pcNewFundShow">Create Another Fund</button></div>
-    <div id="pcNewFundHost"></div>
-    <div class="acPettyK">
-      <div class="acPettyCard"><strong>${money(f.authorized_float)}</strong><span>Authorised float</span></div>
-      <div class="acPettyCard"><strong>${money(balance)}</strong><span>Current system cash balance</span></div>
-      <div class="acPettyCard"><strong>${money(headroom)}</strong><span>Float headroom</span></div>
-      <div class="acPettyCard"><strong>${money(pending)}</strong><span>Pending voucher requests</span></div>
+    <div class="acInfo"><b>Petty Cash Control.</b> The petty-cash account and cost-control reference identify where the cost belongs. Funding/replenishment is not income or expense. Only an approved voucher reduces petty cash and posts to the P&L under the voucher's actual expense category.</div>
+    <div class="acBar"><select class="acSelect" id="pcFundSelect">${fundOpts}</select><button class="acBtn alt" id="pcNewFundShow">Create Another Fund</button><button class="acBtn alt" id="pcNewAccountShow">+ Add Petty Cash Account</button></div>
+    <div id="pcNewFundHost"></div><div id="pcNewAccountHost"></div>
+
+    <div class="acGrid">
+      <div class="acPanel"><h3>Cost Control Identity</h3>
+        <div class="acMeta">Petty cash account: <b>${esc(account?.account_name||'—')}</b> ${account?.account_code?'· '+esc(account.account_code):''}</div>
+        <div class="acMeta">Cost-control reference: <b>${esc(f.cost_control_reference||'—')}</b></div>
+        <div class="acMeta">Cost belongs to: <b>${esc(pettyOwnerLabel(f))}</b></div>
+        <div class="acMeta">Default accounting category: <b>${esc(defaultCat||'—')}</b></div>
+        <div class="acMeta">Purpose: <b>${esc(f.purpose_reason||'—')}</b></div>
+      </div>
+      <div class="acPanel"><h3>Fund Position</h3>
+        <div class="acPettyK" style="grid-template-columns:repeat(2,1fr);margin:0">
+          <div class="acPettyCard"><strong>${money(f.authorized_float)}</strong><span>Authorised amount (ZAR)</span></div>
+          <div class="acPettyCard"><strong>${money(balance)}</strong><span>Current system cash balance</span></div>
+          <div class="acPettyCard"><strong>${money(headroom)}</strong><span>Available float headroom</span></div>
+          <div class="acPettyCard"><strong>${money(pending)}</strong><span>Pending voucher requests</span></div>
+        </div>
+      </div>
     </div>
     ${lastRecon?'<div class="'+(Math.abs(n(lastRecon.variance))>0.005?'acWarn':'acInfo')+'"><b>Last cash count:</b> '+day(lastRecon.reconciliation_date)+' · system '+money(lastRecon.system_balance)+' · counted '+money(lastRecon.counted_cash)+' · variance '+money(lastRecon.variance)+'</div>':''}
 
     <div class="acGrid">
-      <div class="acPanel"><h3>Fund Control</h3><div class="acForm">
-        <input class="acInput" id="pcFundName" value="${esc(f.fund_name)}" placeholder="Fund name">
+      <div class="acPanel"><h3>Fund Control</h3><div class="acInfo">Account, cost owner and cost-control reference are permanent for this fund. Update only the label, custodian, authorised Rand limit, VAT default, purpose and status.</div><div class="acForm">
+        <input class="acInput" id="pcFundName" value="${esc(f.fund_name)}" placeholder="Fund label">
         <select class="acSelect" id="pcCustodian">${pettyCustodianOptions(f.custodian_profile_id||'')}</select>
         <input class="acInput" id="pcCustodianName" value="${esc(f.custodian_name||'')}" placeholder="Custodian name if not linked">
-        <input class="acInput" id="pcAuthFloat" type="number" min="0" step="0.01" value="${n(f.authorized_float).toFixed(2)}" placeholder="Authorised float">
+        <input class="acInput" id="pcAuthFloat" type="number" min="0" step="0.01" value="${n(f.authorized_float).toFixed(2)}" placeholder="Authorised amount (R)">
+        <select class="acSelect" id="pcFundVat">${vatOptions(f.default_vat_treatment||'not_confirmed')}</select>
         <select class="acSelect" id="pcFundStatus"><option value="active" ${f.status==='active'?'selected':''}>Active</option><option value="closed" ${f.status==='closed'?'selected':''}>Closed</option></select>
+        <textarea class="acText acWide" id="pcFundPurpose" placeholder="Business reason / purpose">${esc(f.purpose_reason||'')}</textarea>
         <button class="acBtn" id="pcUpdateFund">Update Fund</button>
-      </div><div class="acMeta">Custodian: <b>${esc(f.custodian_profile_id?pettyProfileName(f.custodian_profile_id):(f.custodian_name||'Not assigned'))}</b>. A fund can be closed only after its balance is zero.</div></div>
+      </div><div class="acMeta">Custodian: <b>${esc(f.custodian_profile_id?pettyProfileName(f.custodian_profile_id):(f.custodian_name||'Not assigned'))}</b> · Default VAT handling: <b>${esc(vatLabel(f.default_vat_treatment))}</b>. A fund can be closed only after its balance is zero.</div></div>
 
       <div class="acPanel"><h3>Fund / Replenish / Return Cash</h3><div class="acForm">
         <select class="acSelect" id="pcMoveType"><option value="opening_float">Opening float</option><option value="replenishment">Replenishment</option><option value="return_to_bank">Return to bank</option></select>
-        <input class="acInput" id="pcMoveAmount" type="number" min="0" step="0.01" placeholder="Amount">
+        <input class="acInput" id="pcMoveAmount" type="number" min="0" step="0.01" placeholder="Amount (R)">
         <input class="acInput" id="pcMoveDate" type="date" value="${today()}">
         <input class="acInput" id="pcMoveRef" placeholder="Bank / cash reference">
-        <input class="acInput" id="pcMoveNotes" placeholder="Movement notes">
+        <input class="acInput" id="pcMoveNotes" placeholder="Movement reason / notes">
         <button class="acBtn" id="pcRecordMove">Record Movement</button>
-      </div><div class="acMeta">Replenishment cannot take the system balance above the authorised float. These movements do not enter the P&L.</div></div>
+      </div><div class="acMeta">Replenishment cannot take the system balance above the authorised amount. Funding movements do not enter the P&L.</div></div>
     </div>
 
-    <div class="acPanel" style="margin-top:10px"><h3>Petty Cash Voucher</h3><div class="acInfo">Create the voucher first. A Finance approver must then use <b>Approve & Post</b> before the purchase reduces petty cash and appears as a P&L expense.</div><div class="acForm">
+    <div class="acPanel" style="margin-top:10px"><h3>Petty Cash Voucher</h3>
+      <div class="acInfo">Cost control: <b>${esc(f.cost_control_reference||'—')}</b> · Account: <b>${esc(account?.account_name||'—')}</b>. The voucher category below controls where the approved purchase appears in the P&L. The total amount is always entered in Rand.</div><div class="acForm">
       <input class="acInput" id="pcVoucherDate" type="date" value="${today()}">
-      <select class="acSelect" id="pcVoucherCategory">${pettyExpenseOptions()}</select>
+      <select class="acSelect" id="pcVoucherCategory">${pettyExpenseOptions(defaultCat)}</select>
       <input class="acInput" id="pcVoucherPayee" placeholder="Payee / supplier">
-      <input class="acInput" id="pcVoucherDept" placeholder="Department / purpose">
-      <input class="acInput" id="pcVoucherAmount" type="number" min="0" step="0.01" placeholder="Amount">
+      <input class="acInput" id="pcVoucherDept" placeholder="Department / business purpose">
+      <input class="acInput" id="pcVoucherAmount" type="number" min="0" step="0.01" placeholder="Total paid (R)">
+      <select class="acSelect" id="pcVoucherVat">${vatOptions(f.default_vat_treatment||'not_confirmed')}</select>
       <input class="acInput" id="pcVoucherReceipt" type="url" placeholder="Receipt / evidence URL (optional)">
       <input class="acInput acWide" id="pcVoucherEvidence" placeholder="Evidence note / explanation if no receipt URL">
-      <textarea class="acText acWide" id="pcVoucherDesc" placeholder="What was purchased and why"></textarea>
+      <textarea class="acText acWide" id="pcVoucherDesc" placeholder="Required reason — what was purchased and why"></textarea>
+      <div class="acMeta acWide">If “VAT included” is selected, the system tracks the 15% VAT component from the total paid. This is tracking only; VAT may be claimed only when the Academy is VAT-registered and the transaction meets SARS requirements.</div>
       <button class="acBtn" id="pcCreateVoucher">Create Voucher Request</button>
     </div></div>
 
@@ -649,12 +714,12 @@ function pettyCashPanel(){
     <div class="acGrid" style="margin-top:10px">
       <div class="acPanel"><h3>Cash Count & Reconciliation</h3><div class="acForm">
         <input class="acInput" id="pcReconDate" type="date" value="${today()}">
-        <input class="acInput" id="pcCountedCash" type="number" min="0" step="0.01" placeholder="Physical cash counted">
+        <input class="acInput" id="pcCountedCash" type="number" min="0" step="0.01" placeholder="Physical cash counted (R)">
         <input class="acInput acWide" id="pcReconNotes" placeholder="Reconciliation note; required if there is a variance">
         <button class="acBtn" id="pcReconcile">Record Reconciliation</button>
       </div><div class="acMeta">System balance now: <b>${money(balance)}</b>. A reconciliation records any difference; it does not silently create an adjustment.</div></div>
 
-      <div class="acPanel"><h3>Petty Cash Report</h3><input class="acInput" id="pcReportMonth" type="month" value="${esc(pettyReportMonth)}"><div class="acBar"><button class="acBtn" id="pcExcel">Download Excel</button><button class="acBtn" id="pcPdf">Download PDF</button></div><div class="acMeta">The report includes fund movements, voucher status, actual inflows/outflows and the running petty cash balance for the selected month.</div></div>
+      <div class="acPanel"><h3>Petty Cash Report</h3><input class="acInput" id="pcReportMonth" type="month" value="${esc(pettyReportMonth)}"><div class="acBar"><button class="acBtn" id="pcExcel">Download Excel</button><button class="acBtn" id="pcPdf">Download PDF</button></div><div class="acMeta">The report includes account, cost control, cost owner, VAT tracking, fund movements, voucher status, actual inflows/outflows and the running petty cash balance for the selected month.</div></div>
     </div>
     <div class="acPanel" style="margin-top:10px"><h3>Reconciliation History</h3>${recons.html}</div>
   `;
@@ -668,6 +733,7 @@ function pettyReportRows(fund,month){
       sort:x.movement_date+'T'+(x.created_at||''),
       Date:day(x.movement_date),Record:'Fund movement',Reference:x.reference_number||'',Category:'',Payee:'',
       Description:String(x.movement_type||'').replaceAll('_',' ')+(x.notes?' · '+x.notes:''),
+      'Gross Amount (R)':0,'VAT Treatment':'Not applicable','VAT Component (R)':0,'Net Before VAT (R)':0,
       'Inflow (R)':Math.max(0,effect),'Outflow (R)':Math.max(0,-effect),Status:x.status,Evidence:'',effect
     });
   }
@@ -676,7 +742,9 @@ function pettyReportRows(fund,month){
     events.push({
       sort:x.expense_date+'T'+(x.created_at||''),
       Date:day(x.expense_date),Record:'Voucher',Reference:x.voucher_number,Category:x.category,Payee:x.payee||'',
-      Description:x.description,'Inflow (R)':0,'Outflow (R)':outflow,Status:x.status,Evidence:x.receipt_url||x.evidence_note||'',effect:-outflow
+      Description:x.description,'Gross Amount (R)':n(x.amount),'VAT Treatment':vatLabel(x.vat_treatment),
+      'VAT Component (R)':n(x.vat_amount),'Net Before VAT (R)':n(x.net_amount),
+      'Inflow (R)':0,'Outflow (R)':outflow,Status:x.status,Evidence:x.receipt_url||x.evidence_note||'',effect:-outflow
     });
   }
   let running=opening;
@@ -693,12 +761,16 @@ async function exportPettyCash(format){
   pettyReportMonth=$('pcReportMonth')?.value||pettyReportMonth;
   if(!pettyReportMonth)return alert('Choose the report month.');
   const api=window.FundaReportExports;if(!api)return alert('The formal report export service is still loading. Please try again.');
-  const data=pettyReportRows(fund,pettyReportMonth),closing=pettyBalance(fund.id,data.to);
-  const postedExpenses=(S.pettyVouchers||[]).filter(x=>x.fund_id===fund.id&&low(x.status)==='posted'&&x.expense_date>=data.from&&x.expense_date<=data.to).reduce((a,x)=>a+n(x.amount),0);
+  const data=pettyReportRows(fund,pettyReportMonth),closing=pettyBalance(fund.id,data.to),account=pettyAccount(fund.petty_account_id);
+  const posted=(S.pettyVouchers||[]).filter(x=>x.fund_id===fund.id&&low(x.status)==='posted'&&x.expense_date>=data.from&&x.expense_date<=data.to);
+  const postedExpenses=posted.reduce((a,x)=>a+n(x.amount),0),trackedVat=posted.reduce((a,x)=>a+n(x.vat_amount),0);
   const report={title:'Petty Cash Register — '+fund.fund_name,rows:data.rows,summary:[
-    ['Month',pettyReportMonth],['Custodian',fund.custodian_profile_id?pettyProfileName(fund.custodian_profile_id):(fund.custodian_name||'Not assigned')],
-    ['Authorised float',money(fund.authorized_float)],['Opening system balance',money(data.opening)],['Posted petty cash expenses',money(postedExpenses)],
-    ['Closing system balance',money(closing)],['Pending vouchers',money(pettyPendingTotal(fund.id))]
+    ['Month',pettyReportMonth],['Petty Cash Account',(account?.account_code||'')+' · '+(account?.account_name||'—')],
+    ['Cost Control Reference',fund.cost_control_reference||'—'],['Cost Owner',pettyOwnerLabel(fund)],
+    ['Purpose',fund.purpose_reason||'—'],['Default VAT Handling',vatLabel(fund.default_vat_treatment)],
+    ['Custodian',fund.custodian_profile_id?pettyProfileName(fund.custodian_profile_id):(fund.custodian_name||'Not assigned')],
+    ['Authorised Amount (ZAR)',money(fund.authorized_float)],['Opening system balance',money(data.opening)],['Posted petty cash expenses',money(postedExpenses)],
+    ['Tracked VAT component',money(trackedVat)],['Closing system balance',money(closing)],['Pending vouchers',money(pettyPendingTotal(fund.id))]
   ]};
   try{
     const fileName=format==='xlsx'?await api.exportExcel(report,{from:data.from,to:data.to,scope:'period'}):await api.exportPdf(report,{from:data.from,to:data.to,scope:'period'});
@@ -924,31 +996,76 @@ async function distributeAnnualTarget(){
   budgetPage=1;await open();render('targets');
 }
 
+function bindPettyAccountCreate(){
+  const b=$('pcCreateAccount');if(!b)return;
+  b.onclick=createPettyAccount;
+}
 function bindPettyFundCreate(){
   const b=$('pcCreateFund');if(!b)return;
   b.onclick=createPettyFund;
+  const owner=$('pcNewOwnerType'),account=$('pcNewAccount');
+  const sync=()=>{
+    if($('pcNewOwnerStaff'))$('pcNewOwnerStaff').disabled=owner?.value!=='staff';
+    const a=pettyAccount(account?.value);
+    if($('pcNewAccountInfo'))$('pcNewAccountInfo').innerHTML=a
+      ?'<b>'+esc(a.account_code)+' · '+esc(a.account_name)+'</b><br>Default accounting category: <b>'+esc(a.default_expense_category)+'</b><br>'+esc(a.description||'')
+      :'Choose an account to see its default accounting category. Cost-control reference will be generated automatically when the fund is created.';
+  };
+  owner?.addEventListener('change',sync);
+  account?.addEventListener('change',sync);
+  sync();
+}
+async function createPettyAccount(){
+  const name=$('pcAccountName')?.value.trim(),category=$('pcAccountCategory')?.value,description=$('pcAccountDesc')?.value.trim()||null;
+  if(!name)return alert('Enter the petty cash account name.');
+  if(!category)return alert('Choose the default accounting expense category.');
+  const {data,error}=await db.rpc('finance_create_petty_cash_account',{
+    p_account_name:name,p_default_expense_category:category,p_description:description
+  });
+  if(error)return alert(error.message);
+  await audit('Petty cash account created',data?.id||'',{account_name:name,account_code:data?.account_code,default_expense_category:category},'recorded','petty_cash_account');
+  await open();render('petty');
 }
 async function createPettyFund(){
-  const name=$('pcNewName')?.value.trim(),custodian=$('pcNewCustodian')?.value||null,custodianName=$('pcNewCustodianName')?.value.trim()||null,float=Number($('pcNewFloat')?.value||0);
-  if(!name)return alert('Enter the petty cash fund name.');
-  if(!Number.isFinite(float)||float<0)return alert('Authorised float must be zero or greater.');
-  const {data,error}=await db.rpc('finance_create_petty_cash_fund',{p_fund_name:name,p_custodian_profile_id:custodian||null,p_custodian_name:custodianName,p_authorized_float:float});
+  const accountId=$('pcNewAccount')?.value,ownerType=$('pcNewOwnerType')?.value,ownerStaff=$('pcNewOwnerStaff')?.value||null;
+  const name=$('pcNewName')?.value.trim()||null,custodian=$('pcNewCustodian')?.value||null,custodianName=$('pcNewCustodianName')?.value.trim()||null;
+  const float=Number($('pcNewFloat')?.value||0),vat=$('pcNewVat')?.value||'not_confirmed',purpose=$('pcNewPurpose')?.value.trim();
+  if(!accountId)return alert('Choose the petty cash account.');
+  if(!ownerType)return alert('Choose who owns this cost control.');
+  if(ownerType==='staff'&&!ownerStaff)return alert('Choose the Staff member linked to this cost control.');
+  if(!Number.isFinite(float)||float<0)return alert('Authorised petty cash amount must be zero or greater.');
+  if(!purpose||purpose.length<5)return alert('Enter a clear reason / purpose for this petty cash fund.');
+  const {data,error}=await db.rpc('finance_create_petty_cash_fund_v2',{
+    p_petty_account_id:accountId,p_cost_owner_type:ownerType,p_cost_owner_profile_id:ownerStaff,
+    p_fund_name:name,p_custodian_profile_id:custodian,p_custodian_name:custodianName,
+    p_authorized_float:float,p_default_vat_treatment:vat,p_purpose_reason:purpose
+  });
   if(error)return alert(error.message);
-  pettyFundId=data;
-  await audit('Petty cash fund created',data,{fund_name:name,authorized_float:float},'recorded','petty_cash_fund');
+  pettyFundId=data?.id||null;
+  await audit('Petty cash fund and cost control created',data?.id||'',{
+    account_id:accountId,account_code:data?.account_code,account_name:data?.account_name,
+    cost_control_reference:data?.cost_control_reference,cost_owner_type:ownerType,cost_owner_profile_id:ownerStaff,
+    authorized_amount_zar:float,default_vat_treatment:vat,purpose_reason:purpose
+  },'recorded','petty_cash_fund');
   await open();render('petty');
 }
 async function updatePettyFund(){
   const f=pettyFund();if(!f)return;
   const name=$('pcFundName').value.trim(),float=Number($('pcAuthFloat').value||0),status=$('pcFundStatus').value;
-  if(!name)return alert('Enter the petty cash fund name.');
-  if(!Number.isFinite(float)||float<0)return alert('Authorised float must be zero or greater.');
-  const {error}=await db.rpc('finance_update_petty_cash_fund',{
+  const vat=$('pcFundVat').value,purpose=$('pcFundPurpose').value.trim();
+  if(!name)return alert('Enter the petty cash fund label.');
+  if(!Number.isFinite(float)||float<0)return alert('Authorised petty cash amount must be zero or greater.');
+  if(!purpose||purpose.length<5)return alert('Enter a clear reason / purpose for this petty cash fund.');
+  const {error}=await db.rpc('finance_update_petty_cash_fund_v2',{
     p_fund_id:f.id,p_fund_name:name,p_custodian_profile_id:$('pcCustodian').value||null,
-    p_custodian_name:$('pcCustodianName').value.trim()||null,p_authorized_float:float,p_status:status
+    p_custodian_name:$('pcCustodianName').value.trim()||null,p_authorized_float:float,
+    p_default_vat_treatment:vat,p_purpose_reason:purpose,p_status:status
   });
   if(error)return alert(error.message);
-  await audit('Petty cash fund updated',f.id,{fund_name:name,authorized_float:float,status},'recorded','petty_cash_fund');
+  await audit('Petty cash fund updated',f.id,{
+    fund_name:name,authorized_amount_zar:float,status,default_vat_treatment:vat,purpose_reason:purpose,
+    cost_control_reference:f.cost_control_reference
+  },'recorded','petty_cash_fund');
   await open();render('petty');
 }
 async function recordPettyMovement(){
@@ -968,22 +1085,28 @@ async function recordPettyMovement(){
 async function createPettyVoucher(){
   const f=pettyFund();if(!f)return;
   const receipt=$('pcVoucherReceipt').value.trim(),evidence=$('pcVoucherEvidence').value.trim(),description=$('pcVoucherDesc').value.trim(),amount=Number($('pcVoucherAmount').value);
+  const vat=$('pcVoucherVat').value||f.default_vat_treatment||'not_confirmed';
   if(receipt&&!safeHttp(receipt))return alert('Receipt/evidence link must start with http:// or https://.');
   if(!receipt&&!evidence)return alert('Add a receipt/evidence URL or explain why evidence is unavailable.');
-  if(!description)return alert('Describe what was purchased and why.');
-  if(!(amount>0))return alert('Enter a voucher amount greater than zero.');
-  const {data,error}=await db.rpc('finance_create_petty_cash_voucher',{
+  if(!description||description.length<3)return alert('Describe what was purchased and why.');
+  if(!(amount>0))return alert('Enter the total petty cash amount in Rands.');
+  const {data,error}=await db.rpc('finance_create_petty_cash_voucher_v2',{
     p_fund_id:f.id,p_expense_date:$('pcVoucherDate').value||today(),p_category:$('pcVoucherCategory').value,
     p_payee:$('pcVoucherPayee').value.trim()||null,p_department:$('pcVoucherDept').value.trim()||null,
-    p_description:description,p_amount:amount,p_receipt_url:receipt||null,p_evidence_note:evidence||null
+    p_description:description,p_amount:amount,p_vat_treatment:vat,
+    p_receipt_url:receipt||null,p_evidence_note:evidence||null
   });
   if(error)return alert(error.message);
-  await audit('Petty cash voucher requested',data?.id||'',{fund_id:f.id,voucher_number:data?.voucher_number,amount,category:$('pcVoucherCategory').value},'pending','petty_cash_voucher');
+  await audit('Petty cash voucher requested',data?.id||'',{
+    fund_id:f.id,cost_control_reference:f.cost_control_reference,voucher_number:data?.voucher_number,
+    gross_amount_zar:amount,vat_treatment:vat,vat_amount:data?.vat_amount,net_amount:data?.net_amount,
+    category:$('pcVoucherCategory').value
+  },'pending','petty_cash_voucher');
   await open();render('petty');
 }
 async function approvePettyVoucher(id){
   const v=(S.pettyVouchers||[]).find(x=>x.id===id);if(!v)return;
-  if(!confirm('Approve and post '+v.voucher_number+' for '+money(v.amount)+'? This will reduce petty cash and post the expense to the P&L under '+v.category+'.'))return;
+  const f=(S.pettyFunds||[]).find(x=>x.id===v.fund_id);if(!confirm('Approve and post '+v.voucher_number+' for '+money(v.amount)+' under cost control '+(f?.cost_control_reference||'—')+'? This will reduce petty cash and post the expense to the P&L under '+v.category+'.'))return;
   const note=prompt('Approval note (optional):','')??null;
   if(note===null)return;
   const {data,error}=await db.rpc('finance_approve_petty_cash_voucher',{p_voucher_id:id,p_review_note:note.trim()||null});
@@ -1083,8 +1206,10 @@ function wire(){
   }
   if(tab==='petty'){
     bindPettyFundCreate();
+    bindPettyAccountCreate();
     $('pcFundSelect')?.addEventListener('change',e=>{pettyFundId=e.target.value;pettyVoucherPage=1;pettyMovementPage=1;pettyReconPage=1;render('petty')});
     $('pcNewFundShow')?.addEventListener('click',()=>{const h=$('pcNewFundHost');if(h){h.innerHTML=pettyFundSetup();bindPettyFundCreate()}});
+    $('pcNewAccountShow')?.addEventListener('click',()=>{const h=$('pcNewAccountHost');if(h){h.innerHTML=pettyAccountSetup();bindPettyAccountCreate()}});
     $('pcUpdateFund')?.addEventListener('click',updatePettyFund);
     $('pcRecordMove')?.addEventListener('click',recordPettyMovement);
     $('pcCreateVoucher')?.addEventListener('click',createPettyVoucher);
