@@ -397,6 +397,12 @@
 
         const destination = actualRole === "admin" ? "admin-v2.html" : "staff-portal.html";
         const portalName = actualRole === "admin" ? "Admin Command Center" : "Staff Workspace";
+        if (actualRole === "admin") {
+          try {
+            localStorage.removeItem("funda_admin_current_section_v1");
+            sessionStorage.removeItem("funda_admin_scroll_v1");
+          } catch (_) {}
+        }
         showMessage(`Login successful. Opening the ${portalName}...`, true);
         setTimeout(() => { window.location.href = destination; }, 450);
         return;
