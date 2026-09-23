@@ -99,13 +99,21 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 .dashboardMetrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}.dashboardMetrics .stat{position:relative;padding:18px 16px;min-height:118px}.statIcon{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:#eef4f8;color:#173f62;font-weight:900;font-size:12px;margin-bottom:11px}.dashboardMetrics .stat b{font-size:25px}.dashboardMetrics .stat small{line-height:1.4}
 .quickGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}.quickAction{border:1px solid #dbe4ea;background:#fbfcfd;border-radius:13px;padding:14px;text-align:left;cursor:pointer;color:#17324a;min-height:100px}.quickAction:hover{border-color:#d7b45a;background:#fffaf0}.quickAction>span{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:#edf3f7;color:#173f62;font-weight:900;margin-bottom:10px}.quickAction b{display:block;font-size:13px}.quickAction small{display:block;color:#74818d;font-size:10px;line-height:1.35;margin-top:4px}
 .textAction{border:0;background:transparent;color:#8a681c;font-weight:900;font-size:11px;cursor:pointer;padding:6px}.rankBar{height:12px;margin:14px 0 10px}.earningsMini .earning{background:#fff}.activityList{display:grid;gap:9px;margin-top:12px}.activityItem{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:11px;align-items:center;padding:11px 12px;border:1px solid #e3e8ec;border-radius:12px;background:#fbfcfd}.activityIcon{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:#eef4f8;color:#173f62;font-weight:900}.activityText b{display:block;font-size:12px;color:#17324a}.activityText span{display:block;font-size:10px;color:#76828d;line-height:1.35;margin-top:2px}.activityAmt{font-size:12px;font-weight:900;color:#173f62;white-space:nowrap}.compactComp{margin-bottom:6px}
-@media(max-width:1000px){.dashboardMetrics,.quickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.dashboardSectionIntro{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:17px 0 9px}.dashboardSectionIntro h2{margin:0!important;color:#17324a!important;font-size:16px!important}.dashboardSectionIntro p{margin:4px 0 0;color:#74818d;font-size:10px;line-height:1.45}.dashboardSectionHint{color:#8a681c;font-size:9px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap}
+.dashboardPerformanceOverview{margin-top:14px}.performanceCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.performanceCard{position:relative;overflow:hidden;min-height:164px;background:linear-gradient(180deg,#fff,#fbfcfe);border:1px solid #dbe4ea;border-radius:15px;padding:17px;box-shadow:0 5px 18px rgba(18,57,85,.06)}.performanceCard:after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#173f62,#c99a2e)}.performanceCard .performanceLabel{font-size:9px;font-weight:900;letter-spacing:.12em;color:#9a741e;text-transform:uppercase}.performanceCard .performanceValue{display:block;margin-top:9px;color:#123955;font-size:27px;font-weight:900;line-height:1.05}.performanceCard .performanceMeta{display:block;margin-top:8px;color:#687786;font-size:11px;line-height:1.5}.performanceCard .performanceFoot{margin-top:12px;padding-top:10px;border-top:1px solid #edf1f4;color:#17324a;font-size:10px;font-weight:800;line-height:1.45}
+.dashboardInsightGrid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr);gap:12px;margin-top:14px;align-items:stretch}.dashboardInsightGrid>.card{margin-top:0;height:100%}.trendHead{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.trendControls{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.trendControl{border:1px solid #dbe4ea;background:#fff;color:#5e6f7f;border-radius:8px;padding:6px 8px;font-family:inherit;font-size:9px;font-weight:900;cursor:pointer}.trendControl.on{background:#173f62;color:#fff;border-color:#173f62}.trendMetricControls{display:flex;gap:7px;margin-top:12px}.trendMetric{border:0;border-radius:9px;background:#edf3f7;color:#526474;padding:8px 10px;font-family:inherit;font-size:10px;font-weight:900;cursor:pointer}.trendMetric.on{background:#fff5d8;color:#765713;box-shadow:inset 0 0 0 1px #dec678}.trendTotals{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.trendTotal{border:1px solid #e1e7ec;background:#fbfcfd;border-radius:10px;padding:8px 10px;color:#6a7987;font-size:9px}.trendTotal b{display:block;color:#17324a;font-size:14px;margin-top:2px}.trendChartShell{margin-top:11px;border:1px solid #e2e8ee;border-radius:12px;background:linear-gradient(180deg,#fcfdfe,#f7f9fb);padding:9px;overflow:hidden}.trendChartShell svg{display:block;width:100%;height:auto;min-height:190px}.trendEmpty{text-align:center;padding:8px 0 2px;color:#82909c;font-size:10px}.trendNote{margin:9px 0 0;color:#788693;font-size:9px;line-height:1.45}
+.ambCalendarTop{display:flex;align-items:center;justify-content:space-between;gap:10px}.ambCalendarTop h3{margin:0!important;color:#17324a!important;font-size:14px!important}.ambCalendarActions{display:flex;gap:5px}.ambCalBtn{border:1px solid #dbe4ea;background:#fff;color:#17324a;border-radius:8px;min-width:30px;height:30px;padding:0 8px;font-family:inherit;font-size:10px;font-weight:900;cursor:pointer}.ambCalBtn:hover{border-color:#d6bd76;background:#fffaf0}.ambCalendarHint{margin:5px 0 10px;color:#788693;font-size:9px;line-height:1.45}.ambCalendarGrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.ambCalendarDow{text-align:center;color:#758493;font-size:9px;font-weight:900;padding:4px 0}.ambCalendarDate{position:relative;min-height:36px;border:1px solid #edf1f4;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;color:#364a5e;font-size:10px}.ambCalendarDate.muted{opacity:.12}.ambCalendarDate.today{border:2px solid #173f62;font-weight:900;color:#17324a}.ambCalendarDate .ambCalDots{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);display:flex;gap:2px}.ambCalDot{width:4px;height:4px;border-radius:50%;background:#173f62}.ambCalDot.earning{background:#c99a2e}.ambCalDot.payment{background:#5f7f9d}.ambCalendarLegend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;color:#73818e;font-size:8.5px}.ambCalendarLegend span{display:inline-flex;align-items:center;gap:4px}.ambCalendarLegend i{width:7px;height:7px;border-radius:50%;background:#173f62}.ambCalendarLegend i.earning{background:#c99a2e}.ambCalendarLegend i.payment{background:#5f7f9d}.ambCalendarLegend i.today{width:9px;height:9px;border:2px solid #173f62;background:#fff;border-radius:3px}
+@media(max-width:1000px){.dashboardMetrics,.quickGrid{grid-template-columns:repeat(2,minmax(0,1fr))}.performanceCards{grid-template-columns:1fr 1fr}.performanceCard:last-child{grid-column:1/-1}.dashboardInsightGrid{grid-template-columns:1fr}}
 @media(max-width:560px){
  .dashboardHero{padding:20px}.heroTopline{display:block}.heroStatus{justify-content:flex-start;margin-top:12px}
  .dashboardMetrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.dashboardMetrics .stat{min-height:108px;padding:14px}.dashboardMetrics .stat b{font-size:23px}.dashboardMetrics .stat small{font-size:8px}
  .quickGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.quickAction{min-height:96px;padding:12px}.quickAction b{font-size:12px}
  .dashboardSplit{display:grid;grid-template-columns:1fr}.activityItem{grid-template-columns:34px minmax(0,1fr)}.activityIcon{width:34px;height:34px}.activityAmt{grid-column:2}
  .earningsMini{grid-template-columns:1fr!important}
+ .dashboardSectionIntro{align-items:flex-start;flex-direction:column}.dashboardSectionHint{white-space:normal}
+ .performanceCards{grid-template-columns:1fr}.performanceCard:last-child{grid-column:auto}.performanceCard{min-height:0}
+ .trendHead{display:block}.trendControls{justify-content:flex-start;margin-top:10px}.trendChartShell svg{min-height:170px}
+ .dashboardInsightGrid{grid-template-columns:1fr}.ambCalendarDate{min-height:34px}
 }
 </style><style id="ambassador-referrals-v1">
 .referralSummary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}.miniMetric{border:1px solid #dfe6eb;background:#f9fbfc;border-radius:13px;padding:14px}.miniMetric span{display:block;color:#71808d;font-size:8px;font-weight:900;letter-spacing:.08em;line-height:1.35}.miniMetric b{display:block;color:#17324a;font-size:22px;margin-top:6px}
@@ -202,11 +210,79 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
   <div class="heroTopline"><div><div class="eyebrow" id="rankLabel">AMBASSADOR</div><h1 id="welcome">Welcome</h1><p class="muted" id="accountLine"></p></div><div class="heroStatus"><span id="accountBadge" class="badge ok">ACTIVE</span><span id="earningBadge" class="badge warn">EARNINGS STATUS</span></div></div>
 </section>
 
+<div class="dashboardSectionIntro">
+  <div><h2>My Ambassador Snapshot</h2><p>Your most important Ambassador figures at a glance.</p></div>
+  <span class="dashboardSectionHint">Live from your approved records</span>
+</div>
 <div class="dashboardMetrics">
   <div class="stat"><span class="statIcon">◎</span><b id="referralCount">0</b><small>ELIGIBLE RECORDED REFERRALS</small></div>
   <div class="stat"><span class="statIcon">R</span><b id="totalEarned">R0</b><small>APPROVED / PAID EARNINGS</small></div>
   <div class="stat"><span class="statIcon">◷</span><b id="pendingEarned">0</b><small>REFERRALS AWAITING APPROVAL</small></div>
   <div class="stat"><span class="statIcon">%</span><b id="commissionTotal">R0</b><small>DIRECT COMMISSION</small></div>
+</div>
+
+<section id="ambassadorPerformanceOverview" class="dashboardPerformanceOverview">
+  <div class="dashboardSectionIntro">
+    <div><h2>Performance Overview</h2><p>A clearer view of your confirmed earnings, referral growth and progress in the Ambassador Programme.</p></div>
+    <span class="dashboardSectionHint">Confirmed data only</span>
+  </div>
+  <div class="performanceCards">
+    <article class="performanceCard">
+      <span class="performanceLabel">Earnings Overview</span>
+      <b class="performanceValue" id="overviewEarnings">R0</b>
+      <span class="performanceMeta" id="overviewEarningsMeta">Confirmed earnings from approved Ambassador records.</span>
+      <div class="performanceFoot" id="overviewEarningsFoot">Paid-out history will appear here.</div>
+    </article>
+    <article class="performanceCard">
+      <span class="performanceLabel">Referral Growth</span>
+      <b class="performanceValue" id="overviewReferralGrowth">0</b>
+      <span class="performanceMeta" id="overviewReferralMeta">Eligible recorded referrals.</span>
+      <div class="performanceFoot" id="overviewReferralFoot">Monthly referral movement will appear here.</div>
+    </article>
+    <article class="performanceCard">
+      <span class="performanceLabel">My Performance</span>
+      <b class="performanceValue" id="overviewPerformance">Ambassador</b>
+      <span class="performanceMeta" id="overviewPerformanceMeta">Current programme recognition level.</span>
+      <div class="performanceFoot" id="overviewPerformanceFoot">Progress to your next achievement will appear here.</div>
+    </article>
+  </div>
+</section>
+
+<div class="dashboardInsightGrid">
+  <section class="card" aria-labelledby="ambTrendTitle">
+    <div class="trendHead">
+      <div><div class="eyebrow dark">PERFORMANCE TREND</div><h2 id="ambTrendTitle">Referral &amp; sales performance</h2><p class="muted">Track how your recorded referrals and confirmed qualifying revenue are moving over time.</p></div>
+      <div class="trendControls" aria-label="Performance period">
+        <button class="trendControl" type="button" data-trend-period="7">7 days</button>
+        <button class="trendControl on" type="button" data-trend-period="30">30 days</button>
+        <button class="trendControl" type="button" data-trend-period="90">90 days</button>
+      </div>
+    </div>
+    <div class="trendMetricControls" aria-label="Performance measure">
+      <button class="trendMetric on" type="button" data-trend-metric="referrals">Referrals</button>
+      <button class="trendMetric" type="button" data-trend-metric="revenue">Qualifying Revenue</button>
+    </div>
+    <div class="trendTotals">
+      <div class="trendTotal">Eligible referrals<b id="trendReferralTotal">0</b></div>
+      <div class="trendTotal">Confirmed qualifying revenue<b id="trendRevenueTotal">R0</b></div>
+    </div>
+    <div id="ambassadorTrendChart" class="trendChartShell" aria-live="polite"></div>
+    <p class="trendNote">Only confirmed qualifying revenue is treated as sales performance. Pending or disqualified referrals are not counted as confirmed revenue.</p>
+  </section>
+
+  <section class="card" aria-labelledby="ambCalendarTitle">
+    <div class="ambCalendarTop">
+      <div><div class="eyebrow dark">AMBASSADOR CALENDAR</div><h3 id="ambCalendarTitle">Month view</h3></div>
+      <div class="ambCalendarActions">
+        <button class="ambCalBtn" id="ambCalPrev" type="button" aria-label="Previous month">‹</button>
+        <button class="ambCalBtn" id="ambCalToday" type="button">Today</button>
+        <button class="ambCalBtn" id="ambCalNext" type="button" aria-label="Next month">›</button>
+      </div>
+    </div>
+    <p class="ambCalendarHint" id="ambCalendarHint">Your referral, confirmed earning and payment activity is marked on the relevant dates.</p>
+    <div id="ambassadorCalendarGrid"></div>
+    <div class="ambCalendarLegend"><span><i class="today"></i>Today</span><span><i></i>Referral</span><span><i class="earning"></i>Earning</span><span><i class="payment"></i>Payment</span></div>
+  </section>
 </div>
 
 <section class="card quickPanel">
@@ -224,7 +300,7 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
 <section class="card"><div class="sectionHead"><div><div class="eyebrow dark">RANK PROGRESS</div><h2>Next achievement</h2></div><button class="textAction" data-go="compensation">View plan →</button></div><p id="nextRank" class="muted"></p><div class="progress rankBar"><i id="progressBar"></i></div><p id="monthlyTarget" class="muted"></p></section>
 </div>
 
-<section class="card"><div class="sectionHead"><div><div class="eyebrow dark">EARNINGS OVERVIEW</div><h2>Where your earnings come from</h2></div><button class="textAction" data-go="earnings">Open ledger →</button></div>
+<section class="card"><div class="sectionHead"><div><div class="eyebrow dark">EARNINGS BREAKDOWN</div><h2>Where your confirmed earnings come from</h2></div><button class="textAction" data-go="earnings">Open ledger →</button></div>
 <div class="three earningsMini" style="margin-top:12px"><div class="earning"><b id="statusCommission">R0</b><span>DIRECT COMMISSION</span></div><div class="earning"><b id="statusBonus">R0</b><span>ACHIEVEMENT BONUSES</span></div><div class="earning"><b id="statusPerformance">R0</b><span>MONTHLY PERFORMANCE</span></div></div><div id="earnSummary" class="notice" style="margin-top:12px"></div></section>
 
 <section class="card"><div class="sectionHead"><div><div class="eyebrow dark">RECENT ACTIVITY</div><h2>Your latest Ambassador activity</h2></div></div><div id="recentActivity" class="activityList"><div class="empty">No recent activity yet.</div></div></section>
@@ -540,7 +616,7 @@ body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-se
   if(logo&&window.FUNDA_TRANSPARENT_LOGO_MASTER)logo.src=window.FUNDA_TRANSPARENT_LOGO_MASTER;
 })();
 </script>
-<script src="ambassador-portal-v2.js?v=20260921-agreement-version-v1"></script>
+<script src="ambassador-portal-v2.js?v=20260923-performance-overview-v1"></script>
 <script src="ambassador-your-voice.js?v=20260913-your-voice-v1"></script>
 <script src="academy-identity.js?v=20260905-master-identity"></script>
 <script src="ambassador-academy-identity-compact.js?v=20260923-compact-v1"></script>
