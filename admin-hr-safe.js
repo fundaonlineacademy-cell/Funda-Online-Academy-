@@ -78,6 +78,8 @@ async function load(){
     ['hr_training_records','*','created_at'],
     ['hr_performance_reviews','*','created_at'],
     ['hr_workforce_plans','*','created_at'],
+    ['hr_compensation_guidance','*','department'],
+    ['hr_compensation_floor','*','effective_date'],
     ['hr_audit_log','*','created_at']
   ];
   await Promise.all(specs.map(async([name,fields,order])=>{
@@ -241,10 +243,50 @@ function staffOpts(){
 }
 const workforceDepartments=[
   'Human Resources','Finance & Accounting','Academic, Assessments & Content','Enrolments & Courses',
-  'Student Support & CRM','Marketing & Admissions','Communication Hub','IT, Security & Platform'
+  'Student Support & CRM','Marketing & Admissions','Communication Hub','IT, Security & Platform','Executive / CEO'
 ];
 function workforceDeptOpts(selected=''){
   return workforceDepartments.map(x=>'<option '+(x===selected?'selected':'')+'>'+esc(x)+'</option>').join('');
+}
+function compensationFloor(){
+  return (D.hr_compensation_floor||[])[0]||{
+    hourly_rate:30.23,monthly_equivalent_40h:5239.46,effective_date:'2026-03-01',
+    source_label:'South Africa National Minimum Wage 2026'
+  };
+}
+function guidanceMonthlyBand(g){
+  if(!g)return {min:0,max:0};
+  if(g.guidance_type==='revenue_percentage'){
+    const target=n(workforceSummary?.monthly_revenue_target);
+    return {min:target*n(g.revenue_pct_min)/100,max:target*n(g.revenue_pct_max)/100};
+  }
+  return {min:n(g.monthly_min),max:n(g.monthly_max)};
+}
+function monthlyToHourly(v){return n(v)/(40*52/12)}
+function compensationGuidanceRows(){
+  const rows=(D.hr_compensation_guidance||[]).filter(x=>x.active);
+  return rows.map(g=>{
+    const band=guidanceMonthlyBand(g),mid=(band.min+band.max)/2;
+    const sourceDate=g.source_as_of?new Date(g.source_as_of+'T12:00:00').toLocaleDateString('en-ZA',{month:'short',year:'numeric'}):'';
+    return `<tr>
+      <td><b>${esc(g.department)}</b><div class="hrMeta">${esc(g.suggested_role)}</div></td>
+      <td>${esc(g.profile_level||'Junior / graduate')}</td>
+      <td><b>${moneyHR(band.min)} – ${moneyHR(band.max)}</b><div class="hrMeta">${g.guidance_type==='revenue_percentage'?'FOA internal affordability envelope':'Market-reference monthly planning band'}</div></td>
+      <td><b>${moneyHR(monthlyToHourly(band.min))} – ${moneyHR(monthlyToHourly(band.max))}/hour</b><div class="hrMeta">40-hour-week equivalent for planning only</div></td>
+      <td><div class="hrMeta"><b>${esc(g.source_label)}</b>${sourceDate?' · '+esc(sourceDate):''}</div><div class="hrEvidence">${esc(g.source_note||'')}</div></td>
+      <td><button class="hrBtn alt" data-comp-guide="${g.id}" data-comp-mode="low">Use lower</button> <button class="hrBtn alt" data-comp-guide="${g.id}" data-comp-mode="mid">Use midpoint</button></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="6">Compensation guidance is currently unavailable.</td></tr>';
+}
+function applyCompGuidance(id,mode='mid'){
+  const g=(D.hr_compensation_guidance||[]).find(x=>x.id===id);if(!g)return;
+  const band=guidanceMonthlyBand(g),rate=mode==='low'?band.min:(band.min+band.max)/2;
+  if($('hwDept'))$('hwDept').value=g.department;
+  if($('hwRole'))$('hwRole').value=g.suggested_role;
+  if($('hwBasis'))$('hwBasis').value='monthly';
+  if($('hwMonthlyRate'))$('hwMonthlyRate').value=n(rate).toFixed(2);
+  syncWorkforceFields();
+  $('hwRole')?.scrollIntoView({behavior:'smooth',block:'center'});
 }
 function workforceBasePerPerson(x){
   return low(x.pay_basis)==='hourly'
