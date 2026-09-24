@@ -35,36 +35,36 @@ function installStyle(){
  if(document.getElementById('studentHeaderFooterSearchStyle'))return;
  const style=document.createElement('style');
  style.id='studentHeaderFooterSearchStyle';
- style.textContent='\\
-body.sdV2>header .h-[72px]{position:relative}\\
-.studentHeaderSearchWrap{position:relative;order:3;flex:1 1 420px;max-width:560px;min-width:220px;margin:0 auto}\\
-.studentHeaderSearchIcon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#bdd0e4;font-size:18px;font-weight:900;pointer-events:none;z-index:2}\\
-.studentGlobalSearch{width:100%;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);color:#fff!important;-webkit-text-fill-color:#fff!important;padding:0 42px;font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important;font-size:13px;font-weight:700;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}\\
-.studentGlobalSearch::placeholder{color:#b7c6d8!important;-webkit-text-fill-color:#b7c6d8!important;opacity:1}\\
-.studentGlobalSearch:focus{border-color:#e2bd62;background:rgba(255,255,255,.14);box-shadow:0 0 0 3px rgba(226,189,98,.12)}\\
-.studentGlobalSearch::-webkit-search-cancel-button{filter:invert(1);opacity:.75}\\
-.studentHeaderSearchResults{display:none;position:absolute;top:50px;left:0;right:0;z-index:160;max-height:390px;overflow:auto;background:#fff;border:1px solid #d9e2ef;border-radius:13px;box-shadow:0 18px 45px rgba(7,23,47,.22);padding:7px}\\
-.studentHeaderSearchResults.open{display:block}\\
-.studentHeaderSearchResult{display:block;width:100%;border:0;background:#fff;border-radius:9px;padding:10px 11px;text-align:left;color:#07172f;font-family:inherit;cursor:pointer}\\
-.studentHeaderSearchResult:hover,.studentHeaderSearchResult:focus{background:#eef4ff;outline:none}\\
-.studentHeaderSearchResult b{display:block;font-size:13px;line-height:1.3}\\
-.studentHeaderSearchResult span{display:block;margin-top:3px;color:#687b90;font-size:10px;line-height:1.35}\\
-.studentHeaderSearchEmpty{padding:13px;color:#66798e;font-size:11px;text-align:center}\\
-#studentHeaderSearchButton{display:none;place-items:center;width:42px;height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;font-size:20px;font-weight:900;cursor:pointer}\\
-body.sdV2>header #sdMenu{order:1}\\
-body.sdV2>header .h-[72px]>a{order:2}\\
-body.sdV2>header .h-[72px]>.studentHeaderSearchWrap{order:3}\\
-body.sdV2>header .h-[72px]>.flex.items-center.gap-2{order:4!important;margin-left:0!important}\\
-.studentFooterEmailLink{color:#dbeafe;text-decoration:none;font-weight:700}\\
-.studentFooterEmailLink:hover,.studentFooterEmailLink:focus{text-decoration:underline;color:#fff}\\
-@media(max-width:999px){.studentHeaderSearchWrap{max-width:420px;flex-basis:280px}.studentGlobalSearch{font-size:12px}}\\
-@media(max-width:760px){\\
- .studentHeaderSearchWrap{display:none;position:absolute;left:0;right:0;top:64px;max-width:none;min-width:0;margin:0;padding:10px;background:#06152f;border:1px solid rgba(255,255,255,.12);border-radius:0 0 14px 14px;box-shadow:0 18px 35px rgba(2,15,35,.24)}\\
- .studentHeaderSearchWrap.mobile-open{display:block}\\
- #studentHeaderSearchButton{display:inline-grid}\\
- .studentHeaderSearchResults{top:58px;left:10px;right:10px}\\
- body.sdV2>header .h-[72px]>.flex.items-center.gap-2{margin-left:auto!important}\\
-}\\
+ style.textContent='\
+body.sdV2>header .h-[72px]{position:relative}\
+.studentHeaderSearchWrap{position:relative;order:3;flex:1 1 420px;max-width:560px;min-width:220px;margin:0 auto}\
+.studentHeaderSearchIcon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#bdd0e4;font-size:18px;font-weight:900;pointer-events:none;z-index:2}\
+.studentGlobalSearch{width:100%;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);color:#fff!important;-webkit-text-fill-color:#fff!important;padding:0 42px;font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important;font-size:13px;font-weight:700;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}\
+.studentGlobalSearch::placeholder{color:#b7c6d8!important;-webkit-text-fill-color:#b7c6d8!important;opacity:1}\
+.studentGlobalSearch:focus{border-color:#e2bd62;background:rgba(255,255,255,.14);box-shadow:0 0 0 3px rgba(226,189,98,.12)}\
+.studentGlobalSearch::-webkit-search-cancel-button{filter:invert(1);opacity:.75}\
+.studentHeaderSearchResults{display:none;position:absolute;top:50px;left:0;right:0;z-index:160;max-height:390px;overflow:auto;background:#fff;border:1px solid #d9e2ef;border-radius:13px;box-shadow:0 18px 45px rgba(7,23,47,.22);padding:7px}\
+.studentHeaderSearchResults.open{display:block}\
+.studentHeaderSearchResult{display:block;width:100%;border:0;background:#fff;border-radius:9px;padding:10px 11px;text-align:left;color:#07172f;font-family:inherit;cursor:pointer}\
+.studentHeaderSearchResult:hover,.studentHeaderSearchResult:focus{background:#eef4ff;outline:none}\
+.studentHeaderSearchResult b{display:block;font-size:13px;line-height:1.3}\
+.studentHeaderSearchResult span{display:block;margin-top:3px;color:#687b90;font-size:10px;line-height:1.35}\
+.studentHeaderSearchEmpty{padding:13px;color:#66798e;font-size:11px;text-align:center}\
+#studentHeaderSearchButton{display:none;place-items:center;width:42px;height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;font-size:20px;font-weight:900;cursor:pointer}\
+body.sdV2>header #sdMenu{order:1}\
+body.sdV2>header .h-[72px]>a{order:2}\
+body.sdV2>header .h-[72px]>.studentHeaderSearchWrap{order:3}\
+body.sdV2>header .h-[72px]>.flex.items-center.gap-2{order:4!important;margin-left:0!important}\
+.studentFooterEmailLink{color:#dbeafe;text-decoration:none;font-weight:700}\
+.studentFooterEmailLink:hover,.studentFooterEmailLink:focus{text-decoration:underline;color:#fff}\
+@media(max-width:999px){.studentHeaderSearchWrap{max-width:420px;flex-basis:280px}.studentGlobalSearch{font-size:12px}}\
+@media(max-width:760px){\
+ .studentHeaderSearchWrap{display:none;position:absolute;left:0;right:0;top:64px;max-width:none;min-width:0;margin:0;padding:10px;background:#06152f;border:1px solid rgba(255,255,255,.12);border-radius:0 0 14px 14px;box-shadow:0 18px 35px rgba(2,15,35,.24)}\
+ .studentHeaderSearchWrap.mobile-open{display:block}\
+ #studentHeaderSearchButton{display:inline-grid}\
+ .studentHeaderSearchResults{top:58px;left:10px;right:10px}\
+ body.sdV2>header .h-[72px]>.flex.items-center.gap-2{margin-left:auto!important}\
+}\
 @media(max-width:420px){body.sdV2>header #logoutButton{padding:10px 13px!important;font-size:12px!important}#studentHeaderSearchButton{width:40px;height:40px}}';
  document.head.appendChild(style);
 }
