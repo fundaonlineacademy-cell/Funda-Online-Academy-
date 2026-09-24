@@ -39,7 +39,7 @@ function installStyle(){
 body.sdV2>header .h-\\[72px\\]{position:relative}\
 .studentHeaderSearchWrap{position:relative;order:3;flex:1 1 420px;max-width:560px;min-width:220px;margin:0 auto}\
 .studentHeaderSearchIcon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#bdd0e4;font-size:18px;font-weight:900;pointer-events:none;z-index:2}\
-.studentGlobalSearch{width:100%;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);color:#fff!important;-webkit-text-fill-color:#fff!important;padding:0 42px;font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important;font-size:13px;font-weight:700;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}\
+.studentGlobalSearch{width:100%;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff!important;padding:0 42px;font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important;font-size:13px;font-weight:700;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}\body.sdV2>header .studentGlobalSearch,body.sdV2>header .studentGlobalSearch:focus,body.sdV2>header .studentGlobalSearch:active,body.sdV2>header .studentGlobalSearch:not(:placeholder-shown){color:#fff!important;-webkit-text-fill-color:#fff!important;caret-color:#fff!important}\
 .studentGlobalSearch::placeholder{color:#b7c6d8!important;-webkit-text-fill-color:#b7c6d8!important;opacity:1}\
 .studentGlobalSearch:focus{border-color:#e2bd62;background:rgba(255,255,255,.14);box-shadow:0 0 0 3px rgba(226,189,98,.12)}\
 .studentGlobalSearch::-webkit-search-cancel-button{filter:invert(1);opacity:.75}\
