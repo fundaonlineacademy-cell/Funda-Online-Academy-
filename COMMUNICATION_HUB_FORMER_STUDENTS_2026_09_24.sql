@@ -21,7 +21,18 @@ create unique index if not exists former_student_contacts_email_ci_uq
 create unique index if not exists former_student_contacts_unsubscribe_token_uq
   on public.former_student_contacts (unsubscribe_token);
 
+create index if not exists former_student_contacts_created_by_idx
+  on public.former_student_contacts (created_by);
+
 alter table public.former_student_contacts enable row level security;
+
+drop policy if exists "Former student contacts are not directly exposed" on public.former_student_contacts;
+create policy "Former student contacts are not directly exposed"
+  on public.former_student_contacts
+  for all
+  to authenticated
+  using (false)
+  with check (false);
 
 revoke all on table public.former_student_contacts from anon, authenticated;
 grant select, insert, update, delete on table public.former_student_contacts to service_role;
