@@ -70,6 +70,11 @@ Deno.serve(async(req:Request)=>{
         const q=await admin.from("profiles").select("id,email,full_name").in("role",["staff","admin","manager"]);if(q.error)throw q.error;recipients=q.data||[];
       }else if(audience==="ambassadors"){
         const q=await admin.from("ambassador_programme_applications").select("email,full_name").eq("status","approved");if(q.error)throw q.error;recipients=(q.data||[]).map((x:any)=>({id:null,email:x.email,full_name:x.full_name}));
+      }else if(audience==="former_students"){
+        const q=await admin.from("former_student_contacts").select("email,full_name,unsubscribe_token").eq("active",true).is("unsubscribed_at",null);if(q.error)throw q.error;
+        const current=await admin.from("profiles").select("email").eq("role","student");if(current.error)throw current.error;
+        const currentEmails=new Set((current.data||[]).map((x:any)=>clean(x.email).toLowerCase()).filter(Boolean));
+        recipients=(q.data||[]).filter((x:any)=>!currentEmails.has(clean(x.email).toLowerCase())).map((x:any)=>({id:null,email:x.email,full_name:x.full_name,unsubscribe_token:x.unsubscribe_token,former_student:true}));
       }else if(audience==="all_funda"){
         const p=await admin.from("profiles").select("id,email,full_name").in("role",["student","staff","admin","manager"]);if(p.error)throw p.error;
         const a=await admin.from("ambassador_programme_applications").select("email,full_name").eq("status","approved");if(a.error)throw a.error;
@@ -80,12 +85,15 @@ Deno.serve(async(req:Request)=>{
       recipients=recipients.filter((r:any)=>{const email=clean(r.email).toLowerCase(),id=String(r.id||"");if(!email||email.endsWith("@deleted.funda.invalid")||(id&&deletedIds.has(id))||seen.has(email))return false;seen.add(email);r.email=email;return true});
 
       const messageKey="scheduled-communication-"+m.id;
-      const html='<!doctype html><html><body style="margin:0;background:#f3f7fb;font-family:Arial,sans-serif;color:#17304f"><div style="max-width:640px;margin:24px auto;background:#fff;border:1px solid #dce6f0;border-radius:18px;overflow:hidden"><div style="background:#071d49;color:#fff;padding:22px 26px"><div style="font-size:11px;letter-spacing:2px;color:#e1bf67;font-weight:700">FUNDA ONLINE ACADEMY</div><h1 style="font-size:21px;margin:7px 0 0">'+esc(m.title)+'</h1></div><div style="padding:26px"><p style="font-size:14px;line-height:1.75;white-space:pre-line">'+esc(m.body)+'</p><p style="font-size:12px;color:#718096;margin-top:24px">Funda Online Academy · Learn. Grow. Achieve.</p></div></div></body></html>';
+      const messageType=audience==="former_students"?"marketing":"operational";
 
       for(const r of recipients){
+        const marketingReason=r.former_student?'You are receiving this because you previously studied with Funda Online Academy.':'';
+        const unsubscribe=messageType==="marketing"&&r.unsubscribe_token?'<p style="font-size:11px;color:#718096;margin-top:18px">'+marketingReason+' <a href="'+url+'/functions/v1/marketing-unsubscribe?token='+encodeURIComponent(r.unsubscribe_token)+'">Unsubscribe</a></p>':'';
+        const html='<!doctype html><html><body style="margin:0;background:#f3f7fb;font-family:Arial,sans-serif;color:#17304f"><div style="max-width:640px;margin:24px auto;background:#fff;border:1px solid #dce6f0;border-radius:18px;overflow:hidden"><div style="background:#071d49;color:#fff;padding:22px 26px"><div style="font-size:11px;letter-spacing:2px;color:#e1bf67;font-weight:700">FUNDA ONLINE ACADEMY</div><h1 style="font-size:21px;margin:7px 0 0">'+esc(m.title)+'</h1></div><div style="padding:26px"><p style="font-size:14px;line-height:1.75;white-space:pre-line">'+esc(m.body)+'</p><p style="font-size:12px;color:#718096;margin-top:24px">Funda Online Academy · Learn. Grow. Achieve.</p>'+unsubscribe+'</div></div></body></html>';
         await admin.from("email_outbox").upsert({
           message_key:messageKey,
-          message_type:"operational",
+          message_type:messageType,
           audience,
           recipient_user_id:r.id||null,
           recipient_email:r.email,
