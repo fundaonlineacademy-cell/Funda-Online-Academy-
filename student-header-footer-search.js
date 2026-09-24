@@ -36,7 +36,7 @@ function installStyle(){
  const style=document.createElement('style');
  style.id='studentHeaderFooterSearchStyle';
  style.textContent='\
-body.sdV2>header .h-[72px]{position:relative}\
+body.sdV2>header .h-\\[72px\\]{position:relative}\
 .studentHeaderSearchWrap{position:relative;order:3;flex:1 1 420px;max-width:560px;min-width:220px;margin:0 auto}\
 .studentHeaderSearchIcon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#bdd0e4;font-size:18px;font-weight:900;pointer-events:none;z-index:2}\
 .studentGlobalSearch{width:100%;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.10);color:#fff!important;-webkit-text-fill-color:#fff!important;padding:0 42px;font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important;font-size:13px;font-weight:700;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}\
@@ -52,9 +52,9 @@ body.sdV2>header .h-[72px]{position:relative}\
 .studentHeaderSearchEmpty{padding:13px;color:#66798e;font-size:11px;text-align:center}\
 #studentHeaderSearchButton{display:none;place-items:center;width:42px;height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;font-size:20px;font-weight:900;cursor:pointer}\
 body.sdV2>header #sdMenu{order:1}\
-body.sdV2>header .h-[72px]>a{order:2}\
-body.sdV2>header .h-[72px]>.studentHeaderSearchWrap{order:3}\
-body.sdV2>header .h-[72px]>.flex.items-center.gap-2{order:4!important;margin-left:0!important}\
+body.sdV2>header .h-\\[72px\\]>a{order:2}\
+body.sdV2>header .h-\\[72px\\]>.studentHeaderSearchWrap{order:3}\
+body.sdV2>header .h-\\[72px\\]>.flex.items-center.gap-2{order:4!important;margin-left:0!important}\
 .studentFooterEmailLink{color:#dbeafe;text-decoration:none;font-weight:700}\
 .studentFooterEmailLink:hover,.studentFooterEmailLink:focus{text-decoration:underline;color:#fff}\
 @media(max-width:999px){.studentHeaderSearchWrap{max-width:420px;flex-basis:280px}.studentGlobalSearch{font-size:12px}}\
@@ -63,7 +63,7 @@ body.sdV2>header .h-[72px]>.flex.items-center.gap-2{order:4!important;margin-lef
  .studentHeaderSearchWrap.mobile-open{display:block}\
  #studentHeaderSearchButton{display:inline-grid}\
  .studentHeaderSearchResults{top:58px;left:10px;right:10px}\
- body.sdV2>header .h-[72px]>.flex.items-center.gap-2{margin-left:auto!important}\
+ body.sdV2>header .h-\\[72px\\]>.flex.items-center.gap-2{margin-left:auto!important}\
 }\
 @media(max-width:420px){body.sdV2>header #logoutButton{padding:10px 13px!important;font-size:12px!important}#studentHeaderSearchButton{width:40px;height:40px}}';
  document.head.appendChild(style);
