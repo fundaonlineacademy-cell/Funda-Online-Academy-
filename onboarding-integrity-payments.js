@@ -84,20 +84,28 @@
   }
 
   function ensureIdentityUI(){
-    const id=document.getElementById('idNumber'),dob=document.getElementById('dateOfBirth');
+    const id=document.getElementById('idNumber'),dob=document.getElementById('dateOfBirth'),type=document.getElementById('identityDocumentType');
     if(!id||!dob)return;
     dob.required=true;
-    dob.readOnly=true;
-    dob.setAttribute('aria-readonly','true');
-    dob.classList.add('bg-gray-50','text-gray-700');
     dob.removeAttribute('max');
-    const note=document.createElement('p');
-    note.id='dobIntegrityNote';note.className='text-xs mt-2 text-gray-500 leading-5';
-    note.textContent=`Date of birth is read automatically from the South African ID number. Minimum learner age: ${MINIMUM_AGE}.`;
-    dob.parentElement.appendChild(note);
+    let note=document.getElementById('dobIntegrityNote');
+    if(!note){
+      note=document.createElement('p');
+      note.id='dobIntegrityNote';note.className='text-xs mt-2 text-gray-500 leading-5';
+      dob.parentElement.appendChild(note);
+    }
     const validate=()=>{
+      const isSA=(type?.value||'south_african_id')==='south_african_id';
+      dob.readOnly=isSA;
+      dob.toggleAttribute('aria-readonly',isSA);
+      dob.classList.toggle('bg-gray-50',isSA);
+      dob.classList.toggle('text-gray-700',isSA);
+      if(!isSA){
+        note.textContent=`Enter the date of birth shown on the passport or foreign identity document. Minimum learner age: ${MINIMUM_AGE}.`;
+        note.className='text-xs mt-2 text-gray-500 leading-5';
+        return;
+      }
       id.value=digits(id.value).slice(0,13);
-      const note=document.getElementById('dobIntegrityNote');
       if(id.value.length<13){dob.value='';note.textContent=`Date of birth is read automatically from the South African ID number. Minimum learner age: ${MINIMUM_AGE}.`;note.className='text-xs mt-2 text-gray-500 leading-5';return;}
       const result=birthDateFromSAId(id.value);
       if(result.error){dob.value='';note.textContent=result.error;note.className='text-xs mt-2 text-red-600 font-semibold leading-5';return;}
@@ -105,7 +113,7 @@
       note.textContent=result.checksum?`✓ ID date verified: ${result.iso} · Age ${result.age}`:`The ID date is valid, but the ID checksum appears incorrect. Please check the number before continuing.`;
       note.className=result.checksum?'text-xs mt-2 text-green-700 font-semibold leading-5':'text-xs mt-2 text-red-600 font-semibold leading-5';
     };
-    id.addEventListener('input',validate);id.addEventListener('blur',validate);validate();
+    id.addEventListener('input',validate);id.addEventListener('blur',validate);type?.addEventListener('change',validate);validate();
   }
 
   function injectPaymentUI(){
@@ -115,7 +123,13 @@
     method.parentElement.classList.add('md:col-span-2');
 
     const ref=document.getElementById('paymentReference');
-    if(ref){ref.required=true;ref.placeholder='Use your South African ID number';ref.parentElement.classList.add('md:col-span-2');}
+    if(ref){
+      ref.required=true;
+      const syncRefPlaceholder=()=>{ref.placeholder=document.getElementById('identityDocumentType')?.value==='passport'?'Use your passport / foreign ID number':'Use your South African ID number';};
+      syncRefPlaceholder();
+      document.getElementById('identityDocumentType')?.addEventListener('change',syncRefPlaceholder);
+      ref.parentElement.classList.add('md:col-span-2');
+    }
 
     const block=document.createElement('div');
     block.id='fundaPaymentPlan';block.className='md:col-span-2 space-y-4';
@@ -199,11 +213,19 @@
   }
 
   function extraValidation(){
-    const id=digits(document.getElementById('idNumber')?.value),dob=document.getElementById('dateOfBirth')?.value;
-    const identity=birthDateFromSAId(id);
-    if(identity.error)return identity.error;
-    if(!identity.checksum)return 'The South African ID number appears to be incorrect. Please check all 13 digits.';
-    if(dob!==identity.iso)return 'Date of birth must correspond with the South African ID number.';
+    const identityType=document.getElementById('identityDocumentType')?.value||'south_african_id';
+    const dob=document.getElementById('dateOfBirth')?.value;
+    if(identityType==='south_african_id'){
+      const id=digits(document.getElementById('idNumber')?.value);
+      const identity=birthDateFromSAId(id);
+      if(identity.error)return identity.error;
+      if(!identity.checksum)return 'The South African ID number appears to be incorrect. Please check all 13 digits.';
+      if(dob!==identity.iso)return 'Date of birth must correspond with the South African ID number.';
+    }else{
+      const passport=String(document.getElementById('passportNumber')?.value||'').trim();
+      if(passport.length<4)return 'Please enter a valid passport or foreign ID number.';
+      if(!dob)return 'Please enter the date of birth shown on the passport or foreign identity document.';
+    }
     const bankText=document.getElementById('bankDetailsStatus')?.textContent||'';
     if(/not yet been published|could not be loaded/i.test(bankText))return 'Official Academy banking details are not available yet. Please do not submit a payment until the banking details are displayed.';
     const method=document.getElementById('paymentMethod')?.value;
@@ -278,7 +300,7 @@
     }
     const submit=document.getElementById('submitApplication');
     if(submit)submit.addEventListener('click',enhancedSubmit,true);
-    document.getElementById('idNumber')?.addEventListener('input',()=>{const r=document.getElementById('paymentReference');if(r)r.value=digits(document.getElementById('idNumber').value);});
+    document.getElementById('idNumber')?.addEventListener('input',()=>{if(document.getElementById('identityDocumentType')?.value!=='south_african_id')return;const r=document.getElementById('paymentReference');if(r)r.value=digits(document.getElementById('idNumber').value);});
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(boot,0),{once:true});else setTimeout(boot,0);
