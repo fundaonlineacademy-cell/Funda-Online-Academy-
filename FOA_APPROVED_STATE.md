@@ -205,10 +205,10 @@ Enrollment Step 4 on `onboarding.html` is owner-approved as the final **Payment*
 
 - The approved Payment step must display the Academy's current official banking details from the active payment settings and must instruct learners not to pay until official banking details are shown.
 - The approved payment methods remain **EFT / Bank Transfer** and **Bank Deposit**. Cash payments are not accepted.
-- **Owner-approved payment-plan amendment — 19 September 2026:** a payable course amount of **R1,300 or less** remains full-payment-only.
-- A payable course amount **above R1,300** with a course duration of **at least 4 weeks** qualifies for **2 instalments**.
+- **Owner-approved payment-plan amendment — 1 October 2026 (superseding the 19 September thresholds):** a payable course amount **below R1,000** is full-payment-only.
+- A payable course amount of **R1,000 or more** qualifies for **2 instalments**.
 - A payable course amount of **R2,000 or more** with a course duration of **at least 8 weeks** qualifies for **3 instalments**.
-- A course shorter than 4 weeks remains full-payment-only even when its payable amount is above R1,300.
+- Instalments are payment-plan amounts, not weekly payments.
 - Payment-plan eligibility continues to use the learner's current payable enrolment amount, preserving existing approved discount/legacy pricing behaviour.
 - When instalments are available, the learner must still retain the option to **Pay full course fee**. Instalments are an option, not a requirement.
 - The system must continue to calculate the amount currently due. **Amount Paid Now** remains read-only and must correspond to the selected full-payment or instalment option.
@@ -739,3 +739,15 @@ The owner explicitly approved **HR & Team / HRM 2** for final lock after complet
 - Work in Finance, Expenses & Income, Petty Cash, Academic, CEO Account Control, Digital Library, IT/Security or any other Admin area does **not** reopen HR & Team.
 - A newly discovered HR & Team defect, legal-reference update or requested enhancement is a protected change request and requires explicit owner approval before modification.
 
+
+### Public Policies & Legal — OWNER-AUTHORISED FOCUSED CORRECTION (1 October 2026)
+
+The owner explicitly reopened only the public legal/policy wording and the matching acceptance-version references so the Academy's public legal position can be corrected without reopening locked portal layouts, course content or enrolment behaviour.
+
+- `policies.html` is updated to **FOA Policies v2.0**, effective **1 October 2026**, covering legal identity, Student Terms, POPIA privacy notice, the approved payment rule, refunds/cancellations, learning/certification, complaints and PAIA access requests.
+- Public legal wording must preserve statutory consumer and privacy rights and must not use an absolute no-refund waiver.
+- The policy must state the approved payment rule exactly: below R1,000 = full payment; R1,000 or more = 2 instalments; R2,000 or more plus at least 8 weeks = 3 instalments; eligible Students may still pay in full; instalments are plan amounts rather than weekly payments.
+- `auth.html` and `enrolment-terms-payment-guard.js` may change only enough to identify/link FOA Policies v2.0 and record the matching version. Registration fields, validation, account creation, policy-acceptance requirement and enrolment submission guards remain protected and unchanged.
+- The public page may state the legal name, registration number, public contact details and International CPD Accredited Trainer status, CPD #405201. It must not claim current CIPC good standing, completed Information Officer registration, a completed PAIA manual or full legal compliance unless separately verified.
+- The verified physical address for electronic-supplier disclosure, Information Officer registration/status and formal PAIA manual remain owner-held compliance actions. Do not invent or publish a residential or unverified address.
+- This focused correction does not reopen Home, Browse Courses, portal layouts, lessons, assessments, Digital Library, automated email, database security or any other locked section.
