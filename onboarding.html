@@ -547,7 +547,7 @@
                   required
                   rows="3"
                   class="w-full rounded-xl border border-gray-200 px-4 py-3"
-                  placeholder="Street, suburb and residential address"
+                  placeholder="Street, district/suburb and residential address"
                 ></textarea>
 
               </div>
@@ -575,9 +575,9 @@
               </div>
 
 
-              <!-- PROVINCE -->
+              <!-- SOUTH AFRICAN PROVINCE -->
 
-              <div>
+              <div id="saProvinceWrap">
 
                 <label
                   for="province"
@@ -611,6 +611,28 @@
               </div>
 
 
+              <!-- INTERNATIONAL STATE / PROVINCE / REGION -->
+
+              <div id="internationalRegionWrap" class="hidden">
+
+                <label
+                  for="internationalRegion"
+                  class="block text-sm font-bold text-gray-700 mb-2"
+                >
+                  State / Province / Region *
+                </label>
+
+                <input
+                  id="internationalRegion"
+                  type="text"
+                  maxlength="120"
+                  class="w-full rounded-xl border border-gray-200 px-4 py-3"
+                  placeholder="State, province or region"
+                >
+
+              </div>
+
+
               <!-- POSTAL CODE -->
 
               <div>
@@ -619,7 +641,7 @@
                   for="postalCode"
                   class="block text-sm font-bold text-gray-700 mb-2"
                 >
-                  Postal Code
+                  Postal / ZIP Code
                 </label>
 
                 <input
@@ -850,7 +872,7 @@
                   minlength="2"
                   maxlength="80"
                   class="w-full rounded-xl border border-gray-200 px-4 py-3"
-                  placeholder="Use your South African ID number"
+                  placeholder="Use your ID or passport / foreign ID number"
                 >
 
               </div>
@@ -1559,9 +1581,23 @@
         currentStudent.city ||
         "";
 
-      document.getElementById("province").value =
+      const storedRegion =
         currentStudent.province ||
         "";
+
+      if (
+        document.getElementById("identityDocumentType").value === "passport"
+      ) {
+
+        document.getElementById("internationalRegion").value =
+          storedRegion;
+
+      } else {
+
+        document.getElementById("province").value =
+          storedRegion;
+
+      }
 
       document.getElementById("postalCode").value =
         currentStudent.postal_code ||
@@ -2103,8 +2139,10 @@
 
         province:
           document.getElementById(
-            "province"
-          ).value,
+            "identityDocumentType"
+          ).value === "passport"
+            ? document.getElementById("internationalRegion").value.trim()
+            : document.getElementById("province").value,
 
         postal_code:
           document.getElementById(
@@ -2200,7 +2238,9 @@
         ],
 
         [
-          "Province",
+          values.identity_document_type === "passport"
+            ? "State / Province / Region"
+            : "Province",
           values.province
         ],
 
@@ -3171,14 +3211,33 @@
       const nationality =
         document.getElementById("nationality");
 
+      const saProvinceWrap =
+        document.getElementById("saProvinceWrap");
+
+      const internationalRegionWrap =
+        document.getElementById("internationalRegionWrap");
+
+      const provinceInput =
+        document.getElementById("province");
+
+      const internationalRegionInput =
+        document.getElementById("internationalRegion");
+
+      const paymentReference =
+        document.getElementById("paymentReference");
+
       const isSA =
         type === "south_african_id";
 
       saWrap.classList.toggle("hidden", !isSA);
       passportWrap.classList.toggle("hidden", isSA);
+      saProvinceWrap.classList.toggle("hidden", !isSA);
+      internationalRegionWrap.classList.toggle("hidden", isSA);
 
       idInput.required = isSA;
       passportInput.required = !isSA;
+      provinceInput.required = isSA;
+      internationalRegionInput.required = !isSA;
 
       dobInput.readOnly = isSA;
 
@@ -3195,6 +3254,11 @@
         help.textContent =
           "Date of birth is read automatically from the South African ID number.";
 
+        if (paymentReference) {
+          paymentReference.placeholder =
+            "Use your South African ID number";
+        }
+
         syncDateOfBirthFromId();
 
       } else {
@@ -3208,6 +3272,11 @@
 
         help.textContent =
           "Enter the date of birth shown on the passport or foreign identity document.";
+
+        if (paymentReference) {
+          paymentReference.placeholder =
+            "Use your passport / foreign ID number";
+        }
 
       }
 
