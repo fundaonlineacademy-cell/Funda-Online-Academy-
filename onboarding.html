@@ -856,6 +856,43 @@
               </div>
 
 
+              <!-- PAYMENT PLAN -->
+
+              <div class="md:col-span-2 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+                <p class="font-black text-[#03133d]">Payment Options</p>
+                <p class="text-sm text-gray-700 leading-6 mt-2">
+                  Amounts below R1,000 are paid in full. Amounts of R1,000 or more qualify for 2 instalments.
+                  Amounts of R2,000 or more on courses of at least 8 weeks qualify for 3 instalments.
+                  Where instalments are available, you may still choose to pay the full balance upfront.
+                </p>
+              </div>
+
+              <div class="md:col-span-2">
+                <label
+                  for="paymentPlanChoice"
+                  class="block text-sm font-bold text-gray-700 mb-2"
+                >
+                  Payment Option *
+                </label>
+
+                <select
+                  id="paymentPlanChoice"
+                  required
+                  class="w-full rounded-xl border border-gray-200 px-4 py-3 bg-white"
+                ></select>
+
+                <div
+                  id="paymentSchedule"
+                  class="mt-3 text-sm text-gray-600 leading-6"
+                ></div>
+
+                <div class="mt-3 rounded-xl bg-blue-50 border border-blue-100 px-4 py-3">
+                  <span class="text-xs font-bold text-blue-700 uppercase tracking-wider">Amount Due Now</span>
+                  <div id="amountDueNow" class="mt-1 text-xl font-black text-[#03133d]">—</div>
+                </div>
+              </div>
+
+
               <!-- FILE -->
 
               <div class="md:col-span-2">
@@ -1946,6 +1983,13 @@
           );
 
 
+        updatePaymentPlanUI();
+        setTimeout(
+          updatePaymentPlanUI,
+          60
+        );
+
+
         window.scrollTo({
           top: 0,
           behavior: "smooth"
@@ -2299,6 +2343,17 @@
 
       if (
         !document.getElementById(
+          "paymentPlanChoice"
+        ).value
+      ) {
+
+        return "Please select a payment option.";
+
+      }
+
+
+      if (
+        !document.getElementById(
           "declaration"
         ).checked
       ) {
@@ -2332,6 +2387,270 @@
       } catch (error) {
 
         return fallback;
+
+      }
+
+    }
+
+
+    function durationWeeks(value) {
+
+      const numbers =
+        String(value || "")
+          .match(/\d+(?:\.\d+)?/g)
+          ?.map(Number) || [];
+
+      if (!numbers.length) {
+        return 0;
+      }
+
+      const units =
+        Math.max(...numbers);
+
+      return /month/i.test(
+        String(value || "")
+      )
+        ? units * 4.345
+        : units;
+
+    }
+
+
+    function paymentPlanFor(
+      price,
+      duration
+    ) {
+
+      const fee =
+        Math.max(
+          Number(price || 0),
+          0
+        );
+
+      const weeks =
+        durationWeeks(duration);
+
+      if (fee < 1000) {
+        return {
+          installments: 1,
+          fee,
+          weeks
+        };
+      }
+
+      if (
+        fee >= 2000 &&
+        weeks >= 8
+      ) {
+        return {
+          installments: 3,
+          fee,
+          weeks
+        };
+      }
+
+      return {
+        installments: 2,
+        fee,
+        weeks
+      };
+
+    }
+
+
+    function paymentParts(
+      total,
+      count
+    ) {
+
+      const totalCents =
+        Math.round(
+          Number(total || 0) * 100
+        );
+
+      const baseCents =
+        Math.ceil(
+          totalCents / count
+        );
+
+      const parts = [];
+      let remaining =
+        totalCents;
+
+      for (
+        let index = 0;
+        index < count;
+        index += 1
+      ) {
+
+        const cents =
+          index === count - 1
+            ? remaining
+            : Math.min(
+                baseCents,
+                remaining
+              );
+
+        parts.push(
+          cents / 100
+        );
+
+        remaining -=
+          cents;
+
+      }
+
+      return parts;
+
+    }
+
+
+    function getPaymentSelection() {
+
+      const plan =
+        paymentPlanFor(
+          effectiveCoursePrice(),
+          selectedCourse?.duration
+        );
+
+      const parts =
+        paymentParts(
+          plan.fee,
+          plan.installments
+        );
+
+      const choice =
+        document.getElementById(
+          "paymentPlanChoice"
+        )?.value || "";
+
+      const isFull =
+        choice === "full" ||
+        plan.installments === 1;
+
+      return {
+        ...plan,
+        choice:
+          isFull
+            ? "full"
+            : choice,
+        amountDue:
+          isFull
+            ? plan.fee
+            : parts[0],
+        parts
+      };
+
+    }
+
+
+    function updatePaymentPlanUI() {
+
+      const select =
+        document.getElementById(
+          "paymentPlanChoice"
+        );
+
+      const schedule =
+        document.getElementById(
+          "paymentSchedule"
+        );
+
+      const due =
+        document.getElementById(
+          "amountDueNow"
+        );
+
+      if (
+        !select ||
+        !selectedCourse
+      ) {
+        return;
+      }
+
+      const plan =
+        paymentPlanFor(
+          effectiveCoursePrice(),
+          selectedCourse.duration
+        );
+
+      const parts =
+        paymentParts(
+          plan.fee,
+          plan.installments
+        );
+
+      const previous =
+        select.value;
+
+      select.innerHTML =
+        '<option value="full">Pay full balance — ' +
+        formatMoney(plan.fee) +
+        '</option>';
+
+      if (
+        plan.installments > 1
+      ) {
+
+        select.innerHTML +=
+          '<option value="installments">Pay in ' +
+          plan.installments +
+          ' instalments — first payment ' +
+          formatMoney(parts[0]) +
+          '</option>';
+
+      }
+
+      if (
+        previous === "full"
+      ) {
+
+        select.value =
+          "full";
+
+      } else {
+
+        select.value =
+          plan.installments > 1
+            ? "installments"
+            : "full";
+
+      }
+
+      const current =
+        getPaymentSelection();
+
+      if (due) {
+
+        due.textContent =
+          formatMoney(
+            current.amountDue
+          );
+
+      }
+
+      if (schedule) {
+
+        schedule.innerHTML =
+          current.choice === "full"
+            ? 'Full payment of <strong>' +
+              formatMoney(
+                current.fee
+              ) +
+              '</strong> is due now.'
+            : 'This course qualifies for <strong>' +
+              current.installments +
+              ' instalments</strong>: ' +
+              current.parts
+                .map(
+                  (amount, index) =>
+                    'Payment ' +
+                    (index + 1) +
+                    ': ' +
+                    formatMoney(amount)
+                )
+                .join(' · ') +
+              '. The first instalment is required with this application.';
 
       }
 
@@ -2662,6 +2981,10 @@
           ).value.trim();
 
 
+        const paymentSelection =
+          getPaymentSelection();
+
+
         const {
           error: enrollmentError
         } =
@@ -2725,7 +3048,7 @@
               p_enrolment_id:
                 enrollment.id,
               p_amount:
-                effectiveCoursePrice(),
+                paymentSelection.amountDue,
               p_payment_method:
                 paymentMethod,
               p_payment_reference:
@@ -2733,7 +3056,9 @@
               p_proof_path:
                 proofPath,
               p_payment_option:
-                "full_balance",
+                paymentSelection.choice === "full"
+                  ? "full_balance"
+                  : "next_instalment",
               p_submission_source:
                 "registration"
             }
@@ -2751,7 +3076,7 @@
 
 
         showMessage(
-          `Your enrollment for ${selectedCourse.title} has been submitted successfully. Your registration and proof of payment are now awaiting approval from Admissions & Finance.`,
+          `Your enrollment for ${selectedCourse.title} has been submitted successfully. Your payment of ${formatMoney(paymentSelection.amountDue)} and proof of payment are now awaiting approval from Admissions & Finance.`,
           true
         );
 
@@ -3094,6 +3419,14 @@
     ).addEventListener(
       "click",
       logout
+    );
+
+
+    document.getElementById(
+      "paymentPlanChoice"
+    ).addEventListener(
+      "change",
+      updatePaymentPlanUI
     );
 
 
