@@ -74,7 +74,7 @@ The following changes require explicit scope confirmation in the PR/task notes:
 - Academy Map destination routing is protected. Public/private destinations must keep their approved role-appropriate login or public route unless the owner explicitly requests a routing change.
 - The final owner-approved Login section is protected: `login.html`, `ambassador-login.html`, `reset-password.html`, Staff Access Code enforcement, approved role routing and password-recovery destinations must not change unless Aziwe Futhe explicitly reopens Login.
 - The final owner-approved Ambassador system is protected end-to-end: public programme, application/agreement, application status, activation, Ambassador Login/recovery/logout, portal/dashboard, referral attribution, privacy-limited referral display, confirmed earnings, ranks/compensation, banking, support/Your Voice, marketing resources, announcements and Admin-side Ambassador controls must not change unless Aziwe Futhe explicitly reopens the Ambassador system.
-- The final owner-approved Create Student Account journey is protected: `create-account.html`, the working `auth.html` registration form, required Student profile fields, Terms & Privacy acceptance, strong-password rules, official transparent logo, account/profile creation, referral handoff and onboarding/course-selection handoff must not change unless Aziwe Futhe explicitly reopens Student registration.
+- The final owner-approved Create Student Account journey is protected: `create-account.html`, the working `auth.html` registration form, required Student profile fields, Terms & Privacy acceptance, strong-password rules, official transparent logo, account/profile creation, referral handoff and onboarding/course-selection handoff must not change unless Aziwe Futhe explicitly reopens Student registration. The 1 October 2026 legal correction permits only the approved FOA Policies v2.0 label/link, summary wording and matching recorded policy version; it does not reopen registration fields, validation, account creation or routing.
 - The final owner-approved Enrollment Step 1 — Choose Your Course behaviour is protected. Step 1-specific course-browser logic must not change without explicit owner approval; shared onboarding changes must prove the approved Step 1 remains intact.
 - The final owner-approved Enrollment Step 2 — Student Type behaviour is protected. Step 2-specific legacy verification logic must not change without explicit owner approval; shared onboarding/draft/legacy changes must prove the approved Step 2 remains intact.
 - The final owner-approved Enrollment Step 3 — Student Registration / Complete Your Details behaviour is protected. Step 3 fields/validation/profile-save logic must not change without explicit owner approval; shared onboarding/registration/draft changes must prove the approved Step 3 remains intact.
@@ -197,7 +197,7 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Step 3 edits continue to save/autosave to the authenticated learner's own Student/profile context.
 - Enrollment Step 4 still shows only active official Academy banking details and blocks payment submission when official details are unavailable.
 - EFT / Bank Transfer and Bank Deposit remain the approved payment methods; cash remains excluded.
-- Payment-plan policy remains: payable amount **R1,300 or less** = full payment; **above R1,300 + at least 4 weeks** = 2 instalments; **R2,000 or more + at least 8 weeks** = 3 instalments; courses shorter than 4 weeks remain full-payment-only.
+- Payment-plan policy remains: payable amount **below R1,000** = full payment; **R1,000 or more** = 2 instalments; **R2,000 or more + at least 8 weeks** = 3 instalments; eligible Students may still pay in full; instalments are plan amounts rather than weekly payments.
 - Eligible instalment courses still offer Pay full course fee.
 - Amount Paid Now remains system-calculated/read-only and must exactly match the selected full-payment or instalment amount.
 - A mismatch between the verified paid amount/proof and the system-required amount remains a rejection condition under the approved payment rule.
@@ -267,7 +267,7 @@ Run the subset relevant to the change, and for protected/global changes run all 
 - Home-page course cards keep non-clickable bodies with separate **View Course** and **Enroll Now** actions.
 - The General Enquiries address remains `info@fundaonlineacademy.co.za`.
 - Browse Courses keeps its final approved controls/layout, FAQ wording, course-card presentation and WhatsApp-focused contact section.
-- Browse Courses payment FAQs continue to state: payable amount R1,300 or less = full payment; above R1,300 + at least 4 weeks = 2 instalments; R2,000 or more + at least 8 weeks = 3 instalments; shorter than 4 weeks = full payment; full upfront settlement remains available; exact system-calculated payment amount is required; accepted methods are EFT / Bank Transfer and Bank Deposit.
+- Browse Courses payment FAQs continue to state: payable amount below R1,000 = full payment; R1,000 or more = 2 instalments; R2,000 or more + at least 8 weeks = 3 instalments; full upfront settlement remains available; instalments are plan amounts rather than weekly payments; the exact system-calculated payment amount is required; accepted methods are EFT / Bank Transfer and Bank Deposit.
 - Browse Courses course images fail gracefully to the approved placeholder rather than exposing a broken-image icon.
 - Student Login, Create Student Account, View Course, Academy Map, Employer and Ambassador routes remain correct.
 - Academy Map registered-learner routes continue through Student Login; Staff/Admin routes continue through the shared secure Staff/Admin login; public routes remain public.
@@ -305,3 +305,12 @@ The currently approved regression-control cleanup order is:
 5. Replace competing runtime overrides with one authoritative implementation where safe.
 6. Add/strengthen regression checks around login, public courses, onboarding, Student, Admin/Staff, and Ambassador journeys.
 7. Only then resume broader feature additions that touch these shared paths.
+
+## J. Public legal/policy scope — 1 October 2026
+
+- `policies.html` is the public FOA Policies v2.0 source effective 1 October 2026. Its legal identity, Student Terms, POPIA notice, payment, refund/cancellation, learning/certification, complaints and PAIA-request wording are change-controlled.
+- The matching policy-version label/link in `auth.html` and `enrolment-terms-payment-guard.js` may be kept aligned without changing their protected validation or workflow behaviour.
+- Do not state or imply current CIPC good standing, completed Information Officer registration, a completed PAIA manual or full compliance unless the underlying fact has been independently verified.
+- Do not publish the CEO's private email or an unverified/residential address. A verified business/service address must be owner-approved before publication.
+- The current payment rule is: below R1,000 = full payment; R1,000 or more = 2 instalments; R2,000 or more plus a course duration of at least 8 weeks = 3 instalments; eligible Students may still pay in full; instalments are not weekly payments.
+- Public legal work does not reopen Home, Browse Courses presentation, portal layouts, lessons, assessments, Digital Library, email automation, security schema or unrelated locked surfaces.
