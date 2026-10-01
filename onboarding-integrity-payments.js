@@ -145,15 +145,7 @@
         <div id="bankDetailsRows" class="hidden mt-4 grid sm:grid-cols-2 gap-3 text-sm"></div>
         <p class="text-xs text-red-700 font-semibold mt-3">Only pay into banking details displayed on this official Academy page. Cash payments are not accepted.</p>
       </div>
-      <div class="rounded-2xl border border-gray-200 p-5">
-        <label for="paymentPlanChoice" class="block text-sm font-bold text-gray-700 mb-2">Payment Option *</label>
-        <select id="paymentPlanChoice" class="w-full rounded-xl border border-gray-200 px-4 py-3 bg-white" required></select>
-        <div id="paymentSchedule" class="mt-3 text-sm text-gray-600 leading-6"></div>
-      </div>
-      <div class="grid md:grid-cols-2 gap-5">
-        <div><label for="amountPaidNow" class="block text-sm font-bold text-gray-700 mb-2">Amount Paid Now *</label><input id="amountPaidNow" type="number" min="0" step="0.01" required readonly aria-readonly="true" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-black text-[#03133d]" placeholder="0.00"></div>
-        <div><label class="block text-sm font-bold text-gray-700 mb-2">Minimum Due Now</label><div id="minimumDueNow" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 font-black text-[#03133d]">—</div></div>
-      </div>`;
+`;
     method.closest('.grid').insertBefore(block,method.parentElement);
 
     const title=document.querySelector('h2.text-2xl.font-black.text-\\[\\#03133d\\].mt-1');
@@ -202,14 +194,14 @@
   }
 
   function updateScheduleDisplay(){
-    const select=document.getElementById('paymentPlanChoice'),schedule=document.getElementById('paymentSchedule'),minimum=document.getElementById('minimumDueNow'),amount=document.getElementById('amountPaidNow');
+    const select=document.getElementById('paymentPlanChoice'),schedule=document.getElementById('paymentSchedule'),minimum=document.getElementById('minimumDueNow')||document.getElementById('amountDueNow'),amount=document.getElementById('amountPaidNow');
     if(!select||!selectedCourse)return;
     const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration),parts=paymentParts(plan.fee,plan.installments);
     const full=select.value==='full'||plan.installments===1;
     const due=full?plan.fee:parts[0];
-    minimum.textContent=money(due);
+    if(minimum)minimum.textContent=money(due);
     if(amount){amount.readOnly=true;amount.setAttribute('aria-readonly','true');amount.value=due.toFixed(2);}
-    schedule.innerHTML=full?`Full payment of <strong>${money(plan.fee)}</strong> is due now.`:`Your course qualifies for <strong>${plan.installments} instalments</strong>: ${parts.map((p,i)=>`Payment ${i+1}: ${money(p)}`).join(' · ')}. The first instalment is required with this application.`;
+    if(schedule)schedule.innerHTML=full?`Full payment of <strong>${money(plan.fee)}</strong> is due now.`:`Your course qualifies for <strong>${plan.installments} instalments</strong>: ${parts.map((p,i)=>`Payment ${i+1}: ${money(p)}`).join(' · ')}. The first instalment is required with this application.`;
   }
 
   function extraValidation(){
@@ -233,7 +225,8 @@
     const choice=document.getElementById('paymentPlanChoice')?.value;
     if(!choice)return 'Please select a payment option.';
     const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration),parts=paymentParts(plan.fee,plan.installments),required=choice==='full'?plan.fee:parts[0];
-    const paid=Number(document.getElementById('amountPaidNow')?.value||0);
+    const amountField=document.getElementById('amountPaidNow');
+    const paid=amountField?Number(amountField.value||0):required;
     if(!Number.isFinite(paid)||paid<=0)return 'Please enter the amount you paid.';
     if(Math.round(paid*100)!==Math.round(required*100))return choice==='full'?`Full payment must be exactly ${money(required)}.`:`The required first instalment is exactly ${money(required)}. Choose full payment if you want to settle the entire course fee now.`;
     const ref=document.getElementById('paymentReference')?.value.trim();
@@ -257,9 +250,11 @@
       const submittedAt=new Date().toISOString();
       const paymentMethod=document.getElementById('paymentMethod').value;
       const paymentReference=document.getElementById('paymentReference').value.trim();
-      const amountPaid=Number(document.getElementById('amountPaidNow').value);
       const planChoice=document.getElementById('paymentPlanChoice').value;
       const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration);
+      const parts=paymentParts(plan.fee,plan.installments);
+      const amountField=document.getElementById('amountPaidNow');
+      const amountPaid=amountField?Number(amountField.value):(planChoice==='full'||plan.installments===1?plan.fee:parts[0]);
       const {error:enrollmentError}=await supabaseClient.from('enrollments').update({
         amount:plan.fee,
         ...(window.FundaLegacy?.getEnrollmentFields?.(legacyClaim)||{}),
