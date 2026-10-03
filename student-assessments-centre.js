@@ -2,14 +2,77 @@
 (function(){
 'use strict';
 if(!/dashboard\.html$/i.test(location.pathname))return;
-let db=null,state={user:null,enrolments:[],courses:[],modules:[],assessments:[],progress:[],attempts:[],required:{}};
+let db=null,state={user:null,enrolments:[],courses:[],selectedCourseId:'',modules:[],assessments:[],progress:[],attempts:[],required:{},loadingCourse:false};
 const esc=v=>String(v??'').replace(/[&<>'"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
 const approved=e=>['approved','active','enrolled','completed'].includes(String(e.enrollment_status||e.status||'').toLowerCase());
 const typeOf=a=>/summative/i.test(a.title||'')?'summative':/formative/i.test(a.title||'')?'formative':'assessment';
 function css(){if(document.getElementById('studentAssessmentsCss'))return;const s=document.createElement('style');s.id='studentAssessmentsCss';s.textContent=`
-#studentAssessmentsCentre{max-width:1180px;margin:22px auto;padding:0 18px}.saHead{background:linear-gradient(135deg,#fffdf7,#fff5dc);border:1px solid #ead8a6;border-radius:22px;padding:22px}.saK{font-size:9px;letter-spacing:.18em;font-weight:900;color:#b58216}.saHead h2{margin:6px 0;color:#17324a;font:900 24px "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.saHead p{margin:0;color:#263746;font-size:13px;line-height:1.65;font-weight:650}.saGuide{margin:18px 19px 0;padding:18px;border:1px solid #e1c774;border-radius:17px;background:linear-gradient(145deg,#fffdf7,#fff8e7)}.saGuideTop{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.saGuideTop h4{margin:0;color:#06152f;font:900 17px/1.3 "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.saGuideTop p{margin:5px 0 0;color:#263746;font-size:11px;line-height:1.55;font-weight:700}.saGuideBadge{flex:0 0 auto;padding:6px 9px;border-radius:999px;background:#071d49;color:#fff;font-size:9px;font-weight:900}.saGuideStats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}.saGuideStat{padding:11px;border:1px solid #ead8a6;border-radius:12px;background:#fff}.saGuideStat small{display:block;color:#5e6c79;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.saGuideStat strong{display:block;margin-top:4px;color:#06152f;font-size:13px;line-height:1.35}.saGuideFlow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:14px}.saGuideStep{position:relative;padding:11px;border-radius:12px;background:#071d49;color:#fff;min-height:108px}.saGuideStep b{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:#e4c777;color:#06152f;font-size:10px}.saGuideStep strong{display:block;margin-top:8px;color:#fff;font-size:11px}.saGuideStep span{display:block;margin-top:4px;color:#e9f1ff;font-size:9px;line-height:1.45;font-weight:650}.saCompetence{margin-top:14px;padding:13px 14px;border-radius:12px;background:#fff;border:1px solid #d8e0e8;color:#263746;font-size:11px;line-height:1.6;font-weight:700}.saCompetence strong{color:#06152f}.saCourse{margin-top:18px;background:#fff;border:1px solid #dfe5ea;border-radius:20px;overflow:hidden}.saCourseHead{padding:17px 19px;background:#f8fafb;border-bottom:1px solid #e4e8ec}.saCourseHead h3{margin:0;color:#17324a;font:900 15px "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.saModule{padding:17px 19px;border-bottom:1px solid #edf0f2}.saModuleTitle{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}.saModuleTitle b{color:#17324a;font-size:13px}.saModuleTitle span{font-size:10px;color:#6f7c89}.saGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.saCard{border:1px solid #e0e5e9;border-radius:14px;padding:13px}.saCard.locked{background:#f8f9fa}.saCard h4{margin:0 0 5px;color:#17324a;font-size:12px}.saCard p{margin:8px 0;color:#697684;font-size:10px;line-height:1.5}.saBadge{display:inline-block;border-radius:999px;padding:5px 8px;font-size:8px;font-weight:900;background:#eef2f5;color:#566573}.saBadge.ready{background:#e8f6ed;color:#21663b}.saBadge.done{background:#fff1c9;color:#79550b}.saBtn{display:inline-flex;margin-top:4px;padding:9px 11px;border-radius:10px;background:#17324a;color:#fff!important;text-decoration:none;font-size:9px;font-weight:900}.saBtn.disabled{background:#d9dee2;color:#7c8790!important;pointer-events:none}.saEmpty{padding:24px;text-align:center;color:#687684;font-size:12px}@media(max-width:980px){.saGuideStats{grid-template-columns:1fr 1fr}.saGuideFlow{grid-template-columns:1fr 1fr}.saGuideStep:last-child{grid-column:1/-1}}@media(max-width:700px){.saGrid,.saGuideStats,.saGuideFlow{grid-template-columns:1fr}.saGuideStep:last-child{grid-column:auto}.saGuideTop{display:block}.saGuideBadge{display:inline-flex;margin-top:9px}.saModuleTitle{display:block}.saModuleTitle span{display:block;margin-top:5px}}`;document.head.appendChild(s)}
+#studentAssessmentsCentre{max-width:1180px;margin:22px auto;padding:0 18px}.saHead{background:linear-gradient(135deg,#fffdf7,#fff5dc);border:1px solid #ead8a6;border-radius:22px;padding:22px}.saK{font-size:9px;letter-spacing:.18em;font-weight:900;color:#b58216}.saHead h2{margin:6px 0;color:#17324a;font:900 24px "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.saHead p{margin:0;color:#263746;font-size:13px;line-height:1.65;font-weight:650}.saGuide{margin:18px 19px 0;padding:18px;border:1px solid #e1c774;border-radius:17px;background:linear-gradient(145deg,#fffdf7,#fff8e7)}.saGuideTop{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.saGuideTop h4{margin:0;color:#06152f;font:900 17px/1.3 "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.saGuideTop p{margin:5px 0 0;color:#263746;font-size:11px;line-height:1.55;font-weight:700}.saGuideBadge{flex:0 0 auto;padding:6px 9px;border-radius:999px;background:#071d49;color:#fff;font-size:9px;font-weight:900}.saGuideStats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}.saGuideStat{padding:11px;border:1px solid #ead8a6;border-radius:12px;background:#fff}.saGuideStat small{display:block;color:#5e6c79;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}.saGuideStat strong{display:block;margin-top:4px;color:#06152f;font-size:13px;line-height:1.35}.saGuideFlow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:14px}.saGuideStep{position:relative;padding:11px;border-radius:12px;background:#071d49;color:#fff;min-height:108px}.saGuideStep b{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:#e4c777;color:#06152f;font-size:10px}.saGuideStep strong{display:block;margin-top:8px;color:#fff;font-size:11px}.saGuideStep span{display:block;margin-top:4px;color:#e9f1ff;font-size:9px;line-height:1.45;font-weight:650}.saCompetence{margin-top:14px;padding:13px 14px;border-radius:12px;background:#fff;border:1px solid #d8e0e8;color:#263746;font-size:11px;line-height:1.6;font-weight:700}.saCompetence strong{color:#06152f}.saCourse{margin-top:18px;background:#fff;border:1px solid #dfe5ea;border-radius:20px;overflow:hidden}.saCourseHead{padding:17px 19px;background:#f8fafb;border-bottom:1px solid #e4e8ec}.saCourseHead h3{margin:0;color:#17324a;font:900 15px "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.saModule{padding:17px 19px;border-bottom:1px solid #edf0f2}.saModuleTitle{display:flex;justify-content:space-between;gap:12px;margin-bottom:12px}.saModuleTitle b{color:#17324a;font-size:13px}.saModuleTitle span{font-size:10px;color:#6f7c89}.saGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.saCard{border:1px solid #e0e5e9;border-radius:14px;padding:13px}.saCard.locked{background:#f8f9fa}.saCard h4{margin:0 0 5px;color:#17324a;font-size:12px}.saCard p{margin:8px 0;color:#697684;font-size:10px;line-height:1.5}.saBadge{display:inline-block;border-radius:999px;padding:5px 8px;font-size:8px;font-weight:900;background:#eef2f5;color:#566573}.saBadge.ready{background:#e8f6ed;color:#21663b}.saBadge.done{background:#fff1c9;color:#79550b}.saBtn{display:inline-flex;margin-top:4px;padding:9px 11px;border-radius:10px;background:#17324a;color:#fff!important;text-decoration:none;font-size:9px;font-weight:900}.saBtn.disabled{background:#d9dee2;color:#7c8790!important;pointer-events:none}.saEmpty{padding:24px;text-align:center;color:#687684;font-size:12px}.saOverview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}.saMetric{padding:13px 14px;border:1px solid #dfe5ea;border-radius:14px;background:#fff;box-shadow:0 4px 14px rgba(20,49,77,.05)}.saMetric small{display:block;color:#667482;font-size:10px;font-weight:800}.saMetric strong{display:block;margin-top:5px;color:#06152f;font-size:18px}.saSelector{margin-top:14px;padding:17px 18px;border:1px solid #dfe5ea;border-radius:17px;background:linear-gradient(145deg,#fff,#f8fbff);box-shadow:0 5px 16px rgba(20,49,77,.05)}.saSelector label{display:block;color:#06152f;font-size:14px;font-weight:900}.saSelector p{margin:4px 0 12px;color:#607286;font-size:11px;line-height:1.5;font-weight:700}.saSelectorGrid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.45fr);gap:10px}.saSelectorGrid input,.saSelectorGrid select{width:100%;min-height:45px;border:1px solid #cdd9e5;border-radius:11px;background:#fff;color:#183153;padding:9px 11px;font:700 12px/1.3 "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;outline:none}.saSelectorGrid input:focus,.saSelectorGrid select:focus{border-color:#2767c6;box-shadow:0 0 0 3px rgba(39,103,198,.12)}.saSelectedHint{margin-top:9px;color:#52657a;font-size:10px;font-weight:800}.saLoading{margin-top:18px;padding:28px;text-align:center;border:1px solid #dfe5ea;border-radius:18px;background:#fff;color:#304459;font-size:12px;font-weight:800}@media(max-width:980px){.saGuideStats,.saOverview{grid-template-columns:1fr 1fr}.saGuideFlow{grid-template-columns:1fr 1fr}.saGuideStep:last-child{grid-column:1/-1}}@media(max-width:700px){.saGrid,.saGuideStats,.saGuideFlow{grid-template-columns:1fr}.saSelectorGrid{grid-template-columns:1fr}.saGuideStep:last-child{grid-column:auto}.saGuideTop{display:block}.saGuideBadge{display:inline-flex;margin-top:9px}.saModuleTitle{display:block}.saModuleTitle span{display:block;margin-top:5px}}`;document.head.appendChild(s)}
 function mount(){let r=document.getElementById('studentAssessmentsCentre');if(!r){r=document.createElement('section');r.id='studentAssessmentsCentre';r.hidden=true;(document.getElementById('dashboardContent')||document.body).appendChild(r)}return r}
-async function load(){if(!window.supabase)return;db=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);const {data:{user}}=await db.auth.getUser();if(!user)return;state.user=user;const {data:ens}=await db.from('enrollments').select('id,course_id,enrollment_status,status').eq('student_id',user.id);state.enrolments=(ens||[]).filter(approved);const ids=[...new Set(state.enrolments.map(e=>e.course_id).filter(Boolean))];if(!ids.length){render();return}const rs=await Promise.all([db.from('courses').select('id,title').in('id',ids),db.from('course_modules').select('id,course_id,module_number,module_name').in('course_id',ids).order('module_number'),db.from('assessments').select('id,course_id,module_id,title').in('course_id',ids).eq('active',true).eq('status','published'),db.from('module_progress').select('module_id,completed,completed_at').eq('student_id',user.id),db.from('assessment_attempts').select('assessment_id,attempt_number,percentage,passed,submitted_at').eq('student_id',user.id)]);state.courses=rs[0].data||[];state.modules=rs[1].data||[];state.assessments=rs[2].data||[];state.progress=rs[3].data||[];state.attempts=rs[4].data||[];state.required={};for(const cid of ids){const rq=await db.rpc('get_required_course_assessments',{p_course_id:cid});state.required[String(cid)]=rq.error?[]:(rq.data||[])}render()}
+
+let courseLoadToken=0;
+function selectedCourse(){return state.courses.find(c=>String(c.id)===String(state.selectedCourseId))||null}
+function resetSelectedData(){
+  state.modules=[];state.assessments=[];state.progress=[];state.attempts=[];state.required={};
+}
+async function load(){
+  if(!window.supabase)return;
+  db=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+  const {data:{user}}=await db.auth.getUser();if(!user)return;
+  state.user=user;
+  const {data:ens,error:ee}=await db.from('enrollments')
+    .select('id,course_id,enrollment_status,status,enrolled_at')
+    .eq('student_id',user.id)
+    .order('enrolled_at',{ascending:false});
+  if(ee){console.error('Assessments enrolments unavailable',ee);render();return}
+  state.enrolments=(ens||[]).filter(approved);
+  const ids=[...new Set(state.enrolments.map(e=>e.course_id).filter(Boolean))];
+  if(!ids.length){state.courses=[];state.selectedCourseId='';resetSelectedData();render();return}
+  const {data:courses,error:ce}=await db.from('courses').select('id,title').in('id',ids);
+  if(ce){console.error('Assessment courses unavailable',ce);render();return}
+  const byId=new Map((courses||[]).map(x=>[String(x.id),x]));
+  state.courses=ids.map(id=>byId.get(String(id))).filter(Boolean);
+  if(!state.courses.some(c=>String(c.id)===String(state.selectedCourseId)))state.selectedCourseId=String(state.courses[0]?.id||'');
+  resetSelectedData();
+  render();
+  await loadSelectedCourse();
+}
+async function loadSelectedCourse(){
+  const course=selectedCourse();if(!course)return;
+  const token=++courseLoadToken;
+  state.loadingCourse=true;resetSelectedData();render();
+  try{
+    const [mr,ar,rr]=await Promise.all([
+      db.from('course_modules').select('id,course_id,module_number,module_name').eq('course_id',course.id).order('module_number'),
+      db.from('assessments').select('id,course_id,module_id,title').eq('course_id',course.id).eq('active',true).eq('status','published'),
+      db.rpc('get_required_course_assessments',{p_course_id:course.id})
+    ]);
+    if(token!==courseLoadToken)return;
+    if(mr.error)throw mr.error;if(ar.error)throw ar.error;
+    const modules=mr.data||[],assessments=ar.data||[];
+    const moduleIds=modules.map(m=>m.id),assessmentIds=assessments.map(a=>a.id);
+    let progress=[],attempts=[];
+    if(moduleIds.length){
+      const pr=await db.from('module_progress').select('module_id,completed,completed_at').eq('student_id',state.user.id).in('module_id',moduleIds);
+      if(pr.error)throw pr.error;progress=pr.data||[];
+    }
+    if(assessmentIds.length){
+      for(let i=0;i<assessmentIds.length;i+=40){
+        const at=await db.from('assessment_attempts').select('assessment_id,attempt_number,percentage,passed,submitted_at').eq('student_id',state.user.id).in('assessment_id',assessmentIds.slice(i,i+40));
+        if(at.error)throw at.error;attempts.push(...(at.data||[]));
+      }
+    }
+    if(token!==courseLoadToken)return;
+    state.modules=modules;state.assessments=assessments;state.progress=progress;state.attempts=attempts;
+    state.required={[String(course.id)]:rr.error?[]:(rr.data||[])};
+  }catch(error){
+    if(token!==courseLoadToken)return;
+    console.error('Selected course assessments could not be loaded',error);
+    state.modules=[];state.assessments=[];state.progress=[];state.attempts=[];state.required={};
+  }finally{
+    if(token===courseLoadToken){state.loadingCourse=false;render()}
+  }
+}
 const moduleDone=id=>state.progress.some(p=>String(p.module_id)===String(id)&&p.completed===true);
 function aState(a,done){const ats=state.attempts.filter(x=>String(x.assessment_id)===String(a.id)),passed=ats.some(x=>x.passed===true);if(passed)return{label:'Passed',cls:'done',msg:'Completed successfully. Your passing result is recorded.',open:true};if(!done)return{label:'Locked',cls:'',msg:'Complete all lessons in this module to unlock this assessment.',open:false};if(typeOf(a)==='summative'){const f=state.assessments.find(x=>String(x.module_id)===String(a.module_id)&&typeOf(x)==='formative');if(f&&!state.attempts.some(x=>String(x.assessment_id)===String(f.id)&&x.passed===true))return{label:'Locked',cls:'',msg:'Pass the module formative assessment first.',open:false}}if(ats.length>=3)return{label:'Finalised',cls:'done',msg:'All permitted attempts have been used.',open:false};return{label:ats.length?'Ready to retry':'Ready',cls:'ready',msg:ats.length?'Review the module and continue when ready.':'Module completed. You may start this assessment.',open:true}}
 function card(a,m,done){const st=aState(a,done),type=typeOf(a),href=`module-assessment.html?course=${encodeURIComponent(m.course_id)}&module=${m.module_number}&type=${type}`;return `<article class="saCard ${st.open?'':'locked'}"><h4>${type==='formative'?'Formative Assessment':'Summative Assessment'}</h4><span class="saBadge ${st.cls}">${esc(st.label)}</span><p>${esc(st.msg)}</p><a class="saBtn ${st.open?'':'disabled'}" ${st.open?`href="${href}"`:'aria-disabled="true"'}>${st.open?'Open Assessment':'🔒 Locked'}</a></article>`}
@@ -53,7 +116,93 @@ function guideForCourse(c){
   const allRule=required.length===1?'the required assessment':'all '+required.length+' required assessments';
   return `<div class="saGuide"><div class="saGuideTop"><div><h4>Your course assessment procedure</h4><p>This guide is based on the assessment structure currently attached to <strong>${esc(c.title)}</strong>.</p></div><span class="saGuideBadge">COURSE-SPECIFIC</span></div><div class="saGuideStats"><div class="saGuideStat"><small>Expected assessments</small><strong>${required.length}</strong></div><div class="saGuideStat"><small>Assessment pattern</small><strong>${esc(pattern)}</strong></div><div class="saGuideStat"><small>Question structure</small><strong>${esc(questionRule)}</strong></div><div class="saGuideStat"><small>Pass requirement</small><strong>${esc(passRule)}${correctRule?`<br><small style="font-size:9px;color:#52657a">${esc(correctRule)}</small>`:''}</strong></div></div><div class="saGuideFlow"><div class="saGuideStep"><b>1</b><strong>Complete the module</strong><span>Finish every required lesson in sequence before the assessment opens.</span></div><div class="saGuideStep"><b>2</b><strong>Unlock the assessment</strong><span>${esc(sequence)}</span></div><div class="saGuideStep"><b>3</b><strong>Answer every question</strong><span>Questions are completed one at a time and every question must be answered before submission.</span></div><div class="saGuideStep"><b>4</b><strong>Meet the pass mark</strong><span>Module assessments require 70%. Up to three attempts are permitted where the current assessment engine applies.</span></div><div class="saGuideStep"><b>5</b><strong>Complete the course result</strong><span>Every required assessment must reach a passing status before the course result can be treated as passed.</span></div></div><div class="saCompetence"><strong>Competence and certification:</strong> Passing one assessment does not cancel a failed required assessment. You must pass ${esc(allRule)}. Once all required assessments are complete and passed, your course result can proceed through the Academy's academic finalisation and review process. A certificate is issued only after those requirements are satisfied and the Academy formally issues it; completing an assessment does not issue a certificate automatically.</div></div>`;
 }
-function render(){const root=mount();let h=`<div class="saHead"><div class="saK">STUDENT ASSESSMENTS</div><h2>My Assessments</h2><p>Assessments are organised by course and module. Complete the module first to unlock its assessment. Where both types apply, pass the formative assessment before the summative assessment opens.</p></div>`;if(!state.courses.length)h+=`<div class="saCourse"><div class="saEmpty">No assessments are available yet. They will appear after your course enrolment is approved.</div></div>`;state.courses.forEach(c=>{h+=`<div class="saCourse"><div class="saCourseHead"><h3>${esc(c.title)}</h3></div>${guideForCourse(c)}`;state.modules.filter(m=>String(m.course_id)===String(c.id)).forEach(m=>{const list=state.assessments.filter(a=>String(a.module_id)===String(m.id));if(!list.length)return;const done=moduleDone(m.id);list.sort((a,b)=>typeOf(a)==='formative'?-1:typeOf(b)==='formative'?1:0);h+=`<div class="saModule"><div class="saModuleTitle"><b>Module ${m.module_number} · ${esc(m.module_name)}</b><span>${done?'Module complete':'Module in progress · assessments locked'}</span></div><div class="saGrid">${list.map(a=>card(a,m,done)).join('')}</div></div>`});h+='</div>'});root.innerHTML=h}
+
+function selectedStats(){
+  const required=state.required[String(state.selectedCourseId)]||[];
+  let passed=0,ready=0,locked=0;
+  state.assessments.forEach(a=>{
+    const m=state.modules.find(x=>String(x.id)===String(a.module_id));
+    const st=aState(a,m?moduleDone(m.id):false);
+    if(st.label==='Passed')passed++;
+    else if(st.open)ready++;
+    else locked++;
+  });
+  return {required:required.length||state.assessments.length,passed,ready,locked};
+}
+function renderControls(){
+  if(!state.courses.length)return '';
+  const stats=selectedStats(),selected=selectedCourse();
+  return `<div class="saOverview">
+    <div class="saMetric"><small>Approved Courses</small><strong>${state.courses.length}</strong></div>
+    <div class="saMetric"><small>Required Assessments</small><strong>${state.loadingCourse?'—':stats.required}</strong></div>
+    <div class="saMetric"><small>Ready / Retry</small><strong>${state.loadingCourse?'—':stats.ready}</strong></div>
+    <div class="saMetric"><small>Passed</small><strong>${state.loadingCourse?'—':stats.passed}</strong></div>
+  </div>
+  <div class="saSelector">
+    <label for="saCourseSelect">Select a course to view assessments</label>
+    <p>Only the selected course is displayed below. Use the search box when you have several approved courses.</p>
+    <div class="saSelectorGrid">
+      <input id="saCourseSearch" type="search" autocomplete="off" placeholder="Search approved courses" aria-label="Search approved courses">
+      <select id="saCourseSelect" aria-label="Select an approved course"></select>
+    </div>
+    <div class="saSelectedHint" id="saSelectedHint">${selected?`Currently viewing: ${esc(selected.title)}`:''}</div>
+  </div>`;
+}
+function wireCourseControls(){
+  const search=document.getElementById('saCourseSearch'),select=document.getElementById('saCourseSelect'),hint=document.getElementById('saSelectedHint');
+  if(!select)return;
+  function fill(query=''){
+    const q=String(query||'').trim().toLowerCase();
+    const matches=state.courses.filter(c=>!q||String(c.title||'').toLowerCase().includes(q));
+    select.innerHTML='';
+    if(!matches.length){
+      const o=document.createElement('option');o.value='';o.textContent='No approved course matches your search';o.disabled=true;o.selected=true;select.appendChild(o);
+      if(hint)hint.textContent='Try a different course name.';return;
+    }
+    const selectedVisible=matches.some(c=>String(c.id)===String(state.selectedCourseId));
+    if(q&&!selectedVisible){
+      const p=document.createElement('option');p.value='';p.textContent='Choose a matching course…';p.selected=true;select.appendChild(p);
+    }
+    matches.forEach(c=>{
+      const o=document.createElement('option');o.value=String(c.id);o.textContent=c.title||'Approved Course';
+      if(selectedVisible&&String(c.id)===String(state.selectedCourseId))o.selected=true;
+      select.appendChild(o);
+    });
+    const cur=selectedCourse();if(hint&&cur)hint.textContent=`Currently viewing: ${cur.title}`;
+  }
+  fill('');
+  search?.addEventListener('input',()=>fill(search.value));
+  select.addEventListener('change',()=>{
+    if(!select.value||String(select.value)===String(state.selectedCourseId))return;
+    state.selectedCourseId=select.value;
+    if(search)search.value='';
+    loadSelectedCourse();
+  });
+}
+function selectedCourseBody(){
+  const c=selectedCourse();if(!c)return '';
+  if(state.loadingCourse)return '<div class="saLoading">Loading assessments for the selected course…</div>';
+  let h=`<div class="saCourse"><div class="saCourseHead"><h3>${esc(c.title)}</h3></div>${guideForCourse(c)}`;
+  let moduleCount=0;
+  state.modules.filter(m=>String(m.course_id)===String(c.id)).forEach(m=>{
+    const list=state.assessments.filter(a=>String(a.module_id)===String(m.id));if(!list.length)return;
+    moduleCount++;
+    const done=moduleDone(m.id);
+    list.sort((a,b)=>typeOf(a)==='formative'?-1:typeOf(b)==='formative'?1:0);
+    h+=`<div class="saModule"><div class="saModuleTitle"><b>Module ${m.module_number} · ${esc(m.module_name)}</b><span>${done?'Module complete':'Module in progress · assessments locked'}</span></div><div class="saGrid">${list.map(a=>card(a,m,done)).join('')}</div></div>`;
+  });
+  if(!moduleCount)h+='<div class="saEmpty">No published module assessments are available for this course yet.</div>';
+  h+='</div>';
+  return h;
+}
+function render(){
+  const root=mount();
+  let h=`<div class="saHead"><div class="saK">STUDENT ASSESSMENTS</div><h2>My Assessments</h2><p>Choose one approved course at a time to view its assessment procedure and module assessments. Complete the module first to unlock its assessment. Where both types apply, pass the formative assessment before the summative assessment opens.</p></div>`;
+  if(!state.courses.length)h+=`<div class="saCourse"><div class="saEmpty">No assessments are available yet. They will appear after your course enrolment is approved.</div></div>`;
+  else h+=renderControls()+selectedCourseBody();
+  root.innerHTML=h;
+  wireCourseControls();
+}
 function show(){
  const dc=document.getElementById('dashboardContent');
  if(dc)[...dc.children].forEach(x=>{if(x.id!=='studentAssessmentsCentre')x.style.setProperty('display','none','important')});
