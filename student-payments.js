@@ -6,7 +6,7 @@
   const BUCKET='payment-proofs';
   const MAX_FILE_BYTES=5*1024*1024;
   const REFRESH_MS=30000;
-  const state={client:null,user:null,accounts:[],payments:[],banks:[],selected:null,loading:false,lastLoaded:0,notice:''};
+  const state={client:null,user:null,accounts:[],payments:[],banks:[],selected:null,selectedAccountId:'',loading:false,lastLoaded:0,notice:''};
   const $=id=>document.getElementById(id);
   const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -31,6 +31,7 @@ body.sdV2[data-sd-view="payments"] #studentPaymentsSection{display:block!importa
 .spHero>*{position:relative;z-index:1}.spKicker{margin:0;color:#e7cb80;font-size:11px;letter-spacing:.17em;font-weight:900;text-transform:uppercase}.spHeroRow{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}.spHero h1{margin:7px 0 0;color:#fff!important;font:900 29px/1.25 "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.spHeroText{max-width:820px;margin:11px 0 0;color:#edf4ff;font-size:15px;line-height:1.7;font-weight:600}.spRefresh{flex:0 0 auto;border:1px solid rgba(255,255,255,.52);border-radius:11px;background:rgba(255,255,255,.10);color:#fff;padding:10px 13px;font:800 12px "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer}.spRefresh:disabled{opacity:.65;cursor:wait}
 .spNotice{margin-top:14px;padding:12px 14px;border-radius:12px;background:#e7f6ed;border:1px solid #a9d6ba;color:#135b3b;font-size:13px;font-weight:800}.spNotice[hidden]{display:none}
 .spSummary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}.spSummaryCard{padding:17px;border:1px solid #dbe3ea;border-radius:17px;background:#fff;box-shadow:0 5px 16px rgba(20,49,77,.05)}.spSummaryCard span{display:block;color:#526274;font-size:11px;font-weight:800}.spSummaryCard strong{display:block;margin-top:7px;color:#102a4a;font:900 22px "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.spSummaryCard.gold strong{color:#91650b}.spSummaryCard.green strong{color:#14714e}.spSummaryCard.amber strong{color:#a56309}
+.spSelector{margin-top:16px;padding:17px 18px;border:1px solid #dbe3ea;border-radius:17px;background:linear-gradient(145deg,#fff,#f8fbff);box-shadow:0 5px 16px rgba(20,49,77,.05)}.spSelector label{display:block;color:#06152f;font-size:14px;font-weight:900}.spSelectorHelp{margin:4px 0 12px;color:#607286;font-size:11px;line-height:1.5;font-weight:700}.spSelectorGrid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.45fr);gap:10px}.spSelectorGrid input,.spSelectorGrid select{width:100%;min-height:45px;border:1px solid #cdd9e5;border-radius:11px;background:#fff;color:#183153;padding:9px 11px;font:700 12px/1.3 "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;outline:none}.spSelectorGrid input:focus,.spSelectorGrid select:focus{border-color:#2767c6;box-shadow:0 0 0 3px rgba(39,103,198,.12)}.spSelectedHint{margin-top:9px;color:#52657a;font-size:10px;font-weight:800}
 .spGrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.75fr);gap:16px;margin-top:16px}.spPanel{padding:22px;border:1px solid #dbe3ea;border-radius:22px;background:#fff;box-shadow:0 5px 16px rgba(20,49,77,.05)}.spPanelHead{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.spPanel h2{margin:4px 0 0;color:#17324a!important;font:900 21px/1.35 "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.spIntro{margin:8px 0 0;color:#405164;font-size:13px;line-height:1.65;font-weight:600}
 .spCourseList{display:grid;gap:13px;margin-top:17px}.spCourse{padding:17px;border:1px solid #dce4eb;border-radius:18px;background:linear-gradient(145deg,#fff,#f8fbff)}.spCourseTop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.spCourse h3{margin:0;color:#102a4a!important;font:900 15px/1.4 "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.spCourseMeta{margin-top:4px;color:#667589;font-size:11px;font-weight:700}.spBadge{display:inline-flex;align-items:center;justify-content:center;padding:5px 8px;border-radius:999px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}.spBadge.paid,.spBadge.verified{background:#ddf5e7;color:#12613f}.spBadge.review,.spBadge.submitted,.spBadge.pending{background:#fff0cf;color:#8a5800}.spBadge.due{background:#e8f0ff;color:#174b93}.spBadge.rejected{background:#fde5e5;color:#9a2929}
 .spMoneyGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}.spMoney{padding:10px;border-radius:12px;background:#fff;border:1px solid #e3e8ee}.spMoney span{display:block;color:#677589;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}.spMoney b{display:block;margin-top:4px;color:#17324a;font-size:13px}.spMoney.balance{border-color:#e0c676;background:#fffbef}.spTrack{height:7px;margin-top:14px;border-radius:999px;background:#e7edf3;overflow:hidden}.spTrack i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#c38c14,#e2bc55)}.spPlan{margin:12px 0 0;color:#33485c;font-size:12px;line-height:1.55;font-weight:650}.spCourseAlert{margin-top:11px;padding:10px 11px;border-radius:10px;background:#fff3d9;border:1px solid #ead08c;color:#76500a;font-size:11px;line-height:1.5;font-weight:750}.spCourseAlert.danger{background:#fff0f0;border-color:#efc0c0;color:#8c2c2c}.spCourseAction{display:flex;justify-content:flex-end;margin-top:13px}.spPayButton{border:0;border-radius:11px;background:#071d49;color:#fff;padding:11px 14px;font:900 12px "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer}.spPayButton:disabled{background:#dfe6ed;color:#667589;cursor:not-allowed}
@@ -39,7 +40,7 @@ body.sdV2[data-sd-view="payments"] #studentPaymentsSection{display:block!importa
 .spLoading{margin-top:16px;padding:42px;border:1px solid #dbe3ea;border-radius:20px;background:#fff;text-align:center}.spSpinner{width:37px;height:37px;margin:0 auto;border:4px solid #dbe5ef;border-top-color:#0b3771;border-radius:50%;animation:spSpin .8s linear infinite}@keyframes spSpin{to{transform:rotate(360deg)}}.spError{margin-top:16px;padding:18px;border:1px solid #efc0c0;border-radius:16px;background:#fff3f3;color:#8c2c2c;font-size:13px;line-height:1.6}.spError button{display:block;margin-top:11px;border:0;border-radius:9px;background:#8c2c2c;color:#fff;padding:9px 12px;font-weight:850}
 .spModal{position:fixed;inset:0;z-index:23000;display:grid;place-items:center;padding:16px;background:rgba(3,15,34,.78);backdrop-filter:blur(3px)}.spModal[hidden]{display:none}.spModalCard{width:min(720px,100%);max-height:92vh;overflow:auto;border-radius:23px;background:#fff;box-shadow:0 28px 70px rgba(0,0,0,.32)}.spModalHead{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;gap:14px;padding:20px 22px;border-bottom:1px solid #e1e7ed;background:#fff}.spModalHead h2{margin:4px 0 0;color:#17324a!important;font:900 21px/1.35 "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.spClose{width:40px;height:40px;flex:0 0 auto;border:1px solid #dbe3ea;border-radius:11px;background:#f6f8fa;color:#17324a;font-size:22px;cursor:pointer}.spForm{padding:20px 22px 24px}.spBalanceStrip{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px;border-radius:14px;background:#f4f7fb}.spBalanceStrip span{display:block;color:#667589;font-size:9px;font-weight:800;text-transform:uppercase}.spBalanceStrip b{display:block;margin-top:4px;color:#17324a;font-size:13px}.spField{margin-top:16px}.spField>label,.spLegend{display:block;margin-bottom:7px;color:#263b4e;font-size:12px;font-weight:850}.spOptions{display:grid;gap:9px}.spOption{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid #dbe3ea;border-radius:12px;cursor:pointer}.spOption:has(input:checked){border-color:#c99a2e;background:#fff9e8}.spOption input{margin-top:3px}.spOption strong{display:block;color:#17324a;font-size:12px}.spOption span{display:block;margin-top:3px;color:#667589;font-size:10px;line-height:1.45}.spInput{width:100%;min-height:45px;box-sizing:border-box;border:1px solid #cfd9e2;border-radius:11px;background:#fff;padding:11px 12px;color:#142e49;font:650 14px "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif}.spInput[readonly]{background:#f2f5f8;font-weight:900}.spFileHelp{margin-top:6px;color:#667589;font-size:10px;line-height:1.5}.spDeclaration{display:flex;gap:10px;align-items:flex-start;margin-top:16px;padding:12px;border-radius:12px;background:#fff9e8;border:1px solid #ead49b;color:#35495c;font-size:11px;line-height:1.55;font-weight:700}.spDeclaration input{margin-top:3px;flex:0 0 auto}.spFormError{margin-top:13px;padding:10px 12px;border-radius:10px;background:#fff0f0;color:#962d2d;font-size:11px;line-height:1.5;font-weight:800}.spFormError[hidden]{display:none}.spSubmit{width:100%;min-height:47px;margin-top:16px;border:0;border-radius:12px;background:linear-gradient(135deg,#c18a10,#e0ba54);color:#142b45;font:900 13px "Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer}.spSubmit:disabled{opacity:.62;cursor:wait}
 @media(max-width:980px){.spSummary{grid-template-columns:1fr 1fr}.spGrid{grid-template-columns:1fr}.spMoneyGrid{grid-template-columns:1fr 1fr}}
-@media(max-width:620px){.spHero{padding:22px 18px;border-radius:21px}.spHeroRow{display:block}.spHero h1{font-size:24px}.spRefresh{margin-top:15px}.spSummary{gap:8px}.spSummaryCard{padding:14px}.spSummaryCard strong{font-size:18px}.spPanel{padding:18px 15px}.spCourseTop{display:block}.spCourseTop .spBadge{margin-top:9px}.spMoneyGrid{grid-template-columns:1fr 1fr}.spBank dl{grid-template-columns:1fr}.spHistoryItem{grid-template-columns:1fr}.spProof{justify-self:start}.spBalanceStrip{grid-template-columns:1fr}.spModal{padding:8px}.spModalCard{max-height:96vh;border-radius:18px}.spModalHead,.spForm{padding-left:16px;padding-right:16px}}
+@media(max-width:620px){.spHero{padding:22px 18px;border-radius:21px}.spSelectorGrid{grid-template-columns:1fr}.spHeroRow{display:block}.spHero h1{font-size:24px}.spRefresh{margin-top:15px}.spSummary{gap:8px}.spSummaryCard{padding:14px}.spSummaryCard strong{font-size:18px}.spPanel{padding:18px 15px}.spCourseTop{display:block}.spCourseTop .spBadge{margin-top:9px}.spMoneyGrid{grid-template-columns:1fr 1fr}.spBank dl{grid-template-columns:1fr}.spHistoryItem{grid-template-columns:1fr}.spProof{justify-self:start}.spBalanceStrip{grid-template-columns:1fr}.spModal{padding:8px}.spModalCard{max-height:96vh;border-radius:18px}.spModalHead,.spForm{padding-left:16px;padding-right:16px}}
 `;
 
   function addStyle(){
@@ -120,6 +121,10 @@ body.sdV2[data-sd-view="payments"] #studentPaymentsSection{display:block!importa
       const failed=[accountResult,paymentResult,bankResult].find(result=>result.error);
       if(failed)throw failed.error;
       state.accounts=accountResult.data||[];
+      if(!state.accounts.some(account=>String(account.enrolment_id)===String(state.selectedAccountId))){
+        const priority=state.accounts.find(account=>account.has_payment_under_review||number(account.outstanding_amount)>0);
+        state.selectedAccountId=String((priority||state.accounts[0])?.enrolment_id||'');
+      }
       state.payments=paymentResult.data||[];
       state.banks=(bankResult.data||[]).filter(bank=>bank.bank_name&&bank.account_number);
       state.lastLoaded=Date.now();
@@ -191,18 +196,83 @@ body.sdV2[data-sd-view="payments"] #studentPaymentsSection{display:block!importa
     return `<article class="spHistoryItem"><div><h3>${esc(account?.course_title||'Course payment')} · ${money(payment.amount)}</h3><div class="spHistoryMeta">${esc(option)}${installment} · ${esc(payment.payment_method||'Method not recorded')}<br>Reference: ${esc(payment.payment_reference||'Legacy record')} · Submitted ${formatDate(payment.submitted_at||payment.created_at)}</div></div><div><span class="spBadge ${paymentStatus}">${esc(labels[paymentStatus]||paymentStatus)}</span>${payment.proof_url?`<button type="button" class="spProof" data-sp-proof="${esc(payment.id)}">View proof</button>`:''}</div>${paymentStatus==='rejected'?`<div class="spHistoryReason"><strong>Decline reason:</strong> ${esc(payment.rejection_reason||'Please contact Admissions & Finance for the review details.')}</div>`:''}</article>`;
   }
 
+
+  function selectedAccount(){
+    return state.accounts.find(account=>String(account.enrolment_id)===String(state.selectedAccountId))||null;
+  }
+
+  function selectorHtml(){
+    if(!state.accounts.length)return '';
+    const current=selectedAccount();
+    return `<div class="spSelector">
+      <label for="spCourseAccountSelect">Select a course to view payment details</label>
+      <p class="spSelectorHelp">Only the selected course balance and payment history are displayed below. Use the search box when you have several courses.</p>
+      <div class="spSelectorGrid">
+        <input id="spCourseAccountSearch" type="search" autocomplete="off" placeholder="Search course payment accounts" aria-label="Search course payment accounts">
+        <select id="spCourseAccountSelect" aria-label="Select a course payment account"></select>
+      </div>
+      <div class="spSelectedHint" id="spSelectedAccountHint">${current?`Currently viewing: ${esc(current.course_title||'Registered course')}`:''}</div>
+    </div>`;
+  }
+
+  function wireAccountSelector(){
+    const search=$('spCourseAccountSearch'),select=$('spCourseAccountSelect'),hint=$('spSelectedAccountHint');
+    if(!select)return;
+    function fill(query=''){
+      const q=String(query||'').trim().toLowerCase();
+      const matches=state.accounts.filter(account=>!q||String(account.course_title||'').toLowerCase().includes(q));
+      select.innerHTML='';
+      if(!matches.length){
+        const option=document.createElement('option');
+        option.value='';option.textContent='No course payment account matches your search';option.disabled=true;option.selected=true;
+        select.appendChild(option);
+        if(hint)hint.textContent='Try a different course name.';
+        return;
+      }
+      const selectedVisible=matches.some(account=>String(account.enrolment_id)===String(state.selectedAccountId));
+      if(q&&!selectedVisible){
+        const placeholder=document.createElement('option');
+        placeholder.value='';placeholder.textContent='Choose a matching course…';placeholder.selected=true;
+        select.appendChild(placeholder);
+      }
+      matches.forEach(account=>{
+        const [label]=accountStatus(account);
+        const option=document.createElement('option');
+        option.value=String(account.enrolment_id);
+        option.textContent=`${account.course_title||'Registered course'} — ${label} · ${money(account.outstanding_amount)} outstanding`;
+        if(selectedVisible&&String(account.enrolment_id)===String(state.selectedAccountId))option.selected=true;
+        select.appendChild(option);
+      });
+      const current=selectedAccount();
+      if(hint&&current)hint.textContent=`Currently viewing: ${current.course_title||'Registered course'} · ${accountStatus(current)[0]} · ${money(current.outstanding_amount)} outstanding`;
+    }
+    fill('');
+    search?.addEventListener('input',()=>fill(search.value));
+    select.addEventListener('change',()=>{
+      if(!select.value||String(select.value)===String(state.selectedAccountId))return;
+      state.selectedAccountId=select.value;
+      state.notice='';
+      render();
+    });
+  }
+
   function render(){
     const host=$('spContent');if(!host)return;
     const totals=state.accounts.reduce((sum,account)=>({
       fee:sum.fee+number(account.course_fee),verified:sum.verified+number(account.verified_paid),pending:sum.pending+number(account.submitted_amount),outstanding:sum.outstanding+number(account.outstanding_amount)
     }),{fee:0,verified:0,pending:0,outstanding:0});
-    const accountMap=new Map(state.accounts.map(account=>[String(account.enrolment_id),account]));
-    const relevantHistory=state.payments.filter(payment=>accountMap.has(String(payment.enrolment_id)));
+    const account=selectedAccount();
+    const accountMap=new Map(state.accounts.map(item=>[String(item.enrolment_id),item]));
+    const relevantHistory=account
+      ?state.payments.filter(payment=>String(payment.enrolment_id)===String(account.enrolment_id))
+      :[];
     host.innerHTML=`
       <div class="spSummary" aria-label="Payment totals"><div class="spSummaryCard"><span>Agreed course fees</span><strong>${money(totals.fee)}</strong></div><div class="spSummaryCard green"><span>Verified payments</span><strong>${money(totals.verified)}</strong></div><div class="spSummaryCard amber"><span>Awaiting review</span><strong>${money(totals.pending)}</strong></div><div class="spSummaryCard gold"><span>Outstanding balance</span><strong>${money(totals.outstanding)}</strong></div></div>
-      <div class="spGrid"><section class="spPanel"><div class="spPanelHead"><div><p class="spKicker">Your Accounts</p><h2>Course balances</h2><p class="spIntro">A balance is reduced only by payments marked Verified. Every enrolled course remains listed, including courses with a zero balance.</p></div></div><div class="spCourseList">${state.accounts.length?state.accounts.map(courseCard).join(''):'<div class="spEmpty">No course payment accounts are linked to your student profile yet.</div>'}</div></section>
+      ${selectorHtml()}
+      <div class="spGrid"><section class="spPanel"><div class="spPanelHead"><div><p class="spKicker">Selected Course</p><h2>Course balance</h2><p class="spIntro">The balance shown below is for the selected course only. It is reduced only by payments marked Verified.</p></div></div><div class="spCourseList">${account?courseCard(account):'<div class="spEmpty">No course payment accounts are linked to your student profile yet.</div>'}</div></section>
       <aside class="spPanel"><p class="spKicker">Official Details</p><h2>Academy bank accounts</h2><p class="spIntro">Choose one account and use the required reference. Do not split one payment between accounts unless the Academy instructs you to.</p><div class="spBankList">${bankCards()}</div></aside></div>
-      <section class="spPanel spHistory"><p class="spKicker">Traceable Records</p><h2>Payment history</h2><p class="spIntro">Every submitted proof stays connected to its course and review outcome.</p><div class="spHistoryList">${relevantHistory.length?relevantHistory.map(payment=>historyItem(payment,accountMap)).join(''):'<div class="spEmpty">No payment records have been submitted yet.</div>'}</div></section>`;
+      <section class="spPanel spHistory"><p class="spKicker">Traceable Records</p><h2>Payment history</h2><p class="spIntro">${account?`Payment records shown below belong to ${esc(account.course_title||'the selected course')}.`:'Select a course to view its payment records.'}</p><div class="spHistoryList">${relevantHistory.length?relevantHistory.map(payment=>historyItem(payment,accountMap)).join(''):'<div class="spEmpty">No payment records have been submitted for this course yet.</div>'}</div></section>`;
+    wireAccountSelector();
     showNotice();
   }
 
