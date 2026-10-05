@@ -181,7 +181,7 @@ function renderSidebar(){
  host.querySelectorAll('.unit:not(.locked)').forEach(b=>b.onclick=()=>{
   state.module=Number(b.dataset.m);
   if(b.dataset.type){location.assign(`module-assessment.html?course=${encodeURIComponent(state.course.id)}&module=${state.module}&type=${b.dataset.type}`);return}
-  state.unit=Number(b.dataset.u);state.stage=0;renderLesson();if(innerWidth<761)$('modulePanel')?.classList.remove('open')
+  state.unit=Number(b.dataset.u);state.stage=0;renderAll();if(innerWidth<761)$('modulePanel')?.classList.remove('open')
  })
 }
 function splitMainContent(value){
