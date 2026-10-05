@@ -20,17 +20,105 @@ body,body *{font-family:"Times New Roman",Times,Georgia,serif!important}
 @media(max-width:760px){.top{height:64px;padding:0 14px}.brand{font-size:13px}.toplinks a{display:none}.shell{display:block}.side.left{display:none;position:fixed;z-index:60;top:64px;left:0;width:min(88vw,340px);height:calc(100vh - 64px);box-shadow:15px 0 40px #06152f2e}.side.left.open{display:block}.workspace{padding:20px 15px 55px}.lessonhead h1{font-size:28px}.card,.assess-intro,.question-card,.result-card{padding:18px;border-radius:17px}.lesson-visual{grid-template-columns:1fr}.lesson-visual img{height:220px}.navbuttons,.quiz-nav{flex-direction:column-reverse}.btn{width:100%}.mobiletools{position:sticky;top:64px;z-index:20;background:var(--bg);padding:5px 0}.assess-title-row{display:block}}
 </style>
 <style id="foaStudentFontStandard">body,body *{font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important}</style>
+<style id="foaStudyToolsLayout">
+body{overflow-x:hidden}
+.shell{grid-template-columns:300px minmax(0,1fr) 310px;transition:grid-template-columns .24s ease}
+.shell.tools-collapsed{grid-template-columns:300px minmax(0,1fr) 0}
+.workspace{max-width:1180px}
+.study-tools{min-width:0;padding:0;overflow:hidden;opacity:1;transition:opacity .18s ease,border-color .18s ease}
+.studytools-inner{width:310px;height:100%;padding:18px;overflow-y:auto;overscroll-behavior:contain}
+.shell.tools-collapsed .study-tools{border-left-color:transparent;opacity:0;pointer-events:none}
+.studytools-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.studytools-head h2{margin:0;color:var(--navy);font-size:18px}
+.studytools-close{width:36px;height:36px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--navy);font-size:20px;line-height:1;cursor:pointer}
+.study-tools-toggle{position:fixed;z-index:44;top:88px;right:14px;display:inline-flex;align-items:center;gap:8px;border:1px solid #d8c078;border-radius:13px;background:#fff8df;color:var(--navy);padding:10px 13px;box-shadow:0 9px 24px #06152f20;cursor:pointer;font-weight:800}
+.shell:not(.tools-collapsed) .study-tools-toggle{display:none}
+.note-toolbox{border:1px solid var(--line);border-radius:17px;background:#fff;padding:15px;margin:0}
+.note-toolbox h3{margin:0;color:var(--navy);font-size:16px}
+.note-toolbox>p{margin:5px 0 13px;color:var(--muted);font-size:11px;line-height:1.45}
+.note-tabs{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:4px;border-radius:12px;background:#edf3fa;margin-bottom:12px}
+.note-tab{border:0;border-radius:9px;background:transparent;color:#53677f;padding:8px 7px;cursor:pointer;font-size:11px;font-weight:800}
+.note-tab.active{background:#fff;color:var(--navy);box-shadow:0 2px 8px #06152f13}
+.notes{min-height:152px;max-height:250px;resize:vertical;line-height:1.55;color:var(--ink);background:#fbfdff}
+.note-actions{display:flex;align-items:center;gap:9px;margin-top:8px}
+.note-actions .btn{flex:0 0 auto;padding:10px 14px}
+.note-save-status{min-height:16px;color:var(--muted);font-size:10px;line-height:1.35}
+.note-save-status.success{color:var(--green)}
+.note-save-status.warning{color:#8a5e08}
+.saved-notes-list{display:grid;gap:8px;max-height:min(42vh,360px);overflow-y:auto;padding-right:3px;overscroll-behavior:contain}
+.saved-note{border:1px solid var(--line);border-radius:12px;background:#fbfdff;overflow:hidden}
+.saved-note[open]{border-color:#b8cce4;background:#fff}
+.saved-note summary{cursor:pointer;list-style:none;padding:10px 11px}
+.saved-note summary::-webkit-details-marker{display:none}
+.saved-note-title{display:block;color:var(--navy);font-size:11px;font-weight:800;line-height:1.35}
+.saved-note-meta{display:block;margin-top:3px;color:var(--muted);font-size:9px;font-weight:700}
+.saved-note-text{max-height:145px;overflow:auto;margin:0;padding:0 11px 11px;white-space:pre-wrap;color:#40566f;font-size:11px;line-height:1.55}
+.saved-notes-empty{padding:16px 10px;text-align:center;color:var(--muted);font-size:11px;line-height:1.5}
+.note-pages{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-top:10px}
+.note-pages button{border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--navy);padding:7px 9px;cursor:pointer;font-size:10px;font-weight:800}
+.note-pages button:disabled{opacity:.45;cursor:not-allowed}
+.note-pages span{color:var(--muted);font-size:9px;font-weight:700}
+.support-disclosure{margin-top:12px;padding:0;overflow:hidden}
+.support-disclosure summary{cursor:pointer;padding:14px 15px;list-style:none;font-weight:800}
+.support-disclosure summary::-webkit-details-marker{display:none}
+.support-disclosure summary::after{content:'+';float:right;color:#f0d27c;font-size:18px;line-height:1}
+.support-disclosure[open] summary::after{content:'–'}
+.support-content{padding:0 15px 15px}
+.support-content p{margin:0 0 10px;font-size:12px;line-height:1.5}
+.tools-backdrop{display:none}
+@media(max-width:1050px){
+ body.studytools-open{overflow:hidden}
+ .shell,.shell.tools-collapsed{grid-template-columns:260px minmax(0,1fr)}
+ .study-tools.right{display:block;position:fixed;z-index:70;top:72px;right:0;bottom:0;width:min(92vw,360px);height:auto;border-left:1px solid var(--line);background:#fff;box-shadow:-18px 0 45px #06152f2e;opacity:0;pointer-events:none;transform:translateX(105%);transition:transform .22s ease,opacity .18s ease}
+ .study-tools.right.open{opacity:1;pointer-events:auto;transform:translateX(0)}
+ .studytools-inner{width:100%}
+ .study-tools-toggle{display:none!important}
+ .tools-backdrop{position:fixed;z-index:69;inset:72px 0 0;display:none;border:0;background:#06152f73}
+ body.studytools-open .tools-backdrop{display:block}
+}
+@media(max-width:760px){
+ .study-tools.right{top:64px}
+ .tools-backdrop{inset:64px 0 0}
+ .studytools-inner{padding:15px}
+}
+@media(prefers-reduced-motion:reduce){.shell,.study-tools{transition:none}}
+</style>
 </head>
 <body>
 <header class="top"><div class="brand">FUNDA ONLINE<small>ACADEMY · LEARNING WORKSPACE</small></div><div class="toplinks"><a href="dashboard.html">Student Dashboard</a><button id="logout">Log out</button></div></header>
 <div id="message" class="message" style="display:none"></div>
-<div class="shell">
+<div class="shell tools-collapsed" id="learningShell">
 <aside class="side left" id="modulePanel"><div class="course-label">Professional Skills Short Course</div><h2 class="course-title" id="sidebarCourse">Loading course...</h2><div class="progressrow"><span>Course Progress</span><span id="progressText">0%</span></div><div class="track"><div class="fill" id="progressFill"></div></div><div id="moduleList"></div></aside>
-<main class="workspace" id="course-content"><div class="mobiletools"><button id="openModules">☰ Modules</button><button id="scrollNotes">✎ Notes</button></div><div class="crumb">Funda Learning Workspace</div><section class="lessonhead"><div class="course-label">APPROVED LEARNING ACCESS</div><h1>Preparing your course...</h1></section></main>
-<aside class="side right"><div class="toolbox"><h3>Key Terms & Terminology</h3><div id="keyTerms"></div></div><div class="toolbox"><h3>My Lesson Notes</h3><textarea class="notes" id="lessonNotes" placeholder="Write private study notes here..."></textarea><button class="btn secondary" id="saveNotes" style="width:100%;margin-top:8px">Save Notes</button></div><div class="support"><h3>Student Support</h3><p>Need help with your learning or course access?</p><a href="https://wa.me/27699608590?text=Hello%20Funda%20Online%20Academy%2C%20I%20need%20help%20with%20my%20course." target="_blank" rel="noopener">WhatsApp 069 960 8590</a></div></aside>
+<main class="workspace" id="course-content"><div class="mobiletools"><button id="openModules">☰ Modules</button><button id="scrollNotes" aria-controls="studyToolsPanel" aria-expanded="false">✎ Notes &amp; Support</button></div><div class="crumb">Funda Learning Workspace</div><section class="lessonhead"><div class="course-label">APPROVED LEARNING ACCESS</div><h1>Preparing your course...</h1></section></main>
+<aside class="side right study-tools" id="studyToolsPanel" aria-label="Study tools" aria-hidden="true">
+ <div class="studytools-inner">
+  <div class="studytools-head"><h2>Study Tools</h2><button class="studytools-close" id="closeStudyTools" type="button" aria-label="Close study tools">×</button></div>
+  <section class="note-toolbox" aria-labelledby="lessonNotesHeading">
+   <h3 id="lessonNotesHeading">My Lesson Notes</h3>
+   <p>Your notes are private and organised by lesson.</p>
+   <div class="note-tabs" role="tablist" aria-label="Lesson notes">
+    <button class="note-tab active" id="writeNoteTab" type="button" role="tab" aria-selected="true" aria-controls="writeNotePanel">Write Note</button>
+    <button class="note-tab" id="savedNotesTab" type="button" role="tab" aria-selected="false" aria-controls="savedNotesPanel">Saved Notes <span id="savedNotesCount">(0)</span></button>
+   </div>
+   <div id="writeNotePanel" role="tabpanel" aria-labelledby="writeNoteTab">
+    <textarea class="notes" id="lessonNotes" maxlength="20000" placeholder="Write private study notes for this lesson..."></textarea>
+    <div class="note-actions"><button class="btn primary" id="saveNotes" type="button">Save Note</button><span class="note-save-status" id="noteSaveStatus" role="status"></span></div>
+   </div>
+   <div id="savedNotesPanel" role="tabpanel" aria-labelledby="savedNotesTab" hidden>
+    <div class="saved-notes-list" id="savedNotesList"></div>
+    <div class="note-pages" id="savedNotesPages" hidden></div>
+   </div>
+  </section>
+  <details class="support support-disclosure">
+   <summary>Student Support</summary>
+   <div class="support-content"><p>Need help with your learning or course access?</p><a href="https://wa.me/27699608590?text=Hello%20Funda%20Online%20Academy%2C%20I%20need%20help%20with%20my%20course." target="_blank" rel="noopener">WhatsApp 069 960 8590</a></div>
+  </details>
+ </div>
+</aside>
+<button class="study-tools-toggle" id="studyToolsToggle" type="button" aria-controls="studyToolsPanel" aria-expanded="false"><span aria-hidden="true">✎</span><span>Notes &amp; Support</span></button>
+<button class="tools-backdrop" id="studyToolsBackdrop" type="button" aria-label="Close study tools"></button>
 </div>
-<script src="course-study.js?v=20261005-lesson-standard-v1"></script>
-<script>const mp=document.getElementById('modulePanel');document.getElementById('openModules')?.addEventListener('click',()=>mp.classList.toggle('open'));document.getElementById('scrollNotes')?.addEventListener('click',()=>alert('Your notes are available in the study tools panel on larger screens.'));</script>
+<script src="course-study.js?v=20261005-study-tools-v1"></script>
 <script>
 window.fundaProtectedPageRecheck=async function(){
   try{
