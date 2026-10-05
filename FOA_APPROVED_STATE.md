@@ -49,6 +49,19 @@ The owner physically reviewed **Admin → My Dashboard** after the final live-da
 - Any future work in **Management & Governance or another Admin tab is out of scope for My Dashboard**. Shared files/loaders may be edited only when necessary for the explicitly reopened area and only if My Dashboard is regression-checked and remains behaviourally unchanged.
 - Feedback or a newly discovered defect is a change request, not automatic permission to modify the locked Dashboard. The owner must explicitly approve the Dashboard correction before implementation.
 
+### CEO Portal Activity Monitor — OWNER-AUTHORISED FOCUSED REOPENING (5 October 2026)
+
+The owner explicitly reopened only the CEO oversight area needed to trace authenticated Student, Ambassador and Staff portal use.
+
+- Admin My Dashboard may add one **Portal Activity Monitor** after **Recent Audits & Alerts** and before **CEO Action Snapshot**, without changing the existing Dashboard sections or their approved order.
+- The monitor is limited to role, online/recent status, last login, last portal use and portal area. It must not record message content, form values, assessment answers, keystrokes or other private work.
+- **Online Now** is derived from an authenticated visible-portal heartbeat received within the previous five minutes. Heartbeats are low-frequency and do not add a sub-10-minute Admin polling loop; Admin receives table changes through the protected Realtime path and its minute timer only recalculates already-loaded status labels locally.
+- Students, Ambassadors and Staff may record only their own activity through the governed RPC. Only the active CEO may read the combined activity register. Deleted accounts remain excluded.
+- The Student Dashboard, Ambassador Portal and Staff Workspace receive only the non-visual background tracker required by this feature. Their layout, content, navigation, permissions and existing workflows remain unchanged.
+- The activity register uses a maximum of 10 visible people per page with search, role filtering and Previous / Next controls.
+- Future Staff accounts are included automatically when their profile role is `staff`.
+- This focused addition remains pending the owner's physical review and final lock. It does not reopen any unrelated Admin, Student, Ambassador, Staff, Login or authentication surface.
+
 
 ### Student Portal — FINAL OWNER-APPROVED AND LOCKED
 
