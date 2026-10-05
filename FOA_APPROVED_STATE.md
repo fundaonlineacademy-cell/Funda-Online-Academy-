@@ -68,6 +68,7 @@ The owner explicitly reopened only the CEO oversight area needed to trace authen
 - The left Modules/course-progress panel, lesson-stage content, in-lesson **Key Terms & Concepts**, navigation, completion, locking/unlocking and assessment gating remain unchanged.
 - The redundant right-rail **Key Terms & Terminology** box is removed. Canonical terminology remains inside the lesson sequence where it is taught.
 - The right rail is replaced by a controlled **Notes & Support** panel. It is collapsed by default on desktop and can be reopened or closed without changing the lesson. On tablet/mobile it opens as a dismissible drawer from the existing lesson controls.
+- When the desktop Modules panel and Notes & Support panel are both collapsed, the lesson workspace expands across the released horizontal space instead of retaining an empty right-side column. The four desktop panel combinations remain independently controlled; tablet/mobile drawer behaviour is unchanged.
 - **My Lesson Notes** provides separate Write Note and Saved Notes views. Notes are private to the authenticated Student, stored against the course and lesson with Row Level Security, retain a device fallback during connectivity problems, and show no more than 10 saved notes per page.
 - Student Support remains available inside the same panel as a compact disclosure. Its approved wording, WhatsApp number and destination are unchanged.
 - Source Sans 3 and the established navy/gold Student learning-workspace presentation remain unchanged.
