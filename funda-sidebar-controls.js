@@ -176,7 +176,10 @@
       html[data-funda-sidebar-page="course"] .side.left,
       html[data-funda-sidebar-page="course"] .shell{transition:transform .22s ease,visibility .22s ease}
       html.funda-course-sidebar-collapsed .shell{
-        grid-template-columns:0 minmax(0,1fr) 290px!important;
+        grid-template-columns:0 minmax(0,1fr) 310px!important;
+      }
+      html.funda-course-sidebar-collapsed .shell.tools-collapsed{
+        grid-template-columns:0 minmax(0,1fr) 0!important;
       }
       html.funda-course-sidebar-collapsed .side.left{
         transform:translateX(-105%)!important;visibility:hidden!important;pointer-events:none!important;
