@@ -4,7 +4,9 @@ const {createClient}=supabase;
 const db=createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
 const $=id=>document.getElementById(id);
 const esc=v=>v==null?'':String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");
-const state={user:null,studentId:null,course:null,modules:[],progress:[],assessments:[],attempts:[],module:1,unit:1,stage:0};
+const state={user:null,studentId:null,course:null,modules:[],progress:[],assessments:[],attempts:[],notes:[],notesLoaded:false,notePage:1,activeLessonId:null,module:1,unit:1,stage:0,studyToolsWired:false};
+const NOTE_PAGE_SIZE=10;
+const STUDY_TOOLS_OPEN_KEY='funda-study-tools-open';
 const doneSet=()=>new Set(state.progress.filter(x=>x.completed).map(x=>String(x.lesson_id)));
 const passedAssessmentSet=()=>new Set(state.attempts.filter(x=>x.passed).map(x=>String(x.assessment_id)));
 const mod=n=>state.modules.find(x=>Number(x.module_number)===Number(n));
@@ -39,6 +41,124 @@ function injectLessonStandardCss(){
  document.head.appendChild(s);
 }
 function show(message,success=false){const box=$('message');if(!box)return;box.textContent=message;box.style.display='block';box.className='message'+(success?' success':'')}
+function savedNoteKey(lessonId){return `funda-note-${state.user?.id||'student'}-${state.course?.id||'course'}-${lessonId}`}
+function savedNoteTimeKey(lessonId){return `${savedNoteKey(lessonId)}-updated`}
+function draftNoteKey(lessonId){return `${savedNoteKey(lessonId)}-draft`}
+function lessonIndex(){
+ const out=[];
+ state.modules.forEach(m=>(m.lessons||[]).forEach(l=>out.push({lesson:l,moduleNumber:Number(m.module_number),lessonNumber:Number(l.lesson_number)})));
+ return out;
+}
+function lessonMeta(lessonId){return lessonIndex().find(x=>String(x.lesson.id)===String(lessonId))||null}
+function localCourseNotes(){
+ return lessonIndex().map(({lesson})=>{
+  const text=localStorage.getItem(savedNoteKey(lesson.id));
+  if(!String(text||'').trim())return null;
+  const updatedAt=localStorage.getItem(savedNoteTimeKey(lesson.id))||null;
+  return {id:`local-${lesson.id}`,student_id:state.user?.id,course_id:state.course?.id,lesson_id:lesson.id,note_text:text,created_at:updatedAt,updated_at:updatedAt,local_only:true};
+ }).filter(Boolean)
+}
+function replaceNote(note){
+ const i=state.notes.findIndex(x=>String(x.lesson_id)===String(note.lesson_id));
+ if(i===-1)state.notes.push(note);else state.notes.splice(i,1,note);
+}
+function noteTime(value){
+ if(!value)return 'Saved on this device';
+ const d=new Date(value);if(Number.isNaN(d.getTime()))return 'Saved';
+ return new Intl.DateTimeFormat('en-ZA',{dateStyle:'medium',timeStyle:'short'}).format(d);
+}
+function setNoteStatus(message='',kind=''){
+ const host=$('noteSaveStatus');if(!host)return;
+ host.textContent=message;host.className='note-save-status'+(kind?' '+kind:'');
+}
+function renderSavedNotes(){
+ const host=$('savedNotesList'),pages=$('savedNotesPages'),count=$('savedNotesCount');if(!host||!pages)return;
+ const notes=state.notes.filter(n=>String(n.note_text||'').trim()).sort((a,b)=>new Date(b.updated_at||0)-new Date(a.updated_at||0));
+ if(count)count.textContent=`(${notes.length})`;
+ const totalPages=Math.max(1,Math.ceil(notes.length/NOTE_PAGE_SIZE));state.notePage=Math.min(Math.max(1,state.notePage),totalPages);
+ const start=(state.notePage-1)*NOTE_PAGE_SIZE,pageNotes=notes.slice(start,start+NOTE_PAGE_SIZE);
+ host.innerHTML=pageNotes.length?pageNotes.map(n=>{
+  const meta=lessonMeta(n.lesson_id),label=meta?`Module ${meta.moduleNumber} · Lesson ${meta.lessonNumber}`:'Saved lesson note',title=meta?.lesson?.title||'Lesson note';
+  return `<details class="saved-note"><summary><span class="saved-note-title">${esc(label)} — ${esc(title)}</span><span class="saved-note-meta">${esc(noteTime(n.updated_at))}${n.local_only?' · device copy':''}</span></summary><p class="saved-note-text">${esc(n.note_text)}</p></details>`
+ }).join(''):'<div class="saved-notes-empty">Your saved lesson notes will appear here. They stay grouped by lesson, so this panel remains easy to use.</div>';
+ pages.hidden=totalPages<=1;
+ pages.innerHTML=totalPages>1?`<button type="button" id="previousNotesPage" ${state.notePage===1?'disabled':''}>← Previous</button><span>Page ${state.notePage} of ${totalPages}</span><button type="button" id="nextNotesPage" ${state.notePage===totalPages?'disabled':''}>Next →</button>`:'';
+ $('previousNotesPage')?.addEventListener('click',()=>{state.notePage--;renderSavedNotes()});
+ $('nextNotesPage')?.addEventListener('click',()=>{state.notePage++;renderSavedNotes()});
+}
+function showNotesTab(name='write'){
+ const saved=name==='saved',writeTab=$('writeNoteTab'),savedTab=$('savedNotesTab'),writePanel=$('writeNotePanel'),savedPanel=$('savedNotesPanel');
+ if(!writeTab||!savedTab||!writePanel||!savedPanel)return;
+ writeTab.classList.toggle('active',!saved);savedTab.classList.toggle('active',saved);
+ writeTab.setAttribute('aria-selected',String(!saved));savedTab.setAttribute('aria-selected',String(saved));
+ writePanel.hidden=saved;savedPanel.hidden=!saved;if(saved)renderSavedNotes();
+}
+function setStudyToolsOpen(open,{remember=true,focus=false}={}){
+ const shell=$('learningShell'),panel=$('studyToolsPanel'),toggle=$('studyToolsToggle');if(!shell||!panel)return;
+ const desktop=window.matchMedia('(min-width:1051px)').matches;
+ if(desktop){
+  shell.classList.toggle('tools-collapsed',!open);panel.classList.remove('open');document.body.classList.remove('studytools-open');
+  if(remember)localStorage.setItem(STUDY_TOOLS_OPEN_KEY,String(open));
+ }else{
+  shell.classList.add('tools-collapsed');panel.classList.toggle('open',open);document.body.classList.toggle('studytools-open',open);
+ }
+ panel.setAttribute('aria-hidden',String(!open));toggle?.setAttribute('aria-expanded',String(open));
+ document.querySelectorAll('#scrollNotes,#scrollNotesInner').forEach(b=>b.setAttribute('aria-expanded',String(open)));
+ if(open&&focus)setTimeout(()=>$('closeStudyTools')?.focus(),0);
+}
+function openStudyTools(tab='write'){
+ showNotesTab(tab);setStudyToolsOpen(true,{focus:true});
+}
+function wireStudyToolsShell(){
+ if(state.studyToolsWired)return;state.studyToolsWired=true;
+ $('studyToolsToggle')?.addEventListener('click',()=>openStudyTools('write'));
+ $('scrollNotes')?.addEventListener('click',()=>openStudyTools('write'));
+ $('openModules')?.addEventListener('click',()=>$('modulePanel')?.classList.toggle('open'));
+ $('closeStudyTools')?.addEventListener('click',()=>setStudyToolsOpen(false,{focus:false}));
+ $('studyToolsBackdrop')?.addEventListener('click',()=>setStudyToolsOpen(false,{focus:false}));
+ $('writeNoteTab')?.addEventListener('click',()=>showNotesTab('write'));
+ $('savedNotesTab')?.addEventListener('click',()=>showNotesTab('saved'));
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('studyToolsPanel')?.getAttribute('aria-hidden')==='false')setStudyToolsOpen(false,{focus:false})});
+ const media=window.matchMedia('(min-width:1051px)');
+ media.addEventListener?.('change',e=>setStudyToolsOpen(e.matches&&localStorage.getItem(STUDY_TOOLS_OPEN_KEY)==='true',{remember:false,focus:false}));
+ setStudyToolsOpen(media.matches&&localStorage.getItem(STUDY_TOOLS_OPEN_KEY)==='true',{remember:false,focus:false});
+}
+function noteForLesson(lessonId){return state.notes.find(n=>String(n.lesson_id)===String(lessonId))||null}
+function activateLessonNotes(lesson,{refresh=false}={}){
+ const field=$('lessonNotes'),button=$('saveNotes');if(!field||!button)return;
+ const lessonId=String(lesson.id),changed=field.dataset.lessonId!==lessonId;state.activeLessonId=lessonId;
+ if(changed||(refresh&&field.dataset.dirty!=='true')){
+  const draft=localStorage.getItem(draftNoteKey(lessonId)),saved=noteForLesson(lessonId);
+  field.value=draft!==null?draft:String(saved?.note_text||'');field.dataset.lessonId=lessonId;field.dataset.dirty=draft!==null?'true':'false';setNoteStatus();
+ }
+ field.oninput=()=>{field.dataset.dirty='true';localStorage.setItem(draftNoteKey(lessonId),field.value);setNoteStatus('Not saved yet')};
+ button.onclick=()=>saveLessonNote(lesson,field,button);renderSavedNotes();
+}
+async function saveLessonNote(lesson,field,button){
+ const text=String(field.value||'').trim();if(!text){setNoteStatus('Write a note before saving.','warning');field.focus();return}
+ const now=new Date().toISOString();state.noteLoadToken++;button.disabled=true;button.textContent='Saving…';
+ localStorage.setItem(savedNoteKey(lesson.id),text);localStorage.setItem(savedNoteTimeKey(lesson.id),now);localStorage.removeItem(draftNoteKey(lesson.id));field.dataset.dirty='false';
+ replaceNote({id:`local-${lesson.id}`,student_id:state.user.id,course_id:state.course.id,lesson_id:lesson.id,note_text:text,created_at:now,updated_at:now,local_only:true});renderSavedNotes();
+ try{
+  const {data,error}=await db.from('student_lesson_notes').upsert({student_id:state.user.id,course_id:state.course.id,lesson_id:lesson.id,note_text:text,updated_at:now},{onConflict:'student_id,lesson_id'}).select('id,student_id,course_id,lesson_id,note_text,created_at,updated_at').single();
+  if(error)throw error;replaceNote(data);renderSavedNotes();setNoteStatus('Saved to your account.','success');
+ }catch(error){console.warn('Lesson note account sync paused',error);setNoteStatus('Saved on this device. Select Save Note again when connected.','warning')}
+ finally{button.disabled=false;button.textContent='Save Note'}
+}
+async function loadCourseNotes(){
+ const token=++state.noteLoadToken;const local=localCourseNotes();
+ try{
+  const {data,error}=await db.from('student_lesson_notes').select('id,student_id,course_id,lesson_id,note_text,created_at,updated_at').eq('student_id',state.user.id).eq('course_id',state.course.id).order('updated_at',{ascending:false});
+  if(error)throw error;if(state.noteLoadToken!==token)return;
+  const merged=new Map((data||[]).map(n=>[String(n.lesson_id),n]));
+  local.forEach(n=>{const remote=merged.get(String(n.lesson_id));if(!remote||new Date(n.updated_at||0)>new Date(remote.updated_at||0))merged.set(String(n.lesson_id),n)});
+  state.notes=[...merged.values()];state.notesLoaded=true;renderSavedNotes();
+  const active=lessonMeta(state.activeLessonId)?.lesson;if(active)activateLessonNotes(active,{refresh:true});
+ }catch(error){
+  console.warn('Lesson notes loaded from device fallback',error);if(state.noteLoadToken!==token)return;
+  state.notes=local;state.notesLoaded=true;renderSavedNotes();const active=lessonMeta(state.activeLessonId)?.lesson;if(active)activateLessonNotes(active,{refresh:true});
+ }
+}
 function asHtml(v){const s=String(v||'').trim();if(!s)return '';if(/<\/?[a-z][\s\S]*>/i.test(s))return s;return s.split(/\n\s*\n/).map(p=>'<p>'+esc(p).replace(/\n/g,'<br>')+'</p>').join('')}
 function section(title,value,cls=''){if(!String(value||'').trim())return '';return `<section class="card ${cls}"><h2>${esc(title)}</h2><div>${asHtml(value)}</div></section>`}
 function progressPct(){
@@ -113,11 +233,6 @@ function wireKnowledge(stage){
  };
  retry.onclick=()=>{renderLesson()};
 }
-function renderKeyTerms(l){
- const host=$('keyTerms');if(!host)return;
- const terms=String(l.key_terms||'').split(/[;\n]+/).map(x=>x.trim()).filter(Boolean);
- host.innerHTML=terms.length?terms.map(t=>`<div class="term"><b>${esc(t)}</b></div>`).join(''):'<div class="term"><span>Key terminology is explained in the lesson.</span></div>';
-}
 function stageButtonLabel(l,ls,stageIndex,lastIndex){
  if(stageIndex<lastIndex)return 'Next →';
  if(Number(l.lesson_number)<ls.length)return 'Continue to Next Lesson →';
@@ -139,16 +254,16 @@ function renderLesson(){
  const ls=lessons(state.module);let l=ls.find(x=>Number(x.lesson_number)===Number(state.unit));if(!l){l=ls[0];state.unit=Number(l?.lesson_number||1)}if(!l){$('course-content').innerHTML='<div class="message">No lessons are configured for this module.</div>';return}
  const complete=doneSet().has(String(l.id)),stages=buildStages(l);state.stage=Math.max(0,Math.min(state.stage,stages.length-1));const st=stages[state.stage],pct=Math.round((state.stage+1)/stages.length*100);
  $('course-content').innerHTML=`
- <div class="mobiletools"><button id="openModulesInner">☰ Modules</button><button id="scrollNotesInner">✎ Notes</button></div>
+ <div class="mobiletools"><button id="openModulesInner">☰ Modules</button><button id="scrollNotesInner" aria-controls="studyToolsPanel" aria-expanded="false">✎ Notes &amp; Support</button></div>
  <div class="crumb">${esc(state.course.title)} / Module ${state.module} / Lesson ${l.lesson_number}</div>
  <section class="lessonhead foaLessonSticky"><div class="course-label">MODULE ${state.module} · LESSON ${l.lesson_number} OF ${ls.length}</div><h1>${esc(l.title)}</h1><div class="meta"><span class="pill">${complete?'Completed ✓':'In progress'}</span><span class="pill gold">Step ${state.stage+1} of ${stages.length}</span></div></section>
  <div class="foaStageMeta"><strong>${esc(st.title)}</strong><span>Move through this lesson one stage at a time.</span></div><div class="foaStageTrack"><i style="width:${pct}%"></i></div>
  ${st.kind==='knowledge'?renderKnowledge(st):st.html}
  <div class="foaNav"><button class="btn secondary" id="prevStage">← Back</button><button class="btn primary" id="nextStage">${stageButtonLabel(l,ls,state.stage,stages.length-1)}</button></div>`;
  $('openModulesInner')?.addEventListener('click',()=>$('modulePanel')?.classList.toggle('open'));
- $('scrollNotesInner')?.addEventListener('click',()=>show('Your notes are available in the study tools panel on larger screens.'));
- renderKeyTerms(l);wireKnowledge(st);
- const nk=`funda-note-${state.course.id}-${l.id}`;if($('lessonNotes'))$('lessonNotes').value=localStorage.getItem(nk)||'';if($('saveNotes'))$('saveNotes').onclick=()=>{localStorage.setItem(nk,$('lessonNotes').value);show('Lesson notes saved on this device.',true)};
+ $('scrollNotesInner')?.addEventListener('click',()=>openStudyTools('write'));
+ $('scrollNotesInner')?.setAttribute('aria-expanded',String($('studyToolsPanel')?.getAttribute('aria-hidden')==='false'));
+ wireKnowledge(st);activateLessonNotes(l);
  const prev=$('prevStage');prev.disabled=state.stage===0&&state.module===1&&Number(l.lesson_number)===1;
  prev.onclick=()=>{if(state.stage>0){state.stage--;renderLesson();scrollTo(0,0);return}if(Number(l.lesson_number)>1){state.unit=Number(l.lesson_number)-1;const prevLesson=lessons(state.module).find(x=>Number(x.lesson_number)===Number(state.unit));state.stage=Math.max(0,buildStages(prevLesson||{}).length-1)}else if(state.module>1){state.module--;state.unit=lessons(state.module).length||1;const prevLesson=lessons(state.module).find(x=>Number(x.lesson_number)===Number(state.unit));state.stage=Math.max(0,buildStages(prevLesson||{}).length-1)}renderAll();scrollTo(0,0)};
  $('nextStage').onclick=()=>{if(state.stage<stages.length-1){state.stage++;renderLesson();scrollTo(0,0);return}finishLesson(l,ls,complete)};
@@ -157,6 +272,7 @@ function renderAll(){if(!$('course-content'))return;$('sidebarCourse').textConte
 async function init(){
  try{
   injectLessonStandardCss();
+  wireStudyToolsShell();
   const courseId=new URLSearchParams(location.search).get('id')||new URLSearchParams(location.search).get('course');
   if(!courseId){show('No course was selected.');return}
   const restored=window.FundaAuth?.restore?await window.FundaAuth.restore(db):await db.auth.getUser().then(result=>({user:result.data?.user||null,error:result.error||null,confirmedSignedOut:!result.error&&!result.data?.user}));
@@ -168,7 +284,7 @@ async function init(){
   state.studentId=data.student_id||user.id;state.course=data.course;state.modules=data.modules||[];state.progress=data.progress||[];state.assessments=data.assessments||[];state.attempts=data.attempts||[];
   const openModules=state.modules.filter(m=>unlocked(Number(m.module_number))).sort((a,b)=>Number(a.module_number)-Number(b.module_number));
   const resumeModule=openModules[openModules.length-1]||state.modules[0];state.module=Number(resumeModule?.module_number||1);
-  const pendingLesson=lessons(state.module).find(l=>!doneSet().has(String(l.id)));state.unit=Number(pendingLesson?.lesson_number||1);state.stage=0;renderAll();
+  const pendingLesson=lessons(state.module).find(l=>!doneSet().has(String(l.id)));state.unit=Number(pendingLesson?.lesson_number||1);state.stage=0;renderAll();loadCourseNotes();
  }catch(e){console.error(e);$('course-content').innerHTML='<div class="message">Unable to load course content: '+esc(e.message||'Please try again.')+'</div>'}
 }
 $('logout')?.addEventListener('click',async()=>{await db.auth.signOut({scope:'local'});location.href='login.html'});

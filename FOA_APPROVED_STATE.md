@@ -62,6 +62,17 @@ The owner explicitly reopened only the CEO oversight area needed to trace authen
 - Future Staff accounts are included automatically when their profile role is `staff`.
 - This focused addition remains pending the owner's physical review and final lock. It does not reopen any unrelated Admin, Student, Ambassador, Staff, Login or authentication surface.
 
+### Student Learning Workspace Study Tools — OWNER-AUTHORISED FOCUSED REOPENING (5 October 2026)
+
+- The owner explicitly reopened only the desktop/right-side tools area of `course-study.html` so the central lesson can use more horizontal space.
+- The left Modules/course-progress panel, lesson-stage content, in-lesson **Key Terms & Concepts**, navigation, completion, locking/unlocking and assessment gating remain unchanged.
+- The redundant right-rail **Key Terms & Terminology** box is removed. Canonical terminology remains inside the lesson sequence where it is taught.
+- The right rail is replaced by a controlled **Notes & Support** panel. It is collapsed by default on desktop and can be reopened or closed without changing the lesson. On tablet/mobile it opens as a dismissible drawer from the existing lesson controls.
+- **My Lesson Notes** provides separate Write Note and Saved Notes views. Notes are private to the authenticated Student, stored against the course and lesson with Row Level Security, retain a device fallback during connectivity problems, and show no more than 10 saved notes per page.
+- Student Support remains available inside the same panel as a compact disclosure. Its approved wording, WhatsApp number and destination are unchanged.
+- Source Sans 3 and the established navy/gold Student learning-workspace presentation remain unchanged.
+- This focused change remains pending the owner's physical review and final lock. It does not reopen any other Student, Admin, Login, assessment, payment, result, certificate or support workflow.
+
 
 ### Student Portal — FINAL OWNER-APPROVED AND LOCKED
 
