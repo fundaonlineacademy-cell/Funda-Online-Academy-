@@ -4,6 +4,18 @@ if(!/(^|\/)ambassador-portal-v2\.html$/i.test(location.pathname))return;
 if(window.__fundaAmbassadorCompactAcademyIdentity)return;
 window.__fundaAmbassadorCompactAcademyIdentity=true;
 
+const rewardBands=[
+  {range:"R0 – R9,999",milestone:"R0",incentive:"—",monthly:"—"},
+  {range:"R10,000 – R24,999",milestone:"R10,000",incentive:"R500",monthly:"—"},
+  {range:"R25,000 – R49,999",milestone:"R25,000",incentive:"R1,000",monthly:"—"},
+  {range:"R50,000 – R99,999",milestone:"R50,000",incentive:"R2,500",monthly:"Up to R5,000"},
+  {range:"R100,000 – R249,999",milestone:"R100,000",incentive:"R5,000",monthly:"Up to R8,000"},
+  {range:"R250,000 – R499,999",milestone:"R250,000",incentive:"R10,000",monthly:"Up to R12,000"},
+  {range:"R500,000 – R999,999",milestone:"R500,000",incentive:"R20,000",monthly:"Up to R18,000"},
+  {range:"R1,000,000+",milestone:"R1,000,000",incentive:"R45,000",monthly:"Up to R25,000"}
+];
+const legacyRankMilestones={Ambassador:"R0",Bronze:"R10,000",Silver:"R25,000",Gold:"R50,000",Platinum:"R100,000",Diamond:"R250,000",Executive:"R500,000",Elite:"R1,000,000"};
+
 function installStyle(){
   if(document.getElementById("ambassadorAcademyIdentityCompactStyle"))return;
   const style=document.createElement("style");
@@ -97,12 +109,170 @@ function compactIdentity(){
   return true;
 }
 
+function replaceLegacyRanks(text){
+  let out=String(text||"");
+  Object.entries(legacyRankMilestones).forEach(([name,target])=>{
+    out=out.replace(new RegExp("\\b"+name+"\\b","g"),name==="Ambassador"?"Ambassador":target+" milestone");
+  });
+  return out
+    .replace(/rank journey/gi,"reward milestone journey")
+    .replace(/current rank/gi,"current milestone status")
+    .replace(/next rank/gi,"next milestone")
+    .replace(/Ambassador rank/gi,"Ambassador milestone")
+    .replace(/published Ambassador rank/gi,"published reward milestone")
+    .replace(/rank threshold/gi,"qualifying-revenue milestone")
+    .replace(/achievement bonuses/gi,"achievement incentives")
+    .replace(/achievement bonus/gi,"achievement incentive")
+    .replace(/monthly performance payments/gi,"monthly performance rewards")
+    .replace(/monthly performance payment/gi,"monthly performance reward");
+}
+
+function setText(el,text){if(el&&el.textContent!==text)el.textContent=text}
+
+function reframeAmbassadorRewards(){
+  const navRank=document.querySelector('[data-go="rank"] span:last-child');
+  const navComp=document.querySelector('[data-go="compensation"] span:last-child');
+  setText(navRank,"Milestone Progress");
+  setText(navComp,"Performance & Rewards");
+
+  document.querySelectorAll('[data-go="rank"] b').forEach(el=>setText(el,"Milestone Progress"));
+  document.querySelectorAll('[data-go="compensation"]').forEach(el=>{
+    if(el.classList.contains('textAction')&&/compensation plan/i.test(el.textContent))setText(el,"View Performance & Rewards →");
+  });
+
+  const dashboard=document.querySelector('.section[data-section="dashboard"]');
+  if(dashboard){
+    const nextRank=document.getElementById('nextRank');
+    if(nextRank){
+      const card=nextRank.closest('.card');
+      setText(card?.querySelector('.eyebrow'),"MILESTONE PROGRESS");
+      setText(card?.querySelector('h2'),"Next reward milestone");
+      const revised=replaceLegacyRanks(nextRank.textContent);
+      if(nextRank.textContent!==revised)nextRank.textContent=revised;
+    }
+    const monthlyTarget=document.getElementById('monthlyTarget');
+    if(monthlyTarget){const revised=replaceLegacyRanks(monthlyTarget.textContent);if(monthlyTarget.textContent!==revised)monthlyTarget.textContent=revised}
+    setText(document.getElementById('statusBonus')?.closest('.earning')?.querySelector('span'),"ACHIEVEMENT INCENTIVES");
+    setText(document.getElementById('statusPerformance')?.closest('.earning')?.querySelector('span'),"MONTHLY PERFORMANCE REWARDS");
+    setText(document.getElementById('overviewPerformance'),"Ambassador");
+    const overviewFoot=document.getElementById('overviewPerformanceFoot');
+    if(overviewFoot){const revised=replaceLegacyRanks(overviewFoot.textContent);if(overviewFoot.textContent!==revised)overviewFoot.textContent=revised}
+  }
+
+  const rankSection=document.querySelector('.section[data-section="rank"]');
+  if(rankSection){
+    const hero=rankSection.querySelector('.rankHeroCard');
+    setText(hero?.querySelector('.eyebrow'),"AMBASSADOR PERFORMANCE");
+    setText(hero?.querySelector('h2'),"Milestone Progress");
+    setText(hero?.querySelector('.muted'),"Your progress is based on cumulative verified qualifying revenue from students directly attributed to your Ambassador code.");
+    setText(document.getElementById('rankCurrentBadge'),"AMBASSADOR");
+    const numbers=hero?.querySelectorAll('.rankNumbers>div');
+    if(numbers?.length>=3){
+      setText(numbers[0].querySelector('span'),"CUMULATIVE QUALIFYING REVENUE");
+      setText(numbers[1].querySelector('span'),"NEXT MILESTONE");
+      setText(numbers[2].querySelector('span'),"REMAINING TO NEXT MILESTONE");
+    }
+    const next=document.getElementById('rankNext');
+    if(next){
+      const raw=next.textContent.trim();
+      if(legacyRankMilestones[raw]&&raw!=="Ambassador")setText(next,legacyRankMilestones[raw]);
+      else if(/elite achieved/i.test(raw))setText(next,"Highest milestone reached");
+    }
+    const progress=document.getElementById('rankProgressText');
+    if(progress){const revised=replaceLegacyRanks(progress.textContent);if(progress.textContent!==revised)progress.textContent=revised}
+
+    const cards=rankSection.querySelectorAll(':scope > .card');
+    if(cards[1]){
+      setText(cards[1].querySelector('.eyebrow'),"REWARD MILESTONES");
+      setText(cards[1].querySelector('h2'),"Your Ambassador milestone journey");
+      setText(cards[1].querySelector('.muted'),"Milestones recognise verified direct-referral performance. They do not create teams, downlines or recruitment earnings.");
+    }
+    const steps=document.querySelectorAll('#rankPath .rankStep');
+    steps.forEach((step,i)=>{
+      const band=rewardBands[i];if(!band)return;
+      setText(step.querySelector('.rankStepText b'),band.range);
+      setText(step.querySelector('.rankStepText span'),i===0?"Starting qualifying-revenue band":"Qualifying-revenue milestone");
+      const detail='15% commission'+(band.incentive!=="—"?' · '+band.incentive+' incentive':'')+(band.monthly!=="—"?' · '+band.monthly+' monthly reward':'');
+      setText(step.querySelector('.rankStepValue'),detail);
+    });
+    if(cards[2]){
+      setText(cards[2].querySelector('.eyebrow'),"MONTHLY PERFORMANCE");
+      setText(cards[2].querySelector('h2'),"Monthly Performance Reward eligibility");
+      const action=cards[2].querySelector('[data-go="compensation"]');
+      if(action)setText(action,"View Performance & Rewards →");
+    }
+    const monthly=document.getElementById('rankMonthly');
+    if(monthly)monthly.innerHTML='<b>Monthly Performance Rewards become available from the R50,000 qualifying-revenue milestone.</b><br>Rewards are performance-based, subject to monthly verification and approval, and are not a salary or guaranteed monthly payment.';
+  }
+
+  const comp=document.querySelector('.section[data-section="compensation"]');
+  if(comp){
+    const hero=comp.querySelector('.compHero');
+    setText(hero?.querySelector('.eyebrow'),"AMBASSADOR PERFORMANCE & REWARDS · 2026");
+    setText(hero?.querySelector('h2'),"Ambassador Performance & Rewards");
+    setText(hero?.querySelector('.muted'),"A direct student-referral programme with clear qualifying-revenue milestones and performance-based rewards. No downlines, recruitment commissions or team overrides.");
+    const headline=hero?.querySelectorAll('.compHeadline .earning');
+    if(headline?.length>=3){
+      setText(headline[0].querySelector('span'),"DIRECT COMMISSION");
+      setText(headline[0].querySelector('p'),"15% on verified qualifying revenue from students directly attributed to you.");
+      setText(headline[1].querySelector('span'),"ACHIEVEMENT INCENTIVES");
+      setText(headline[1].querySelector('p'),"One-time incentives unlocked when a cumulative qualifying-revenue milestone is reached.");
+      setText(headline[2].querySelector('span'),"MONTHLY PERFORMANCE REWARDS");
+      setText(headline[2].querySelector('p'),"Available from the R50,000 milestone, subject to monthly verification and approval.");
+    }
+
+    const mobile=document.getElementById('compMobile');
+    if(mobile){
+      const card=mobile.closest('.card');
+      setText(card?.querySelector('.eyebrow'),"MILESTONES & REWARDS");
+      setText(card?.querySelector('h2'),"Qualifying revenue milestones, incentives & rewards");
+      setText(card?.querySelector('.muted'),"Cumulative milestones use verified direct qualifying student revenue.");
+      const action=card?.querySelector('[data-go="rank"]');if(action)setText(action,"View My Progress →");
+      mobile.querySelectorAll('article').forEach((article,i)=>{
+        const band=rewardBands[i];if(!band)return;
+        setText(article.querySelector('b'),band.range);
+        setText(article.querySelector('span'),"Qualifying revenue milestone");
+        setText(article.querySelector('em'),'15% direct commission'+(band.incentive!=="—"?' · '+band.incentive+' incentive':''));
+        setText(article.querySelector('small'),band.monthly!=="—"?band.monthly+' monthly performance reward':'No monthly performance reward');
+      });
+    }
+
+    const table=comp.querySelector('.compTable');
+    if(table&&!table.dataset.reframedRewards){
+      table.dataset.reframedRewards='1';
+      table.innerHTML='<thead><tr><th>Qualifying Revenue Milestone</th><th>Direct Commission</th><th>Achievement Incentive</th><th>Monthly Performance Reward</th></tr></thead><tbody>'+rewardBands.map(b=>'<tr><td><b>'+b.range+'</b></td><td>15%</td><td>'+b.incentive+'</td><td>'+b.monthly+'</td></tr>').join('')+'</tbody>';
+      table.style.minWidth='680px';
+    }
+
+    comp.querySelectorAll('.compFlowStep').forEach(step=>{
+      if(/earnings are recorded separately/i.test(step.textContent)){
+        setText(step.querySelector('b'),"Rewards are recorded separately");
+        setText(step.querySelector('span'),"Direct commission, achievement incentives and monthly performance rewards remain auditable.");
+      }
+    });
+  }
+}
+
+function installRewardsObserver(){
+  if(window.__fundaAmbassadorRewardsPresentation)return;
+  window.__fundaAmbassadorRewardsPresentation=true;
+  let scheduled=false;
+  const apply=()=>{scheduled=false;reframeAmbassadorRewards()};
+  const queue=()=>{if(scheduled)return;scheduled=true;requestAnimationFrame(apply)};
+  reframeAmbassadorRewards();
+  const observer=new MutationObserver(queue);
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+}
+
 function boot(){
-  if(compactIdentity())return;
+  compactIdentity();
+  installRewardsObserver();
   let tries=0;
   const timer=setInterval(()=>{
     tries+=1;
-    if(compactIdentity()||tries>=30)clearInterval(timer);
+    compactIdentity();
+    reframeAmbassadorRewards();
+    if(tries>=30)clearInterval(timer);
   },150);
 }
 
