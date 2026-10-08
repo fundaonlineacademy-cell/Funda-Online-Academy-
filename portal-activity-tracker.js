@@ -74,7 +74,7 @@ function loadAmbassadorRewards(){
   if(!/\/ambassador-portal-v2\.html$/.test(path)||window.__fundaAmbassadorPerformanceRewardsV3)return;
   if(document.querySelector('script[data-funda-ambassador-rewards-v3]'))return;
   const script=document.createElement('script');
-  script.src='ambassador-performance-rewards-v3.js?v=20261008-final-20pct-v1';
+  script.src='ambassador-performance-rewards-v3.js?v=20261008-final-20pct-v2';
   script.async=false;
   script.dataset.fundaAmbassadorRewardsV3='1';
   document.head.appendChild(script);
