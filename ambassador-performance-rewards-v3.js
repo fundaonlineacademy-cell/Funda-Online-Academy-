@@ -25,6 +25,13 @@ function patchNav(){
  document.querySelectorAll('[data-go="compensation"].textAction').forEach(btn=>setText(btn,'View Performance & Rewards →'));
 }
 
+function patchSearch(){
+ document.querySelectorAll('.ambassadorSearchResult b').forEach(el=>{
+  if(el.textContent==='Rank Progress')setText(el,'Target Progress');
+  if(el.textContent==='Compensation Plan')setText(el,'Performance & Rewards');
+ });
+}
+
 function patchEarningLabels(){
  const bonus=document.getElementById('statusBonus');
  if(bonus?.nextElementSibling)setText(bonus.nextElementSibling,'ACHIEVEMENT INCENTIVES');
@@ -50,7 +57,7 @@ function patchDashboardProgress(life){
   if(bar&&bar.style.width!==pct+'%')bar.style.width=pct+'%';
  }else{
   setText(nextRank,'R1,000,000 qualifying-revenue target achieved.');
-  if(bar)bar.style.width='100%';
+  if(bar&&bar.style.width!=='100%')bar.style.width='100%';
  }
  setText(monthly,'Fixed Monthly Performance Rewards begin at R100,000 verified qualifying revenue in a calendar month.');
  const ov=document.getElementById('overviewPerformance');setText(ov,'Ambassador');
@@ -60,17 +67,21 @@ function patchDashboardProgress(life){
 
 function patchPreview(){
  const box=document.querySelector('.compensationPreview');if(!box)return;
- const desired=`
-  <div class="sectionHead"><div><div class="eyebrow dark">AMBASSADOR PERFORMANCE & REWARDS</div><h2>Direct commission, milestone incentives and monthly performance rewards</h2><p class="muted">Direct referrals only. All participants remain Ambassadors. No ranks, downlines, recruitment commissions or team overrides.</p></div><button class="btn gold" data-go="compensation">View Full Rewards</button></div>
-  <div class="three compensationSteps">
+ if(box.dataset.rewardsV3!=='1'){
+  box.innerHTML=`
+   <div class="sectionHead"><div><div class="eyebrow dark">AMBASSADOR PERFORMANCE & REWARDS</div><h2>Direct commission, milestone incentives and monthly performance rewards</h2><p class="muted">Direct referrals only. All participants remain Ambassadors. No ranks, downlines, recruitment commissions or team overrides.</p></div><button class="btn gold" data-go="compensation">View Full Rewards</button></div>
+   <div class="three compensationSteps">
     <div class="earning"><b>15%</b><span>DIRECT COMMISSION</span><p class="muted">On verified qualifying revenue from your own directly attributed students.</p></div>
     <div class="earning"><b>R20,000</b><span>HIGHEST CASH ACHIEVEMENT INCENTIVE</span><p class="muted">One-time cumulative milestone incentives. The R10,000 milestone begins with a 10GB data bundle.</p></div>
     <div class="earning"><b>R30,000</b><span>R1M MONTHLY PERFORMANCE REWARD</span><p class="muted">Fixed rewards begin at R100,000 verified qualifying revenue in a calendar month.</p></div>
-  </div>`;
- if(box.dataset.rewardsV3!=='1'){
-  box.innerHTML=desired;box.dataset.rewardsV3='1';
+   </div>`;
+  box.dataset.rewardsV3='1';
   box.querySelectorAll('[data-go="compensation"]').forEach(b=>b.onclick=()=>document.querySelector('.navbtn[data-go="compensation"]')?.click());
  }
+}
+
+function targetPathHtml(life,next){
+ return milestones.map((m,i)=>{const done=life>=m.target,active=!done&&next?.target===m.target;const state=done?'done':active?'current':'';const monthly=m.monthly?money(m.monthly)+' monthly reward':'No monthly cash reward';return `<div class="rankStep ${state}"><div class="rankStepIcon">${done?'✓':active?'●':i+1}</div><div class="rankStepText"><b>${money(m.target)} target</b><span>Achievement Incentive: ${m.incentive}</span></div><div class="rankStepValue">${monthly}</div></div>`}).join('');
 }
 
 function patchTargetSection(life){
@@ -93,13 +104,16 @@ function patchTargetSection(life){
  setText(document.getElementById('rankNext'),next?money(next.target):'R1,000,000 achieved');
  setText(document.getElementById('rankRemaining'),next?money(Math.max(0,next.target-life)):'R0');
  const fill=document.getElementById('rankProgressFill');
- if(fill){const pct=next?Math.max(0,Math.min(100,((life-prev)/Math.max(1,next.target-prev))*100)):100;fill.style.width=pct+'%'}
+ if(fill){const pct=next?Math.max(0,Math.min(100,((life-prev)/Math.max(1,next.target-prev))*100)):100;if(fill.style.width!==pct+'%')fill.style.width=pct+'%'}
  setText(document.getElementById('rankProgressText'),next?money(Math.max(0,next.target-life))+' more verified lifetime qualifying revenue to reach the '+money(next.target)+' target.':'You have reached the highest published qualifying-revenue target.');
  const path=document.getElementById('rankPath');
- if(path){
-  path.innerHTML=milestones.map((m,i)=>{const done=life>=m.target,active=!done&&next?.target===m.target;const state=done?'done':active?'current':'';const monthly=m.monthly?money(m.monthly)+' monthly reward':'No monthly cash reward';return `<div class="rankStep ${state}"><div class="rankStepIcon">${done?'✓':active?'●':i+1}</div><div class="rankStepText"><b>${money(m.target)} target</b><span>Achievement Incentive: ${m.incentive}</span></div><div class="rankStepValue">${monthly}</div></div>`}).join('');
+ if(path){const html=targetPathHtml(life,next);if(path.innerHTML!==html)path.innerHTML=html}
+ const monthly=document.getElementById('rankMonthly');
+ if(monthly){
+  monthly.className='notice gold';
+  const html='<b>Monthly Performance Rewards start at R100,000 verified qualifying revenue in a calendar month.</b><br>R100,000 → R2,500 · R250,000 → R7,500 · R500,000 → R15,000 · R750,000 → R22,500 · R1,000,000 → R30,000.';
+  if(monthly.innerHTML!==html)monthly.innerHTML=html;
  }
- const monthly=document.getElementById('rankMonthly');if(monthly){monthly.className='notice gold';monthly.innerHTML='<b>Monthly Performance Rewards start at R100,000 verified qualifying revenue in a calendar month.</b><br>R100,000 → R2,500 · R250,000 → R7,500 · R500,000 → R15,000 · R750,000 → R22,500 · R1,000,000 → R30,000.'}
 }
 
 function rewardsTable(){
@@ -132,12 +146,12 @@ let timer=0,applying=false;
 function apply(){
  if(applying)return;applying=true;
  try{
-  patchNav();patchEarningLabels();patchPreview();patchCompensation();
+  patchNav();patchSearch();patchEarningLabels();patchPreview();patchCompensation();
   const life=parseMoney(document.getElementById('rankLifetime')?.textContent);
   patchDashboardProgress(life);patchTargetSection(life);
  }finally{applying=false}
 }
-function schedule(){clearTimeout(timer);timer=setTimeout(apply,30)}
+function schedule(){clearTimeout(timer);timer=setTimeout(apply,40)}
 function install(){apply();new MutationObserver(schedule).observe(document.body,{subtree:true,childList:true,characterData:true});[300,900,1800,3500].forEach(ms=>setTimeout(apply,ms))}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});else install();
 })();
