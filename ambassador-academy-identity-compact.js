@@ -61,6 +61,24 @@ function fixNavigation(){
  document.querySelectorAll('.navbtn[data-go="compensation"]').forEach(b=>b.remove());
  document.querySelectorAll('[data-go="compensation"]:not(.navbtn)').forEach(b=>{b.dataset.go='rank';if(/compensation|rank|level/i.test(b.textContent))b.textContent='View Performance & Rewards →'});
 }
+function fixProgrammeGuide(){
+ const guide=$('.section[data-section="guide"]');if(!guide)return;
+ guide.querySelectorAll('.guideMap [data-go="rank"]').forEach(b=>{
+  const title=b.querySelector('b'),desc=b.querySelector('span');
+  if(title)title.textContent='Performance & Rewards';
+  if(desc)desc.textContent='Track verified qualifying revenue, milestones and rewards.';
+ });
+ guide.querySelectorAll('.guideMap [data-go="compensation"]').forEach(b=>{
+  b.dataset.go='rank';
+  const title=b.querySelector('b'),desc=b.querySelector('span');
+  if(title)title.textContent='Performance & Rewards';
+  if(desc)desc.textContent='Track verified qualifying revenue, milestones and rewards.';
+ });
+ guide.querySelectorAll('b,h2,h3,p,span').forEach(el=>{
+  if(/^rank progress$/i.test(el.textContent.trim()))el.textContent='Performance & Rewards';
+  else if(/^compensation plan$/i.test(el.textContent.trim()))el.textContent='Performance & Rewards';
+ });
+}
 function fixDashboard(){
  const d=lastData,next=nextMilestone(d.life);
  const perf=$('#overviewPerformance');if(perf)perf.textContent='Ambassador';
@@ -101,10 +119,10 @@ async function refreshData(){
    incentive:rows.filter(x=>x.earning_type==='achievement_bonus').reduce((s,x)=>s+Number(x.commission_amount||0),0),
    monthlyReward:rows.filter(x=>x.earning_type==='monthly_performance').reduce((s,x)=>s+Number(x.commission_amount||0),0)
   };
-  mountPerformanceSections();fixNavigation();fixDashboard();fixSearch();compactIdentity();
+  mountPerformanceSections();fixNavigation();fixProgrammeGuide();fixDashboard();fixSearch();compactIdentity();
  }finally{refreshing=false}
 }
-function enforce(){installStyle();fixNavigation();fixDashboard();fixSearch();compactIdentity();if($('.section[data-section="rank"]')?.dataset.aprV4!=='1')mountPerformanceSections()}
+function enforce(){installStyle();fixNavigation();fixProgrammeGuide();fixDashboard();fixSearch();compactIdentity();if($('.section[data-section="rank"]')?.dataset.aprV4!=='1')mountPerformanceSections()}
 function boot(){
  installStyle();let tries=0;const timer=setInterval(()=>{tries++;enforce();if($('.section[data-section="dashboard"]')&&$('.section[data-section="rank"]')){clearInterval(timer);refreshData()}else if(tries>80)clearInterval(timer)},100);
  const observer=new MutationObserver(()=>{clearTimeout(window.__aprV4Debounce);window.__aprV4Debounce=setTimeout(enforce,30)});observer.observe(document.documentElement,{childList:true,subtree:true,characterData:true});
