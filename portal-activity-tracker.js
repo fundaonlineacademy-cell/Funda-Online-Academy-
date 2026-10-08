@@ -70,7 +70,18 @@ async function record(markActive=false,force=false){
 
 function markActivity(){record(true,false)}
 
+function loadAmbassadorRewards(){
+  if(!/\/ambassador-portal-v2\.html$/.test(path)||window.__fundaAmbassadorPerformanceRewardsV3)return;
+  if(document.querySelector('script[data-funda-ambassador-rewards-v3]'))return;
+  const script=document.createElement('script');
+  script.src='ambassador-performance-rewards-v3.js?v=20261008-final-20pct-v1';
+  script.async=false;
+  script.dataset.fundaAmbassadorRewardsV3='1';
+  document.head.appendChild(script);
+}
+
 function install(){
+  loadAmbassadorRewards();
   ['pointerdown','keydown','touchstart'].forEach(type=>window.addEventListener(type,markActivity,{passive:true}));
   window.addEventListener('scroll',markActivity,{passive:true});
   window.addEventListener('focus',()=>record(true,true));
