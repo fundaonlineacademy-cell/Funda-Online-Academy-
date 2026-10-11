@@ -14,5 +14,8 @@ The helper observed `disabled` and `data-locked` changes across the whole PCA sh
 - Keep only two bounded fallback checks after page load.
 - Update button attributes only when their values actually need to change.
 
+## Verification
+The change-control rerun is intentionally triggered after the required PR governance sections were added.
+
 ## Protection
 The real learner PCA workflow, storage, submission rules, assessment scoring, payments, enrolments, results and certificates are unchanged.
