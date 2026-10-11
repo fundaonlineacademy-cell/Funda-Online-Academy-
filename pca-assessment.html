@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Practical Competence Assessment | Funda Online Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js?v=20260913-session-v1"></script>
+  <style>
+    :root{--navy:#06152f;--navy2:#0b2f70;--gold:#c99a2e;--ink:#183153;--muted:#64748b;--line:#dce6f2;--bg:#f4f8fd;--green:#16835b;--amber:#a16207}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3","Segoe UI",Roboto,Arial,sans-serif}.top{min-height:70px;background:linear-gradient(100deg,var(--navy),var(--navy2));color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 22px;position:sticky;top:0;z-index:20;box-shadow:0 6px 24px #06152f25}.brand{font-weight:800}.brand small{display:block;color:#e4c777;font-size:10px;letter-spacing:.15em;margin-top:3px}.top a{color:#fff;text-decoration:none;border:1px solid #ffffff2e;background:#ffffff10;padding:9px 13px;border-radius:11px;font-weight:700}.wrap{width:min(960px,calc(100% - 28px));margin:30px auto 70px}.eyebrow{color:#9a6b0c;font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.title{font-size:clamp(30px,5vw,46px);line-height:1.08;color:var(--navy);margin:8px 0 12px}.subtitle{color:var(--muted);line-height:1.65;margin:0}.status-row{display:flex;flex-wrap:wrap;gap:9px;margin:18px 0}.pill{padding:7px 10px;border-radius:99px;background:#eaf2ff;color:#0b2f70;font-size:12px;font-weight:800}.pill.gold{background:#fff3d5;color:#805d0d}.pill.green{background:#e9f7f0;color:#126b4b}.pill.amber{background:#fff6df;color:#8a5e08}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}.metric,.card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 25px #234a780a}.metric{padding:16px}.metric strong{display:block;color:var(--navy);font-size:20px}.metric span{color:var(--muted);font-size:12px}.card{padding:22px;margin:16px 0}.card h2{margin:0 0 10px;color:var(--navy);font-size:20px}.card h3{color:var(--navy2);font-size:16px;margin:18px 0 8px}.card p,.card li{line-height:1.65;color:#445b75}.notice{border-left:4px solid var(--gold);background:#fff8e8}.locked{border-left:4px solid #d59a28;background:#fffaf0}.good{border-left:4px solid var(--green);background:#effbf5}.modes{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.mode{padding:8px 10px;border:1px solid #d5e1ef;border-radius:11px;background:#f8fbff;color:#2d4d72;font-weight:700;font-size:12px}.list{margin:8px 0 0;padding-left:20px}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 16px;border-radius:12px;text-decoration:none;font-weight:800;border:1px solid var(--line);background:#fff;color:var(--navy)}.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}.message{padding:15px 17px;border:1px solid #efcaca;background:#fff1f1;color:#8f1d1d;border-radius:14px}.skeleton{opacity:.65}.task-content[hidden]{display:none!important}@media(max-width:760px){.top{padding:12px 14px}.wrap{margin-top:20px}.grid{grid-template-columns:1fr}.card{padding:18px}.actions{flex-direction:column}.btn{width:100%}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">Funda Online Academy<small>ACADEMIC ASSESSMENT</small></div>
+    <a id="backToCourse" href="dashboard.html">Back to Course</a>
+  </header>
+  <main class="wrap">
+    <div id="message" class="message" hidden></div>
+    <section id="pcaShell" class="skeleton" aria-live="polite">
+      <div class="eyebrow">Final Course Requirement</div>
+      <h1 class="title" id="pcaTitle">Practical Competence Assessment</h1>
+      <p class="subtitle" id="pcaIntro">This final practical assessment checks whether you can apply the knowledge and skills taught in your course.</p>
+      <div class="status-row"><span class="pill" id="pcaStatus">Loading…</span><span class="pill gold" id="moduleLabel">Final module</span></div>
+
+      <div class="grid">
+        <div class="metric"><strong id="minimumScore">60%</strong><span>Minimum rubric score</span></div>
+        <div class="metric"><strong>All</strong><span>Critical criteria must be met</span></div>
+        <div class="metric"><strong id="resubmissionCount">1</strong><span>Structured resubmission available</span></div>
+      </div>
+
+      <section class="card notice">
+        <h2>How this assessment works</h2>
+        <p>Your course uses one Practical Competence Assessment at the end of the final module. It is completed only after the final Summative Assessment requirement has been met.</p>
+        <p>Your final practical outcome is recorded as <strong>Competent</strong> or <strong>Not Yet Competent</strong>. Meeting the percentage alone is not enough where a critical criterion has not been satisfied.</p>
+      </section>
+
+      <section class="card">
+        <h2>Approved evidence mode</h2>
+        <p>The practical format is selected to suit this course without creating unsafe or unreasonable access requirements.</p>
+        <div class="modes" id="pcaModes"></div>
+      </section>
+
+      <section class="card locked" id="taskUnavailable">
+        <h2>Course-specific practical task</h2>
+        <p id="taskUnavailableText">The assessment structure is configured, but the course-specific task and rubric are not yet open for learner submission.</p>
+      </section>
+
+      <section class="task-content" id="taskContent" hidden>
+        <section class="card">
+          <h2>Purpose</h2><div id="taskPurpose"></div>
+          <h2>Task instructions</h2><div id="taskInstructions"></div>
+          <div id="taskComponents"></div>
+        </section>
+        <section class="card">
+          <h2>Materials and access</h2><ul class="list" id="taskMaterials"></ul>
+          <h2>Safety and responsible practice</h2><ul class="list" id="taskSafety"></ul>
+          <h2>Evidence to submit</h2><ul class="list" id="taskEvidence"></ul>
+        </section>
+        <section class="card">
+          <h2>Assessment criteria</h2><div id="taskCriteria"></div>
+        </section>
+      </section>
+
+      <section class="card" id="progressCard">
+        <h2>Your PCA status</h2>
+        <p id="progressText">No practical submission has been recorded yet.</p>
+      </section>
+
+      <div class="actions"><a class="btn" id="returnCourse" href="dashboard.html">Return to Course</a><a class="btn primary" id="courseCompletion" href="#" hidden>Continue to Course Completion</a></div>
+    </section>
+  </main>
+  <script src="pca-assessment.js?v=20261011-structure-v1"></script>
+</body>
+</html>
