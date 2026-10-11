@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Course Completion | Funda Online Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js?v=20260913-session-v1"></script>
+  <style>
+    :root{--navy:#06152f;--navy2:#0b2f70;--gold:#c99a2e;--ink:#183153;--muted:#64748b;--line:#dce6f2;--bg:#f4f8fd;--green:#16835b;--amber:#a16207;--red:#a12b2b}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3","Segoe UI",Roboto,Arial,sans-serif}.top{min-height:70px;background:linear-gradient(100deg,var(--navy),var(--navy2));color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 22px;position:sticky;top:0;z-index:20;box-shadow:0 6px 24px #06152f25}.brand{font-weight:800}.brand small{display:block;color:#e4c777;font-size:10px;letter-spacing:.15em;margin-top:3px}.top a{color:#fff;text-decoration:none;border:1px solid #ffffff2e;background:#ffffff10;padding:9px 13px;border-radius:11px;font-weight:700}.wrap{width:min(960px,calc(100% - 28px));margin:30px auto 70px}.eyebrow{color:#9a6b0c;font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.title{font-size:clamp(30px,5vw,46px);line-height:1.08;color:var(--navy);margin:8px 0 12px}.subtitle{color:var(--muted);line-height:1.65;margin:0}.card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 25px #234a780a;padding:22px;margin:16px 0}.card h2{margin:0 0 12px;color:var(--navy);font-size:20px}.card p,.card li{line-height:1.65;color:#445b75}.journey{display:grid;gap:10px;margin-top:14px}.step{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:14px;background:#fbfdff}.step-icon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#edf3fa;color:var(--navy);font-weight:900}.step.done .step-icon{background:#e9f7f0;color:#126b4b}.step.wait .step-icon{background:#fff3d5;color:#805d0d}.step strong{display:block;color:var(--navy)}.step small{display:block;color:var(--muted);margin-top:2px}.state{font-size:11px;font-weight:800;padding:6px 9px;border-radius:99px;background:#edf3fa;color:#53677f}.step.done .state{background:#e9f7f0;color:#126b4b}.step.wait .state{background:#fff3d5;color:#805d0d}.notice{border-left:4px solid var(--gold);background:#fff8e8}.good{border-left:4px solid var(--green);background:#effbf5}.locked{border-left:4px solid #d59a28;background:#fffaf0}.feedback-rule{padding:14px;border-radius:14px;background:#f5f9ff;border:1px solid #d8e5f4;margin-top:12px}.feedback-rule strong{color:var(--navy)}.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:11px 16px;border-radius:12px;text-decoration:none;font-weight:800;border:1px solid var(--line);background:#fff;color:var(--navy)}.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}.btn[aria-disabled="true"]{opacity:.55;pointer-events:none}.message{padding:15px 17px;border:1px solid #efcaca;background:#fff1f1;color:#8f1d1d;border-radius:14px}.skeleton{opacity:.65}@media(max-width:760px){.top{padding:12px 14px}.wrap{margin-top:20px}.card{padding:18px}.step{grid-template-columns:36px minmax(0,1fr)}.step .state{grid-column:2;justify-self:start}.actions{flex-direction:column}.btn{width:100%}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand">Funda Online Academy<small>COURSE COMPLETION</small></div>
+    <a id="backToCourse" href="dashboard.html">Back to Course</a>
+  </header>
+  <main class="wrap">
+    <div id="message" class="message" hidden></div>
+    <section id="completionShell" class="skeleton" aria-live="polite">
+      <div class="eyebrow">Final Course Step</div>
+      <h1 class="title">Course Completion</h1>
+      <p class="subtitle">Review your academic requirements and complete the course evaluation when it becomes available.</p>
+
+      <section class="card">
+        <h2>Completion pathway</h2>
+        <div class="journey">
+          <div class="step" id="assessmentStep"><div class="step-icon">1</div><div><strong>Final academic assessment</strong><small id="assessmentDetail">Checking your final Summative Assessment status.</small></div><span class="state" id="assessmentState">Checking</span></div>
+          <div class="step" id="pcaStep"><div class="step-icon">2</div><div><strong>Practical Competence Assessment</strong><small id="pcaDetail">Checking whether a PCA applies to this course.</small></div><span class="state" id="pcaState">Checking</span></div>
+          <div class="step" id="evaluationStep"><div class="step-icon">3</div><div><strong>Course Evaluation</strong><small id="evaluationDetail">Learner feedback is the final quality-assurance step.</small></div><span class="state" id="evaluationState">Checking</span></div>
+          <div class="step" id="completeStep"><div class="step-icon">✓</div><div><strong>Course completion</strong><small id="completeDetail">Completion is confirmed after the required academic and evaluation steps.</small></div><span class="state" id="completeState">Pending</span></div>
+        </div>
+      </section>
+
+      <section class="card notice">
+        <h2>Course Evaluation</h2>
+        <p>Funda Online Academy collects learner feedback at the end of each course as part of course quality review and continuous improvement.</p>
+        <div class="feedback-rule"><strong>Your feedback does not change your academic result.</strong><br>Your competence decision is based on the approved academic assessment requirements. The evaluation asks for your experience and may include positive or critical feedback without academic penalty.</div>
+        <p id="evaluationAvailability">The online evaluation form structure is being prepared from the Academy's approved evaluation process.</p>
+      </section>
+
+      <section class="card locked" id="completionNotice">
+        <h2 id="completionNoticeTitle">Completion pending</h2>
+        <p id="completionNoticeText">Complete the required academic steps before the Course Evaluation can be submitted.</p>
+      </section>
+
+      <div class="actions"><a class="btn" id="returnCourse" href="dashboard.html">Return to Course</a><a class="btn primary" id="openPca" href="#" hidden>Open PCA</a><a class="btn primary" id="openEvaluation" href="#" aria-disabled="true">Course Evaluation</a></div>
+    </section>
+  </main>
+  <script src="course-completion.js?v=20261011-structure-v1"></script>
+</body>
+</html>
