@@ -11,6 +11,8 @@ function showMessage(text){const box=$('message');if(!box)return;box.textContent
 function setStep(id,state,label,detail){const step=$(id+'Step'),badge=$(id+'State'),copy=$(id+'Detail');if(!step||!badge||!copy)return;step.classList.remove('done','wait');if(state==='done')step.classList.add('done');else if(state==='wait')step.classList.add('wait');badge.textContent=label;copy.textContent=detail}
 function render(data){
   $('completionShell')?.classList.remove('skeleton');
+  const evalInfo=$('evaluationAvailability');
+  if(evalInfo)evalInfo.textContent='The Course Evaluation opens after all required academic steps have been satisfied.';
   setStep('assessment',data.final_summative_passed?'done':'wait',data.final_summative_passed?'Passed':'Pending',data.final_summative_passed?'The final Summative Assessment requirement has been satisfied.':'Pass the final Summative Assessment before continuing to the course-end requirements.');
 
   const openPca=$('openPca');
@@ -27,15 +29,19 @@ function render(data){
 
   if(!data.evaluation_required){
     setStep('evaluation','done','Not required','No separate course evaluation is required for this course.');
+    if(evalInfo)evalInfo.textContent='No separate learner evaluation is required for this course.';
   }else if(data.evaluation_submitted){
     setStep('evaluation','done','Submitted','Your course evaluation has been submitted. Your feedback does not alter your academic result.');
+    if(evalInfo)evalInfo.textContent='Thank you. Your Course Evaluation has been submitted.';
   }else if(data.evaluation_form_status!=='active'){
     setStep('evaluation','wait','Form pending','The Course Evaluation is required, but the online evaluation form has not yet been activated.');
-    $('evaluationAvailability').textContent='The Course Evaluation requirement is configured. The Academy is transferring the approved evaluation questions into the online completion workflow before learner submission is activated.';
+    if(evalInfo)evalInfo.textContent='The Course Evaluation requirement is configured, but learner submission is not currently active.';
   }else if(!data.academic_requirements_met){
     setStep('evaluation','wait','Locked','The Course Evaluation opens after all required academic steps have been satisfied.');
+    if(evalInfo)evalInfo.textContent='Complete the required academic pathway first. Your feedback form will then unlock automatically.';
   }else{
     setStep('evaluation','wait','Required','Complete and submit the Course Evaluation to finish the course-completion workflow.');
+    if(evalInfo)evalInfo.textContent='Your academic requirements are satisfied. Complete the Course Evaluation to finish the course-completion workflow.';
   }
 
   const notice=$('completionNotice'),title=$('completionNoticeTitle'),text=$('completionNoticeText');
