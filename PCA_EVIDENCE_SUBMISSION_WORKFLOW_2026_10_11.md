@@ -42,6 +42,10 @@ The private `pca-evidence` storage bucket supports JPG, PNG, WEBP, PDF, DOCX, XL
 
 The approved internal QA account can inspect the full PCA task and test local file selection. QA preview does not create a PCA submission, upload a learner file or record a Course Evaluation. This preserves the account as an inspection tool rather than producing false learner evidence.
 
+## Regression scope
+
+The implementation is limited to the PCA evidence workspace and its private evidence storage controls. It does not alter payment, enrolment, existing formal assessment scoring, results, certificates, login, Ambassador or public-course runtime files.
+
 ## Protection
 
 This workflow does not activate any draft PCA task. Course-specific PCA activation remains separately controlled by academic QA and lesson-alignment approval. Existing lessons, Knowledge Checks, Formative/Summative assessment logic, payments, results and certificates are outside this change.
