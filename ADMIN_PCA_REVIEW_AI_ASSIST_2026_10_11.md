@@ -75,10 +75,16 @@ If either condition fails, the first permitted attempt is `not_yet_competent`; a
 - Admin PCA RPCs are `SECURITY DEFINER` but also perform `is_admin()` checks.
 - RPC execution is granted to `authenticated` and explicitly revoked from `anon`.
 - AI/review tables use RLS and expose Admin SELECT only.
-- AI pre-assessment records are cryptographically/database-bound to the same PCA submission before they can be referenced by a human review.
+- AI pre-assessment records are database-bound to the same PCA submission before they can be referenced by a human review.
 - Learners cannot read the private AI pre-assessment or Admin review records.
 - Existing learner evidence/storage controls are unchanged.
 - Existing payment, enrolment, Formative/Summative scoring, results and certificate logic is unchanged by this Admin feature.
+
+## Shared Admin regression boundaries
+
+The only change to `admin-v2.html` is one additional isolated script include for the PCA review workspace. Existing script order and logic for Ambassador operations, IT/Security, Finance, Student Support, Marketing, Communication and other Admin departments remain unchanged.
+
+The PCA workspace uses manual Refresh only and introduces no polling or automatic refresh into Academic, Assessments & Content.
 
 ## Current limitations / test status
 
