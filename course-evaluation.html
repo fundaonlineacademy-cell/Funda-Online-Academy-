@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta http-equiv="Cache-Control" content="no-cache,no-store,must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Course Evaluation | Funda Online Academy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js?v=20260913-session-v1"></script>
+  <style>
+    :root{--navy:#06152f;--navy2:#0b2f70;--gold:#c99a2e;--ink:#183153;--muted:#64748b;--line:#dce6f2;--bg:#f4f8fd;--green:#16835b;--red:#9b1c1c}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3","Segoe UI",Roboto,Arial,sans-serif}.top{min-height:70px;background:linear-gradient(100deg,var(--navy),var(--navy2));color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 22px;position:sticky;top:0;z-index:20;box-shadow:0 6px 24px #06152f25}.brand{font-weight:800}.brand small{display:block;color:#e4c777;font-size:10px;letter-spacing:.15em;margin-top:3px}.top a{color:#fff;text-decoration:none;border:1px solid #ffffff2e;background:#ffffff10;padding:9px 13px;border-radius:11px;font-weight:700}.wrap{width:min(900px,calc(100% - 28px));margin:30px auto 70px}.eyebrow{color:#9a6b0c;font-size:12px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}.title{font-size:clamp(30px,5vw,44px);line-height:1.08;color:var(--navy);margin:8px 0 10px}.subtitle{color:var(--muted);line-height:1.65;margin:0}.card{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 25px #234a780a;padding:22px;margin:16px 0}.card h2{margin:0 0 7px;color:var(--navy);font-size:19px}.question{padding-top:20px}.question-num{display:inline-flex;align-items:center;justify-content:center;width:31px;height:31px;border-radius:50%;background:#eaf2ff;color:#0b2f70;font-weight:800;margin-right:8px}.required{color:#9b1c1c;font-size:12px;font-weight:800}.options{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}.option{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid #d7e3f1;border-radius:12px;background:#fbfdff;cursor:pointer;font-weight:700;color:#334a62}.option:has(input:checked){border-color:#2767c6;background:#edf5ff;color:#0b2f70}.option input{accent-color:#0b2f70}.rating .option{min-width:60px;justify-content:center}.field{width:100%;min-height:110px;border:1px solid #ccdbea;border-radius:12px;padding:12px 13px;font:inherit;color:var(--ink);resize:vertical;background:#fbfdff}.field:focus{outline:3px solid #2767c61b;border-color:#2767c6}.hint{color:var(--muted);font-size:12px;line-height:1.5;margin-top:7px}.privacy{border-left:4px solid var(--gold);background:#fff8e8}.privacy strong{color:var(--navy)}.actions{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:22px}.btn{min-height:46px;border-radius:12px;padding:11px 17px;font:inherit;font-weight:800;border:1px solid var(--line);background:#fff;color:var(--navy);text-decoration:none;cursor:pointer}.btn.primary{background:var(--navy);color:#fff;border-color:var(--navy)}.btn:disabled{opacity:.55;cursor:not-allowed}.message{padding:15px 17px;border:1px solid #efcaca;background:#fff1f1;color:#8f1d1d;border-radius:14px;margin-bottom:16px}.message.success{border-color:#bce7cf;background:#effbf5;color:#146447}.conditional[hidden]{display:none}.skeleton{opacity:.65}@media(max-width:680px){.top{padding:12px 14px}.wrap{margin-top:20px}.card{padding:17px}.options{display:grid;grid-template-columns:1fr}.rating.options{grid-template-columns:repeat(5,1fr)}.rating .option{min-width:0;padding:10px 4px}.actions{flex-direction:column-reverse}.btn{width:100%}}
+  </style>
+</head>
+<body>
+<header class="top"><div class="brand">Funda Online Academy<small>COURSE EVALUATION</small></div><a id="backToCompletion" href="dashboard.html">Course Completion</a></header>
+<main class="wrap">
+  <div id="message" class="message" hidden></div>
+  <section id="evaluationShell" class="skeleton">
+    <div class="eyebrow">Final Quality Review</div>
+    <h1 class="title">Course Evaluation</h1>
+    <p id="courseTitle" class="subtitle">Checking your course and completion status.</p>
+
+    <section class="card privacy">
+      <strong>Your feedback does not change your academic result.</strong>
+      <p>Your academic result is determined by the approved assessment requirements. This evaluation is used for course quality review and continuous improvement, and you may provide positive or critical feedback without academic penalty.</p>
+    </section>
+
+    <form id="evaluationForm" novalidate hidden>
+      <section class="card question">
+        <h2><span class="question-num">1</span>How would you rate your overall experience of this course? <span class="required">Required</span></h2>
+        <div class="hint">1 = Poor · 5 = Excellent</div>
+        <div class="options rating" role="radiogroup" aria-label="Overall course rating">
+          <label class="option"><input type="radio" name="overall_rating" value="1">1</label><label class="option"><input type="radio" name="overall_rating" value="2">2</label><label class="option"><input type="radio" name="overall_rating" value="3">3</label><label class="option"><input type="radio" name="overall_rating" value="4">4</label><label class="option"><input type="radio" name="overall_rating" value="5">5</label>
+        </div>
+      </section>
+
+      <section class="card question">
+        <h2><span class="question-num">2</span>Which topics, lessons or aspects of the course did you find most useful or valuable?</h2>
+        <textarea class="field" id="mostUseful" maxlength="5000" placeholder="Optional"></textarea>
+      </section>
+
+      <section class="card question">
+        <h2><span class="question-num">3</span>Did the course achieve its stated learning objectives? <span class="required">Required</span></h2>
+        <div class="options"><label class="option"><input type="radio" name="objectives_achieved" value="yes">Yes</label><label class="option"><input type="radio" name="objectives_achieved" value="no">No</label></div>
+        <div id="objectivesReasonWrap" class="conditional" hidden><label for="objectivesReason"><strong>If no, please explain why.</strong></label><textarea class="field" id="objectivesReason" maxlength="5000"></textarea></div>
+      </section>
+
+      <section class="card question">
+        <h2><span class="question-num">4</span>Knowledge and practical value</h2>
+        <p><strong>Did the knowledge and information gained meet your expectations?</strong> <span class="required">Required</span></p>
+        <div class="options"><label class="option"><input type="radio" name="expectations_met" value="yes">Yes</label><label class="option"><input type="radio" name="expectations_met" value="no">No</label><label class="option"><input type="radio" name="expectations_met" value="partly">Partly</label></div>
+        <p style="margin-top:22px"><strong>How useful or applicable will what you learned be in your work, career, business or daily activities?</strong> <span class="required">Required</span></p>
+        <div class="options"><label class="option"><input type="radio" name="work_applicability" value="definitely">Definitely</label><label class="option"><input type="radio" name="work_applicability" value="mostly">Mostly</label><label class="option"><input type="radio" name="work_applicability" value="somewhat">Somewhat</label><label class="option"><input type="radio" name="work_applicability" value="not_at_all">Not at all</label></div>
+      </section>
+
+      <section class="card question"><h2><span class="question-num">5</span>What could Funda Online Academy have done to make this course more effective?</h2><textarea class="field" id="improvementComments" maxlength="5000" placeholder="Optional"></textarea></section>
+
+      <section class="card question">
+        <h2><span class="question-num">6</span>How would you rate the organisation and presentation of the course? <span class="required">Required</span></h2>
+        <div class="hint">1 = Poor · 5 = Excellent</div>
+        <div class="options rating" role="radiogroup" aria-label="Course organisation rating">
+          <label class="option"><input type="radio" name="organization_rating" value="1">1</label><label class="option"><input type="radio" name="organization_rating" value="2">2</label><label class="option"><input type="radio" name="organization_rating" value="3">3</label><label class="option"><input type="radio" name="organization_rating" value="4">4</label><label class="option"><input type="radio" name="organization_rating" value="5">5</label>
+        </div>
+      </section>
+
+      <section class="card question"><h2><span class="question-num">7</span>Comments and suggestions</h2><p class="hint">You may include topics, activities, support or initiatives you would find useful in future courses.</p><textarea class="field" id="commentsSuggestions" maxlength="5000" placeholder="Optional"></textarea><label for="furtherComments" style="display:block;margin-top:18px"><strong>Further comments or suggestions</strong></label><textarea class="field" id="furtherComments" maxlength="5000" placeholder="Optional"></textarea></section>
+
+      <div class="actions"><a class="btn" id="cancelEvaluation" href="dashboard.html">Back to Course Completion</a><button class="btn primary" id="submitEvaluation" type="submit">Submit Course Evaluation</button></div>
+    </form>
+  </section>
+</main>
+<script src="course-evaluation.js?v=20261011-eval-v1"></script>
+</body>
+</html>

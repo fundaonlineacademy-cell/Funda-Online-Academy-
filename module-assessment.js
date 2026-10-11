@@ -25,6 +25,7 @@
 
   const db=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
   let state=null;
+  let courseEnd=null;
   let currentQuestionIndex=0;
   let answerMap={};
 
@@ -51,6 +52,16 @@
     return `<div class="actions">${extra}<a class="btn secondary" href="dashboard.html#myCoursesSection">Return to My Courses</a></div>`;
   }
 
+  function postSummativeAction(){
+    if(assessmentType!=='summative'||!courseEnd||Number(courseEnd.final_module_number)!==moduleNumber){
+      return {href:`course-study.html?id=${encodeURIComponent(courseId)}`,label:'Return to Course →'};
+    }
+    if(courseEnd.pca_required){
+      return {href:`pca-assessment.html?course=${encodeURIComponent(courseId)}`,label:'Proceed to Practical Competence Assessment →'};
+    }
+    return {href:`course-completion.html?course=${encodeURIComponent(courseId)}`,label:'Proceed to Course Completion →'};
+  }
+
   async function load(){
     if(!validUuid(courseId)||!Number.isInteger(moduleNumber)||moduleNumber<1||!['formative','summative'].includes(assessmentType)){
       fail('The assessment link is invalid. Please reopen it from your course dashboard.');
@@ -65,7 +76,6 @@
       else fail('The secure connection could not be confirmed. You have not been signed out and your answers on this page remain here. Check your connection and try again.');
       return;
     }
-    const user=restored.user;
 
     const {data,error}=await db.rpc('get_module_assessment_state',{
       p_course_id:courseId,
@@ -80,6 +90,12 @@
     }
 
     state=data;
+    if(assessmentType==='summative'){
+      try{
+        const {data:endData,error:endError}=await db.rpc('get_course_end_structure',{p_course_id:courseId});
+        if(!endError&&endData?.ok)courseEnd=endData;else if(endError)console.warn('Course-end structure unavailable',endError);
+      }catch(endError){console.warn('Course-end structure unavailable',endError)}
+    }
     renderState();
   }
 
@@ -110,9 +126,12 @@
     }
 
     if(state.status==='passed'){
-      const extra=assessmentType==='formative'
-        ? `<a class="btn primary" href="module-assessment.html?course=${encodeURIComponent(courseId)}&module=${moduleNumber}&type=summative">Proceed to Summative Assessment →</a>`
-        : `<a class="btn primary" href="course-study.html?id=${encodeURIComponent(courseId)}">Return to Course →</a>`;
+      let extra;
+      if(assessmentType==='formative'){
+        extra=`<a class="btn primary" href="module-assessment.html?course=${encodeURIComponent(courseId)}&module=${moduleNumber}&type=summative">Proceed to Summative Assessment →</a>`;
+      }else{
+        const next=postSummativeAction();extra=`<a class="btn primary" href="${next.href}">${escapeHtml(next.label)}</a>`;
+      }
       statusBox.innerHTML=`<div class="notice good"><strong>✅ Assessment already passed</strong><br>${escapeHtml(state.message||'Your passing result has been recorded.')} Attempts used: ${escapeHtml(state.attempts_used||1)} of ${escapeHtml(state.max_attempts||3)}.</div>${actionLinks(extra)}`;
       form.hidden=true;
       return;
@@ -283,9 +302,12 @@
     badges.innerHTML=`<span class="badge">${escapeHtml(result.percentage)}%</span><span class="badge">${escapeHtml(result.correct_answers)} / ${escapeHtml(result.total_questions)} correct</span><span class="badge">Attempt ${escapeHtml(result.attempt_number)} of 3</span>`;
 
     if(result.passed){
-      const extra=assessmentType==='formative'
-        ? `<a class="btn primary" href="module-assessment.html?course=${encodeURIComponent(courseId)}&module=${moduleNumber}&type=summative">Proceed to Summative Assessment →</a>`
-        : `<a class="btn primary" href="course-study.html?id=${encodeURIComponent(courseId)}">Return to Course →</a>`;
+      let extra;
+      if(assessmentType==='formative'){
+        extra=`<a class="btn primary" href="module-assessment.html?course=${encodeURIComponent(courseId)}&module=${moduleNumber}&type=summative">Proceed to Summative Assessment →</a>`;
+      }else{
+        const next=postSummativeAction();extra=`<a class="btn primary" href="${next.href}">${escapeHtml(next.label)}</a>`;
+      }
       statusBox.innerHTML=`<div class="notice good"><strong>✅ Passed — ${escapeHtml(result.percentage)}%</strong><br>You achieved the required 70% pass mark. This passing attempt is now recorded.</div>${actionLinks(extra)}`;
     }else if(result.status==='exhausted'){
       statusBox.innerHTML=`<div class="notice bad"><strong>Final attempt recorded — ${escapeHtml(result.percentage)}%</strong><br>All three permitted attempts have now been used. This assessment is finalised for Academy review.</div>${actionLinks()}`;
