@@ -54,7 +54,7 @@ The configured structural modes are:
 
 ## Course-specific PCA draft status
 
-Course-specific task briefs and rubrics have now been drafted for all 21 PCA courses. They remain in `draft` status and are not learner-visible or open for submission until they are separately audited and activated.
+Course-specific task briefs and rubrics have been drafted for all 21 PCA courses. They remain in `draft` status and are not learner-visible or open for submission until separately audited and activated.
 
 Each draft contains:
 
@@ -68,21 +68,54 @@ Each draft contains:
 - learner-declaration requirement;
 - an indicative completion-time guide.
 
-Structural QA confirms all 21 drafts have five criteria totalling 100% and at least one critical criterion. The approved overall competence rule remains 60% plus successful completion of every designated critical criterion, with one structured resubmission.
+## Post-audit rubric and evidence controls
 
-Examples of deliberate access/safety controls in the drafts include:
+Following the read-only PCA audit, all 21 drafts were strengthened without activating learner submission.
 
-- Carpentry and Construction use drawing/structured simulation rather than compulsory hazardous cutting or live-site work.
-- Digital Device Repair uses an authorised fictional diagnostic/job-card case rather than compulsory repair of a real customer device.
-- Poultry does not require live birds.
-- Landscaping does not require power tools, pesticide application or specialist tree work.
-- Print & Branding does not require ownership of specialist production machinery.
-- Food & Beverage uses a controlled mock service and does not require alcohol service.
-- Nails may use a practice hand/tips rather than a live model.
-- Urban Farming permits an equivalent structured simulation where reasonable growing access is unavailable.
-- Baking uses one small affordable approved product and includes food-safety controls plus a business/costing component.
+Each PCA now uses the same controlled five-level criterion scale:
 
-The drafts deliberately remain inactive while lesson alignment, wording, evidence sufficiency and course-specific academic validity are checked.
+- Level 4 — Fully Competent — 100% of the criterion weight.
+- Level 3 — Competent — 75% of the criterion weight.
+- Level 2 — Partially Competent — 50% of the criterion weight.
+- Level 1 — Limited Evidence — 25% of the criterion weight.
+- Level 0 — Not Demonstrated / Unsafe — 0% of the criterion weight.
+
+The weighted criterion scores are added to produce the overall PCA percentage. The overall competence threshold remains 60%.
+
+A criterion marked Critical must achieve at least Level 3. A critical criterion is Not Met if it scores Level 0, 1 or 2, if mandatory evidence for that criterion is missing, or if an unsafe/prohibited action occurs. A learner cannot be declared Competent overall while any critical criterion is Not Met, even when the total percentage is 60% or higher.
+
+Evidence verification is also standardised across all 21 drafts:
+
+- learner declaration is mandatory;
+- process evidence is required where the process itself is material to competence;
+- final photographs or a final output alone are not sufficient where the process is essential;
+- editable/source files are required where relevant to verifying authorship and competence;
+- the assessor may request brief clarification, additional evidence or a limited demonstration where authenticity or competence is unclear;
+- suspected copied, fabricated or misleading evidence is referred for academic review rather than treated as an ordinary resubmission.
+
+All 21 tasks remain activation-blocked until final QA is satisfied.
+
+## Lesson-alignment gate
+
+PCA activation also requires confirmation that the task assesses only content actually taught in the approved course lessons.
+
+Current governance state:
+
+- Bookkeeping, Carpentry and E-Commerce: alignment recorded against currently approved course content.
+- Remaining 18 PCA courses: alignment remains pending until those lessons are audited/approved under FOA-ACA-STD-001 v1.1.
+
+The pending alignment state is deliberate and does not reopen or rewrite those lessons as part of the PCA work.
+
+## Course-specific access and clarity corrections
+
+The audit corrections also made hidden access expectations and vague evidence requirements explicit:
+
+- Fashion Design and Sewing: safe access to a domestic sewing machine or approved supervised equivalent is required for the hands-on component, but purchase is not required.
+- Gel & Acrylic Nails: basic gel/acrylic practice products and a compatible curing lamp where required must be accessible; a professional salon kit is not required.
+- Urban Farming: the monitoring period is now a minimum of 14 calendar days with at least five dated monitoring entries, or equivalent dated evidence in the approved simulation route.
+- Professional Baking: product-quality judgement is tied to hygiene, process, bake completion, product-appropriate texture/structure and stated quality checks rather than appearance alone.
+- Graphic Design: production readiness is tied to the supplied output brief, including dimensions, image quality, bleed/safe area where required, asset/font handling and appropriate export settings.
+- Print & Branding: the production specification must state dimensions, placement, material/substrate, intended process, file requirements and quality checks; the learner is not expected to invent machine settings or own specialist equipment.
 
 ## Course Evaluation — approved online version
 
@@ -147,4 +180,4 @@ The structure deliberately does not alter:
 - payments or enrolment;
 - unrelated Student Portal tabs or workflows.
 
-The Student-facing course-end work remains isolated on the feature branch pending PCA draft audit/approval, evidence-submission workflow finalisation, cache/version finalisation, authenticated end-to-end UI testing and the owner's physical review before merge to live `main`.
+The Student-facing course-end work remains isolated on the feature branch pending final PCA academic QA/approval, evidence-submission workflow finalisation, cache/version finalisation, authenticated end-to-end UI testing and the owner's physical review before merge to live `main`.
