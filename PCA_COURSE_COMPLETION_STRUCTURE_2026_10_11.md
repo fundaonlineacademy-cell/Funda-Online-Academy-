@@ -54,9 +54,37 @@ The configured structural modes are:
 
 Course-specific task instructions, evidence requirements and rubrics are intentionally not populated in the initial structure. Those will be designed during the formal assessment-development phase and activated only after academic approval.
 
-## Course Evaluation status
+## Course Evaluation — approved online version
 
-Every current course is configured to require a Course Evaluation at completion. The evaluation form is intentionally marked `pending_design` until the owner's existing evaluation form is reviewed and approved for the online workflow. No evaluation questions have been invented or activated in this structural phase.
+Every current course is configured to require the approved Course Evaluation after academic requirements are satisfied.
+
+Form version: `FOA-EVAL-001 v1.0`.
+
+The online form is based on the Academy's existing Evaluation Form and retains its core evaluation areas while updating the language from event/workshop wording to course wording:
+
+- overall course rating (1–5);
+- most useful learning/topics;
+- whether the stated course objectives were achieved;
+- required explanation where the learner answers No to achievement of objectives;
+- whether the knowledge/information gained met expectations;
+- expected work/career/business applicability;
+- suggestions for improving course effectiveness;
+- organisation/presentation rating (1–5);
+- comments, suggestions and optional further comments.
+
+Core rating/choice questions are required. Written comments remain optional except for the required explanation when the learner says the course objectives were not achieved. Learner feedback does not alter the academic result or competence decision.
+
+## Final-module navigation behaviour
+
+The Student learning workspace reads the configured course-end structure without changing existing lesson or assessment rules.
+
+- PCA is shown only in the final module and only for courses classified for PCA.
+- PCA remains locked until the final Summative is passed and the course-specific PCA task is active.
+- Course Completion is shown only at the end of the final module.
+- For non-PCA courses, Course Completion unlocks after the final Summative is passed.
+- For PCA courses, Course Completion unlocks after the final Summative is passed and the PCA has been assessed Competent at or above the approved 60% rubric threshold with all critical criteria met.
+- After a learner passes the final Summative, the primary next action routes to PCA where required; otherwise it routes directly to Course Completion.
+- Course Evaluation becomes available only after the configured academic requirements are satisfied.
 
 ## Data model
 
@@ -67,10 +95,13 @@ Controls the final module, assessment pathway, PCA applicability/mode, PCA stand
 Reserved for learner PCA evidence and assessor outcomes. RLS protects learner-owned records. Learner creation remains unavailable while a course PCA is only `structure_only`.
 
 ### `course_evaluation_submissions`
-Reserved for the final learner evaluation response. Submission remains unavailable until an approved evaluation form version is activated.
+Stores the final learner evaluation response for the active form version. Submission is limited to the authenticated learner after the final Summative and any required PCA have been completed.
 
 ### `get_course_end_structure(course_id)`
-Authenticated read model for the student course-end workspace. It reports final Summative status, PCA requirements/status, evaluation status and course-completion readiness without altering the existing MCQ assessment tables.
+Authenticated read model for the Student course-end workspace. It reports final Summative status, PCA requirements/status, evaluation status and course-completion readiness without altering the existing MCQ assessment tables.
+
+### `submit_course_evaluation(course_id, responses)`
+Authenticated submission route for the final Course Evaluation. The server validates eligibility and the required response structure before recording one submission for the active form version.
 
 ## Protection / scope
 
@@ -79,11 +110,11 @@ The structure deliberately does not alter:
 - lesson content;
 - Knowledge Checks;
 - existing Formative/Summative question banks;
-- assessment attempts or pass rules;
+- assessment scoring, attempts or pass rules;
 - module unlocking before the course-end sequence;
 - results templates;
 - certificate issuance;
 - payments or enrolment;
 - unrelated Student Portal tabs or workflows.
 
-The new Student-facing shells remain isolated on the feature branch until the Course Evaluation form and final course-end navigation are completed and physically reviewed by the owner.
+The Student-facing course-end work remains isolated on the feature branch pending course-specific PCA task development, cache/version finalisation, authenticated end-to-end UI testing and the owner's physical review before merge to live `main`.
