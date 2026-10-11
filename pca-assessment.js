@@ -20,7 +20,7 @@ function backUrl(){return courseId?`course-study.html?id=${encodeURIComponent(co
 function setLinks(){[$('backToCourse'),$('returnCourse')].forEach(a=>{if(a)a.href=backUrl()});const cc=$('courseCompletion');if(cc&&courseId)cc.href=`course-completion.html?course=${encodeURIComponent(courseId)}`}
 function liList(host,items,empty='To be confirmed in the approved course task.'){if(!host)return;const list=Array.isArray(items)?items.filter(Boolean):[];host.innerHTML=list.length?list.map(x=>`<li>${esc(typeof x==='string'?x:(x.text||x.label||x.description||''))}</li>`).join(''):`<li>${esc(empty)}</li>`}
 function renderComponents(components){const host=$('taskComponents');if(!host)return;const list=Array.isArray(components)?components:[];host.innerHTML=list.map((c,i)=>`<section><h3>${esc(c.title||`Part ${String.fromCharCode(65+i)}`)}</h3><p>${esc(c.instructions||c.description||'')}</p>${Array.isArray(c.evidence_required)&&c.evidence_required.length?`<ul class="list">${c.evidence_required.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}</section>`).join('')}
-function renderCriteria(criteria){const host=$('taskCriteria');if(!host)return;const list=Array.isArray(criteria)?criteria:[];host.innerHTML=list.length?list.map(c=>`<div class="mode" style="display:block;margin:8px 0"><strong>${esc(c.name||c.title||'Criterion')}</strong>${c.critical?' · Critical':''}<div style="margin-top:4px;font-weight:500;color:#566c84">${esc(c.description||'')}</div></div>`).join(''):'<p>The approved course-specific rubric will appear here before learner submission opens.</p>'}
+function renderCriteria(criteria){const host=$('taskCriteria');if(!host)return;const list=Array.isArray(criteria)?criteria:[];host.innerHTML=list.length?list.map(c=>{const weight=Number(c.weight);const meta=[Number.isFinite(weight)?`${weight}%`:null,c.critical?'Critical criterion':null].filter(Boolean).join(' · ');return `<div class="mode" style="display:block;margin:8px 0"><strong>${esc(c.name||c.title||'Criterion')}</strong>${meta?` · ${esc(meta)}`:''}<div style="margin-top:4px;font-weight:500;color:#566c84">${esc(c.description||'')}</div></div>`}).join(''):'<p>The approved course-specific rubric will appear here before learner submission opens.</p>'}
 function statusLabel(value){return String(value||'not_started').replaceAll('_',' ').replace(/\b\w/g,m=>m.toUpperCase())}
 function render(data){
   $('pcaShell')?.classList.remove('skeleton');
@@ -33,6 +33,7 @@ function render(data){
   const pcaStatus=$('pcaStatus');
   if(!data.pca_required){pcaStatus.textContent='Not required for this course';pcaStatus.className='pill';showMessage('This course does not require a Practical Competence Assessment.');return}
   if(data.pca_submission_status){pcaStatus.textContent=statusLabel(data.pca_submission_status);pcaStatus.className=data.pca_submission_status==='competent'?'pill green':'pill amber'}
+  else if(data.pca_task_status==='draft'){pcaStatus.textContent='Task drafted · academic QA pending';pcaStatus.className='pill amber'}
   else if(data.pca_task_status!=='active'){pcaStatus.textContent='Structure configured · task not yet active';pcaStatus.className='pill amber'}
   else if(!data.pca_unlocked){pcaStatus.textContent='Locked until final Summative is passed';pcaStatus.className='pill amber'}
   else{pcaStatus.textContent='Ready';pcaStatus.className='pill green'}
@@ -50,7 +51,9 @@ function render(data){
     renderCriteria(cfg.criteria);
   }else{
     unavailable.hidden=false;taskContent.hidden=true;
-    $('taskUnavailableText').textContent='The PCA placement, assessment mode and competence rules are configured. The course-specific task, evidence brief and rubric will be added during the formal assessment-development phase before learner submission is activated.';
+    $('taskUnavailableText').textContent=data.pca_task_status==='draft'
+      ?'The course-specific PCA brief and rubric have been drafted and are held for academic QA. Learner submission will remain closed until the task is approved and activated.'
+      :'The PCA placement, assessment mode and competence rules are configured. Learner submission will remain closed until the course-specific task and rubric are approved and activated.';
   }
 
   const progress=$('progressText');
@@ -62,6 +65,8 @@ function render(data){
     progress.textContent=`Current status: ${statusLabel(data.pca_submission_status)}${data.pca_rubric_score!=null?` · Rubric score ${Number(data.pca_rubric_score)}%`:''}.`;
   }else if(!data.final_summative_passed){
     progress.textContent='The PCA remains locked until the final Summative Assessment has been passed.';
+  }else if(data.pca_task_status==='draft'){
+    progress.textContent='The final Summative requirement is satisfied, but this PCA is still under academic QA and is not open for learner submission.';
   }else if(data.pca_task_status!=='active'){
     progress.textContent='The final Summative requirement is satisfied, but the course-specific PCA task is not yet active.';
   }else{
