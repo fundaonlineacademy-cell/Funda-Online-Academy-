@@ -52,7 +52,37 @@ The configured structural modes are:
 - Portfolio.
 - Drawing / Applied Drawing where appropriate.
 
-Course-specific task instructions, evidence requirements and rubrics are intentionally not populated in the initial structure. Those will be designed during the formal assessment-development phase and activated only after academic approval.
+## Course-specific PCA draft status
+
+Course-specific task briefs and rubrics have now been drafted for all 21 PCA courses. They remain in `draft` status and are not learner-visible or open for submission until they are separately audited and activated.
+
+Each draft contains:
+
+- task purpose and learner instructions;
+- one or more course-appropriate compulsory components;
+- materials/access requirements;
+- explicit safety and reasonable-access controls;
+- evidence requirements;
+- five weighted assessment criteria totalling 100%;
+- at least one designated critical criterion;
+- learner-declaration requirement;
+- an indicative completion-time guide.
+
+Structural QA confirms all 21 drafts have five criteria totalling 100% and at least one critical criterion. The approved overall competence rule remains 60% plus successful completion of every designated critical criterion, with one structured resubmission.
+
+Examples of deliberate access/safety controls in the drafts include:
+
+- Carpentry and Construction use drawing/structured simulation rather than compulsory hazardous cutting or live-site work.
+- Digital Device Repair uses an authorised fictional diagnostic/job-card case rather than compulsory repair of a real customer device.
+- Poultry does not require live birds.
+- Landscaping does not require power tools, pesticide application or specialist tree work.
+- Print & Branding does not require ownership of specialist production machinery.
+- Food & Beverage uses a controlled mock service and does not require alcohol service.
+- Nails may use a practice hand/tips rather than a live model.
+- Urban Farming permits an equivalent structured simulation where reasonable growing access is unavailable.
+- Baking uses one small affordable approved product and includes food-safety controls plus a business/costing component.
+
+The drafts deliberately remain inactive while lesson alignment, wording, evidence sufficiency and course-specific academic validity are checked.
 
 ## Course Evaluation — approved online version
 
@@ -89,16 +119,16 @@ The Student learning workspace reads the configured course-end structure without
 ## Data model
 
 ### `course_end_requirements`
-Controls the final module, assessment pathway, PCA applicability/mode, PCA standard settings, and evaluation-form activation state.
+Controls the final module, assessment pathway, PCA applicability/mode, PCA standard settings, draft/active task state and evaluation-form activation state.
 
 ### `pca_submissions`
-Reserved for learner PCA evidence and assessor outcomes. RLS protects learner-owned records. Learner creation remains unavailable while a course PCA is only `structure_only`.
+Reserved for learner PCA evidence and assessor outcomes. RLS protects learner-owned records. Learner creation remains unavailable while a course PCA is not active.
 
 ### `course_evaluation_submissions`
 Stores the final learner evaluation response for the active form version. Submission is limited to the authenticated learner after the final Summative and any required PCA have been completed.
 
 ### `get_course_end_structure(course_id)`
-Authenticated read model for the Student course-end workspace. It reports final Summative status, PCA requirements/status, evaluation status and course-completion readiness without altering the existing MCQ assessment tables.
+Authenticated read model for the Student course-end workspace. It reports final Summative status, PCA requirements/status, evaluation status and course-completion readiness without altering the existing MCQ assessment tables. Draft PCA configuration is not disclosed to learners until the task status is active.
 
 ### `submit_course_evaluation(course_id, responses)`
 Authenticated submission route for the final Course Evaluation. The server validates eligibility and the required response structure before recording one submission for the active form version.
@@ -117,4 +147,4 @@ The structure deliberately does not alter:
 - payments or enrolment;
 - unrelated Student Portal tabs or workflows.
 
-The Student-facing course-end work remains isolated on the feature branch pending course-specific PCA task development, cache/version finalisation, authenticated end-to-end UI testing and the owner's physical review before merge to live `main`.
+The Student-facing course-end work remains isolated on the feature branch pending PCA draft audit/approval, evidence-submission workflow finalisation, cache/version finalisation, authenticated end-to-end UI testing and the owner's physical review before merge to live `main`.
