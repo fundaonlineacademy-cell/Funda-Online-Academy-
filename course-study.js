@@ -4,7 +4,7 @@ const {createClient}=supabase;
 const db=createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true}});
 const $=id=>document.getElementById(id);
 const esc=v=>v==null?'':String(v).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");
-const state={user:null,studentId:null,course:null,modules:[],progress:[],assessments:[],attempts:[],notes:[],notesLoaded:false,notePage:1,activeLessonId:null,module:1,unit:1,stage:0,studyToolsWired:false};
+const state={user:null,studentId:null,course:null,modules:[],progress:[],assessments:[],attempts:[],courseEnd:null,notes:[],notesLoaded:false,notePage:1,activeLessonId:null,module:1,unit:1,stage:0,studyToolsWired:false};
 const NOTE_PAGE_SIZE=10;
 const STUDY_TOOLS_OPEN_KEY='funda-study-tools-open';
 const doneSet=()=>new Set(state.progress.filter(x=>x.completed).map(x=>String(x.lesson_id)));
@@ -173,13 +173,18 @@ function renderSidebar(){
  host.innerHTML=state.modules.map(m=>{
   const n=Number(m.module_number),ls=lessons(n),open=unlocked(n),dc=ls.filter(l=>done.has(String(l.id))).length;
   const hasF=!!assessment(n,'formative'),hasS=!!assessment(n,'summative'),fp=passed(n,'formative'),sp=passed(n,'summative');
+  const ce=state.courseEnd,isFinal=!!ce&&Number(ce.final_module_number)===n;
   let items=ls.map(l=>{const u=Number(l.lesson_number),active=n===state.module&&u===state.unit;return `<button class="unit ${active?'active':''} ${open?'':'locked'}" data-m="${n}" data-u="${u}" ${open?'':'disabled'}><span class="dot">${done.has(String(l.id))?'✓':active?'▶':u}</span><span>${esc(l.title)}</span></button>`}).join('');
   if(hasF){const lock=!open||dc<ls.length;items+=`<button class="unit ${lock?'locked':''}" data-m="${n}" data-type="formative" ${lock?'disabled':''}><span class="dot">${fp?'✓':ls.length+1}</span><span>Formative Assessment</span></button>`}
   if(hasS){const lock=!open||dc<ls.length||(hasF&&!fp);items+=`<button class="unit ${lock?'locked':''}" data-m="${n}" data-type="summative" ${lock?'disabled':''}><span class="dot">${sp?'✓':ls.length+(hasF?2:1)}</span><span>Summative Assessment</span></button>`}
+  if(isFinal&&ce.pca_required){const pcaDone=ce.pca_submission_status==='competent',lock=!sp||ce.pca_task_status!=='active';items+=`<button class="unit ${lock?'locked':''}" data-m="${n}" data-end="pca" ${lock?'disabled':''}><span class="dot">${pcaDone?'✓':'P'}</span><span>Practical Competence Assessment</span></button>`}
+  if(isFinal){const doneCourse=!!ce.course_completion_ready,lock=!ce.academic_requirements_met;items+=`<button class="unit ${lock?'locked':''}" data-m="${n}" data-end="completion" ${lock?'disabled':''}><span class="dot">${doneCourse?'✓':'C'}</span><span>Course Completion</span></button>`}
   return `<div class="module"><h3>Module ${n} · ${esc(m.module_name)}</h3><div style="font-size:10px;color:#64748b;margin-bottom:8px">${dc}/${ls.length} lessons complete</div>${items}</div>`
  }).join('');
  host.querySelectorAll('.unit:not(.locked)').forEach(b=>b.onclick=()=>{
   state.module=Number(b.dataset.m);
+  if(b.dataset.end==='pca'){location.assign(`pca-assessment.html?course=${encodeURIComponent(state.course.id)}`);return}
+  if(b.dataset.end==='completion'){location.assign(`course-completion.html?course=${encodeURIComponent(state.course.id)}`);return}
   if(b.dataset.type){location.assign(`module-assessment.html?course=${encodeURIComponent(state.course.id)}&module=${state.module}&type=${b.dataset.type}`);return}
   state.unit=Number(b.dataset.u);state.stage=0;renderAll();if(innerWidth<761)$('modulePanel')?.classList.remove('open')
  })
@@ -282,6 +287,10 @@ async function init(){
   const request=db.rpc('get_learning_workspace_course',{p_course_id:courseId});
   const {data,error}=await Promise.race([request,timeout]);if(error)throw error;if(!data?.ok)throw new Error(data?.message||'Unable to open this course.');
   state.studentId=data.student_id||user.id;state.course=data.course;state.modules=data.modules||[];state.progress=data.progress||[];state.assessments=data.assessments||[];state.attempts=data.attempts||[];
+  try{
+   const {data:endData,error:endError}=await db.rpc('get_course_end_structure',{p_course_id:courseId});
+   if(!endError&&endData?.ok)state.courseEnd=endData;else if(endError)console.warn('Course-end structure unavailable',endError);
+  }catch(endError){console.warn('Course-end structure unavailable',endError)}
   const openModules=state.modules.filter(m=>unlocked(Number(m.module_number))).sort((a,b)=>Number(a.module_number)-Number(b.module_number));
   const resumeModule=openModules[openModules.length-1]||state.modules[0];state.module=Number(resumeModule?.module_number||1);
   const pendingLesson=lessons(state.module).find(l=>!doneSet().has(String(l.id)));state.unit=Number(pendingLesson?.lesson_number||1);state.stage=0;renderAll();loadCourseNotes();
