@@ -16,6 +16,12 @@
     return !!notice && notice.hidden===false;
   }
 
+  function unlock(el){
+    if(!el)return;
+    if(el.disabled)el.disabled=false;
+    if(el.dataset.locked!=='false')el.dataset.locked='false';
+  }
+
   function enableQaActions(){
     if(!isQaPreview())return false;
     const save=$('savePcaDraft');
@@ -26,14 +32,10 @@
     const notice=$('qaPreviewNotice');
     if(!save||!submit)return false;
 
-    [save,submit,notes,declaration,files].filter(Boolean).forEach(el=>{
-      el.disabled=false;
-      el.dataset.locked='false';
-    });
+    [save,submit,notes,declaration,files].forEach(unlock);
 
-    if(notice){
-      notice.innerHTML='<strong>Internal QA preview:</strong> you can test file selection, Save Draft and Submit PCA. Nothing is uploaded and no learner submission is recorded.';
-    }
+    const noticeText='<strong>Internal QA preview:</strong> you can test file selection, Save Draft and Submit PCA. Nothing is uploaded and no learner submission is recorded.';
+    if(notice&&notice.innerHTML!==noticeText)notice.innerHTML=noticeText;
 
     if(wired)return true;
     wired=true;
@@ -73,13 +75,13 @@
     enableQaActions();
     const notice=$('qaPreviewNotice');
     if(notice){
-      const observer=new MutationObserver(()=>enableQaActions());
+      const observer=new MutationObserver(mutations=>{
+        if(mutations.some(m=>m.attributeName==='hidden')&&!notice.hidden){
+          enableQaActions();
+          observer.disconnect();
+        }
+      });
       observer.observe(notice,{attributes:true,attributeFilter:['hidden']});
-    }
-    const shell=$('pcaShell');
-    if(shell){
-      const observer=new MutationObserver(()=>enableQaActions());
-      observer.observe(shell,{subtree:true,attributes:true,attributeFilter:['hidden','disabled','data-locked']});
     }
     setTimeout(enableQaActions,400);
     setTimeout(enableQaActions,1200);
