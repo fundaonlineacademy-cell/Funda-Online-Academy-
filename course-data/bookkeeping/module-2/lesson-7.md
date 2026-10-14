@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 2: Source Documents & Transaction Analysis
 ### Lesson 7: Document Filing, Audit Trails, POPIA & Record Control
 

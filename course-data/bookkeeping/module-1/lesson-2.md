@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 1: Bookkeeping Foundations
 ### Lesson 2: The Accounting Equation & Double-Entry Principles
 

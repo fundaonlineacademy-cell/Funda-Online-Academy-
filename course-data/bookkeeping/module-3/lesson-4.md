@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 3: Journals, Ledgers & Trial Balance
 ### Lesson 4: Debits, Credits and Balancing Accounts
 

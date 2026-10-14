@@ -7,366 +7,366 @@
 **Maximum attempts:** 3  
 **Coverage:** All eight Module 6 lessons.
 
-1. Why are period-end adjustments needed?  
-A. To align income, expenses, assets and liabilities with the correct reporting period  
-B. To force profit to a target  
-C. To avoid source documents  
-D. To replace reconciliation  
+1. Electricity was used in June, but the supplier invoice will arrive in July. What period-end treatment is normally considered for June?  
+A. Recognise an estimated June expense and liability when reliably supportable  
+B. Reverse all June utility expenses until the invoice arrives  
+C. Wait for payment and record the full amount in the payment month  
+D. Record the amount as a June prepayment asset  
 **Answer: A**
 
 2. What is accrual-basis accounting?  
 A. Recording only bank transactions  
-B. Recognising income and expenses when earned/incurred, not only when cash moves  
-C. Recording all expenses in advance  
-D. Ignoring unpaid invoices  
-**Answer: B**
+B. Ignoring unpaid invoices  
+C. Recognising income and expenses when earned/incurred, not only when cash moves  
+D. Recording all expenses in advance  
+**Answer: C**
 
 3. Which is a period-end adjustment?  
 A. Customer greeting  
-B. Bank password reset  
-C. Depreciation  
+B. Depreciation  
+C. Bank password reset  
 D. Filing label  
-**Answer: C**
-
-4. What must be true of every adjustment journal?  
-A. It affects Bank  
-B. It has exactly two accounts  
-C. It increases profit  
-D. Total debits equal total credits  
-**Answer: D**
-
-5. Why should adjustment journals be approved and supported?  
-A. They can materially affect reported results and balances  
-B. Adjustments are optional  
-C. Evidence changes the bank statement  
-D. Journals are never reviewed  
-**Answer: A**
-
-6. What is an accrual?  
-A. Cash paid early  
-B. Expense incurred but not yet recorded/paid  
-C. Customer deposit  
-D. Owner capital  
 **Answer: B**
 
-7. What is a prepayment?  
-A. An overdue creditor  
-B. A bad debt  
-C. Payment for a future-period benefit  
-D. Bank fee  
+4. What must be true of every adjustment journal?  
+A. It increases profit  
+B. Total debits equal total credits  
+C. It has exactly two accounts  
+D. It affects Bank  
+**Answer: B**
+
+5. Why should adjustment journals be approved and supported?  
+A. Evidence changes the bank statement  
+B. Journals are never reviewed  
+C. They can materially affect reported results and balances  
+D. Adjustments are optional  
 **Answer: C**
 
-8. R24,000 annual insurance is paid on 1 January. At 31 March, if spread evenly, what amount remains prepaid?  
-A. R6,000  
-B. R12,000  
-C. R24,000  
-D. R18,000  
-**Answer: D**
+6. An expense belongs to the current period but has not yet been recorded or paid. What is it?  
+A. Owner capital  
+B. Expense incurred but not yet recorded/paid  
+C. Cash paid early  
+D. Customer deposit  
+**Answer: B**
+
+7. A payment made now secures a benefit in a future reporting period. What is the future portion?  
+A. Bank fee  
+B. An overdue creditor  
+C. Payment for a future-period benefit  
+D. A bad debt  
+**Answer: C**
+
+8. Annual insurance of R36,000 is paid on 1 January. If it is spread evenly, what amount remains prepaid at 31 March?  
+A. R27,000  
+B. R18,000  
+C. R36,000  
+D. R9,000  
+**Answer: A**
 
 9. March electricity R2,500 is unbilled at month end. A basic accrual entry is:  
 A. Debit Electricity Expense; Credit Accrued Expenses  
-B. Debit Bank; Credit Electricity Expense  
-C. Debit Prepayment; Credit Bank  
+B. Debit Prepayment; Credit Bank  
+C. Debit Bank; Credit Electricity Expense  
 D. Debit Debtors; Credit Sales  
 **Answer: A**
 
 10. Why must an accrual estimate be reasonable and supported?  
-A. To guarantee the invoice amount  
-B. To avoid unsupported manipulation of expenses/profit  
-C. To increase liabilities  
-D. To eliminate later settlement  
-**Answer: B**
+A. To eliminate later settlement  
+B. To increase liabilities  
+C. To guarantee the invoice amount  
+D. To avoid unsupported manipulation of expenses/profit  
+**Answer: D**
 
 11. What can happen if an accrual is not cleared or reversed correctly next period?  
-A. Bank automatically reconciles  
+A. Asset cost changes  
 B. Sales double  
-C. Expense/liability may be double counted or misstated  
-D. Asset cost changes  
-**Answer: C**
-
-12. What does depreciation represent?  
-A. New cash paid each month  
-B. Market value only  
-C. Repairs expense  
-D. Systematic allocation of a depreciable asset amount over useful life  
+C. Bank automatically reconciles  
+D. Expense/liability may be double counted or misstated  
 **Answer: D**
+
+12. Why is depreciation recorded for a depreciable asset used over several periods?  
+A. To replace the asset with its current selling price  
+B. To record a new cash payment every month  
+C. To allocate the depreciable amount systematically over the asset's useful life  
+D. To treat routine repairs as part of the asset cost  
+**Answer: C**
 
 13. Straight-line depreciation is calculated as:  
-A. (Cost - residual value) ÷ useful life  
-B. Cost × bank rate  
-C. Sales - expenses  
-D. Cost + residual value  
-**Answer: A**
-
-14. Equipment cost R75,000, residual value R15,000, useful life 5 years. Annual straight-line depreciation?  
-A. R15,000  
-B. R12,000  
-C. R18,000  
-D. R60,000  
+A. Sales - expenses  
+B. (Cost - residual value) ÷ useful life  
+C. Cost + residual value  
+D. Cost × bank rate  
 **Answer: B**
 
-15. What is accumulated depreciation?  
-A. Asset purchase price  
-B. Cash spent on repairs  
-C. Total depreciation recorded to date  
-D. Residual value  
-**Answer: C**
+14. Equipment cost R75,000, residual value R15,000, useful life 5 years. Annual straight-line depreciation?  
+A. R60,000  
+B. R12,000  
+C. R15,000  
+D. R18,000  
+**Answer: B**
+
+15. Which balance represents the total depreciation recognised on an asset up to the reporting date?  
+A. Total depreciation recorded to date  
+B. Residual value  
+C. Cash spent on repairs  
+D. Asset purchase price  
+**Answer: A**
 
 16. Equipment cost R80,000 and accumulated depreciation R25,000. Carrying amount?  
-A. R105,000  
-B. R80,000  
-C. R25,000  
-D. R55,000  
-**Answer: D**
+A. R80,000  
+B. R25,000  
+C. R55,000  
+D. R105,000  
+**Answer: C**
 
 17. Why is a fixed-asset register useful?  
 A. It supports asset identity, cost, location and depreciation records  
-B. It replaces all invoices  
-C. It records customer receipts  
-D. It sets tax law  
+B. It sets tax law  
+C. It replaces all invoices  
+D. It records customer receipts  
 **Answer: A**
 
 18. Who should determine accounting-policy choices such as useful lives and capitalisation thresholds?  
 A. Any clerk  
-B. The authorised accounting/management process  
+B. The bank  
 C. The supplier  
-D. The bank  
-**Answer: B**
+D. The authorised accounting/management process  
+**Answer: D**
 
 19. Is every old customer balance a bad debt?  
 A. Yes  
-B. Yes after 60 days  
-C. No; reconcile and investigate first  
+B. No; reconcile and investigate first  
+C. Yes after 60 days  
 D. Yes if a reminder was sent  
+**Answer: B**
+
+20. A specific customer balance of R7,500 is confirmed irrecoverable and the write-off is authorised. What should the entry achieve?  
+A. Increase the customer's credit limit by R7,500  
+B. Settle a supplier balance using the customer account  
+C. Remove the specific receivable and recognise the approved bad-debt effect  
+D. Record a customer receipt that was not received  
 **Answer: C**
 
-20. What is a bad-debt write-off?  
-A. Supplier payment  
-B. Customer receipt  
-C. Credit-limit increase  
-D. Authorised removal of a specific irrecoverable receivable  
+21. Which estimate reduces receivables for expected collection losses under the entity’s policy?  
+A. Customer discount  
+B. Bank overdraft  
+C. Supplier credit  
+D. Estimate reducing receivables for potential collection losses under policy  
 **Answer: D**
 
-21. What is an allowance for doubtful debts?  
-A. Estimate reducing receivables for potential collection losses under policy  
-B. Customer discount  
-C. Supplier credit  
-D. Bank overdraft  
-**Answer: A**
-
 22. Why should the bookkeeper not write off debt without authority?  
-A. Debtors never change  
-B. Recoverability involves judgement and affects assets/profit  
+A. Recoverability involves judgement and affects assets/profit  
+B. Debtors never change  
 C. Customers approve all write-offs  
 D. Write-offs only affect cash  
-**Answer: B**
+**Answer: A**
 
 23. A receipt was allocated to the wrong customer. What kind of action is needed?  
 A. Bad-debt allowance  
-B. Depreciation  
+B. Bank reconciliation only  
 C. Allocation correction, not a write-off  
-D. Bank reconciliation only  
+D. Depreciation  
 **Answer: C**
 
 24. Why should a previously written-off recovery remain traceable?  
-A. To hide the original write-off  
-B. To increase Debtors automatically  
+A. To increase Debtors automatically  
+B. To hide the original write-off  
 C. To avoid recording cash  
 D. To link the later recovery to the original authorised treatment  
 **Answer: D**
 
-25. What is an adjusted trial balance?  
+25. After approved period-end adjustments are posted, which trial-balance version is prepared?  
 A. Trial balance after approved period-end adjustments  
-B. A bank reconciliation  
-C. Supplier statement  
-D. Sales journal  
+B. Supplier statement  
+C. Sales journal  
+D. A bank reconciliation  
 **Answer: A**
 
 26. Which balance should reconcile to individual customer accounts?  
-A. Sales  
+A. Capital  
 B. Debtors Control  
-C. Rent  
-D. Capital  
+C. Sales  
+D. Rent  
 **Answer: B**
 
 27. Which balance should reconcile to the fixed-asset register?  
 A. Creditors only  
-B. Bank charges  
-C. Relevant fixed-asset and accumulated-depreciation accounts  
+B. Relevant fixed-asset and accumulated-depreciation accounts  
+C. Bank charges  
 D. Sales only  
-**Answer: C**
+**Answer: B**
 
 28. Why should material suspense balances be investigated before reporting?  
 A. Suspense is always equity  
 B. They automatically reverse  
-C. They never affect reports  
-D. They represent unresolved items that may distort financial information  
-**Answer: D**
+C. They represent unresolved items that may distort financial information  
+D. They never affect reports  
+**Answer: C**
 
 29. What is a reasonableness review?  
-A. Comparing balances with prior periods, expectations and business activity to identify unusual movement  
+A. Checking only spelling  
 B. Replacing reconciliations  
 C. Approving every journal  
-D. Checking only spelling  
-**Answer: A**
+D. Comparing balances with prior periods, expectations and business activity to identify unusual movement  
+**Answer: D**
 
 30. A normally debit asset account shows an unexpected credit balance. What should the bookkeeper do?  
 A. Change it to debit automatically  
-B. Investigate the cause  
+B. Move it to Sales  
 C. Delete the account  
-D. Move it to Sales  
+D. Investigate the cause  
+**Answer: D**
+
+31. An adjusted trial balance agrees, but a cash sale and both sides of its entry were omitted. What does this demonstrate?  
+A. Agreement proves the records are complete  
+B. A trial balance can agree even though a complete transaction was omitted  
+C. Agreement proves all source documents were captured  
+D. Software review prevents omission errors from remaining  
 **Answer: B**
 
-31. Does an adjusted trial balance agreeing prove every transaction is correct?  
-A. Yes  
-B. Yes if no suspense  
-C. No; classification, omission and valuation errors may remain  
-D. Yes if reviewed by software  
-**Answer: C**
-
 32. What is the purpose of period locking after authorised close?  
-A. Increase profit  
-B. Delete source documents  
-C. Prevent future reporting  
-D. Prevent unauthorised or accidental backdated changes  
-**Answer: D**
+A. Prevent unauthorised or accidental backdated changes  
+B. Increase profit  
+C. Delete source documents  
+D. Prevent future reporting  
+**Answer: A**
 
 33. What does the statement of profit or loss show?  
 A. Financial performance over a period  
-B. Assets at one date only  
-C. Customer details  
-D. Bank passwords  
+B. Bank passwords  
+C. Assets at one date only  
+D. Customer details  
 **Answer: A**
 
 34. Gross profit is generally:  
-A. Assets - Liabilities  
-B. Sales - Cost of Sales  
-C. Bank - Creditors  
-D. Sales - Bank  
-**Answer: B**
+A. Bank - Creditors  
+B. Assets - Liabilities  
+C. Sales - Bank  
+D. Sales - Cost of Sales  
+**Answer: D**
 
 35. Sales R500,000 and Cost of Sales R300,000. Gross profit?  
-A. R800,000  
-B. R300,000  
-C. R200,000  
-D. R500,000  
-**Answer: C**
+A. R300,000  
+B. R200,000  
+C. R500,000  
+D. R800,000  
+**Answer: B**
 
 36. An omitted electricity accrual generally causes:  
-A. Profit to be understated  
-B. Bank to increase  
-C. Debtors to decrease  
-D. Expense understated and profit overstated  
-**Answer: D**
+A. Bank to increase  
+B. Debtors to decrease  
+C. Expense understated and profit overstated  
+D. Profit to be understated  
+**Answer: C**
 
 37. Why is profit not the same as cash?  
 A. Credit transactions and non-cash expenses create different timing between performance and cash  
-B. Profit never includes Sales  
-C. Bank is always equal to equity  
-D. Cash ignores payments  
+B. Bank is always equal to equity  
+C. Cash ignores payments  
+D. Profit never includes Sales  
 **Answer: A**
 
 38. What does a statement of financial position show?  
-A. Monthly sales only  
-B. Assets, liabilities and equity at a specific date  
-C. Cash receipts only  
-D. Expense trends only  
-**Answer: B**
+A. Cash receipts only  
+B. Monthly sales only  
+C. Expense trends only  
+D. Assets, liabilities and equity at a specific date  
+**Answer: D**
 
-39. State the accounting equation.  
-A. Sales = Profit + Bank  
-B. Debtors = Creditors + Bank  
+39. Which equality expresses the relationship among assets, liabilities and equity?  
+A. Expenses = Assets - Liabilities  
+B. Sales = Profit + Bank  
 C. Assets = Liabilities + Equity  
-D. Expenses = Assets - Liabilities  
+D. Debtors = Creditors + Bank  
 **Answer: C**
 
 40. Which is an asset?  
-A. Creditors  
-B. Accrued expenses  
+A. Debtors / Accounts Receivable  
+B. Creditors  
 C. Loan payable  
-D. Debtors / Accounts Receivable  
-**Answer: D**
+D. Accrued expenses  
+**Answer: A**
 
-41. Which is a liability?  
+41. Which listed item represents an amount the business owes?  
 A. Creditors  
-B. Bank asset  
+B. Prepayment  
 C. Equipment  
-D. Prepayment  
+D. Bank asset  
 **Answer: A**
 
 42. Why can missing supplier invoices understate liabilities?  
 A. They increase Bank  
-B. Obligations incurred may not yet be recorded  
-C. They reduce Debtors  
-D. They always become capital  
-**Answer: B**
-
-43. Equipment cost R100,000 and accumulated depreciation R30,000. Carrying amount?  
-A. R130,000  
-B. R30,000  
-C. R70,000  
-D. R100,000  
+B. They always become capital  
+C. Obligations incurred may not yet be recorded  
+D. They reduce Debtors  
 **Answer: C**
 
-44. Why should balance-sheet accounts be supported by schedules?  
-A. Reports do not need evidence  
-B. Schedules replace the ledger  
-C. They increase account balances  
-D. They help prove what makes up the reported total  
-**Answer: D**
-
-45. What is a variance?  
-A. Difference between amounts, periods or expectations  
-B. A customer invoice  
-C. A supplier payment  
-D. Fixed-asset cost  
+43. Equipment cost R84,000 and accumulated depreciation is R21,000. What is the carrying amount?  
+A. R63,000  
+B. R21,000  
+C. R84,000  
+D. R105,000  
 **Answer: A**
+
+44. Why should balance-sheet accounts be supported by schedules?  
+A. Schedules replace the ledger  
+B. They help prove what makes up the reported total  
+C. Reports do not need evidence  
+D. They increase account balances  
+**Answer: B**
+
+45. A reported amount differs from the prior period or expectation. What is the difference called?  
+A. A supplier payment  
+B. A customer invoice  
+C. Difference between amounts, periods or expectations  
+D. Fixed-asset cost  
+**Answer: C**
 
 46. Sales increase while Debtors also rise sharply. What is one evidence-based interpretation?  
 A. Customers necessarily paid faster  
-B. More sales may remain uncollected  
+B. Bank must increase equally  
 C. Creditors must be zero  
-D. Bank must increase equally  
+D. More sales may remain uncollected  
+**Answer: D**
+
+47. Current assets are R200,000 and current liabilities are R150,000. Which formula identifies the R50,000 measure?  
+A. Bank less Sales  
+B. Current assets less current liabilities  
+C. Equity less assets  
+D. Sales less expenses  
 **Answer: B**
 
-47. What is basic working capital?  
-A. Sales less expenses  
-B. Bank less Sales  
-C. Current assets less current liabilities  
-D. Equity less assets  
-**Answer: C**
-
 48. Why can a rising creditor balance require investigation?  
-A. It always means fraud  
-B. It always increases cash  
+A. It always increases cash  
+B. It always means fraud  
 C. It proves suppliers are wrong  
 D. It may reflect more credit purchases, delayed payments or allocation issues  
 **Answer: D**
 
 49. What should happen before explaining unusual financial trends?  
-A. Reconcile and verify the relevant balances  
-B. Guess the likely cause  
+A. Ignore source schedules  
+B. Reconcile and verify the relevant balances  
 C. Change the accounts  
-D. Ignore source schedules  
-**Answer: A**
-
-50. What should a concise management explanation include?  
-A. Every ledger transaction  
-B. Verified change, cause, unresolved items and next action  
-C. Personal opinion only  
-D. No supporting figures  
+D. Guess the likely cause  
 **Answer: B**
 
-51. Which is the BEST example of evidence-based analysis?  
-A. “Cash is low because business is bad.”  
-B. “Profit fell because expenses are too high.”  
-C. “Sales rose R60,000 while overdue Debtors rose R45,000; collections should be reviewed.”  
-D. “The bank balance feels wrong.”  
+50. What should a concise management explanation include?  
+A. Personal opinion only  
+B. No supporting figures  
+C. Verified change, cause, unresolved items and next action  
+D. Every ledger transaction  
 **Answer: C**
+
+51. Which is the BEST example of evidence-based analysis?  
+A. “Profit fell because expenses are too high.”  
+B. “Cash is low because business is bad.”  
+C. “The bank balance feels wrong.”  
+D. “Sales rose R60,000 while overdue Debtors rose R45,000; collections should be reviewed.”  
+**Answer: D**
 
 52. Which principle BEST summarises Module 6?  
 A. Financial reports can be prepared directly from bank statements  
-B. Adjustments are optional if the trial balance agrees  
-C. Profit and cash are the same measure  
+B. Profit and cash are the same measure  
+C. Adjustments are optional if the trial balance agrees  
 D. Reliable reporting requires period-correct adjustments, reconciled balances, closing checks and evidence-based explanation  
 **Answer: D**

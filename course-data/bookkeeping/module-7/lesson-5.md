@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 7: Computerised Bookkeeping & QuickBooks Fundamentals
 ### Lesson 5: Banking, Bank Feeds and Reconciliation Workflows
 

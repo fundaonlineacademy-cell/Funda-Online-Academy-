@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 8: VAT, Tax Records & SARS Awareness
 ### Lesson 4: VAT-inclusive and VAT-exclusive Calculations
 

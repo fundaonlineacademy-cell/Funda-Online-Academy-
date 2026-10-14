@@ -10,60 +10,60 @@
 ## Lesson 1 — VAT Fundamentals for Bookkeepers
 1. What is the standard VAT rate used in the current 2026 course source check?  
 A. 15%  
-B. 14%  
+B. 18%  
 C. 16%  
-D. 18%  
+D. 14%  
 **Answer: A**
 
 2. What is output tax?  
 A. VAT paid on every purchase  
-B. VAT charged on taxable supplies made by a vendor  
-C. Income tax  
-D. Payroll tax  
-**Answer: B**
-
-3. From 1 April 2026, what is the general compulsory VAT-registration threshold highlighted in current SARS guidance?  
-A. R1 million  
-B. R120,000  
-C. More than R2.3 million in taxable supplies per annum  
-D. R5 million  
+B. Payroll tax  
+C. VAT charged on taxable supplies made by a vendor  
+D. Income tax  
 **Answer: C**
 
-4. Which statement is correct?  
-A. Zero-rated and exempt mean exactly the same thing  
-B. Every purchase VAT amount is deductible  
-C. Registration depends only on profit  
-D. Complex or unclear VAT treatment should be escalated rather than guessed  
-**Answer: D**
+3. From 1 April 2026, what is the general compulsory VAT-registration threshold highlighted in current SARS guidance?  
+A. More than R2.3 million in taxable supplies per annum  
+B. R120,000  
+C. R5 million  
+D. R1 million  
+**Answer: A**
+
+4. A purchase has unclear VAT treatment and the available invoice does not resolve it. What is the safest bookkeeping response?  
+A. Claim input VAT because the supplier charged an amount  
+B. Preserve the evidence and escalate the treatment instead of guessing  
+C. Treat it as zero-rated because no VAT was confirmed  
+D. Code it using the previous purchase without review  
+**Answer: B**
 
 ## Lesson 2 — Tax Invoices and VAT Source-document Requirements
 5. Why is a valid tax invoice important?  
 A. It supports the VAT treatment and audit trail  
-B. It replaces all bookkeeping  
-C. It proves every purchase is deductible  
+B. It proves every purchase is deductible  
+C. It replaces all bookkeeping  
 D. It removes approval requirements  
 **Answer: A**
 
 6. Under the VAT404 guide used for this lesson, a full tax invoice applies at consideration of:  
-A. More than R50  
-B. R5,000 or more  
-C. R2,300 or more  
-D. Any amount only if cash  
-**Answer: B**
+A. R2,300 or more  
+B. More than R50  
+C. Any amount only if cash  
+D. R5,000 or more  
+**Answer: D**
 
 7. Which is a required type of detail on a full tax invoice?  
 A. Employee ID number  
 B. Bank password  
-C. Supplier name/address/VAT registration details  
-D. Payroll code  
-**Answer: C**
+C. Payroll code  
+D. Supplier name/address/VAT registration details  
+**Answer: D**
 
 8. A supplier invoice is missing a required VAT registration number. What should the bookkeeper do?  
-A. Type one onto the PDF  
+A. Claim VAT anyway  
 B. Guess the number  
-C. Claim VAT anyway  
-D. Request correction or refer through the approved process  
-**Answer: D**
+C. Request correction or refer through the approved process  
+D. Type one onto the PDF  
+**Answer: C**
 
 ## Lesson 3 — Input Tax, Output Tax and VAT Control Accounts
 9. A standard-rated sale of R10,000 excluding VAT has output VAT of:  
@@ -74,163 +74,163 @@ D. R2,300
 **Answer: A**
 
 10. What is a VAT control account used for?  
-A. Customer credit limits  
+A. Payroll deductions only  
 B. Accumulating and reconciling VAT amounts  
-C. Payroll deductions only  
-D. Asset depreciation  
+C. Asset depreciation  
+D. Customer credit limits  
 **Answer: B**
 
 11. Output VAT is R12,000 and deductible input VAT is R6,000. Simplified net VAT is:  
-A. R18,000 refundable  
-B. R12,000 payable  
-C. R6,000 payable  
-D. R6,000 sales income  
-**Answer: C**
+A. R6,000 payable  
+B. R6,000 sales income  
+C. R12,000 payable  
+D. R18,000 refundable  
+**Answer: A**
 
 12. What should happen with unsupported input VAT?  
 A. Claim it because software calculated it  
 B. Move it to Sales  
-C. Delete the invoice  
-D. Flag and resolve/refer it before treating it as deductible  
-**Answer: D**
+C. Flag and resolve/refer it before treating it as deductible  
+D. Delete the invoice  
+**Answer: C**
 
 ## Lesson 4 — VAT-inclusive and VAT-exclusive Calculations
 13. VAT on R8,000 exclusive at 15% is:  
-A. R1,200  
-B. R800  
+A. R1,380  
+B. R1,200  
 C. R920  
-D. R1,380  
-**Answer: A**
+D. R800  
+**Answer: B**
 
 14. What multiplier converts a standard-rated VAT-exclusive amount to inclusive at 15%?  
-A. 0.15  
+A. 15/115  
 B. 1.15  
-C. 15/115  
-D. 1.05  
+C. 1.05  
+D. 0.15  
 **Answer: B**
 
 15. What fraction extracts VAT from a 15% VAT-inclusive amount?  
-A. 15/100  
-B. 100/115  
-C. 15/115  
-D. 115/15  
-**Answer: C**
+A. 15/115  
+B. 115/15  
+C. 15/100  
+D. 100/115  
+**Answer: A**
 
 16. Why is inclusive total × 15% incorrect for extracting VAT?  
-A. VAT has no rate  
-B. It understates VAT  
-C. It applies only to zero-rated supplies  
+A. It understates VAT  
+B. It applies only to zero-rated supplies  
+C. VAT has no rate  
 D. The inclusive amount already contains VAT, so the VAT fraction must be used  
 **Answer: D**
 
 ## Lesson 5 — VAT Records, Reconciliations and Return Preparation Support
 17. What is a VAT201?  
-A. VAT declaration for a tax period  
-B. Payroll return  
-C. Supplier statement  
-D. Asset register  
-**Answer: A**
-
-18. What should output VAT be reconciled to?  
-A. Only bank balance  
-B. Taxable-sales reports and relevant ledger records  
-C. Payroll register  
-D. Fixed assets only  
+A. Asset register  
+B. VAT declaration for a tax period  
+C. Payroll return  
+D. Supplier statement  
 **Answer: B**
 
-19. Which belongs in a VAT exception register?  
-A. Employee leave request  
-B. Office stationery list  
-C. Unsupported manual VAT journal  
-D. Meeting invitation  
+18. What should output VAT be reconciled to?  
+A. Payroll register  
+B. Fixed assets only  
+C. Taxable-sales reports and relevant ledger records  
+D. Only bank balance  
 **Answer: C**
 
+19. Which belongs in a VAT exception register?  
+A. Unsupported manual VAT journal  
+B. Office stationery list  
+C. Meeting invitation  
+D. Employee leave request  
+**Answer: A**
+
 20. How long does current SARS vendor guidance generally require relevant VAT records to be retained?  
-A. 1 year  
-B. 2 years  
-C. 3 years  
-D. 5 years  
-**Answer: D**
+A. 3 years  
+B. 5 years  
+C. 2 years  
+D. 1 year  
+**Answer: B**
 
 ## Lesson 6 — Common VAT Errors, Exceptions and Escalation
 21. Can an expense be posted to the correct account but use the wrong VAT code?  
-A. Yes  
-B. No  
-C. Only on cash transactions  
-D. Only at year end  
-**Answer: A**
+A. Only on cash transactions  
+B. Only at year end  
+C. Yes  
+D. No  
+**Answer: C**
 
 22. What can a duplicated supplier invoice duplicate?  
-A. Only invoice number  
+A. Only output VAT  
 B. Expense/creditor and input-VAT amounts  
-C. Only bank balance  
-D. Only output VAT  
+C. Only invoice number  
+D. Only bank balance  
 **Answer: B**
 
 23. Why should manual VAT journals receive extra review?  
-A. They cannot be posted  
+A. They automatically reverse  
 B. They always mean fraud  
 C. They can change VAT balances outside routine invoice workflows  
-D. They automatically reverse  
+D. They cannot be posted  
 **Answer: C**
 
 24. Which matter should be escalated?  
-A. Correct standard-rated transaction  
-B. Normal invoice number  
-C. Matched bank receipt  
+A. Matched bank receipt  
+B. Correct standard-rated transaction  
+C. Normal invoice number  
 D. Unusual zero-rated treatment without clear support  
 **Answer: D**
 
 ## Lesson 7 — Income-tax and Provisional-tax Recordkeeping Awareness
 25. Is accounting profit always equal to taxable income?  
-A. No  
-B. Yes  
-C. Only for companies  
-D. Only when VAT registered  
-**Answer: A**
+A. Only for companies  
+B. No  
+C. Only when VAT registered  
+D. Yes  
+**Answer: B**
 
 26. What is provisional tax?  
-A. Separate turnover tax  
-B. Advance-payment method for income tax based on estimates under the rules  
-C. VAT refund  
-D. Payroll deduction  
-**Answer: B**
+A. VAT refund  
+B. Payroll deduction  
+C. Separate turnover tax  
+D. Advance-payment method for income tax based on estimates under the rules  
+**Answer: D**
 
 27. Which SARS return is associated with provisional tax?  
 A. VAT201  
-B. EMP201  
+B. IRP5  
 C. IRP6  
-D. IRP5  
+D. EMP201  
 **Answer: C**
 
 28. Who should make complex tax-deductibility decisions?  
-A. Any data capturer  
+A. Bank  
 B. Customer  
-C. Bank  
+C. Any data capturer  
 D. The authorised tax/accounting process  
 **Answer: D**
 
 ## Lesson 8 — SARS eFiling, Compliance Records and Bookkeeper Role Boundaries
 29. What should happen before an authorised tax submission?  
-A. Reconcile books and review supporting schedules/exceptions  
-B. Guess missing amounts  
-C. Delete prior working papers  
+A. Guess missing amounts  
+B. Delete prior working papers  
+C. Reconcile books and review supporting schedules/exceptions  
 D. Ignore the tax period  
-**Answer: A**
+**Answer: C**
 
 30. Why should submission references be retained?  
 A. They replace accounting records  
-B. They provide evidence of the filing event  
-C. They set VAT rates  
-D. They approve expenses  
-**Answer: B**
+B. They set VAT rates  
+C. They approve expenses  
+D. They provide evidence of the filing event  
+**Answer: D**
 
 31. A SARS statement differs from the accounting tax balance. What should happen?  
-A. Change books immediately  
+A. Investigate timing, allocation and assessment causes first  
 B. Pay the difference twice  
-C. Investigate timing, allocation and assessment causes first  
+C. Change books immediately  
 D. Delete the SARS statement  
-**Answer: C**
+**Answer: A**
 
 32. Why must current SARS guidance be checked regularly?  
 A. Old rates never change  

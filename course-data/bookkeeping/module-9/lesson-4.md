@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 9: Payroll Administration & Payroll Records
 ### Lesson 4: PAYE, UIF and Statutory-deduction Awareness
 

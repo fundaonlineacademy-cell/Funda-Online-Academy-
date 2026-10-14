@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 9: Payroll Administration & Payroll Records
 ### Lesson 6: Payroll Reconciliation and Payment Controls
 

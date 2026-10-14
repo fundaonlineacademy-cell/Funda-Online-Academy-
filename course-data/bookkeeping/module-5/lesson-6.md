@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 5: Debtors, Creditors, Invoicing & Credit Control
 ### Lesson 6: Creditors Reconciliation and Payment Preparation
 

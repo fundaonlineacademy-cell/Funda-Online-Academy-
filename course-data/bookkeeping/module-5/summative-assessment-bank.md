@@ -8,228 +8,228 @@
 **Coverage:** All eight Module 5 lessons.
 
 1. What is a debtor?  
-A. A customer who owes the business money  
-B. A supplier the business owes  
-C. A bank account  
-D. An expense account  
-**Answer: A**
+A. A bank account  
+B. An expense account  
+C. A customer who owes the business money  
+D. A supplier the business owes  
+**Answer: C**
 
 2. What is a creditor?  
-A. A customer who paid in cash  
-B. A supplier to whom the business owes money  
-C. A sales account  
-D. A fixed asset  
-**Answer: B**
+A. A supplier to whom the business owes money  
+B. A customer who paid in cash  
+C. A fixed asset  
+D. A sales account  
+**Answer: A**
 
 3. A credit sale normally records:  
-A. Debit Bank; Credit Sales  
-B. Debit Creditors; Credit Sales  
-C. Debit Debtors; Credit Sales  
-D. Debit Sales; Credit Debtors  
-**Answer: C**
-
-4. A customer payment against an existing invoice normally records:  
-A. Debit Debtors; Credit Bank  
-B. Debit Sales; Credit Bank  
+A. Debit Creditors; Credit Sales  
+B. Debit Debtors; Credit Sales  
 C. Debit Bank; Credit Sales  
-D. Debit Bank; Credit Debtors  
-**Answer: D**
-
-5. What is the purpose of a control account?  
-A. Summarise detailed subsidiary balances in the general ledger  
-B. Replace customer records  
-C. Record only cash  
-D. Approve credit limits  
-**Answer: A**
-
-6. Why can an allocation error exist even if Debtors Control is correct?  
-A. Control accounts never update  
-B. A receipt may be posted to the wrong customer while the total remains unchanged  
-C. Sales invoices do not affect Debtors  
-D. Customer accounts are not part of bookkeeping  
+D. Debit Sales; Credit Debtors  
 **Answer: B**
 
-7. What does a credit purchase normally create?  
-A. Debtors  
-B. Sales  
-C. Creditors  
-D. Capital  
+4. A customer payment against an existing invoice normally records:  
+A. Debit Sales; Credit Bank  
+B. Debit Bank; Credit Sales  
+C. Debit Bank; Credit Debtors  
+D. Debit Debtors; Credit Bank  
 **Answer: C**
 
-8. Paying a supplier invoice already recorded normally:  
-A. records the expense again  
-B. increases Creditors  
-C. increases Sales  
-D. reduces Creditors and Bank  
+5. What is the purpose of a control account?  
+A. Replace customer records  
+B. Record only cash  
+C. Approve credit limits  
+D. Summarise detailed subsidiary balances in the general ledger  
 **Answer: D**
 
-9. What is a sales invoice?  
-A. Evidence billing a customer for supplied goods/services  
-B. A bank statement  
-C. A supplier remittance  
-D. A payroll record  
+6. Why can an allocation error exist even if Debtors Control is correct?  
+A. A receipt may be posted to the wrong customer while the total remains unchanged  
+B. Sales invoices do not affect Debtors  
+C. Customer accounts are not part of bookkeeping  
+D. Control accounts never update  
 **Answer: A**
 
+7. What does a credit purchase normally create?  
+A. Capital  
+B. Creditors  
+C. Debtors  
+D. Sales  
+**Answer: B**
+
+8. Paying a supplier invoice already recorded normally:  
+A. increases Sales  
+B. reduces Creditors and Bank  
+C. records the expense again  
+D. increases Creditors  
+**Answer: B**
+
+9. Which document bills a customer for goods or services already supplied?  
+A. A supplier remittance  
+B. A payroll record  
+C. Evidence billing a customer for supplied goods/services  
+D. A bank statement  
+**Answer: C**
+
 10. Why should sales invoice numbers be unique?  
-A. They determine payment terms  
+A. They replace customer names  
 B. They support sequence, duplicate detection and traceability  
-C. They replace customer names  
+C. They determine payment terms  
 D. They set VAT rates  
 **Answer: B**
 
-11. What is a customer credit note?  
-A. A customer payment  
+11. A customer returns goods previously sold on credit and the reduction is approved. Which document records the reduction of the customer’s balance?  
+A. A bank charge  
 B. A new sales invoice  
 C. A document reducing an amount previously billed  
-D. A bank charge  
+D. A customer payment  
 **Answer: C**
 
 12. Why should manual invoice discounts be controlled?  
-A. Discounts cannot be used in business  
-B. They affect only formatting  
+A. They affect only formatting  
+B. They reduce revenue/customer balances and may require authority  
 C. They never affect revenue  
-D. They reduce revenue/customer balances and may require authority  
-**Answer: D**
+D. Discounts cannot be used in business  
+**Answer: B**
 
-13. What is accounting cut-off?  
-A. Recording transactions in the correct accounting period  
-B. Closing a customer account  
-C. Cancelling every old invoice  
-D. Removing unpaid balances  
-**Answer: A**
+13. Goods invoiced on 30 June were delivered and accepted on 2 July. Before the June records are finalised, what issue must the bookkeeper resolve?  
+A. Whether the invoice should be written off because delivery was later  
+B. Whether the payment date alone decides the reporting period  
+C. Whether every June purchase should be moved to July  
+D. Whether the transaction belongs in June or July under the cut-off policy and evidence  
+**Answer: D**
 
 14. Why should cancelled invoice numbers remain explainable?  
 A. To increase sales  
-B. To preserve sequence and audit-trail integrity  
-C. To remove customer history  
-D. To avoid credit notes  
-**Answer: B**
-
-15. Which invoice exception should be investigated?  
-A. Correct approved invoice  
-B. Normal customer terms  
-C. Duplicate invoice number  
-D. Correct sequential reference  
+B. To avoid credit notes  
+C. To preserve sequence and audit-trail integrity  
+D. To remove customer history  
 **Answer: C**
 
-16. What is receipt allocation?  
-A. Preparing supplier payments  
-B. Ageing customer balances  
-C. Creating sales invoices  
-D. Matching customer money received to the correct account/invoice  
+15. Which invoice exception should be investigated?  
+A. Normal customer terms  
+B. Correct sequential reference  
+C. Correct approved invoice  
+D. Duplicate invoice number  
 **Answer: D**
+
+16. A customer payment is matched to the correct account and invoice. What process is this?  
+A. Ageing customer balances  
+B. Preparing supplier payments  
+C. Matching customer money received to the correct account/invoice  
+D. Creating sales invoices  
+**Answer: C**
 
 17. Why is remittance advice useful?  
 A. It explains which invoices a customer payment covers  
-B. It replaces the bank statement  
-C. It sets customer credit limits  
+B. It sets customer credit limits  
+C. It replaces the bank statement  
 D. It creates a credit note  
 **Answer: A**
 
 18. A customer pays only R6,000 of a R10,000 invoice. What is the remaining balance?  
-A. R16,000  
-B. R4,000  
+A. R4,000  
+B. R16,000  
 C. R6,000  
 D. R10,000  
-**Answer: B**
+**Answer: A**
 
 19. How should an unidentified deposit be handled?  
 A. Post to Sales automatically  
-B. Allocate to any open customer  
-C. Investigate and use an approved unallocated-receipts process if necessary  
-D. Delete it  
-**Answer: C**
+B. Delete it  
+C. Allocate to any open customer  
+D. Investigate and use an approved unallocated-receipts process if necessary  
+**Answer: D**
 
 20. Why should customer overpayments be investigated before refund?  
-A. Refunds are never allowed  
-B. Overpayments always become income  
-C. Bank cannot refund money  
-D. The excess may relate to another invoice, advance or duplicate payment  
-**Answer: D**
+A. Bank cannot refund money  
+B. Refunds are never allowed  
+C. The excess may relate to another invoice, advance or duplicate payment  
+D. Overpayments always become income  
+**Answer: C**
 
 21. What does a customer statement normally show?  
 A. Opening balance, invoices, receipts, credits and closing balance  
-B. Supplier balances only  
-C. Bank fees only  
+B. Bank fees only  
+C. Supplier balances only  
 D. Payroll deductions  
 **Answer: A**
 
-22. What is a supplier statement mainly used for?  
-A. Setting selling prices  
+22. At month end, which purpose is served by comparing a supplier statement with the creditor account?  
+A. Approving bank details  
 B. Reconciling the supplier's records to the business creditor account  
-C. Approving bank details  
+C. Setting selling prices  
 D. Recording customer sales  
 **Answer: B**
 
 23. A supplier statement shows an invoice not in the ledger. What is the BEST next action?  
-A. Pay it immediately  
-B. Ignore it  
-C. Obtain and verify the underlying invoice before capture  
-D. Adjust the statement  
-**Answer: C**
-
-24. What does a supplier credit note normally do?  
-A. Increase the amount owed  
-B. Increase Sales  
-C. Increase Debtors  
-D. Reduce the supplier obligation  
-**Answer: D**
-
-25. Which control helps prevent duplicate supplier payments?  
-A. Check supplier, invoice number, amount and prior payment status  
-B. Pay directly from statements  
-C. Ignore system warnings  
-D. Use shared banking credentials  
-**Answer: A**
-
-26. Why send remittance advice to suppliers?  
-A. To create a new invoice  
-B. To explain which obligations the payment settles  
-C. To change banking details  
-D. To increase the supplier balance  
+A. Adjust the statement  
+B. Obtain and verify the underlying invoice before capture  
+C. Pay it immediately  
+D. Ignore it  
 **Answer: B**
 
-27. What does a debtors reconciliation compare?  
-A. Sales to bank  
-B. Suppliers to bank  
-C. Debtors Control to total individual customer balances  
-D. Purchases to Sales  
+24. What does a supplier credit note normally do?  
+A. Reduce the supplier obligation  
+B. Increase Debtors  
+C. Increase the amount owed  
+D. Increase Sales  
+**Answer: A**
+
+25. Which control helps prevent duplicate supplier payments?  
+A. Pay directly from statements  
+B. Ignore system warnings  
+C. Check supplier, invoice number, amount and prior payment status  
+D. Use shared banking credentials  
 **Answer: C**
 
-28. What is an age analysis?  
-A. A fixed-asset report  
-B. Employee-age report  
-C. Supplier master list  
-D. Report grouping outstanding receivables by age  
+26. Why send remittance advice to suppliers?  
+A. To explain which obligations the payment settles  
+B. To create a new invoice  
+C. To change banking details  
+D. To increase the supplier balance  
+**Answer: A**
+
+27. Which balances are compared when reconciling Debtors Control?  
+A. Purchases to Sales  
+B. Suppliers to bank  
+C. Sales to bank  
+D. Debtors Control to total individual customer balances  
 **Answer: D**
 
+28. Which report groups unpaid customer balances by how long they have been outstanding?  
+A. Supplier master list  
+B. A fixed-asset report  
+C. Report grouping outstanding receivables by age  
+D. Employee-age report  
+**Answer: C**
+
 29. Why must the ageing method be understood?  
-A. Invoice-date and due-date methods can produce different ageing interpretations  
+A. Ageing does not affect collection  
 B. All systems use identical logic  
 C. Ageing applies only to suppliers  
-D. Ageing does not affect collection  
-**Answer: A**
+D. Invoice-date and due-date methods can produce different ageing interpretations  
+**Answer: D**
 
 30. Which may cause an apparently old customer balance besides genuine non-payment?  
 A. Correct receipt allocation  
 B. Missing credit note or misallocated receipt  
-C. Correct closing balance  
-D. Accurate invoice  
+C. Accurate invoice  
+D. Correct closing balance  
 **Answer: B**
 
-31. What should happen to an unexplained customer credit balance?  
+31. A customer account shows an unexplained credit. What should happen before any refund or reallocation?  
 A. Refund automatically  
 B. Move to Sales  
-C. Investigate before refund or reallocation  
-D. Delete it  
-**Answer: C**
+C. Delete it  
+D. Investigate before refund or reallocation  
+**Answer: D**
 
 32. What should happen when Debtors Control differs from total customer balances?  
-A. Change the largest customer  
+A. Investigate one-sided postings, journals, opening balances or system issues  
 B. Ignore small differences  
-C. Post to Sales  
-D. Investigate one-sided postings, journals, opening balances or system issues  
-**Answer: D**
+C. Change the largest customer  
+D. Post to Sales  
+**Answer: A**
 
 33. What should precede a supplier payment run?  
 A. Creditor and supplier-statement reconciliation  
@@ -239,134 +239,134 @@ D. Payroll processing
 **Answer: A**
 
 34. Why should statement totals not be paid blindly?  
-A. Statements never show balances  
+A. Supplier statements are always wrong  
 B. They can include disputes, missing credits, timing items or errors  
-C. Supplier statements are always wrong  
-D. Suppliers decide internal approval  
+C. Suppliers decide internal approval  
+D. Statements never show balances  
 **Answer: B**
 
-35. What belongs on a supplier-payment schedule?  
-A. Customer ageing only  
-B. Sales totals only  
-C. Supplier, invoice references, amount, due date and approval status  
-D. Employee leave dates  
+35. Before a supplier-payment run, which schedule is ready for review and approval?  
+A. A customer ageing report with no supplier information  
+B. An employee leave calendar with the payment date added  
+C. A schedule listing suppliers, invoice references, amounts, due dates, exceptions and approval status  
+D. A sales summary showing revenue by customer only  
 **Answer: C**
 
 36. Why must changed supplier bank details be independently verified?  
-A. To delay payment  
+A. To reduce fraud risk from redirected payments  
 B. To calculate VAT  
 C. To update customer accounts  
-D. To reduce fraud risk from redirected payments  
-**Answer: D**
-
-37. What is segregation of duties in payment processing?  
-A. Separating incompatible stages such as setup, preparation, approval and reconciliation  
-B. Giving one employee all access  
-C. Removing review  
-D. Allowing password sharing  
+D. To delay payment  
 **Answer: A**
 
-38. What should collection follow-up begin with?  
-A. Threats  
+37. What is segregation of duties in payment processing?  
+A. Giving one employee all access  
+B. Removing review  
+C. Allowing password sharing  
+D. Separating incompatible stages such as setup, preparation, approval and reconciliation  
+**Answer: D**
+
+38. Before contacting overdue customers, which information should collection follow-up rely on?  
+A. Legal action  
 B. Accurate reconciled debtor information  
-C. Legal action  
-D. Write-offs  
+C. Write-offs  
+D. Threats  
 **Answer: B**
 
-39. What should a promise-to-pay record include?  
-A. Supplier name  
-B. Only customer name  
-C. Amount, promised date and follow-up status  
-D. Bank password  
+39. A customer promises to pay R18,000 on 25 August. What should the collection record capture?  
+A. Only the customer name and current balance  
+B. The supplier name, bank account and payment batch  
+C. The amount, promised date, contact note, responsible person and follow-up status  
+D. Only a reminder to check the bank at month-end  
 **Answer: C**
 
 40. How should a disputed invoice be handled?  
-A. Ignore it  
-B. Write it off immediately  
-C. Keep sending generic reminders only  
-D. Record and route it for resolution while keeping it visible  
-**Answer: D**
-
-41. Which factor can guide collection priority?  
-A. Age, amount, risk and prior promises  
-B. Customer name length  
-C. Invoice colour  
-D. Staff preference  
-**Answer: A**
-
-42. Who should approve a major credit-limit increase?  
-A. Any bookkeeper  
-B. The authorised credit/finance manager or delegated role  
-C. The customer  
-D. The bank  
+A. Write it off immediately  
+B. Record and route it for resolution while keeping it visible  
+C. Ignore it  
+D. Keep sending generic reminders only  
 **Answer: B**
 
-43. What is a write-off?  
-A. Deleting any old invoice  
-B. Customer refund  
-C. Authorised accounting removal of an amount judged irrecoverable under policy  
-D. Supplier payment  
+41. Which factor can guide collection priority?  
+A. Staff preference  
+B. Invoice colour  
+C. Customer name length  
+D. Age, amount, risk and prior promises  
+**Answer: D**
+
+42. Who should approve a major credit-limit increase?  
+A. The customer  
+B. Any bookkeeper  
+C. The authorised credit/finance manager or delegated role  
+D. The bank  
 **Answer: C**
 
+43. What is a write-off?  
+A. Authorised accounting removal of an amount judged irrecoverable under policy  
+B. Customer refund  
+C. Deleting any old invoice  
+D. Supplier payment  
+**Answer: A**
+
 44. Why are repeated broken payment promises significant?  
-A. They reduce Sales automatically  
-B. They improve creditworthiness  
+A. They improve creditworthiness  
+B. They reduce Sales automatically  
 C. They eliminate debt  
 D. They indicate higher collection risk and may require escalation  
 **Answer: D**
 
 45. Customer A opening balance R18,000, new invoice R9,000, receipt R15,000. Closing balance?  
-A. R12,000 Dr  
-B. R42,000 Dr  
-C. R6,000 Cr  
-D. R15,000 Dr  
-**Answer: A**
-
-46. Supplier X opening R14,000 Cr, new invoice R6,000, payment R10,000. Closing balance?  
-A. R30,000 Cr  
-B. R10,000 Cr  
-C. R2,000 Dr  
-D. R14,000 Cr  
-**Answer: B**
-
-47. Debtors Control is R22,000 and customer balances are R12,000 and R10,000. What is true?  
-A. Control differs by R2,000  
-B. Control differs by R12,000  
-C. Control agrees with subsidiary total  
-D. Control should be R32,000  
-**Answer: C**
-
-48. If a R15,000 receipt is posted to the wrong customer, what may happen?  
-A. Debtors Control must be wrong  
-B. Bank must be wrong  
-C. Sales must be wrong  
-D. Control total may remain correct while individual balances are wrong  
+A. R15,000 Dr  
+B. R6,000 Cr  
+C. R42,000 Dr  
+D. R12,000 Dr  
 **Answer: D**
 
-49. Why should supplier credits be processed before payment?  
-A. They reduce the amount genuinely owed  
-B. They increase the obligation  
+46. Supplier X opening R14,000 Cr, new invoice R6,000, payment R10,000. Closing balance?  
+A. R14,000 Cr  
+B. R30,000 Cr  
+C. R10,000 Cr  
+D. R2,000 Dr  
+**Answer: C**
+
+47. Debtors Control is R22,000 and customer balances are R12,000 and R10,000. What is true?  
+A. Control agrees with subsidiary total  
+B. Control differs by R2,000  
+C. Control should be R32,000  
+D. Control differs by R12,000  
+**Answer: A**
+
+48. If a R15,000 receipt is posted to the wrong customer, what may happen?  
+A. Sales must be wrong  
+B. Control total may remain correct while individual balances are wrong  
+C. Bank must be wrong  
+D. Debtors Control must be wrong  
+**Answer: B**
+
+49. Approved supplier credit notes are on the account before a payment run. Why must they be processed before the payment amount is finalised?  
+A. They increase the obligation  
+B. They reduce the amount genuinely owed  
 C. They affect only customer balances  
 D. They are unrelated to payment  
-**Answer: A**
+**Answer: B**
 
 50. Which combination BEST supports a controlled supplier payment?  
 A. Statement total and emailed bank details  
-B. Reconciled balance, source evidence, approval, duplicate check and verified bank details  
+B. Customer remittance  
 C. One employee's memory  
-D. Customer remittance  
-**Answer: B**
+D. Reconciled balance, source evidence, approval, duplicate check and verified bank details  
+**Answer: D**
 
 51. What should a debtor exception report highlight?  
-A. Only current balances  
-B. Only cash sales  
-C. Material overdue, disputed, unallocated or unusual balances  
-D. Supplier bank details  
-**Answer: C**
+A. Material overdue, disputed, unallocated or unusual balances  
+B. Supplier bank details  
+C. Only cash sales  
+D. Only current balances  
+**Answer: A**
 
 52. Which principle BEST summarises Module 5?  
 A. Customer and supplier balances can be managed from statements alone  
-B. Control accounts eliminate the need for subsidiary ledgers  
-C. Collection and payment do not require reconciliation  
+B. Collection and payment do not require reconciliation  
+C. Control accounts eliminate the need for subsidiary ledgers  
 D. Reliable debtor-creditor control links accurate invoices, allocations, reconciliations, collections, approvals and settlement evidence  
 **Answer: D**

@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 10: Practical Bookkeeping Project
 ### Lesson 6: Process Period-end Adjustments
 

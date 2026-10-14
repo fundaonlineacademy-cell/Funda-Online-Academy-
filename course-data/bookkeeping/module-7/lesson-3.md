@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 7: Computerised Bookkeeping & QuickBooks Fundamentals
 ### Lesson 3: Customers, Suppliers and Opening Information
 

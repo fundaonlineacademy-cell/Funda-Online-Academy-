@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 2: Source Documents & Transaction Analysis
 ### Lesson 3: Supplier Invoices, Debit Notes & Purchase Documents
 

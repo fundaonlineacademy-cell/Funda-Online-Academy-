@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 6: Adjustments & Basic Financial Reporting
 ### Lesson 2: Accruals and Prepayments
 
