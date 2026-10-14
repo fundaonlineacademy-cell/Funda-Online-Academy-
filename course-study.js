@@ -217,22 +217,65 @@ function buildStages(l){
  if(String(l.lesson_summary||'').trim())stages.push({kind:'summary',title:'Lesson Summary',html:section('Lesson Summary',l.lesson_summary)});
  return stages.length?stages:[{kind:'content',title:'Lesson Content',html:'<section class="card"><p>No lesson content is available yet.</p></section>'}];
 }
+function shuffled(values){
+ const out=[...values];
+ for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}
+ return out;
+}
+function renderKnowledgeQuestion(q,qi){
+ const type=String(q.type||'mcq').toLowerCase();
+ if(type==='true_false'){
+  return `<label class="foaQuizOption"><input type="radio" name="q${qi}" value="true"><span>True</span></label><label class="foaQuizOption"><input type="radio" name="q${qi}" value="false"><span>False</span></label>`;
+ }
+ if(type==='matching'&&Array.isArray(q.pairs)&&q.pairs.length){
+  const rights=shuffled(q.pairs.map(p=>String(p.right??'')));
+  return `<p style="margin:0 0 10px;color:#64748b;font-size:12px">Choose the matching response for each item. Use each response once.</p>${q.pairs.map((p,pi)=>`<label style="display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,1fr);gap:10px;align-items:center;margin:9px 0"><span style="font-size:12px;line-height:1.45;color:#334a62">${esc(p.left)}</span><select name="q${qi}_match_${pi}" style="width:100%;padding:10px 11px;border:1px solid #dce6f2;border-radius:11px;background:#fbfdff;color:#334a62"><option value="">Select match…</option>${rights.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('')}</select></label>`).join('')}`;
+ }
+ if(type==='sequencing'&&Array.isArray(q.items)&&q.items.length){
+  const items=shuffled(q.items.map(item=>({id:String(item.id),text:String(item.text??'')})));
+  return `<p style="margin:0 0 10px;color:#64748b;font-size:12px">Choose the item that belongs in each position. Use each item once.</p>${q.items.map((_,pi)=>`<label style="display:grid;grid-template-columns:95px minmax(0,1fr);gap:10px;align-items:center;margin:9px 0"><span style="font-size:12px;font-weight:800;color:#0b2f70">Step ${pi+1}</span><select name="q${qi}_seq_${pi}" style="width:100%;padding:10px 11px;border:1px solid #dce6f2;border-radius:11px;background:#fbfdff;color:#334a62"><option value="">Select item…</option>${items.map(item=>`<option value="${esc(item.id)}">${esc(item.text)}</option>`).join('')}</select></label>`).join('')}`;
+ }
+ return (q.options||[]).map((o,oi)=>`<label class="foaQuizOption"><input type="radio" name="q${qi}" value="${oi}"><span>${esc(o)}</span></label>`).join('');
+}
 function renderKnowledge(stage){
  if(!stage.quiz)return section('Knowledge Check',stage.raw,'knowledge');
  const qs=stage.quiz.questions;
- return `<section class="card knowledge"><h2>Knowledge Check</h2><p>This is a short self-check. It does not form part of your formal result and it will not block your progress.</p><form id="foaKnowledgeForm">${qs.map((q,qi)=>`<div class="foaQuizQuestion" data-q="${qi}"><h3>${qi+1}. ${esc(q.prompt)}</h3>${(q.options||[]).map((o,oi)=>`<label class="foaQuizOption"><input type="radio" name="q${qi}" value="${oi}"><span>${esc(o)}</span></label>`).join('')}<div class="foaQuizFeedback" id="foaFeedback${qi}" hidden></div></div>`).join('')}<div class="foaQuizActions"><button type="button" class="btn primary" id="foaCheckKnowledge">Check My Knowledge</button><button type="button" class="btn secondary" id="foaRetryKnowledge" hidden>Try Again</button></div><div class="foaQuizResult" id="foaQuizResult" hidden></div></form></section>`;
+ return `<section class="card knowledge"><h2>Knowledge Check</h2><p>This is a short self-check. It does not form part of your formal result and it will not block your progress.</p><form id="foaKnowledgeForm">${qs.map((q,qi)=>`<div class="foaQuizQuestion" data-q="${qi}"><h3>${qi+1}. ${esc(q.prompt)}</h3>${renderKnowledgeQuestion(q,qi)}<div class="foaQuizFeedback" id="foaFeedback${qi}" hidden></div></div>`).join('')}<div class="foaQuizActions"><button type="button" class="btn primary" id="foaCheckKnowledge">Check My Knowledge</button><button type="button" class="btn secondary" id="foaRetryKnowledge" hidden>Try Again</button></div><div class="foaQuizResult" id="foaQuizResult" hidden></div></form></section>`;
+}
+function knowledgeResponse(form,q,i){
+ const type=String(q.type||'mcq').toLowerCase();
+ if(type==='matching'&&Array.isArray(q.pairs)&&q.pairs.length){
+  const controls=q.pairs.map((_,pi)=>form.querySelector(`[name="q${i}_match_${pi}"]`));
+  const values=controls.map(x=>String(x?.value||''));
+  const complete=values.every(Boolean)&&new Set(values).size===values.length;
+  const correct=complete&&values.every((value,pi)=>value===String(q.pairs[pi].right??''));
+  return {complete,correct,controls};
+ }
+ if(type==='sequencing'&&Array.isArray(q.items)&&q.items.length){
+  const expected=Array.isArray(q.correct_order)?q.correct_order.map(String):[];
+  const count=expected.length||q.items.length;
+  const controls=Array.from({length:count},(_,pi)=>form.querySelector(`[name="q${i}_seq_${pi}"]`));
+  const values=controls.map(x=>String(x?.value||''));
+  const complete=values.every(Boolean)&&new Set(values).size===values.length;
+  const correct=complete&&expected.length===values.length&&values.every((value,pi)=>value===expected[pi]);
+  return {complete,correct,controls};
+ }
+ const selected=form.querySelector(`input[name="q${i}"]:checked`);
+ if(!selected)return {complete:false,correct:false,controls:[...form.querySelectorAll(`input[name="q${i}"]`)]};
+ const correct=type==='true_false'?String(selected.value)===String(Boolean(q.answer)):Number(selected.value)===Number(q.answer);
+ return {complete:true,correct,controls:[...form.querySelectorAll(`input[name="q${i}"]`)]};
 }
 function wireKnowledge(stage){
  if(!stage.quiz)return;
  const form=$('foaKnowledgeForm'),check=$('foaCheckKnowledge'),retry=$('foaRetryKnowledge'),result=$('foaQuizResult');if(!form||!check)return;
  check.onclick=()=>{
-  const qs=stage.quiz.questions;const chosen=qs.map((_,i)=>form.querySelector(`input[name="q${i}"]:checked`));
-  if(chosen.some(x=>!x)){result.hidden=false;result.innerHTML='<strong>Complete all 5 questions first.</strong><div style="margin-top:5px">You can then check your understanding.</div>';return}
+  const qs=stage.quiz.questions,responses=qs.map((q,i)=>knowledgeResponse(form,q,i));
+  if(responses.some(x=>!x.complete)){result.hidden=false;result.innerHTML='<strong>Complete all 5 questions first.</strong><div style="margin-top:5px">For matching and sequencing, use each choice once before checking your knowledge.</div>';return}
   let correct=0;
   qs.forEach((q,i)=>{
-   const selected=Number(chosen[i].value),ok=selected===Number(q.answer);if(ok)correct++;
+   const response=responses[i],ok=response.correct;if(ok)correct++;
    const fb=$(`foaFeedback${i}`);if(fb){fb.hidden=false;fb.className='foaQuizFeedback '+(ok?'correct':'incorrect');fb.innerHTML=`<strong>${ok?'Correct':'Review this answer'}.</strong> ${esc(q.feedback||'')}`}
-   form.querySelectorAll(`input[name="q${i}"]`).forEach(x=>x.disabled=true);
+   response.controls.forEach(x=>{if(x)x.disabled=true});
   });
   const pct=Math.round(correct/qs.length*100);result.hidden=false;result.innerHTML=`<strong>${correct} / ${qs.length} · ${pct}%</strong><div style="margin-top:5px">This score is for your own learning only and is not recorded as a formal result.</div>`;check.hidden=true;retry.hidden=false;
  };
