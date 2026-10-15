@@ -87,6 +87,18 @@ The owner explicitly reopened only the **Bookkeeping & Financial Administration 
 - The post-remediation QA status is **REQUIRES ACTION** because 712 of 840 formal questions retain a uniquely longest correct option. The PCA remains `draft` and blocked pending final QA. This scope must not be re-locked or represented as clean until an SME distractor rewrite and a new independent audit pass.
 - The controlled evidence and required follow-up are recorded in `BOOKKEEPING_ACADEMIC_REMEDIATION_2026_10_14.md`.
 
+### Student learning Knowledge Checks and module assessments — OWNER-AUTHORISED FOCUSED CORRECTION (15 October 2026)
+
+After physically reviewing the Bookkeeping course on mobile, the owner explicitly reopened only the affected Knowledge Check presentation, Bookkeeping post-activity guidance labels and shared module-assessment runtime.
+
+- Mobile matching rows must place each complete term above its full-width selector so the term cannot be clipped by the desktop two-column layout. Desktop matching remains a two-column relationship.
+- True/False Knowledge Checks use a short numbered **True or False** type label followed by the actual question and answer claim. The repetitive “for the question / the proposed answer is” wrapper is removed from the learner-facing presentation without changing the answer key or feedback.
+- Bookkeeping case-study disclosure text is **Compare with a suggested response**. Bookkeeping practical-activity disclosure text is **View guidance after completing the activity**. The underlying post-attempt learning guidance remains unchanged and ungraded.
+- The full assessment hero and complete instructions remain on the pre-start screen only. After Start, one question remains visible at a time with a compact Module / assessment type / Question X of N / Attempt X of 3 progress strip. The approved 15-question formative, 25-question summative, 70% pass, three-attempt and formative-before-summative rules remain unchanged.
+- Internal QA accounts may complete and score a deterministic **QA Preview**, but the preview must never insert an assessment-attempt row, consume an attempt, change progression or present itself as a recorded learner result. Real learner submissions retain the existing server-side gates and recorded-attempt behaviour.
+- A rejected or interrupted submission must preserve the answers already selected on the page and show a retryable message. A domain response with `ok: false` must not be rendered as a successful result.
+- This focused correction does not reopen Student Dashboard navigation, formal question-bank content, learner history, results, payments, certificates, unrelated course content or any other protected Student Portal surface. The Bookkeeping academic QA status remains **REQUIRES ACTION**, and the PCA remains draft/blocked pending the separate distractor-quality remediation.
+
 
 ### Student Portal — FINAL OWNER-APPROVED AND LOCKED
 

@@ -32,11 +32,13 @@ function injectLessonStandardCss(){
  .lesson-glossary th,.lesson-table-wrap th,.card th{background:#071d49;color:#fff;font-weight:800}
  .card details{margin-top:14px;border:1px solid #d9e4f2;border-radius:13px;background:#f8fbff;padding:12px 14px}.card details summary{cursor:pointer;color:#0b2f70;font-weight:800}
  .foaQuizQuestion{margin:14px 0;padding:15px;border:1px solid #d7e3f1;border-radius:15px;background:#fff}.foaQuizQuestion h3{margin:0 0 10px;color:#06152f;font-size:14px}
+ .foaQuizType{margin:0 0 8px;color:#0b2f70;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
  .foaQuizOption{display:flex;gap:10px;align-items:flex-start;margin:8px 0;padding:10px 11px;border:1px solid #dce6f2;border-radius:11px;background:#fbfdff;cursor:pointer}.foaQuizOption input{margin-top:3px}.foaQuizOption span{font-size:12px;line-height:1.45;color:#334a62}
+ .foaMatchHelp{margin:0 0 10px;color:#64748b;font-size:12px}.foaMatchRow{display:grid;grid-template-columns:minmax(140px,.75fr) minmax(260px,1.25fr);gap:12px;align-items:center;margin:10px 0}.foaMatchTerm{min-width:0;color:#334a62;font-size:12px;font-weight:700;line-height:1.45;overflow-wrap:anywhere}.foaQuizSelect{width:100%;min-width:0;padding:10px 11px;border:1px solid #dce6f2;border-radius:11px;background:#fbfdff;color:#334a62}
  .foaQuizFeedback{margin-top:8px;padding:9px 10px;border-radius:9px;background:#eef6ff;color:#23466c;font-size:11px;line-height:1.5}.foaQuizFeedback.correct{background:#eaf7ef;color:#176b50}.foaQuizFeedback.incorrect{background:#fff3df;color:#80580b}
  .foaQuizResult{margin-top:14px;padding:14px;border-radius:13px;background:#071d49;color:#fff}.foaQuizResult strong{color:#f0cf78;font-size:18px}.foaQuizActions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
  .foaNav{display:flex;justify-content:space-between;gap:12px;margin-top:22px}.foaNav .btn{min-width:150px}
- @media(max-width:760px){.foaLessonSticky{top:64px}.foaLessonSticky h1{font-size:24px}.foaStageMeta{align-items:flex-start;flex-direction:column}.foaNav{flex-direction:column-reverse}.foaNav .btn{width:100%}.lesson-glossary,.lesson-table-wrap,.card{overflow-x:auto}}
+ @media(max-width:760px){.foaLessonSticky{top:64px}.foaLessonSticky h1{font-size:24px}.foaStageMeta{align-items:flex-start;flex-direction:column}.foaNav{flex-direction:column-reverse}.foaNav .btn{width:100%}.lesson-glossary,.lesson-table-wrap,.card{overflow-x:auto}.foaMatchRow{display:block;margin:14px 0}.foaMatchTerm{display:block;margin:0 0 7px;font-size:13px}.foaQuizSelect{display:block}}
  `;
  document.head.appendChild(s);
 }
@@ -222,6 +224,13 @@ function shuffled(values){
  for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}
  return out;
 }
+function formatTrueFalsePrompt(value){
+ const raw=String(value||'').trim();
+ const match=raw.match(/^True or false\s*[—–-]\s*for the question\s+[“"]([\s\S]*?)[”"]\s*,?\s*the proposed answer is\s+[“"]([\s\S]*?)[”"]\.?$/i);
+ if(!match)return raw.replace(/^True or false\s*[—–-]\s*/i,'');
+ const question=match[1].trim(),claim=match[2].trim();
+ return `${question} — ${claim}${/[.!?]$/.test(claim)?'':'.'}`;
+}
 function renderKnowledgeQuestion(q,qi){
  const type=String(q.type||'mcq').toLowerCase();
  if(type==='true_false'){
@@ -229,7 +238,7 @@ function renderKnowledgeQuestion(q,qi){
  }
  if(type==='matching'&&Array.isArray(q.pairs)&&q.pairs.length){
   const rights=shuffled(q.pairs.map(p=>String(p.right??'')));
-  return `<p style="margin:0 0 10px;color:#64748b;font-size:12px">Choose the matching response for each item. Use each response once.</p>${q.pairs.map((p,pi)=>`<label style="display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,1fr);gap:10px;align-items:center;margin:9px 0"><span style="font-size:12px;line-height:1.45;color:#334a62">${esc(p.left)}</span><select name="q${qi}_match_${pi}" style="width:100%;padding:10px 11px;border:1px solid #dce6f2;border-radius:11px;background:#fbfdff;color:#334a62"><option value="">Select match…</option>${rights.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('')}</select></label>`).join('')}`;
+  return `<p class="foaMatchHelp">Choose the matching response for each item. Use each response once.</p>${q.pairs.map((p,pi)=>`<label class="foaMatchRow"><span class="foaMatchTerm">${esc(p.left)}</span><select class="foaQuizSelect" name="q${qi}_match_${pi}"><option value="">Select match…</option>${rights.map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('')}</select></label>`).join('')}`;
  }
  if(type==='sequencing'&&Array.isArray(q.items)&&q.items.length){
   const items=shuffled(q.items.map(item=>({id:String(item.id),text:String(item.text??'')})));
@@ -240,7 +249,7 @@ function renderKnowledgeQuestion(q,qi){
 function renderKnowledge(stage){
  if(!stage.quiz)return section('Knowledge Check',stage.raw,'knowledge');
  const qs=stage.quiz.questions;
- return `<section class="card knowledge"><h2>Knowledge Check</h2><p>This is a short self-check. It does not form part of your formal result and it will not block your progress.</p><form id="foaKnowledgeForm">${qs.map((q,qi)=>`<div class="foaQuizQuestion" data-q="${qi}"><h3>${qi+1}. ${esc(q.prompt)}</h3>${renderKnowledgeQuestion(q,qi)}<div class="foaQuizFeedback" id="foaFeedback${qi}" hidden></div></div>`).join('')}<div class="foaQuizActions"><button type="button" class="btn primary" id="foaCheckKnowledge">Check My Knowledge</button><button type="button" class="btn secondary" id="foaRetryKnowledge" hidden>Try Again</button></div><div class="foaQuizResult" id="foaQuizResult" hidden></div></form></section>`;
+ return `<section class="card knowledge"><h2>Knowledge Check</h2><p>This is a short self-check. It does not form part of your formal result and it will not block your progress.</p><form id="foaKnowledgeForm">${qs.map((q,qi)=>{const type=String(q.type||'mcq').toLowerCase();const heading=type==='true_false'?`<div class="foaQuizType">${qi+1}. True or False</div><h3>${esc(formatTrueFalsePrompt(q.prompt))}</h3>`:`<h3>${qi+1}. ${esc(q.prompt)}</h3>`;return `<div class="foaQuizQuestion" data-q="${qi}">${heading}${renderKnowledgeQuestion(q,qi)}<div class="foaQuizFeedback" id="foaFeedback${qi}" hidden></div></div>`}).join('')}<div class="foaQuizActions"><button type="button" class="btn primary" id="foaCheckKnowledge">Check My Knowledge</button><button type="button" class="btn secondary" id="foaRetryKnowledge" hidden>Try Again</button></div><div class="foaQuizResult" id="foaQuizResult" hidden></div></form></section>`;
 }
 function knowledgeResponse(form,q,i){
  const type=String(q.type||'mcq').toLowerCase();
