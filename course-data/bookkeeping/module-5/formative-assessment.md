@@ -9,40 +9,40 @@
 
 ## Lesson 1 — Debtors and Creditors in the Bookkeeping System
 1. A credit sale normally creates:  
-A. a debtor balance  
-B. a creditor balance  
-C. a bank charge  
-D. a loan liability  
-**Answer: A**
+A. a bank charge  
+B. a loan liability  
+C. a debtor balance  
+D. a creditor balance  
+**Answer: C**
 
 2. A customer pays an existing invoice. What is the normal effect?  
-A. Sales increases again  
-B. Bank increases and Debtors decreases  
-C. Creditors increases  
+A. Bank increases and Debtors decreases  
+B. Creditors increases  
+C. Sales increases again  
 D. Capital decreases  
-**Answer: B**
+**Answer: A**
 
 3. What does Creditors represent?  
 A. Money customers owe  
-B. Cash in the bank  
-C. Amounts the business owes suppliers  
+B. Amounts the business owes suppliers  
+C. Cash in the bank  
 D. Owner equity  
-**Answer: C**
+**Answer: B**
 
 4. Why are subsidiary ledgers used?  
-A. To replace source documents  
-B. To avoid control accounts  
+A. To avoid control accounts  
+B. To show individual customer or supplier balances behind control totals  
 C. To record only cash  
-D. To show individual customer or supplier balances behind control totals  
-**Answer: D**
+D. To replace source documents  
+**Answer: B**
 
 ## Lesson 2 — Customer Invoicing and Sales-account Control
 5. What is a sales invoice?  
-A. A customer-payment record only  
-B. Evidence billing a customer for goods or services supplied  
-C. A supplier statement  
-D. A bank reconciliation  
-**Answer: B**
+A. A supplier statement  
+B. A customer-payment record only  
+C. A bank reconciliation  
+D. Evidence billing a customer for goods or services supplied  
+**Answer: D**
 
 6. Why are invoice numbers important?  
 A. They determine profit  
@@ -52,189 +52,189 @@ D. They set payment approval
 **Answer: C**
 
 7. What does a customer credit note do?  
-A. Increase Debtors  
-B. Increase Sales  
-C. Create a supplier balance  
-D. Reduce an approved amount previously invoiced  
-**Answer: D**
+A. Increase Sales  
+B. Create a supplier balance  
+C. Reduce an approved amount previously invoiced  
+D. Increase Debtors  
+**Answer: C**
 
 8. What is cut-off?  
 A. Recording transactions in the correct accounting period  
 B. Cancelling customer accounts  
-C. Closing the bank account  
-D. Removing VAT  
+C. Removing VAT  
+D. Closing the bank account  
 **Answer: A**
 
 ## Lesson 3 — Customer Receipts, Allocations and Statements
 9. What is receipt allocation?  
-A. Filing customer invoices  
+A. Creating a credit limit  
 B. Matching money received to the correct customer and invoice(s)  
-C. Preparing supplier payments  
-D. Creating a credit limit  
+C. Filing customer invoices  
+D. Preparing supplier payments  
 **Answer: B**
 
 10. What should happen to an unidentified customer deposit?  
-A. Post to Sales automatically  
-B. Allocate to the largest debtor  
-C. Investigate and use an approved unallocated process if required  
-D. Refund immediately  
-**Answer: C**
+A. Refund immediately  
+B. Investigate and use an approved unallocated process if required  
+C. Post to Sales automatically  
+D. Allocate to the largest debtor  
+**Answer: B**
 
 11. What is a part-payment?  
-A. A payment greater than the invoice  
+A. A credit note  
 B. A supplier refund  
-C. A credit note  
+C. A payment greater than the invoice  
 D. Payment that settles only part of an outstanding amount  
 **Answer: D**
 
 12. What does a customer statement summarise?  
-A. Invoices, receipts, credits and balance  
-B. Supplier payments only  
-C. Bank fees  
-D. Payroll records  
-**Answer: A**
+A. Bank fees  
+B. Invoices, receipts, credits and balance  
+C. Payroll records  
+D. Supplier payments only  
+**Answer: B**
 
 ## Lesson 4 — Supplier Invoices, Payments and Supplier Statements
 13. A supplier invoice on credit normally creates:  
 A. Debtors  
-B. Creditors  
-C. Sales  
-D. Capital  
-**Answer: B**
+B. Sales  
+C. Capital  
+D. Creditors  
+**Answer: D**
 
 14. Why should a supplier statement be reconciled?  
-A. To replace invoices  
+A. To approve bank details  
 B. To set selling prices  
-C. To identify missing invoices, credits or payments  
-D. To approve bank details  
-**Answer: C**
+C. To replace invoices  
+D. To identify missing invoices, credits or payments  
+**Answer: D**
 
 15. What should happen when a supplier invoice appears twice?  
-A. Pay both  
-B. Change one number  
-C. Ignore the warning  
-D. Investigate whether the transaction was duplicated  
-**Answer: D**
+A. Investigate whether the transaction was duplicated  
+B. Pay both  
+C. Change one number  
+D. Ignore the warning  
+**Answer: A**
 
 16. What is remittance advice used for?  
 A. Explaining which supplier invoices a payment settles  
-B. Calculating depreciation  
-C. Recording customer sales  
-D. Preparing payroll  
+B. Preparing payroll  
+C. Calculating depreciation  
+D. Recording customer sales  
 **Answer: A**
 
 ## Lesson 5 — Debtors Reconciliation and Age Analysis
 17. What does a debtors reconciliation compare?  
 A. Bank to cashbook  
-B. Debtors Control to total customer balances  
-C. Supplier statements to bank  
+B. Supplier statements to bank  
+C. Debtors Control to total customer balances  
 D. Sales to purchases  
-**Answer: B**
+**Answer: C**
 
 18. What is an age analysis?  
 A. Employee-service report  
-B. Asset-age register  
-C. Report grouping receivables by how long they have been outstanding  
-D. Supplier-payment schedule  
-**Answer: C**
-
-19. An old debtor balance is always bad debt. Is this correct?  
-A. Yes  
-B. Yes if older than 30 days  
-C. Yes if customer is inactive  
-D. No; it may also be disputed, misallocated or missing a credit/receipt  
+B. Supplier-payment schedule  
+C. Asset-age register  
+D. Report grouping receivables by how long they have been outstanding  
 **Answer: D**
 
+19. An old debtor balance is always bad debt. Is this correct?  
+A. Yes if older than 30 days  
+B. No; it may also be disputed, misallocated or missing a credit/receipt  
+C. Yes if customer is inactive  
+D. Yes  
+**Answer: B**
+
 20. What should happen to an unexplained customer credit balance?  
-A. Investigate the cause before refund or reallocation  
-B. Refund automatically  
-C. Delete it  
-D. Move it to Sales  
-**Answer: A**
+A. Move it to Sales  
+B. Delete it  
+C. Refund automatically  
+D. Investigate the cause before refund or reallocation  
+**Answer: D**
 
 ## Lesson 6 — Creditors Reconciliation and Payment Preparation
 21. What should happen before a supplier payment run?  
-A. Pay statement totals  
-B. Reconcile and verify the amounts due  
-C. Ignore credits  
-D. Remove approvals  
-**Answer: B**
-
-22. What belongs on a payment schedule?  
-A. Only supplier name  
-B. Only bank balance  
-C. Supplier, invoices, amount, due date and approval status  
-D. Customer receipts  
-**Answer: C**
-
-23. Why are changed supplier bank details high risk?  
-A. They always mean fraud  
-B. They change VAT  
-C. They reduce invoices  
-D. Fraudsters may redirect legitimate payments  
+A. Remove approvals  
+B. Ignore credits  
+C. Pay statement totals  
+D. Reconcile and verify the amounts due  
 **Answer: D**
 
-24. What does segregation of duties reduce?  
-A. Risk from one person controlling incompatible payment stages  
-B. Number of invoices  
-C. Supplier balances  
-D. VAT liability  
+22. What belongs on a payment schedule?  
+A. Supplier, invoices, amount, due date and approval status  
+B. Only bank balance  
+C. Only supplier name  
+D. Customer receipts  
 **Answer: A**
+
+23. Why are changed supplier bank details high risk?  
+A. They change VAT  
+B. Fraudsters may redirect legitimate payments  
+C. They reduce invoices  
+D. They always mean fraud  
+**Answer: B**
+
+24. Separating payment preparation, approval and release primarily reduces which risk?  
+A. Number of invoices  
+B. Risk from one person controlling incompatible payment stages  
+C. VAT liability  
+D. Supplier balances  
+**Answer: B**
 
 ## Lesson 7 — Credit Control, Collections and Dispute Handling
 25. What should collection follow-up begin with?  
-A. A threat  
-B. Accurate reconciled customer records  
-C. A write-off  
+A. A write-off  
+B. A threat  
+C. Accurate reconciled customer records  
 D. A bank transfer  
-**Answer: B**
+**Answer: C**
 
 26. What should a promise-to-pay record contain?  
-A. Only customer name  
-B. Only invoice number  
-C. Amount, promised date and responsible contact/status  
-D. Supplier details  
-**Answer: C**
+A. Amount, promised date and responsible contact/status  
+B. Supplier details  
+C. Only invoice number  
+D. Only customer name  
+**Answer: A**
 
 27. What should happen with a disputed invoice?  
 A. Ignore the dispute  
 B. Write it off immediately  
-C. Continue generic reminders only  
-D. Record and route the dispute for resolution while keeping it visible  
-**Answer: D**
+C. Record and route the dispute for resolution while keeping it visible  
+D. Continue generic reminders only  
+**Answer: C**
 
 28. Who should approve major credit-limit or write-off decisions?  
 A. The authorised manager or credit/finance role  
-B. Any bookkeeper  
+B. The bank  
 C. The customer  
-D. The bank  
+D. Any bookkeeper  
 **Answer: A**
 
 ## Lesson 8 — Debtors-and-Creditors Practical
 29. Can Debtors Control agree while a customer receipt is allocated to the wrong customer?  
-A. No  
-B. Yes  
-C. Only with VAT  
-D. Only at year end  
-**Answer: B**
+A. Only with VAT  
+B. Only at year end  
+C. Yes  
+D. No  
+**Answer: C**
 
 30. What should happen when a supplier statement contains an unrecorded invoice?  
-A. Pay it immediately  
-B. Ignore it  
+A. Delete the statement  
+B. Pay it immediately  
 C. Obtain and verify the source invoice before capture/payment  
-D. Delete the statement  
+D. Ignore it  
 **Answer: C**
 
 31. Why should supplier credits be applied before payment?  
-A. They increase the amount owed  
+A. They reduce the valid supplier obligation  
 B. They affect customer balances  
 C. They are unrelated to payment  
-D. They reduce the valid supplier obligation  
-**Answer: D**
+D. They increase the amount owed  
+**Answer: A**
 
 32. What does a complete debtor-creditor workflow achieve?  
-A. Accurate receivables/payables with controlled collection, payment and reconciliation  
-B. Only a balanced bank account  
-C. Only customer statements  
-D. Only supplier invoices  
-**Answer: A**
+A. Only supplier invoices  
+B. Only customer statements  
+C. Only a balanced bank account  
+D. Accurate receivables/payables with controlled collection, payment and reconciliation  
+**Answer: D**

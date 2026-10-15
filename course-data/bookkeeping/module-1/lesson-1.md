@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 1: Bookkeeping Foundations
 ### Lesson 1: The Role of Bookkeeping in a Business
 

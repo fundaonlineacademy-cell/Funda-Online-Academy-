@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 1: Bookkeeping Foundations
 ### Lesson 4: The Bookkeeping Cycle: From Transaction to Financial Reports
 

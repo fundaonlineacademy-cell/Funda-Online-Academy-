@@ -1,10 +1,16 @@
 # Bookkeeping Course Academic Content Lock — 2026-10-06
 
-**Status:** LOCKED / BASELINED  
+**Status:** HISTORICAL BASELINE — FORMAL ASSESSMENT, KNOWLEDGE-CHECK AND PUBLIC-TITLE SCOPE REOPENED 2026-10-14  
 **Authority:** Owner/CEO direction during academic QA and housekeeping  
 **Academic standard:** FOA-ACA-STD-001 v1.0  
 **Course:** Bookkeeping & Financial Administration — Professional Short Course  
 **Course ID:** `fcbe0c39-c31f-4a39-833f-7b89d553bef2`
+
+## Reopening notice — 2026-10-14
+
+The owner reopened the Bookkeeping assessment and lesson-standard scope for audit and correction. The 2026-10-06 document remains the historical lesson/content baseline, but it is not a current clean approval of the formal question banks, Knowledge Checks or public course presentation.
+
+Corrective work completed on 2026-10-14 is recorded in `BOOKKEEPING_ACADEMIC_REMEDIATION_2026_10_14.md`. The latest QA disposition is **REQUIRES ACTION** because 712 of 840 formal questions still use a uniquely longest correct option. Final re-locking and PCA activation are withheld until an SME rewrites those distractors and a new independent audit passes.
 
 ## Lock scope
 
@@ -89,4 +95,5 @@ This course housekeeping and lock did not change payment rules, admin-dashboard 
 
 Database QA/lock record: `7f0dcdd5-e29a-412d-b3da-b1aab6690fad`
 
-**Final baseline status:** LOCKED / CLEAN / APPROVED FOR CONTINUED USE
+**Historical baseline status recorded on 2026-10-06:** LOCKED / CLEAN / APPROVED FOR CONTINUED USE  
+**Current status from 2026-10-14:** REOPENED / REQUIRES ACTION / RE-LOCK WITHHELD

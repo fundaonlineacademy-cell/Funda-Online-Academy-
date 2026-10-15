@@ -75,6 +75,19 @@ The owner explicitly reopened only the CEO oversight area needed to trace authen
 - This focused change remains pending the owner's physical review and final lock. It does not reopen any other Student, Admin, Login, assessment, payment, result, certificate or support workflow.
 
 
+### Bookkeeping academic content — OWNER-AUTHORISED AUDIT AND REMEDIATION (14 October 2026)
+
+The owner explicitly reopened only the **Bookkeeping & Financial Administration — Professional Short Course** academic scope to read the assessment/lesson standard, audit the course and fix supported defects.
+
+- The authorised scope covers the Bookkeeping public overview title/duplicate-section defect, the 80 Bookkeeping lesson title references and informal Knowledge Checks, the 20 Bookkeeping formal assessment banks, official-source evidence, course-specific QA status and PCA readiness/permissions.
+- Existing Student Portal navigation, learning-workspace layout, lesson completion, progression, results, payment, certificate and unrelated-course behaviour remain protected and unchanged.
+- Assessment delivery remains protected at 32 formative-bank questions with 15 delivered, 52 summative-bank questions with 25 delivered, a 70% pass standard, three attempts and formative-before-summative gating.
+- Learner history must be preserved. The 14 October change retained the existing passed Module 1 formative attempt and did not replace assessment, question, module or lesson identities.
+- The learner-facing position is **Bookkeeping & Financial Administration — Professional Short Course**. The legacy technical slug `professional-certificate-in-bookkeeping` remains only for route stability and is not a credential claim.
+- The post-remediation QA status is **REQUIRES ACTION** because 712 of 840 formal questions retain a uniquely longest correct option. The PCA remains `draft` and blocked pending final QA. This scope must not be re-locked or represented as clean until an SME distractor rewrite and a new independent audit pass.
+- The controlled evidence and required follow-up are recorded in `BOOKKEEPING_ACADEMIC_REMEDIATION_2026_10_14.md`.
+
+
 ### Student Portal — FINAL OWNER-APPROVED AND LOCKED
 
 The complete Student Portal remains owner-approved and locked. After explicit owner reopening of Payment / Enrollment Step 4 on **19 September 2026**, the payment-plan policy was amended and re-locked at functional checkpoint `3c7b091cd3e8cface5d80e1895fc353fb1699a95`. All other Student Portal areas remain protected and unchanged by that amendment.

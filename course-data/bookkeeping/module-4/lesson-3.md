@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 4: Cashbooks, Petty Cash & Bank Reconciliation
 ### Lesson 3: Petty Cash and the Imprest System
 

@@ -7,152 +7,152 @@
 **Maximum attempts:** 3  
 **Coverage:** All eight Module 3 lessons.
 
-1. What is the main purpose of a journal in bookkeeping?  
-A. Record or group transactions before ledger posting  
-B. Replace every source document  
-C. Reconcile bank statements only  
-D. Store customer details  
-**Answer: A**
+1. A bookkeeper needs to record an authorised non-routine correction with its debits, credits, narration and supporting evidence before posting. Which record is most appropriate?  
+A. The bank reconciliation  
+B. The customer master file  
+C. The general journal  
+D. The supplier ageing report  
+**Answer: C**
 
-2. Which transaction is MOST likely to require a general journal?  
-A. Routine customer receipt  
-B. Approved non-routine reclassification  
-C. Normal cash sale  
-D. Supplier EFT already processed through payments  
-**Answer: B**
+2. An authorised non-routine correction cannot be entered through the routine sales, purchases or cash journals. Which journal is most appropriate?  
+A. Normal cash sale  
+B. Routine customer receipt  
+C. Supplier EFT already processed through payments  
+D. Approved non-routine reclassification  
+**Answer: D**
 
 3. What does narration add to a journal entry?  
-A. Automatic approval  
+A. A concise explanation of why the entry was made  
 B. VAT calculation  
-C. A concise explanation of why the entry was made  
+C. Automatic approval  
 D. A bank-statement balance  
-**Answer: C**
+**Answer: A**
 
 4. Why should manual journal access be controlled?  
 A. Journals cannot contain numbers  
-B. They are only used annually  
-C. They replace user accounts  
-D. They can directly change ledger balances and bypass routine workflows  
-**Answer: D**
-
-5. Which flow BEST describes bookkeeping information?  
-A. Source evidence → journal/transaction module → ledger → trial balance → reports  
-B. Trial balance → invoice → bank → journal  
-C. Ledger → source evidence → payment  
-D. Reports → journal → source document  
-**Answer: A**
-
-6. What must always be true of a valid double-entry journal?  
-A. It uses two accounts only  
-B. Total debits equal total credits  
-C. It affects Bank  
-D. It has no supporting evidence  
-**Answer: B**
-
-7. What is the general ledger?  
-A. A customer statement  
-B. A supplier list  
-C. The main collection of accounts accumulating transaction effects  
-D. A source-document folder  
+B. They replace user accounts  
+C. They can directly change ledger balances and bypass routine workflows  
+D. They are only used annually  
 **Answer: C**
 
+5. Which flow BEST describes bookkeeping information?  
+A. Trial balance → invoice → bank → journal  
+B. Source evidence → journal/transaction module → ledger → trial balance → reports  
+C. Reports → journal → source document  
+D. Ledger → source evidence → payment  
+**Answer: B**
+
+6. What must always be true of a valid double-entry journal?  
+A. Total debits equal total credits  
+B. It uses two accounts only  
+C. It affects Bank  
+D. It has no supporting evidence  
+**Answer: A**
+
+7. Which record serves as the main collection of accounts in which transaction effects accumulate?  
+A. A source-document folder  
+B. The main collection of accounts accumulating transaction effects  
+C. A customer statement  
+D. A supplier list  
+**Answer: B**
+
 8. In a T-account, which side is the credit side?  
-A. Left  
+A. Right  
 B. Top  
 C. Bottom  
-D. Right  
-**Answer: D**
+D. Left  
+**Answer: A**
 
-9. Which account normally increases with a debit?  
+9. Office equipment is acquired. Which listed account normally increases with a debit?  
 A. Equipment  
 B. Sales  
-C. Capital  
-D. Loan Payable  
+C. Loan Payable  
+D. Capital  
 **Answer: A**
 
 10. Which account normally increases with a credit?  
-A. Rent Expense  
-B. Sales Revenue  
-C. Debtors  
-D. Bank asset  
-**Answer: B**
+A. Debtors  
+B. Bank asset  
+C. Rent Expense  
+D. Sales Revenue  
+**Answer: D**
 
 11. What does a ledger balance represent?  
 A. Only the latest transaction  
-B. The source-document total only  
-C. The net accumulated position of debits and credits in that account  
-D. The bank statement balance in every case  
-**Answer: C**
-
-12. Why is the ledger central to financial reporting?  
-A. It contains only cash  
-B. It replaces the trial balance  
-C. It stores legal documents  
-D. It groups transaction effects by account so balances can be extracted  
-**Answer: D**
-
-13. What does posting mean?  
-A. Transferring journal information into relevant ledger accounts  
-B. Emailing an invoice  
-C. Preparing a tax return  
-D. Filing a bank statement  
-**Answer: A**
-
-14. Why are posting references useful?  
-A. They make account names shorter  
-B. They support traceability between journal and ledger  
-C. They replace source documents  
-D. They prevent all errors  
+B. The net accumulated position of debits and credits in that account  
+C. The bank statement balance in every case  
+D. The source-document total only  
 **Answer: B**
 
-15. A journal entry debits Stationery Expense and credits Creditors. What does this normally indicate?  
-A. A customer payment  
-B. A cash sale  
-C. A stationery purchase on credit  
-D. A supplier payment  
+12. Why is the ledger central to financial reporting?  
+A. It replaces the trial balance  
+B. It groups transaction effects by account so balances can be extracted  
+C. It contains only cash  
+D. It stores legal documents  
+**Answer: B**
+
+13. A journal entry is transferred into the affected ledger accounts. What process is taking place?  
+A. Preparing a tax return  
+B. Filing a bank statement  
+C. Emailing an invoice  
+D. Transferring journal information into relevant ledger accounts  
+**Answer: D**
+
+14. Why are posting references useful?  
+A. They prevent all errors  
+B. They make account names shorter  
+C. They support traceability between journal and ledger  
+D. They replace source documents  
 **Answer: C**
 
+15. A journal entry debits Stationery Expense and credits Creditors. What does this normally indicate?  
+A. A stationery purchase on credit  
+B. A cash sale  
+C. A customer payment  
+D. A supplier payment  
+**Answer: A**
+
 16. Which posting error may still leave total debits equal to total credits?  
-A. Posting only the debit side  
-B. Omitting only the credit side  
-C. Adding one ledger incorrectly  
-D. Posting the correct amount to the wrong expense account  
-**Answer: D**
+A. Omitting only the credit side  
+B. Adding one ledger incorrectly  
+C. Posting the correct amount to the wrong expense account  
+D. Posting only the debit side  
+**Answer: C**
 
 17. Why should posted entries be checked against journal totals or system reports?  
 A. To detect missing, duplicated or incorrect postings  
-B. To make every entry manual  
-C. To remove ledger references  
-D. To avoid reconciliation  
+B. To remove ledger references  
+C. To avoid reconciliation  
+D. To make every entry manual  
 **Answer: A**
 
 18. What normally happens to an asset account when it decreases?  
-A. It is debited  
-B. It is credited  
+A. It becomes income  
+B. It is debited  
 C. It is closed automatically  
-D. It becomes income  
-**Answer: B**
-
-19. What normally happens to a liability when it increases?  
-A. It is debited  
-B. It is transferred to expenses  
-C. It is credited  
-D. It is removed from the ledger  
-**Answer: C**
-
-20. Bank has debits of R31,000 and credits of R12,000. What is the closing balance?  
-A. R43,000 debit  
-B. R12,000 credit  
-C. R31,000 debit  
-D. R19,000 debit  
+D. It is credited  
 **Answer: D**
 
-21. Sales has credits of R50,000 and debits of R4,000. What is the net balance?  
-A. R46,000 credit  
-B. R54,000 debit  
-C. R4,000 debit  
-D. R50,000 credit  
+19. What normally happens to a liability when it increases?  
+A. It is credited  
+B. It is transferred to expenses  
+C. It is debited  
+D. It is removed from the ledger  
 **Answer: A**
+
+20. Bank has debits of R31,000 and credits of R12,000. What is the closing balance?  
+A. R12,000 credit  
+B. R19,000 debit  
+C. R43,000 debit  
+D. R31,000 debit  
+**Answer: B**
+
+21. Sales has credits of R50,000 and debits of R4,000. What is the net balance?  
+A. R4,000 debit  
+B. R54,000 debit  
+C. R46,000 credit  
+D. R50,000 credit  
+**Answer: C**
 
 22. Why are account balances carried forward or extracted at period end?  
 A. To destroy transaction history  
@@ -161,26 +161,26 @@ C. To replace reconciliation
 D. To stop double entry  
 **Answer: B**
 
-23. What is the primary purpose of a trial balance?  
-A. Calculate VAT payable  
-B. Produce a customer statement  
-C. List ledger balances and test debit-credit arithmetic agreement  
-D. Replace financial statements  
-**Answer: C**
+23. Which document lists ledger balances to test debit-credit arithmetic agreement before further reporting?  
+A. List ledger balances and test debit-credit arithmetic agreement  
+B. Replace financial statements  
+C. Produce a customer statement  
+D. Calculate VAT payable  
+**Answer: A**
 
 24. If trial-balance debits total R210,000 and credits total R208,500, what should the bookkeeper do?  
-A. Add a random R1,500 credit  
-B. Ignore the difference  
-C. Delete an expense  
-D. Investigate the R1,500 difference systematically  
-**Answer: D**
+A. Investigate the R1,500 difference systematically  
+B. Delete an expense  
+C. Ignore the difference  
+D. Add a random R1,500 credit  
+**Answer: A**
 
 25. Which balance would usually appear on the debit side of a trial balance?  
-A. Rent Expense  
-B. Sales Revenue  
-C. Creditors  
-D. Owner Capital  
-**Answer: A**
+A. Owner Capital  
+B. Creditors  
+C. Sales Revenue  
+D. Rent Expense  
+**Answer: D**
 
 26. Which balance would usually appear on the credit side?  
 A. Debtors  
@@ -192,9 +192,9 @@ D. Bank asset
 27. A balanced trial balance proves that:  
 A. every transaction is correct  
 B. no fraud exists  
-C. debit and credit totals agree arithmetically  
-D. all source documents have been filed  
-**Answer: C**
+C. all source documents have been filed  
+D. debit and credit totals agree arithmetically  
+**Answer: D**
 
 28. Which error can occur even when the trial balance agrees?  
 A. One-sided posting  
@@ -203,12 +203,12 @@ C. Omission of a debit without its credit
 D. Correct amount posted to the wrong but same-side account  
 **Answer: D**
 
-29. What is a transposition error?  
-A. Reversing digits such as 63 and 36  
-B. Posting twice  
-C. Using a wrong account class only  
-D. Omitting narration  
-**Answer: A**
+29. An amount of 63 is entered as 36. Which error has occurred?  
+A. Using a wrong account class only  
+B. Omitting narration  
+C. Reversing digits such as 63 and 36  
+D. Posting twice  
+**Answer: C**
 
 30. What is a duplication error?  
 A. Posting to a wrong period  
@@ -219,108 +219,108 @@ D. Omitting a transaction
 
 31. Why should bookkeeping errors not be hidden by forced journal entries?  
 A. Forced entries make reports shorter  
-B. Journals cannot correct errors  
-C. The real cause must be identified so records remain accurate and traceable  
-D. Every difference is immaterial  
-**Answer: C**
+B. The real cause must be identified so records remain accurate and traceable  
+C. Every difference is immaterial  
+D. Journals cannot correct errors  
+**Answer: B**
 
 32. If a trial-balance figure was copied incorrectly from a correct ledger balance, the correction should be made to:  
-A. the bank statement  
-B. the original invoice  
-C. the journal even though it is correct  
-D. the trial-balance extraction  
-**Answer: D**
+A. the original invoice  
+B. the bank statement  
+C. the trial-balance extraction  
+D. the journal even though it is correct  
+**Answer: C**
 
 33. Which method is useful when searching for a trial-balance difference?  
-A. Recalculate totals and compare balances back to ledger accounts  
+A. Post the difference to Suspense immediately without policy  
 B. Change the smallest account  
-C. Post the difference to Suspense immediately without policy  
+C. Recalculate totals and compare balances back to ledger accounts  
 D. Delete old entries  
-**Answer: A**
+**Answer: C**
 
 34. Why should corrections preserve the audit trail?  
 A. To keep errors confidential from all reviewers  
-B. So authorised users can understand the original entry, correction and reason  
+B. To increase account balances  
 C. To prevent period close  
-D. To increase account balances  
-**Answer: B**
-
-35. What is a control account?  
-A. A tax invoice  
-B. A bank password  
-C. A summary general-ledger account linked to detailed subsidiary records  
-D. A petty-cash float  
-**Answer: C**
-
-36. Debtors Control should normally reconcile to:  
-A. supplier balances  
-B. bank balance  
-C. sales only  
-D. total individual customer balances  
+D. So authorised users can understand the original entry, correction and reason  
 **Answer: D**
 
-37. Creditors Control should normally reconcile to:  
-A. total individual supplier balances  
-B. total customer balances  
-C. cash sales only  
-D. payroll records  
+35. Which account summarises detailed subsidiary records in the general ledger?  
+A. A summary general-ledger account linked to detailed subsidiary records  
+B. A petty-cash float  
+C. A bank password  
+D. A tax invoice  
 **Answer: A**
 
+36. Debtors Control should normally reconcile to:  
+A. total individual customer balances  
+B. sales only  
+C. bank balance  
+D. supplier balances  
+**Answer: A**
+
+37. Creditors Control should normally reconcile to:  
+A. cash sales only  
+B. payroll records  
+C. total individual supplier balances  
+D. total customer balances  
+**Answer: C**
+
 38. Why are subsidiary ledgers useful?  
-A. They replace the general ledger completely  
-B. They provide detail behind a control-account total  
-C. They eliminate source documents  
-D. They are used only for tax  
-**Answer: B**
+A. They provide detail behind a control-account total  
+B. They are used only for tax  
+C. They replace the general ledger completely  
+D. They eliminate source documents  
+**Answer: A**
 
 39. A Debtors Control account is R42,000 but individual customer balances total R40,500. What should happen?  
 A. Change a customer balance randomly  
-B. Ignore R1,500  
-C. Investigate posting, timing and allocation differences  
+B. Investigate posting, timing and allocation differences  
+C. Ignore R1,500  
 D. Delete the control account  
-**Answer: C**
-
-40. Which is a likely cause of control-account disagreement?  
-A. Correctly posted customer receipt in both records  
-B. Matching opening balances  
-C. Accurate credit note allocation  
-D. A transaction posted to the control account but omitted from a customer subsidiary account  
-**Answer: D**
-
-41. A business makes a credit sale of R8,000. What is the normal entry?  
-A. Debit Debtors R8,000; Credit Sales R8,000  
-B. Debit Sales; Credit Debtors  
-C. Debit Bank; Credit Sales  
-D. Debit Expense; Credit Creditors  
-**Answer: A**
-
-42. A customer pays R5,000 toward a recorded debtor balance. What is the normal entry?  
-A. Debit Debtors; Credit Bank  
-B. Debit Bank; Credit Debtors  
-C. Debit Sales; Credit Bank  
-D. Debit Creditors; Credit Bank  
 **Answer: B**
 
+40. Which is a likely cause of control-account disagreement?  
+A. Accurate credit note allocation  
+B. A transaction posted to the control account but omitted from a customer subsidiary account  
+C. Correctly posted customer receipt in both records  
+D. Matching opening balances  
+**Answer: B**
+
+41. A business makes a credit sale of R8,000. What is the normal entry?  
+A. Debit Bank; Credit Sales  
+B. Debit Sales; Credit Debtors  
+C. Debit Expense; Credit Creditors  
+D. Debit Debtors R8,000; Credit Sales R8,000  
+**Answer: D**
+
+42. Debtors Control shows R42,000 before a customer pays R3,200 by EFT. How should the receipt normally be recorded?  
+A. Debit Debtors R3,200; credit Bank R3,200  
+B. Debit Creditors R3,200; credit Bank R3,200  
+C. Debit Bank R3,200; credit Sales R3,200  
+D. Debit Bank R3,200; credit Debtors R3,200  
+**Answer: D**
+
 43. A supplier invoice for stationery of R2,500 on credit is recorded. What is the normal basic entry if VAT is ignored?  
-A. Debit Creditors; Credit Stationery  
-B. Debit Bank; Credit Creditors  
+A. Debit Bank; Credit Creditors  
+B. Debit Debtors; Credit Sales  
 C. Debit Stationery Expense; Credit Creditors  
-D. Debit Debtors; Credit Sales  
+D. Debit Creditors; Credit Stationery  
 **Answer: C**
 
 44. The business pays R3,000 against an existing creditor balance. What is the normal entry?  
 A. Debit Expense; Credit Bank  
-B. Debit Bank; Credit Creditors  
-C. Debit Sales; Credit Bank  
+B. Debit Sales; Credit Bank  
+C. Debit Bank; Credit Creditors  
 D. Debit Creditors; Credit Bank  
 **Answer: D**
 
 45. Owner contributes R6,000 cash to the business. What is the normal entry?  
-A. Debit Bank; Credit Owner Capital  
+A. Debit Debtors; Credit Capital  
 B. Debit Capital; Credit Bank  
 C. Debit Expense; Credit Bank  
-D. Debit Debtors; Credit Capital  
-**Answer: A**
+D. Debit Bank; Credit Owner Capital  
+**Answer: D**
 
 46. Why does paying a previously recorded supplier invoice not normally create the expense again?  
 A. Payments are never recorded  
@@ -330,43 +330,43 @@ D. Expenses only exist at year end
 **Answer: B**
 
 47. In the practical scenario, opening Bank R20,000 Dr plus receipts R11,000 and payments R7,000 gives:  
-A. R38,000 Dr  
-B. R18,000 Dr  
+A. R18,000 Dr  
+B. R24,000 Cr  
 C. R24,000 Dr  
-D. R24,000 Cr  
+D. R38,000 Dr  
 **Answer: C**
 
 48. Why should a manual books-to-trial-balance exercise include source-document references?  
-A. To increase page count  
-B. To remove the need for balances  
-C. To make journals optional  
-D. To maintain traceability through the full accounting flow  
-**Answer: D**
+A. To remove the need for balances  
+B. To increase page count  
+C. To maintain traceability through the full accounting flow  
+D. To make journals optional  
+**Answer: C**
 
 49. After a trial balance agrees, which check is still useful?  
-A. Reconcile major balances such as bank, debtors and creditors to supporting records  
-B. Delete journal references  
-C. Assume classification is perfect  
-D. Skip source-document review  
-**Answer: A**
+A. Skip source-document review  
+B. Reconcile major balances such as bank, debtors and creditors to supporting records  
+C. Delete journal references  
+D. Assume classification is perfect  
+**Answer: B**
 
 50. A R4,000 rent payment is posted to Stationery Expense instead of Rent Expense, while Bank is correctly credited. What is likely?  
-A. Debits and credits will not agree  
-B. The trial balance may still agree despite incorrect classification  
-C. Creditors will increase  
+A. The trial balance may still agree despite incorrect classification  
+B. Creditors will increase  
+C. Debits and credits will not agree  
 D. Sales will decrease  
-**Answer: B**
+**Answer: A**
 
 51. Which principle BEST helps a bookkeeper investigate errors?  
 A. Post corrections before checking evidence  
 B. Change balances until they agree  
-C. Trace from source evidence through journal, ledger and trial balance to locate where the error entered  
-D. Treat every difference as fraud  
-**Answer: C**
+C. Treat every difference as fraud  
+D. Trace from source evidence through journal, ledger and trial balance to locate where the error entered  
+**Answer: D**
 
 52. Which statement BEST summarises Module 3?  
 A. Journals are only for accountants  
-B. Trial balances prove all records are correct  
-C. Ledgers replace source evidence  
-D. Reliable bookkeeping requires traceable journal entries, correct posting, balanced ledgers, trial-balance checks and controlled corrections  
-**Answer: D**
+B. Ledgers replace source evidence  
+C. Reliable bookkeeping requires traceable journal entries, correct posting, balanced ledgers, trial-balance checks and controlled corrections  
+D. Trial balances prove all records are correct  
+**Answer: C**

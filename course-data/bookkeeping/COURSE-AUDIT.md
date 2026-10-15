@@ -1,4 +1,8 @@
-# Professional Certificate in Bookkeeping — Course Audit
+# Bookkeeping & Financial Administration — Professional Short Course — Course Audit
+
+## Supersession notice — 2026-10-14
+
+The current controlled audit is `BOOKKEEPING_ACADEMIC_REMEDIATION_2026_10_14.md` at the repository root. It supersedes this document's earlier **Assessment audit: PASSED** conclusion for psychometric quality. The structural controls below remain useful historical evidence, but the current overall disposition is **REQUIRES ACTION**: 712 of 840 formal questions still have a uniquely longest correct option. The PCA therefore remains `draft`, activation remains blocked pending final QA, and the course has not been re-locked.
 
 ## Audit status
 **Source build:** COMPLETE  
@@ -164,5 +168,5 @@ This confirms that the deployed Bookkeeping course correctly recognises the pres
 ## 10. Cleanup
 Temporary HTTP/Markdown/assessment parsing helpers used for source validation and deployment were removed after successful verification. No temporary deployment helper remains as part of the permanent course runtime.
 
-## 11. Final conclusion
-The Professional Certificate in Bookkeeping is fully rebuilt, audited, reconciled to production and integrity-checked. The authoritative source is retained in GitHub, the production database now reflects the approved 10-module/80-lesson structure, assessment security and answer-bank architecture are intact, and the pre-existing learner enrolment and completed lesson progress were preserved.
+## 11. Historical conclusion — superseded
+The earlier audit concluded that the Bookkeeping & Financial Administration — Professional Short Course was fully rebuilt, reconciled to production and integrity-checked. The 2026-10-14 controlled audit supersedes that clean assessment conclusion: structural and reconciliation controls pass, but the formal bank remains **REQUIRES ACTION** because of the material answer-length cue recorded above and in `BOOKKEEPING_ACADEMIC_REMEDIATION_2026_10_14.md`.

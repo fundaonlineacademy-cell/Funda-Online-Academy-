@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 10: Practical Bookkeeping Project
 ### Lesson 8: Final Portfolio, Handover and Continuous-improvement Review
 

@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping — Authoritative Rebuild Plan
+# Bookkeeping & Financial Administration — Professional Short Course — Authoritative Rebuild Plan
 
 ## Build approach
 The repository becomes the approved source before production reconciliation. The existing live course already has 10 modules with 8 lesson records per module, so the rebuild will preserve that 10 × 8 structure while replacing short legacy content with full professional lessons and secure module assessments.

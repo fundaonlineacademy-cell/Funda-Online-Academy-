@@ -10,85 +10,85 @@
 ## Lesson 1 — The Role of Bookkeeping in a Business
 
 1. Which statement BEST describes bookkeeping?  
-A. Making all financial-management decisions  
-B. Recording and maintaining reliable financial transaction information  
-C. Preparing legal opinions  
+A. Recording and maintaining reliable financial transaction information  
+B. Preparing legal opinions  
+C. Making all financial-management decisions  
 D. Managing only cash transactions  
-**Answer: B**
+**Answer: A**
 
 2. A customer pays R8,500 that was previously invoiced. Which control is MOST important after seeing the bank receipt?  
-A. Record it as new sales income  
+A. Delete the original invoice  
 B. File the bank statement only  
 C. Match and allocate the receipt to the correct customer account  
-D. Delete the original invoice  
+D. Record it as new sales income  
 **Answer: C**
 
 3. Which action BEST protects bookkeeping confidentiality?  
-A. Discussing payroll balances in reception  
+A. Sharing supplier bank details with any colleague  
 B. Forwarding finance files to a personal email  
-C. Sharing supplier bank details with any colleague  
+C. Discussing payroll balances in reception  
 D. Using authorised systems and sharing information only with people who need it  
 **Answer: D**
 
 4. What is an audit trail?  
-A. Traceable evidence connecting a transaction to its supporting records and accounting entry  
-B. A list of all employees  
-C. A bank loan schedule only  
+A. A bank loan schedule only  
+B. Traceable evidence connecting a transaction to its supporting records and accounting entry  
+C. A list of all employees  
 D. A report showing profit only  
-**Answer: A**
+**Answer: B**
 
 ## Lesson 2 — The Accounting Equation & Double-Entry Principles
 
 5. Which equation is fundamental to bookkeeping?  
-A. Income = Assets + Expenses  
-B. Assets = Liabilities + Owners' Equity  
-C. Cash = Income - Creditors  
-D. Equity = Assets + Liabilities  
-**Answer: B**
-
-6. Which side normally increases an asset account?  
-A. Credit  
-B. Either side randomly  
-C. Debit  
-D. Neither side  
-**Answer: C**
-
-7. A business receives a R20,000 bank loan. Why is the receipt NOT ordinary income?  
-A. Loans never enter the bank  
-B. Cash receipts are always equity  
-C. The loan should be ignored until repaid  
-D. The increase in bank is matched by a liability to repay the lender  
+A. Cash = Income - Creditors  
+B. Income = Assets + Expenses  
+C. Equity = Assets + Liabilities  
+D. Assets = Liabilities + Owners' Equity  
 **Answer: D**
 
-8. A customer settles R4,000 previously owed. Which double-entry is appropriate at a basic level?  
-A. Debit Bank and credit Debtors  
-B. Debit Debtors and credit Sales again  
-C. Debit Expense and credit Bank  
-D. Debit Sales and credit Bank  
+6. Which side normally increases an asset account?  
+A. Neither side  
+B. Either side randomly  
+C. Credit  
+D. Debit  
+**Answer: D**
+
+7. A business receives a R20,000 bank loan. Why is the receipt NOT ordinary income?  
+A. The increase in bank is matched by a liability to repay the lender  
+B. The loan should be ignored until repaid  
+C. Cash receipts are always equity  
+D. Loans never enter the bank  
 **Answer: A**
+
+8. A customer settles R4,000 previously owed. Which double-entry is appropriate at a basic level?  
+A. Debit Expense and credit Bank  
+B. Debit Debtors and credit Sales again  
+C. Debit Sales and credit Bank  
+D. Debit Bank and credit Debtors  
+**Answer: D**
 
 ## Lesson 3 — Business Types, Owners' Equity & Bookkeeping Implications
 
 9. A sole proprietor takes R1,000 from the business for private groceries. How should this generally be classified?  
 A. Office expense  
 B. Drawings / personal withdrawal  
-C. Sales income  
-D. Supplier payment  
+C. Supplier payment  
+D. Sales income  
 **Answer: B**
 
 10. A company director transfers R50,000 into the company bank account with no explanation. What should the bookkeeper do FIRST?  
-A. Record it as sales  
+A. Clarify the nature and authorised accounting treatment of the transaction  
 B. Record it as an expense refund  
-C. Clarify the nature and authorised accounting treatment of the transaction  
-D. Treat it automatically as share capital  
-**Answer: C**
+C. Treat it automatically as share capital  
+D. Record it as sales  
+**Answer: A**
 
 11. Why should personal and business transactions be separated?  
 A. Personal transactions are always illegal  
 B. Business bank accounts cannot contain owner transactions  
-C. Owners may never withdraw money  
-D. Separation improves accuracy, reconciliation and meaningful reporting  
-**Answer: D**
+C. Separation improves accuracy, reconciliation and meaningful reporting  
+D. Owners may never withdraw money  
+**Answer: C**
 
 12. Which item is MOST likely to require supporting evidence and approval before reimbursement?  
 A. An employee's personally paid business stationery purchase  
@@ -100,18 +100,18 @@ D. A loan instalment paid by the business
 ## Lesson 4 — The Bookkeeping Cycle
 
 13. What should normally happen BEFORE a transaction is captured?  
-A. Prepare the final financial statements  
-B. Check the source evidence and analyse the transaction  
+A. Check the source evidence and analyse the transaction  
+B. Prepare the final financial statements  
 C. Close the reporting period  
 D. Delete prior records  
-**Answer: B**
+**Answer: A**
 
 14. What is the main purpose of a ledger account?  
-A. Store only source documents  
-B. Approve payments  
-C. Accumulate transaction movements and balances for a particular account  
-D. Replace bank reconciliation  
-**Answer: C**
+A. Replace bank reconciliation  
+B. Accumulate transaction movements and balances for a particular account  
+C. Approve payments  
+D. Store only source documents  
+**Answer: B**
 
 15. Does a balanced trial balance prove that every transaction is correct?  
 A. Yes, always  
@@ -121,69 +121,69 @@ D. No; some errors still preserve total debit and credit equality
 **Answer: D**
 
 16. What is reconciliation?  
-A. Comparing related records and investigating differences  
-B. Changing totals until they agree  
+A. Changing totals until they agree  
+B. Preparing payroll only  
 C. Filing invoices alphabetically  
-D. Preparing payroll only  
-**Answer: A**
+D. Comparing related records and investigating differences  
+**Answer: D**
 
 ## Lesson 5 — Ethics, Accuracy, Confidentiality & Professional Conduct
 
 17. A manager asks the bookkeeper to omit a valid supplier invoice so profit looks higher. What should the bookkeeper do?  
-A. Omit it because the manager is senior  
-B. Refuse to falsify the records and follow the authorised escalation process  
-C. Delete the invoice and its email  
+A. Delete the invoice and its email  
+B. Omit it because the manager is senior  
+C. Refuse to falsify the records and follow the authorised escalation process  
 D. Move it to a personal file  
-**Answer: B**
-
-18. What is a professional way to correct an honest bookkeeping error?  
-A. Delete all evidence of the original entry  
-B. Change the amount silently  
-C. Follow the approved correction process and preserve the audit trail  
-D. Blame the source-document creator  
 **Answer: C**
 
+18. What is a professional way to correct an honest bookkeeping error?  
+A. Change the amount silently  
+B. Follow the approved correction process and preserve the audit trail  
+C. Blame the source-document creator  
+D. Delete all evidence of the original entry  
+**Answer: B**
+
 19. Which situation is a potential conflict of interest?  
-A. Reconciling the bank account  
-B. Filing customer invoices  
-C. Checking a supplier statement  
-D. Preparing payment for a supplier owned by a close relative without disclosing the relationship where required  
-**Answer: D**
+A. Preparing payment for a supplier owned by a close relative without disclosing the relationship where required  
+B. Reconciling the bank account  
+C. Filing customer invoices  
+D. Checking a supplier statement  
+**Answer: A**
 
 20. Why should shared accounting-system passwords be avoided?  
-A. They weaken security and make actions harder to attribute to the real user  
-B. They make reports too long  
+A. They make reports too long  
+B. They weaken security and make actions harder to attribute to the real user  
 C. They increase VAT automatically  
 D. They stop ledger balances from updating  
-**Answer: A**
+**Answer: B**
 
 ## Lesson 6 — Accounting Concepts, GAAP Awareness & IFRS for SMEs Context
 
 21. What does the accrual basis aim to do?  
-A. Record only cash transactions  
+A. Delay all expenses  
 B. Recognise income and expenses in the periods to which they relate  
-C. Delay all expenses  
+C. Record only cash transactions  
 D. Remove the need for source documents  
 **Answer: B**
 
 22. Why is consistency useful in bookkeeping?  
 A. It means an incorrect method may never change  
-B. Every expense must use the same account  
+B. It removes the need for accounting policies  
 C. Similar transactions are treated in a stable way, improving comparability  
-D. It removes the need for accounting policies  
+D. Every expense must use the same account  
 **Answer: C**
 
 23. Is materiality a single universal rand amount for every business?  
 A. Yes, R100  
-B. Yes, R1,000  
-C. Yes, if management agrees verbally  
+B. Yes, if management agrees verbally  
+C. Yes, R1,000  
 D. No; significance depends on context and authorised policy/judgement  
 **Answer: D**
 
 24. Which statement about IFRS for SMEs is MOST accurate?  
 A. It is a reporting framework for eligible entities and is not automatically used by every small business  
-B. Every small South African business must use it regardless of circumstances  
-C. It applies only to cashbooks  
+B. It applies only to cashbooks  
+C. Every small South African business must use it regardless of circumstances  
 D. It replaces double-entry bookkeeping  
 **Answer: A**
 
@@ -191,10 +191,10 @@ D. It replaces double-entry bookkeeping
 
 25. What is the purpose of a chart of accounts?  
 A. List every source document  
-B. Provide an organised set of accounts for consistent transaction classification  
-C. Replace customer and supplier records  
+B. Replace customer and supplier records  
+C. Provide an organised set of accounts for consistent transaction classification  
 D. Show only bank transactions  
-**Answer: B**
+**Answer: C**
 
 26. Why are duplicate accounts such as “Courier Fees” and “Delivery Expense” risky when used for the same purpose?  
 A. They always cause the trial balance not to balance  
@@ -205,44 +205,44 @@ D. They automatically create tax penalties
 
 27. Which account belongs in the asset category?  
 A. Sales Income  
-B. Rent Expense  
+B. Bank  
 C. Bank Loan Payable  
-D. Bank  
-**Answer: D**
+D. Rent Expense  
+**Answer: B**
 
 28. Before creating a new ledger account, what should the bookkeeper do?  
-A. Check whether a suitable account already exists and follow account-creation controls  
-B. Create it immediately with a random name  
+A. Create it immediately with a random name  
+B. Check whether a suitable account already exists and follow account-creation controls  
 C. Delete an old account first  
 D. Ask a customer to choose the account  
-**Answer: A**
+**Answer: B**
 
 ## Lesson 8 — Internal Controls, Error Prevention & Fraud Awareness
 
 29. Which is a preventive control?  
-A. Bank reconciliation after month-end  
-B. Requiring authorised approval before releasing a supplier payment  
-C. Investigating a duplicate payment after it occurred  
-D. Correcting a posting error  
-**Answer: B**
+A. Requiring authorised approval before releasing a supplier payment  
+B. Correcting a posting error  
+C. Bank reconciliation after month-end  
+D. Investigating a duplicate payment after it occurred  
+**Answer: A**
 
 30. What is segregation of duties?  
 A. Giving one person complete control of a payment  
-B. Removing all approvals  
+B. Keeping all finance staff in separate offices  
 C. Separating incompatible transaction responsibilities among people where practical  
-D. Keeping all finance staff in separate offices  
+D. Removing all approvals  
 **Answer: C**
 
 31. A supplier suddenly emails new bank details just before payment. What is the safest response?  
-A. Pay immediately because the email looks genuine  
-B. Ask the same email address to confirm itself  
-C. Ignore the invoice forever  
-D. Follow the approved independent verification and change-control process  
-**Answer: D**
+A. Ask the same email address to confirm itself  
+B. Ignore the invoice forever  
+C. Follow the approved independent verification and change-control process  
+D. Pay immediately because the email looks genuine  
+**Answer: C**
 
 32. Does an unusual payment pattern prove fraud?  
-A. No; it is a warning sign that may require authorised verification and escalation  
-B. Yes, every unusual transaction is fraudulent  
-C. Yes, if the amount is large  
-D. No, and it should therefore always be ignored  
-**Answer: A**
+A. No, and it should therefore always be ignored  
+B. Yes, if the amount is large  
+C. Yes, every unusual transaction is fraudulent  
+D. No; it is a warning sign that may require authorised verification and escalation  
+**Answer: D**

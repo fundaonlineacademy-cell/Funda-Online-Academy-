@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 4: Cashbooks, Petty Cash & Bank Reconciliation
 ### Lesson 6: Investigating Reconciling Items and Errors
 

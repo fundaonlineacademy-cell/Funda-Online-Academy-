@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 1: Bookkeeping Foundations
 ### Lesson 6: Accounting Concepts, GAAP Awareness & IFRS for SMEs Context
 

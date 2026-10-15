@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 7: Computerised Bookkeeping & QuickBooks Fundamentals
 ### Lesson 2: Setting Up a Company File and Chart of Accounts
 

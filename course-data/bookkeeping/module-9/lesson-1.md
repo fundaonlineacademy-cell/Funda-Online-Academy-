@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 9: Payroll Administration & Payroll Records
 ### Lesson 1: Payroll Information and Employee Master Data
 

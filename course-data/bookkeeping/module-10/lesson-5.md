@@ -1,4 +1,4 @@
-# Professional Certificate in Bookkeeping
+# Bookkeeping & Financial Administration — Professional Short Course
 ## Module 10: Practical Bookkeeping Project
 ### Lesson 5: Reconcile Bank, Debtors and Creditors
 
