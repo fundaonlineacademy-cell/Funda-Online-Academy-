@@ -31,3 +31,30 @@ function boot(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
+
+// Shared learner-display polish: the stage bar may identify the current step as
+// "Main Lesson Content", but that internal template label must not be repeated
+// as a second heading inside the teaching card. Learner-facing subject headings
+// already stored in the lesson content remain untouched.
+(function(){
+'use strict';
+const INTERNAL_MAIN=/^Main Lesson Content(?:\s+\d+)?$/i;
+function removeDuplicateMainContentHeading(){
+  const stageLabel=document.querySelector('.foaStageMeta strong');
+  if(!stageLabel || !INTERNAL_MAIN.test(String(stageLabel.textContent||'').trim()))return;
+  const stageMeta=stageLabel.closest('.foaStageMeta');
+  const stageTrack=stageMeta?.nextElementSibling;
+  const card=stageTrack?.nextElementSibling;
+  if(!card?.matches?.('section.card'))return;
+  const heading=card.querySelector(':scope > h2');
+  if(heading && INTERNAL_MAIN.test(String(heading.textContent||'').trim()))heading.remove();
+}
+function startLessonDisplayPolish(){
+  const host=document.getElementById('course-content');
+  if(!host)return;
+  removeDuplicateMainContentHeading();
+  const observer=new MutationObserver(removeDuplicateMainContentHeading);
+  observer.observe(host,{childList:true,subtree:true});
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startLessonDisplayPolish,{once:true});else startLessonDisplayPolish();
+})();
