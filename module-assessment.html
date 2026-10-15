@@ -18,6 +18,22 @@
 body,body *{font-family:"Times New Roman",Times,Georgia,serif!important}
 @media(max-width:600px){.card{padding:18px;border-radius:18px}.topin{padding:12px 14px}.submitbar{align-items:stretch;flex-direction:column}.btn{width:100%}}
 </style>
+<style id="foaAssessmentFlowStyles">
+html{scroll-padding-top:88px}
+.question{scroll-margin-top:88px}
+body.assessment-active #assessmentHero{display:none}
+body.assessment-active .wrap{margin-top:14px}
+body.assessment-active #assessmentStatus{padding:0;border:0;background:transparent;box-shadow:none}
+.assessment-progress{padding:13px 15px;border:1px solid #d7e3f1;border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(30,70,118,.07)}
+.assessment-progress-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:9px}
+.assessment-progress-head strong{color:var(--navy);font-size:14px}
+.assessment-progress-head span{color:#64748b;font-size:12px;font-weight:700}
+.assessment-progress-items{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.assessment-progress-item{padding:8px 9px;border-radius:10px;background:#eef5ff;color:#0b2f70;font-size:12px;font-weight:700;text-align:center;line-height:1.25}
+.assessment-progress-alert{margin-top:9px;padding:9px 11px;border:1px solid #edcaca;border-radius:10px;background:#fff1f1;color:#8d2525;font-size:12px;font-weight:700;line-height:1.45}
+.assessment-result-card{padding:22px;border:1px solid #dce6f1;border-radius:20px;background:#fff;box-shadow:0 12px 32px rgba(30,70,118,.08)}
+@media(max-width:600px){html{scroll-padding-top:78px}.question{scroll-margin-top:78px}.assessment-progress-items{grid-template-columns:repeat(2,minmax(0,1fr))}.assessment-progress-head{align-items:flex-start}.assessment-result-card{padding:18px;border-radius:18px}}
+</style>
 <style id="foaStudentFontStandard">body,body *{font-family:"Source Sans 3","Segoe UI",Roboto,Helvetica,Arial,sans-serif!important}</style>
 </head>
 <body>
@@ -27,6 +43,6 @@ body,body *{font-family:"Times New Roman",Times,Georgia,serif!important}
 <section id="assessmentStatus" class="card status"><div class="spinner"></div></section>
 <form id="assessmentForm" hidden></form>
 </main>
-<script src="module-assessment.js?v=20260913-session-v1"></script>
+<script src="module-assessment.js?v=20261015-mobile-qa-preview-v1"></script>
 </body>
 </html>
