@@ -39,7 +39,26 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 'use strict';
 const INTERNAL_MAIN=/^Main Lesson Content(?:\s+\d+)?$/i;
 const PRACTICAL=/^Practical Activity$/i;
+const STYLE_ID='foa-v12-lesson-polish';
+function ensureLessonStyles(){
+  if(document.getElementById(STYLE_ID))return;
+  const style=document.createElement('style');
+  style.id=STYLE_ID;
+  style.textContent=`
+    #course-content details{border:1px solid rgba(15,42,67,.16);border-radius:10px;margin:10px 0;background:#fff;overflow:hidden}
+    #course-content details>summary{list-style:none;cursor:pointer;position:relative;padding:13px 48px 13px 16px;font-weight:700;line-height:1.4;color:#102a43;background:#f8fafc}
+    #course-content details>summary::-webkit-details-marker{display:none}
+    #course-content details>summary::after{content:'+';position:absolute;right:14px;top:50%;transform:translateY(-50%);width:26px;height:26px;border:1px solid rgba(15,42,67,.24);border-radius:50%;display:grid;place-items:center;font-size:20px;font-weight:600;line-height:1}
+    #course-content details[open]>summary::after{content:'−'}
+    #course-content details>p,#course-content details>div,#course-content details>ul,#course-content details>ol{margin-left:16px;margin-right:16px}
+    #course-content details>p:first-of-type,#course-content details>div:first-of-type,#course-content details>ul:first-of-type,#course-content details>ol:first-of-type{margin-top:14px}
+    #course-content details>p:last-child,#course-content details>div:last-child,#course-content details>ul:last-child,#course-content details>ol:last-child{margin-bottom:14px}
+    @media(max-width:640px){#course-content details>summary{padding:12px 44px 12px 14px}#course-content details>summary::after{right:12px;width:24px;height:24px;font-size:18px}}
+  `;
+  document.head.appendChild(style);
+}
 function polishLessonDisplay(){
+  ensureLessonStyles();
   const stageLabel=document.querySelector('.foaStageMeta strong');
   if(!stageLabel)return;
   const stageMeta=stageLabel.closest('.foaStageMeta');
@@ -66,6 +85,7 @@ function polishLessonDisplay(){
 function startLessonDisplayPolish(){
   const host=document.getElementById('course-content');
   if(!host)return;
+  ensureLessonStyles();
   polishLessonDisplay();
   const observer=new MutationObserver(polishLessonDisplay);
   observer.observe(host,{childList:true,subtree:true});
