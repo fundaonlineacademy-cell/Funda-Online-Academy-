@@ -22,7 +22,7 @@ const aliases={
  faq:'faq faqs questions answers help',
  academic:'academic support learning support',
  support:'support ticket technical help assistance',
- profile:'profile personal details account',
+ profile:'profile personal details account learner id student id',
  security:'security password login account security',
  voice:'your voice feedback complaint compliment suggestion'
 };
@@ -30,6 +30,8 @@ const aliases={
 function esc(v){
  return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 }
+function cleanText(v){return String(v??'').replace(/\s+/g,' ').trim()}
+function searchText(v){return cleanText(v).toLowerCase()}
 
 function installStyle(){
  if(document.getElementById('studentHeaderFooterSearchStyle'))return;
@@ -50,6 +52,7 @@ body.sdV2>header .h-\\[72px\\]{position:relative}\
 .studentHeaderSearchResult b{display:block;font-size:13px;line-height:1.3}\
 .studentHeaderSearchResult span{display:block;margin-top:3px;color:#687b90;font-size:10px;line-height:1.35}\
 .studentHeaderSearchEmpty{padding:13px;color:#66798e;font-size:11px;text-align:center}\
+.studentSearchTarget{outline:3px solid rgba(201,154,46,.58);outline-offset:3px;transition:outline-color .25s}\
 #studentHeaderSearchButton{display:none;place-items:center;width:42px;height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:#fff;font-size:20px;font-weight:900;cursor:pointer}\
 body.sdV2>header #sdMenu{order:1}\
 body.sdV2>header .h-\\[72px\\]>a{order:2}\
@@ -71,16 +74,83 @@ body.sdV2>header .h-\\[72px\\]>.flex.items-center.gap-2{order:4!important;margin
 
 function buildIndex(){
  const items=[];
+ const sideLinks={};
  document.querySelectorAll('#sdSide .sdNavGroup').forEach(group=>{
   const groupLabel=(group.querySelector('.sdNavLabel')?.textContent||'Student Portal').trim();
   group.querySelectorAll('[data-sd-key]').forEach(link=>{
    const key=link.dataset.sdKey||'';
    const label=(link.querySelector('span:last-child')?.textContent||link.textContent||key).trim();
    const href=link.getAttribute('href')||'';
-   items.push({
+   const item={
     key,label,detail:groupLabel,href,link,
-    haystack:(label+' '+groupLabel+' '+key+' '+href+' '+(aliases[key]||'')).toLowerCase()
-   });
+    haystack:searchText(label+' '+groupLabel+' '+key+' '+href+' '+(aliases[key]||''))
+   };
+   items.push(item);
+   sideLinks[key]=link;
+  });
+ });
+
+ // Keep learner-identity search strictly scoped to values already rendered for
+ // the signed-in student. No cross-learner/profile lookup is performed here.
+ const ownProfileTerms=[
+  document.getElementById('sdName')?.textContent,
+  document.getElementById('sdLearner')?.textContent,
+  document.getElementById('studentName')?.textContent,
+  document.getElementById('studentEmail')?.textContent
+ ].map(cleanText).filter(Boolean).join(' ');
+ const profileItem=items.find(item=>item.key==='profile');
+ if(profileItem&&ownProfileTerms)profileItem.haystack+=' '+searchText(ownProfileTerms);
+
+ // Course cards are produced from the signed-in learner's enrolments, so the
+ // search can find their own courses without querying any global student data.
+ document.querySelectorAll('#myCourses > article').forEach((card,index)=>{
+  const title=cleanText(card.querySelector('h3')?.textContent);
+  if(!title)return;
+  const status=cleanText([...card.querySelectorAll('span')].slice(0,2).map(x=>x.textContent).join(' • '));
+  const courseRefs=[...card.querySelectorAll('a[href]')].map(a=>a.getAttribute('href')||'').join(' ');
+  const courseNav=sideLinks.courses;
+  items.push({
+   key:'course-'+index,
+   label:title,
+   detail:'My Courses'+(status?' • '+status:''),
+   href:'#myCoursesSection',
+   haystack:searchText(title+' '+card.textContent+' '+courseRefs+' my courses enrolled enrolment enrollment learning'),
+   action:()=>{
+    if(courseNav&&document.contains(courseNav))courseNav.click();
+    setTimeout(()=>{
+     if(!document.contains(card))return;
+     card.scrollIntoView({behavior:'smooth',block:'center'});
+     card.classList.add('studentSearchTarget');
+     setTimeout(()=>card.classList.remove('studentSearchTarget'),1800);
+    },80);
+   }
+  });
+ });
+
+ // Index useful dashboard cards that are not represented as their own side-nav
+ // destination. These are local DOM targets only, never remote/user searches.
+ [
+  ['Application Status','My Dashboard','#applicationJourney','application status track application admissions payment review'],
+  ['Recent Activities','My Dashboard','#recentActivity','recent activity account activity history'],
+  ['Announcements','My Dashboard','#announcementsSection','announcements academy updates notices'],
+  ['Student Information','My Dashboard','#studentInfoAndAcademy','student information account details learner details'],
+  ['Quick Access','My Dashboard','#studentQuickAccess','quick access application profile calendar library support']
+ ].forEach(([label,detail,selector,keywords])=>{
+  const target=document.querySelector(selector);
+  if(!target)return;
+  items.push({
+   key:'dashboard-'+selector.slice(1),label,detail,href:selector,
+   haystack:searchText(label+' '+detail+' '+keywords+' '+target.textContent),
+   action:()=>{
+    const dashboardNav=sideLinks.dashboard;
+    if(dashboardNav&&document.contains(dashboardNav))dashboardNav.click();
+    setTimeout(()=>{
+     if(!document.contains(target))return;
+     target.scrollIntoView({behavior:'smooth',block:'start'});
+     target.classList.add('studentSearchTarget');
+     setTimeout(()=>target.classList.remove('studentSearchTarget'),1800);
+    },80);
+   }
   });
  });
  return items;
@@ -137,16 +207,17 @@ function installSearch(){
   input.value='';
   closeResults();
   closeMobile();
-  if(item.link&&document.contains(item.link))item.link.click();
+  if(typeof item.action==='function')item.action();
+  else if(item.link&&document.contains(item.link))item.link.click();
   else if(item.href)location.href=item.href;
  };
  const render=()=>{
-  const query=input.value.trim().toLowerCase();
+  const query=searchText(input.value);
   if(!query){closeResults();return;}
   const terms=query.split(/\s+/).filter(Boolean);
   current=buildIndex().filter(item=>terms.every(term=>item.haystack.includes(term))).slice(0,8);
   if(!current.length){
-   box.innerHTML='<div class="studentHeaderSearchEmpty">No matching Student Portal item found.</div>';
+   box.innerHTML='<div class="studentHeaderSearchEmpty">No matching item found in your Student Dashboard.</div>';
   }else{
    box.innerHTML=current.map((item,index)=>'<button class="studentHeaderSearchResult" type="button" role="option" data-student-search-index="'+index+'"><b>'+esc(item.label)+'</b><span>'+esc(item.detail)+'</span></button>').join('');
    box.querySelectorAll('[data-student-search-index]').forEach(button=>{
