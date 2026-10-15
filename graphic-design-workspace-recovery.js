@@ -32,28 +32,42 @@ function boot(){
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
 
-// Shared learner-display polish: the stage bar may identify the current step as
-// "Main Lesson Content", but that internal template label must not be repeated
-// as a second heading inside the teaching card. Learner-facing subject headings
-// already stored in the lesson content remain untouched.
+// Shared learner-display polish for FOA-ACA-STD-001 v1.2.
+// Internal template labels are not exposed where they add no learning value,
+// while the learner-facing Practical Activity label becomes Self-Practice Activity.
 (function(){
 'use strict';
 const INTERNAL_MAIN=/^Main Lesson Content(?:\s+\d+)?$/i;
-function removeDuplicateMainContentHeading(){
+const PRACTICAL=/^Practical Activity$/i;
+function polishLessonDisplay(){
   const stageLabel=document.querySelector('.foaStageMeta strong');
-  if(!stageLabel || !INTERNAL_MAIN.test(String(stageLabel.textContent||'').trim()))return;
+  if(!stageLabel)return;
   const stageMeta=stageLabel.closest('.foaStageMeta');
   const stageTrack=stageMeta?.nextElementSibling;
   const card=stageTrack?.nextElementSibling;
-  if(!card?.matches?.('section.card'))return;
-  const heading=card.querySelector(':scope > h2');
-  if(heading && INTERNAL_MAIN.test(String(heading.textContent||'').trim()))heading.remove();
+  const current=String(stageLabel.textContent||'').trim();
+
+  if(INTERNAL_MAIN.test(current)){
+    if(stageMeta)stageMeta.style.display='none';
+    if(card?.matches?.('section.card')){
+      const heading=card.querySelector(':scope > h2');
+      if(heading && INTERNAL_MAIN.test(String(heading.textContent||'').trim()))heading.remove();
+    }
+    return;
+  }
+
+  if(stageMeta)stageMeta.style.display='';
+  if(PRACTICAL.test(current))stageLabel.textContent='Self-Practice Activity';
+  if(card?.matches?.('section.card')){
+    const heading=card.querySelector(':scope > h2');
+    if(heading && PRACTICAL.test(String(heading.textContent||'').trim()))heading.textContent='Self-Practice Activity';
+  }
 }
 function startLessonDisplayPolish(){
   const host=document.getElementById('course-content');
   if(!host)return;
-  removeDuplicateMainContentHeading();
-  const observer=new MutationObserver(removeDuplicateMainContentHeading);
+  polishLessonDisplay();
+  const observer=new MutationObserver(polishLessonDisplay);
   observer.observe(host,{childList:true,subtree:true});
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',startLessonDisplayPolish,{once:true});else startLessonDisplayPolish();
