@@ -160,6 +160,18 @@ The Home page (`index.html`) is owner-approved as the final public Home-page str
 - Do not reintroduce legacy, retired, superseded or duplicate Home-page content from older commits, cached implementations or prior overrides.
 - A direct change to `index.html` requires an explicit Home-page owner approval marker in the pull request. Routine work on other pages must leave the Home page untouched.
 
+### Public search identity — OWNER-AUTHORISED FOCUSED CORRECTION (17 October 2026)
+
+The owner explicitly reopened only the non-visual public search identity needed to distinguish Funda Online Academy from an unrelated similarly named provider in internet search results.
+
+- The canonical site name is **Funda Online Academy** and the legal name is **Funda Online Academy (Pty) Ltd**.
+- Funda Online Academy is an independent South African 100% online learning provider and is **not affiliated with Funda Institute**.
+- The Home page may strengthen its non-visual search metadata, `WebSite` / `EducationalOrganization` structured data, official contact identity, company identifier, CPD trainer identifier, canonical URL, language targeting, logo and verified official social-profile references.
+- Browse Courses and Policies & Legal may receive aligned non-visual canonical, social-preview and structured-page metadata so all key public pages identify the same official Academy entity and domain.
+- The XML sitemap may be corrected to include authoritative public pages and truthful last-modified dates so search engines receive current crawl signals.
+- This correction does **not** reopen visible Home, Browse Courses or Policies & Legal design, wording, section order, navigation, course cards, FAQs, contact presentation, routes, enrolment/payment behaviour, authentication, portals, course content or database behaviour.
+- Search-engine ranking and snippet replacement remain controlled by the search engine and may change only after recrawling; the Academy must not represent the correction as an immediate guaranteed ranking result.
+
 ### Login / authentication — FINAL OWNER-APPROVED STATE
 
 The Login section is owner-approved as the final Academy authentication structure as of 18 September 2026.
@@ -494,6 +506,7 @@ These are known cleanup targets, not permission to alter them during unrelated t
 
 Add future protected decisions here in concise form, with the date and the owner request that established them. Do not remove older entries merely because code was refactored; mark them as superseded only when the owner explicitly changes the decision.
 
+- **2026-10-17:** Public search identity explicitly reopened by Aziwe Futhe for a focused non-visual correction: strengthen the official Funda Online Academy site/entity metadata, distinguish it from Funda Institute, align canonical public-page signals and correct sitemap freshness while preserving every approved visual, route, course, enrolment, portal and database behaviour.
 - **2026-09-18:** Enrollment Step 4 — Payment approved by Aziwe Futhe as final: official banking details, EFT/Bank Deposit, full-payment and eligible 2/3-instalment choices, always-available full-payment option, exact required-amount rule, required payment reference, PDF/JPG/PNG proof up to 5 MB, Admissions & Finance verification, Back/Continue navigation and Step 4 presentation are protected; Step 5 remains separately reviewable.
 - **2026-09-18:** Enrollment Step 3 — Student Registration / Complete Your Details approved by Aziwe Futhe as final: existing-account profile prefill, required/optional Student details, SA ID/passport validation, read-only registered email, Student/profile saving, Back to Student Type, Continue to Payment, draft persistence and Step 3 presentation are protected; Steps 4–5 remain separately reviewable.
 - **2026-09-18:** Enrollment Step 2 — Student Type approved by Aziwe Futhe as final: first-time, 70% completed-course Legacy Upgrade, 50% incomplete-course Restart and 25% returning-student paths; evidence/ID verification, provisional-discount safeguards, Back/Continue navigation, draft restoration and Step 2 presentation are protected; Steps 3–5 remain separately reviewable.
