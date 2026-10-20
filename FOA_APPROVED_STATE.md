@@ -84,6 +84,7 @@ The owner requested fixes to the Module 1 audit findings. The academic scope rem
 - Every Module 1 lesson must retain at least 2,000 Main Lesson Content words, excluding the supporting lesson components. Worked-example additions do not count towards that minimum.
 - Existing lesson identities, stage order, navigation, completion, assessment gates, formal assessment banks, learner history, layout, typography and other modules' academic content remain protected.
 - Module 1 remains open for the owner's next audit and physical review. This correction does not lock Module 1 or authorise work on Module 2.
+- **Owner-authorised Lesson 1.2 visual pilot (20 October 2026):** place genuine hardware photographs directly after the relevant Main Lesson Content explanations, following the established Nail Technician inline placement pattern. The pilot covers CPU, motherboard, RAM, HDD, SSD, an older ROM-family example and modern firmware flash storage. Retain visible component labels, explanatory captions, alternative text and source/licence credits. Preserve all existing teaching text and exclude the figures from the 2,000-word minimum verification. Lesson 1.1 and the remaining lessons stay unchanged by this pilot; authenticated desktop/mobile visual review remains pending.
 
 ### Bookkeeping academic content — OWNER-AUTHORISED AUDIT AND REMEDIATION (14 October 2026)
 
