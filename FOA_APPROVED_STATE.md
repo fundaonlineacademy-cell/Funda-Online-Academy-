@@ -75,6 +75,16 @@ The owner explicitly reopened only the CEO oversight area needed to trace authen
 - This focused change remains pending the owner's physical review and final lock. It does not reopen any other Student, Admin, Login, assessment, payment, result, certificate or support workflow.
 
 
+### Computer & Digital Literacy Module 1 — OWNER-AUTHORISED AUDIT FIXES (20 October 2026)
+
+The owner requested fixes to the Module 1 audit findings. The academic scope remains Module 1 only.
+
+- Lessons 1.2, 1.3, 1.5, 1.6 and 1.8 receive completed fictional worked examples with recorded evidence, reasoning and results. Lesson 1.5 Knowledge Check question 5 asks for the support-status check; its options, answer key and feedback remain unchanged.
+- The shared learning workspace displays **Self-Practice Activity** in both the stage title and section heading. The `practical_activity` field and `practical` stage identifier remain unchanged. This corrects the shared display wording only.
+- Every Module 1 lesson must retain at least 2,000 Main Lesson Content words, excluding the supporting lesson components. Worked-example additions do not count towards that minimum.
+- Existing lesson identities, stage order, navigation, completion, assessment gates, formal assessment banks, learner history, layout, typography and other modules' academic content remain protected.
+- Module 1 remains open for the owner's next audit and physical review. This correction does not lock Module 1 or authorise work on Module 2.
+
 ### Bookkeeping academic content — OWNER-AUTHORISED AUDIT AND REMEDIATION (14 October 2026)
 
 The owner explicitly reopened only the **Bookkeeping & Financial Administration — Professional Short Course** academic scope to read the assessment/lesson standard, audit the course and fix supported defects.
