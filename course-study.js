@@ -214,7 +214,7 @@ function buildStages(l){
  splitMainContent(l.main_content).forEach((part,i)=>stages.push({kind:'content',title:part.title||`Main Lesson Content ${i+1}`,html:section(part.title||'Main Lesson Content',part.html)}));
  if(String(l.examples||'').trim())stages.push({kind:'example',title:'Worked Example',html:section('Worked Example / Demonstration',l.examples)});
  if(String(l.case_study||'').trim())stages.push({kind:'case',title:'Workplace Scenario / Case Study',html:section('Workplace Scenario / Case Study',l.case_study)});
- if(String(l.practical_activity||'').trim())stages.push({kind:'practical',title:'Practical Activity',html:section('Practical Activity',l.practical_activity)});
+ if(String(l.practical_activity||'').trim())stages.push({kind:'practical',title:'Self-Practice Activity',html:section('Self-Practice Activity',l.practical_activity)});
  if(String(l.knowledge_check||'').trim())stages.push({kind:'knowledge',title:'Knowledge Check',html:'',quiz:parseKnowledge(l.knowledge_check),raw:l.knowledge_check});
  if(String(l.lesson_summary||'').trim())stages.push({kind:'summary',title:'Lesson Summary',html:section('Lesson Summary',l.lesson_summary)});
  return stages.length?stages:[{kind:'content',title:'Lesson Content',html:'<section class="card"><p>No lesson content is available yet.</p></section>'}];
