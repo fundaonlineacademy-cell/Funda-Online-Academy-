@@ -872,3 +872,18 @@ The owner requested Module 4 and then instructed continuation. This authorises a
 - Checked current primary Microsoft documentation for the taught platform limits, including Morph, linked Excel data, media compression/captions, Coach and recording. Responsive markup and source-image decoding were checked. Actual Microsoft PowerPoint execution and authenticated desktop/mobile course display were not performed and remain owner/target-environment review items.
 
 Status: saved live for owner academic audit; no owner approval or academic lock is asserted. Module 5 remains outside this work. Any later correction should remain limited to the owner-requested finding while preserving the unchanged course structure and protected behaviour.
+
+
+## 2026-10-21 — Computer & Digital Literacy Module 5 development, pending owner audit
+
+The owner requested Module 5, authorising academic development of the existing Email and Internet module and alignment of its existing formal question contents. Other modules and protected runtime surfaces remain outside this request.
+
+- Developed the ten existing lessons with complete learning support and five descriptive main-teaching screens each. Conservative live counts are 2,111–2,244 main words per lesson (21,849 total), excluding headings, figures/captions, references and supporting sections; excluding tables gives the same counts.
+- Added 30 purposeful visual placements: 12 genuine Microsoft interface-image placements, one unaltered official Google instructional illustration and 17 exact HTML teaching visuals. Captions distinguish screenshots, illustrations and model fields; sources, credit, larger-view links and proportional responsive limits are included.
+- Added 50 retryable, non-blocking informal Knowledge Check items, complete fictional message/application examples, attachment/size decisions, safe service research and a complete virtual application/mock-interview pack. Official government submissions, payments, external sends/invitations and recording other people are not practice requirements. The informal lab does not replace the course PCA.
+- Rewrote the existing 32 formative and 52 summative question contents with taught-content/rationale mapping, distinct micro-decisions and balanced A–D keys (8 each formative; 13 each summative). Preserved question identities, numbers, marks, assessment links, creation metadata and both assessment records; delivery/pass/progression/attempt rules remain unchanged.
+- Checked current primary technical, government and payment-safety sources, including the official move from legacy uFiling employee claims to UIF Online, account-specific attachment limits, inherited sharing access and actual payment/workflow states. Institutional service availability was not presented as guaranteed and no real service transaction was performed.
+- Atomic full-record-guarded save and exact live readback passed. Existing-renderer checks covered 12 stages per lesson, 50 correct, 50 incorrect and 50 incomplete informal responses, ten retries and next/final-formative navigation with zero learner writes. Arithmetic, dates, word counts, markup and used source-image integrity passed.
+- Course/PCA metadata, all ten module metadata records, the other 90 lessons, other assessments/question content and learner attempts/progress remain unchanged. No runtime/layout, account, payment, schema, RLS, RPC or authentication change was made.
+
+Status: saved live for owner academic audit; no owner approval or academic lock is asserted. Actual mail/calendar/meeting/government/payment application execution and authenticated desktop/mobile course display were not performed in this pass. Module 6 was not started.
