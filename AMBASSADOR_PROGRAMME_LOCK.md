@@ -11,11 +11,11 @@ Locked after final audit and housekeeping on 2026-10-08. Public-programme presen
 - The operating compensation model, eligibility rules, verification controls and payout rules remain unchanged by the 2026-10-21 public-presentation amendment.
 
 ## Public Ambassador Programme presentation — owner amendment 2026-10-21
-- The public Ambassador Programme remains available and may explain the programme purpose, selection criteria, application journey, responsible-promotion rules, referral tracking and the fact that approved partnerships have commercial terms.
-- The public page must **not** display the compensation-plan table, commission percentage, revenue targets, expected earnings, achievement-incentive amounts, monthly performance-reward amounts, maximum-total-cash examples or other earnings projections.
-- Detailed compensation, eligibility and payout information is private programme information for approved Ambassadors and is presented through the secure Ambassador Portal and official programme terms.
-- The public page may state that sponsored, paid, gifted or commission-based content must be disclosed where applicable; this does not authorise publication of the compensation matrix.
-- The public replacement section is programme-focused: referral tools, programme guidance, verified tracking and private programme information after approval.
+- The public Ambassador Programme remains available and otherwise retains its approved content and layout.
+- The public page must **not** display the former **Ambassador Performance & Rewards · 2026** section or any compensation-plan table, commission percentage, revenue targets, expected earnings, achievement-incentive amounts, monthly performance-reward amounts, maximum-total-cash examples or other earnings projections.
+- No replacement public earnings or compensation section is required. The authorised public change is removal only of that earnings/compensation block.
+- Detailed compensation, eligibility and payout information is private programme information for approved Ambassadors and remains available through the secure Ambassador Portal and official programme terms.
+- The public page may state elsewhere, where already approved, that sponsored, paid, gifted or commission-based content must be disclosed where applicable; this does not authorise publication of the compensation matrix.
 
 ## Approved private reward table
 The following operating table remains approved for the Ambassador Dashboard / secure programme context. It is **not public-page content**.
@@ -34,7 +34,7 @@ The following operating table remains approved for the Ambassador Dashboard / se
 From R100,000 upward, total cash at the stated target must not exceed 20% of qualifying revenue.
 
 ## Protected implementation areas
-- Public Ambassador Programme presentation, including the rule that detailed compensation is not publicly displayed.
+- Public Ambassador Programme presentation, including the rule that the former public earnings/compensation block remains removed and is not replaced by another public compensation presentation.
 - Ambassador Dashboard Performance & Rewards presentation.
 - Direct-referral attribution and 15% commission logic.
 - Reward verification/reversal safeguards and payout controls.
