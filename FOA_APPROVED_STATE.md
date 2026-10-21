@@ -949,3 +949,17 @@ The owner identified presentation drift and explicitly requested the agreed bull
 Required for subsequent development in this course: Lesson Overview, Learning Outcomes and Lesson Summary must use genuine unordered bullet lists. Validate the saved list structure and current-renderer output explicitly; a word-count or general component pass does not establish formatting compliance.
 
 Status: owner-requested formatting correction saved and verified. No full-course academic approval or academic lock is asserted, and no new module was started.
+
+
+## 2026-10-21 — Computer & Digital Literacy Module 9 development, pending owner audit
+
+The owner requested Module 9, authorising development of the ten existing Advanced Digital Productivity & Automation lessons and alignment of their existing formal question contents.
+
+- Developed all ten lessons with complete supporting components, five descriptive main screens and fifty retryable, non-blocking informal checks. Conservative live main-word counts are 2,043–2,121 per lesson (20,758 total), excluding headings, figures/captions, references, tables and support.
+- Preserved the required unordered bullets in every Lesson Overview, Learning Outcomes and Lesson Summary. All thirty saved sections passed semantic-list and current-renderer output checks explicitly.
+- Added sixty-two inline visual placements: eleven genuine Microsoft interface screenshot details, one unaltered Google instructional interface animation and fifty exact labelled teaching visuals. Published assets were decoded, dimension-checked, hashed and visually inspected; all 445 animation frames decoded. Captions, meaningful descriptions, source/larger links, proportional limits and relevant credits are included.
+- Completed integrated fictional productivity, AI, workflow, data, accessibility, remote-work and form-to-report models. Checked arithmetic, denominators, date-specific time zones, contrast, threshold boundaries, replay and partial-write recovery in an offline serial simulation. Managed-service terms, simulated evidence and spreadsheet concurrency limits remain explicit; no real send, invitation, private-data upload, purchase, permission change or deployed workflow occurred.
+- Rewrote the existing 32 formative and 52 summative question contents, retaining identities, links, numbering, marks, creation metadata and both assessment records. Keys are balanced A–D, with private taught-content/cognitive/rationale mapping and distinct micro-decision review. Delivery, pass, attempt and progression rules are unchanged.
+- Guarded atomic save and exact live readback passed for ten lessons and eighty-four questions. Existing-renderer checks passed twelve stages per lesson, fifty correct/incorrect/incomplete informal responses, ten retries, navigation and thirty bullet sections, with zero learner writes. Course/PCA, all ten module records, the other ninety lessons, other assessments/questions, relevant histories and existing identity/media fields remain unchanged. Renderer SHA is unchanged; no runtime/layout, auth/payment, schema/RLS/RPC or academic-lock change.
+
+Status: saved live for owner academic audit; no owner approval or academic lock is asserted. Source markup and asset integrity were checked. Actual application/service execution and authenticated desktop/mobile course display remain unperformed and are separate target-environment review items. Module 10 is outside this work.
