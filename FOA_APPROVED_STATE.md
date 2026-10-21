@@ -934,3 +934,18 @@ The owner requested Module 8, authorising academic development of the existing P
 - Preserved course/PCA metadata, all ten module metadata records, the other ninety lessons, other assessment/question content, learner attempts/progress and existing media/identity fields. Current renderer SHA is unchanged. No runtime/layout, authentication, payment, schema, RLS, RPC or academic-lock change was made.
 
 Status: saved live for owner academic audit; no owner approval or academic lock is asserted. Actual profile publication, job application, business transaction, application/device execution and authenticated desktop/mobile course display were not performed. Responsive markup and source-image integrity are verified; target-device display remains an owner/environment review item. Module 9 is outside this work.
+
+
+## 2026-10-21 — Computer & Digital Literacy Modules 1–8 bullet-format correction
+
+The owner identified presentation drift and explicitly requested the agreed bullet format for lesson overviews, learning outcomes and summaries through Module 8, using Module 2 as the comparison.
+
+- Corrected these three fields across the eighty completed lessons to semantic unordered lists. Two hundred fields required changes: eighty overviews, sixty outcome fields and sixty summaries. Forty already-correct unordered lists remain byte-for-byte unchanged. Module 2 ordered outcomes became unordered bullets with the same words and item order.
+- Identified the main later-module drift from Module 4: outcomes were semicolon-delimited plain text and summaries were paragraph HTML. Earlier validation had checked populated/valid fields without enforcing the agreed list structure. This omission is now explicitly covered.
+- Verified all 240 saved sections for direct ul/li structure, nonempty items and preserved visible wording/order. The unchanged current renderer retains those lists in Lesson Start and Summary. Eight hundred adjacent-stage comparisons and 160 navigation comparisons passed across eighty actual lesson records, with zero learner writes. This is renderer-source verification; authenticated desktop/mobile viewing was not performed.
+- Updated the scoped authoring format and component-validation gates so all three fields must be unordered lists. Regenerated the fifty Module 4–8 drafts and verified that these fields exactly match the correction. Existing component checks passed for all five module payloads.
+- Saved only the three requested academic fields and necessary lesson timestamps through a full-row-hash-guarded atomic update. Exact live values passed. Protected-field hashes match for all one hundred lessons; Modules 9–10 full rows, main teaching, word counts, visuals, support sections, course/PCA/module metadata, all assessments/questions, learner attempts/progress and academic locks remain unchanged. No runtime, CSS, layout, authentication, payment, schema, RLS or RPC change was made.
+
+Required for subsequent development in this course: Lesson Overview, Learning Outcomes and Lesson Summary must use genuine unordered bullet lists. Validate the saved list structure and current-renderer output explicitly; a word-count or general component pass does not establish formatting compliance.
+
+Status: owner-requested formatting correction saved and verified. No full-course academic approval or academic lock is asserted, and no new module was started.
