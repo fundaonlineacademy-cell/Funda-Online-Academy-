@@ -978,3 +978,13 @@ The owner requested Module 10, authorising development of the ten existing Final
 - The existing required applied-work-product PCA, its rubric, critical criteria, course-end configuration, activation gate and submission/review history were preserved. Its task remains draft, blocked until final academic QA. No activation, academic lock, learner result, real send/invitation, private-data upload, purchase or live permission change occurred. Course and PCA runtime SHAs remain unchanged; no runtime/layout, auth/payment, schema/RLS/RPC change.
 
 Status: Module 10 is saved live for the owner’s independent academic audit. No owner approval, whole-course academic approval or academic lock is asserted. Actual Office/service execution and authenticated desktop/mobile course display remain unperformed and are separate target-environment review items. Completing development of Module 10 does not activate the PCA or award course completion.
+
+
+## 2026-10-22 — Computer & Digital Literacy visual continuation and read-only audit
+
+The owner requested continuation after the current course-status review. Academic edits are limited to inline teaching figures in existing lessons 1.3, 1.4, 1.5, 1.6, 1.8, 1.9 and 4.1.
+
+- Added nineteen inline placements: fourteen original FOA teaching models and five Microsoft screenshot placements using three inspected published assets. Figures retain readable alternatives, source/context captions and bounded responsive sizing; original teaching prose and five-screen markers are preserved.
+- Independently screened all one hundred lessons against the owner's 2,000 genuine main-word minimum, excluding headings, figures, tables, sources and supporting fields. All pass; exactly five hundred informal items and three hundred required bullet sections are present. All lessons contain a structured teaching visual or table.
+- Guarded seven-row save and exact readback passed. The other ninety-three lesson records, all 860 existing question records (including the archived legacy bank), course/module/assessment/PCA metadata and academic locks are unchanged. Existing-renderer checks passed 500 main screens, 700 unchanged support stages and 200 navigation labels; runtime source is unchanged.
+- Modules 9 and 10 remain REQUIRES ACTION following the read-only assessment-quality review. The required PCA remains draft, with final brief/dataset and academic QA outstanding. No question-bank correction, PCA activation, owner approval or academic lock is asserted. Authenticated desktop/mobile display remains unverified; the available browser reached sign-in.
