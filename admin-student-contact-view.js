@@ -52,7 +52,7 @@
     const safe=Math.min(Math.max(1,page),pages);
     const start=(safe-1)*PAGE_SIZE+1;
     const end=Math.min(safe*PAGE_SIZE,total);
-    return `<div class="funda-record-pager" data-funda-pager="${kind}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #edf1f6">
+    return `<div class="funda-record-pager" data-funda-pager="${kind}" data-funda-page-signature="${safe}:${total}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #edf1f6">
       <span class="muted" style="font-size:12px">Showing ${start}–${end} of ${total} · Page ${safe} of ${pages}</span>
       <div class="actions">
         <button type="button" class="btn light" data-funda-page-kind="${kind}" data-funda-page="${safe-1}" ${safe<=1?'disabled':''}>Previous</button>
@@ -72,9 +72,18 @@
     return {page:safe,total,pages};
   }
 
+  function upsertPager(host,kind,page,total){
+    if(!host)return;
+    const signature=`${page}:${total}`;
+    const existing=host.parentElement?.querySelector(`[data-funda-pager="${kind}"]`);
+    if(existing?.dataset.fundaPageSignature===signature)return;
+    existing?.remove();
+    host.insertAdjacentHTML('afterend',pagerMarkup(kind,page,total));
+  }
+
   function findApplicationsPanel(view){
     const heading=[...view.querySelectorAll('h1,h2,h3,h4,strong')]
-      .find(node=>/^(applications|enrollment pipeline|enrolment pipeline)$/i.test(String(node.textContent||'').trim()));
+      .find(node=>/(applications|enrollment pipeline|enrolment pipeline)/i.test(String(node.textContent||'').trim()));
     return heading?.closest('.panel,section,[class*="panel"],[class*="Panel"]')||null;
   }
 
@@ -88,8 +97,7 @@
 
     const state=applyPage(rows,applicationPage);
     applicationPage=state.page;
-    panel.querySelector('[data-funda-pager="applications"]')?.remove();
-    list.insertAdjacentHTML('afterend',pagerMarkup('applications',state.page,state.total));
+    upsertPager(list,'applications',state.page,state.total);
   }
 
   function paginateContacts(){
@@ -102,9 +110,8 @@
 
     const state=applyPage(rows,contactPage);
     contactPage=state.page;
-    panel.querySelector('[data-funda-pager="contacts"]')?.remove();
     const tablewrap=panel.querySelector('.tablewrap');
-    tablewrap?.insertAdjacentHTML('afterend',pagerMarkup('contacts',state.page,state.total));
+    upsertPager(tablewrap,'contacts',state.page,state.total);
   }
 
   function applyPagination(){
