@@ -8,10 +8,14 @@
   let loading=false;
   let applicationPage=1;
   let contactPage=1;
+  let contactSort='name-asc';
+  let pendingContactSearch='';
+  let activeContactSearch='';
 
   const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
   }[ch]));
+  const normal=value=>String(value??'').trim().toLowerCase().replace(/\s+/g,' ');
 
   function formatDate(value){
     if(!value)return '—';
@@ -100,18 +104,92 @@
     upsertPager(list,'applications',state.page,state.total);
   }
 
+  function contactRows(){
+    const tbody=document.querySelector(`#${PANEL_ID} tbody`);
+    return tbody?[...tbody.querySelectorAll(':scope > tr')]:[];
+  }
+
   function paginateContacts(){
     const panel=document.getElementById(PANEL_ID);
     if(!panel)return;
-    const tbody=panel.querySelector('tbody');
-    if(!tbody)return;
-    const rows=[...tbody.querySelectorAll(':scope > tr')];
+    const rows=contactRows();
     if(!rows.length)return;
 
     const state=applyPage(rows,contactPage);
     contactPage=state.page;
     const tablewrap=panel.querySelector('.tablewrap');
     upsertPager(tablewrap,'contacts',state.page,state.total);
+  }
+
+  function sortRows(rows,mode){
+    return [...rows].sort((a,b)=>{
+      if(mode==='name-desc')return String(b.dataset.name||'').localeCompare(String(a.dataset.name||''),'en',{sensitivity:'base'});
+      if(mode==='newest')return Number(b.dataset.created||0)-Number(a.dataset.created||0);
+      if(mode==='oldest')return Number(a.dataset.created||0)-Number(b.dataset.created||0);
+      return String(a.dataset.name||'').localeCompare(String(b.dataset.name||''),'en',{sensitivity:'base'});
+    });
+  }
+
+  function sortContactDom(resetPage=true){
+    const panel=document.getElementById(PANEL_ID);
+    const tbody=panel?.querySelector('tbody');
+    if(!tbody)return;
+    const rows=sortRows([...tbody.querySelectorAll(':scope > tr')],contactSort);
+    rows.forEach(row=>tbody.appendChild(row));
+    if(resetPage)contactPage=1;
+    paginateContacts();
+    if(activeContactSearch)focusContact(activeContactSearch,false);
+  }
+
+  function clearContactHighlight(){
+    contactRows().forEach(row=>{
+      row.style.background='';
+      row.style.outline='';
+      row.style.outlineOffset='';
+      row.removeAttribute('tabindex');
+    });
+  }
+
+  function setSearchStatus(message,isError=false){
+    const status=document.getElementById('studentContactSearchStatus');
+    if(!status)return;
+    status.textContent=message||'';
+    status.style.color=isError?'#9b2525':'#176b50';
+  }
+
+  function focusContact(term,scroll=true){
+    const query=normal(term);
+    if(!query)return false;
+    const rows=contactRows();
+    if(!rows.length)return false;
+
+    let match=rows.find(row=>normal(row.dataset.name)===query||normal(row.dataset.email)===query||normal(row.dataset.contact)===query);
+    if(!match)match=rows.find(row=>normal(row.dataset.search).includes(query));
+
+    clearContactHighlight();
+    if(!match){
+      setSearchStatus(`No student contact matched “${term}”.`,true);
+      return false;
+    }
+
+    const index=rows.indexOf(match);
+    contactPage=Math.floor(index/PAGE_SIZE)+1;
+    paginateContacts();
+    match.style.background='#fff8dc';
+    match.style.outline='2px solid #c7a13b';
+    match.style.outlineOffset='-2px';
+    match.setAttribute('tabindex','-1');
+    const studentName=match.dataset.displayName||'Student';
+    setSearchStatus(`Student found: ${studentName}`);
+    activeContactSearch=term;
+
+    if(scroll){
+      requestAnimationFrame(()=>{
+        match.scrollIntoView({behavior:'smooth',block:'center'});
+        try{match.focus({preventScroll:true});}catch(_){match.focus();}
+      });
+    }
+    return true;
   }
 
   function applyPagination(){
@@ -127,8 +205,14 @@
     panel.className='panel funda-student-contacts-panel';
     panel.style.marginTop='12px';
 
-    const body=rows.length
-      ? `<div class="tablewrap"><table class="tbl"><thead><tr><th>Student</th><th>Email</th><th>Contact Number</th><th>Registered</th></tr></thead><tbody>${rows.map(row=>`<tr><td><strong>${esc(row.full_name||'Student')}</strong></td><td>${esc(row.email||'—')}</td><td><strong>${esc(row.contact||'—')}</strong></td><td>${esc(formatDate(row.created_at))}</td></tr>`).join('')}</tbody></table></div>`
+    const ordered=[...rows].sort((a,b)=>normal(a.full_name||a.email).localeCompare(normal(b.full_name||b.email),'en',{sensitivity:'base'}));
+    const body=ordered.length
+      ? `<div class="tablewrap"><table class="tbl"><thead><tr><th>Student</th><th>Email</th><th>Contact Number</th><th>Registered</th></tr></thead><tbody>${ordered.map(row=>{
+          const displayName=row.full_name||'Student';
+          const created=Date.parse(row.created_at||'')||0;
+          const search=normal(`${displayName} ${row.email||''} ${row.contact||''}`);
+          return `<tr data-name="${esc(normal(displayName))}" data-display-name="${esc(displayName)}" data-email="${esc(normal(row.email))}" data-contact="${esc(normal(row.contact))}" data-search="${esc(search)}" data-created="${created}"><td><strong>${esc(displayName)}</strong></td><td>${esc(row.email||'—')}</td><td><strong>${esc(row.contact||'—')}</strong></td><td>${esc(formatDate(row.created_at))}</td></tr>`;
+        }).join('')}</tbody></table></div>`
       : '<div class="empty">No active Student-role accounts found.</div>';
 
     panel.innerHTML=`
@@ -138,6 +222,18 @@
           <p>Only active Student-role accounts are shown here. Ambassador and Admin accounts stay separate.</p>
         </div>
         <span class="badge green">${rows.length} STUDENT${rows.length===1?'':'S'}</span>
+      </div>
+      <div class="toolbar" style="justify-content:space-between;margin:8px 0 10px">
+        <div class="toolbar" style="margin:0">
+          <label for="studentContactSort" class="muted" style="font-weight:800">Sort students</label>
+          <select id="studentContactSort" class="field" style="min-width:170px;padding:8px 10px">
+            <option value="name-asc" selected>A–Z</option>
+            <option value="name-desc">Z–A</option>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+          </select>
+        </div>
+        <span id="studentContactSearchStatus" class="muted" style="font-size:12px"></span>
       </div>
       ${body}`;
     return panel;
@@ -151,6 +247,11 @@
 
     if(document.getElementById(PANEL_ID)||loading){
       paginateContacts();
+      if(pendingContactSearch&&document.getElementById(PANEL_ID)){
+        const term=pendingContactSearch;
+        pendingContactSearch='';
+        focusContact(term,true);
+      }
       return;
     }
 
@@ -188,7 +289,15 @@
       const legacy=legacyReportContainer(view);
       if(legacy)legacy.before(panel);
       else view.appendChild(panel);
+      contactSort='name-asc';
+      contactPage=1;
       paginateContacts();
+
+      if(pendingContactSearch){
+        const term=pendingContactSearch;
+        pendingContactSearch='';
+        focusContact(term,true);
+      }
     }catch(error){
       console.warn('Student contacts could not load:',error);
     }finally{
@@ -210,15 +319,48 @@
     applyPagination();
   }
 
+  function handleSort(event){
+    if(event.target?.id!=='studentContactSort')return;
+    contactSort=event.target.value||'name-asc';
+    sortContactDom(true);
+  }
+
+  function handleGlobalStudentSearch(event){
+    const input=event.target;
+    if(event.key!=='Enter'||input?.id!=='global')return;
+    const term=String(input.value||'').trim();
+    if(!term)return;
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    pendingContactSearch=term;
+    activeContactSearch=term;
+
+    const view=document.getElementById('view');
+    if(!view||!isCurrentEnrolmentsWorkspace(view)){
+      if(typeof window.show==='function')window.show('enrolments');
+      else if(typeof show==='function')show('enrolments');
+    }
+    schedule();
+    setTimeout(()=>{
+      if(document.getElementById(PANEL_ID)){
+        pendingContactSearch='';
+        focusContact(term,true);
+      }
+    },180);
+  }
+
   function start(){
     const view=document.getElementById('view');
     if(!view){setTimeout(start,250);return;}
     view.addEventListener('click',handlePager);
+    view.addEventListener('change',handleSort);
+    document.addEventListener('keydown',handleGlobalStudentSearch,true);
     new MutationObserver(schedule).observe(view,{childList:true,subtree:true});
     schedule();
   }
 
-  window.FundaAdminStudentContactView={render:schedule,applyPagination};
+  window.FundaAdminStudentContactView={render:schedule,applyPagination,focusContact};
   document.addEventListener('funda:admin-nav-ready',schedule);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
