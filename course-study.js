@@ -29,6 +29,9 @@ function injectLessonStandardCss(){
  .foaStageIntro{margin:0 0 14px;color:#5f7185;font-size:12px;font-weight:700;line-height:1.55}
  .lesson-glossary table,.lesson-table-wrap table,.card table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
  .lesson-glossary th,.lesson-glossary td,.lesson-table-wrap th,.lesson-table-wrap td,.card th,.card td{border:1px solid #d9e4f2;padding:10px 11px;vertical-align:top;text-align:left;line-height:1.55}
+ .card th,.card td{min-width:140px;overflow-wrap:normal;word-break:normal;hyphens:none}
+ .foaLessonTableScroll{max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain}
+ .foaLessonTableScroll:focus-visible{outline:3px solid #c99a2e;outline-offset:2px}
  .lesson-glossary th,.lesson-table-wrap th,.card th{background:#071d49;color:#fff;font-weight:800}
  .card details{margin-top:14px;border:1px solid #d9e4f2;border-radius:13px;background:#f8fbff;padding:12px 14px}.card details summary{cursor:pointer;color:#0b2f70;font-weight:800}
  .foaQuizQuestion{margin:14px 0;padding:15px;border:1px solid #d7e3f1;border-radius:15px;background:#fff}.foaQuizQuestion h3{margin:0 0 10px;color:#06152f;font-size:14px}
@@ -163,6 +166,25 @@ async function loadCourseNotes(){
 }
 function asHtml(v){const s=String(v||'').trim();if(!s)return '';if(/<\/?[a-z][\s\S]*>/i.test(s))return s;return s.split(/\n\s*\n/).map(p=>'<p>'+esc(p).replace(/\n/g,'<br>')+'</p>').join('')}
 function section(title,value,cls=''){if(!String(value||'').trim())return '';return `<section class="card ${cls}"><h2>${esc(title)}</h2><div>${asHtml(value)}</div></section>`}
+function prepareLessonTables(){
+ $('course-content').querySelectorAll('.card table').forEach(table=>{
+  const columns=Math.max(1,...Array.from(table.rows,row=>Array.from(row.cells).reduce((n,cell)=>n+cell.colSpan,0)));
+  const minimum=Math.max(520,columns*160);
+  table.style.minWidth=`max(${table.style.minWidth||'0px'}, ${minimum}px)`;
+  let wrap=table.parentElement;
+  // Reuse existing table-only scroll containers, including inline teaching figures.
+  if(wrap.children.length!==1||!(wrap.matches('.lesson-table-wrap,.lesson-glossary,.foaLessonTableScroll')||/^(auto|scroll)$/.test(wrap.style.overflowX))){
+   wrap=document.createElement('div');table.before(wrap);wrap.appendChild(table);
+  }
+  wrap.classList.add('foaLessonTableScroll');
+  if(!wrap.hasAttribute('tabindex'))wrap.tabIndex=0;
+  if(!wrap.hasAttribute('role'))wrap.setAttribute('role','region');
+  if(!wrap.hasAttribute('aria-label')&&!wrap.hasAttribute('aria-labelledby')){
+   const title=table.caption?.textContent||table.closest('figure')?.querySelector('h3,h4')?.textContent||table.closest('.card')?.querySelector('h2')?.textContent||'Lesson';
+   wrap.setAttribute('aria-label',`${title.trim()} table — scroll horizontally`);
+  }
+ });
+}
 function progressPct(){
  const lessonTotal=state.modules.reduce((n,m)=>n+(m.lessons?.length||0),0);
  const assessmentTotal=state.assessments.length;
@@ -320,7 +342,7 @@ function renderLesson(){
  $('openModulesInner')?.addEventListener('click',()=>$('modulePanel')?.classList.toggle('open'));
  $('scrollNotesInner')?.addEventListener('click',()=>openStudyTools('write'));
  $('scrollNotesInner')?.setAttribute('aria-expanded',String($('studyToolsPanel')?.getAttribute('aria-hidden')==='false'));
- wireKnowledge(st);activateLessonNotes(l);
+ prepareLessonTables();wireKnowledge(st);activateLessonNotes(l);
  const prev=$('prevStage');prev.disabled=state.stage===0&&state.module===1&&Number(l.lesson_number)===1;
  prev.onclick=()=>{if(state.stage>0){state.stage--;renderLesson();scrollTo(0,0);return}if(Number(l.lesson_number)>1){state.unit=Number(l.lesson_number)-1;const prevLesson=lessons(state.module).find(x=>Number(x.lesson_number)===Number(state.unit));state.stage=Math.max(0,buildStages(prevLesson||{}).length-1)}else if(state.module>1){state.module--;state.unit=lessons(state.module).length||1;const prevLesson=lessons(state.module).find(x=>Number(x.lesson_number)===Number(state.unit));state.stage=Math.max(0,buildStages(prevLesson||{}).length-1)}renderAll();scrollTo(0,0)};
  $('nextStage').onclick=()=>{if(state.stage<stages.length-1){state.stage++;renderLesson();scrollTo(0,0);return}finishLesson(l,ls,complete)};
