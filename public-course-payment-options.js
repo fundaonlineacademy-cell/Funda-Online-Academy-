@@ -113,6 +113,9 @@ function simplifyAcademyMessageAttribution(){
     const text=p.textContent.replace(/\s+/g,' ').trim();
     if(text==='A MESSAGE FROM THE HEAD OF ACADEMICS'||text==='— Head of Academics')p.remove();
   });
+  const paragraphs=[...section.querySelectorAll('p')];
+  const signature=paragraphs.find(p=>p.textContent.replace(/\s+/g,' ').trim()==='FUNDA ONLINE ACADEMY');
+  if(signature)signature.textContent='-Funda Online Academy';
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',simplifyAcademyMessageAttribution,{once:true});else simplifyAcademyMessageAttribution();
 })();
