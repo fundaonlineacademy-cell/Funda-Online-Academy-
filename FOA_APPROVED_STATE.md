@@ -75,6 +75,16 @@ The owner explicitly reopened only the CEO oversight area needed to trace authen
 - This focused change remains pending the owner's physical review and final lock. It does not reopen any other Student, Admin, Login, assessment, payment, result, certificate or support workflow.
 
 
+### Learning workspace overview and mobile tables — OWNER-AUTHORISED FOCUSED CORRECTION (24 October 2026)
+
+The owner's Computer Literacy mobile review explicitly reopened two shared lesson-presentation defects across lessons and modules: dark Lesson Overview copy against navy and tables compressed into broken words on phones.
+
+- Include overview list text and bullet markers in the existing white-on-navy treatment. Preserve the navy background, Source Sans 3, wording and bullet structure.
+- Give lesson tables readable minimum table/column widths and horizontal scrolling inside the lesson. Reuse existing table-only scroll containers, preserve larger authored minima and table semantics, and support keyboard focus as well as touch scrolling. Prevent inherited automatic hyphenation and character-level wrapping in table cells.
+- Edit only the authoritative `course-study.html` and `course-study.js` presentation/rendering path and its script cache version; do not add another observer, timer, global override or loader.
+- Preserve lesson data/figures, stage order, Modules and Notes & Support controls, navigation, completion, progress, Knowledge Checks, assessment/access rules, authentication, payments and all other Academy pages. Database inspection for this correction is read-only.
+- Required checks: all 100 Computer Literacy overview sections and 457 saved lesson tables at mobile/tablet/desktop widths; both owner screenshot tables in their existing figure containers; existing wide-table containers; touch/keyboard scrolling; adjacent navigation/tools/Knowledge Check retry and the four desktop panel combinations. Target-device owner review remains separate from local browser verification. This correction applies no academic lock.
+
 ### Computer & Digital Literacy Module 1 — OWNER-AUTHORISED AUDIT FIXES (20 October 2026)
 
 The owner requested fixes to the Module 1 audit findings. The academic scope remains Module 1 only.
