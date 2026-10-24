@@ -3,8 +3,11 @@
   window.__fundaAdminStudentContactView=true;
 
   const PANEL_ID='fundaStudentContactsPanel';
+  const PAGE_SIZE=10;
   let timer=null;
   let loading=false;
+  let applicationPage=1;
+  let contactPage=1;
 
   const esc=value=>String(value??'').replace(/[&<>"']/g,ch=>({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
@@ -27,8 +30,11 @@
 
   function isCurrentEnrolmentsWorkspace(view){
     const text=String(view?.textContent||'').toLowerCase();
-    return text.includes('enrollment pipeline')||
+    return text.includes('enrolments & courses')||
+      text.includes('enrollment pipeline')||
       text.includes('enrolment pipeline')||
+      text.includes('applications')||
+      text.includes('course portfolio')||
       text.includes('course catalog')||
       text.includes('course catalogue')||
       text.includes('course governance');
@@ -38,6 +44,74 @@
     const heading=[...view.querySelectorAll('h1,h2,h3,h4,strong')]
       .find(node=>/legacy students report/i.test(node.textContent||''));
     return heading?.closest('.panel,.lgPanel,section,.card,[class*="panel"],[class*="Panel"]')||null;
+  }
+
+  function pagerMarkup(kind,page,total){
+    if(!total)return '';
+    const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+    const safe=Math.min(Math.max(1,page),pages);
+    const start=(safe-1)*PAGE_SIZE+1;
+    const end=Math.min(safe*PAGE_SIZE,total);
+    return `<div class="funda-record-pager" data-funda-pager="${kind}" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #edf1f6">
+      <span class="muted" style="font-size:12px">Showing ${start}–${end} of ${total} · Page ${safe} of ${pages}</span>
+      <div class="actions">
+        <button type="button" class="btn light" data-funda-page-kind="${kind}" data-funda-page="${safe-1}" ${safe<=1?'disabled':''}>Previous</button>
+        <button type="button" class="btn light" data-funda-page-kind="${kind}" data-funda-page="${safe+1}" ${safe>=pages?'disabled':''}>Next</button>
+      </div>
+    </div>`;
+  }
+
+  function applyPage(rows,page){
+    const total=rows.length;
+    const pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+    const safe=Math.min(Math.max(1,page),pages);
+    const start=(safe-1)*PAGE_SIZE;
+    rows.forEach((row,index)=>{
+      row.style.display=index>=start&&index<start+PAGE_SIZE?'':'none';
+    });
+    return {page:safe,total,pages};
+  }
+
+  function findApplicationsPanel(view){
+    const heading=[...view.querySelectorAll('h1,h2,h3,h4,strong')]
+      .find(node=>/^(applications|enrollment pipeline|enrolment pipeline)$/i.test(String(node.textContent||'').trim()));
+    return heading?.closest('.panel,section,[class*="panel"],[class*="Panel"]')||null;
+  }
+
+  function paginateApplications(view){
+    const panel=findApplicationsPanel(view);
+    if(!panel)return;
+    const list=panel.querySelector('.list');
+    if(!list)return;
+    const rows=[...list.children].filter(node=>node.classList?.contains('row'));
+    if(!rows.length)return;
+
+    const state=applyPage(rows,applicationPage);
+    applicationPage=state.page;
+    panel.querySelector('[data-funda-pager="applications"]')?.remove();
+    list.insertAdjacentHTML('afterend',pagerMarkup('applications',state.page,state.total));
+  }
+
+  function paginateContacts(){
+    const panel=document.getElementById(PANEL_ID);
+    if(!panel)return;
+    const tbody=panel.querySelector('tbody');
+    if(!tbody)return;
+    const rows=[...tbody.querySelectorAll(':scope > tr')];
+    if(!rows.length)return;
+
+    const state=applyPage(rows,contactPage);
+    contactPage=state.page;
+    panel.querySelector('[data-funda-pager="contacts"]')?.remove();
+    const tablewrap=panel.querySelector('.tablewrap');
+    tablewrap?.insertAdjacentHTML('afterend',pagerMarkup('contacts',state.page,state.total));
+  }
+
+  function applyPagination(){
+    const view=document.getElementById('view');
+    if(!view||!isCurrentEnrolmentsWorkspace(view))return;
+    paginateApplications(view);
+    paginateContacts();
   }
 
   function buildPanel(rows){
@@ -64,7 +138,14 @@
 
   async function render(){
     const view=document.getElementById('view');
-    if(!view||!isCurrentEnrolmentsWorkspace(view)||document.getElementById(PANEL_ID)||loading)return;
+    if(!view||!isCurrentEnrolmentsWorkspace(view))return;
+
+    paginateApplications(view);
+
+    if(document.getElementById(PANEL_ID)||loading){
+      paginateContacts();
+      return;
+    }
 
     const dbClient=client();
     if(!dbClient)return;
@@ -100,6 +181,7 @@
       const legacy=legacyReportContainer(view);
       if(legacy)legacy.before(panel);
       else view.appendChild(panel);
+      paginateContacts();
     }catch(error){
       console.warn('Student contacts could not load:',error);
     }finally{
@@ -112,14 +194,24 @@
     timer=setTimeout(render,120);
   }
 
+  function handlePager(event){
+    const button=event.target.closest?.('[data-funda-page-kind]');
+    if(!button||button.disabled)return;
+    const page=Number(button.dataset.fundaPage||1);
+    if(button.dataset.fundaPageKind==='applications')applicationPage=page;
+    if(button.dataset.fundaPageKind==='contacts')contactPage=page;
+    applyPagination();
+  }
+
   function start(){
     const view=document.getElementById('view');
     if(!view){setTimeout(start,250);return;}
+    view.addEventListener('click',handlePager);
     new MutationObserver(schedule).observe(view,{childList:true,subtree:true});
     schedule();
   }
 
-  window.FundaAdminStudentContactView={render:schedule};
+  window.FundaAdminStudentContactView={render:schedule,applyPagination};
   document.addEventListener('funda:admin-nav-ready',schedule);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
   else start();
