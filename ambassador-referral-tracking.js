@@ -116,7 +116,15 @@ function run(){
 }
 
 function loadPortalFix(file,id){if(!/ambassador-portal-v2\.html$/i.test(location.pathname)||document.getElementById(id))return;const s=document.createElement('script');s.id=id;s.src=file+'?v='+Date.now();document.head.appendChild(s)}
+function loadOnboardingContactValidation(){
+ if(!/(^|\/)onboarding\.html$/i.test(location.pathname)||document.getElementById('fundaOnboardingContactValidation'))return;
+ const s=document.createElement('script');
+ s.id='fundaOnboardingContactValidation';
+ s.src='onboarding-contact-validation.js?v=20261024-student-contact-v1';
+ document.head.appendChild(s);
+}
 loadPortalFix('ambassador-portal-audit-fixes.js','ambassadorPortalAuditFixes');
 loadPortalFix('ambassador-bank-display-sync.js','ambassadorBankDisplaySync');
+loadOnboardingContactValidation();
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 })();
