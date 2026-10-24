@@ -101,3 +101,18 @@ if(!robots)return;
 const courseId=(new URLSearchParams(location.search).get('id')||'').trim();
 robots.setAttribute('content',courseId?'index,follow,max-image-preview:large':'noindex,follow');
 })();
+
+(()=>{
+'use strict';
+function simplifyAcademyMessageAttribution(){
+  const path=location.pathname.replace(/\/+$/,'');
+  if(path!==''&&path!=='/index.html')return;
+  const section=document.getElementById('ceo-message');
+  if(!section)return;
+  section.querySelectorAll('p').forEach(p=>{
+    const text=p.textContent.replace(/\s+/g,' ').trim();
+    if(text==='A MESSAGE FROM THE HEAD OF ACADEMICS'||text==='— Head of Academics')p.remove();
+  });
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',simplifyAcademyMessageAttribution,{once:true});else simplifyAcademyMessageAttribution();
+})();
