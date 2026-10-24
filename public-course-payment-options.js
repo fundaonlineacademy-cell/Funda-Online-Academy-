@@ -91,3 +91,13 @@ function addOfficialAcademyInformation(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',addOfficialAcademyInformation,{once:true});else addOfficialAcademyInformation();
 })();
+
+(()=>{
+'use strict';
+const path=location.pathname.replace(/\/+$/,'');
+if(path!=='/course-view.html')return;
+const robots=document.querySelector('meta[name="robots"]');
+if(!robots)return;
+const courseId=(new URLSearchParams(location.search).get('id')||'').trim();
+robots.setAttribute('content',courseId?'index,follow,max-image-preview:large':'noindex,follow');
+})();
