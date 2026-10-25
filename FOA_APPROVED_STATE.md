@@ -1131,3 +1131,15 @@ The owner explicitly authorised fixing the four findings from the Module 1 lesso
 - A guarded atomic save captured an original eight-lesson private recovery snapshot. Independent readback matched all 72 academic fields, verified exactly ten intended field changes, preserved every other target field and matched all eight original snapshot rows. All 59 unaffected course lessons, course/module metadata, 17 assessment records, 692 formal questions, PCA configuration/status and academic-lock state are unchanged. Six current shared runtime files still match the tested fixtures. No auth/payment, schema/RLS/RPC or learner-history/result change occurred.
 
 Status: all four identified Module 1 lesson-audit findings are addressed in the saved content. Module 1 remains unlocked and pending owner academic review. Formal assessment/PCA approval and whole-course completion are not asserted.
+
+
+## 2026-10-25 — Graphic Design Module 1 owner-approved lesson content and academic lock
+
+Aziwe Futhe explicitly authorised locking Module 1 after the final seven question corrections: “We can lock module 1.” This supersedes the earlier Module 1 unlocked/pending-owner-review status for the lesson-content scope.
+
+- Course: Graphic Design & Visual Communication — Professional Short Course. Module 1: Graphic Design Foundations & Visual Communication, module id `f8cffccc-7e2f-40c7-887c-a6c3406c0476`.
+- The approved checkpoint contains eight lessons, 24 teaching figures, 17,032 genuine main-content words and 40 informal Knowledge Check items. The final six MCQ rewrites and the Lesson 6 Q5 matching replacement are saved live; findings M1-R01 and M1-R02 are addressed.
+- The existing academic lock record is `locked` under `FOA-ACA-STD-001-v1.2`, recorded at `2026-10-25T08:25:59.895843+00:00` (25 October 2026, 10:25:59 Africa/Johannesburg). The owner approved the lesson content and informal Knowledge Checks for lock. This does not approve or activate the formal formative/summative assessments or PCA, which remain separately governed.
+- The existing database protection rejected both a lesson update and a module-metadata update. Both verification attempts were blocked inside rollback-safe subtransactions, with no content changes. Independent post-commit readback confirmed all eight lesson records are unchanged and this is the only lock in the Graphic Design course; Modules 2–8 remain unlocked.
+- Further lesson or module edits require an explicit owner-authorised controlled reopening. Do not disable the guard or infer permission from access. No shared runtime, navigation, learner access/progress/result, formal assessment or PCA change was part of this lock.
+- Earlier browser verification used isolated current-renderer fixtures. Owner authorisation to lock is recorded here without asserting that an authenticated learner session or physical-device test was performed.
