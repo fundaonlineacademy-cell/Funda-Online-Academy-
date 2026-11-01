@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="5400" viewBox="0 0 1200 5400" role="img" aria-label="Funda Online Academy Commercial Cleaning Module 5 study maps">
+<defs>
+  <style>
+    .bg{fill:#f7f9fc}.head{fill:#13233f}.accent{fill:#e8f1ff}.box{fill:#ffffff;stroke:#5d6b82;stroke-width:2}.title{font:700 34px Arial,sans-serif;fill:#ffffff}.sub{font:700 22px Arial,sans-serif;fill:#13233f}.body{font:18px Arial,sans-serif;fill:#24334d}.small{font:16px Arial,sans-serif;fill:#44536a}.arrow{stroke:#5d6b82;stroke-width:4;fill:none;marker-end:url(#a)}
+  </style>
+  <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#5d6b82"/></marker>
+  <view id="lesson-01" viewBox="0 0 1200 675"/>
+  <view id="lesson-02" viewBox="0 675 1200 675"/>
+  <view id="lesson-03" viewBox="0 1350 1200 675"/>
+  <view id="lesson-04" viewBox="0 2025 1200 675"/>
+  <view id="lesson-05" viewBox="0 2700 1200 675"/>
+  <view id="lesson-06" viewBox="0 3375 1200 675"/>
+  <view id="lesson-07" viewBox="0 4050 1200 675"/>
+  <view id="lesson-08" viewBox="0 4725 1200 675"/>
+</defs>
+
+<g id="p1" transform="translate(0,0)">
+<rect class="bg" width="1200" height="675"/><rect class="head" width="1200" height="110"/><text class="title" x="55" y="68">5.1 Office Workstation Cleaning</text>
+<text class="small" x="55" y="142">Protect property, confidentiality, electronics and hygiene while following a repeatable route.</text>
+<g transform="translate(55,190)"><rect class="box" width="190" height="150" rx="18"/><text class="sub" x="25" y="45">1. Pre-check</text><text class="body" x="25" y="78">Access, papers,</text><text class="body" x="25" y="106">devices, spills</text></g>
+<g transform="translate(285,190)"><rect class="box" width="190" height="150" rx="18"/><text class="sub" x="22" y="45">2. Protect</text><text class="body" x="22" y="78">Do not rearrange</text><text class="body" x="22" y="106">client property</text></g>
+<g transform="translate(515,190)"><rect class="box" width="190" height="150" rx="18"/><text class="sub" x="22" y="45">3. Clean</text><text class="body" x="22" y="78">Desk + approved</text><text class="body" x="22" y="106">touch surfaces</text></g>
+<g transform="translate(745,190)"><rect class="box" width="190" height="150" rx="18"/><text class="sub" x="22" y="45">4. Electronics</text><text class="body" x="22" y="78">Low moisture,</text><text class="body" x="22" y="106">no direct spray</text></g>
+<g transform="translate(975,190)"><rect class="box" width="170" height="150" rx="18"/><text class="sub" x="18" y="45">5. Inspect</text><text class="body" x="18" y="78">Floor, waste,</text><text class="body" x="18" y="106">exceptions</text></g>
+<path class="arrow" d="M245 265 H278"/><path class="arrow" d="M475 265 H508"/><path class="arrow" d="M705 265 H738"/><path class="arrow" d="M935 265 H968"/>
+<rect class="accent" x="55" y="395" width="1090" height="180" rx="18"/><text class="sub" x="85" y="438">Quality gates</text><text class="body" x="85" y="477">• Cloth changes after waste/soil breaks  • Confidential items remain undisturbed</text><text class="body" x="85" y="512">• Electronics remain dry and functional  • Exceptions are recorded instead of guessed</text>
+</g>
+
+<g id="p2" transform="translate(0,675)">
+<rect class="bg" width="1200" height="675"/><rect class="head" width="1200" height="110"/><text class="title" x="55" y="68">5.2 Commercial Floor Care Decisions</text>
+<text class="small" x="55" y="142">Identify the floor before selecting moisture, chemistry, tools and recovery method.</text>
+<g transform="translate(55,190)"><rect class="box" width="210" height="150" rx="18"/><text class="sub" x="24" y="45">Identify</text><text class="body" x="24" y="80">Carpet / tile /</text><text class="body" x="24" y="108">vinyl / wood</text></g>
+<g transform="translate(305,190)"><rect class="box" width="210" height="150" rx="18"/><text class="sub" x="24" y="45">Dry soil</text><text class="body" x="24" y="80">Vacuum / dust</text><text class="body" x="24" y="108">before wet work</text></g>
+<g transform="translate(555,190)"><rect class="box" width="210" height="150" rx="18"/><text class="sub" x="24" y="45">Select method</text><text class="body" x="24" y="80">Compatible pad,</text><text class="body" x="24" y="108">chemical, moisture</text></g>
+<g transform="translate(805,190)"><rect class="box" width="210" height="150" rx="18"/><text class="sub" x="24" y="45">Recover + dry</text><text class="body" x="24" y="80">Remove soil,</text><text class="body" x="24" y="108">control access</text></g>
+<path class="arrow" d="M265 265 H298"/><path class="arrow" d="M515 265 H548"/><path class="arrow" d="M765 265 H798"/>
+<rect class="accent" x="55" y="395" width="1090" height="180" rx="18"/><text class="sub" x="85" y="438">Decision rule</text><text class="body" x="85" y="477">Routine cleaning ≠ stripping, refinishing or specialist restoration.</text><text class="body" x="85" y="512">Reopen only when the floor is dry/safe and defects have been reported.</text>
+</g>
+
+<g id="p3" transform="translate(0,1350)">
+<rect class="bg" width="1200" height="675"/><rect class="head" width="1200" height="110"/><text class="title" x="55" y="68">5.3 Interior Glass Cleaning</text>
+<text class="small" x="55" y="142">Control overspray, access and edge detailing for a streak-free result.</text>
+<g transform="translate(55,190)"><rect class="box" width="200" height="150" rx="18"/><text class="sub" x="22" y="45">Protect area</text><text class="body" x="22" y="80">Electronics, floor,</text><text class="body" x="22" y="108">public traffic</text></g>
+<g transform="translate(295,190)"><rect class="box" width="200" height="150" rx="18"/><text class="sub" x="22" y="45">Controlled wetting</text><text class="body" x="22" y="80">Apply to tool,</text><text class="body" x="22" y="108">not the room</text></g>
+<g transform="translate(535,190)"><rect class="box" width="200" height="150" rx="18"/><text class="sub" x="22" y="45">Squeegee</text><text class="body" x="22" y="80">Clean blade,</text><text class="body" x="22" y="108">overlap passes</text></g>
+<g transform="translate(775,190)"><rect class="box" width="200" height="150" rx="18"/><text class="sub" x="22" y="45">Detail + inspect</text><text class="body" x="22" y="80">Edges, drips,</text><text class="body" x="22" y="108">multiple angles</text></g>
+<path class="arrow" d="M255 265 H288"/><path class="arrow" d="M495 265 H528"/><path class="arrow" d="M735 265 H768"/>
+<rect class="accent" x="55" y="395" width="1090" height="180" rx="18"/><text class="sub" x="85" y="438">Access boundary</text><text class="body" x="85" y="477">Never stand on desks, chairs or bins to reach high glass.</text><text class="body" x="85" y="512">Ladders, platforms and other high-access work require the authorised trained process.</text>
+</g>
+
+<g id="p4" transform="translate(0,2025)">
+<rect class="bg" width="1200" height="675"/><rect class="head" width="1200" height="110"/><text class="title" x="55" y="68">5.4 High-Level Dusting and Vertical Surfaces</text>
+<text class="small" x="55" y="142">Work high-to-low so settled dust is removed once, with safe-reach limits.</text>
+<g transform="translate(55,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Upper areas</text><text class="body" x="22" y="80">Ledges, corners,</text><text class="body" x="22" y="108">accessible vents</text></g>
+<g transform="translate(300,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Walls + frames</text><text class="body" x="22" y="80">Spot clean with</text><text class="body" x="22" y="108">compatible method</text></g>
+<g transform="translate(545,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Skirtings</text><text class="body" x="22" y="80">Low moisture,</text><text class="body" x="22" y="108">protect edges</text></g>
+<g transform="translate(790,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Floor + recheck</text><text class="body" x="22" y="80">Remove fallen dust,</text><text class="body" x="22" y="108">inspect again</text></g>
+<path class="arrow" d="M260 265 H293"/><path class="arrow" d="M505 265 H538"/><path class="arrow" d="M750 265 H783"/>
+<rect class="accent" x="55" y="395" width="1090" height="180" rx="18"/><text class="sub" x="85" y="438">Stop and report</text><text class="body" x="85" y="477">Ceiling stains, loose materials, damaged finishes and unsafe access are maintenance/specialist issues.</text><text class="body" x="85" y="512">Cleaning should not hide building defects or create work-at-height risk.</text>
+</g>
+
+<g id="p5" transform="translate(0,2700)">
+<rect class="bg" width="1200" height="675"/><rect class="head" width="1200" height="110"/><text class="title" x="55" y="68">5.5 Reception, Meeting and Executive Areas</text>
+<text class="small" x="55" y="142">Combine hygiene, presentation, confidentiality and rapid room reset.</text>
+<g transform="translate(55,190)"><rect class="box" width="200" height="150" rx="18"/><text class="sub" x="22" y="45">Access check</text><text class="body" x="22" y="80">Meeting status,</text><text class="body" x="22" y="108">property, papers</text></g>
+<g transform="translate(295,190)"><rect class="box" width="200" height="150" rx="18"/><text class="sub" x="22" y="45">Priority clean</text><text class="body" x="22" y="80">Waste, spills,</text><text class="body" x="22" y="108">touchpoints</text></g>
+<g transform="translate(535,190)"><rect class="box" width="200" height="150" rx="18"/><text class="sub" x="22" y="45">Presentation</text><text class="body" x="22" y="80">Glass, chairs,</text><text class="body" x="22" y="108">table, floor</text></g>
+<g transform="translate(775,190)"><rect class="box" width="200" height="150" rx="18"/><text class="sub" x="22" y="45">Handover</text><text class="body" x="22" y="80">Reset, consumables,</text><text class="body" x="22" y="108">final entrance view</text></g>
+<path class="arrow" d="M255 265 H288"/><path class="arrow" d="M495 265 H528"/><path class="arrow" d="M735 265 H768"/>
+<rect class="accent" x="55" y="395" width="1090" height="180" rx="18"/><text class="sub" x="85" y="438">Confidentiality rule</text><text class="body" x="85" y="477">Do not read, photograph, discard or rearrange client documents unless the site procedure authorises it.</text><text class="body" x="85" y="512">A room can look clean and still fail handover if information security or setup is wrong.</text>
+</g>
+
+<g id="p6" transform="translate(0,3375)">
+<rect class="bg" width="1200" height="675"/><rect class="head" width="1200" height="110"/><text class="title" x="55" y="68">5.6 Kitchen and Canteen Hygiene Controls</text>
+<text class="small" x="55" y="142">Separate food-contact, general surfaces, waste and floor tasks to control contamination.</text>
+<g transform="translate(55,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Remove soil</text><text class="body" x="22" y="80">Crumbs, grease,</text><text class="body" x="22" y="108">waste</text></g>
+<g transform="translate(300,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Food-contact</text><text class="body" x="22" y="80">Approved cleaner /</text><text class="body" x="22" y="108">sanitising process</text></g>
+<g transform="translate(545,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Appliances</text><text class="body" x="22" y="80">Low moisture,</text><text class="body" x="22" y="108">power boundaries</text></g>
+<g transform="translate(790,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Floors + close</text><text class="body" x="22" y="80">Grease removal,</text><text class="body" x="22" y="108">slip control</text></g>
+<path class="arrow" d="M260 265 H293"/><path class="arrow" d="M505 265 H538"/><path class="arrow" d="M750 265 H783"/>
+<rect class="accent" x="55" y="395" width="1090" height="180" rx="18"/><text class="sub" x="85" y="438">Contamination breaks</text><text class="body" x="85" y="477">Waste handling, raw-food contamination or floor work triggers tool/glove/hand-hygiene controls before clean surfaces resume.</text><text class="body" x="85" y="512">Food-area rinsing/contact-time rules come from the approved site hygiene system and product instructions.</text>
+</g>
+
+<g id="p7" transform="translate(0,4050)">
+<rect class="bg" width="1200" height="675"/><rect class="head" width="1200" height="110"/><text class="title" x="55" y="68">5.7 Upholstery, Curtains and Fabric Care</text>
+<text class="small" x="55" y="142">Inspect first, control moisture and stop when colour, shrinkage or drying risk appears.</text>
+<g transform="translate(55,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Inspect</text><text class="body" x="22" y="80">Material, damage,</text><text class="body" x="22" y="108">care guidance</text></g>
+<g transform="translate(300,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Dry soil</text><text class="body" x="22" y="80">Vacuum before</text><text class="body" x="22" y="108">adding moisture</text></g>
+<g transform="translate(545,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Test + treat</text><text class="body" x="22" y="80">Spot test, controlled</text><text class="body" x="22" y="108">solution</text></g>
+<g transform="translate(790,190)"><rect class="box" width="205" height="150" rx="18"/><text class="sub" x="22" y="45">Recover + dry</text><text class="body" x="22" y="80">Extraction passes,</text><text class="body" x="22" y="108">airflow, inspection</text></g>
+<path class="arrow" d="M260 265 H293"/><path class="arrow" d="M505 265 H538"/><path class="arrow" d="M750 265 H783"/>
+<rect class="accent" x="55" y="395" width="1090" height="180" rx="18"/><text class="sub" x="85" y="438">Escalate when needed</text><text class="body" x="85" y="477">Colour transfer, fragile trim, dry-clean-only care labels or unresolved odour can require a specialist process.</text><text class="body" x="85" y="512">Do not reopen damp upholstery just to meet a schedule.</text>
+</g>
+
+<g id="p8" transform="translate(0,4725)">
+<rect class="bg" width="1200" height="675"/><rect class="head" width="1200" height="110"/><text class="title" x="55" y="68">5.8 Adapting Standards Across Client Sites</text>
+<text class="small" x="55" y="142">The core safety system stays fixed while priorities, timing and controls adapt to the environment.</text>
+<g transform="translate(55,190)"><rect class="box" width="240" height="170" rx="18"/><text class="sub" x="24" y="45">Corporate</text><text class="body" x="24" y="82">Confidentiality</text><text class="body" x="24" y="110">Quiet service</text><text class="body" x="24" y="138">Electronics</text></g>
+<g transform="translate(325,190)"><rect class="box" width="240" height="170" rx="18"/><text class="sub" x="24" y="45">Retail</text><text class="body" x="24" y="82">Public traffic</text><text class="body" x="24" y="110">Fast spill response</text><text class="body" x="24" y="138">Presentation</text></g>
+<g transform="translate(595,190)"><rect class="box" width="240" height="170" rx="18"/><text class="sub" x="24" y="45">School</text><text class="body" x="24" y="82">Learner access</text><text class="body" x="24" y="110">Secured chemicals</text><text class="body" x="24" y="138">Timetabled work</text></g>
+<g transform="translate(865,190)"><rect class="box" width="240" height="170" rx="18"/><text class="sub" x="24" y="45">Gym</text><text class="body" x="24" y="82">Shared equipment</text><text class="body" x="24" y="110">Wet zones</text><text class="body" x="24" y="138">Low-moisture controls</text></g>
+<rect class="accent" x="55" y="410" width="1090" height="165" rx="18"/><text class="sub" x="85" y="452">Core controls never change</text><text class="body" x="85" y="491">Approved products • trained methods • property/security • contamination control • safe access • honest records</text><text class="body" x="85" y="526">Adapt the service specification—not the basic safety rules.</text>
+</g>
+</svg>
