@@ -214,11 +214,11 @@ The Home page (`index.html`) is owner-approved as the final public Home-page str
 ### Homepage course cards — OWNER-AUTHORISED DISPLAY CORRECTION (2 November 2026)
 
 - The owner explicitly reopened only the Homepage Explore Courses cards to make their sizes consistent and replace public instalment-cent ranges with one rounded whole-rand estimate.
-- Use equal-height cards with images at their natural height, titles directly below the images and bottom-aligned fee/action sections. Keep each complete approved poster visible at its natural proportions, meeting the top/side edges without cropping, stretching or fixed-height image padding.
+- Following the owner's subsequent instruction to fix the remaining different image heights and uneven spacing, Homepage card thumbnails use consistent 4:5 image frames, light top-biased cover cropping without distortion, equal title blocks and aligned fee/action sections. This focused correction supersedes the natural-height/no-cropping restriction for Homepage thumbnails only; original image assets and full posters on Browse Courses/View Course remain unchanged.
 - Keep the shared payment-policy helper authoritative for instalment eligibility/count. Round only the Homepage display; identify non-exact values as approximate and state that exact amounts are shown at enrolment. Preserve the full course fee and the availability of upfront payment.
 - The protected enrolment schedule, cent balancing, amount enforcement, discounts and payment workflow remain unchanged. Browse Courses and View Course are outside this correction.
 - Keep the existing six most recently updated active courses and their order; this request asks for an explanation of that selection rather than a new rotation mechanism. Preserve View Course, Enroll Now and referral routing, surrounding Homepage sections, navigation, wording and branding.
-- Required checks: desktop/tablet/mobile card sizing, no artificial image-to-title gaps, aligned fee/action sections, full poster composition, whole-rand estimate examples and eligibility boundaries, exact shared-helper output preservation, non-clickable card bodies, both card actions and referral preservation.
+- Required checks: identical card/image/title dimensions and aligned title/payment/action starts across all six cards at desktop/tablet/mobile widths; no artificial image padding or variable title-to-payment gap; readable full titles, acceptable thumbnail subject framing, no clipping; original assets and adjacent public-page source preserved; whole-rand estimates, payment/selection scripts and referral/action routes unchanged.
 
 ### Public search identity — OWNER-AUTHORISED FOCUSED CORRECTION (17 October 2026)
 
