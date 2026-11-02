@@ -114,9 +114,10 @@ h1,h2,h3,.brand,nav,button,input,select,textarea{font-family:var(--font)}
 #courses{grid-auto-rows:1fr;align-items:stretch}
 .course-card{min-width:0;height:100%;overflow:hidden;transition:.2s}.course-card:hover{transform:translateY(-3px);box-shadow:0 12px 30px #06152f21}
 #courses .course-card>div:first-child:not([data-funda-course-actions]){display:flex;flex-direction:column;min-width:0}
-.home-course-media{display:block;flex:none;width:calc(100% + 24px);margin:-12px -12px 0;overflow:hidden;border-radius:16px 16px 12px 12px;background:#fff}
-.home-course-image{display:block;width:100%;max-width:none;height:auto}
-.home-course-payment-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:auto;padding-top:10px}
+.home-course-media{display:block;flex:none;width:calc(100% + 24px);aspect-ratio:4/5;margin:-12px -12px 0;overflow:hidden;border-radius:16px 16px 12px 12px;background:#fff}
+.home-course-image{display:block;width:100%;max-width:none;height:100%;object-fit:cover;object-position:50% 35%}
+#courses .course-card h3{flex:1 0 auto}
+.home-course-payment-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:0;padding-top:10px}
 .home-course-payment-tile{min-width:0;min-height:74px;padding:7px 6px;border-radius:9px;background:#06152f;border:1px solid #295376;color:#fff}.home-course-payment-tile.payment{border-color:#d9b548}.home-course-payment-tile span{display:block;font-size:8px;line-height:1.2;letter-spacing:.06em;text-transform:uppercase;color:#bdd0e0;font-weight:900}.home-course-payment-tile strong{display:block;margin-top:3px;font-size:11px;line-height:1.22;color:#fff;font-weight:900;overflow-wrap:anywhere}.home-course-payment-tile.payment strong{color:#bdf291}
 .home-course-payment-note{min-height:4.05em;margin:6px 1px 0;color:#536579;font-size:9px;line-height:1.35}
 .spin{width:24px;height:24px;border:3px solid #dbe7ff;border-top-color:var(--g);border-radius:50%;animation:s .8s linear infinite;margin:auto}
