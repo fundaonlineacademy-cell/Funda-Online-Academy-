@@ -370,6 +370,15 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - **Owner-approved Homepage and Browse Courses poster-fit correction — 4 October 2026:** the owner explicitly reopened only the public course-card image presentation and Homepage course-information display. Poster images must render at their natural portrait proportions so the complete person, tools and working scene remain visible without horizontal face/body cropping or artificial navy side spaces. Homepage course cards must show the same **Duration**, **Full Course Fee** and applicable **Payment Option** information already approved for Browse Courses. The Homepage course selection/order, buttons, routes, surrounding sections and all enrolment/payment enforcement remain unchanged and protected.
 - **Owner-approved View Course poster-fit correction — 4 October 2026:** the owner explicitly reopened only the course-overview hero image presentation. Each approved portrait poster must render at its natural aspect ratio and fill the available course-content width without cropping, stretching or artificial navy/gradient side panels. The course content, Duration / Full Course Fee / Payment Option cards, navigation, authentication, enrolment routes and protected payment enforcement remain unchanged and protected.
 
+### Browse Courses instalments — OWNER-AUTHORISED DISPLAY CORRECTION (2 November 2026)
+
+- The owner explicitly requested the Homepage-style rounded payment option on the public Browse Courses cards shown in the follow-up screenshot.
+- In the Browse Courses context only, keep the existing shared helper authoritative for payment-plan eligibility and count. Display a single rounded whole-rand estimate for non-exact instalments, clearly marked as approximate; show the instalment count, exact-enrolment note and availability of full payment.
+- Keep full course fees precise. R2,500 across three instalments displays approximately R833 each; R2,900 across three displays approximately R967 each. These are public estimates, never amounts used for payment submission.
+- Preserve the protected exact enrolment schedule, cent balancing, discounts, amount validation, payment methods and proof/Finance workflow. No payment-provider integration or data mutation is part of this correction.
+- Preserve catalogue layout/images, filters, search, sorting, pagination, FAQs/contact content, public routes and referral/Enroll Now behaviour. Both the native catalogue renderer and course-career-skill-areas.js catalogue renderer use the same page-local formatter; the latter's course-overview path, all other shared code and Home rendering remain unchanged. Bump only the catalogue's career-script cache version.
+- Required checks: rounding and eligibility boundaries, exact-helper preservation, dynamic search/filter/sort rendering, desktop/mobile price visibility, intact card links/referral handling and a source comparison confined to the catalogue renderer and this record.
+
 ### Approved portal typography
 
 - `Source Sans 3` is the approved Student Portal typeface.
