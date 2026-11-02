@@ -211,6 +211,15 @@ The Home page (`index.html`) is owner-approved as the final public Home-page str
 - Do not reintroduce legacy, retired, superseded or duplicate Home-page content from older commits, cached implementations or prior overrides.
 - A direct change to `index.html` requires an explicit Home-page owner approval marker in the pull request. Routine work on other pages must leave the Home page untouched.
 
+### Homepage course cards — OWNER-AUTHORISED DISPLAY CORRECTION (2 November 2026)
+
+- The owner explicitly reopened only the Homepage Explore Courses cards to make their sizes consistent and replace public instalment-cent ranges with one rounded whole-rand estimate.
+- Use equal-height cards, uniform image areas and aligned fee/action sections. Keep each complete approved poster visible at its natural proportions, fitted to the top edge without cropping or stretching.
+- Keep the shared payment-policy helper authoritative for instalment eligibility/count. Round only the Homepage display; identify non-exact values as approximate and state that exact amounts are shown at enrolment. Preserve the full course fee and the availability of upfront payment.
+- The protected enrolment schedule, cent balancing, amount enforcement, discounts and payment workflow remain unchanged. Browse Courses and View Course are outside this correction.
+- Keep the existing six most recently updated active courses and their order; this request asks for an explanation of that selection rather than a new rotation mechanism. Preserve View Course, Enroll Now and referral routing, surrounding Homepage sections, navigation, wording and branding.
+- Required checks: desktop/tablet/mobile card sizing, full poster composition, whole-rand estimate examples and eligibility boundaries, exact shared-helper output preservation, non-clickable card bodies, both card actions and referral preservation.
+
 ### Public search identity — OWNER-AUTHORISED FOCUSED CORRECTION (17 October 2026)
 
 The owner explicitly reopened only the non-visual public search identity needed to distinguish Funda Online Academy from an unrelated similarly named provider in internet search results.
