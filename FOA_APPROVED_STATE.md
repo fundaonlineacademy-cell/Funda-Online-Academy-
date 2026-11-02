@@ -379,6 +379,14 @@ The Browse Courses page (`courses-public.html`) is owner-approved as the final p
 - Preserve catalogue layout/images, filters, search, sorting, pagination, FAQs/contact content, public routes and referral/Enroll Now behaviour. Both the native catalogue renderer and course-career-skill-areas.js catalogue renderer use the same page-local formatter; the latter's course-overview path, all other shared code and Home rendering remain unchanged. Bump only the catalogue's career-script cache version.
 - Required checks: rounding and eligibility boundaries, exact-helper preservation, dynamic search/filter/sort rendering, desktop/mobile price visibility, intact card links/referral handling and a source comparison confined to the catalogue renderer and this record.
 
+### Browse Courses laptop layout — OWNER-AUTHORISED RESPONSIVE CORRECTION (2 November 2026)
+
+- The owner explicitly reopened only the public catalogue's course-grid and header breakpoints after comparing a three-column preview with their laptop's two-column layout and collapsed navigation.
+- Show three course cards per row and the full existing primary navigation at browser widths of 1,024 CSS pixels and above. Use a compact navigation gap below 1,280 pixels so the existing logo, links and Student account actions fit on one header row.
+- Between 1,024 and 1,279 pixels, arrange the fee tiles as two tiles above a full-width Payment Option tile so labels and amounts fit the narrower course cards. Preserve the existing two-column tablet and single-column phone layouts, mobile-menu interaction, card content and full poster proportions. Browser zoom and operating-system scaling can affect available CSS width; layouts below the laptop breakpoint retain the responsive menu.
+- Preserve the rounded public instalment estimates, precise full fees, exact enrolment/payment calculations, filters/search/sorting, course order, FAQs/contact content, link destinations, referral attribution and all protected Student/Staff/Admin/Ambassador journeys.
+- Required checks: three columns and visible navigation without overlap at 1,024, 1,100 and 1,280 pixels; adjacent tablet/phone widths; readable payment tiles and intact card/account links. The runtime change is limited to responsive utility classes and laptop fee-tile layout rules in courses-public.html; no loader, shared script, data or authenticated flow changes.
+
 ### Approved portal typography
 
 - `Source Sans 3` is the approved Student Portal typeface.
