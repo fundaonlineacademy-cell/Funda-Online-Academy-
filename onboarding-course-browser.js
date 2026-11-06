@@ -1,5 +1,5 @@
 (()=>{
-  const VERSION='20261106-course-images-full-v5';
+  const VERSION='20261106-course-browser-compact-v6';
   if(window.FundaOnboardingCourseBrowser?.version===VERSION)return;
 
   const PAGE_SIZE=10;
@@ -211,7 +211,7 @@
 
     if(!filtered.length){
       coursesContainer.innerHTML=`
-        <div class="md:col-span-2 lg:col-span-3 rounded-3xl bg-white p-10 text-center">
+        <div class="md:col-span-2 lg:col-span-4 rounded-3xl bg-white p-10 text-center">
           <div class="text-4xl">🔎</div>
           <h2 class="mt-3 text-xl font-black text-[#03133d]">No matching course found</h2>
           <p class="mt-2 text-sm text-gray-500">Try another course name or clear the search.</p>
@@ -231,20 +231,20 @@
         : `selectCourse('${escapeHtml(course.id)}')`;
       return `
         <article class="course-card ${selected?"selected border-blue-600":"border-transparent"} flex h-full w-full flex-col overflow-hidden rounded-2xl border-2 bg-white text-left">
-          <div class="shrink-0 bg-slate-100">
+          <div class="course-card-media shrink-0 bg-slate-100">
             ${course.image_url
-              ? `<img src="${escapeHtml(course.image_url)}" alt="${escapeHtml(course.title)}" class="block h-auto w-full" loading="lazy">`
+              ? `<img src="${escapeHtml(course.image_url)}" alt="${escapeHtml(course.title)}" class="course-card-image block h-auto w-full" loading="lazy">`
               : `<div class="flex h-40 w-full items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 text-5xl">🎓</div>`}
           </div>
-          <div class="flex flex-1 flex-col p-5">
+          <div class="course-card-content flex flex-1 flex-col p-5">
             <h2 class="course-card-title font-black text-[#03133d]">${escapeHtml(course.title)}</h2>
             <p class="course-card-preview mt-2 text-sm text-gray-500">${escapeHtml(description)}</p>
-            <button type="button" onclick="window.FundaOnboardingCourseBrowser.openDescription('${escapeHtml(course.id)}')" class="mt-2 self-start text-sm font-extrabold text-blue-600 hover:underline">View more</button>
-            <div class="mt-auto flex items-center justify-between gap-3 pt-5">
+            <button type="button" onclick="window.FundaOnboardingCourseBrowser.openDescription('${escapeHtml(course.id)}')" class="course-card-details mt-2 self-start text-sm font-extrabold text-blue-600 hover:underline">View more</button>
+            <div class="course-card-meta mt-auto flex items-center justify-between gap-3 pt-5">
               <span class="text-xs font-bold text-gray-500">⏱ ${escapeHtml(course.duration||"Flexible")}</span>
               <span class="text-sm font-black text-blue-600">${formatMoney(course.price)}</span>
             </div>
-            <button type="button" onclick="${selectionAction}" class="mt-4 w-full rounded-xl ${selected?"bg-blue-50 text-blue-700 ring-1 ring-blue-200":"bg-slate-50 text-[#03133d] hover:bg-blue-50 hover:text-blue-700"} px-4 py-3 text-sm font-extrabold">
+            <button type="button" onclick="${selectionAction}" class="course-card-select mt-4 w-full rounded-xl ${selected?"bg-blue-50 text-blue-700 ring-1 ring-blue-200":"bg-slate-50 text-[#03133d] hover:bg-blue-50 hover:text-blue-700"} px-4 py-3 text-sm font-extrabold">
               ${selected?"Clear selection":"Select this course"}
             </button>
           </div>
@@ -284,6 +284,33 @@
     @media (max-width:640px){
       .course-card-title{min-height:auto;-webkit-line-clamp:2}
       .course-card-preview{min-height:4.35rem}
+    }
+    @media (min-width:1024px){
+      #coursesContainer{gap:12px}
+      #coursesContainer .course-card-media{height:96px}
+      #coursesContainer .course-card-image{height:100%;object-fit:contain}
+      #coursesContainer .course-card-media>div{height:100%}
+      #coursesContainer .course-card-content{padding:8px 10px}
+      #coursesContainer .course-card-title{
+        display:block;min-height:54px;font-size:14px;line-height:18px;
+        overflow:visible;-webkit-line-clamp:unset;
+      }
+      #coursesContainer .course-card-preview{display:none}
+      #coursesContainer .course-card-details{margin-top:4px;font-size:12px;line-height:16px}
+      #coursesContainer .course-card-meta{padding-top:6px;gap:8px}
+      #coursesContainer .course-card-meta span{font-size:12px;line-height:16px}
+      #coursesContainer .course-card-select{margin-top:6px;padding:6px 8px;font-size:12px;line-height:16px}
+      body:has(#courseStep:not(.hidden-section)) header>div{padding-top:8px;padding-bottom:8px}
+      body:has(#courseStep:not(.hidden-section)) header img{width:32px;height:32px}
+      body:has(#courseStep:not(.hidden-section)) main{padding-top:12px;padding-bottom:24px}
+      body:has(#courseStep:not(.hidden-section)) #stepLabel{font-size:11px;line-height:14px}
+      body:has(#courseStep:not(.hidden-section)) #pageTitle{margin-top:4px;font-size:28px;line-height:32px}
+      body:has(#courseStep:not(.hidden-section)) #welcomeMessage{margin-top:4px;font-size:14px;line-height:18px}
+      #courseStep{margin-top:12px}
+      #courseBrowserTools{display:flex;align-items:center;gap:12px;padding:8px 10px;margin-bottom:12px}
+      #courseBrowserTools>div:first-child{flex:1;min-width:0;gap:8px}
+      #courseBrowserSummary{max-width:220px;margin-top:0;font-size:12px;line-height:16px}
+      #courseSearchInput,#courseSearchButton,#courseSearchClear{padding-top:6px;padding-bottom:6px}
     }
   `;
   document.head.appendChild(style);
