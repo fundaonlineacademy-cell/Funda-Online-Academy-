@@ -1,5 +1,5 @@
 (()=>{
-  const VERSION='20261106-course-browser-compact-v6';
+  const VERSION='20261106-course-browser-details-v7';
   if(window.FundaOnboardingCourseBrowser?.version===VERSION)return;
 
   const PAGE_SIZE=10;
@@ -110,8 +110,6 @@
     });
     byId("coursePrevPage").addEventListener("click",()=>changePage(-1));
     byId("courseNextPage").addEventListener("click",()=>changePage(1));
-
-    ensureDescriptionModal();
   }
 
   function applySearch(){
@@ -175,12 +173,7 @@
   function openDescription(courseId){
     const course=courses.find(item=>String(item.id)===String(courseId));
     if(!course)return;
-    ensureDescriptionModal();
-    byId("courseDescriptionTitle").textContent=course.title||"Course";
-    byId("courseDescriptionText").textContent=course.description||"Practical, career-focused online learning.";
-    byId("courseDescriptionModal").classList.remove("hidden");
-    document.body.style.overflow="hidden";
-    byId("courseDescriptionClose")?.focus();
+    window.open(`course-view.html?id=${encodeURIComponent(course.id)}`,"_blank","noopener");
   }
 
   function closeDescription(){
@@ -211,7 +204,7 @@
 
     if(!filtered.length){
       coursesContainer.innerHTML=`
-        <div class="md:col-span-2 lg:col-span-4 rounded-3xl bg-white p-10 text-center">
+        <div class="col-span-2 lg:col-span-4 rounded-3xl bg-white p-10 text-center">
           <div class="text-4xl">🔎</div>
           <h2 class="mt-3 text-xl font-black text-[#03133d]">No matching course found</h2>
           <p class="mt-2 text-sm text-gray-500">Try another course name or clear the search.</p>
@@ -239,7 +232,7 @@
           <div class="course-card-content flex flex-1 flex-col p-5">
             <h2 class="course-card-title font-black text-[#03133d]">${escapeHtml(course.title)}</h2>
             <p class="course-card-preview mt-2 text-sm text-gray-500">${escapeHtml(description)}</p>
-            <button type="button" onclick="window.FundaOnboardingCourseBrowser.openDescription('${escapeHtml(course.id)}')" class="course-card-details mt-2 self-start text-sm font-extrabold text-blue-600 hover:underline">View more</button>
+            <a href="course-view.html?id=${encodeURIComponent(course.id)}" target="_blank" rel="noopener" aria-label="View more about ${escapeHtml(course.title)} (opens in a new tab)" class="course-card-details mt-2 self-start text-sm font-extrabold text-blue-600 hover:underline">View more</a>
             <div class="course-card-meta mt-auto flex items-center justify-between gap-3 pt-5">
               <span class="text-xs font-bold text-gray-500">⏱ ${escapeHtml(course.duration||"Flexible")}</span>
               <span class="text-sm font-black text-blue-600">${formatMoney(course.price)}</span>
@@ -285,21 +278,27 @@
       .course-card-title{min-height:auto;-webkit-line-clamp:2}
       .course-card-preview{min-height:4.35rem}
     }
+    #coursesContainer{gap:12px}
+    #coursesContainer .course-card-media{height:96px}
+    #coursesContainer .course-card-image{height:100%;object-fit:cover;object-position:center 20%}
+    #coursesContainer .course-card-media>div{height:100%}
+    #coursesContainer .course-card-content{padding:8px 10px}
+    #coursesContainer .course-card-title{
+      display:block;min-height:54px;font-size:14px;line-height:18px;
+      overflow:visible;-webkit-line-clamp:unset;
+    }
+    #coursesContainer .course-card-preview{display:none}
+    #coursesContainer .course-card-details{margin-top:4px;font-size:12px;line-height:16px}
+    #coursesContainer .course-card-meta{padding-top:6px;gap:8px;flex-wrap:wrap}
+    #coursesContainer .course-card-meta span{font-size:12px;line-height:16px}
+    #coursesContainer .course-card-select{margin-top:6px;padding:6px 8px;font-size:12px;line-height:16px}
+    @media (max-width:767px){
+      #coursesContainer{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+      #coursesContainer .course-card-content{padding:8px}
+      #coursesContainer .course-card-title{min-height:68px;font-size:13px;line-height:17px}
+      #coursesContainer .course-card-select{min-height:36px;padding:8px 4px}
+    }
     @media (min-width:1024px){
-      #coursesContainer{gap:12px}
-      #coursesContainer .course-card-media{height:96px}
-      #coursesContainer .course-card-image{height:100%;object-fit:contain}
-      #coursesContainer .course-card-media>div{height:100%}
-      #coursesContainer .course-card-content{padding:8px 10px}
-      #coursesContainer .course-card-title{
-        display:block;min-height:54px;font-size:14px;line-height:18px;
-        overflow:visible;-webkit-line-clamp:unset;
-      }
-      #coursesContainer .course-card-preview{display:none}
-      #coursesContainer .course-card-details{margin-top:4px;font-size:12px;line-height:16px}
-      #coursesContainer .course-card-meta{padding-top:6px;gap:8px}
-      #coursesContainer .course-card-meta span{font-size:12px;line-height:16px}
-      #coursesContainer .course-card-select{margin-top:6px;padding:6px 8px;font-size:12px;line-height:16px}
       body:has(#courseStep:not(.hidden-section)) header>div{padding-top:8px;padding-bottom:8px}
       body:has(#courseStep:not(.hidden-section)) header img{width:32px;height:32px}
       body:has(#courseStep:not(.hidden-section)) main{padding-top:12px;padding-bottom:24px}
