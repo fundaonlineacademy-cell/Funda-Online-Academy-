@@ -1,5 +1,5 @@
 (()=>{
-  const VERSION='20261106-course-browser-full-scene-v8';
+  const VERSION='20261106-course-browser-image-fill-v9';
   if(window.FundaOnboardingCourseBrowser?.version===VERSION)return;
 
   const PAGE_SIZE=10;
@@ -226,7 +226,7 @@
         <article class="course-card ${selected?"selected border-blue-600":"border-transparent"} flex h-full w-full flex-col overflow-hidden rounded-2xl border-2 bg-white text-left">
           <div class="course-card-media shrink-0 bg-slate-100">
             ${course.image_url
-              ? `<img src="${escapeHtml(course.image_url)}" alt="" aria-hidden="true" class="course-card-backdrop" loading="lazy"><img src="${escapeHtml(course.image_url)}" alt="${escapeHtml(course.title)}" class="course-card-image block h-auto w-full" loading="lazy">`
+              ? `<img src="${escapeHtml(course.image_url)}" alt="${escapeHtml(course.title)}" class="course-card-image block h-auto w-full" loading="lazy">`
               : `<div class="flex h-40 w-full items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 text-5xl">🎓</div>`}
           </div>
           <div class="course-card-content flex flex-1 flex-col p-5">
@@ -279,9 +279,8 @@
       .course-card-preview{min-height:4.35rem}
     }
     #coursesContainer{gap:12px}
-    #coursesContainer .course-card-media{position:relative;height:96px;overflow:hidden}
-    #coursesContainer .course-card-backdrop{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(12px);transform:scale(1.15);opacity:.55;pointer-events:none}
-    #coursesContainer .course-card-image{position:relative;height:100%;object-fit:contain;object-position:center;filter:drop-shadow(0 0 8px rgb(3 19 61 / .22))}
+    #coursesContainer .course-card-media{height:96px;overflow:hidden}
+    #coursesContainer .course-card-image{width:100%;height:100%;object-fit:fill}
     #coursesContainer .course-card-media>div{height:100%}
     #coursesContainer .course-card-content{padding:8px 10px}
     #coursesContainer .course-card-title{
