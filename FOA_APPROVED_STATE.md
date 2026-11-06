@@ -284,6 +284,12 @@ Enrollment Step 1 on `onboarding.html` is owner-approved as the final **Choose Y
 - Do not redesign, restyle, reorder, remove, rename, weaken or replace Step 1 behaviour unless Aziwe Futhe explicitly reopens Enrollment Step 1.
 - Changes to later enrollment stages are **not** permission to disturb Step 1. Any shared `onboarding.html` or onboarding-script change must regression-check this approved Step 1 before merge.
 
+#### Owner-authorised course-image correction 6 November 2026
+
+- The owner explicitly reopened only the Step 1 course-card pictures after reporting cropped images during enrolment. Show each original course image at full card width and its natural aspect ratio, with automatic height and no cover cropping or stretching. Retain the existing compact graduation-icon fallback when no image is available.
+- Apply the same image sizing in the authoritative course browser and the page's base renderer, and update the browser script cache version. Preserve the course grid, active catalogue, 10-per-page pagination, search, View more, titles, descriptions, prices, duration, Select/Clear Selection and Continue. Registration, later enrolment steps, payments, authentication, learner data and other pages are outside this correction.
+- Verification: the local browser preview passed full-picture/proportion and overflow checks at 1280, 768, 390 and 320 pixels; all 35 active courses appeared across the existing 10/10/10/5 pages; search/clear/no-results, View more, Select/Clear Selection/reselection, Continue to Student Type and Back passed. The no-image fallback retained its 160-pixel height. The preview used the public catalogue and a local empty-enrolment response, without creating accounts or writing production records. Authenticated live-session review remains with the owner. This correction applies no new academic or workflow lock.
+
 ### Enrollment Step 2 — Student Type — FINAL OWNER-APPROVED STATE
 
 Enrollment Step 2 on `onboarding.html` is owner-approved as the final **Student Type** structure, verification logic and presentation as of 18 September 2026. This approval applies to Step 2 only; Steps 3–5 remain subject to separate owner review and approval.

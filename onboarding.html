@@ -1734,7 +1734,7 @@
                 } w-full"
               >
 
-                <div class="h-40 bg-slate-100">
+                <div class="bg-slate-100">
 
                   ${
                     course.image_url
@@ -1744,7 +1744,7 @@
                         <img
                           src="${escapeHtml(course.image_url)}"
                           alt="${escapeHtml(course.title)}"
-                          class="w-full h-full object-cover"
+                          class="block w-full h-auto"
                         >
 
                       `
@@ -1752,7 +1752,7 @@
                       : `
 
                         <div
-                          class="w-full h-full flex items-center justify-center text-5xl bg-gradient-to-br from-blue-50 to-slate-100"
+                          class="w-full h-40 flex items-center justify-center text-5xl bg-gradient-to-br from-blue-50 to-slate-100"
                         >
                           🎓
                         </div>
@@ -3612,7 +3612,7 @@
     initialisePage();
 
   </script>
-  <script src="onboarding-course-browser.js?v=20260917-course-browser-stable-v4"></script>
+  <script src="onboarding-course-browser.js?v=20261106-course-images-full-v5"></script>
   <script src="legacy-student-upgrade.js?v=20260917-course-browser-stable-v4"></script>
 
 <script src="ambassador-referral-tracking.js?v=20260905-referral-route-fix"></script>

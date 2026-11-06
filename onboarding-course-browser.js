@@ -1,5 +1,5 @@
 (()=>{
-  const VERSION='20260917-course-browser-v4';
+  const VERSION='20261106-course-images-full-v5';
   if(window.FundaOnboardingCourseBrowser?.version===VERSION)return;
 
   const PAGE_SIZE=10;
@@ -231,10 +231,10 @@
         : `selectCourse('${escapeHtml(course.id)}')`;
       return `
         <article class="course-card ${selected?"selected border-blue-600":"border-transparent"} flex h-full w-full flex-col overflow-hidden rounded-2xl border-2 bg-white text-left">
-          <div class="h-40 shrink-0 overflow-hidden bg-slate-100">
+          <div class="shrink-0 bg-slate-100">
             ${course.image_url
-              ? `<img src="${escapeHtml(course.image_url)}" alt="${escapeHtml(course.title)}" class="block h-full w-full object-cover object-center" loading="lazy">`
-              : `<div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 text-5xl">🎓</div>`}
+              ? `<img src="${escapeHtml(course.image_url)}" alt="${escapeHtml(course.title)}" class="block h-auto w-full" loading="lazy">`
+              : `<div class="flex h-40 w-full items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 text-5xl">🎓</div>`}
           </div>
           <div class="flex flex-1 flex-col p-5">
             <h2 class="course-card-title font-black text-[#03133d]">${escapeHtml(course.title)}</h2>
