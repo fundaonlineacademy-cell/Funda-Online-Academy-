@@ -156,7 +156,7 @@
     var button=$('reviewButton');button.dataset.label=button.textContent;setBusy(true,button);clearMessage();
     try{
       var startIds=ids();
-      var data=callResult(await db.rpc('prepare_course_checkout',{p_course_ids:startIds,p_claim_ids:{},p_existing_checkout_id:null}),'Unable to confirm new course fees');
+      var data=callResult(await db.rpc('prepare_additional_course_checkout',{p_course_ids:startIds,p_existing_checkout_id:null}),'Unable to confirm new course fees');
       if(!data||!data.id||data.status!=='draft'||!Array.isArray(data.items))throw Error('Unable to confirm the new application. Please contact Admissions.');
       if(JSON.stringify(startIds)!==JSON.stringify(ids())||JSON.stringify(data.items.map(function(i){return String(i.course_id);}).sort())!==JSON.stringify(startIds))throw Error('Your selected courses changed. Please confirm them again.');
       if(data.items.some(function(i){return owned.has(String(i.course_id))||!Number.isFinite(Number(i.fee))||cents(i.fee)<=0;}))throw Error('The selected course list must be reviewed.');
@@ -198,7 +198,7 @@
         proofCache={checkoutId:snapshot.id,file:input.file,path:path};
       }
       if(snapshot!==quote||JSON.stringify(ids())!==JSON.stringify(snapshot.items.map(function(i){return String(i.course_id);}).sort())||input.method!==$('paymentMethod').value||input.ref!==$('paymentReference').value.trim()||input.option!==$('paymentOption').value||cents(input.amount)!==cents(dueNow())||input.file!==$('proofFile').files[0]||!$('declaration').checked||!$('paymentAcknowledged').checked)throw Error('Payment or course details changed during submission. Please review your information.');
-      var data=callResult(await db.rpc('submit_course_checkout',{p_checkout_id:snapshot.id,p_amount:input.amount,p_payment_method:input.method,p_payment_reference:input.ref,p_proof_path:path,p_payment_option:input.option}),'Additional course application was not submitted');
+      var data=callResult(await db.rpc('submit_additional_course_checkout',{p_checkout_id:snapshot.id,p_amount:input.amount,p_payment_method:input.method,p_payment_reference:input.ref,p_proof_path:path,p_payment_option:input.option}),'Additional course application was not submitted');
       if(!data||!Array.isArray(data.enrolment_ids)||!data.enrolment_ids.length)throw Error('The application response needs verification. Please contact Admissions before attempting another payment.');
       $('successText').textContent='We received your application for '+snapshot.items.length+' additional course(s) and your payment proof of '+money(data.amount_paid)+'. Your payment is awaiting Admissions and Finance verification.';
       show('success');clearMessage();
