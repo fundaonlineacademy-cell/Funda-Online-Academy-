@@ -241,6 +241,7 @@
     const values=getFormValues(),file=document.getElementById('proofFile').files[0];
     const baseError=validateApplication(values,file),moreError=baseError||extraValidation();
     if(moreError){showMessage(moreError);return;}
+    const submittedCourse=selectedCourse;
     submitButton.disabled=true;submitButton.textContent='Submitting application...';
     try{
       await updateStudent(values);
@@ -272,9 +273,10 @@
         p_submission_source:'registration'
       });
       if(paymentError)throw new Error('Your application was saved, but the payment record could not be created: '+paymentError.message);
-      showMessage(`Your enrollment for ${selectedCourse.title} has been submitted successfully. Your payment of ${money(amountPaid)} is awaiting verification by Admissions & Finance.`,true);
+      const remaining=window.FundaOnboardingCourseBrowser?.completeCourse?.(submittedCourse.id)||0;
+      showMessage(`Your enrollment for ${submittedCourse.title} has been submitted successfully. Your payment of ${money(amountPaid)} is awaiting verification by Admissions & Finance.${remaining?` ${remaining} selected course${remaining===1?"":"s"} remain. Continue with the next application from your saved selection.`:""}`,true);
       submitButton.textContent='Application Submitted ✓';
-      setTimeout(()=>{window.location.href=`dashboard.html?application=submitted&enrollment=${encodeURIComponent(enrollment.id)}`;},1800);
+      setTimeout(()=>{window.location.href=remaining?'onboarding.html?continue_selected=1':`dashboard.html?application=submitted&enrollment=${encodeURIComponent(enrollment.id)}`;},1800);
     }catch(error){console.error('Enhanced enrollment submission error:',error);showMessage(error.message||'We could not complete your enrollment application.');submitButton.disabled=false;submitButton.textContent='Submit Enrollment Application';}
   }
 

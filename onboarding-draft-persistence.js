@@ -2,7 +2,7 @@
   if(window.__fundaOnboardingDraftPersistence)return;
   window.__fundaOnboardingDraftPersistence=true;
 
-  const VERSION='20260917-draft-v1';
+  const VERSION='20261107-multiple-course-draft-v2';
   const NAV_PREFIX='funda:onboarding:navigation:v1:';
   const SESSION_PREFIX='funda:onboarding:session:v1:';
   const SERVER_SAVE_DELAY=900;
@@ -56,9 +56,10 @@
     const type=document.querySelector('input[name="legacyType"]:checked')?.value||current.studentType||'';
     const next={
       version:VERSION,
-      courseId:selected?.id?String(selected.id):(current.courseId||null),
+      courseId:selected?.id?String(selected.id):null,
+      courseIds:(window.FundaOnboardingCourseBrowser?.getSelectedCourses?.()||(selected?[selected]:[])).map(course=>String(course.id)),
       step:patch.step||lastKnownStep||current.step||'course',
-      studentType:type,
+      studentType:(patch.step||lastKnownStep||current.step||'course')==='course'?'':type,
       paymentMethod:byId('paymentMethod')?.value||current.paymentMethod||'',
       updatedAt:new Date().toISOString(),
       ...patch
@@ -248,8 +249,9 @@
     try{
       applySessionFields();
 
-      const courseId=navigation.courseId;
-      const course=courseList().find(item=>String(item.id)===String(courseId));
+      const courseIds=Array.isArray(navigation.courseIds)&&navigation.courseIds.length?navigation.courseIds:[navigation.courseId];
+      const validIds=[...new Set(courseIds.map(String))].filter(id=>courseList().some(course=>String(course.id)===id));
+      const course=courseList().find(item=>String(item.id)===String(navigation.courseId)&&validIds.includes(String(item.id)))||courseList().find(item=>validIds.includes(String(item.id)));
       if(!course){
         clearDraft();
         return;
@@ -259,7 +261,8 @@
         clearDraft();
         return;
       }
-      window.selectCourse(course.id);
+      if(window.FundaOnboardingCourseBrowser?.restoreSelection)window.FundaOnboardingCourseBrowser.restoreSelection(validIds,course.id);
+      else window.selectCourse(course.id);
       updateCourseSummary();
 
       const type=restoreStudentType(navigation.studentType||'');
@@ -293,7 +296,7 @@
     if(typeof original==='function'&&!original.__draftWrapped){
       const wrapped=function(courseId){
         const result=original.apply(this,arguments);
-        if(!restoring)writeNavigation({courseId:String(courseId),step:'course'});
+        if(!restoring)writeNavigation({step:'course'});
         return result;
       };
       wrapped.__draftWrapped=true;
@@ -364,7 +367,8 @@
       if(section)observer.observe(section,{attributes:true,attributeFilter:['class']});
     });
     lastKnownStep=detectVisibleStep();
-    writeNavigation({step:lastKnownStep});
+    // Restore the saved selection before a fresh page is allowed to overwrite it.
+    if(!readNavigation())writeNavigation({step:lastKnownStep});
   }
 
   function watchSubmission(){
@@ -372,7 +376,12 @@
     if(!submit||submit.dataset.draftSubmissionWatch)return;
     submit.dataset.draftSubmissionWatch='1';
     const observer=new MutationObserver(()=>{
-      if(/Application Submitted/i.test(submit.textContent||''))clearDraft();
+      if(/Application Submitted/i.test(submit.textContent||'')){
+        if(window.FundaOnboardingCourseBrowser?.getSelectedCourses?.().length){
+          try{const key=sessionKey();if(key)sessionStorage.removeItem(key);}catch(_){}
+          writeNavigation({step:'course',studentType:''});
+        }else clearDraft();
+      }
     });
     observer.observe(submit,{childList:true,subtree:true,characterData:true});
 
@@ -394,6 +403,14 @@
     if(!readyToWire())return;
     ready=true;
     wrapCourseSelection();
+    window.addEventListener('funda:course-selection-changed',event=>{
+      const chosen=window.FundaOnboardingCourseBrowser?.getSelectedCourses?.()||[];
+      if(!chosen.length){clearDraft();return;}
+      if(event.detail?.reason==='submitted'){
+        try{const key=sessionKey();if(key)sessionStorage.removeItem(key);}catch(_){}
+      }
+      writeNavigation({step:'course',studentType:''});
+    });
     attachFieldListeners();
     observeStepChanges();
     watchSubmission();
