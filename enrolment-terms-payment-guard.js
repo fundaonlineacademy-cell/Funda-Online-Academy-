@@ -39,7 +39,7 @@
  if(!/\/onboarding\.html$/i.test(location.pathname))return;
  if(window.__fundaOnboardingRegistrationFlow||document.querySelector('script[data-funda-registration-flow]'))return;
  const s=document.createElement('script');
- s.src='onboarding-registration-flow.js?v=20261107-approved-ambassador-selection-v6';
+ s.src='onboarding-registration-flow.js?v=20261107-combined-course-checkout-v7';
  s.async=true;
  s.dataset.fundaRegistrationFlow='1';
  document.head.appendChild(s);

@@ -2,7 +2,7 @@
   if(window.__fundaOnboardingDraftPersistence)return;
   window.__fundaOnboardingDraftPersistence=true;
 
-  const VERSION='20261107-ambassador-selection-draft-v3';
+  const VERSION='20261107-combined-checkout-draft-v4';
   const NAV_PREFIX='funda:onboarding:navigation:v1:';
   const SESSION_PREFIX='funda:onboarding:session:v1:';
   const SERVER_SAVE_DELAY=900;
@@ -13,7 +13,7 @@
     'dateOfBirth','nationality','address','city','province','postalCode',
     'employmentStatus','highestEducation','whereHeard','ambassadorSource','emergencyName','emergencyPhone'
   ];
-  const paymentFields=['paymentMethod','paymentReference'];
+  const paymentFields=['paymentMethod','paymentReference','paymentPlanChoice'];
   const legacyFields=['legacyId','legacyPaymentDate','legacyReason'];
 
   let ready=false;
@@ -60,6 +60,8 @@
       courseIds:(window.FundaOnboardingCourseBrowser?.getSelectedCourses?.()||(selected?[selected]:[])).map(course=>String(course.id)),
       step:patch.step||lastKnownStep||current.step||'course',
       studentType:(patch.step||lastKnownStep||current.step||'course')==='course'?'':type,
+      checkoutId:current.checkoutId||null,
+      basketNeedsEvidence:window.FundaCourseBenefits?.needsEvidence?.()||false,
       paymentMethod:byId('paymentMethod')?.value||current.paymentMethod||'',
       updatedAt:new Date().toISOString(),
       ...patch
@@ -74,7 +76,7 @@
     [...registrationFields,...paymentFields,...legacyFields].forEach(id=>{
       const element=byId(id);
       if(!element)return;
-      fields[id]=id==='ambassadorSource'?(element.value||element.dataset.pendingValue||''):(element.value??'');
+      fields[id]=['ambassadorSource','paymentPlanChoice'].includes(id)?(element.value||element.dataset.pendingValue||''):(element.value??'');
     });
     return fields;
   }
@@ -185,7 +187,7 @@
       const element=byId(id);
       if(!element||element.type==='file'||element.readOnly)return;
       if(value===undefined||value===null)return;
-      if(id==='ambassadorSource')element.dataset.pendingValue=String(value);
+      if(['ambassadorSource','paymentPlanChoice'].includes(id))element.dataset.pendingValue=String(value);
       else element.value=String(value);
     });
     try{window.setIdentityMode?.();}catch(_){ }
@@ -225,6 +227,11 @@
       byId('pageTitle')&&(byId('pageTitle').textContent='Payment');
       byId('welcomeMessage')&&(byId('welcomeMessage').textContent='Complete your payment information and upload your proof of payment, then continue to the final declaration.');
       try{window.FundaPaymentIntegrity?.refresh?.();}catch(_){ }
+      if((window.FundaEnrollmentContext?.getSelectedCourses?.()||[]).length>1){
+        window.FundaPaymentIntegrity?.prepareCheckout?.().catch(error=>{
+          showStep('registration');window.showMessage?.(error.message||'Please confirm the combined course fees again.');
+        });
+      }
     }else{
       byId('courseStep')?.classList.remove('hidden-section');
       byId('stepLabel')&&(byId('stepLabel').textContent='STEP 1 OF 5 • CHOOSE YOUR COURSE');
@@ -272,7 +279,8 @@
       else window.selectCourse(course.id);
       updateCourseSummary();
 
-      const type=restoreStudentType(navigation.studentType||'');
+      const type=restoreStudentType(navigation.basketNeedsEvidence?'':navigation.studentType||'');
+      if(type==='first_time')window.FundaCourseBenefits?.restoreFirstTime?.();
       const requested=navigation.step||'course';
       let target=requested;
 
@@ -292,7 +300,9 @@
       applySessionFields();
       updateCourseSummary();
 
-      if(ambassadorRequired){
+      if(navigation.basketNeedsEvidence&&target==='student_type'){
+        window.showMessage?.('Your selected courses were saved. Please re-verify previous-study benefits for each course before payment.');
+      }else if(ambassadorRequired){
         window.showMessage?.('Your enrollment details were saved. Please select the ambassador / influencer who referred you before continuing to payment.');
       }else if(requested==='review'&&target==='payment'){
         window.showMessage?.('Your enrollment details were saved. For security, please reselect your proof-of-payment file before continuing to the final declaration.');
@@ -450,5 +460,7 @@
     version:VERSION,
     saveNow:()=>{writeSessionDraft();writeNavigation({step:lastKnownStep});return saveStudentToServer();},
     clear:clearDraft
+    ,getCheckoutId:()=>readNavigation()?.checkoutId||null
+    ,setCheckoutId:id=>writeNavigation({checkoutId:id})
   };
 })();

@@ -4,6 +4,21 @@
 
   const byId=id=>document.getElementById(id);
   let activeCourseId=null;
+  const courseBenefits=new Map();
+  const chosenCourses=()=>window.FundaOnboardingCourseBrowser?.getSelectedCourses?.()||(selectedCourse?[selectedCourse]:[]);
+  function restoreFirstTimeBenefits(){
+    if(courseBenefits.size)return;
+    const snapshot=window.FundaLegacy?.captureSelection?.();
+    if(snapshot?.type!=='first_time')return;
+    chosenCourses().forEach(course=>courseBenefits.set(String(course.id),{...snapshot,course:{id:course.id,title:course.title,price:course.price}}));
+  }
+  window.FundaCourseBenefits={
+    snapshots:()=>chosenCourses().map(course=>courseBenefits.get(String(course.id))).filter(Boolean),
+    ready:()=>chosenCourses().length<2||chosenCourses().every(course=>courseBenefits.has(String(course.id))),
+    needsEvidence:()=>[...courseBenefits.values()].some(item=>item.type!=='first_time'),
+    restoreFirstTime:restoreFirstTimeBenefits
+  };
+  window.addEventListener('funda:course-selection-changed',()=>courseBenefits.clear());
   const AMBASSADOR_SOURCE='Influencer / Brand Ambassador';
   let ambassadorOptions=[];
   let ambassadorLinked=null;
@@ -283,6 +298,8 @@
         window.FundaLegacy?.ensurePanel?.();
       }
       normaliseStudentTypeCopy();
+      const index=chosenCourses().findIndex(course=>String(course.id)===String(selectedCourse.id));
+      if(byId('studentTypeBack'))byId('studentTypeBack').textContent=index>0?'← Previous course':'← Back to Course Selection';
 
       const remaining=window.FundaOnboardingCourseBrowser?.getSelectedCourses?.()||[selectedCourse];
       byId('summaryCourse').textContent=selectedCourse.title;
@@ -294,7 +311,7 @@
       setHeader(
         'STEP 2 OF 5 • STUDENT TYPE',
         'Student Type',
-        `You selected ${selectedCourse.title}. Tell us whether you are a first-time or returning Funda Online Academy student.${remaining.length>1?` You have ${remaining.length} courses selected; complete this application first, then continue with the remaining courses.`:""}`
+        `You selected ${selectedCourse.title}. Tell us whether you are a first-time or returning Funda Online Academy student.${remaining.length>1?` You have ${remaining.length} courses selected. Previous-study benefits are checked per course; payment will cover your combined total.`:""}`
       );
       scrollTop();
     }catch(error){
@@ -311,6 +328,14 @@
     if(error){
       showMessage?.(error);
       return;
+    }
+    if(chosenCourses().length>1){
+      const snapshot=window.FundaLegacy?.captureSelection?.();
+      if(!snapshot?.course){showMessage?.('Please refresh before confirming your course selection.');return;}
+      if(snapshot.type==='first_time'&&!courseBenefits.size)restoreFirstTimeBenefits();
+      else courseBenefits.set(String(snapshot.course.id),snapshot);
+      const next=chosenCourses().find(course=>!courseBenefits.has(String(course.id)));
+      if(next){selectedCourse=next;existingEnrollment=null;startStudentType();return;}
     }
 
     hideAllFlowSteps();
@@ -398,6 +423,15 @@
       }
       if(byId('detailsStep')?.classList.contains('hidden-section'))return;
     }
+    if(chosenCourses().length>1){
+      const button=byId('registrationContinue');button.disabled=true;
+      try{
+        if(!window.FundaPaymentIntegrity?.prepareCheckout)throw Error('Combined checkout could not be loaded. Please refresh before payment.');
+        await window.FundaPaymentIntegrity.prepareCheckout();
+      }catch(error){showMessage?.(error.message||'Combined course fees could not be confirmed. Please try again.');return;}
+      finally{button.disabled=false;}
+      if(byId('detailsStep')?.classList.contains('hidden-section'))return;
+    }
 
     hideAllFlowSteps();
     byId('paymentStep')?.classList.remove('hidden-section');
@@ -413,6 +447,8 @@
   function validatePaymentDetails(){
     const legacyError=window.FundaLegacy?.validate?.();
     if(legacyError)return legacyError;
+    const checkoutError=window.FundaPaymentIntegrity?.validateCheckout?.();
+    if(checkoutError)return checkoutError;
 
     const method=byId('paymentMethod')?.value;
     if(!method)return 'Please select a payment method.';
@@ -449,6 +485,7 @@
     byId('summaryCourse').textContent=selectedCourse?.title||'—';
     byId('summaryDuration').textContent=selectedCourse?.duration||'Flexible';
     byId('summaryPrice').textContent=formatMoney(effectiveCoursePrice());
+    window.FundaPaymentIntegrity?.renderSummary?.();
 
     hideAllFlowSteps();
     byId('reviewStep')?.classList.remove('hidden-section');
@@ -512,7 +549,11 @@
       },true);
     }
 
-    byId('studentTypeBack')?.addEventListener('click',showCourseStep);
+    byId('studentTypeBack')?.addEventListener('click',()=>{
+      const chosen=chosenCourses(),index=chosen.findIndex(course=>String(course.id)===String(selectedCourse?.id));
+      if(index>0){selectedCourse=chosen[index-1];existingEnrollment=null;courseBenefits.delete(String(selectedCourse.id));startStudentType();}
+      else showCourseStep();
+    });
     byId('studentTypeContinue')?.addEventListener('click',continueFromStudentType);
     byId('registrationBack')?.addEventListener('click',backToStudentType);
     byId('registrationContinue')?.addEventListener('click',continueToPayment);

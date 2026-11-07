@@ -2615,6 +2615,11 @@
 
     function updatePaymentPlanUI() {
 
+      if ((window.FundaOnboardingCourseBrowser?.getSelectedCourses?.() || []).length > 1 && window.FundaPaymentIntegrity) {
+        window.FundaPaymentIntegrity.refresh();
+        return;
+      }
+
       const select =
         document.getElementById(
           "paymentPlanChoice"
@@ -3641,8 +3646,8 @@
     initialisePage();
 
   </script>
-  <script src="onboarding-course-browser.js?v=20261107-desktop-original-photo-detail-v12"></script>
-  <script src="legacy-student-upgrade.js?v=20260917-course-browser-stable-v4"></script>
+  <script src="onboarding-course-browser.js?v=20261107-combined-course-checkout-v13"></script>
+  <script src="legacy-student-upgrade.js?v=20261107-combined-course-benefits-v5"></script>
 
 <script src="ambassador-referral-tracking.js?v=20260905-referral-route-fix"></script>
 </body>

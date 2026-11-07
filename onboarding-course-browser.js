@@ -1,5 +1,5 @@
 (()=>{
-  const VERSION='20261107-desktop-original-photo-detail-v12';
+  const VERSION='20261107-combined-course-checkout-v13';
   if(window.FundaOnboardingCourseBrowser?.version===VERSION)return;
 
   const PAGE_SIZE=10;
@@ -128,7 +128,7 @@
     const totalCents=chosen.reduce((sum,course)=>sum+Math.round(Number(course.price)*100),0);
     if(name)name.textContent=chosen.length>1?`${chosen.length} courses selected`:(chosen[0]?.title||"—");
     if(meta)meta.textContent=chosen.length>1?`${formatMoney(totalCents/100)} total course fees`:(chosen.length?`${chosen[0].duration||"Flexible"} • ${formatMoney(chosen[0].price)}`:"—");
-    if(button)button.textContent=chosen.length>1?"Continue to first course →":"Continue →";
+    if(button)button.textContent=chosen.length>1?"Continue with selected courses →":"Continue →";
     const label=name?.previousElementSibling;
     if(label)label.textContent=chosen.length>1?"Selected Courses":"Selected Course";
     let list=byId("selectedCourseList");
@@ -140,7 +140,7 @@
     if(list){
       list.classList.toggle("hidden",chosen.length<2);
       const expanded=!!list.querySelector("details")?.open;
-      list.innerHTML=chosen.length>1?`<details${expanded?" open":""}><summary class="cursor-pointer font-bold text-blue-700">View selected courses</summary><p class="my-2 text-xs leading-5 text-gray-600">Complete enrolment and payment for each course separately. Previous-study benefits are checked per course.</p><ul class="space-y-2">${chosen.map(course=>`<li class="flex items-start justify-between gap-3"><span>${escapeHtml(course.title)} — <strong>${formatMoney(course.price)}</strong></span><button type="button" class="shrink-0 font-bold text-blue-700 underline" data-remove-course="${escapeHtml(course.id)}" aria-label="Remove ${escapeHtml(course.title)}">Remove</button></li>`).join("")}</ul></details>`:"";
+      list.innerHTML=chosen.length>1?`<details${expanded?" open":""}><summary class="cursor-pointer font-bold text-blue-700">View selected courses</summary><p class="my-2 text-xs leading-5 text-gray-600">Your selected courses share one payment based on their combined payable total. Previous-study benefits are checked per course.</p><ul class="space-y-2">${chosen.map(course=>`<li class="flex items-start justify-between gap-3"><span>${escapeHtml(course.title)} — <strong>${formatMoney(course.price)}</strong></span><button type="button" class="shrink-0 font-bold text-blue-700 underline" data-remove-course="${escapeHtml(course.id)}" aria-label="Remove ${escapeHtml(course.title)}">Remove</button></li>`).join("")}</ul></details>`:"";
       list.querySelectorAll("[data-remove-course]").forEach(control=>control.addEventListener("click",()=>removeSelection(control.dataset.removeCourse)));
     }
   }
@@ -471,6 +471,11 @@
     restoreSelection,
     getSelectedCourses,
     completeCourse:courseId=>removeSelection(courseId,"submitted"),
+    completeCourses:ids=>{
+      ids.forEach(id=>selectedCourseIds.delete(String(id)));
+      selectedCourse=getSelectedCourses()[0]||null;existingEnrollment=null;
+      renderCourses();selectionChanged('submitted');return selectedCourseIds.size;
+    },
     openDescription,
     closeDescription,
     clearSelection
