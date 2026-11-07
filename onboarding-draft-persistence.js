@@ -2,7 +2,7 @@
   if(window.__fundaOnboardingDraftPersistence)return;
   window.__fundaOnboardingDraftPersistence=true;
 
-  const VERSION='20261107-multiple-course-draft-v2';
+  const VERSION='20261107-ambassador-selection-draft-v3';
   const NAV_PREFIX='funda:onboarding:navigation:v1:';
   const SESSION_PREFIX='funda:onboarding:session:v1:';
   const SERVER_SAVE_DELAY=900;
@@ -11,7 +11,7 @@
   const registrationFields=[
     'fullName','mobile','gender','identityDocumentType','idNumber','passportNumber',
     'dateOfBirth','nationality','address','city','province','postalCode',
-    'employmentStatus','highestEducation','whereHeard','emergencyName','emergencyPhone'
+    'employmentStatus','highestEducation','whereHeard','ambassadorSource','emergencyName','emergencyPhone'
   ];
   const paymentFields=['paymentMethod','paymentReference'];
   const legacyFields=['legacyId','legacyPaymentDate','legacyReason'];
@@ -74,7 +74,7 @@
     [...registrationFields,...paymentFields,...legacyFields].forEach(id=>{
       const element=byId(id);
       if(!element)return;
-      fields[id]=element.value??'';
+      fields[id]=id==='ambassadorSource'?(element.value||element.dataset.pendingValue||''):(element.value??'');
     });
     return fields;
   }
@@ -135,6 +135,8 @@
       employment_status:byId('employmentStatus')?.value||null,
       highest_education:byId('highestEducation')?.value||null,
       where_heard_about_us:byId('whereHeard')?.value||null,
+      heard_about_ambassador_id:byId('whereHeard')?.value==='Influencer / Brand Ambassador'
+        ? (byId('ambassadorSource')?.value||byId('ambassadorSource')?.dataset.pendingValue||null):null,
       emergency_contact_name:String(byId('emergencyName')?.value||'').trim()||null,
       emergency_contact_phone:String(byId('emergencyPhone')?.value||'').trim()||null
     };
@@ -183,9 +185,11 @@
       const element=byId(id);
       if(!element||element.type==='file'||element.readOnly)return;
       if(value===undefined||value===null)return;
-      element.value=String(value);
+      if(id==='ambassadorSource')element.dataset.pendingValue=String(value);
+      else element.value=String(value);
     });
     try{window.setIdentityMode?.();}catch(_){ }
+    window.FundaOnboardingAmbassadors?.sync?.();
   }
 
   function updateCourseSummary(){
@@ -248,6 +252,9 @@
     restoring=true;
     try{
       applySessionFields();
+      if(byId('whereHeard')?.value==='Influencer / Brand Ambassador'){
+        await window.FundaOnboardingAmbassadors?.sync?.();
+      }
 
       const courseIds=Array.isArray(navigation.courseIds)&&navigation.courseIds.length?navigation.courseIds:[navigation.courseId];
       const validIds=[...new Set(courseIds.map(String))].filter(id=>courseList().some(course=>String(course.id)===id));
@@ -274,13 +281,20 @@
         target='student_type';
       }
       if(requested==='review')target='payment';
+      const ambassadorRequired=type==='first_time'
+        &&['payment','review'].includes(requested)
+        &&byId('whereHeard')?.value==='Influencer / Brand Ambassador'
+        &&!byId('ambassadorSource')?.value;
+      if(ambassadorRequired)target='registration';
 
       showStep(target);
       if(navigation.paymentMethod&&byId('paymentMethod'))byId('paymentMethod').value=navigation.paymentMethod;
       applySessionFields();
       updateCourseSummary();
 
-      if(requested==='review'&&target==='payment'){
+      if(ambassadorRequired){
+        window.showMessage?.('Your enrollment details were saved. Please select the ambassador / influencer who referred you before continuing to payment.');
+      }else if(requested==='review'&&target==='payment'){
         window.showMessage?.('Your enrollment details were saved. For security, please reselect your proof-of-payment file before continuing to the final declaration.');
       }else if(type&&type!=='first_time'&&requested!==target){
         window.showMessage?.('Your enrollment details were saved. Please re-verify your previous-study evidence before continuing.');

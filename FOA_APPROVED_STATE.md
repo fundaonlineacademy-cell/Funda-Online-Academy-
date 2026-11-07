@@ -365,6 +365,12 @@ Enrollment Step 3 on `onboarding.html` is owner-approved as the final **Student 
 - Changes to Steps 4–5 are not permission to disturb Step 3. Any shared onboarding/registration/draft change must regression-check this approved Step 3 before merge.
 - Do not redesign, restyle, reorder, remove, rename, weaken or replace Step 3 fields, required/optional status, identity validation, profile-prefill/save behaviour, navigation, persistence or presentation unless Aziwe Futhe explicitly reopens Enrollment Step 3.
 
+#### Owner-authorised approved ambassador choice — 7 November 2026
+
+- The owner reopened only the conditional Step 3 marketing-source question: when **Influencer / Brand Ambassador** is chosen, require a dropdown selection from live approved ambassadors, showing TikTok/Facebook/other platform handles with their names. Include approved ambassadors awaiting activation; future approvals appear from the database. Other required-field messages and all existing registration/identity requirements remain unchanged.
+- Persist the selected ambassador's stable application ID with the learner's own Student details/draft. On a deliberate valid first-application Continue, a narrow authenticated RPC may record the canonical referral before any enrolment, payment or previous-study claim exists. This specifically adds explicit application attribution alongside the unchanged new-account referral-link claim. Established learners may save the marketing source without retroactive referral credit. Existing attribution stays permanent; reject self-referral. Activation, Admin-approved enrolment, verified payment, direct commission, privacy and access gates remain unchanged. The approved-but-unactivated listing is not an earnings approval.
+- Scope: Step 3 HTML/registration/draft and its loader cache, additive Student FK and authenticated directory/save RPCs, plus focused records. Preserve photos/card sizing/multiple-course selection, account creation, automatic link claiming, legacy verification, other registration fields, payment/commission calculations, all portal presentation and historical records. See `ONBOARDING_AMBASSADOR_SELECTION_2026_11_07.md`. No new lock is applied.
+
 ### Enrollment Step 4 — Payment — FINAL OWNER-APPROVED STATE
 
 Enrollment Step 4 on `onboarding.html` is owner-approved as the final **Payment** structure, payment-plan behaviour, proof requirements and presentation as of 18 September 2026. This approval applies to Step 4 only; Step 5 remains subject to separate owner review and approval.
