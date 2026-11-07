@@ -1,10 +1,81 @@
 (()=>{
-  const VERSION='20261106-course-browser-image-fill-v9';
+  const VERSION='20261107-course-selection-and-original-photo-clarity-v11';
   if(window.FundaOnboardingCourseBrowser?.version===VERSION)return;
 
   const PAGE_SIZE=10;
   let currentPage=1;
   let searchTerm="";
+  const selectedCourseIds=new Set();
+  // Show more vertical detail from the same full-width photo, retaining its people and work.
+  const PHOTO_FRAMING={"bookkeeping":[1.45,0.03],"business-administration":[1.55,0.11],"carpentry-fundamentals-workplace-practice":[1.4,0.02],"cashier-excellence":[1.4,0.02],"commercial-cleaning-professional-janitorial-services":[1.2,0.06],"computer-digital-literacy":[1.55,0.11],"construction-site-skills-workplace-readiness":[1.35,0.05],"corporate-reception":[1.55,0.11],"customer-service-excellence":[1.55,0.11],"cybersecurity-digital-safety":[1.55,0.11],"digital-device-repair-technical-support":[1.45,0.12],"ecommerce-online-retail":[1.55,0.11],"early-childhood-care-development-fundamentals":[1.2,0.06],"event-management-wedding-conference-planning":[1.45,0.12],"fashion-design-garment-making-fundamentals":[1.4,0.03],"fire-safety-emergency-response-safety-officer":[1.18,0.04],"food-beverage-service-hospitality-operations":[1.3,0.04],"food-safety-hygiene-haccp-fundamentals":[1.25,0.04],"front-office-hotel-reception-guest-services":[1.45,0.03],"gel-acrylic-nail-technology":[1.35,0.02],"graphic-design-visual-communication":[1.25,0.02],"landscaping-professional-garden-maintenance":[1.25,0.07],"office-administration-assistant":[1.5,0.105],"petrol-station-attendant-forecourt-customer-service":[1.15,0.04],"poultry-production-enterprise-management":[1.15,0.04],"print-branding-custom-product-production":[1.35,0.03],"professional-baking-enterprise-development":[1.25,0.02],"professional-housekeeping-hospitality-services":[1.2,0.025],"professional-makeup-artistry-client-services":[1.35,0.02],"retail-management-team-leadership":[1.25,0.07],"retail-merchandising-visual-display":[1.25,0.02],"sewing-garment-production-small-business":[1.45,0.12],"strategic-social-media-marketing-paid-media":[1.4,0.1],"urban-farming-small-scale-agriculture":[1.2,0.055],"warehouse-logistics-operations":[1.2,0.055]};
+  function photoFramingStyle(url){
+    const key=String(url||"").split("?")[0].split("/").pop().replace(/-course-hero[.]webp$/i,"");
+    const [zoom,y]=Object.prototype.hasOwnProperty.call(PHOTO_FRAMING,key)?PHOTO_FRAMING[key]:[1,0];
+    return `--course-photo-height:${zoom*100}%;--course-photo-y:${-y*100}%`;
+  }
+
+  function getSelectedCourses(){
+    return [...selectedCourseIds].map(id=>courses.find(course=>String(course.id)===id)).filter(Boolean);
+  }
+
+  function selectionChanged(reason="selection"){
+    renderSelectionSummary();
+    window.dispatchEvent(new CustomEvent("funda:course-selection-changed",{detail:{reason}}));
+  }
+
+  function selectCourseForBasket(courseId){
+    const course=courses.find(item=>String(item.id)===String(courseId));
+    if(!course)return;
+    const price=Number(course.price);
+    if(!Number.isFinite(price)||price<0){showMessage?.("This course fee could not be loaded. Please refresh before selecting it.");return;}
+    selectedCourseIds.add(String(course.id));
+    if(!selectedCourse||!selectedCourseIds.has(String(selectedCourse.id))){selectedCourse=course;existingEnrollment=null;}
+    renderCourses();
+    selectionChanged();
+  }
+
+  function removeSelection(courseId,reason="selection"){
+    selectedCourseIds.delete(String(courseId));
+    if(!selectedCourseIds.has(String(selectedCourse?.id))){selectedCourse=getSelectedCourses()[0]||null;existingEnrollment=null;}
+    renderCourses();
+    selectionChanged(reason);
+    return selectedCourseIds.size;
+  }
+
+  function restoreSelection(ids,activeId){
+    selectedCourseIds.clear();
+    for(const id of Array.isArray(ids)?ids:[]){
+      if(courses.some(course=>String(course.id)===String(id)))selectedCourseIds.add(String(id));
+    }
+    selectedCourse=getSelectedCourses().find(course=>String(course.id)===String(activeId))||getSelectedCourses()[0]||null;
+    existingEnrollment=null;
+    renderCourses();
+    renderSelectionSummary();
+  }
+
+  function renderSelectionSummary(){
+    const chosen=getSelectedCourses();
+    const name=byId("selectedCourseName"),meta=byId("selectedCourseMeta"),button=byId("continueButton");
+    continueBar?.classList.toggle("hidden-section",!chosen.length);
+    const totalCents=chosen.reduce((sum,course)=>sum+Math.round(Number(course.price)*100),0);
+    if(name)name.textContent=chosen.length>1?`${chosen.length} courses selected`:(chosen[0]?.title||"—");
+    if(meta)meta.textContent=chosen.length>1?`${formatMoney(totalCents/100)} total course fees`:(chosen.length?`${chosen[0].duration||"Flexible"} • ${formatMoney(chosen[0].price)}`:"—");
+    if(button)button.textContent=chosen.length>1?"Continue to first course →":"Continue →";
+    const label=name?.previousElementSibling;
+    if(label)label.textContent=chosen.length>1?"Selected Courses":"Selected Course";
+    let list=byId("selectedCourseList");
+    if(!list&&name){
+      list=document.createElement("div");list.id="selectedCourseList";
+      list.className="mt-3 hidden max-h-40 overflow-auto text-sm text-[#03133d]";
+      name.parentElement.appendChild(list);
+    }
+    if(list){
+      list.classList.toggle("hidden",chosen.length<2);
+      const expanded=!!list.querySelector("details")?.open;
+      list.innerHTML=chosen.length>1?`<details${expanded?" open":""}><summary class="cursor-pointer font-bold text-blue-700">View selected courses</summary><p class="my-2 text-xs leading-5 text-gray-600">Complete enrolment and payment for each course separately. Previous-study benefits are checked per course.</p><ul class="space-y-2">${chosen.map(course=>`<li class="flex items-start justify-between gap-3"><span>${escapeHtml(course.title)} — <strong>${formatMoney(course.price)}</strong></span><button type="button" class="shrink-0 font-bold text-blue-700 underline" data-remove-course="${escapeHtml(course.id)}" aria-label="Remove ${escapeHtml(course.title)}">Remove</button></li>`).join("")}</ul></details>`:"";
+      list.querySelectorAll("[data-remove-course]").forEach(control=>control.addEventListener("click",()=>removeSelection(control.dataset.removeCourse)));
+    }
+  }
 
   function byId(id){return document.getElementById(id)}
 
@@ -129,13 +200,11 @@
   }
 
   function clearSelection(){
+    selectedCourseIds.clear();
     selectedCourse=null;
-    const name=byId("selectedCourseName");
-    const meta=byId("selectedCourseMeta");
-    if(name)name.textContent="—";
-    if(meta)meta.textContent="—";
-    continueBar?.classList.add("hidden-section");
+    existingEnrollment=null;
     renderCourses();
+    selectionChanged();
   }
 
   function ensureDescriptionModal(){
@@ -183,6 +252,8 @@
 
   function renderBrowserCourses(){
     ensureBrowserUi();
+    if(!selectedCourseIds.size&&selectedCourse&&courses.some(course=>String(course.id)===String(selectedCourse.id)))selectedCourseIds.add(String(selectedCourse.id));
+    renderSelectionSummary();
 
     const filtered=visibleCourses();
     const totalPages=totalPagesFor(filtered);
@@ -216,17 +287,17 @@
     if(pager)pager.classList.remove("hidden");
 
     coursesContainer.innerHTML=pageCourses.map(course=>{
-      const selected=selectedCourse&&String(selectedCourse.id)===String(course.id);
+      const selected=selectedCourseIds.has(String(course.id));
       const fallback="Practical, career-focused online learning.";
       const description=String(course.description||fallback).trim();
       const selectionAction=selected
-        ? `window.FundaOnboardingCourseBrowser.clearSelection()`
+        ? `window.FundaOnboardingCourseBrowser.removeSelection('${escapeHtml(course.id)}')`
         : `selectCourse('${escapeHtml(course.id)}')`;
       return `
         <article class="course-card ${selected?"selected border-blue-600":"border-transparent"} flex h-full w-full flex-col overflow-hidden rounded-2xl border-2 bg-white text-left">
           <div class="course-card-media shrink-0 bg-slate-100">
             ${course.image_url
-              ? `<img src="${escapeHtml(course.image_url)}" alt="${escapeHtml(course.title)}" class="course-card-image block h-auto w-full" loading="lazy">`
+              ? `<img src="${escapeHtml(course.image_url)}" alt="${escapeHtml(course.title)}" style="${photoFramingStyle(course.image_url)}" class="course-card-image block h-auto w-full" loading="lazy">`
               : `<div class="flex h-40 w-full items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100 text-5xl">🎓</div>`}
           </div>
           <div class="course-card-content flex flex-1 flex-col p-5">
@@ -237,8 +308,8 @@
               <span class="text-xs font-bold text-gray-500">⏱ ${escapeHtml(course.duration||"Flexible")}</span>
               <span class="text-sm font-black text-blue-600">${formatMoney(course.price)}</span>
             </div>
-            <button type="button" onclick="${selectionAction}" class="course-card-select mt-4 w-full rounded-xl ${selected?"bg-blue-50 text-blue-700 ring-1 ring-blue-200":"bg-slate-50 text-[#03133d] hover:bg-blue-50 hover:text-blue-700"} px-4 py-3 text-sm font-extrabold">
-              ${selected?"Clear selection":"Select this course"}
+            <button type="button" onclick="${selectionAction}" aria-pressed="${selected}" class="course-card-select mt-4 w-full rounded-xl ${selected?"bg-blue-50 text-blue-700 ring-1 ring-blue-200":"bg-slate-50 text-[#03133d] hover:bg-blue-50 hover:text-blue-700"} px-4 py-3 text-sm font-extrabold">
+              ${selected?"Remove this course":"Select this course"}
             </button>
           </div>
         </article>`;
@@ -278,9 +349,12 @@
       .course-card-title{min-height:auto;-webkit-line-clamp:2}
       .course-card-preview{min-height:4.35rem}
     }
+    #continueButton{max-width:100%;white-space:normal}
+    #continueBar>div>div:first-child{min-width:0;flex:1}
+    #courseSelectionActions{max-width:100%}
     #coursesContainer{gap:12px}
     #coursesContainer .course-card-media{height:96px;overflow:hidden}
-    #coursesContainer .course-card-image{width:100%;height:100%;object-fit:fill}
+    #coursesContainer .course-card-image{width:100%;height:var(--course-photo-height,100%);object-fit:fill;transform:translateY(var(--course-photo-y,0%));image-rendering:auto}
     #coursesContainer .course-card-media>div{height:100%}
     #coursesContainer .course-card-content{padding:8px 10px}
     #coursesContainer .course-card-title{
@@ -319,6 +393,11 @@
   window.FundaOnboardingCourseBrowser={
     version:VERSION,
     render:renderBrowserCourses,
+    selectCourse:selectCourseForBasket,
+    removeSelection,
+    restoreSelection,
+    getSelectedCourses,
+    completeCourse:courseId=>removeSelection(courseId,"submitted"),
     openDescription,
     closeDescription,
     clearSelection

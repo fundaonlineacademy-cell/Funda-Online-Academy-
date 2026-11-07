@@ -192,6 +192,7 @@
       }
       normaliseStudentTypeCopy();
 
+      const remaining=window.FundaOnboardingCourseBrowser?.getSelectedCourses?.()||[selectedCourse];
       byId('summaryCourse').textContent=selectedCourse.title;
       byId('summaryDuration').textContent=selectedCourse.duration||'Flexible';
       byId('summaryPrice').textContent=formatMoney(effectiveCoursePrice());
@@ -201,7 +202,7 @@
       setHeader(
         'STEP 2 OF 5 • STUDENT TYPE',
         'Student Type',
-        `You selected ${selectedCourse.title}. Tell us whether you are a first-time or returning Funda Online Academy student.`
+        `You selected ${selectedCourse.title}. Tell us whether you are a first-time or returning Funda Online Academy student.${remaining.length>1?` You have ${remaining.length} courses selected; complete this application first, then continue with the remaining courses.`:""}`
       );
       scrollTop();
     }catch(error){
