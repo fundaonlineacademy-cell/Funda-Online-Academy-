@@ -1,5 +1,5 @@
 (()=>{
-  const VERSION='20261107-course-selection-and-original-photo-clarity-v11';
+  const VERSION='20261107-desktop-original-photo-detail-v12';
   if(window.FundaOnboardingCourseBrowser?.version===VERSION)return;
 
   const PAGE_SIZE=10;
@@ -8,11 +8,79 @@
   const selectedCourseIds=new Set();
   // Show more vertical detail from the same full-width photo, retaining its people and work.
   const PHOTO_FRAMING={"bookkeeping":[1.45,0.03],"business-administration":[1.55,0.11],"carpentry-fundamentals-workplace-practice":[1.4,0.02],"cashier-excellence":[1.4,0.02],"commercial-cleaning-professional-janitorial-services":[1.2,0.06],"computer-digital-literacy":[1.55,0.11],"construction-site-skills-workplace-readiness":[1.35,0.05],"corporate-reception":[1.55,0.11],"customer-service-excellence":[1.55,0.11],"cybersecurity-digital-safety":[1.55,0.11],"digital-device-repair-technical-support":[1.45,0.12],"ecommerce-online-retail":[1.55,0.11],"early-childhood-care-development-fundamentals":[1.2,0.06],"event-management-wedding-conference-planning":[1.45,0.12],"fashion-design-garment-making-fundamentals":[1.4,0.03],"fire-safety-emergency-response-safety-officer":[1.18,0.04],"food-beverage-service-hospitality-operations":[1.3,0.04],"food-safety-hygiene-haccp-fundamentals":[1.25,0.04],"front-office-hotel-reception-guest-services":[1.45,0.03],"gel-acrylic-nail-technology":[1.35,0.02],"graphic-design-visual-communication":[1.25,0.02],"landscaping-professional-garden-maintenance":[1.25,0.07],"office-administration-assistant":[1.5,0.105],"petrol-station-attendant-forecourt-customer-service":[1.15,0.04],"poultry-production-enterprise-management":[1.15,0.04],"print-branding-custom-product-production":[1.35,0.03],"professional-baking-enterprise-development":[1.25,0.02],"professional-housekeeping-hospitality-services":[1.2,0.025],"professional-makeup-artistry-client-services":[1.35,0.02],"retail-management-team-leadership":[1.25,0.07],"retail-merchandising-visual-display":[1.25,0.02],"sewing-garment-production-small-business":[1.45,0.12],"strategic-social-media-marketing-paid-media":[1.4,0.1],"urban-farming-small-scale-agriculture":[1.2,0.055],"warehouse-logistics-operations":[1.2,0.055]};
-  function photoFramingStyle(url){
+  function photoFraming(url){
     const key=String(url||"").split("?")[0].split("/").pop().replace(/-course-hero[.]webp$/i,"");
-    const [zoom,y]=Object.prototype.hasOwnProperty.call(PHOTO_FRAMING,key)?PHOTO_FRAMING[key]:[1,0];
+    return Object.prototype.hasOwnProperty.call(PHOTO_FRAMING,key)?PHOTO_FRAMING[key]:[1,0];
+  }
+  function photoFramingStyle(url){
+    const [zoom,y]=photoFraming(url);
     return `--course-photo-height:${zoom*100}%;--course-photo-y:${-y*100}%`;
   }
+
+  // Resample the accepted frame once at screen resolution, without changing the source photo.
+  const pendingPhotoLoads=new WeakSet();
+  function renderDesktopPhoto(image){
+    if(!image.isConnected||!window.matchMedia("(min-width:1024px)").matches)return;
+    if(!image.complete||!image.naturalWidth)return;
+    const media=image.parentElement;
+    const rect=media.getBoundingClientRect();
+    if(!rect.width||!rect.height)return;
+    const ratio=window.devicePixelRatio||1;
+    const width=Math.max(1,Math.round(rect.width*ratio));
+    const height=Math.max(1,Math.round(rect.height*ratio));
+    const source=image.currentSrc||image.src;
+    const key=`${source}|${width}|${height}`;
+    const previous=media.querySelector(".course-card-detail");
+    if(previous?.dataset.photoKey===key)return;
+    try{
+      const canvas=document.createElement("canvas");
+      canvas.width=width;canvas.height=height;
+      const context=canvas.getContext("2d");
+      if(!context){previous?.remove();return;}
+      const [zoom,y]=photoFraming(source);
+      context.imageSmoothingEnabled=true;
+      context.imageSmoothingQuality="high";
+      context.drawImage(image,0,y*image.naturalHeight,image.naturalWidth,image.naturalHeight/zoom,0,0,width,height);
+      // Keep colours/identities intact; restore only small final-size luminance edges.
+      try{
+        const frame=context.getImageData(0,0,width,height);
+        const pixels=frame.data,original=new Uint8ClampedArray(pixels);
+        const stride=width*4;
+        for(let row=1;row<height-1;row++)for(let col=1;col<width-1;col++){
+          const i=(row*width+col)*4;
+          let detail=0;
+          for(let channel=0;channel<3;channel++){
+            const p=i+channel;
+            const soft=(original[p-stride-4]+2*original[p-stride]+original[p-stride+4]+2*original[p-4]+4*original[p]+2*original[p+4]+original[p+stride-4]+2*original[p+stride]+original[p+stride+4])/16;
+            detail+=(original[p]-soft)*[0.2126,0.7152,0.0722][channel];
+          }
+          const correction=Math.abs(detail)>1.5?Math.max(-7,Math.min(7,detail*0.4)):0;
+          for(let channel=0;channel<3;channel++)pixels[i+channel]=original[i+channel]+correction;
+        }
+        context.putImageData(frame,0,0);
+      }catch(_){/* Cross-origin photos still get high-quality scaling without pixel readback. */}
+      canvas.className="course-card-detail";
+      canvas.setAttribute("aria-hidden","true");
+      canvas.dataset.photoKey=key;
+      previous?.remove();
+      media.appendChild(canvas);
+    }catch(_){previous?.remove();/* Keep the original image if canvas drawing is unavailable. */}
+  }
+  function renderDesktopPhotos(){
+    if(!window.matchMedia("(min-width:1024px)").matches)return;
+    coursesContainer.querySelectorAll(".course-card-image").forEach(image=>{
+      if(!image.complete&&!pendingPhotoLoads.has(image)){
+        pendingPhotoLoads.add(image);
+        image.addEventListener("load",()=>renderDesktopPhoto(image),{once:true});
+      }
+      renderDesktopPhoto(image);
+    });
+  }
+  let photoResizeFrame=0;
+  window.addEventListener("resize",()=>{
+    cancelAnimationFrame(photoResizeFrame);
+    photoResizeFrame=requestAnimationFrame(renderDesktopPhotos);
+  },{passive:true});
 
   function getSelectedCourses(){
     return [...selectedCourseIds].map(id=>courses.find(course=>String(course.id)===id)).filter(Boolean);
@@ -315,6 +383,8 @@
         </article>`;
     }).join("");
 
+    renderDesktopPhotos();
+
     const first=start+1;
     const last=Math.min(start+PAGE_SIZE,filtered.length);
     const status=byId("coursePageStatus");
@@ -356,6 +426,7 @@
     #coursesContainer .course-card-media{height:96px;overflow:hidden}
     #coursesContainer .course-card-image{width:100%;height:var(--course-photo-height,100%);object-fit:fill;transform:translateY(var(--course-photo-y,0%));image-rendering:auto}
     #coursesContainer .course-card-media>div{height:100%}
+    #coursesContainer .course-card-detail{display:none}
     #coursesContainer .course-card-content{padding:8px 10px}
     #coursesContainer .course-card-title{
       display:block;min-height:54px;font-size:14px;line-height:18px;
@@ -373,6 +444,8 @@
       #coursesContainer .course-card-select{min-height:36px;padding:8px 4px}
     }
     @media (min-width:1024px){
+      #coursesContainer .course-card-media{position:relative}
+      #coursesContainer .course-card-detail{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
       body:has(#courseStep:not(.hidden-section)) header>div{padding-top:8px;padding-bottom:8px}
       body:has(#courseStep:not(.hidden-section)) header img{width:32px;height:32px}
       body:has(#courseStep:not(.hidden-section)) main{padding-top:12px;padding-bottom:24px}
