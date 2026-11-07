@@ -110,7 +110,7 @@
       var enrolled=callResult(data[2],'Existing courses unavailable')||[];
       allCourses=callResult(data[3],'Course catalogue unavailable')||[];
       if(!profile||String(profile.role||'').toLowerCase()!=='student'||!student)throw Error('This service is for signed-in students who already have an Academy student record.');
-      if(!enrolled.some(function(e){return !!e.submitted_at;}))throw Error('Submit your first course application through the existing enrolment process before using additional-course enrolment.');
+      if(!enrolled.some(function(e){return !!e.submitted_at||['approved','active','enrolled','completed'].includes(String(e.enrollment_status||e.status||'').toLowerCase());}))throw Error('Submit your first course application through the existing enrolment process before using additional-course enrolment.');
       owned=new Set(enrolled.filter(function(e){return !!e.course_id;}).map(function(e){return String(e.course_id);}));
       $('studentGreeting').textContent='Welcome back, '+String(student.full_name||profile.full_name||'Student');
       renderExisting(enrolled);renderCatalog();renderSelection();show('choose');
