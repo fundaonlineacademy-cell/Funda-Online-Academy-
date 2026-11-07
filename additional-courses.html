@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enrol in More Courses | Funda Online Academy</title>
+  <meta name="description" content="Existing Funda Online Academy students can apply for additional short courses through their secure student account.">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js?v=20260913-session-v1"></script>
+  <style>
+    :root{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#071d49;background:#f2f6fb}
+    *{box-sizing:border-box}body{margin:0;line-height:1.55}a{color:#1956a0}button,input,select{font:inherit}
+    button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.6}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e0b963;outline-offset:3px}
+    header{background:#06152f;color:#fff}header .inner{max-width:1170px;margin:auto;padding:20px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+    header a{color:white;text-decoration:none;font-weight:800}header .brand{font-size:17px;letter-spacing:.02em}header .brand span{color:#e3c478}
+    main{max-width:1170px;margin:28px auto 70px;padding:0 20px}h1{font-size:clamp(27px,4vw,39px);line-height:1.16;margin:7px 0 12px}h2{font-size:22px;margin:0 0 8px}h3{font-size:17px;margin:0 0 6px}p{margin:0 0 12px}.muted{color:#596980;font-size:14px}.kicker{color:#9a6d1c;text-transform:uppercase;letter-spacing:.14em;font-weight:800;font-size:11px}
+    .card{background:white;border:1px solid #dce6f2;border-radius:20px;padding:22px;box-shadow:0 5px 20px #071d490a;margin-bottom:20px}
+    .hero{padding:30px;color:#fff;background:linear-gradient(116deg,#061b42,#204a94);border-radius:24px;margin-bottom:20px}.hero .muted{color:#e2ecff}
+    .steps{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0}.steps span{border-radius:100px;padding:7px 15px;font-size:13px;font-weight:700;background:#e4ebf5}.steps .current{background:#174b9c;color:white}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.line{height:1px;background:#e5ebf2;margin:15px 0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+    .course{border:1px solid #dce6f2;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;min-width:0;background:white}.course img{display:block;width:100%;height:142px;object-fit:fill;background:#eaf0f8}.course .body{padding:14px;display:flex;flex-direction:column;gap:7px;flex:1}.course p{overflow-wrap:anywhere}.course strong{line-height:1.35}.course .btn{margin-top:auto}.course.selected{border:2px solid #1b61bd;background:#f3f8ff}
+    .btn{display:inline-flex;justify-content:center;align-items:center;text-decoration:none;gap:7px;border:0;border-radius:11px;padding:12px 18px;font-weight:800;background:#071d49;color:#fff;text-align:center;min-height:43px}.btn.secondary{color:#071d49;background:#e9eff8}.btn.outline{color:#174d9b;background:#fff;border:1px solid #174d9b}.btn.gold{color:#071d49;background:#dfc27c}.btn.wide{width:100%}.btn.small{padding:9px 13px;font-size:13px}
+    .summary{background:#f2f6fb;border:1px solid #dce6f2;border-radius:13px;padding:15px}.summary ul,.plain{padding-left:20px;margin:8px 0}.summary li{margin:6px 0;overflow-wrap:anywhere}.total{font-size:23px;font-weight:900}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field label{display:block;font-weight:750;margin-bottom:5px;font-size:14px}.field input,.field select{width:100%;border:1px solid #adbdd3;border-radius:10px;padding:11px 12px;background:white;min-height:45px}.field small{display:block;margin-top:6px;color:#596980}
+    .alert{background:#fff2ee;border:1px solid #eeb7ad;color:#802a20;padding:14px;border-radius:12px;margin-bottom:20px}.alert.success{background:#e8f7ee;border-color:#8bd6ad;color:#15562c}
+    .bank{border:1px solid #d6e4f4;background:#f5faff;border-radius:13px;padding:15px;margin:10px 0}.bank strong{font-size:17px}.check{display:flex;align-items:flex-start;gap:12px;font-size:14px;margin:14px 0;line-height:1.65}.check input{width:19px;height:19px;flex:none;margin-top:3px}
+    [hidden]{display:none!important}.course-action{white-space:nowrap}.note{border-left:4px solid #c79a3c;background:#fff7e6;border-radius:9px;padding:14px;font-size:14px}
+    footer{text-align:center;padding:20px;color:#66778f;font-size:12px}
+    @media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:570px){main{padding:0 12px;margin-top:15px}.hero{padding:21px}.card{padding:15px}.grid,.form-grid{grid-template-columns:1fr}.course img{height:170px}header .inner{padding:15px}.row.actions .btn{width:100%}}
+  </style>
+</head>
+<body>
+<header><div class="inner"><a class="brand" href="dashboard.html">FUNDA ONLINE <span>ACADEMY</span></a><a href="dashboard.html">My Dashboard</a></div></header>
+<main>
+  <div class="hero"><div class="kicker" style="color:#efd08a">STUDENT PORTAL · CONTINUING LEARNING</div><h1>Enrol in Another Course</h1><p class="muted">Already studying with us? Add one or more new short courses using your existing student account. Your current courses, results and payments stay separate.</p></div>
+  <div id="message" class="alert" role="alert" aria-live="polite" hidden></div>
+  <section id="loading" class="card"><h2>Checking your student account…</h2><p class="muted">Loading the courses available to you.</p></section>
+  <section id="choose" hidden>
+    <div class="steps" aria-label="Application progress"><span class="current">1 · Choose new courses</span><span>2 · Review and payment</span></div>
+    <div class="card"><div class="row"><div><p class="kicker">My existing learning</p><h2 id="studentGreeting">Student</h2></div><a class="btn secondary small" href="dashboard.html">Return to My Courses</a></div><p class="muted">Courses you have already applied for are excluded from new selections, including completed and pending courses.</p><div id="existingList" class="muted"></div></div>
+    <div class="card"><div class="row"><div><p class="kicker">Available courses</p><h2>Choose your additional courses</h2></div><div class="field"><label for="courseSearch">Find a course</label><input id="courseSearch" type="search" placeholder="Search courses"></div></div><p class="muted">Select as many different available courses as you need. You will confirm the final fees before paying.</p><div id="courseGrid" class="grid" aria-live="polite"></div><div id="noAvailable" class="note" hidden>No additional courses are available for this account right now.</div></div>
+    <div class="card"><h2>Your new selection</h2><div id="selectionSummary" class="summary">No courses selected.</div><p class="muted" style="margin-top:12px">Existing course balances and any previous payments are not part of this new quote.</p><div class="row actions"><a href="dashboard.html" class="btn secondary">Back to Dashboard</a><button id="reviewButton" class="btn" type="button" disabled>Continue to Fees &amp; Payment</button></div></div>
+  </section>
+  <section id="checkout" hidden>
+    <div class="steps"><span>1 · Choose new courses</span><span class="current">2 · Review and payment</span></div>
+    <div class="card"><p class="kicker">New application only</p><h2>Review your selected course fees</h2><div id="quoteItems"></div><div class="line"></div><div class="row"><strong>Total payable course fees</strong><strong id="quoteTotal" class="total">—</strong></div><p class="muted" style="margin-top:9px">The fee above is confirmed from Academy records. Existing course balances are not included.</p></div>
+    <div class="card"><p class="kicker">Payment</p><h2>Choose a payment option</h2><div class="form-grid">
+      <div class="field"><label for="paymentOption">Payment option *</label><select id="paymentOption" required></select><small id="paymentSchedule"></small></div>
+      <div class="summary"><span class="muted">Required payment now</span><div id="amountDue" class="total">—</div><small>Pay the exact amount displayed. Payments are reviewed by Admissions &amp; Finance.</small></div>
+    </div><div class="line"></div><h3>Official Academy banking details</h3><p id="bankStatus" class="muted">Loading banking details…</p><div id="bankDetails"></div><p class="note">Pay only to an official account shown on this page. Cash payments are not accepted. If banking details are unavailable, do not pay or submit.</p></div>
+    <div class="card"><h2>Submit your payment information</h2><p class="muted">Your saved student identity is reused. No new account or duplicate student record is created.</p><div class="form-grid">
+      <div class="field"><label for="paymentMethod">Payment method *</label><select id="paymentMethod" required><option value="">Select method</option><option value="EFT / Bank Transfer">EFT / Bank Transfer</option><option value="Bank Deposit">Bank Deposit</option></select></div>
+      <div class="field"><label for="paymentReference">Bank payment reference *</label><input id="paymentReference" maxlength="80" minlength="2" required placeholder="Use the same reference as your payment"><small>Use the reference shown on your bank receipt.</small></div>
+      <div class="field" style="grid-column:1/-1"><label for="proofFile">Proof of payment *</label><input id="proofFile" type="file" accept="application/pdf,image/jpeg,image/png" required><small>PDF, JPG or PNG. Maximum 5 MB.</small></div>
+    </div><div class="line"></div>
+    <label class="check"><input id="declaration" type="checkbox" required><span>I confirm that my saved registration details are accurate, this proof of payment belongs to this new course application, and my new course modules will remain locked until the responsible department approves the application and payment.</span></label>
+    <label class="check"><input id="paymentAcknowledged" type="checkbox" required><span>I have reviewed the selected courses, the exact required payment, official banking information and the payment terms. I understand that my existing courses and outstanding balances remain separate.</span></label>
+    <p class="muted">If you believe you qualify for an approved previous-study benefit, contact Admissions to verify it before making a payment. No previous-study discount is applied automatically in this additional-course pathway.</p>
+    <div class="row actions"><button id="editButton" class="btn secondary" type="button">← Change Courses</button><button id="submitButton" class="btn gold" type="button">Submit Additional Course Application</button></div>
+    </div>
+  </section>
+  <section id="success" class="card" hidden><p class="kicker">Application received</p><h2>Additional course application submitted</h2><p id="successText"></p><p class="muted">You may continue your existing approved courses. New courses remain pending until Admissions and Finance complete their checks.</p><a class="btn" href="dashboard.html">Return to My Courses</a></section>
+</main>
+<footer>Funda Online Academy · Secure student enrolment · Existing courses and student records are preserved</footer>
+<script>
+(function () {
+  "use strict";
+  var db=null,user=null,student=null,allCourses=[],owned=new Set(),selected=new Set(),quote=null,bankReady=false,proofCache=null,busy=false;
+  var $=function(id){return document.getElementById(id);};
+  var safe=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
+  var cents=function(n){return Math.round(Number(n||0)*100);};
+  var money=function(n){return 'R'+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});};
+  var ids=function(){return Array.from(selected).sort();};
+  var selectedList=function(){return allCourses.filter(function(c){return selected.has(String(c.id));});};
+  function message(text,isError){var m=$('message');m.textContent=text;m.className='alert'+(isError?'':' success');m.hidden=false;m.scrollIntoView({block:'nearest'});}
+  function clearMessage(){$('message').hidden=true;}
+  function callResult(result,label){if(result.error)throw new Error(label+': '+result.error.message);return result.data;}
+  function setBusy(on,button){busy=on;['reviewButton','submitButton','editButton'].forEach(function(id){if($(id))$(id).disabled=on;});if(button)button.textContent=on?'Processing securely…':button.dataset.label;}
+  function show(name){['loading','choose','checkout','success'].forEach(function(id){$(id).hidden=id!==name;});window.scrollTo({top:0,behavior:'auto'});}
+  function renderExisting(rows){var list=rows.filter(function(r){return !!r.course_id;});$('existingList').innerHTML=list.map(function(r){var title=r.courses&&r.courses.title?r.courses.title:'Previously selected course';return '<div style="padding:7px 0;border-top:1px solid #edf0f4">'+safe(title)+' · '+safe(r.enrollment_status||r.status||'pending')+'</div>';}).join('');}
+  function renderCatalog(){
+    var q=$('courseSearch').value.trim().toLowerCase(),eligible=allCourses.filter(function(c){return !owned.has(String(c.id));}),visible=eligible.filter(function(c){return !q||(String(c.title||'')+' '+String(c.description||'')).toLowerCase().includes(q);});
+    $('noAvailable').hidden=eligible.length!==0;
+    $('courseGrid').innerHTML=visible.length?visible.map(function(c){
+      var chosen=selected.has(String(c.id));
+      var photo=c.image_url?'<img src="'+safe(c.image_url)+'" alt="" loading="lazy">':'';
+      return '<article class="course'+(chosen?' selected':'')+'">'+photo+'<div class="body"><strong>'+safe(c.title)+'</strong><p class="muted">'+safe(c.duration||'Flexible duration')+'</p><p><strong>'+money(c.price)+'</strong> <span class="muted">full fee</span></p><button type="button" class="btn small '+(chosen?'secondary':'outline')+'" data-course="'+safe(c.id)+'" aria-pressed="'+chosen+'">'+(chosen?'✓ Selected — Remove':'Select Course')+'</button></div></article>';
+    }).join(''):'<p class="muted">'+(eligible.length?'No courses match your search.':'')+'</p>';
+    $('courseGrid').querySelectorAll('[data-course]').forEach(function(b){b.addEventListener('click',function(){toggleCourse(b.dataset.course);});});
+  }
+  function renderSelection(){
+    var list=selectedList(),total=list.reduce(function(s,c){return s+cents(c.price);},0)/100;
+    $('selectionSummary').innerHTML=list.length?'<strong>'+list.length+' new course(s) selected</strong><ul>'+list.map(function(c){return '<li>'+safe(c.title)+' — '+money(c.price)+'</li>';}).join('')+'</ul><strong>Estimated total: '+money(total)+'</strong>':'No courses selected.';
+    $('reviewButton').disabled=!list.length||busy;
+  }
+  function toggleCourse(id){
+    if(owned.has(String(id)))return;
+    if(selected.has(id))selected.delete(id);else selected.add(id);
+    quote=null;proofCache=null;$('proofFile').value='';renderCatalog();renderSelection();clearMessage();
+  }
+  async function init(){
+    try{
+      if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_ANON_KEY)throw Error('The Academy connection is unavailable.');
+      db=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);
+      var auth=await db.auth.getUser();if(auth.error||!auth.data||!auth.data.user){location.replace('login.html?next=additional-courses.html&portal=student');return;}
+      user=auth.data.user;
+      var data=await Promise.all([db.from('profiles').select('role,full_name').eq('id',user.id).maybeSingle(),db.from('students').select('id,full_name,email').eq('user_id',user.id).maybeSingle(),db.from('enrollments').select('course_id,enrollment_status,status,submitted_at,courses(title)').eq('student_id',user.id),db.from('courses').select('id,title,description,duration,price,image_url,active').eq('active',true).order('title',{ascending:true})]);
+      var profile=callResult(data[0],'Student profile unavailable');
+      student=callResult(data[1],'Student record unavailable');
+      var enrolled=callResult(data[2],'Existing courses unavailable')||[];
+      allCourses=callResult(data[3],'Course catalogue unavailable')||[];
+      if(!profile||String(profile.role||'').toLowerCase()!=='student'||!student)throw Error('This service is for signed-in students who already have an Academy student record.');
+      if(!enrolled.some(function(e){return !!e.submitted_at||['approved','active','enrolled','completed'].includes(String(e.enrollment_status||e.status||'').toLowerCase());}))throw Error('Submit your first course application through the existing enrolment process before using additional-course enrolment.');
+      owned=new Set(enrolled.filter(function(e){return !!e.course_id;}).map(function(e){return String(e.course_id);}));
+      $('studentGreeting').textContent='Welcome back, '+String(student.full_name||profile.full_name||'Student');
+      renderExisting(enrolled);renderCatalog();renderSelection();show('choose');
+      loadBanks();
+    }catch(e){show('loading');$('loading').innerHTML='<h2>Additional enrolment not available</h2><p>'+safe(e.message||'Please try again later.')+'</p><a class="btn" href="dashboard.html">Return to Dashboard</a> <a class="btn secondary" href="onboarding.html">First-time Enrolment</a>';}
+  }
+  async function loadBanks(){
+    try{
+      var data=callResult(await db.from('academy_payment_settings').select('id,bank_name,account_name,account_number,branch_code,account_type,payment_reference_instruction,is_active').eq('is_active',true).order('id'),'Official bank details unavailable')||[];
+      var banks=data.filter(function(b){return b.bank_name&&b.account_number;});
+      if(!banks.length)throw Error('Official banking details have not been published.');
+      $('bankDetails').innerHTML=banks.map(function(b){return '<div class="bank"><strong>'+safe(b.bank_name)+'</strong><div>Account name: <b>'+safe(b.account_name||'Funda Online Academy')+'</b></div><div>Account number: <b>'+safe(b.account_number)+'</b></div>'+ (b.branch_code?'<div>Branch code: <b>'+safe(b.branch_code)+'</b></div>':'')+(b.account_type?'<div>Account type: <b>'+safe(b.account_type)+'</b></div>':'')+'</div>';}).join('')+'<p class="muted">Bank reference instruction: '+safe(banks[0].payment_reference_instruction||'Use your official identity number')+'</p>';
+      bankReady=true;$('bankStatus').textContent='Use one of the official Academy accounts displayed below.';
+    }catch(e){bankReady=false;$('bankStatus').textContent='Banking details could not be loaded. Do not make payment until they appear. '+(e.message||'');}
+  }
+  function dueNow(){
+    if(!quote) return 0;
+    if($('paymentOption').value==='full_balance')return Number(quote.total_fee);
+    return (quote.items||[]).reduce(function(sum,item){return sum+cents(item.installment_amounts[0]);},0)/100;
+  }
+  function renderPayment(){
+    var items=quote.items||[],count=Number(quote.installment_count)||1;
+    $('quoteItems').innerHTML=items.map(function(item){return '<div class="row" style="padding:8px 0"><span>'+safe(item.title)+'</span><strong>'+money(item.fee)+'</strong></div>';}).join('');
+    $('quoteTotal').textContent=money(quote.total_fee);
+    var opts='<option value="full_balance">Pay full fee — '+money(quote.total_fee)+'</option>';
+    var schedule=[];
+    for(var i=0;i<count;i++){schedule.push(items.reduce(function(sum,item){return sum+cents(item.installment_amounts[i]);},0)/100);}
+    if(count>1)opts+='<option value="next_instalment">Pay in '+count+' instalments — first payment '+money(schedule[0])+'</option>';
+    $('paymentOption').innerHTML=opts;
+    $('paymentOption').value=count>1?'next_instalment':'full_balance';
+    $('paymentOption').dataset.schedule=JSON.stringify(schedule);
+    updateDue();
+  }
+  function updateDue(){
+    if(!quote)return;
+    var payments=JSON.parse($('paymentOption').dataset.schedule||'[]');
+    $('amountDue').textContent=money(dueNow());
+    $('paymentSchedule').textContent=$('paymentOption').value==='full_balance'?'Full payment for all new courses.':'Exact instalments: '+payments.map(function(p,i){return 'Payment '+(i+1)+': '+money(p);}).join(' · ');
+    proofCache=null;$('proofFile').value='';
+  }
+  async function prepare(){
+    if(busy||!selected.size)return;
+    var button=$('reviewButton');button.dataset.label=button.textContent;setBusy(true,button);clearMessage();
+    try{
+      var startIds=ids();
+      var data=callResult(await db.rpc('prepare_additional_course_checkout',{p_course_ids:startIds,p_existing_checkout_id:null}),'Unable to confirm new course fees');
+      if(!data||!data.id||data.status!=='draft'||!Array.isArray(data.items))throw Error('Unable to confirm the new application. Please contact Admissions.');
+      if(JSON.stringify(startIds)!==JSON.stringify(ids())||JSON.stringify(data.items.map(function(i){return String(i.course_id);}).sort())!==JSON.stringify(startIds))throw Error('Your selected courses changed. Please confirm them again.');
+      if(data.items.some(function(i){return owned.has(String(i.course_id))||!Number.isFinite(Number(i.fee))||cents(i.fee)<=0;}))throw Error('The selected course list must be reviewed.');
+      if(data.items.reduce(function(s,i){return s+cents(i.fee);},0)!==cents(data.total_fee))throw Error('The combined course total could not be reconciled.');
+      if(data.items.some(function(i){return !Array.isArray(i.installment_amounts)||i.installment_amounts.length!==Number(data.installment_count)||i.installment_amounts.reduce(function(s,a){return s+cents(a);},0)!==cents(i.fee);}))throw Error('Payment instalments could not be confirmed.');
+      quote=data;renderPayment();show('checkout');
+      if(!bankReady)loadBanks();
+    }catch(e){message(e.message||'Unable to confirm the selected course fees.',true);}
+    finally{setBusy(false,button);renderSelection();}
+  }
+  function validate(){
+    if(!quote||quote.status!=='draft')throw Error('Confirm the new courses and fees first.');
+    var current=ids(),quoted=quote.items.map(function(i){return String(i.course_id);}).sort();
+    if(JSON.stringify(current)!==JSON.stringify(quoted)||current.some(function(i){return owned.has(i);}))throw Error('Your course selection changed. Please review it.');
+    if(!bankReady)throw Error('Official banking information is unavailable. Do not make a payment until it has loaded.');
+    var method=$('paymentMethod').value,ref=$('paymentReference').value.trim(),option=$('paymentOption').value;
+    if(method!=='EFT / Bank Transfer'&&method!=='Bank Deposit')throw Error('Please select an approved payment method.');
+    if(ref.length<2||ref.length>80)throw Error('Enter the payment reference from your bank receipt (2–80 characters).');
+    if(option!=='full_balance'&&option!=='next_instalment')throw Error('Select an approved payment option.');
+    var amount=dueNow();if(!Number.isFinite(amount)||amount<=0)throw Error('The required payment could not be confirmed.');
+    var file=$('proofFile').files[0],types={'application/pdf':'pdf','image/jpeg':'jpg','image/png':'png'};
+    if(!file||!types[file.type]||file.size<1||file.size>5*1024*1024)throw Error('Upload a PDF, JPG or PNG proof of payment of 5 MB or less.');
+    if(!$('declaration').checked||!$('paymentAcknowledged').checked)throw Error('Please accept both compulsory declarations.');
+    return {method:method,ref:ref,option:option,amount:amount,file:file,ext:types[file.type]};
+  }
+  async function submit(){
+    if(busy)return;
+    var button=$('submitButton');button.dataset.label=button.textContent;clearMessage();
+    var input;
+    try{input=validate();}catch(e){message(e.message,true);return;}
+    setBusy(true,button);
+    try{
+      var snapshot=quote,prev=proofCache,path;
+      if(prev&&prev.checkoutId===snapshot.id&&prev.file===input.file){path=prev.path;}
+      else{
+        path=user.id+'/'+snapshot.id+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,10)+'.'+input.ext;
+        var uploaded=await db.storage.from('payment-proofs').upload(path,input.file,{cacheControl:'3600',upsert:false,contentType:input.file.type});
+        if(uploaded.error)throw Error('Unable to upload proof of payment: '+uploaded.error.message);
+        proofCache={checkoutId:snapshot.id,file:input.file,path:path};
+      }
+      if(snapshot!==quote||JSON.stringify(ids())!==JSON.stringify(snapshot.items.map(function(i){return String(i.course_id);}).sort())||input.method!==$('paymentMethod').value||input.ref!==$('paymentReference').value.trim()||input.option!==$('paymentOption').value||cents(input.amount)!==cents(dueNow())||input.file!==$('proofFile').files[0]||!$('declaration').checked||!$('paymentAcknowledged').checked)throw Error('Payment or course details changed during submission. Please review your information.');
+      var data=callResult(await db.rpc('submit_additional_course_checkout',{p_checkout_id:snapshot.id,p_amount:input.amount,p_payment_method:input.method,p_payment_reference:input.ref,p_proof_path:path,p_payment_option:input.option}),'Additional course application was not submitted');
+      if(!data||!Array.isArray(data.enrolment_ids)||!data.enrolment_ids.length)throw Error('The application response needs verification. Please contact Admissions before attempting another payment.');
+      $('successText').textContent='We received your application for '+snapshot.items.length+' additional course(s) and your payment proof of '+money(data.amount_paid)+'. Your payment is awaiting Admissions and Finance verification.';
+      show('success');clearMessage();
+    }catch(e){message(e.message||'Submission could not be completed. Your current courses are unaffected.',true);}
+    finally{setBusy(false,button);}
+  }
+  $('courseSearch').addEventListener('input',renderCatalog);
+  $('reviewButton').addEventListener('click',prepare);
+  $('editButton').addEventListener('click',function(){if(busy)return;quote=null;proofCache=null;$('proofFile').value='';show('choose');});
+  $('paymentOption').addEventListener('change',updateDue);
+  $('submitButton').addEventListener('click',submit);
+  init();
+})();
+</script>
+</body>
+</html>
