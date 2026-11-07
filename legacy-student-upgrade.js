@@ -223,8 +223,40 @@ function fields(claim){
  const course=selected(),discount=state.type==="first_time"?0:Number(state.entitlement?.discount_percent||0);
  return {student_category:state.type||"first_time",original_amount:Number(course?.price||0),discount_percent:discount,legacy_claim_id:claim?.id||null};
 }
+function captureSelection(){
+ const course=selected();
+ return {userId:user()?.id,course:course?{id:course.id,title:course.title,price:course.price}:null,type:state.type,
+  entitlement:state.entitlement?{...state.entitlement}:null,evidencePath:state.evidencePath,file:$("#legacyEvidence")?.files?.[0]||null,
+  idNumber:($("#legacyId")?.value||"").replace(/\D/g,""),oldPaymentDate:$("#legacyPaymentDate")?.value||null,
+  reason:$("#legacyReason")?.value.trim()||null,extractedText:state.extractedText,verificationSummary:state.verificationSummary,
+  savedClaimId:state.entitlement?.approved_claim_id||null};
+}
+async function saveSelection(snapshot){
+ if(!snapshot||snapshot.userId!==user()?.id||!snapshot.course?.id)throw Error('Please verify previous-study benefits again for your selected courses.');
+ if(snapshot.type==='first_time')return null;
+ if(!snapshot.entitlement?.matched)throw Error('Previous-study evidence must be verified separately for each course.');
+ if(snapshot.savedClaimId)return {id:snapshot.savedClaimId};
+ const db=client(),u=user(),s=student(),course=snapshot.course;
+ if(!snapshot.evidencePath){
+  const file=snapshot.file;
+  if(!file||!["image/png","image/jpeg","application/pdf"].includes(file.type)||file.size>5*1024*1024)throw Error('Previous-study evidence must be PDF, JPG or PNG and 5 MB or smaller.');
+  const ext=(file.name.split('.').pop()||'file').toLowerCase().replace(/[^a-z0-9]/g,'');
+  const path=`${u.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+  const {data,error}=await db.storage.from('legacy-verification').upload(path,file,{upsert:false,contentType:file.type});
+  if(error)throw error;snapshot.evidencePath=data.path;
+ }
+ const payload={user_id:u.id,student_id:s?.id||null,course_id:course.id,enrollment_id:null,claim_type:snapshot.type,
+  legacy_record_id:snapshot.entitlement.legacy_record_id||null,id_number:snapshot.idNumber,evidence_path:snapshot.evidencePath,
+  old_payment_date:snapshot.oldPaymentDate,noncompletion_reason:snapshot.reason,original_amount:Number(course.price),
+  discount_percent:Number(snapshot.entitlement.discount_percent||0),payable_amount:Number(snapshot.entitlement.payable_amount||0),auto_matched:true,
+  verification_status:'pending',system_verification_method:snapshot.type==='legacy_completed'?'certificate_text_reading':'historical_match',
+  system_verification_score:Number(snapshot.verificationSummary?.score||0),system_verification_summary:snapshot.verificationSummary||null,
+  extracted_text:snapshot.type==='legacy_completed'?snapshot.extractedText:null};
+ const {data,error}=await db.from('legacy_verification_claims').insert(payload).select('id').single();
+ if(error)throw error;snapshot.savedClaimId=data.id;return data;
+}
 function onCourseOpened(){ensurePanel(); state.type="";state.entitlement=null;state.evidencePath=null;state.extractedText="";state.verificationSummary=null; document.querySelectorAll('input[name="legacyType"]').forEach(x=>x.checked=false); $("#legacyExtra")?.classList.add("hidden");setPaymentVisible(false);updateSummary();}
-window.FundaLegacy={ensurePanel,onCourseOpened,getPayableAmount,validate,saveClaim,getEnrollmentFields:fields,getPaymentFields:fields};
+window.FundaLegacy={ensurePanel,onCourseOpened,getPayableAmount,validate,saveClaim,getEnrollmentFields:fields,getPaymentFields:fields,captureSelection,saveSelection};
 document.addEventListener("DOMContentLoaded",ensurePanel);
 })();
 

@@ -2,7 +2,7 @@
   if(window.__fundaOnboardingSubmissionConfirmation)return;
   window.__fundaOnboardingSubmissionConfirmation=true;
 
-  const VERSION='20260917-submission-confirmation-v1';
+  const VERSION='20261107-combined-submission-confirmation-v2';
   const TARGET_RPC='submit_student_payment';
   const FUNCTION_NAME='send-enrollment-submission-confirmation';
   let installed=false;
@@ -57,6 +57,9 @@
         // submission flow. Any email failure is swallowed so the learner's
         // successfully submitted application is never rolled back.
         await sendConfirmation(client,String(args.p_enrolment_id));
+      }
+      if(functionName==='submit_course_checkout'&&!result?.error&&!result?.data?.already_submitted){
+        for(const enrollmentId of result?.data?.enrolment_ids||[])await sendConfirmation(client,String(enrollmentId));
       }
 
       return result;

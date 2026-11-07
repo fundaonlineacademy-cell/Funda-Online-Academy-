@@ -173,7 +173,108 @@
     }catch(e){status.textContent='Banking details could not be loaded. Do not make payment until the official details are displayed.';status.className='text-sm text-red-700 font-semibold leading-6 mt-2';}
   }
 
+  let combinedCheckout=null;
+  let combinedProof=null;
+  let checkoutPreparation=null;
+  const selectedCourses=()=>window.FundaOnboardingCourseBrowser?.getSelectedCourses?.()||(selectedCourse?[selectedCourse]:[]);
+  const isCombined=()=>selectedCourses().length>1;
+  const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  function resetCheckout(){
+    combinedCheckout=null;combinedProof=null;
+    window.FundaOnboardingDraft?.setCheckoutId?.(null);
+  }
+  window.addEventListener('funda:course-selection-changed',resetCheckout);
+  function validateCheckout(){
+    if(!isCombined())return null;
+    const ids=selectedCourses().map(course=>String(course.id)).sort();
+    const quoted=(combinedCheckout?.items||[]).map(item=>String(item.course_id)).sort();
+    if(!combinedCheckout||combinedCheckout.status!=='draft'||JSON.stringify(ids)!==JSON.stringify(quoted)){
+      return 'Please return to Student Registration and confirm the combined course fees before payment.';
+    }
+    return null;
+  }
+  async function prepareCheckout(){
+    if(!isCombined())return null;
+    if(checkoutPreparation)return checkoutPreparation;
+    checkoutPreparation=(async()=>{
+      window.FundaCourseBenefits?.restoreFirstTime?.();
+      if(!window.FundaCourseBenefits?.ready?.())throw Error('Please complete the Student Type checks for each selected course.');
+      await window.FundaOnboardingDraft?.saveNow?.();
+      const chosen=selectedCourses().map(course=>String(course.id));
+      const claims={};
+      for(const snapshot of window.FundaCourseBenefits.snapshots()){
+        const claim=await window.FundaLegacy.saveSelection(snapshot);
+        claims[String(snapshot.course.id)]=claim?.id||null;
+      }
+      const previousId=combinedCheckout?.id||window.FundaOnboardingDraft?.getCheckoutId?.()||null;
+      const paymentChoice=document.getElementById('paymentPlanChoice');
+      if(paymentChoice?.value)paymentChoice.dataset.pendingValue=paymentChoice.value;
+      combinedCheckout=null;updatePaymentPlanUI();
+      const {data,error}=await supabaseClient.rpc('prepare_course_checkout',{p_course_ids:chosen,p_claim_ids:claims,p_existing_checkout_id:previousId});
+      if(error)throw Error(error.message||'Combined course fees could not be confirmed.');
+      if(!data?.id||!Array.isArray(data.items))throw Error('Combined course fees could not be confirmed. Please try again.');
+      if(JSON.stringify(chosen.slice().sort())!==JSON.stringify(selectedCourses().map(course=>String(course.id)).sort()))throw Error('Your course selection changed. Please confirm it before payment.');
+      if(data.status==='submitted')throw Error('These course applications have already been submitted. Please use your dashboard to track them.');
+      combinedCheckout=data;
+      window.FundaOnboardingDraft?.setCheckoutId?.(data.id);
+      updatePaymentPlanUI();renderSummary();
+      return data;
+    })().finally(()=>{checkoutPreparation=null;});
+    return checkoutPreparation;
+  }
+  function currentPlan(){
+    if(isCombined())return {fee:Number(combinedCheckout?.total_fee||0),installments:Number(combinedCheckout?.installment_count||1)};
+    return paymentPlanFor(effectiveFee(),selectedCourse?.duration);
+  }
+  function renderCourseBreakdown(){
+    let box=document.getElementById('combinedCourseFees');
+    const field=document.getElementById('paymentPlanChoice')?.closest('div');
+    if(!box&&field){box=document.createElement('div');box.id='combinedCourseFees';box.className='md:col-span-2 rounded-2xl border border-blue-100 bg-blue-50 p-5';field.before(box);}
+    if(!box)return;
+    box.hidden=!isCombined();
+    if(!isCombined())return;
+    if(!combinedCheckout){box.textContent='Your selected course fees must be confirmed before payment.';return;}
+    box.innerHTML=`<h3 class="font-black text-[#03133d]">Selected courses</h3><ul class="mt-3 space-y-3 text-sm text-gray-700">${combinedCheckout.items.map(item=>`<li class="flex items-start justify-between gap-4"><span>${escape(item.title)}${Number(item.discount_percent)>0?`<span class="block mt-1 text-xs text-green-700">Previous-study benefit · ${escape(item.discount_percent)}% off</span>`:''}</span><strong class="shrink-0 text-[#03133d]">${money(item.fee)}</strong></li>`).join('')}</ul><div class="mt-4 flex items-center justify-between gap-4 border-t border-blue-200 pt-3 font-black text-[#03133d]"><span>Total course fees (${combinedCheckout.items.length} courses)</span><span>${money(combinedCheckout.total_fee)}</span></div>`;
+  }
+  function renderSummary(){
+    if(!isCombined()||!combinedCheckout)return;
+    const title=document.getElementById('summaryCourse'),duration=document.getElementById('summaryDuration'),price=document.getElementById('summaryPrice');
+    if(title)title.textContent=combinedCheckout.items.map(item=>item.title).join(' + ');
+    if(duration)duration.textContent=[...new Set(combinedCheckout.items.map(item=>item.duration||'Flexible'))].join(' / ');
+    if(price)price.textContent=money(combinedCheckout.total_fee);
+  }
+  async function submitCombined(values,file){
+    const error=validateCheckout();if(error)throw Error(error);
+    const checkout=combinedCheckout;
+    const currentAmount=()=>{
+      const field=document.getElementById('amountPaidNow'),plan=currentPlan();
+      return field?Number(field.value):document.getElementById('paymentPlanChoice').value==='full'?plan.fee:paymentParts(plan.fee,plan.installments)[0];
+    };
+    const selection={choice:document.getElementById('paymentPlanChoice').value,amount:currentAmount(),
+      method:document.getElementById('paymentMethod').value,reference:document.getElementById('paymentReference').value.trim()};
+    await updateStudent(values);
+    if(!combinedProof||combinedProof.checkoutId!==checkout.id||combinedProof.file!==file){
+      combinedProof={checkoutId:checkout.id,file,path:await uploadProofOfPayment(file,checkout.id)};
+    }
+    if(checkout!==combinedCheckout||JSON.stringify(checkout.items.map(item=>String(item.course_id)).sort())!==JSON.stringify(selectedCourses().map(course=>String(course.id)).sort())
+      ||selection.choice!==document.getElementById('paymentPlanChoice').value||selection.amount!==currentAmount()
+      ||selection.method!==document.getElementById('paymentMethod').value||selection.reference!==document.getElementById('paymentReference').value.trim()
+      ||file!==document.getElementById('proofFile').files[0])throw Error('Your course selection or payment details changed. Please review them before submitting.');
+    const {data,error:submissionError}=await supabaseClient.rpc('submit_course_checkout',{
+      p_checkout_id:checkout.id,p_amount:selection.amount,p_payment_method:selection.method,
+      p_payment_reference:selection.reference,p_proof_path:combinedProof.path,
+      p_payment_option:selection.choice==='full'?'full_balance':'next_instalment'
+    });
+    if(submissionError)throw Error(submissionError.message||'The combined application could not be submitted. Please try again.');
+    if(!data?.enrolment_ids?.length)throw Error('The application response could not be confirmed. Please try again.');
+    const remaining=window.FundaOnboardingCourseBrowser.completeCourses(checkout.items.map(item=>item.course_id));
+    showMessage(`Your ${checkout.items.length} selected course applications have been submitted. Your combined payment of ${money(data.amount_paid)} and proof of payment are awaiting verification by Admissions & Finance.`,true);
+    submitButton.textContent='Application Submitted ✓';
+    setTimeout(()=>{window.location.href=remaining?'onboarding.html?continue_selected=1':`dashboard.html?application=submitted&enrollment=${encodeURIComponent(data.enrolment_ids[0])}`;},1800);
+  }
+
   function effectiveFee(){
+    if(isCombined())return Number(combinedCheckout?.total_fee||0);
     const base=Number(selectedCourse?.price||0);
     try{
       const value=window.FundaLegacy?.getPayableAmount?.(selectedCourse);
@@ -184,27 +285,31 @@
   function updatePaymentPlanUI(){
     const select=document.getElementById('paymentPlanChoice');
     if(!select||!selectedCourse)return;
-    const fee=effectiveFee();
-    const plan=paymentPlanFor(fee,selectedCourse.duration);
+    renderCourseBreakdown();
+    if(isCombined()&&!combinedCheckout){select.innerHTML='<option value="">Confirm combined course fees before payment</option>';const due=document.getElementById('minimumDueNow')||document.getElementById('amountDueNow');if(due)due.textContent='—';const amount=document.getElementById('amountPaidNow');if(amount)amount.value='';return;}
+    const previous=select.dataset.pendingValue||select.value;
+    const plan=currentPlan();
     const parts=paymentParts(plan.fee,plan.installments);
-    select.innerHTML='<option value="">Select payment option</option><option value="full">Pay full course fee — '+money(plan.fee)+'</option>';
+    select.innerHTML='<option value="">Select payment option</option><option value="full">Pay full course '+(isCombined()?'fees':'fee')+' — '+money(plan.fee)+'</option>';
     if(plan.installments>1)select.innerHTML+=`<option value="installments">Pay in ${plan.installments} instalments — first payment ${money(parts[0])}</option>`;
-    select.value=plan.installments>1?'installments':'full';
+    select.value=isCombined()&&previous==='full'?'full':plan.installments>1?'installments':'full';
+    delete select.dataset.pendingValue;
     updateScheduleDisplay();
   }
 
   function updateScheduleDisplay(){
     const select=document.getElementById('paymentPlanChoice'),schedule=document.getElementById('paymentSchedule'),minimum=document.getElementById('minimumDueNow')||document.getElementById('amountDueNow'),amount=document.getElementById('amountPaidNow');
     if(!select||!selectedCourse)return;
-    const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration),parts=paymentParts(plan.fee,plan.installments);
+    const plan=currentPlan(),parts=paymentParts(plan.fee,plan.installments);
     const full=select.value==='full'||plan.installments===1;
     const due=full?plan.fee:parts[0];
     if(minimum)minimum.textContent=money(due);
     if(amount){amount.readOnly=true;amount.setAttribute('aria-readonly','true');amount.value=due.toFixed(2);}
-    if(schedule)schedule.innerHTML=full?`Full payment of <strong>${money(plan.fee)}</strong> is due now.`:`Your course qualifies for <strong>${plan.installments} instalments</strong>: ${parts.map((p,i)=>`Payment ${i+1}: ${money(p)}`).join(' · ')}. The first instalment is required with this application.`;
+    if(schedule)schedule.innerHTML=full?`Full payment of <strong>${money(plan.fee)}</strong>${isCombined()?` for all ${selectedCourses().length} selected courses`:""} is due now.`:`Your ${isCombined()?"selected courses qualify":"course qualifies"} for <strong>${plan.installments} instalments</strong>: ${parts.map((p,i)=>`Payment ${i+1}: ${money(p)}`).join(' · ')}. The first instalment is required with this application.`;
   }
 
   function extraValidation(){
+    const checkoutError=validateCheckout();if(checkoutError)return checkoutError;
     const identityType=document.getElementById('identityDocumentType')?.value||'south_african_id';
     const dob=document.getElementById('dateOfBirth')?.value;
     if(identityType==='south_african_id'){
@@ -224,7 +329,7 @@
     if(!['EFT / Bank Transfer','Bank Deposit'].includes(method))return 'Please select EFT / Bank Transfer or Bank Deposit.';
     const choice=document.getElementById('paymentPlanChoice')?.value;
     if(!choice)return 'Please select a payment option.';
-    const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration),parts=paymentParts(plan.fee,plan.installments),required=choice==='full'?plan.fee:parts[0];
+    const plan=currentPlan(),parts=paymentParts(plan.fee,plan.installments),required=choice==='full'?plan.fee:parts[0];
     const amountField=document.getElementById('amountPaidNow');
     const paid=amountField?Number(amountField.value||0):required;
     if(!Number.isFinite(paid)||paid<=0)return 'Please enter the amount you paid.';
@@ -244,6 +349,7 @@
     const submittedCourse=selectedCourse;
     submitButton.disabled=true;submitButton.textContent='Submitting application...';
     try{
+      if(isCombined()){await submitCombined(values,file);return;}
       await updateStudent(values);
       const enrollment=await ensureEnrollment();
       const legacyClaim=await window.FundaLegacy?.saveClaim?.(enrollment.id)||null;
@@ -252,7 +358,7 @@
       const paymentMethod=document.getElementById('paymentMethod').value;
       const paymentReference=document.getElementById('paymentReference').value.trim();
       const planChoice=document.getElementById('paymentPlanChoice').value;
-      const plan=paymentPlanFor(effectiveFee(),selectedCourse.duration);
+      const plan=currentPlan();
       const parts=paymentParts(plan.fee,plan.installments);
       const amountField=document.getElementById('amountPaidNow');
       const amountPaid=amountField?Number(amountField.value):(planChoice==='full'||plan.installments===1?plan.fee:parts[0]);
@@ -282,7 +388,7 @@
 
   window.FundaPaymentIntegrity={
     refresh:updatePaymentPlanUI,
-    effectiveFee
+    effectiveFee,prepareCheckout,validateCheckout,renderSummary
   };
 
   function boot(){
