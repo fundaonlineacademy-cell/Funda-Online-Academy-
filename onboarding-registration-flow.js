@@ -4,6 +4,98 @@
 
   const byId=id=>document.getElementById(id);
   let activeCourseId=null;
+  const AMBASSADOR_SOURCE='Influencer / Brand Ambassador';
+  let ambassadorOptions=[];
+  let ambassadorLinked=null;
+  let ambassadorLoaded=false;
+  let ambassadorRequest=null;
+
+  function ambassadorClient(){return window.FundaEnrollmentContext?.getSupabase?.()||supabaseClient;}
+  function ambassadorLabel(ambassador){
+    const handles=(ambassador.handles||[]).map(item=>`${item.platform||'Social'}: ${item.handle}`).join(' · ');
+    return handles?`${handles} — ${ambassador.name||'Ambassador'}`:ambassador.name||'Approved ambassador';
+  }
+  function ambassadorHelp(message,error=false){
+    const help=byId('ambassadorSourceHelp');
+    if(help){help.textContent=message;help.className=`mt-2 text-xs leading-5 ${error?'text-red-600':'text-gray-500'}`;}
+    byId('ambassadorSource')?.setAttribute('aria-invalid',String(error));
+  }
+  function addAmbassadorOption(select,value,label){
+    const option=document.createElement('option');option.value=value;option.textContent=label;select.appendChild(option);
+  }
+  async function loadAmbassadors(refresh=false){
+    if(ambassadorRequest)return ambassadorRequest;
+    if(ambassadorLoaded&&!refresh)return;
+    const select=byId('ambassadorSource');
+    if(!select)return;
+    const firstLoad=!ambassadorLoaded;
+    const refreshButton=byId('ambassadorSourceRefresh');
+    select.disabled=true;
+    if(refreshButton)refreshButton.disabled=true;
+    ambassadorHelp('Loading approved ambassadors / influencers…');
+    ambassadorRequest=(async()=>{
+      try{
+        const {data,error}=await ambassadorClient().rpc('get_onboarding_ambassador_directory');
+        if(error||!data||!Array.isArray(data.ambassadors))throw error||new Error('Directory unavailable');
+        const wanted=select.value||select.dataset.pendingValue||(firstLoad?data.selected_id:null)||'';
+        ambassadorOptions=data.ambassadors;
+        ambassadorLinked=data.linked||null;
+        select.replaceChildren();
+        addAmbassadorOption(select,'','Select the ambassador / influencer');
+        ambassadorOptions.forEach(item=>addAmbassadorOption(select,item.id,ambassadorLabel(item)));
+        if(ambassadorLinked&&!ambassadorOptions.some(item=>item.id===ambassadorLinked.id)){
+          addAmbassadorOption(select,ambassadorLinked.id,ambassadorLabel(ambassadorLinked));
+        }
+        select.value=ambassadorLinked?.id||wanted;
+        delete select.dataset.pendingValue;
+        ambassadorLoaded=true;
+        if(ambassadorLinked)ambassadorHelp(`Your referral is already linked to ${ambassadorLabel(ambassadorLinked)}.`);
+        else if(!ambassadorOptions.length)ambassadorHelp('No approved ambassadors / influencers are available yet. Please contact the Academy.',true);
+        else ambassadorHelp('Select their TikTok, Facebook or other social handle from the list.');
+      }catch(error){
+        ambassadorLoaded=false;
+        ambassadorHelp('Unable to load the ambassador list. Select Refresh list to try again.',true);
+      }finally{
+        select.disabled=!!ambassadorLinked;
+        if(refreshButton)refreshButton.disabled=false;
+      }
+    })().finally(()=>{ambassadorRequest=null;});
+    return ambassadorRequest;
+  }
+  function syncAmbassadorSelection(refresh=false){
+    const required=byId('whereHeard')?.value===AMBASSADOR_SOURCE;
+    const group=byId('ambassadorSourceGroup'),select=byId('ambassadorSource');
+    if(!group||!select)return;
+    group.hidden=!required;
+    select.required=required;
+    if(required)return loadAmbassadors(refresh);
+    select.setAttribute('aria-invalid','false');
+  }
+  function validateAmbassadorSelection(values){
+    if(values.where_heard_about_us!==AMBASSADOR_SOURCE)return null;
+    if(ambassadorRequest)return 'The ambassador list is still loading. Please try Continue again.';
+    if(!ambassadorLoaded)return 'Please refresh the approved ambassador / influencer list before continuing.';
+    const id=values.heard_about_ambassador_id;
+    if(!id||(!ambassadorOptions.some(item=>item.id===id)&&ambassadorLinked?.id!==id)){
+      return 'Please select the ambassador / influencer who referred you.';
+    }
+    return null;
+  }
+  function showAmbassadorError(message){
+    ambassadorHelp(message,true);
+    byId('ambassadorSource')?.focus();
+    showMessage?.(message);
+  }
+  function wireAmbassadorSelection(){
+    byId('whereHeard')?.addEventListener('change',()=>syncAmbassadorSelection(true));
+    byId('ambassadorSource')?.addEventListener('change',()=>{
+      delete byId('ambassadorSource').dataset.pendingValue;
+      ambassadorHelp('Select their TikTok, Facebook or other social handle from the list.');
+    });
+    byId('ambassadorSourceRefresh')?.addEventListener('click',()=>loadAmbassadors(true));
+    window.FundaOnboardingAmbassadors={sync:syncAmbassadorSelection};
+    syncAmbassadorSelection();
+  }
 
   function normaliseStudentTypeCopy(){
     const panel=byId('legacyStudentPanel');
@@ -228,6 +320,7 @@
       'Complete Your Details',
       'Complete your student registration details, then continue to payment.'
     );
+    syncAmbassadorSelection(true);
     scrollTop();
   }
 
@@ -253,6 +346,8 @@
     ];
     const missing=requiredFields.find(field=>!field[1]);
     if(missing)return `${missing[0]} is required.`;
+    const ambassadorError=validateAmbassadorSelection(values);
+    if(ambassadorError)return ambassadorError;
 
     if(values.identity_document_type==='south_african_id'){
       if(!/^\d{13}$/.test(values.south_african_id||'')){
@@ -274,12 +369,34 @@
     return null;
   }
 
-  function continueToPayment(){
+  async function continueToPayment(){
     hideMessage?.();
     const error=validateRegistrationDetails();
     if(error){
-      showMessage?.(error);
+      if(byId('whereHeard')?.value===AMBASSADOR_SOURCE&&/ambassador/i.test(error))showAmbassadorError(error);
+      else showMessage?.(error);
       return;
+    }
+
+    if(byId('whereHeard')?.value===AMBASSADOR_SOURCE){
+      const button=byId('registrationContinue'),source=byId('whereHeard'),select=byId('ambassadorSource');
+      const id=select.value;
+      button.disabled=true;source.disabled=true;select.disabled=true;
+      try{
+        const {data,error}=await ambassadorClient().rpc('save_onboarding_ambassador_choice',{p_application_id:id});
+        if(error||data?.selected_id!==id)throw error||new Error('Selection could not be saved');
+        if(data.linked_id)ambassadorLinked=ambassadorOptions.find(item=>item.id===data.linked_id)||ambassadorLinked;
+        ambassadorHelp(ambassadorLinked?'Your referral is linked to this ambassador.':'Your ambassador / influencer selection has been saved.');
+      }catch(error){
+        const message=/^(Your account is already linked|This ambassador is no longer available|You cannot select yourself|Please select an approved)/.test(error?.message||'')
+          ? error.message:'Your ambassador / influencer selection could not be saved. Please try again.';
+        select.disabled=!!ambassadorLinked;
+        showAmbassadorError(message);
+        return;
+      }finally{
+        button.disabled=false;source.disabled=false;select.disabled=!!ambassadorLinked;
+      }
+      if(byId('detailsStep')?.classList.contains('hidden-section'))return;
     }
 
     hideAllFlowSteps();
@@ -364,6 +481,7 @@
       'Complete Your Details',
       'Complete your student registration details, then continue to payment.'
     );
+    syncAmbassadorSelection(true);
     scrollTop();
   }
 
@@ -383,6 +501,7 @@
   function wireFlow(){
     buildStudentTypeStep();
     buildRegistrationPaymentAndReviewSteps();
+    wireAmbassadorSelection();
 
     const courseContinue=byId('continueButton');
     if(courseContinue){

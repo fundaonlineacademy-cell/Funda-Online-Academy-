@@ -746,12 +746,27 @@
                   <option>Google / Search</option>
                   <option>Friend or Family</option>
                   <option>School / Workplace</option>
+                  <option>Influencer / Brand Ambassador</option>
                   <option>Other</option>
 
                 </select>
 
               </div>
 
+
+              <div id="ambassadorSourceGroup" class="md:col-span-2 min-w-0" hidden>
+                <label for="ambassadorSource" class="block text-sm font-bold text-gray-700 mb-2">
+                  Which Ambassador / Influencer Referred You? *
+                </label>
+                <select id="ambassadorSource" aria-describedby="ambassadorSourceHelp"
+                  class="w-full max-w-full min-w-0 rounded-xl border border-gray-200 px-4 py-3 bg-white">
+                  <option value="">Select the ambassador / influencer</option>
+                </select>
+                <p id="ambassadorSourceHelp" class="mt-2 text-xs text-gray-500 leading-5" aria-live="polite">
+                  Select their TikTok, Facebook or other social handle from the list.
+                </p>
+                <button id="ambassadorSourceRefresh" type="button" class="mt-2 text-sm font-bold text-blue-600 hover:underline">Refresh list</button>
+              </div>
 
               <!-- EMERGENCY NAME -->
 
@@ -2180,6 +2195,11 @@
             "whereHeard"
           ).value,
 
+        heard_about_ambassador_id:
+          document.getElementById("whereHeard").value === "Influencer / Brand Ambassador"
+            ? (document.getElementById("ambassadorSource").value || document.getElementById("ambassadorSource").dataset.pendingValue || null)
+            : null,
+
         emergency_contact_name:
           document.getElementById(
             "emergencyName"
@@ -2261,6 +2281,10 @@
         requiredFields.find(
           field => !field[1]
         );
+
+      if (!missing && values.where_heard_about_us === "Influencer / Brand Ambassador" && !values.heard_about_ambassador_id) {
+        return "Please select the ambassador / influencer who referred you.";
+      }
 
 
       if (missing) {
