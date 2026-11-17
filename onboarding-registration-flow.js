@@ -25,6 +25,14 @@
   let ambassadorLoaded=false;
   let ambassadorRequest=null;
 
+  window.FundaOnboardingCampaign={studentFields(values){
+    const result={...values};const id=result.heard_about_ambassador_id;
+    if(id&&!ambassadorLoaded){delete result.heard_about_ambassador_id;return result;}
+    const campaign=ambassadorOptions.find(item=>item.id===id&&item.kind==='campaign');
+    result.heard_about_promotion_promoter_id=campaign?id:null;
+    if(campaign)result.heard_about_ambassador_id=null;
+    return result;
+  }};
   function ambassadorClient(){return window.FundaEnrollmentContext?.getSupabase?.()||supabaseClient;}
   function ambassadorLabel(ambassador){
     const handles=(ambassador.handles||[]).map(item=>`${item.platform||'Social'}: ${item.handle}`).join(' · ');
@@ -346,6 +354,7 @@
       'Complete your student registration details, then continue to payment.'
     );
     syncAmbassadorSelection(true);
+    window.FundaPaymentIntegrity?.refreshRegistrationPromotion?.();
     scrollTop();
   }
 
@@ -411,9 +420,11 @@
         const {data,error}=await ambassadorClient().rpc('save_onboarding_ambassador_choice',{p_application_id:id});
         if(error||data?.selected_id!==id)throw error||new Error('Selection could not be saved');
         if(data.linked_id)ambassadorLinked=ambassadorOptions.find(item=>item.id===data.linked_id)||ambassadorLinked;
+        if(data.promo_code&&window.FundaPaymentIntegrity?.canUsePromotion?.())window.FundaPaymentIntegrity.selectPromotion(data.promo_code);
+        else if(!data.promo_code&&ambassadorOptions.some(item=>item.kind==='campaign'&&item.promo_code===window.FundaPaymentIntegrity?.promotionCode?.()))window.FundaPaymentIntegrity.selectPromotion('');
         ambassadorHelp(ambassadorLinked?'Your referral is linked to this ambassador.':'Your ambassador / influencer selection has been saved.');
       }catch(error){
-        const message=/^(Your account is already linked|This ambassador is no longer available|You cannot select yourself|Please select an approved)/.test(error?.message||'')
+        const message=/^(Your account is already linked|This ambassador is no longer available|This influencer promotion|You cannot use your own|You cannot select yourself|Please select an approved)/.test(error?.message||'')
           ? error.message:'Your ambassador / influencer selection could not be saved. Please try again.';
         select.disabled=!!ambassadorLinked;
         showAmbassadorError(message);
@@ -423,7 +434,7 @@
       }
       if(byId('detailsStep')?.classList.contains('hidden-section'))return;
     }
-    if(chosenCourses().length>1){
+    if(chosenCourses().length>1||window.FundaPaymentIntegrity?.hasPromotion?.()){
       const button=byId('registrationContinue');button.disabled=true;
       try{
         if(!window.FundaPaymentIntegrity?.prepareCheckout)throw Error('Combined checkout could not be loaded. Please refresh before payment.');

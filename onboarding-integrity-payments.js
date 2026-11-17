@@ -176,17 +176,112 @@
   let combinedCheckout=null;
   let combinedProof=null;
   let checkoutPreparation=null;
+  let promotionExpiryTimer=null;
   const selectedCourses=()=>window.FundaOnboardingCourseBrowser?.getSelectedCourses?.()||(selectedCourse?[selectedCourse]:[]);
-  const isCombined=()=>selectedCourses().length>1;
+  const isCombined=()=>selectedCourses().length>1||!!promotionCode();
+  const promoMemory=new Map();
+  const promotionKey=()=>currentUser?.id?'funda:promotion:applied:v1:'+currentUser.id:null;
+  function promotionCode(){
+    const key=promotionKey();if(!key)return '';
+    try{return sessionStorage.getItem(key)||promoMemory.get(key)||'';}catch(_){return promoMemory.get(key)||'';}
+  }
+  function writePromotion(code){
+    const key=promotionKey();if(!key)throw Error('Please sign in before applying a promo code.');
+    if(code)promoMemory.set(key,code);else promoMemory.delete(key);
+    try{if(code)sessionStorage.setItem(key,code);else sessionStorage.removeItem(key);}catch(_){}
+    refreshRegistrationPromotion();
+  }
+  function selectPromotion(value){
+    const code=String(value||'').trim().toUpperCase();
+    if(code&&!/^[A-Z0-9]{4,32}$/.test(code))throw Error('Enter a valid promo code.');
+    writePromotion(code);resetCheckout();
+  }
+  function canUsePromotion(){
+    const snapshots=window.FundaCourseBenefits?.snapshots?.()||[];
+    if(snapshots.some(item=>item.type!=='first_time'))return false;
+    if(selectedCourses().length===1){
+      const course=selectedCourses()[0];
+      const fee=window.FundaLegacy?.getPayableAmount?.(course);
+      if(fee!=null&&Number(fee)<Number(course.price))return false;
+    }
+    return true;
+  }
+  function promotionStatus(message,error=false){
+    const status=document.getElementById('promotionStatus');
+    if(status){status.textContent=message;status.dataset.promoError=String(error);}
+  }
+  function refreshRegistrationPromotion(){
+    const nav=document.getElementById('registrationNavigation');if(!nav)return;
+    let panel=document.getElementById('registrationPromotion');
+    if(!panel){
+      panel=document.createElement('section');panel.id='registrationPromotion';panel.className='fundaPromoField';panel.style.marginTop='18px';
+      panel.innerHTML='<p id="registrationPromotionText"></p><div class="fundaPromoControls" style="margin-top:8px"><button id="clearRegistrationPromotion" type="button" class="fpRemove">Remove saved promo code</button></div>';
+      nav.before(panel);
+      document.getElementById('clearRegistrationPromotion').addEventListener('click',()=>{
+        selectPromotion('');window.FundaCoursePromotion?.rememberCode?.('');updatePaymentPlanUI();
+        showMessage?.('Saved promo code removed. Confirm your selected course fees before paying.',true);
+      });
+    }
+    const code=promotionCode();panel.hidden=!code;
+    document.getElementById('registrationPromotionText').textContent=code?`Saved promo code: ${code}. It will be checked before payment. Remove it to use normal fees or a verified previous-study benefit.`:'';
+  }
+  function injectPromotionUI(){
+    if(document.getElementById('promotionCode'))return;
+    const anchor=document.getElementById('fundaPaymentPlan');if(!anchor)return;
+    const box=document.createElement('section');box.className='fundaPromoField';box.setAttribute('aria-label','Course promotion');
+    box.innerHTML='<label for="promotionCode">Promo code</label><div class="fundaPromoControls"><input id="promotionCode" maxlength="32" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="e.g. BLACKNOV30"><button id="applyPromotion" type="button">Apply code</button><button id="removePromotion" type="button" class="fpRemove" hidden>Remove code</button></div><p id="promotionStatus" role="status" aria-live="polite">Enter your code before choosing a payment option. One promotion per application; previous-study benefits cannot be combined.</p>';
+    anchor.before(box);
+    const input=document.getElementById('promotionCode'),apply=document.getElementById('applyPromotion'),remove=document.getElementById('removePromotion');
+    input.value=promotionCode()||window.FundaCoursePromotion?.pendingCode?.()||'';remove.hidden=!promotionCode();
+    input.addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();apply.click();}});
+    apply.addEventListener('click',async()=>{
+      const code=input.value.trim().toUpperCase();
+      if(!/^[A-Z0-9]{4,32}$/.test(code)){promotionStatus('Enter a valid promo code.',true);input.focus();return;}
+      if(!canUsePromotion()){promotionStatus('A previous-study benefit is selected. It cannot be combined with a promo code.',true);return;}
+      const previous={code:promotionCode(),quote:combinedCheckout,proof:combinedProof};
+      input.disabled=apply.disabled=remove.disabled=true;promotionStatus('Confirming your discounted course fees…');
+      try{
+        selectPromotion(code);await prepareCheckout();
+        window.FundaCoursePromotion?.rememberCode?.(code);input.value=code;remove.hidden=false;
+        promotionStatus(`${code} applied: ${combinedCheckout.promotion.discount_percent}% off. Your payment options now use the discounted total.`);
+      }catch(error){
+        writePromotion(previous.code);combinedCheckout=previous.quote;combinedProof=previous.proof;
+        window.FundaOnboardingDraft?.setCheckoutId?.(combinedCheckout?.id||null);updatePaymentPlanUI();renderSummary();
+        promotionStatus(error.message||'This code could not be applied.',true);
+      }finally{input.disabled=apply.disabled=remove.disabled=false;}
+    });
+    remove.addEventListener('click',async()=>{
+      if(checkoutPreparation)return;
+      const previous={code:promotionCode(),quote:combinedCheckout,proof:combinedProof};
+      input.disabled=apply.disabled=remove.disabled=true;
+      try{
+        selectPromotion('');if(selectedCourses().length>1)await prepareCheckout();
+        window.FundaCoursePromotion?.rememberCode?.('');input.value='';remove.hidden=true;
+        updatePaymentPlanUI();renderSummary();promotionStatus('Promo code removed. Your current course fees and payment options are shown below.');
+      }catch(error){
+        writePromotion(previous.code);combinedCheckout=previous.quote;combinedProof=previous.proof;
+        window.FundaOnboardingDraft?.setCheckoutId?.(combinedCheckout?.id||null);updatePaymentPlanUI();renderSummary();
+        promotionStatus(error.message||'Course fees could not be confirmed.',true);
+      }finally{input.disabled=apply.disabled=remove.disabled=false;}
+    });
+    window.FundaCoursePromotion?.loadOffer?.().then(offer=>{
+      if(offer&&!input.value)input.value=offer.code;
+      if(offer&&!promotionCode())promotionStatus(`${offer.name}: ${offer.discount_percent}% off eligible fees until ${window.FundaCoursePromotion.endsText(offer)}, 23:59 South African time. Apply your code before paying.`);
+    }).catch(()=>{});
+  }
+
   const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
   function resetCheckout(){
+    clearTimeout(promotionExpiryTimer);promotionExpiryTimer=null;
     combinedCheckout=null;combinedProof=null;
     window.FundaOnboardingDraft?.setCheckoutId?.(null);
   }
   window.addEventListener('funda:course-selection-changed',resetCheckout);
   function validateCheckout(){
     if(!isCombined())return null;
+    if(combinedCheckout?.promotion?.ends_at&&new Date(combinedCheckout.promotion.ends_at).getTime()<=Date.now())return 'This promotion has ended. Remove the code and confirm the course fees before paying.';
     const ids=selectedCourses().map(course=>String(course.id)).sort();
+    if((combinedCheckout?.promotion?.code||'')!==promotionCode())return 'Please apply your promo code and confirm the course fees again.';
     const quoted=(combinedCheckout?.items||[]).map(item=>String(item.course_id)).sort();
     if(!combinedCheckout||combinedCheckout.status!=='draft'||JSON.stringify(ids)!==JSON.stringify(quoted)){
       return 'Please return to Student Registration and confirm the combined course fees before payment.';
@@ -197,12 +292,14 @@
     if(!isCombined())return null;
     if(checkoutPreparation)return checkoutPreparation;
     checkoutPreparation=(async()=>{
+      const promo=promotionCode();
+      if(promo&&!canUsePromotion())throw Error('Previous-study benefits cannot be combined with a promo code.');
       window.FundaCourseBenefits?.restoreFirstTime?.();
-      if(!window.FundaCourseBenefits?.ready?.())throw Error('Please complete the Student Type checks for each selected course.');
+      if(selectedCourses().length>1&&!window.FundaCourseBenefits?.ready?.())throw Error('Please complete the Student Type checks for each selected course.');
       await window.FundaOnboardingDraft?.saveNow?.();
       const chosen=selectedCourses().map(course=>String(course.id));
       const claims={};
-      for(const snapshot of window.FundaCourseBenefits.snapshots()){
+      for(const snapshot of (promo?[]:(window.FundaCourseBenefits?.snapshots?.()||[]))){
         const claim=await window.FundaLegacy.saveSelection(snapshot);
         claims[String(snapshot.course.id)]=claim?.id||null;
       }
@@ -210,12 +307,24 @@
       const paymentChoice=document.getElementById('paymentPlanChoice');
       if(paymentChoice?.value)paymentChoice.dataset.pendingValue=paymentChoice.value;
       combinedCheckout=null;updatePaymentPlanUI();
-      const {data,error}=await supabaseClient.rpc('prepare_course_checkout',{p_course_ids:chosen,p_claim_ids:claims,p_existing_checkout_id:previousId});
+      const {data,error}=await supabaseClient.rpc(promo?'prepare_promotion_course_checkout':'prepare_course_checkout',promo
+        ?{p_course_ids:chosen,p_promo_code:promo,p_existing_checkout_id:previousId,p_additional:false}
+        :{p_course_ids:chosen,p_claim_ids:claims,p_existing_checkout_id:previousId});
       if(error)throw Error(error.message||'Combined course fees could not be confirmed.');
       if(!data?.id||!Array.isArray(data.items))throw Error('Combined course fees could not be confirmed. Please try again.');
       if(JSON.stringify(chosen.slice().sort())!==JSON.stringify(selectedCourses().map(course=>String(course.id)).sort()))throw Error('Your course selection changed. Please confirm it before payment.');
       if(data.status==='submitted')throw Error('These course applications have already been submitted. Please use your dashboard to track them.');
+      if(promo!==(data.promotion?.code||'')||promo!==promotionCode())throw Error('Your promo code changed. Please confirm the course fees again.');
       combinedCheckout=data;
+      clearTimeout(promotionExpiryTimer);
+      if(data.promotion?.ends_at){
+        const remaining=new Date(data.promotion.ends_at).getTime()-Date.now();
+        if(remaining<=0)throw Error('This promotion has ended. Remove the code and confirm the course fees before paying.');
+        if(remaining<2147483647)promotionExpiryTimer=setTimeout(()=>{
+          combinedCheckout=null;combinedProof=null;updatePaymentPlanUI();
+          promotionStatus('This promotion has ended. Remove the code and confirm the course fees before paying.',true);
+        },remaining);
+      }
       window.FundaOnboardingDraft?.setCheckoutId?.(data.id);
       updatePaymentPlanUI();renderSummary();
       return data;
@@ -234,10 +343,11 @@
     box.hidden=!isCombined();
     if(!isCombined())return;
     if(!combinedCheckout){box.textContent='Your selected course fees must be confirmed before payment.';return;}
-    box.innerHTML=`<h3 class="font-black text-[#03133d]">Selected courses</h3><ul class="mt-3 space-y-3 text-sm text-gray-700">${combinedCheckout.items.map(item=>`<li class="flex items-start justify-between gap-4"><span>${escape(item.title)}${Number(item.discount_percent)>0?`<span class="block mt-1 text-xs text-green-700">Previous-study benefit · ${escape(item.discount_percent)}% off</span>`:''}</span><strong class="shrink-0 text-[#03133d]">${money(item.fee)}</strong></li>`).join('')}</ul><div class="mt-4 flex items-center justify-between gap-4 border-t border-blue-200 pt-3 font-black text-[#03133d]"><span>Total course fees (${combinedCheckout.items.length} courses)</span><span>${money(combinedCheckout.total_fee)}</span></div>`;
+    box.innerHTML=`<h3 class="font-black text-[#03133d]">Selected courses</h3><ul class="mt-3 space-y-3 text-sm text-gray-700">${combinedCheckout.items.map(item=>`<li class="flex items-start justify-between gap-4"><span>${escape(item.title)}${Number(item.discount_percent)>0?`<span class="block mt-1 text-xs text-green-700">${combinedCheckout.promotion?escape(combinedCheckout.promotion.code):'Previous-study benefit'} · ${escape(item.discount_percent)}% off</span>`:''}</span><strong class="shrink-0 text-[#03133d]">${money(item.fee)}</strong></li>`).join('')}</ul><div class="mt-4 flex items-center justify-between gap-4 border-t border-blue-200 pt-3 font-black text-[#03133d]"><span>Total course fees (${combinedCheckout.items.length} ${combinedCheckout.items.length===1?'course':'courses'})</span><span>${money(combinedCheckout.total_fee)}</span></div>`;
   }
   function renderSummary(){
-    if(!isCombined()||!combinedCheckout)return;
+    if(!isCombined()){const price=document.getElementById('summaryPrice');if(price)price.textContent=money(effectiveFee());return;}
+    if(!combinedCheckout)return;
     const title=document.getElementById('summaryCourse'),duration=document.getElementById('summaryDuration'),price=document.getElementById('summaryPrice');
     if(title)title.textContent=combinedCheckout.items.map(item=>item.title).join(' + ');
     if(duration)duration.textContent=[...new Set(combinedCheckout.items.map(item=>item.duration||'Flexible'))].join(' / ');
@@ -268,7 +378,7 @@
     if(submissionError)throw Error(submissionError.message||'The combined application could not be submitted. Please try again.');
     if(!data?.enrolment_ids?.length)throw Error('The application response could not be confirmed. Please try again.');
     const remaining=window.FundaOnboardingCourseBrowser.completeCourses(checkout.items.map(item=>item.course_id));
-    showMessage(`Your ${checkout.items.length} selected course applications have been submitted. Your combined payment of ${money(data.amount_paid)} and proof of payment are awaiting verification by Admissions & Finance.`,true);
+    showMessage(`${checkout.items.length===1?'Your course application has':'Your '+checkout.items.length+' selected course applications have'} been submitted. Your combined payment of ${money(data.amount_paid)} and proof of payment are awaiting verification by Admissions & Finance.`,true);
     submitButton.textContent='Application Submitted ✓';
     setTimeout(()=>{window.location.href=remaining?'onboarding.html?continue_selected=1':`dashboard.html?application=submitted&enrollment=${encodeURIComponent(data.enrolment_ids[0])}`;},1800);
   }
@@ -285,12 +395,22 @@
   function updatePaymentPlanUI(){
     const select=document.getElementById('paymentPlanChoice');
     if(!select||!selectedCourse)return;
+    if(combinedCheckout?.promotion?.ends_at&&new Date(combinedCheckout.promotion.ends_at).getTime()<=Date.now()){
+      combinedCheckout=null;combinedProof=null;promotionStatus('This promotion has ended. Remove the code and confirm the course fees before paying.',true);
+    }
+    const code=promotionCode(),remove=document.getElementById('removePromotion'),status=document.getElementById('promotionStatus');
+    if(remove)remove.hidden=!code;
+    if(code&&combinedCheckout?.promotion?.code===code&&status?.dataset.appliedCode!==code){
+      const input=document.getElementById('promotionCode');if(input&&document.activeElement!==input)input.value=code;
+      if(status)status.dataset.appliedCode=code;
+      promotionStatus(`${code} applied: ${combinedCheckout.promotion.discount_percent}% off. Your payment options use the discounted total.`);
+    }else if(!code&&status)delete status.dataset.appliedCode;
     renderCourseBreakdown();
     if(isCombined()&&!combinedCheckout){select.innerHTML='<option value="">Confirm combined course fees before payment</option>';const due=document.getElementById('minimumDueNow')||document.getElementById('amountDueNow');if(due)due.textContent='—';const amount=document.getElementById('amountPaidNow');if(amount)amount.value='';return;}
     const previous=select.dataset.pendingValue||select.value;
     const plan=currentPlan();
     const parts=paymentParts(plan.fee,plan.installments);
-    select.innerHTML='<option value="">Select payment option</option><option value="full">Pay full course '+(isCombined()?'fees':'fee')+' — '+money(plan.fee)+'</option>';
+    select.innerHTML='<option value="">Select payment option</option><option value="full">Pay full course '+(selectedCourses().length>1?'fees':'fee')+' — '+money(plan.fee)+'</option>';
     if(plan.installments>1)select.innerHTML+=`<option value="installments">Pay in ${plan.installments} instalments — first payment ${money(parts[0])}</option>`;
     select.value=isCombined()&&previous==='full'?'full':plan.installments>1?'installments':'full';
     delete select.dataset.pendingValue;
@@ -305,7 +425,7 @@
     const due=full?plan.fee:parts[0];
     if(minimum)minimum.textContent=money(due);
     if(amount){amount.readOnly=true;amount.setAttribute('aria-readonly','true');amount.value=due.toFixed(2);}
-    if(schedule)schedule.innerHTML=full?`Full payment of <strong>${money(plan.fee)}</strong>${isCombined()?` for all ${selectedCourses().length} selected courses`:""} is due now.`:`Your ${isCombined()?"selected courses qualify":"course qualifies"} for <strong>${plan.installments} instalments</strong>: ${parts.map((p,i)=>`Payment ${i+1}: ${money(p)}`).join(' · ')}. The first instalment is required with this application.`;
+    if(schedule)schedule.innerHTML=full?`Full payment of <strong>${money(plan.fee)}</strong>${selectedCourses().length>1?` for all ${selectedCourses().length} selected courses`:""} is due now.`:`Your ${selectedCourses().length>1?"selected courses qualify":"course qualifies"} for <strong>${plan.installments} instalments</strong>: ${parts.map((p,i)=>`Payment ${i+1}: ${money(p)}`).join(' · ')}. The first instalment is required with this application.`;
   }
 
   function extraValidation(){
@@ -388,12 +508,13 @@
 
   window.FundaPaymentIntegrity={
     refresh:updatePaymentPlanUI,
-    effectiveFee,prepareCheckout,validateCheckout,renderSummary
+    effectiveFee,prepareCheckout,validateCheckout,renderSummary,
+    hasPromotion:()=>!!promotionCode(),promotionCode,selectPromotion,canUsePromotion,refreshRegistrationPromotion
   };
 
   function boot(){
     ensureCourseBrowser();
-    ensureIdentityUI();injectPaymentUI();
+    ensureIdentityUI();injectPaymentUI();injectPromotionUI();
     const originalOpen=window.openDetailsStep||openDetailsStep;
     if(typeof originalOpen==='function'){
       const wrapped=async function(){await originalOpen();setTimeout(updatePaymentPlanUI,0);};

@@ -28,6 +28,8 @@
     footer{text-align:center;padding:20px;color:#66778f;font-size:12px}
     @media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:570px){main{padding:0 12px;margin-top:15px}.hero{padding:21px}.card{padding:15px}.grid,.form-grid{grid-template-columns:1fr}.course img{height:170px}header .inner{padding:15px}.row.actions .btn{width:100%}}
   </style>
+<link rel="stylesheet" href="course-promotions.css?v=20261117-black-november-v1">
+<script defer src="course-promotion-public.js?v=20261117-black-november-v1"></script>
 </head>
 <body>
 <header><div class="inner"><a class="brand" href="dashboard.html">FUNDA ONLINE <span>ACADEMY</span></a><a href="dashboard.html">My Dashboard</a></div></header>
@@ -39,7 +41,7 @@
     <div class="steps" aria-label="Application progress"><span class="current">1 · Choose new courses</span><span>2 · Review and payment</span></div>
     <div class="card"><div class="row"><div><p class="kicker">My existing learning</p><h2 id="studentGreeting">Student</h2></div><a class="btn secondary small" href="dashboard.html">Return to My Courses</a></div><p class="muted">Courses you have already applied for are excluded from new selections, including completed and pending courses.</p><div id="existingList" class="muted"></div></div>
     <div class="card"><div class="row"><div><p class="kicker">Available courses</p><h2>Choose your additional courses</h2></div><div class="field"><label for="courseSearch">Find a course</label><input id="courseSearch" type="search" placeholder="Search courses"></div></div><p class="muted">Select as many different available courses as you need. You will confirm the final fees before paying.</p><div id="courseGrid" class="grid" aria-live="polite"></div><div id="noAvailable" class="note" hidden>No additional courses are available for this account right now.</div></div>
-    <div class="card"><h2>Your new selection</h2><div id="selectionSummary" class="summary">No courses selected.</div><p class="muted" style="margin-top:12px">Existing course balances and any previous payments are not part of this new quote.</p><div class="row actions"><a href="dashboard.html" class="btn secondary">Back to Dashboard</a><button id="reviewButton" class="btn" type="button" disabled>Continue to Fees &amp; Payment</button></div></div>
+    <div class="card"><h2>Your new selection</h2><div id="selectionSummary" class="summary">No courses selected.</div><p class="muted" style="margin-top:12px">Existing course balances and any previous payments are not part of this new quote.</p><section class="fundaPromoField" style="margin-top:16px"><label for="additionalPromotionCode">Promo code (optional)</label><div class="fundaPromoControls"><input id="additionalPromotionCode" maxlength="32" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter your promo code"></div><p id="additionalPromotionHelp">Enter a code before reviewing the final fees. One promotion per application; existing course balances are excluded.</p></section><div class="row actions"><a href="dashboard.html" class="btn secondary">Back to Dashboard</a><button id="reviewButton" class="btn" type="button" disabled>Continue to Fees &amp; Payment</button></div></div>
   </section>
   <section id="checkout" hidden>
     <div class="steps"><span>1 · Choose new courses</span><span class="current">2 · Review and payment</span></div>
@@ -66,6 +68,13 @@
 (function () {
   "use strict";
   var db=null,user=null,student=null,allCourses=[],owned=new Set(),selected=new Set(),quote=null,bankReady=false,proofCache=null,busy=false;
+  var promotionExpiryTimer=null;
+  function checkQuoteExpiry(){
+    if(quote?.promotion?.ends_at&&new Date(quote.promotion.ends_at).getTime()<=Date.now()){
+      quote=null;proofCache=null;$('proofFile').value='';show('choose');
+      message('This promotion has ended. Remove the code and review current course fees before paying.',true);
+    }
+  }
   var $=function(id){return document.getElementById(id);};
   var safe=function(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});};
   var cents=function(n){return Math.round(Number(n||0)*100);};
@@ -133,7 +142,7 @@
   }
   function renderPayment(){
     var items=quote.items||[],count=Number(quote.installment_count)||1;
-    $('quoteItems').innerHTML=items.map(function(item){return '<div class="row" style="padding:8px 0"><span>'+safe(item.title)+'</span><strong>'+money(item.fee)+'</strong></div>';}).join('');
+    $('quoteItems').innerHTML=items.map(function(item){return '<div class="row" style="padding:8px 0"><span>'+safe(item.title)+(quote.promotion?'<small style="display:block;color:#236241">'+safe(quote.promotion.code)+' · '+safe(item.discount_percent)+'% off · Normal fee '+money(item.original_fee)+'</small>':'')+'</span><strong>'+money(item.fee)+'</strong></div>';}).join('');
     $('quoteTotal').textContent=money(quote.total_fee);
     var opts='<option value="full_balance">Pay full fee — '+money(quote.total_fee)+'</option>';
     var schedule=[];
@@ -156,19 +165,32 @@
     var button=$('reviewButton');button.dataset.label=button.textContent;setBusy(true,button);clearMessage();
     try{
       var startIds=ids();
-      var data=callResult(await db.rpc('prepare_additional_course_checkout',{p_course_ids:startIds,p_existing_checkout_id:null}),'Unable to confirm new course fees');
+      var promo=$('additionalPromotionCode').value.trim().toUpperCase();
+      if(promo&&!/^[A-Z0-9]{4,32}$/.test(promo))throw Error('Enter a valid promo code.');
+      var data=callResult(await db.rpc(promo?'prepare_promotion_course_checkout':'prepare_additional_course_checkout',promo
+        ?{p_course_ids:startIds,p_promo_code:promo,p_existing_checkout_id:null,p_additional:true}
+        :{p_course_ids:startIds,p_existing_checkout_id:null}),'Unable to confirm new course fees');
+      if((data.promotion?.code||'')!==promo)throw Error('The promo code could not be confirmed.');
       if(!data||!data.id||data.status!=='draft'||!Array.isArray(data.items))throw Error('Unable to confirm the new application. Please contact Admissions.');
       if(JSON.stringify(startIds)!==JSON.stringify(ids())||JSON.stringify(data.items.map(function(i){return String(i.course_id);}).sort())!==JSON.stringify(startIds))throw Error('Your selected courses changed. Please confirm them again.');
       if(data.items.some(function(i){return owned.has(String(i.course_id))||!Number.isFinite(Number(i.fee))||cents(i.fee)<=0;}))throw Error('The selected course list must be reviewed.');
       if(data.items.reduce(function(s,i){return s+cents(i.fee);},0)!==cents(data.total_fee))throw Error('The combined course total could not be reconciled.');
       if(data.items.some(function(i){return !Array.isArray(i.installment_amounts)||i.installment_amounts.length!==Number(data.installment_count)||i.installment_amounts.reduce(function(s,a){return s+cents(a);},0)!==cents(i.fee);}))throw Error('Payment instalments could not be confirmed.');
-      quote=data;renderPayment();show('checkout');
+      quote=data;clearTimeout(promotionExpiryTimer);
+      if(quote.promotion?.ends_at){
+        var remaining=new Date(quote.promotion.ends_at).getTime()-Date.now();
+        if(remaining<=0){quote=null;throw Error('This promotion has ended. Remove the code and review the course fees before paying.');}
+        if(remaining<2147483647)promotionExpiryTimer=setTimeout(checkQuoteExpiry,remaining);
+      }
+      renderPayment();show('checkout');
       if(!bankReady)loadBanks();
     }catch(e){message(e.message||'Unable to confirm the selected course fees.',true);}
     finally{setBusy(false,button);renderSelection();}
   }
   function validate(){
+    checkQuoteExpiry();
     if(!quote||quote.status!=='draft')throw Error('Confirm the new courses and fees first.');
+    if((quote.promotion?.code||'')!==$('additionalPromotionCode').value.trim().toUpperCase())throw Error('Your promo code changed. Review your course fees again.');
     var current=ids(),quoted=quote.items.map(function(i){return String(i.course_id);}).sort();
     if(JSON.stringify(current)!==JSON.stringify(quoted)||current.some(function(i){return owned.has(i);}))throw Error('Your course selection changed. Please review it.');
     if(!bankReady)throw Error('Official banking information is unavailable. Do not make a payment until it has loaded.');
@@ -210,6 +232,13 @@
   $('editButton').addEventListener('click',function(){if(busy)return;quote=null;proofCache=null;$('proofFile').value='';show('choose');});
   $('paymentOption').addEventListener('change',updateDue);
   $('submitButton').addEventListener('click',submit);
+  $('additionalPromotionCode').value=window.FundaCoursePromotion?.pendingCode?.()||'';
+  window.addEventListener('DOMContentLoaded',function(){
+    if(!$('additionalPromotionCode').value)$('additionalPromotionCode').value=window.FundaCoursePromotion?.pendingCode?.()||'';
+    window.FundaCoursePromotion?.loadOffer?.().then(function(offer){if(offer)$('additionalPromotionHelp').textContent=offer.name+': '+offer.discount_percent+'% off with '+offer.code+' until '+window.FundaCoursePromotion.endsText(offer)+', 23:59 South African time. Full payment or qualifying instalments. One code per application; existing balances and previous-study benefits are excluded.';}).catch(function(){});
+  },{once:true});
+  window.addEventListener('pageshow',checkQuoteExpiry);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)checkQuoteExpiry();});
   init();
 })();
 </script>

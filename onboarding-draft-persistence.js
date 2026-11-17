@@ -154,7 +154,8 @@
       return;
     }
 
-    const payload=collectStudentPayload();
+    const rawPayload=collectStudentPayload();
+    const payload=window.FundaOnboardingCampaign?.studentFields?.(rawPayload)||rawPayload;
     const snapshot=JSON.stringify(payload);
     if(snapshot===lastServerSnapshot&&!serverSavePending)return;
 
@@ -217,6 +218,7 @@
       byId('pageTitle')&&(byId('pageTitle').textContent='Student Type');
       byId('welcomeMessage')&&(byId('welcomeMessage').textContent=`You selected ${course?.title||'your course'}. Tell us whether you are a first-time or returning Funda Online Academy student.`);
     }else if(step==='registration'){
+      window.FundaPaymentIntegrity?.refreshRegistrationPromotion?.();
       byId('detailsStep')?.classList.remove('hidden-section');
       byId('stepLabel')&&(byId('stepLabel').textContent='STEP 3 OF 5 • STUDENT REGISTRATION');
       byId('pageTitle')&&(byId('pageTitle').textContent='Complete Your Details');
@@ -227,7 +229,7 @@
       byId('pageTitle')&&(byId('pageTitle').textContent='Payment');
       byId('welcomeMessage')&&(byId('welcomeMessage').textContent='Complete your payment information and upload your proof of payment, then continue to the final declaration.');
       try{window.FundaPaymentIntegrity?.refresh?.();}catch(_){ }
-      if((window.FundaEnrollmentContext?.getSelectedCourses?.()||[]).length>1){
+      if((window.FundaEnrollmentContext?.getSelectedCourses?.()||[]).length>1||window.FundaPaymentIntegrity?.hasPromotion?.()){
         window.FundaPaymentIntegrity?.prepareCheckout?.().catch(error=>{
           showStep('registration');window.showMessage?.(error.message||'Please confirm the combined course fees again.');
         });

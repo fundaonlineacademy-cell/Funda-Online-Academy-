@@ -72,6 +72,8 @@
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
   </style>
+<link rel="stylesheet" href="course-promotions.css?v=20261117-black-november-v1">
+<script defer src="course-promotion-public.js?v=20261117-black-november-v1"></script>
 </head>
 
 <body class="min-h-screen">
@@ -2819,7 +2821,7 @@
       } =
         await supabaseClient
           .from("students")
-          .update(values)
+          .update(window.FundaOnboardingCampaign?.studentFields?.(values)||values)
           .eq(
             "id",
             currentStudent.id
