@@ -1245,3 +1245,8 @@ Promoter contact and payout records are private. The public offer/directory expo
 ## 2026-11-18 — Owner-authorised account-first campaign link
 
 The owner requested that the influencer promotion link open Create Student Account before course selection. The authorised entry is `create-account.html?promo=ENKOSI30`. Only `create-account.html` and its working `auth.html` form load the existing promotion-intent helper; the entry forwards the validated code through its existing redirect. The account form, required fields, Terms/Privacy, password rules, session reset, profile creation, normal post-registration onboarding, permanent Ambassador referrals, payment calculations and all other routes remain protected. The code remains proposed until Apply code and server validation at payment; account creation alone earns no commission. See `BLACK_NOVEMBER_2026.md` for the focused scope and verification.
+
+
+## 2026-11-18 — Owner-authorised promotional payment display correction
+
+The owner reopened only the mismatched promotional full-payment label and repeated Capitec account-holder row. `onboarding.html` may route single-course promotions to the existing integrity renderer and use its confirmed fee in shared summaries; `onboarding-bank-details-multi.js` may remove the duplicate holder row. Keep the Capitec verification note, all actual bank details, payment policy/amount enforcement/proof/Finance controls, authentication, other onboarding steps and production data unchanged. Scope and verification are recorded in `BLACK_NOVEMBER_2026.md`.

@@ -31,7 +31,6 @@
       <div class="font-black text-[#03133d] text-base">${esc(bankName)}</div>
       <div class="mt-3 grid sm:grid-cols-2 gap-3">
         <div><span class="text-xs text-gray-500">Beneficiary / Business</span><div class="font-bold text-[#03133d]">${esc(b.account_name||'Funda Online Academy')}</div></div>
-        ${capitec?`<div><span class="text-xs text-gray-500">Account holder shown by the bank</span><div class="font-bold text-[#03133d]">Mr Futhe</div></div>`:''}
         <div><span class="text-xs text-gray-500">Account number</span><div class="font-black text-[#03133d]">${esc(b.account_number)}</div></div>
         <div><span class="text-xs text-gray-500">Branch code</span><div class="font-black text-[#03133d]">${esc(b.branch_code||'—')}</div></div>
         ${b.account_type?`<div><span class="text-xs text-gray-500">Account type</span><div class="font-bold text-[#03133d]">${esc(b.account_type)}</div></div>`:''}

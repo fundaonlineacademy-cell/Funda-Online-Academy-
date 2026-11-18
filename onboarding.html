@@ -2441,6 +2441,10 @@
 
     function effectiveCoursePrice() {
 
+      if (window.FundaPaymentIntegrity?.hasPromotion?.()) {
+        return window.FundaPaymentIntegrity.effectiveFee();
+      }
+
       const fallback =
         Number(selectedCourse?.price || 0);
 
@@ -2617,7 +2621,7 @@
 
     function updatePaymentPlanUI() {
 
-      if ((window.FundaOnboardingCourseBrowser?.getSelectedCourses?.() || []).length > 1 && window.FundaPaymentIntegrity) {
+      if (window.FundaPaymentIntegrity && ((window.FundaOnboardingCourseBrowser?.getSelectedCourses?.() || []).length > 1 || window.FundaPaymentIntegrity.hasPromotion?.())) {
         window.FundaPaymentIntegrity.refresh();
         return;
       }
