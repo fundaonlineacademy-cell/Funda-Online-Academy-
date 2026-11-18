@@ -58,7 +58,7 @@
     ambassadorHelp('Loading approved ambassadors / influencers…');
     ambassadorRequest=(async()=>{
       try{
-        const {data,error}=await ambassadorClient().rpc('get_onboarding_ambassador_directory');
+        const {data,error}=await ambassadorClient().rpc('get_onboarding_promotion_directory');
         if(error||!data||!Array.isArray(data.ambassadors))throw error||new Error('Directory unavailable');
         const wanted=select.value||select.dataset.pendingValue||(firstLoad?data.selected_id:null)||'';
         ambassadorOptions=data.ambassadors;
