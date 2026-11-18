@@ -1,5 +1,17 @@
 # Black November Skills Special — approved scope
 
+## Account-first promoter link — 18 November 2026
+
+Owner request: the influencer link must open account creation before course selection. The approved Enkosi entry is now `https://fundaonlineacademy.co.za/create-account.html?promo=ENKOSI30`.
+
+In scope: load the existing promotion-intent helper in `create-account.html` and its authoritative `auth.html` form, and preserve the validated code in the existing handoff. The helper stores only a proposed code in this browser tab. Payment still requires Apply code and server confirmation. Account creation itself does not earn commission.
+
+Out of scope: registration form/design, required details, Terms/Privacy, password validation, authentication/session rules, profile creation, existing-user/role routes, Ambassador referral ownership, course selection, payment/commission calculations, public catalogue, global loaders and database records. All remain unchanged.
+
+Required regression checks: direct account entry with ENKOSI30 and BLACKNOV30; empty/invalid code; existing referral and next parameters; approved session reset; auth form and onboarding handoff source identity; code retained into the existing payment field; account form usability on phone/desktop; deployed-source and live account-first route. Use isolated fixtures for registration/payment checks, with no real account creation or Terms acceptance.
+
+Verification: 53 isolated checks passed using the actual helper, entry and registration scripts, with fictional local signup/profile/policy responses. They cover code normalisation/validation, normal and mixed referral/next links, local sign-out, required Terms and strong-password gates, Student-only signup, profile/policy writes, onboarding handoff and the existing payment-code prefill contract. The auth source is identical to the live baseline after removing the single new helper include. Browser preview confirmed the account form at 390px and 1280px frame widths without horizontal overflow; Terms remained unchecked. No live user, registration, consent, payment or referral was submitted.
+
 Owner request: activate a 30% Black November course promotion ending 30 November 2026, with a general code and Enkosi Gxonono's unique code. The owner expressly agreed to a privately configured campaign commission on discounted verified payments.
 
 In scope: public promotion notices and code handoff, code entry during enrolment and additional-course checkout, server-validated discounted quotes and expiry, an Academy-controlled campaign-promoter record, campaign-only commission reporting and payout records, and the narrow marketing-source integration needed to select this promoter. Use BLACKNOV30 and ENKOSI30.
