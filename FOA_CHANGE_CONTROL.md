@@ -321,3 +321,14 @@ The currently approved regression-control cleanup order is:
 - Do not publish the CEO's private email or an unverified/residential address. A verified business/service address must be owner-approved before publication.
 - The current payment rule is: below R1,000 = full payment; R1,000 or more = 2 instalments; R2,000 or more plus a course duration of at least 8 weeks = 3 instalments; eligible Students may still pay in full; instalments are not weekly payments.
 - Public legal work does not reopen Home, Browse Courses presentation, portal layouts, lessons, assessments, Digital Library, email automation, security schema or unrelated locked surfaces.
+
+
+## 2026-11-17 — Owner-authorised Black November promotion
+
+The owner requested activation of the Black November Skills Special with 30% off eligible new course applications, a general code and a unique influencer code, and expressly agreed to a privately configured influencer commission on discounted verified receipts. This reopens only public promotion notices, enrolment/additional-course promo entry and quoting, the campaign-specific marketing-source entry, and a controlled promotion Finance report/payout register. See `BLACK_NOVEMBER_2026.md` for scope and verification.
+
+Campaign promoters are separate from membership in the locked 15% Ambassador programme. Existing permanent referral ownership, accounts, agreements, ranks, banking and portal design remain protected. A different promoter cannot overwrite an existing Ambassador attribution; the general code gives that student the same discount. Campaign-promoter receipts are excluded from standard Ambassador credit to prevent double payment.
+
+Catalogue fees are unchanged. Codes are server-validated against campaign availability before quote/submission, are not stacked with previous-study benefits, and use the discounted combined total for the existing full/instalment thresholds. First application/payment submission must fall within the campaign; later payments retain the submitted discounted balance and snapshotted commission. Official banking, exact payment/proof, enrolment approval and Finance verification remain required. No Auth user, accepted agreement or creator profile evidence is fabricated.
+
+Promoter contact and payout records are private. The public offer/directory exposes only approved display names, codes and offer metadata. Finance data is available only through an authenticated authorised report; Marketing receives a link, without restoring the retired Ambassador financial snapshot. No production fixture learner, application, proof, payment or message is created. All unrelated locked surfaces remain protected.
