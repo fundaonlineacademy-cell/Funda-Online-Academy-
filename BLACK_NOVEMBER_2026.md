@@ -1,5 +1,17 @@
 # Black November Skills Special — approved scope
 
+## Payment option and repeated bank-holder correction — 18 November 2026
+
+Owner request: remove the repeated Capitec "Account holder shown by the bank" / holder-name row while keeping the verification note; make the full-payment option agree with the confirmed promotional fee (R1,950 less 30% = R1,365), and verify exact-amount security.
+
+In scope: the authoritative payment display handoff and quoted-fee helper in `onboarding.html`, the repeated row in `onboarding-bank-details-multi.js`, and these controlled notes. Single-course promotions must use the existing integrity renderer just as combined checkouts do. Shared summaries must read the confirmed promotional total.
+
+Preserve: Capitec verification wording, all banking numbers/details, official-bank loading/failure behaviour, ordinary and previous-study fees, full/instalment rules, exact-cent schedules, own-account quotes, expiry, proof/reference checks, server amount enforcement, Finance verification, promotion/referral ownership, account-first registration, all other onboarding steps/design and production records. No database, loader, authentication or portal-shell change is authorised.
+
+Required checks: reproduce the base-renderer overwrite, then verify full R1,365 and two R682.50 instalments through repeat renders/change/Back/refresh; below-threshold, three-part and multi-course quotes; ordinary/benefit prices and promo removal; one Capitec note without the repeated row; wrong/tampered amounts, quote ownership, expired codes and proof guards in an isolated database; mobile/desktop and deployed-source verification. Never create a live test application, payment or payout.
+
+Validation: the regression reproduced the original dropdown overwrite before the fix. All 53 display/bank assertions now pass using the actual base/integrity renderers. The actual migration SQL passed 125 isolated database assertions, including R1,950 to R1,365, two R682.50 allocations, rejection of full-payment requests for R1,950/R1,364.99/R1,365.01/zero, acceptance and immutable saving of R1,365, idempotent retries, ownership, expiry and existing proof/commission guards. Read-only production inspection confirmed the same exact-quote and promotion/ownership checks remain enforced and anonymous callers cannot execute the checkout RPCs. The bank loader is otherwise source-identical; all inline script syntax and whitespace checks pass. Browser fixtures confirmed the full R1,365 option, due amount and schedule remain aligned after changing payment option and returning through Student Registration. No production data was changed.
+
 ## Account-first promoter link — 18 November 2026
 
 Owner request: the influencer link must open account creation before course selection. The approved Enkosi entry is now `https://fundaonlineacademy.co.za/create-account.html?promo=ENKOSI30`.
